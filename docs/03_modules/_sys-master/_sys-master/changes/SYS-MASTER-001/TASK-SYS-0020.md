@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0020"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§28 供应链安全 + §87 SBOM + §95 API生命周期"
@@ -73,4 +74,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

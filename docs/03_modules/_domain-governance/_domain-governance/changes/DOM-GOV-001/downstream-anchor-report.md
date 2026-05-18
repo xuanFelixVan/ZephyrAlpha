@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # DOM-GOV-001 Downstream Anchor Report
 
 **Generated:** 2026-05-07

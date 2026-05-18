@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0038"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§101 基准与评估完整性保障 + §102 跨环境一致性与Windows 11本地化 + §一百〇三 变更记录与维护审计"
@@ -78,4 +79,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

@@ -1,4 +1,8 @@
 ---
+blueprint_id: DOM-GOV-001
+---
+
+---
 task_id: "TASK-GOV-0022"
 source_blueprint: "DOM-GOV-001"
 source_section: "治理脚本去重与优化"

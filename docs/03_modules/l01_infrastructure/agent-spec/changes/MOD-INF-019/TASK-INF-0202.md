@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0202
 task_title: "四层架构实现——L0 AGENTS.md宪法 + L1 Domain Skills + L2 Role Skills + L3 Cold Memory + 触发表路由"
 parent_ticket: TASK-INF-0201
@@ -43,7 +44,9 @@ context_assembly_manifest:
     - "D-019-01: 四层架构——Domain与Role分层解耦，冲突时Domain优先"
     - "D-019-02: AGENTS.md触发表路由触发加载"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0202: 四层架构与触发表实现
 

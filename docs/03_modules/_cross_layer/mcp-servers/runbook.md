@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # MCP Runbook
 
 > 运维操作手册 — MOD-INF-013 Phase 8 (8 incident scenarios)

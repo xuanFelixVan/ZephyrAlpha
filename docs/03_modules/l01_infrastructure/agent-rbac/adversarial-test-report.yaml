@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 report_id: AT-RPT-20260508-001
 module: MOD-INF-018
 title: "Agent RBAC v0.14.0 — 红白对抗测试报告"

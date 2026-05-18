@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0203
 task_title: "Progressive Disclosure 三层递进加载策略实现——D-019-04"
 parent_ticket: TASK-INF-0202
@@ -40,7 +41,9 @@ context_assembly_manifest:
   decisions:
     - "D-019-04: Progressive Disclosure 三层递进加载"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0203: Progressive Disclosure 加载策略实现
 

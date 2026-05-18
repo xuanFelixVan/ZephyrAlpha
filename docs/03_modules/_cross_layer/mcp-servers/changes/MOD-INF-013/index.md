@@ -1,11 +1,14 @@
 ---
+
 doc_type: index
 status: active
 title: "MOD-INF-013 — 目录索引"
 version: "1.0.0"
 created: "2026-05-06"
 updated: "2026-05-06"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # MOD-INF-013
 

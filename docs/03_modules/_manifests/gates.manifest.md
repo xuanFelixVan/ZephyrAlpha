@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # gates/ 文件清单（自动生成 2026-05-09）
 
 总计: 64 个文件
@@ -17,7 +21,7 @@
 - cdc_broker.py
 - circuit_breaker.py
 - contract_template_manager.py
-- drift_detector.py
+- behavioral_auditor.py
 - end_to_end_walkthrough.py
 - g1_ingest.yaml
 - g2_triage.yaml

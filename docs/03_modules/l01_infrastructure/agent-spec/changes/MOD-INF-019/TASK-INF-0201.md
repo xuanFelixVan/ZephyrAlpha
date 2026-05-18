@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0201
 task_title: "Agent Spec 模块骨架搭建——§1概述与模块定位落地"
 parent_ticket: null
@@ -61,7 +62,9 @@ context_assembly_manifest:
   risks:
     - "R1: 蓝图与 Skill 漂移——蓝图更新但 Skill 未同步"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0201: Agent Spec 模块骨架搭建
 

@@ -26,6 +26,29 @@ depends_on:
   - {target: "MOD-INF-023", at: "§2", why: "Drift Detector——漂移预算信号 + 配置漂移对预算的影响"}
   - {target: "MOD-INF-014", at: "§2", why: "LLM Security Gateway——IPI检测 + 策略文件签名验证 + Trust Ring 隔离"}
 ---
+ssot_claims:
+  - claim: "Token/Cost/Time 三维预算策略唯一真源"
+    scope: "config/budget_policy.yaml + src/zephyr/budget_enforcer/"
+    negative: "MOD-INF-001 token_budget.yaml 为 deprecated 引用，非 SSoT"
+  - claim: "预算降级链唯一执行者"
+    scope: "degradation_manager.py + pre_flight_gate.py"
+    negative: "其他模块不得自行实现降级逻辑"
+  - claim: "模型成本路由唯一决策者"
+    scope: "model_router.py + cost_router.py"
+    negative: "MOD-INF-032 Resource Optimization 管 CPU/Memory，不管 Token/Cost"
+consumer_registry:
+  - tier: "hard"
+    consumers: ["MOD-INF-022 Escalation", "MOD-INF-001 Capacity Assurance", "MOD-INF-014 LLM Security"]
+  - tier: "soft"
+    consumers: ["MOD-INF-008 Context Engine", "MOD-INF-006 Task System", "MOD-INF-015 System Telemetry"]
+  - tier: "optional"
+    consumers: ["MOD-INF-032 Resource Optimization", "MOD-INF-034 Model Capability Exam"]
+actual_disk_path: "src/zephyr/budget_enforcer/"
+last_updated: "2026-05-18"
+last_verified: "2026-05-18"
+generation: 3
+stability: evolving
+---
 
 ## DOM-GOV-001 集成契约锚点
 
@@ -39,7 +62,7 @@ depends_on:
 
 > **module_id**: MOD-INF-024 | **version**: 0.7.0 | **status**: draft | **layer**: cross_layer
 
-> **对标**：Forcepoint X-Labs IPI十大攻击载荷 (2026.4) + Oktsec 7-Stage Kill Chain (2026.3) + Okta Agent Guardrail Bypass (2026.5) + Microsoft Agent Governance Toolkit Runtime Rings + SUPERVISORAGENT (ICLR 2026) + TechAhead 3层Guardrails + Vibe Coding 2026成本现实 + Gravitee AI Agent Security 2026 + Oracle Runtime Budget Guardrails + AgentGuard + Stanford Token Economics + TokenFence + Anthropic 4-Tier + Boris Cherny Claude成本解剖。
+> **对标**：Forcepoint X-Labs IPI (2026.4) | Oktsec Kill Chain (2026.3) | Okta Agent Bypass (2026.5) | Microsoft Runtime Rings | SUPERVISORAGENT (ICLR 2026) | TechAhead Guardrails | Gravitee AI Security 2026 | Oracle Budget Guardrails | AgentGuard | Stanford Token Economics | TokenFence | Anthropic 4-Tier | Boris Cherny Claude Anatomy
 
 ---
 
@@ -60,12 +83,182 @@ depends_on:
 
 ### 1.3 v0.7.0 升级摘要（终极取证补丁）
 
-> 前6轮共补齐68项功能性盲点。v0.7.0 **不增加新功能**——从一个外部取证专家的视角，回答一个根本问题：**"一个100% AI构建的系统，凭什么相信它能可信地约束AI？"** 发现3个结构面缺陷，补齐10项。
-
 | 版本 | 信任模型 | 抗对抗 | 故障模式 | 审计完整性 |
 |------|------|:---:|------|:---:|
 | v0.6.0 | 无条件信任Budget Enforcer | ❌ 假设agents合作 | ❌ 未定义 | 明文JSONL可篡改 |
 | **v0.7.0** | **Runtime Trust Rings(0-3)** | **IPI Defense + Cold Start Anti-Abuse + Adversarial Test** | **Formal Fail-Open/Closed** | **Tamper-Evident hash chain** |
+
+---
+
+## §0 代码对齐验证
+
+### §0.1 代码文件清单
+
+| 文件 | 蓝图章节 | 存在性 | 归属 |
+|------|---------|--------|------|
+| `budget_engine.py` | §2.1-2.4 | ✅ 已实现 | 核心 |
+| `budget_tracker.py` | §2.1 | ✅ 已实现 | 核心 |
+| `budget_models.py` | §2.1 | ✅ 已实现 | 数据模型 |
+| `budget_profile_manager.py` | §2.15 | ✅ 已实现 | 配置 |
+| `token_budget.py` | §2.1 | ✅ 已实现 | 三维预算 |
+| `cost_budget.py` | §2.1 | ✅ 已实现 | 三维预算 |
+| `context_budget.py` | §2.1 | ✅ 已实现 | 三维预算 |
+| `degradation_manager.py` | §2.4 | ✅ 已实现 | 降级 |
+| `model_router.py` | §2.3 | ✅ 已实现 | 路由 |
+| `model_provider_data.py` | §2.3 | ✅ 已实现 | 路由数据 |
+| `cost_router.py` | §2.3 | ✅ 已实现 | 成本路由 |
+| `pre_flight_gate.py` | §2.2 | ✅ 已实现 | 门控 |
+| `timeout_guard.py` | §2.20 | ✅ 已实现 | 守卫 |
+| `stream_abort_guard.py` | §2.13 | ✅ 已实现 | 守卫 |
+| `output_quality_gate.py` | §2.14 | ✅ 已实现 | 守卫 |
+| `burn_rate_monitor.py` | §2.9 | ✅ 已实现 | 监控 |
+| `spiral_ews.py` | §2.22 | ✅ 已实现 | 监控 |
+| `action_history.py` | §2.5 | ✅ 已实现 | 去重 |
+| `semantic_cache.py` | §2.6 | ✅ 已实现 | 缓存 |
+| `cost_attributor.py` | §2.7 | ✅ 已实现 | 归因 |
+| `parent_child_attributor.py` | §2.24 | ✅ 已实现 | 归因 |
+| `roi_calculator.py` | §2.8 | ✅ 已实现 | ROI |
+| `pricing_sync.py` | §2.11 | ✅ 已实现 | 定价 |
+| `policy_sandbox.py` | §2.16 | ✅ 已实现 | 策略 |
+| `context_waste_detector.py` | §2.17 | ✅ 已实现 | 检测 |
+| `conversation_tax_detector.py` | §2.19 | ✅ 已实现 | 检测 |
+| `instruction_bloat_detector.py` | §2.18 | ✅ 已实现 | 检测 |
+| `think_time_model.py` | §2.25 | ✅ 已实现 | 推理成本 |
+| `self_budget_tracker.py` | §2.21 | ✅ 已实现 | 自预算 |
+| `trust_ring_manager.py` | §2.26 | ✅ 已实现 | 信任环 |
+| `tamper_evident_log.py` | §2.27 | ✅ 已实现 | 防篡改 |
+| `ipi_defense.py` | §2.28 | ✅ 已实现 | IPI防御 |
+| `poison_cascade_detector.py` | §2.23 | ✅ 已实现 | 投毒检测 |
+| `fail_mode_manager.py` | §2.29 | ✅ 已实现 | 故障模式 |
+| `bootstrapping_calibrator.py` | §2.30 | ✅ 已实现 | 校准 |
+| `adversarial_tester.py` | §2.29 | ✅ 已实现 | 对抗测试 |
+| `alerts.py` | §2.9 | ✅ 已实现 | 告警模型 |
+| `bridges/alerts.py` | G-CT-006 | ✅ 已实现 | 契约桥接 |
+| `bridges/rbac_bridge.py` | G-CT-007 | ✅ 已实现 | 契约桥接 |
+| `tco_model.py` | §2.7 | ✅ 已实现 | TCO |
+| `bandwidth_optimizer.py` | §2.17 | ✅ 已实现 | 带宽优化 |
+| `context_manager.py` | §2.17 | ✅ 已实现 | 上下文常量 |
+| `context_recycling.py` | §2.17 | ✅ 已实现 | 上下文回收 |
+| `daily_ops.py` | §3 | ✅ 已实现 | 日常操作 |
+| `ops_foundation.py` | §3 | ✅ 已实现 | 运维基础 |
+| `time_sync.py` | §2.20 | ✅ 已实现 | 时间同步 |
+| `rbac_bridge.py` | G-CT-007 | ✅ 已实现 | RBAC桥接(旧版) |
+| `config/budget_policy.yaml` | §2.1 | ✅ 已实现 | SSoT配置 |
+
+### §0.4 SSoT 与责任唯一性
+
+| SSoT 声明 | 真源位置 | 冲突方 | 裁定 |
+|-----------|---------|--------|------|
+| Token/Cost/Time 预算策略 | `config/budget_policy.yaml` | `config/capacity/token_budget.yaml`(MOD-INF-001) | **024 为 SSoT**，001 已标记 deprecated |
+| 预算降级执行 | `degradation_manager.py` | 无冲突 | — |
+| 模型成本路由 | `model_router.py` + `cost_router.py` | 无冲突 | — |
+
+---
+
+## §1 设计背景与目标
+
+### §1.1 背景
+
+AI Agent 系统中，LLM API 调用是主要成本驱动因素。无预算控制→成本失控→系统不可持续。Solo Maintainer 场景下，无人值守时预算超限=直接经济损失。
+
+### §1.2 目标范围
+
+| 包含 | 排除 |
+|------|------|
+| Token/Cost/Time 三维预算策略定义与执行 | CPU/Memory/Disk 资源预算 |
+| 五级预算体系 + 七级降级链 | 容量规划（MOD-INF-001） |
+| Pre-flight Gate 事前拦截 | LLM 调用安全（MOD-INF-014） |
+| Model Router 成本路由 | 模型能力评测（MOD-INF-034） |
+| Stream Abort Guard 事中控制 | 上下文压缩策略（MOD-INF-008） |
+| Trust Ring + Tamper-Evident Audit | RBAC 权限控制（MOD-INF-018） |
+
+### §1.7 典型场景
+
+| 场景 | 触发 | 预算行为 |
+|------|------|---------|
+| 日常 AI Session | session_startup | 加载策略→pre-flight check |
+| 批量治理脚本 | Phase Manager gate | per-script budget gate |
+| Agent 委托链 | A2A Protocol | per-agent sub-pool + parent-child attribution |
+| 预算超限 | record_consumption | 降级链推进→Escalation 通知 |
+| IPI 攻击 | ipi_defense 检测 | 阻断→审计→Trust Ring 隔离 |
+
+---
+
+## §2 模块边界
+
+### §2.1 职责边界
+
+| 包含（本模块负责） | 排除（本模块不负责） | 归属 |
+|-------------------|---------------------|------|
+| Token/Cost/Time 三维预算策略定义与执行 | CPU/Memory/Disk/Process 资源预算 | MOD-INF-032 |
+| 五级预算体系 (Global→Session→Task→Turn→Request) | 容量规划与容量保障 | MOD-INF-001 |
+| 六级降级链 (L0→L6) 自动执行 | 升级/委托决策 | MOD-INF-022 |
+| Pre-flight Gate 事前拦截 | LLM 调用安全（注入检测/内容过滤） | MOD-INF-014 |
+| Model Router 成本路由 | 模型能力评测 | MOD-INF-034 |
+| Stream Abort Guard 事中控制 | 上下文压缩策略 | MOD-INF-008 |
+| Burn Rate 监控 | 系统遥测指标聚合 | MOD-INF-015 |
+| 成本归因 + ROI | 审计日志存储 | MOD-INF-020 |
+| Trust Ring 信任分级 | RBAC 权限控制 | MOD-INF-018 |
+| Tamper-Evident Audit | 审计编排 | MOD-INF-020 |
+
+### 职责唯一性声明
+
+| 声明 | 判定 |
+|------|------|
+| 本模块是 Token/Cost/Time 预算执行的唯一真源 | ✅ 无其他模块实现同等功能 |
+| 本模块的降级链是预算降级的唯一执行路径 | ✅ 其他模块通过 G-CT-006 契约调用 |
+| config/budget_policy.yaml 是预算策略的唯一配置源 | ✅ token_budget.yaml 已标记 deprecated |
+
+---
+
+## §3 架构设计
+
+### §3.2 数据流
+
+| 上游 | 数据 | 处理 | 下游 |
+|------|------|------|------|
+| LLM API 调用请求 | estimated_tokens/cost/time | PreFlightGate 三维检查 | ALLOW/WARN/DENY |
+| LLM API 响应 | actual_tokens/cost/time | record_consumption 累加 | BurnRateMonitor + DegradationManager |
+| DegradationManager | usage_ratio > threshold | advance_degradation | Escalation(G-CT-006) + AuditTrail |
+| PricingSync | LiteLLM price data | sync_from_litellm | model_pricing.yaml |
+| IPI Defense | 外部输入文本 | regex+semantic scan | BLOCK/ALLOW + TrustRing |
+
+### §3.3 状态生命周期
+
+| 状态 | 进入条件 | 退出条件 | 降级动作 |
+|------|---------|---------|---------|
+| L0_NORMAL | usage < 50% | usage ≥ 50% | — |
+| L1_NOTIFY | usage ≥ 50% | usage < 50% 持续 cooldown | 通知 |
+| L2_WARNING | usage ≥ 70% | usage < 50% 持续 cooldown | 告警+模型切换准备 |
+| L3_MODEL_SWITCH | usage ≥ 80% | usage < 50% 持续 cooldown | 切换到低 Tier 模型 |
+| L4_COMPRESS | usage ≥ 85% | usage < 50% 持续 cooldown | 压缩上下文 |
+| L5_MINIMAL | usage ≥ 95% | usage < 50% 持续 cooldown | 最小化输出 |
+| L6_HALT | usage ≥ 100% | Owner 手动恢复 | 全局熔断+Kill Switch |
+
+---
+
+## §8 安全考量
+
+| 威胁 | 影响 | 缓解 | 验证 |
+|------|------|------|------|
+| IPI 注入攻击 | 绕过预算控制 | IPIDefense 6类模式+0.75阈值 | adversarial_tester |
+| 预算策略篡改 | 提高限额 | TrustRing(Ring0=Owner签名)+Ed25519 | tamper_evident_log |
+| 审计日志篡改 | 掩盖超限 | SHA-256 hash chain+启动自检 | tamper_evident_log.verify() |
+| Cold Start 滥用 | 重启绕过限制 | 1h内≤3 Session+27500 token上限 | adversarial_tester |
+| 委托链无限递归 | 预算耗尽 | max_depth=5+bottleneck检测 | parent_child_attributor |
+| 流式输出绕过 | 超预算输出 | 每500token checkpoint+微交易 | stream_abort_guard |
+
+---
+
+## §9 测试策略
+
+| 测试类型 | 覆盖范围 | 通过标准 |
+|---------|---------|---------|
+| 单元测试 | BudgetEngine/BudgetTracker/DegradationManager/ModelRouter/PreFlightGate/CostBudget/ContextBudget/PricingSync | tests/governance/test_budget_enforcer_submodules.py |
+| 集成测试 | G-CT-006 Escalation桥接 + G-CT-007 RBAC桥接 | check_budget_health.py exit 0 |
+| 对抗测试 | 5项：IPI注入/cold_start/delegation_chain/stream_abort/race_condition | adversarial_tester.run_all() 全部 PASS |
+| 健康检查 | 8项：engine/pre_flight/dimensions/policy/escalation/degradation/tamper/burn_rate | check_budget_health.py HEALTHY |
+| 蓝图对齐 | API签名/依赖/版本/时态内容 | check_blueprint_code_alignment.py --warn-only |
 
 ---
 
@@ -77,295 +270,60 @@ depends_on:
 
 ```yaml
 budget_levels:
-  # ── Level 5: 最粗粒度 ──
-  global_level:
-    description: "全局周预算（solo maintainer 场景 weekly 粒度比 daily 更合理）"
-    soft_limit: 500000           # tokens/week，约 $3-5/week（按 GPT-4o 价格）
-    hard_limit: 750000
-    action_on_soft_exceed: "全局通知 + 建议暂停非关键任务"
-    action_on_hard_exceed: "全局只读模式"
-    reset: "每周一 00:00 UTC"
-    borrow_pool: true            # 允许跨周借用（最多预支下周 20%）
-
-  # ── Level 4 ──
-  session_level:
-    description: "单次会话预算（一次施工对话的累计消耗）"
-    soft_limit: 8000             # tokens，到达触发通知
-    hard_limit: 12000            # tokens，到达触发降级
-    action_on_soft_exceed: "WARNING 日志 + 建议 /compact"
-    action_on_hard_exceed: "降级到最小上下文"
-    reset: "会话结束"
-
-  # ── Level 3 ──
-  task_level:
-    description: "单任务预算（一个蓝图层/一个Phase的施工）"
-    soft_limit: 4000
-    hard_limit: 6000
-    action_on_soft_exceed: "暂停任务 + 建议拆分"
-    action_on_hard_exceed: "暂停任务 + 委托给新会话"
-    pool_share: true             # 同一 Session 内的 Task 之间弹性共享预算
-
-  # ── Level 2: token spiral 锚点 ──
-  turn_level:
-    description: "单轮 ReAct 迭代预算（一次 think→act→observe 循环）"
-    soft_limit: 1500
-    hard_limit: 2500
-    action_on_soft_exceed: "检查是否陷入循环 + 建议简化工具调用"
-    action_on_hard_exceed: "强制终止本轮 + 返回部分结果 + 循环指纹记录"
-
-  # ── Level 1: 最细粒度 ──
-  request_level:
-    description: "单次 API 调用预算"
-    input_limit: 32000           # max input tokens per request
-    output_limit: 4096           # max output tokens per request
-    reasoning_limit: 8000        # reasoning tokens 专项预算（reasoning models 的 thinking 不可见但计费）
-    tool_calls_limit: 10         # max tool calls per request
-    action_on_exceed: "截断输出 + 建议拆分请求"
-```
-
-```yaml
-# ── v0.5.0 新增：Time Budget 三维预算体系 ──
+  global_level: { soft: 500000, hard: 750000, on_soft: "全局通知+建议暂停", on_hard: "只读模式", borrow_pool: true }
+  session_level: { soft: 8000, hard: 12000, on_soft: "WARNING+/compact", on_hard: "降级最小上下文" }
+  task_level: { soft: 4000, hard: 6000, on_soft: "暂停+建议拆分", on_hard: "委托新会话", pool_share: true }
+  turn_level: { soft: 1500, hard: 2500, on_soft: "检查循环+简化", on_hard: "强制终止+循环指纹" }
+  request_level: { input_limit: 32000, output_limit: 4096, reasoning_limit: 8000, tool_calls_limit: 10, on_exceed: "截断+拆分" }
 time_budget:
-  description: "Wall-clock 时间预算——token 消耗少但耗时极长的任务（死循环/慢模型/网络抖动）是三维预算必须独立追踪的原因"
-  # Stanford 论文数据：相同任务在不同模型间执行时间差异可达 10x，与 token 消耗无关
-  dimensions:
-    request_timeout: 120           # 单次 API 调用 2 分钟超时
-    turn_timeout: 300              # 单轮 ReAct 循环 5 分钟超时
-    task_timeout: 3600             # 单个施工任务 1 小时超时
-    session_timeout: 28800         # 单个 Session 8 小时超时
-  enforcement: "Timeout Guard（§2.20）——硬超时即刻 abort + 保存 partial state + Action History checkpoint"
-  visualization: "终端显示 '⏱ 任务: 23min/60min (38%) | 💰 Token: 42K/100K (42%)'"
+  dimensions: { request_timeout: 120, turn_timeout: 300, task_timeout: 3600, session_timeout: 28800 }
+  enforcement: "Timeout Guard（§2.20）"
+  visualization: "⏱任务:23min/60min(38%) | 💰Token:42K/100K(42%)"
 ```
 
 ### 2.2 Pre-flight Gate（事前拦截门）
 
 > **决策 D-024-03**：专业机构要求 pre-request blocking——在 tokens 被实际消耗之前就拦截。Pre-flight Gate 是 v0.3.0 新增的核心组件，位于每次 API 调用的咽喉位置。
 
-```yaml
-pre_flight_gate:
-  position: "每次 API 调用前，在任何 token 消耗之前执行"
-  checks:
-    - check_id: "global_budget_check"
-      rule: "本周 global soft_limit 剩余 < 预估消耗 × 1.2"
-      on_fail: "DENY → 建议推迟到下周"
-      exception: "Owner 临时提额令可覆盖"
-
-    - check_id: "session_budget_check"
-      rule: "会话 hard_limit 剩余 < 预估消耗"
-      on_fail: "DEGRADE → 强制 /compact 后再试"
-
-    - check_id: "task_budget_check"
-      rule: "任务 hard_limit 剩余 < 预估消耗"
-      on_fail: "DEGRADE → 任务拆分 + 委托子任务到新对话"
-
-    - check_id: "turn_budget_check"
-      rule: "本轮 soft_limit 剩余 < 预估消耗"
-      on_fail: "WARN → 检查循环指纹 + 建议跳过冗余工具调用"
-
-    - check_id: "request_size_check"
-      rule: "预估 input_tokens > request_level.input_limit"
-      on_fail: "DENY → 请求太大，建议拆分"
-
-    - check_id: "cost_threshold_check"
-      rule: "预估单次调用成本 > $0.50"
-      on_fail: "DEGRADE → 自动切换到 Tier-1 模型"
-
-  estimator: "TikToken-based + model-specific tokenizer，误差 < 10%"
-  decision_outcomes: ["ALLOW", "WARN", "DEGRADE", "DENY", "BORROW"]
-
-  # Borrow 机制：从 Budget Pool 临时借用
-  borrow:
-    enabled: true
-    max_borrow_ratio: 0.20       # 最多借 20% 其他任务预算
-    payback: "同 Session 下次任务少分 30% 直到还清"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| checks | global: soft剩余<预估×1.2→DENY; session: hard剩余<预估→DEGRADE; task: hard剩余<预估→DEGRADE; turn: soft剩余<预估→WARN; request_size: input>limit→DENY; cost: 单次>$0.50→DEGRADE | Owner临时提额令可覆盖DENY |
+| verdicts | ALLOW / WARN / DEGRADE / DENY / BORROW | — |
+| borrow | max_ratio: 0.20; payback: 下次任务少分30% | enabled: true |
+| estimator | TikToken + model-specific tokenizer | 误差<10% |
 
 ### 2.3 模型路由升级（Model Router）
 
 > **决策 D-024-04（v0.4.0 修订）**：模型路由方向反转——从"默认用高→预算紧张降级到低"改为"默认最低→质量不达标才升级"。专业机构实践（Cost Engineering for Agents, 2025）+ Vibe Coding 社区模型组合拳（需求理解用弱模型→代码生成用强模型→Lint 用免费模型）降本 80%+。
 
-```yaml
-model_tier_routing:
-  description: "按任务复杂度自动选择最优成本模型——默认最低 Tier，质量不达标才升级"
-  strategy: "cheapest_first_escalate_on_quality_fail"
-
-  # ── 模型升级路径（v0.4.0 反转）──
-  escalation_chain:
-    - from: "tier_0_free"
-      to: "tier_1_cheap"
-      trigger: "tier_0 返回质量不达标（output_validator 评分 < 阈值）OR 任务复杂度 > tier_0.max_complexity"
-      max_escalation_cost: 0.01      # 升级一次的成本上限
-
-    - from: "tier_1_cheap"
-      to: "tier_2_standard"
-      trigger: "tier_1 返回质量不达标 OR 任务需要深度推理（架构设计/多文件重构）"
-      max_escalation_cost: 0.05
-
-    - from: "tier_2_standard"
-      to: "tier_3_premium"
-      trigger: "tier_2 返回质量不达标 AND 任务为终审裁决/安全审计"
-      requires_owner_approval: true    # Tier-3 使用需要 Owner 信号
-
-  # ── 预算紧张时的降级覆盖（保留旧路径作为反向压降）──
-  degradation_override:
-    - from: "tier_3_premium"
-      to: "tier_2_standard"
-      trigger: "global_budget_used > 60%"
-
-    - from: "tier_2_standard"
-      to: "tier_1_cheap"
-      trigger: "global_budget_used > 80%"
-
-    - from: "tier_1_cheap"
-      to: "tier_0_free"
-      trigger: "global_budget_used > 95%"
-
-  # ── 分析：何时升级 vs 降级 ──
-  decision_matrix:
-    normal_state: "escalation_chain 生效——默认 tier_0，质量驱动升级"
-    budget_tight: "degradation_override 优先——预算紧张时压降覆盖升级"
-
-  # ── 批次路由（v0.4.0 新增）──
-  batch_routing:
-    description: "非实时任务走 Batch API（Anthropic/OpenAI Batch API 50% 折扣）"
-    eligible_tasks:
-      - "周报生成"
-      - "成本归因分析"
-      - "批量 Lint 修复"
-      - "文档批量格式化"
-      - "ROI 计算"
-    max_latency: "24h"            # Batch 任务最大延迟容忍
-    cost_saving: "50%"            # Batch API 折扣
-    integration: "任务系统（MOD-MASTER-001）标记 task.urgency=low → 自动走 batch"
-
-  # ── 厂商风险对冲 ──
-  vendor_fallback:
-    anthropic_unavailable: "→ OpenAI equivalent tier"
-    openai_unavailable: "→ Google equivalent tier"
-    google_unavailable: "→ DeepSeek equivalent tier"
-    all_unavailable: "→ local free model (Ollama)"
-
-  # ── v0.5.0 新增：多Provider同Tier内least-cost路由 ──
-  cross_provider_least_cost:
-    description: "同一 Tier 内部存在多个 Provider 的等效模型——自动选最便宜的"
-    example:
-      tier_2_standard:
-        candidates:
-          - provider: "anthropic"
-            model: "claude-sonnet-4"
-            cost_per_1m_input: $3.00
-          - provider: "openai"
-            model: "gpt-4o"
-            cost_per_1m_input: $2.50
-          - provider: "google"
-            model: "gemini-2.0-pro"
-            cost_per_1m_input: $1.25
-        selection: "min(cost_per_1m_input) WHERE availability=UP AND quality_score >= 0.7"
-        tie_break: "prefer provider with highest remaining rate limit capacity"
-    quality_weighted: true          # 不纯按价格——质量太差的便宜模型不选
-    refresh_interval: 300           # 每 5 分钟刷新一次最低价路由表
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| strategy | cheapest_first_escalate_on_quality_fail | 默认最低Tier，质量不达标才升级 |
+| escalation_chain | tier_0→tier_1(质量不达标, max_cost:$0.01)→tier_2(深度推理, max_cost:$0.05)→tier_3(终审裁决, requires_owner_approval) | v0.4.0方向反转 |
+| degradation_override | tier_3→tier_2(global>60%)→tier_1(>80%)→tier_0(>95%) | 预算紧张时压降覆盖升级 |
+| batch_routing | 非实时任务走Batch API 50%折扣; max_latency: 24h; eligible: 周报/归因/Lint/格式化/ROI | task.urgency=low→自动batch |
+| vendor_fallback | anthropic→openai→google→deepseek→ollama(local) | — |
+| cross_provider_least_cost | 同Tier内min(cost) WHERE availability=UP AND quality>=0.7; tie_break: 最高rate limit; quality_weighted: true; refresh: 300s | — |
+| long_context_pricing | anthropic: >200K→1.5-2×溢价; openai: >128K potential_trap; action: 成本预估自动纳入 | v0.5.0新增 |
 
 ### 2.4 六级自适应降级链
 
 > **决策 D-024-05（v0.4.0 修订）**：新增 L1.5 沉没成本干预——当 Cost-to-Completion Ratio 异常时主动建议放弃。新增预算耗尽用户沟通协议。
 
-```yaml
-degradation_strategy:
-  level_0_notify:
-    trigger: "session_budget_used > 50% OR burn_rate_1h > 3× normal"
-    action: "INFO 日志 + 会话内显示剩余预算 + 建议 /compact 时机"
-    auto: true
-    visualization: "终端显示 '💰 预算: 4,200/8,000 tokens (52.5%)'"
-
-  level_1_warning:
-    trigger: "预算使用 > 70% OR 单轮 Turn soft_limit 接近"
-    action: "WARNING 日志 + 通知附录建议减少上下文 + 标记当前任务为 'budget_watch'"
-    auto: true
-
-  # ── v0.4.0 新增：沉没成本干预 ──
-  level_1_5_sunk_cost_warn:
-    trigger: "cost_to_completion_ratio > 3× AND 任务产出 < 20%"
-    action: "主动告警 '预算已消耗 80% 但产出仅 10%——建议放弃当前任务，重启更有效'"
-    auto: true
-    rationale: "再试一次就好了 是成本超支的核心心理陷阱——系统必须主动干预"
-    cost_to_completion_ratio: "budget_consumed_ratio / output_completion_ratio"
-
-  level_2_model_switch:
-    trigger: "预算使用 > 80% OR 单次调用预估成本 > $0.50"
-    action: "自动降级到 Tier-1 模型——这是成本最低且效果最好的降级手段"
-    auto: true
-    priority: "最高——在压缩上下文之前执行"
-
-  level_3_compress:
-    trigger: "预算使用 > 85%"
-    action: "强制压缩上下文——DocCompressor aggressive 模式"
-    auto: true
-    integration: "Context Engine (MOD-INF-008)"
-
-  level_4_minimal:
-    trigger: "预算使用 > 95%"
-    action: "最小上下文——仅保留 AGENTS.md + 当前蓝图 §3"
-    auto: true
-
-  level_5_halt:
-    trigger: "预算使用 > 100%（hard_limit）"
-    action: "硬停止——仅允许只读操作 + 审计告警"
-    auto: true
-    audit_level: "ProvenanceStandard"
-    # ── v0.4.0 新增：预算耗尽用户沟通协议 ──
-    user_communication:
-      template: >
-        ⚠️ 预算已耗尽（{level}: {used}/{limit} tokens）。
-        当前任务的已完成部分已保存至 {output_path}。
-        建议：1) 等待下周预算重置  2) 使用 `--override-budget` 临时提额
-        诊断命令：`zephyr budget status --detail`
-      fallback_action: "自动保存当前进度 + 生成 resume checkpoint"
-
-  level_6_kill_switch:
-    trigger: "单日成本 > $100 OR 连续 5 个请求被 DENY OR 检测到 runaway loop"
-    action: "全局熔断——所有 AI 调用暂停，保留修复通道（允许 Owner 执行诊断命令）"
-    auto: true
-    integration: "Capacity Assurance Kill Switch (MOD-INF-001)"
-    recovery: "熔断后 30 分钟自动尝试解除 + Owner 手动解除"
-
-  # ── 成本感知自动回升 ──
-  auto_recovery:
-    enabled: true
-    rules:
-      - condition: "连续 3 个请求 burn_rate_10min < 1× normal AND budget_used < soft_limit × 0.6"
-        action: "回升一级（L4→L3, L3→L2, L2→L1, L1.5→L1）"
-        max_recovery: "L1"        # 不自动回到 L0（需要新的会话）
-      - condition: "新会话开始"
-        action: "完全重置到 L0"
-    anti_spiral:
-      max_degradation_per_minute: 1
-      recovery_cooldown: 180
-```
-
-```yaml
-# ── v0.5.0 新增：额外的自适应干预动作（Oracle Runtime Budget Guardrails 对标）──
-adaptive_interventions:
-  description: "在传统的 degrade/stop 二元模型之外，Oracle 2026 论文明确了 Narrow 和 Reroute 两种轻量干预"
-
-  narrow_scope:
-    description: "预算紧张时收窄任务范围——不是降级，而是只做最关键的 20%"
-    trigger: "task_budget_used > 70% AND task_progress < 30%"
-    action: "自动注入 system prompt '你的预算已消耗 70% 但产出仅 30%——请仅完成核心子任务，跳过优化/美化/文档'"
-    visual: "终端显示 '🎯 范围收窄——仅完成核心逻辑，跳过: [单元测试, 文档, 格式化]'"
-    reversible: true              # 预算恢复后可自动解除
-
-  reroute_strategy:
-    description: "当前策略消耗过高时切换执行路径——不是换模型，而是换方法"
-    trigger: "同一 task 内 model_switch 发生 2 次以上 OR per-request cost > 3× running_average"
-    action: "切换到 'pipeline 模式'（拆分成多个小请求逐段处理）而非 '一次性大请求'"
-    visual: "终端显示 '🔄 策略切换——Pipeline 模式（将任务拆分为 {n} 段逐段处理）'"
-
-  global_timeout_kill:
-    description: "当 wall-clock 时间预算耗尽时触发——token 少但耗时长的任务在此被拦截"
-    trigger: "task_timeout OR session_timeout reached"
-    action: "IMMEDIATE_ABORT + 保存 Action History checkpoint + 写入 resume 文件"
-    integration: "Timeout Guard（§2.20）——独立于 token/price 预算链的并行监控线程"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| L0_notify | session>50% OR burn_rate>3×→INFO+显示剩余预算 | auto |
+| L1_warning | >70% OR turn soft_limit接近→WARNING+budget_watch | auto |
+| L1.5_sunk_cost | cost_to_completion>3× AND 产出<20%→告警建议放弃 | auto; ratio=budget_consumed/output_completion |
+| L2_model_switch | >80% OR 单次>$0.50→自动降级Tier-1 | auto; 最高优先——在压缩上下文之前 |
+| L3_compress | >85%→DocCompressor aggressive | auto; 联动MOD-INF-008 |
+| L4_minimal | >95%→仅AGENTS.md+当前蓝图§3 | auto |
+| L5_halt | >100% hard_limit→只读+审计; 沟通协议: 保存进度+resume checkpoint | auto; ProvenanceStandard |
+| L6_kill_switch | 单日>$100 OR 连续5 DENY OR runaway→全局熔断 | auto; 联动MOD-INF-001; 30min自动尝试解除 |
+| auto_recovery | burn_rate<1× AND budget<soft×0.6→回升一级; max_recovery: L1; 新会话→完全重置 | anti_spiral: max 1/min; cooldown: 180s |
+| narrow_scope | task_budget>70% AND progress<30%→仅完成核心20% | reversible |
+| reroute | model_switch≥2次 OR per-request>3×avg→Pipeline模式拆分 | — |
+| global_timeout_kill | task/session timeout→IMMEDIATE_ABORT+save checkpoint | 联动§2.20 |
 
 ### 2.5 动作历史与去重（Action History with Dedup）
 
@@ -424,132 +382,33 @@ action_history:
 
 > **决策 D-024-07**：缓存是最便宜的性能优化。对齐 Anthropic cache-aware token management——对高频相同/相似请求自动缓存，hit 后零新增 token 消耗。
 
-```yaml
-semantic_cache:
-  description: "嵌入向量相似度匹配的语义缓存——不仅缓存完全相同的请求，也缓存语义相似的请求"
-  backend: "ChromaDB（复用已有向量库，零新增依赖）"
-  cache_layers:
-
-    layer_1_prompt_cache:
-      description: "System prompt + 上下文哈希 → 缓存 completion"
-      strategy: "exact_hash"     # 精确哈希匹配
-      ttl: 3600                  # 1 小时
-      encryption: "AES-256 at rest"
-      hit_ratio_target: 0.40
-
-    layer_2_tool_cache:
-      description: "工具调用（API 查询/文件读取等）结果缓存"
-      strategy: "param_hash"     # 参数哈希匹配
-      ttl: 300                   # 5 分钟
-      hit_ratio_target: 0.30
-
-    layer_3_embedding_cache:
-      description: "文档嵌入去重——两个 chunk 哈希相同则复用向量"
-      strategy: "content_hash"
-      ttl: 86400                 # 24 小时
-
-  observability:
-    metrics: ["cache_hit_rate", "cache_saved_tokens", "cache_saved_cost"]
-    audit: "每次 cache hit 写入 audit trail——证明敏感数据在缓存中加密且按时过期"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| backend | ChromaDB（复用已有向量库） | 零新增依赖 |
+| layer_1_prompt_cache | exact_hash; ttl: 3600s; AES-256 at rest; hit_ratio_target: 0.40 | — |
+| layer_2_tool_cache | param_hash; ttl: 300s; hit_ratio_target: 0.30 | — |
+| layer_3_embedding_cache | content_hash; ttl: 86400s | 文档嵌入去重 |
+| observability | cache_hit_rate / cache_saved_tokens / cache_saved_cost | 每次cache hit写入audit trail |
 
 ### 2.7 成本归因体系（Cost Attribution）
 
 > **决策 D-024-08（v0.4.0 修订）**：不知道钱花在哪里的 Budget Enforcer 只做了一半工作。v0.4.0 新增 Outcome 维度（成功/失败/部分分离）——失败消耗和成功消耗的 ROI 完全不同。
 
-```yaml
-cost_attribution:
-  dimensions:
-
-    entity_level:
-      description: "按 Agent/模块归因"
-      fields:
-        - "agent_id"
-        - "module_id"
-        - "phase"
-      query_example: "agent_id='code-generator' 本月消耗 $12.50，占总成本 65%"
-
-    tool_level:
-      description: "按工具/API 归因——含第三方 API 直接调用费用"
-      fields:
-        - "tool_name"
-        - "tool_call_count"
-        - "tool_api_cost"
-        - "tool_prompt_tokens"
-        - "tool_result_tokens"
-        - "passthrough_cost"        # v0.4.0 新增：Web Search/Code Exec/DB Query 等服务自身的费用
-      query_example: "tool_name='web_search' 调用 320 次，API 费用 $1.60 + token 费用 $8.40"
-
-    feature_level:
-      description: "按产品功能/施工活动归因"
-      fields:
-        - "activity_type"
-        - "output_files_created"
-        - "lines_of_code"
-      query_example: "activity_type='debug' 占本月 45% 成本——debug 效率需优化"
-
-    # ── v0.4.0 新增：产出结果维度 ──
-    outcome_level:
-      description: "按 API 调用结果分离成本——成功/失败/部分/拒止"
-      fields:
-        - "outcome"                  # "success" | "partial" | "failed" | "rejected"
-        - "retry_count"
-        - "error_category"           # "rate_limit" | "timeout" | "hallucination" | "validation_fail"
-      query_example: "outcome='failed' 本月消耗 $4.20，占总成本 22%——失败重试是最大浪费源"
-
-    # ── v0.4.0 新增：LLM-as-Judge 独立核算 ──
-    judge_cost:
-      description: "LLM 审查 LLM 的 Judge 模式消耗——这是二次消耗，不是直接产出"
-      tracking: "独立子预算——不计入 Task 预算，走 Judge 专用预算池"
-      alert: "Judge 成本 > 总成本 15% → 告警 '审查成本过高，建议简化审查逻辑'"
-
-  showback:
-    description: "每周自动生成归因摘要"
-    format: "自然语言 Markdown 报告 → `docs/09_audit/cost_reports/weekly-{date}.md`"
-    content:
-      - "本周总消耗：X tokens / $Y"
-      - "Top 3 消耗 Agent：[agent_id] $X (占比%)"
-      - "Top 3 消耗工具：[tool_name] $X (占比%)"
-      - "Top 3 消耗活动：[activity_type] $X (占比%)"
-      - "失败消耗：$X (占比%)——含 top failure reason"
-      - "本周异常：[超过预算的事件列表]"
-      - "ROI 估算：[token 产出效率 vs 上周]"
-      - "预测下周：[基于 4 周趋势的预测]"
-
-  data_retention:
-    description: "v0.4.0 新增——成本数据不会无限增长"
-    raw_data: "30 天保留（JSONL）"
-    aggregated: "12 个月保留（按周聚合 SQLite）"
-    archival: "每年自动归档上一年度数据为 gzip JSON"
-    cleanup: "每周日 03:00 UTC 自动执行过期策略"
-
-  storage: "JSONL——data/audit/cost-attribution.jsonl（按天切分）"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| dimensions | entity_level(agent_id/module_id/phase); tool_level(tool_name/call_count/api_cost/passthrough_cost); feature_level(activity_type/output_files/loc); outcome_level(success\|partial\|failed\|rejected, retry_count, error_category) | v0.4.0新增outcome+passthrough |
+| judge_cost | LLM-as-Judge独立子预算; 不计入Task预算; >总成本15%→告警 | v0.4.0新增 |
+| showback | 每周自动Markdown报告→docs/09_audit/cost_reports/; 含Top3 Agent/Tool/Activity/失败消耗/ROI/预测 | — |
+| data_retention | raw: 30天(JSONL); aggregated: 12个月(按周SQLite); archival: 年度gzip; cleanup: 每周日03:00 UTC | v0.4.0新增 |
+| storage | data/audit/cost-attribution.jsonl（按天切分） | — |
 
 ### 2.8 Token ROI 模型
 
-```yaml
-token_roi:
-  description: "不只算花了多少 token——算这些 token 产出了什么。Token 价值归因是 FinOps for AI 的核心。"
-  outcome_metrics:
-    - metric: "lines_of_code_per_1k_tokens"
-      description: "每 1000 token 产出的代码行数"
-      baseline_week_1: null     # Week 1 建立基线
-
-    - metric: "files_completed_per_1k_tokens"
-      description: "每 1000 token 完成的文件数"
-
-    - metric: "blueprint_sections_per_1k_tokens"
-      description: "每 1000 token 产出的蓝图章节数"
-
-    - metric: "debug_rounds_per_task"
-      description: "每任务的 debug 轮次——越高说明首次生成质量越差"
-
-  trend_alert:
-    roi_drop_30_percent: "ROI 下降 30% 以上 → 告警 Owner '施工效率下降，建议检查 Prompt 质量'"
-
-  integration: "与 Session Log（docs/09_audit/session_logs/）联动，自动计算"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| outcome_metrics | lines_of_code_per_1k_tokens; files_completed_per_1k_tokens; blueprint_sections_per_1k_tokens; debug_rounds_per_task | Week 1 建立基线 |
+| trend_alert | ROI 下降 30% 以上→告警 Owner '施工效率下降，建议检查 Prompt 质量' | — |
+| integration | 与 Session Log（docs/09_audit/session_logs/）联动，自动计算 | — |
 
 ### 2.9 Burn Rate 多窗口监控
 
@@ -668,387 +527,119 @@ budget_pool:
 
 ### 2.11 厂商价格自动同步 + 新模型发现
 
-```yaml
-pricing_sync:
-  description: "模型价格是动态变化的——不能硬编码。从 LiteLLM 每日拉取最新定价。"
-  source: "LiteLLM model_prices_and_context_window.json"
-  sync_frequency: "daily at 02:00 UTC"
-  fallback: "使用本地缓存的上一次成功同步数据"
-  alert: "连续 3 天同步失败 → 通知 Owner"
-
-  local_cache: ".audit_cache/model_pricing_cache.json"
-  ttl: 86400
-
-  # ── v0.4.0 新增：新模型自动发现 ──
-  new_model_discovery:
-    description: "检测到 LiteLLM registry 中出现新模型——自动评估是否适合现有 Tier 体系"
-    trigger: "sync 检测到本地缓存中不存在的 model_id"
-    evaluation:
-      - step: "拉取模型能力画像（context_window, max_output, capabilities）"
-      - step: "计算预估成本排名（vs 现有同 Tier 模型）"
-      - step: "生成 '新模型评估建议' 写入本周摘要"
-    action: "INFO '发现新模型 {model_id}: 价格 {price}/MTok, 同样能力的模型比现有便宜 {saving}%'"
-    auto_adopt: false            # 不自动替换——由 Owner 审阅后手动更新 budget_policy.yaml
-
-  # ── v0.4.0 新增：Provider Token 计数差异归一化 ──
-  token_normalization:
-    description: "不同厂商 token 定义不同——不做归一化无法真正 apples-to-apples 成本对比"
-    base_tokenizer: "cl100k_base"        # 以 OpenAI 分词为基准
-    normalization_factors:
-      anthropic_custom: 1.05             # Anthropic token ≈ 1.05× OpenAI token
-      google_gemini: 0.92                # Google token ≈ 0.92× OpenAI token
-      deepseek: 0.98                     # DeepSeek token ≈ 0.98× OpenAI token
-    application: "所有跨模型成本对比前先归一化到 cl100k_base 等效 token 数"
-
-  # ── v0.5.0 新增：长上下文隐藏定价感知 ──
-  long_context_pricing:
-    description: "部分 Provider 在超过某个 context 阈值后触发更高定价——不被同步的静默成本杀手"
-    known_traps:
-      anthropic_1m:
-        threshold: 200000               # 超过 200K input 后价格翻倍（2026 早期定价策略）
-        multiplier: "1.5× - 2×"         # 不同模型的溢价因子不同
-        detection: "Pre-flight 时检查 estimated_input_tokens——超过阈值则计入溢价成本预估"
-      openai_128k:
-        threshold: 128000
-        potential_trap: true            # OpenAI 目前无差异定价但历史上出现过
-    action: "成本预估自动纳入 context-length-based pricing tier"
-    visual: "终端显示 '⚠ 长上下文溢价: +50% (320K > 200K 阈值)'"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| source | LiteLLM model_prices_and_context_window.json | daily 02:00 UTC; 3天同步失败→告警 |
+| new_model_discovery | 检测新model_id→拉取能力画像→成本排名→写周摘要; auto_adopt: false | Owner审阅后手动更新 |
+| token_normalization | base: cl100k_base; anthropic: 1.05×; gemini: 0.92×; deepseek: 0.98× | 跨模型成本对比前先归一化 |
+| long_context_pricing | anthropic: >200K→1.5-2×溢价; openai: >128K potential_trap; action: 成本预估自动纳入 | v0.5.0新增 |
 
 ### 2.12 计划消耗 vs 实际消耗偏差
 
-```yaml
-consumption_deviation:
-  description: "AI 在施工前应该给出'计划消耗预估'——施工后对比实际消耗。偏差 > 30% 说明 AI 对自身消耗缺乏认知。"
-  workflow:
-    - step: "task_start"
-      action: "AI 提交 plan_estimated_tokens（规划阶段预估）"
-    - step: "task_end"
-      action: "对比 actual_tokens vs plan_estimated_tokens"
-    - step: "deviation_alert"
-      condition: "abs(actual - plan) / plan > 0.30"
-      action: "写入 budget_enforcer_deviation_events + 建议 AI 自我校准预估模型"
-
-  calibration:
-    method: "每个模型维护独立的预估偏差校正系数"
-    update: "每周基于最近 20 个任务的实际偏差自动更新"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| workflow | task_start→AI提交plan_estimated_tokens→task_end→对比actual→偏差>30%→写入deviation_events | — |
+| calibration | 每模型独立偏差校正系数; 每周基于最近20任务自动更新 | — |
 
 ### 2.13 事中控制——Stream Abort Guard
 
 > **决策 D-024-11（🆕 v0.4.0）**：Pre-flight Gate 只能管输入端。流式输出中途无法拦截——如果模型开始输出大量无意义内容，预算已被烧掉。Stream Abort Guard 对流式输出做中间 checkpoint（每 500 token）预算二次确认。
 
-```yaml
-stream_abort_guard:
-  description: "流式输出中途预算二次确认——Pre-flight 场景的缺失互补"
-  lifecycle_position: "in_flight"   # 位于 Pre-flight（事前）和 Post-flight（事后）之间
-
-  checkpoints:
-    frequency: 500                   # 每 500 output token 做一次预算检查
-    checks:
-      - condition: "remaining_budget - estimated_completion_cost < 0"
-        action: "IMMEDIATE_ABORT——发送 abort signal 给 provider + 记录 partial output"
-      - condition: "output_quality_gate.score < 0.3 AND tokens_emitted > 200"
-        action: "ABORT_AND_RETRY——切回 input 用更便宜模型重试"
-      - condition: "cumulative_response_too_verbose（token_count > expected × 3）"
-        action: "ABORT_WITH_WARNING——日志 '响应过于冗长，建议添加 'be concise' 指令'"
-
-  partial_output_handling:
-    on_abort: "保存已输出的 partial_response 到 context_budget_tracker"
-    resume_strategy: "下次调用时 append partial_response 到 system prompt '之前的回答在 [X] token 处中断'"
-
-  provider_integration:
-    anthropic: "streaming SSE — 监听 stop_reason='max_tokens'"
-    openai: "streaming SSE — 监听 finish_reason='length'"
-    google: "streaming SSE — 监听 finishReason='MAX_TOKENS'"
-    deepseek: "streaming SSE — 同 OpenAI 协议"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| lifecycle_position | in_flight（Pre-flight和Post-flight之间） | — |
+| checkpoints | 每500 output token检查: 剩余预算<预估完成成本→IMMEDIATE_ABORT; quality<0.3 AND tokens>200→ABORT_AND_RETRY(便宜模型); token>expected×3→ABORT_WITH_WARNING | — |
+| partial_output | abort→保存partial_response; 下次调用append到system prompt | — |
+| provider_integration | anthropic: stop_reason=max_tokens; openai: finish_reason=length; google: finishReason=MAX_TOKENS; deepseek: 同OpenAI | — |
 
 ### 2.14 事中控制——Output Quality Gate
 
 > **决策 D-024-12（🆕 v0.4.0）**：Token ROI 只统计事后产出。但需要实时质量信号——如果 LLM 的前 200 token 输出明显是垃圾（格式错误/幻觉/不相关），应立即 abort + 切模型重试，而不是等到 4000 token 输出完了再判断。
 
-```yaml
-output_quality_gate:
-  description: "输出前 N token 的快速质量校验——在浪费大量预算前发现问题"
-  lifecycle_position: "in_flight"
-
-  # 与 MOD-INF-023 Drift Detector 联动
-  validator: "output_validator.early_quality_check()"
-
-  early_signals:
-    format_check:
-      trigger: "first 200 output tokens"
-      rules:
-        - "JSON/XML 格式正确性"
-        - "代码块完整性（``` 是否闭合）"
-        - "markdown 语法正确性"
-      fail_action: "ABORT + 追加 '你的输出格式有误，请重新生成' 到下一轮 prompt"
-
-    relevance_check:
-      trigger: "first 300 output tokens"
-      method: "Fast embedding similarity(partial_output, task_prompt)"
-      threshold: "similarity < 0.4"
-      fail_action: "ABORT + L1_warning '输出与任务无关——可能上下文污染'"
-
-    hallucination_check:
-      trigger: "full response received"
-      method: "引用验证——输出中声称的 file_path / module_id 是否真实存在"
-      fail_action: "MARK_FAILED + 不计入 ROI + 写入 audit trail"
-
-  auto_retry:
-    max_retries: 2
-    retry_model_escalation:
-      attempt_1: "same model + extra 'be accurate' prompt"
-      attempt_2: "升級到下一個 Tier 模型"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| lifecycle_position | in_flight | — |
+| format_check | first 200 tokens: JSON/XML/代码块/markdown语法→fail→ABORT+追加纠正prompt | — |
+| relevance_check | first 300 tokens: embedding similarity(partial, task_prompt)<0.4→ABORT+L1_warning | — |
+| hallucination_check | full response: 引用验证(file_path/module_id是否真实)→MARK_FAILED+不计入ROI | — |
+| auto_retry | max_retries: 2; attempt_1: same model+'be accurate'; attempt_2: 升级到下一Tier | — |
 
 ### 2.15 环境感知预算 Profile
 
 > **决策 D-024-13（🆕 v0.4.0）**：业界标准实践——dev 环境永远只用最便宜模型，prod 才开全能力。Solo maintainer 最容易在 dev 调试时不小心烧掉一周预算。
 
-```yaml
-env_aware_budget_profiles:
-  description: "根据环境自动切换预算策略——不需要手动切换 model/router 配置"
-  detection: "环境变量 ZEPHYR_ENV 或自动检测（IDE 集成 → development, CI/CD → staging, deployed → production）"
-
-  profiles:
-    development:
-      default_model_tier: "tier_0_free"
-      max_model_tier: "tier_1_cheap"
-      daily_cost_cap: "$1.00"
-      task_cost_cap: "$0.10"
-      cache_enabled: true
-      audit_level: "minimal"
-      notes: "调试/实验环境——绝不用付费模型，除非 Owner 显式 /switch-model"
-
-    staging:
-      default_model_tier: "tier_1_cheap"
-      max_model_tier: "tier_2_standard"
-      daily_cost_cap: "$5.00"
-      task_cost_cap: "$0.50"
-      cache_enabled: true
-      audit_level: "standard"
-      notes: "集成测试/预发——允许标准模型做质量验证"
-
-    production:
-      default_model_tier: "tier_1_cheap"
-      max_model_tier: "tier_3_premium"
-      daily_cost_cap: "$10.00"
-      task_cost_cap: "$1.00"
-      cache_enabled: true
-      audit_level: "full"
-      notes: "正式施工——全能力可用，但仍有日/任务成本硬顶"
-
-  dev_trap_protection:
-    description: "防止在 development 环境手动切换到 Tier-3 后忘记切回"
-    auto_revert: "每次新 Task 开始时重置到当前 Profile 的 default_model_tier"
-    persistent_override: "通过 `zephyr env override-production` 显式命令切换（需二次确认）"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| detection | $ZEPHYR_ENV 或自动检测(IDE→dev, CI/CD→staging, deployed→prod) | — |
+| development | default: tier_0_free; max: tier_1; daily_cap: $1; task_cap: $0.10; cache: on; audit: minimal | 绝不用付费模型除非显式/switch-model |
+| staging | default: tier_1; max: tier_2; daily_cap: $5; task_cap: $0.50; cache: on; audit: standard | — |
+| production | default: tier_1; max: tier_3; daily_cap: $10; task_cap: $1.00; cache: on; audit: full | 全能力可用，仍有硬顶 |
+| dev_trap_protection | 每次新Task自动重置到Profile default; 持久覆盖需`zephyr env override-production`(二次确认) | — |
 
 ### 2.16 预算策略沙盘 + 策略版本管理
 
 > **决策 D-024-14（🆕 v0.4.0）**：你怎么知道五级预算+六级降级不会把系统卡死？预算策略需要在不上线的情况下验证——dry-run 模拟路径。策略变更需要版本管理——改坏了可以回滚。
 
-```yaml
-policy_sandbox:
-  description: "预算策略的 dry-run 模拟环境——不实际调用 AI，模拟预算消耗路径"
-  trigger: "budget_policy.yaml 变更后自动执行 OR `zephyr budget sandbox --scenario aggressive`"
-
-  scenarios:
-    low_complexity:
-      tasks: 20
-      task_type: "lint_fix"
-      simulation: "模拟单天 20 个 Lint 修复任务——验证 tier_0_free 是否被正确路由"
-      expected: "全部走 tier_0，零成本"
-
-    medium_load:
-      tasks: 50
-      task_type: "mixed"
-      simulation: "模拟中等施工量——50 个混合任务中包含 5 个需要升级到 tier_2 的复杂任务"
-      expected: "tier_0 处理 45 个，tier_1 处理 3 个，tier_2 处理 2 个"
-
-    budget_exhaustion:
-      tasks: 100
-      task_type: "heavy_refactor"
-      simulation: "模拟预算耗尽场景——连续大规模重构直到触发 L5_halt"
-      expected: "系统正确执行降级链且不进入 spiral"
-
-    runaway_agent:
-      tasks: 10
-      task_type: "runaway_simulation"
-      simulation: "模拟一个 Agent 在单个 Task 上持续重试——触发 per-agent sub-pool 限制"
-      expected: "sub-pool 触顶后 spillover 被全局池 60% 总预算限制截断"
-
-  output: "sandbox 执行后生成 `budget_sandbox_report.md`——包括通过/警告/失败的 checklist"
-
-policy_versioning:
-  description: "budget_policy.yaml 的版本管理——改坏了可以回滚"
-  storage: "config/budget_policy_history/{version}/budget_policy.yaml"
-  auto_version: "每次 git commit 时在 pre-commit hook 中快照当前 policy"
-  rollback: "zephyr budget policy rollback --version v{N}"
-  diff: "zephyr budget policy diff --v1 v2 — 对比两个版本的策略差异"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| sandbox_trigger | budget_policy.yaml变更后自动执行 OR `zephyr budget sandbox --scenario <name>` | — |
+| scenarios | low_complexity(20 lint_fix→全tier_0); medium_load(50 mixed→45/3/2 tier分配); budget_exhaustion(100 heavy→降级链不spiral); runaway_agent(10→sub-pool触顶+spillover截断) | — |
+| sandbox_output | budget_sandbox_report.md(通过/警告/失败checklist) | — |
+| policy_versioning | storage: config/budget_policy_history/{version}/; auto_version: git commit pre-commit hook; rollback: `zephyr budget policy rollback --version v{N}`; diff: `--v1 v2` | — |
 
 ### 2.17 辅助能力——上下文浪费检测 + 冷启动豁免 + 自托管模型成本模型
 
 > **决策 D-024-15（🆕 v0.4.0）**：补充三个之前被忽略的辅助能力——它们不影响核心逻辑，但在 solo maintainer 场景下持续性产生隐性成本。
 
-```yaml
-context_waste_detector:
-  description: "你控制了预算上限，但不知道塞进上下文的材料里有多少是 LLM 实际没看的"
-  tracking: "每次 LLM 调用后分析 response 中实际引用到的上下文片段"
-  metric: "referenced_chars / total_context_chars"
-  alert: "waste_ratio > 0.60 持续 5 个请求 → 建议 /compact 或精简 AGENTS.md"
-  integration: "Context Engine 的 DocCompressor 根据 waste 数据优化选择策略"
-
-cold_start_allowance:
-  description: "每个 Session 初始阶段（读蓝图、索引文件、建立上下文）有固定'入场费'——不应计入任务预算"
-  fixed_cost:
-    - step: "读取 AGENTS.md + 核心蓝图"
-      estimated_tokens: 3000
-    - step: "建立 workspace index"
-      estimated_tokens: 2000
-    - step: "加载 budget_policy.yaml"
-      estimated_tokens: 500
-  total_cold_start: 5500             # 每个 Session 默认豁免
-  accounting: "cold_start_tokens 计入 session 级预算但不计入任何任务的 task_budget"
-  overridable: true                   # 复杂项目可以调整
-
-local_model_cost_model:
-  description: "蓝图假设全走 API。但如果你跑了本地模型（Ollama），'成本'怎么算？"
-  cost_model:
-    electricity: "$0.12/kWh"
-    gpu_power: "200W"                   # 单 GPU 功耗
-    tokens_per_second: 50              # 本地模型吞吐量（因模型而异）
-    cost_per_1m_tokens: "electricity / (tokens_per_second × 3600) × 1,000,000 ≈ $0.13/MTok"
-  accounting: "local tokens 记为 'local_cost' 而非 'api_cost'——在 showback 中分开展示"
-  model_assignment: "tier_local（独立于 API Tier 体系）"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| context_waste_detector | metric: referenced_chars/total_context_chars; waste>0.60持续5请求→建议/compact; 联动Context Engine DocCompressor | — |
+| cold_start_allowance | 固定入场费: 读蓝图3000+索引2000+policy500=5500 token/session; 计入session预算但不计入task_budget; overridable: true | — |
+| local_model_cost_model | electricity: $0.12/kWh; gpu: 200W; throughput: 50 tok/s; cost≈$0.13/MTok; 记为local_cost非api_cost; tier: tier_local | — |
 
 ### 2.18 指令膨胀检测（Instruction Bloat Detector）
 
 > **决策 D-024-16（🆕 v0.5.0）**：Boris Cherny 400 小时 Claude 使用分析——14% 的 token 浪费来自膨胀的 CLAUDE.md/AI 指令文件。我们的 Context Waste Detector (§2.17) 追踪 "sent vs referenced"，但指令文件是被动的——它总是被发送但永远不会被"引用"，仅跟踪 referenced 比例会误报。
 
-```yaml
-instruction_bloat_detector:
-  description: "专门检测 AGENTS.md/CLAUDE.md/system_prompt 等指令文件的膨胀——这些文件每个 turn 都被发送，膨胀的边际成本极大"
-  targets:
-    - "AGENTS.md"
-    - "budget_policy.yaml"
-    - "所有 *blueprint.md 的 §1-§2（设计理念部分）"
-  metrics:
-    - "instruction_token_count"
-    - "instruction_growth_rate_weekly"      # 每周增长率（超过 20% 告警）
-    - "per_turn_instruction_overhead"       # 每轮的平均指令 token 开销
-  alerts:
-    instruction_oversized: "instruction_token_count > session_budget × 0.25"
-    instruction_growing: "growth_rate_weekly > 20% → WARN '指令文件正在膨胀——建议精简冗余规则'"
-    instruction_dominance: "per_turn_instruction_overhead > productive_tokens → 指令比产出还多"
-  auto_compact:
-    enabled: false                  # 不自动压缩（可能删除有用规则）
-    suggest: "生成精简建议——检测哪个段落过去 30 天没被遵守过 → 建议删除"
-  visual: "终端显示 '📋 指令: 3.2K (占预算 8%) | 本周增长 +5%'"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| targets | AGENTS.md / budget_policy.yaml / 所有*blueprint.md §1-§2 | — |
+| metrics | instruction_token_count; growth_rate_weekly(>20%告警); per_turn_instruction_overhead | — |
+| alerts | oversized: >session_budget×0.25; growing: weekly>20%; dominance: overhead>productive_tokens | — |
+| auto_compact | enabled: false; suggest: 检测30天未遵守段落→建议删除 | 不自动压缩（可能删有用规则） |
 
 ### 2.19 对话历史税检测（Conversation History Tax Detector）
 
 > **决策 D-024-17（🆕 v0.5.0）**：Boris Cherny 数据——13% 的 token 浪费来自对话历史重读。长对话中，历史即使全部压缩后仍占上下文大头。Context Engine 的压缩解决"大小"但没解决"价值"——压缩后的历史 tokens 中可能 80% 对当前任务无价值。
 
-```yaml
-conversation_history_tax_detector:
-  description: "跟踪对话历史中实际被当前 turn 使用的比例——未被引用的历史就是浪费"
-  tracking:
-    - "total_history_tokens_sent"
-    - "history_tokens_referenced"            # LLM 在 response 中实际引用到的历史片段
-    - "history_tax_ratio"                    # = sent / referenced
-  alert:
-    threshold: "history_tax_ratio > 5×"      # 5 倍浪费——发 5000 token 历史只用了 1000 token
-    action: "WARN + 建议 /compact-aggressive（仅保留最近 3 轮的失败/上下文/决策摘要）"
-  decay_model:
-    description: "越远的 turn 价值越低——加权衰减而非均匀压缩"
-    weights:
-      last_3_turns: 1.0                      # 全部保留
-      turns_4_10: 0.3                        # 仅保留决策 + 异常
-      turns_11_plus: 0.05                    # 仅保留摘要
-  synergy: "联动 Context Engine (MOD-INF-008) 的 DocCompressor 加权衰减策略"
-  visual: "终端显示 '📜 历史: 12K/15K (80%) | 有效引用: 仅 22%'"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| tracking | total_history_tokens_sent / history_tokens_referenced / history_tax_ratio(=sent/referenced) | — |
+| alert | tax_ratio>5×→WARN+建议/compact-aggressive(仅保留最近3轮摘要) | — |
+| decay_model | last_3_turns: 1.0(全保留); turns_4_10: 0.3(仅决策+异常); turns_11+: 0.05(仅摘要) | 联动Context Engine DocCompressor |
 
 ### 2.20 Timeout Guard（并行监控线程）
 
 > **决策 D-024-18（🆕 v0.5.0）**：AgentGuard (2026.4) 三大 guard 之一——Timeout Guard = wall-clock kill switch。这是一个独立于预算链的并行线程——不依赖 L0-L6 降级或 Pre-flight Gate，一旦触发即强行 abort。
 
-```yaml
-timeout_guard:
-  description: "独立并行线程——wall-clock 超时即 abort，不经过降级协商流程"
-  lifecycle_position: "in_flight（与 Stream Abort Guard 并行运行）"
-  implementation: "asyncio 独立 task → 每个 Session 启动一个 daemon timer"
-
-  session_timer:
-    countdown: 28800              # 8 小时（来自 §2.1 time_budget）
-    on_expiry:
-      action: "FORCE_ABORT——所有活跃请求立即终止"
-      pre_action: "保存 Action History + 生成 resume checkpoint + 写入 audit trail"
-      message: "⏰ Session 时间预算已耗尽（8h）——当前进度已保存。下次启动自动恢复。"
-
-  task_timer:
-    countdown: 3600               # 1 小时
-    on_expiry:
-      action: "FORCE_ABORT 当前 Task + 自动委托到新 Task"
-      message: "⏰ 任务超时（1h）——已自动拆分并委托剩余工作到新任务"
-
-  request_timer:
-    countdown: 120                # 2 分钟
-    on_expiry:
-      action: "CANCEL streaming SSE + ABORT"
-      auto_retry: true            # 自动重试一次（不同 Provider 或模型）
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| implementation | asyncio独立task→每个Session启动daemon timer | 不经过降级协商流程 |
+| session_timer | 28800s(8h)→FORCE_ABORT+保存Action History+resume checkpoint+audit | — |
+| task_timer | 3600s(1h)→FORCE_ABORT当前Task+自动委托新Task | — |
+| request_timer | 120s(2min)→CANCEL streaming SSE+ABORT; auto_retry: true(不同Provider或模型) | — |
 
 ### 2.21 Self-Budget——Budget Enforcer 自身运营成本管控
 
 > **决策 D-024-19（🆕 v0.6.0）**：SUPERVISORAGENT (ICLR 2026) 引入 LLM-free 自适应触发——传统 guards 自身消耗 token 来评估 token 消耗，形成悖论。Budget Enforcer 自身的运作成本（Output Quality Gate 的 LLM 调用、Instruction Bloat 的语义分析、Conversation Tax 的引用追踪）必须被预算。
 
-```yaml
-self_budget:
-  description: "Budget Enforcer 不是免费的——自身 guards/detectors/analyzers 消耗的 token 需要独立上限"
-  # SUPERVISORAGENT 原则：guards 应该是 LLM-free 的 trigger，仅在必要时升级到 LLM evaluation
-  daily_cap: 50000                # Budget Enforcer 自身每日 token 上限
-
-  components:
-    # ── LLM-Free triggers（零成本，应优先使用）──
-    llm_free:
-      - "format_check (regex-based)"
-      - "action_history.dedup_rules (hash-based)"
-      - "timeout_guard (timer-based)"
-      - "context_waste_detector.sent_count (non-LLM)"
-      - "burn_rate_monitor (EMA-based)"
-
-    # ── LLM-Dependent triggers（有成本，需配额控制）──
-    llm_dependent:
-      - name: "output_quality_gate.relevance_check"
-        model: "tier_0_free"      # 强制用免费模型
-        cap_per_call: 500
-      - name: "output_quality_gate.hallucination_check"
-        model: "tier_0_free"
-        cap_per_call: 1000
-      - name: "instruction_bloat_detector.auto_compact_suggest"
-        model: "tier_0_free"
-        cap_per_day: 2000
-      - name: "conversation_tax_detector.reference_analysis"
-        model: "tier_0_free"
-        cap_per_day: 1500
-
-  guard_efficiency:
-    description: "Guards 的收益-成本比——如果 guard 自身消耗超过它节省的 token，关闭该 guard"
-    metric: "tokens_saved_by_guard / tokens_consumed_by_guard"
-    auto_disable_threshold: "< 0.5"  # guard 每花 2 token 才省 1 token → 关闭
-    weekly_efficiency_report: true
-
-  self_budget_exceeded:
-    action: "HALT——所有 LLM-dependent guards 降级为 LLM-free 模式仅 warn 不 block"
-    visual: "终端显示 '🛡 Self-Budget: 18K/50K (36%) | Guard 效率: 1:4.2 (省 budget:guard cost)'"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| daily_cap | 50000 token | Budget Enforcer自身每日上限 |
+| llm_free_guards | format_check(regex) / action_history.dedup(hash) / timeout_guard(timer) / context_waste.sent_count / burn_rate(EMA) | 零成本，优先使用 |
+| llm_dependent_guards | relevance_check(tier_0, 500/call) / hallucination_check(tier_0, 1000/call) / bloat_suggest(tier_0, 2000/day) / tax_analysis(tier_0, 1500/day) | 有成本，需配额控制 |
+| guard_efficiency | metric: tokens_saved/tokens_consumed; auto_disable: <0.5(花2省1→关闭); weekly_report: true | — |
+| self_budget_exceeded | HALT→所有LLM-dependent guards降级为LLM-free仅warn不block | — |
 
 ### 2.22 Token Spiral 早期预警系统（Token Spiral EWS）
 
@@ -1094,57 +685,22 @@ token_spiral_ews:
 
 > **决策 D-024-21（🆕 v0.6.0）**：SUPERVISORAGENT (ICLR 2026) 的核心贡献——MAS 中一个 agent 的幻觉输出被下游 agent 当作事实，会产生指数级成本放大。单点的 bad observation 可以导致整个 pipeline 的 token 消耗翻倍。
 
-```yaml
-poisoning_cascade_detector:
-  description: "检测上游 agent 的错误输出被下游 agent 继承放大的级联效应"
-  # 典型场景：Agent-A 说 'config/file.yaml 不存在'（幻觉）→ Agent-B 开始造那个文件（浪费）
-  #           → Agent-C 开始引用那个假文件 → 成本指数放大
-
-  detection_layers:
-    fact_contradiction:
-      description: "Agent 输出声称的事实与系统已知状态矛盾"
-      method: "cross-reference agent output claims vs workspace index / file system state"
-      example: "Agent says 'module X has rate limit 100' but config says 50"
-      action: "MARK as potentially_poisoned + 注入 warning 到下游 agent 的 system prompt"
-
-    chain_of_faith:
-      description: "追踪信息源链——如果 Agent-C 引用 Agent-B 引用 Agent-A 且 Agent-A 被纠正过"
-      method: "构建 observation provenance DAG"
-      ttl: "3600s（1h 内同一不实引用链触发级联熔断）"
-
-    cascade_cost_tracker:
-      description: "量化下中游因上游错误而浪费的 token"
-      metric: "tokens_spent_on_fixing_poisoned_context / total_tokens"
-      alert: "cascade_cost > 15% total → WARN '上下文中毒成本过高——建议重启 Session'"
-
-  auto_isolation:
-    description: "检测到级联时自动隔离可疑 agent 的中间输出"
-    action: "清除被标记为 potentially_poisoned 的上下文片段 + 重新生成"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| fact_contradiction | agent输出声称事实vs workspace index/file system矛盾→MARK potentially_poisoned+注入warning到下游agent system prompt | — |
+| chain_of_faith | 构建observation provenance DAG; 同一不实引用链1h内触发级联熔断; TTL: 3600s | — |
+| cascade_cost_tracker | metric: tokens_spent_on_fixing_poisoned/total; >15% total→WARN建议重启Session | — |
+| auto_isolation | 检测到级联→清除potentially_poisoned上下文片段+重新生成 | — |
 
 ### 2.24 Hierarchical Parent-Child Agent 成本归因
 
 > **决策 D-024-22（🆕 v0.6.0）**：现代 MAS 中一个 coordinator 可能委托多个 child agents。扁平 entity-level 归因无法展示"哪个 coordinator 的委托模式最贵"。
 
-```yaml
-parent_child_attribution:
-  description: "追踪 agent 委托链的树状成本结构——parent 承担 child 的成本但有 governance 杠杆"
-
-  delegation_tree:
-    description: "每个 agent call 记录 parent_agent_id 和 cause_agent_id"
-    structure: "DAG（同一 child 可被多个 parent 委托）"
-
-  attribution_rules:
-    direct_cost: "agent 自己的 LLM API 消耗 → 归于自己"
-    delegated_cost: "child agent 的消耗 → 按 delegation_ratio 回溯到各 parent"
-    root_cause_cost: "如果 child 因 parent 的错误指令增加了成本 → 超额部分归于 parent"
-
-  query_examples:
-    top_delegator: "coordinator-A 直接消耗 $3 + 委托链总成本 $12 → 真实影响 $15"
-    delegation_efficiency: "child 产出 / parent 委托成本 → 低效委托被标记"
-
-  visual: "终端显示 '🌳 coordinator-A: $3(self) + $12(delegated) = $15 total | 委托比 4:1'"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| delegation_tree | 每个agent call记录parent_agent_id和cause_agent_id; 结构: DAG(同一child可被多parent委托) | — |
+| attribution_rules | direct_cost: 自身LLM API消耗→归于自己; delegated_cost: child消耗按delegation_ratio回溯parent; root_cause_cost: child因parent错误指令增加→超额归于parent | — |
+| query_examples | top_delegator: coordinator-A $3(self)+$12(delegated)=$15; delegation_efficiency: child产出/parent委托成本 | — |
 
 ### 2.25 推理模型 Think-Time 成本感知 + LLM-Free Guard 升级路径
 
@@ -1227,129 +783,44 @@ runtime_trust_rings:
 
 > **决策 D-024-25（🆕 v0.7.0）**：当前的 cost-attribution.jsonl 是明文 JSONL——任何 buggy AI agent 可以 append/overwrite。在 One-person + AI 模式下没有"审计部门"来检查篡改——必须是加密学上的防篡改。
 
-```yaml
-tamper_evident_audit:
-  description: "Budget Enforcer 所有审计事件写入 append-only hash chain——事后被篡改可立即检测"
-  # 不需要完整的区块链——只需要 append-only + sequential hashing
-  
-  structure:
-    format: "JSONL with SHA-256 chain"
-    each_line: "{event_json} || SHA256(prev_line_hash + current_event_payload)"
-    genesis_line: "SHA256(module_id + creation_timestamp + initial_policy_hash)"
-    
-  verification:
-    command: "zephyr budget audit verify —— 顺序验证 hash chain 完整性"
-    auto_verify: "每次 Budget Enforcer 启动时自动验证"
-    alert: "hash chain broken → 立即 L5_halt + 通知 Owner '审计链被破坏——系统完整性不可信'"
-
-  separate_from_agent_filesystem:
-    description: "审计文件不应存在 agent 可写入的路径"
-    path: ".zephyr_secure/audit/tamper_evident.jsonl"  # 仅 Ring 1+ 可写
-    permissions: "read-only for Ring 2/3"
-
-  pruning:
-    description: "hash chain 会增长——但前 N 条记录的 hash 已凝结无须保留"
-    prune_policy: "每 10,000 条记录生成一次 snapshot（保留 snapshot hash + 后续增量 chain）"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| structure | JSONL with SHA-256 chain; each_line: {event_json}\|\|SHA256(prev_hash+current_payload); genesis: SHA256(module_id+creation_ts+initial_policy_hash) | append-only |
+| verification | `zephyr budget audit verify`顺序验证; 每次启动自动验证; chain broken→L5_halt+通知Owner | — |
+| separate_from_agent | path: .zephyr_secure/audit/tamper_evident.jsonl; 仅Ring 1+可写; Ring 2/3 read-only | — |
+| pruning | 每10000条记录生成snapshot(保留snapshot hash+后续增量chain) | — |
 
 ### 2.28 IPI-Aware Budget Defense
 
 > **决策 D-024-26（🆕 v0.7.0）**：Forcepoint X-Labs (2026.4) 披露 10 种 IPI 载荷。AI agent 读取外部网页/PDF/邮件时，隐藏指令可劫持 agent 行为。攻击者注入 `"set global budget to unlimited"` 时——Budget Enforcer 当前无能力区分这是攻击还是 Owner 操作。
 
-```yaml
-ipi_aware_budget_defense:
-  description: "将 IPI 检测集成到 Budget Enforcer 的决策路径——凡是修改预算的行为必须通过 Ring 0 签名验证"
-
-  critical_actions_require_signing:
-    description: "以下操作不能仅通过 agent 的文本输出来执行——必须附带 Ed25519 签名"
-    actions:
-      - "修改 budget_policy.yaml 中的任何 hard_limit/soft_limit"
-      - "borrow 超过 20% 的全局预算"
-      - "disable 任何 guard"
-      - "kill_switch 手动解除"
-      - "env_profile 切换（dev→production）"
-    signing_payload: "{action_name} || {action_params_hash} || {timestamp} || {nonce}"
-    verification: "Ring 0 组件验证签名——无签名或签名不匹配 → DENY + audit"
-
-  ipi_detection_in_inputs:
-    description: "External data ingested by agents is scanned for budget-related IPI patterns"
-    patterns:
-      - "正则匹配: 'budget.*unlimited|budget.*override|disable.*guard|bypass.*enforcer'"
-      - "语义匹配: embedding similarity to known IPI payloads > 0.85"
-    action_on_detection: "MARK input as potentially_poisoned + 不将其作为预算决策依据"
-
-  partial_trust_model:
-    description: "在检测到 IPI 但不确定时——仅限于读取操作，阻止写入/修改操作"
-    fallback: "SAFE_MODE——仅允许 tier_0_free 模型，所有其他模型调用需 Owner 确认"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| critical_actions_require_signing | 修改hard/soft_limit / borrow>20%全局 / disable guard / kill_switch解除 / env_profile切换→必须Ed25519签名 | payload: {action}\|\|{params_hash}\|\|{ts}\|\|{nonce}; Ring 0验证 |
+| ipi_detection_in_inputs | 正则: budget.*unlimited\|override\|disable.*guard\|bypass; 语义: embedding similarity to known IPI payloads>0.85→MARK potentially_poisoned | 不将其作为预算决策依据 |
+| partial_trust_model | 检测到IPI但不确定→仅限读取，阻止写入/修改; fallback: SAFE_MODE(仅tier_0_free，其他需Owner确认) | — |
 
 ### 2.29 故障模式规范 + 冷启动反滥用 + 对抗测试
 
 > **决策 D-024-27（🆕 v0.7.0）**：Budget Enforcer 自身崩溃时，系统应 fail-open（允许所有→成本失控）还是 fail-closed（拒绝所有→系统瘫痪）？前 6 轮从未定义。
 
-```yaml
-fail_mode_specification:
-  description: "Budget Enforcer 在每个 level 的故障模式——并非一刀切 fail-open 或 fail-closed"
-
-  per_level_fail_mode:
-    l0_request: "fail-closed"     # 单次请求故障→拒绝该请求（影响最小）
-    l1_turn: "fail-closed"        # 单轮故障→拒绝该轮（用户可重试）
-    l2_task: "fail-closed"        # 任务级故障→拒绝任务（拆分或重试）
-    l3_session: "fail-open限流"   # Session 故障→允许调用但限制在 tier_0_free + 1/10 上限
-    l3_5_workflow: "fail-open限流"# Workflow 故障→同上
-    l4_global: "fail-closed"      # 全局故障→硬拒绝（安全优先于可用性）
-    l4_5_self: "fail-open限流"    # Self-Budget 故障→降级为仅统计不阻断
-
-  fail_mode_recovery:
-    heartbeat: "每 30s 检查各组件健康——连续 3 次 heartbeat 失败触发对应 fail_mode"
-    auto_recovery: "组件恢复后自动从 fail_mode 恢复正常模式"
-
-# ── v0.7.0 冷启动反滥用 ──
-cold_start_anti_abuse:
-  description: "§2.17 冷启动豁免 5500 token/session——可被 agent 通过频繁重启利用"
-  rate_limit: "同一 Owner 1 小时内最多 3 个 Session（超过则冷启动豁免降为 1000 token）"
-  daily_cap: "24 小时内冷启动豁免累计不超过 27,500 token（= 5 × 5500）"
-  detection: "超过速率限制 → WARN '检测到频繁 Session 重启——冷启动豁免已缩容'"
-
-# ── v0.7.0 对抗测试强制要求 ──
-adversarial_testing_mandate:
-  description: "Oktsec 报告——88% 组织遭遇 AI agent 安全事件。Budget Enforcer 上线前必须通过对抗测试"
-  test_vectors:
-    - "IPI 注入 budget_policy.yaml 修改尝试"
-    - "Agent 尝试利用 cold_start_allowance 通过 10 次快速重启"
-    - "Agent 尝试通过 parent-child 委托链无限代理消耗预算"
-    - "Agent 尝试在 stream_abort_guard 触发前完成恶意操作"
-    - "Agent 尝试通过多 Provider 切换触发 race condition"
-  gate: "Phase experimental→beta 前必须通过全部 5 项对抗测试"
-  report: "对抗测试报告写入 docs/09_audit/adversarial_test_report.md"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| per_level_fail_mode | L0 request: fail-closed; L1 turn: fail-closed; L2 task: fail-closed; L3 session: fail-open限流(tier_0+1/10上限); L3.5 workflow: fail-open限流; L4 global: fail-closed; L4.5 self: fail-open限流(仅统计不阻断) | — |
+| fail_mode_recovery | heartbeat: 每30s检查; 连续3次失败→触发fail_mode; 组件恢复→自动恢复 | — |
+| cold_start_anti_abuse | 1h内最多3个Session(超过→冷启动豁免降为1000token); 24h冷启动累计≤27500token(=5×5500) | — |
+| adversarial_testing | 5项: IPI注入policy修改 / cold start 10次快速重启 / parent-child无限委托 / stream_abort前恶意操作 / 多Provider race condition; gate: experimental→beta前必须全过 | 报告→docs/09_audit/adversarial_test_report.md |
 
 ### 2.30 启动校准阶段（Bootstrapping Calibration Phase）
 
 > **决策 D-024-28（🆕 v0.7.0）**：Day 0 的 budget_policy.yaml 是 AI 生成的猜测。如果阈值太紧→系统不可用→无法收集数据→自学习无法启动。需要一个显式的"宽限期"。
 
-```yaml
-bootstrapping_calibration:
-  description: "新部署的前 30 天为校准模式——阈值宽松，侧重数据收集而非严格执法"
-  duration: "30 days or 100 tasks completed（whichever first）"
-
-  calibration_profile:
-    description: "所有 hard_limit 临时 ×3，soft_limit 仅告警不阻断"
-    hard_limit_multiplier: 3.0
-    enforcement: "ALL actions → warn-only（不 DENY，不 HALT）"
-    exceptions: "loop_detection 和 kill_switch 这两个安全熔断保持生效"
-
-  exit_criteria:
-    min_data_points: 100            # 至少收集 100 个任务的消耗数据
-    convergence: "预算预估偏差 < 20%（连续 10 个任务）"
-    auto_exit: "满足条件后自动切换到正常 enforcement 模式"
-    manual_exit: "Owner 可随时执行 `zephyr budget exit-calibration` 提前结束"
-
-  post_calibration:
-    auto_tune: "基于收集的 100 个任务数据，自动调整 soft_limit/hard_limit 为 P95 消耗值"
-    report: "校准报告——各模型/任务类型的 P50/P75/P95/P99 消耗分布"
-    human_review: "自动调整后的阈值需 Owner 签名确认方可生效"
-```
+| 参数 | 值 | 约束 |
+|------|-----|------|
+| duration | 30 days or 100 tasks completed(whichever first) | — |
+| calibration_profile | hard_limit ×3; enforcement: ALL→warn-only(不DENY不HALT); exceptions: loop_detection和kill_switch保持生效 | — |
+| exit_criteria | min_data_points: 100; convergence: 预估偏差<20%连续10任务; auto_exit: 满足后自动切换; manual_exit: `zephyr budget exit-calibration` | — |
+| post_calibration | auto_tune: 基于P95消耗值调整soft/hard_limit; report: 各模型/任务P50/P75/P95/P99; human_review: 调整后阈值需Owner签名确认 | — |
 
 ---
 
@@ -1680,18 +1151,246 @@ solo_maintainer_optimizations:
 
 ---
 
+## §4 接口契约
+
+### §4.1 公共 API
+
+| 类 | 方法 | 签名 | 执行流程 |
+|----|------|------|---------|
+| `BudgetEngine` | `pre_flight_check` | `(estimated_tokens, estimated_cost, estimated_time) → GateResult` | 加载策略→检查三维预算→返回 ALLOW/WARN/DEGRADE/DENY/BORROW |
+| `BudgetEngine` | `record_consumption` | `(policy_id, tokens, cost, time_minutes) → None` | 累加消耗→检查阈值→触发降级/告警 |
+| `BudgetEngine` | `try_claim_budget` | `(tokens, cost, time) → claim_id` | 乐观锁预留→返回 claim_id |
+| `BudgetEngine` | `commit_claim` | `(claim_id) → None` | 确认消耗→写入审计 |
+| `BudgetEngine` | `rollback_claim` | `(claim_id) → None` | 释放预留→回退配额 |
+| `BudgetEngine` | `advance_degradation` | `(reason) → BudgetLevel` | 推进降级→写入审计→通知 Escalation |
+| `BudgetEngine` | `retreat_degradation` | `() → BudgetLevel` | 检查恢复条件→回升一级 |
+| `BudgetTracker` | `open_scope` | `(scope: TrackerScope, scope_id: str) → BudgetSnapshot` | 开启预算作用域 |
+| `BudgetTracker` | `record_request` | `(scope, scope_id, tokens_in, tokens_out, cost_usd, wall_time) → BudgetSnapshot` | 记录请求级消耗 |
+| `PreFlightGate` | `gate` | `(estimated_tokens, estimated_cost, estimated_time, policy?) → PreFlightReport` | 三维预算门控 |
+| `DegradationManager` | `evaluate` | `(usage_ratio: float, dimension: BudgetDimension, current_tier?) → DegradationAction` | 检查阈值→推进降级 |
+| `ModelRouter` | `route` | `(task_complexity, budget_remaining) → RoutingDecision` | 成本感知路由 |
+| `CostBudget` | `record_usage` | `(provider, model, input_tokens, output_tokens, cached_input_tokens?) → float` | 记录API调用消费 |
+| `TimeoutGuard` | `watch` | `(scope_id, timeout_seconds) → None` | 启动超时监控 |
+| `TimeoutGuard` | `unwatch` | `(scope_id) → None` | 取消超时监控 |
+
+### §4.2 数据模型
+
+| 模型 | 字段 | SSoT |
+|------|------|------|
+| `BudgetDimension` | TOKEN / COST / TIME | `budget_models.py` |
+| `BudgetLevel` | L0_NORMAL→L6_KILL_SWITCH | `budget_models.py` |
+| `GateDecision` | ALLOW / WARN / DEGRADE / DENY / BORROW / NARROW | `budget_models.py` |
+| `ModelTier` | PREMIUM / STANDARD / ECONOMY / MINIMAL | `budget_models.py` |
+| `GateResult` | request_id, decision, reason, budget_level, model_tier, estimated_tokens, estimated_cost, remaining_daily, remaining_hourly | `budget_models.py` |
+| `BudgetAlert` | alert_id, budget_type, burn_rate, severity | `alerts.py` |
+
+---
+
+## §5 约束条件
+
+### §5.1 技术约束
+
+| 约束 | 值 | 原因 |
+|------|-----|------|
+| Python 版本 | ≥3.11 | 使用 `str` 类型别名、`match` 语句 |
+| 依赖 | Pydantic V2, asyncio | 数据模型 + 超时守卫 |
+| 存储 | JSONL + YAML + SQLite | 审计日志 + 策略 + 聚合 |
+| 并发模型 | asyncio + ThreadPoolExecutor | I/O 密集型操作 |
+
+### §5.4 非功能需求与 SLI/SLO
+
+| SLI | SLO | 告警阈值 | 采集方式 |
+|-----|-----|---------|---------|
+| pre_flight_check 延迟 | P99 < 5ms | P99 > 10ms | 代码埋点 |
+| 预算检查准确率 | > 95% | < 90% | 预估 vs 实际偏差 |
+| 降级触发及时性 | < 1s | > 3s | 事件时间戳 |
+| Tamper-Evident chain 完整性 | 100% | chain broken | 启动自检 |
+
+### §5.5 自动化触发机制
+
+| 操作 | 触发方式 | 自动化程度 |
+|------|---------|-----------|
+| Pre-flight Gate | 每次 LLM API 调用前自动触发 | ✅ 全自动 |
+| 降级链推进 | `record_consumption()` 内自动检查阈值 | ✅ 全自动 |
+| Burn Rate 告警 | 4 窗口滑动监控自动触发 | ✅ 全自动 |
+| Timeout Guard | asyncio daemon timer 自动触发 | ✅ 全自动 |
+| Stream Abort Guard | 每 500 token checkpoint 自动触发 | ✅ 全自动 |
+| 健康检查 | `check_budget_health.py` 需手动运行 | ⚠️ 半自动 |
+| 定价同步 | cron/daily 02:00 UTC | ⚠️ 需外部调度 |
+| 周报生成 | cron/weekly | ⚠️ 需外部调度 |
+| 对抗测试 | Phase transition gate 触发 | ⚠️ 需手动触发 |
+
+### §5.7 禁止模式
+
+| 禁止 | 原因 | 替代 |
+|------|------|------|
+| 直接修改 `budget_policy.yaml` 不走签名验证 | 绕过 Trust Ring | `PolicySandbox.propose_change()` + Ed25519 签名 |
+| 在 `budget_enforcer` 外部实现降级逻辑 | 职责分裂 | 通过 G-CT-006 契约调用 |
+| 硬编码模型价格 | 价格动态变化 | `PricingSync` + LiteLLM Registry |
+| 跳过 Pre-flight Gate 直接调用 LLM | 绕过预算控制 | 所有 LLM 调用必须经过 `pre_flight_check()` |
+
+---
+
+## §6 错误处理
+
+| 异常 | 触发条件 | 处理 | 降级 |
+|------|---------|------|------|
+| `CostBudgetExceededError` | 消费超过 hard_limit | 记录→降级→审计 | L2_model_switch |
+| `TimeoutError` | wall-clock 超时 | 保存状态→abort→审计 | FORCE_ABORT |
+| `TamperEvidentChainBroken` | hash chain 验证失败 | L5_halt→通知Owner | 全局只读 |
+| `IPIPatternDetected` | IPI 攻击模式匹配 | 标记→限制→审计 | SAFE_MODE |
+| `FailModeTriggered` | 组件连续3次失败 | per-level fail-open/closed | 按级别 |
+| `BootstrappingNotConverged` | 30天未达100数据点 | 延长校准期 | warn-only |
+
+### §6.1 可观测性
+
+| 指标 | 类型 | 采集 | 告警阈值 |
+|------|------|------|---------|
+| `budget_utilization_ratio` | gauge | 每次消费后 | >0.8 WARNING, >0.95 CRITICAL |
+| `burn_rate_10min` | gauge | 10min窗口 | >10× CRITICAL |
+| `degradation_level` | state | 降级事件 | L4+ CRITICAL |
+| `cache_hit_rate` | gauge | 每次缓存查询 | <0.2 WARNING |
+| `guard_efficiency_ratio` | gauge | 每日统计 | <0.5 auto_disable |
+| `tamper_chain_length` | counter | 每次append | chain broken→CRITICAL |
+
+---
+
+## §16 施工指引
+
+### §16.1 施工策略
+
+| Phase | 策略 | 当前状态 |
+|-------|------|---------|
+| sandbox | 策略沙盘验证 | 📋 Backlog |
+| scaffold | 核心骨架（BudgetEngine+Tracker+Gate+Timeout） | ✅ 已完成 |
+| experimental | 路由+降级+缓存+检测 | 📋 Backlog |
+| beta | 归因+ROI+周报+Burn Rate | 📋 Backlog |
+| stable | 自学习+Anti-Spiral+储蓄 | 📋 Backlog |
+| self_calibrating | 自适应校准 | 📋 Backlog |
+
+### §16.2 前置条件
+
+| 条件 | 状态 | 阻塞原因 |
+|------|------|---------|
+| Pydantic V2 已安装 | ✅ | — |
+| budget_policy.yaml 已创建 | ✅ | — |
+| G-CT-006 契约已注册 | ✅ | — |
+| MOD-INF-022 Escalation 可达 | ⚠️ | escalation check failed: LSG blocked |
+| MOD-INF-015 Telemetry 桥接 | ⚠️ | 需验证 |
+
+### §16.3 实施步骤（读→做→产→检）
+
+| 步骤 | 读 | 做 | 产 | 检 |
+|------|-----|----|----|-----|
+| 1 | 读 budget_policy.yaml | 实例化 BudgetEngine | GateResult | `check_budget_health.py` exit 0 |
+| 2 | 读 G-CT-006 契约 | 集成 Escalation | 升级事件 | escalation bridge OK |
+| 3 | 读 §2.3 Model Router | 集成 cost_router | 路由决策 | 路由测试通过 |
+| 4 | 读 §2.4 降级链 | 集成 degradation_manager | 降级事件 | 降级测试通过 |
+| 5 | 读 §2.9 Burn Rate | 集成 burn_rate_monitor | 告警 | 告警测试通过 |
+
+### §16.4 回滚方案
+
+| 场景 | 回滚操作 | 验证 |
+|------|---------|------|
+| BudgetEngine 异常 | `fail_mode_manager` 自动 fail-closed | heartbeat 恢复 |
+| 策略变更导致卡死 | `zephyr budget policy rollback --version v{N}` | sandbox dry-run |
+| 降级螺旋 | anti_spiral max 1/min + cooldown 180s | 恢复到 L1 |
+
+### §16.5 完成与就绪标准
+
+| 标准 | 判定 |
+|------|------|
+| scaffold 完成 | ✅ BudgetEngine+Tracker+Gate+Timeout 可运行 |
+| experimental 就绪 | ❌ 路由+降级+缓存集成测试未通过 |
+| beta 就绪 | ❌ 对抗测试5项未通过 |
+| stable 就绪 | ❌ 自学习阈值未校准 |
+
+---
+
+## §10 依赖关系
+
+### §10.1 依赖声明
+
+| 依赖 | 类型 | 方向 | 硬/软 |
+|------|------|------|-------|
+| MOD-INF-008 Context Engine | 数据消费 | 024→008 | soft |
+| MOD-INF-020 Audit Trail | 事件写入 | 024→020 | hard |
+| MOD-INF-022 Escalation | 事件触发 | 024→022 | hard |
+| MOD-INF-001 Capacity Assurance | Kill Switch 联动 | 024↔001 | hard |
+| MOD-INF-006 Task System | 预算字段读取 | 024→006 | soft |
+| MOD-INF-023 Drift Detector | 漂移信号 | 023→024 | soft |
+| MOD-INF-014 LLM Security | IPI 检测 | 014→024 | hard |
+| MOD-INF-015 System Telemetry | metrics 聚合 | 024→015 | soft |
+| MOD-INF-016 Shared Core | BudgetEngine 基类 | 024→016 | hard |
+| MOD-INF-034 Model Exam | 评测数据 | 034→024 | soft |
+
+### §10.6 依赖链风险评级
+
+| 风险 | 评级 | 缓解 |
+|------|------|------|
+| 022↔024 双向依赖 (C24) | **中** | 024→022 为事件驱动（非同步调用），022→024 为查询驱动；Escalation `escalation_loop_detector.py` 已实现循环检测+冷却期；**非真环**——运行时不会死循环 |
+| 022→024→025→022 三节点环 (C25) | **低** | 024→025 为单向消费（A2A 读 Budget 池），025→022 为事件驱动（仲裁失败升级）；三边均为异步/事件驱动，无同步调用链；**裁定：伪环，保留现状** |
+| 024 依赖深度 5 级 | **高** | circuit breaker + 本地缓存 fallback + FailModeManager |
+
+**C24/C25 裁定**：022↔024 和三节点环均为**伪环**（事件/查询驱动，非同步递归），运行时不会死循环。保留现状，依赖 Escalation 的 `escalation_loop_detector` 作为安全网。
+
+| 依赖图条目 | 蓝图 depends_on | 对齐 |
+|-----------|----------------|------|
+| 022→024 (Escalation→Budget) | ✅ | 对齐 |
+| 024→025 (Budget→A2A) | ✅ §9 | 对齐 |
+| 024→015 (Budget→Telemetry) | ✅ §10.1 | 对齐 |
+| 024→016 (Budget→Shared Core) | ✅ §10.1 | **新增对齐** |
+| 024→034 (Budget→Model Exam) | ✅ §10.1 | **新增对齐** |
+| Context Engine→024 | ✅ §9 | 对齐 |
+| LLM Security→024 | ✅ §9 | 对齐 |
+
+### §10.5 概念重叠声明
+
+| 概念 | 本模块 | 重叠模块 | 边界 |
+|------|--------|---------|------|
+| Token Budget | 五级预算执行 | MOD-INF-001 容量规划 | 024 执行，001 规划 |
+| Cost Budget | 三维预算+降级 | MOD-INF-032 资源优化 | 024 管 Token/Cost/Time，032 管 CPU/Memory/Disk |
+| Kill Switch | L6 全局熔断 | MOD-INF-001 容量保障 | 024 触发，001 执行 |
+| Budget Alert | 预算告警模型 | MOD-INF-020 审计 | 024 产生告警，020 存储 |
+
+---
+
+## §13 需要更新的相关内容
+
+| 修改本蓝图 | 必须同步更新 |
+|-----------|-------------|
+| §2.1 预算阈值 | `config/budget_policy.yaml` + `config/capacity/token_budget.yaml`(deprecated 标记) |
+| §2.3 模型路由 | `model_provider_data.py` + `cost_router.py` |
+| §4.1 公共 API | `budget_models.py` + `__init__.py` 导出 |
+| §9 跨模块集成 | 对端蓝图 §10 依赖声明 |
+| G-CT-006 契约 | `bridges/alerts.py` + MOD-INF-022 蓝图 |
+
+---
+
+## 术语表
+
+| 术语 | 定义 | 易混淆 |
+|------|------|--------|
+| Budget Dimension | Token/Cost/Time 三维预算维度 | ≠ Resource Dimension(CPU/Memory/Disk) |
+| Budget Level | L0-L6 降级级别 | ≠ Budget Scope(Global/Session/Task/Turn/Request) |
+| Gate Decision | Pre-flight 门控决策 | ≠ Degradation Level |
+| Model Tier | PREMIUM/STANDARD/ECONOMY/MINIMAL | ≠ Provider Tier(Anthropic 4-Tier) |
+| Burn Rate | 消耗速率(4窗口) | ≠ Spiral Score(结构扩张模式) |
+| Trust Ring | Ring 0-3 信任分级 | ≠ RBAC Role |
+
+---
+
 ## 变更记录
 
-| 日期 | 版本 | 变更内容 |
-|------|------|---------|
-| 2026-05-05 | **0.7.0** | **终极取证补丁——信任根 + 抗对抗 + 故障模式**：这是与 v0.6.0 性质完全不同的升级——不是增加功能，而是回答根本问题："一个100%AI构建的系统，凭什么相信它能可信地约束AI？" ①信任根——引入 Runtime Trust Rings（Ring 0-3）：Budget Enforcer 内部组件按信任级别分级执行，Ring 0 仅限 Owner Ed25519 签名代码（kernel 级不可被 AI 修改），Ring 2 为 AI 生成 guards，Ring 3 为受约束的 agent 执行空间；引入 Tamper-Evident Audit Trail——append-only SHA-256 hash chain替代明文 JSONL，每次启动自动验证完整性，hash chain 断裂→系统进入不可信状态并 HALT；引入 Budget Policy Signing——修改 hard_limit/soft_limit、borrow 20%+ 全局预算、解除熔断等写操作必须附带 Ed25519 签名；②抗对抗——引入 IPI-Aware Budget Defense（Forcepoint X-Labs 2026.4 10 种 IPI 载荷防御）：外部数据中检测 budget-related IPI patterns（正则+语义双重匹配），预算关键操作通过签名验证网关；引入 Cold Start Anti-Abuse——Session 重启速率限制（1h 内最多 3 个 Session）+ 日累计冷启动豁免上限 27,500 token；引入 Adversarial Testing Mandate——5 项对抗测试（IPI 注入/cold start abuse/parent-child infinite delegation/stream abort bypass/provider race），Phase experimental→beta 前必须全部通过；③故障模式——引入 Formal Fail-Mode Specification：Budget Enforcer 崩溃时 per-level 的 fail-open/fail-closed 定义（L0 request fail-closed / L4 global fail-closed / L3 session fail-open 限流）+ heartbeat 监控 + 自动恢复；引入 Bootstrapping Calibration Phase——新部署前 30 天为校准期，所有 hard_limit ×3 宽松执行仅告警不阻断，收集 100 任务数据后 P95 自动调参，解决"Day 0 阈值是 AI 猜测→太紧→系统卡死→自学习无法启动"的 bootstrap paradox；新增 6 个文件（trust_ring_manager/tamper_evident_log/ipi_defense/fail_mode_manager/bootstrapping_calibrator/adversarial_tester）；风险登记新增 6 条（含不可修复的"信任根悖论"——AI 构建的 Ring 0 代码如何自证正确性——这是 100% AI 施工体系的哲学上限）；10 项新盲点全量补齐→共 78 项；对标新增 Forcepoint X-Labs/Oktsec/Okta/Microsoft/Gravitee |
-
-| 2026-05-05 | 0.6.0 | **Self-Budget 自耗管控 + 多层安全 + 委托归因升级**：预算级数从五级→七级（新增 L3.5 Workflow 级跨Session workflow 独立预算 + L4.5 Self-Budget 级——Budget Enforcer 自身运营成本上限）；新增 Self-Budget——guards 自身消耗独立追踪 + guard_efficiency ratio（省 token:guard 自耗 < 0.5→自动关闭）+ 每日上限 50K token；新增 Token Spiral EWS——四维早期预警（expanding_context/multiplying_tool_calls/depth_explosion/time_per_turn_growth）+ spiral_score 综合评分（Pearson r + 单调递增）+ 阈值 30/60/80 三级联动降级/Kill；新增 Context Poisoning Cascade Detection——fact_contradiction 交叉引用 + chain_of_faith provenance DAG + cascade_cost_tracker + auto_isolation；新增 Hierarchical Parent-Child Agent 成本归因——delegation_tree DAG + attribution_rules（direct/delegated/root_cause）+ delegation_efficiency 指标；新增 Reasoning Think-Time Cost Model——Anthropic extended thinking + OpenAI o1/o3 hidden reasoning token 推算 + auto_switch when thinking > 2× output；新增 LLM-Free Guard 升级路径——scaffold→experimental→beta→stable→self_calibrating 五阶段渐进 LLM-free 降本（对标 SUPERVISORAGENT ICLR 2026）；12 项新盲点全量补齐 → 共 68 项盲点全量覆盖；对标更新（SUPERVISORAGENT + TechAhead + Vibe Coding 2026 costs） |
-| 2026-05-05 | **0.5.0** | **三维升级——Token/Cost→Token/Cost/Time 三维预算**：预算体系从 Token/Cost 双维升级为三维——新增 Time Budget（Request 2min/Turn 5min/Task 1h/Session 8h 独立 wall-clock 预算）+ Timeout Guard（独立 asyncio daemon timer——AgentGuard 2026 三大 guard 之一）；降级链从六级增强为八级：新增 Narrow Scope（预算紧张时收窄任务范围只做核心 20%）+ Reroute Strategy（策略重定向——Pipeline 模式而非一次性大请求）+ Global Timeout Kill（wall-clock 超时熔断）；循环检测全面升级为 Action History with Dedup——新增 semantic_hash/effect_hash/自修复螺旋检测/输出无差异去重（对标 Stanford/MIT Token Economics 论文发现：50% 高成本运行中的文件读写是重复的）；新增 Instruction Bloat Detector——检测 AGENTS.md/budget_policy.yaml 等指令文件膨胀（Boris Cherny 400h Claude 分析：14% token 浪费在指令膨胀上）；新增 Conversation History Tax Detector——对话历史加权衰减 + 有效引用率追踪（Boris Cherny 数据：13% token 浪费在历史税上）；模型路由新增多Provider同Tier内least-cost路由 + Provider Tier 容量感知（Anthropic 4-Tier RPM/TPM）；价格同步新增长上下文隐藏定价感知——超过 200K context 自动计入溢价成本预估；Budget Pool 新增跨 Session 预算储蓄——轻量周省的钱自动入储蓄池救急重周；13 项新盲点全量补齐 → 共 56 项盲点全量覆盖；对标更新（Oracle Runtime Budget Guardrails + AgentGuard + Stanford Token Economics + TokenFence + Boris Cherny Claude Anatomy）|
-| 2026-05-05 | 0.4.0 | **补完升级——全生命周期控制**：模型路由方向反转（默认 tier_0 免费→质量不达标才升级）+ Batch 路由（非实时任务自动走 Batch API 享 50% 折扣）；六级降级链新增 L1.5 沉没成本干预 + 预算耗尽用户沟通协议；新增 Stream Abort Guard（流式输出中途每 500 token 预算二次确认 + 部分响应保存）；新增 Output Quality Gate（前 200/300 token 快速质量校验——格式/相关性/幻觉）；新增 ENV Profile（dev/staging/prod 三套预算策略——dev 永远锁在免费模型）；新增 Agent 级子池隔离（per-agent sub-pool——防止失控 Agent 烧掉全部预算）；新增 Budget Policy Sandbox（dry-run 模拟 4 场景 + Policy Versioning/回滚/diff）；新增新模型自动发现（LiteLLM sync 检测 + 自动评估 + 周摘要置顶）；新增上下文浪费检测（sent vs referenced 比例）；新增 Outcome 维度成本归因（成功/失败/部分分离 + LLM-as-Judge 独立核算）；新增 Provider Token 归一化（cl100k_base 基准）；新增 Rate Limit 浪费追踪 + Distribution Shift 结构异常检测；新增冷启动成本豁免 + 自托管模型成本模型 + 数据生命周期管理 + 第三方 API Passthrough 聚合；跨模块联动扩展（Output Validator/任务系统/LiteLLM Registry/Git hook）；风险登记更新 5 条；23 项新增盲点全量补齐 → 共 43 项盲点全量覆盖 |
-| 2026-05-05 | 0.3.0 | **全量重构**：三级→五级预算体系（新增 Request/Turn 级）；新增 Pre-flight Gate 事前拦截门；新增 Model Router（Tier 0→3 成本感知路由+厂商故障切换）；四级→六级降级链（新增模型切换+Kill Switch+成本感知回升+反螺旋）；新增循环检测器（工具调用指纹）；新增语义缓存（Prompt/Tool/Embedding 三层）；新增成本归因（Entity/Tool/Feature 三级+Weekly Showback）；新增 Token ROI 模型；新增 Burn Rate 多窗口监控；新增 Budget Pool 弹性共享；新增厂商价格自动同步；新增计划vs实际消耗偏差校准；Solo Maintainer 特异性优化（自学习阈值/自静默告警/周自动摘要）；Budget Policy as Code（独立 YAML）；软硬双轨阈值分离；20 项盲点全量补齐 |
-| 2026-05-05 | 0.2.0 | 决策写入：D-024-01 四级自动降级；成本审计改为 JSONL |
-| 2026-05-05 | 0.1.0 | 初始创建——三级预算体系 + 降级策略 + 预算执行器 |
+| 版本 | 关键变更 | 盲点数 |
+|------|---------|:------:|
+| 0.7.0 | Trust Rings(0-3) + Tamper-Evident hash chain + IPI Defense + Fail-Mode Spec + Bootstrapping Calibration + Adversarial Testing | 78 |
+| 0.6.0 | Self-Budget + Spiral EWS + Poison Cascade + Parent-Child Attribution + Think-Time Model + LLM-Free Guard 升级路径 | 68 |
+| 0.5.0 | 三维(Token/Cost/Time) + Timeout Guard + Action History Dedup + Instruction Bloat + Conversation Tax + 跨Session储蓄 | 56 |
+| 0.4.0 | 模型路由反转 + Stream Abort + Output Quality Gate + ENV Profile + Agent子池 + Policy Sandbox + 新模型发现 | 43 |
+| 0.3.0 | 五级预算 + Pre-flight Gate + Model Router + 六级降级 + 语义缓存 + 成本归因 + Burn Rate + Budget Pool | 20 |
+| 0.2.0 | D-024-01 四级自动降级 + JSONL审计 | — |
+| 0.1.0 | 三级预算体系 + 降级策略 | — |
 
 
 ---
@@ -1703,6 +1402,6 @@ solo_maintainer_optimizations:
 | 源码路径 | `src/zephyr/budget_enforcer/ (8 文件) + governance/budget_enforcer/ (3 文件)` |
 | 源码文件数 | **11 个 .py**（蓝图 §4 计划 31 文件，完成率 **35.5%** ← 修复前 22.6%） |
 | 新增 P1 模块 | `budget_tracker.py`, `degradation_manager.py`, `model_router.py`, `timeout_guard.py` |
-| 配置文件 | `config/capacity/token_budget.yaml`（Capacity Assurance SSoT）+ ✅ `config/budget_policy.yaml`（Budget Policy SSoT 种子版 v0.1.0-seed） |
+| 配置文件 | `config/capacity/token_budget.yaml`（Capacity Assurance——**deprecated，SSoT 已迁移至 024**）+ ✅ `config/budget_policy.yaml`（Budget Policy SSoT 种子版 v0.1.0-seed） |
 | 门禁 | ✅ GCT-024 `gates/gct_024_budget_enforcer.yaml`（7 checks: 硬4 + 软2 + info1） |
 | 关键入口 | `governance/budget_enforcer/alerts.py` |

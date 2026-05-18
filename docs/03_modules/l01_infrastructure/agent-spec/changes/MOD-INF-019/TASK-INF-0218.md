@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0218
 task_title: "§20第十五轮审计-LLM Gateway+Vibe Coding Gate+Skill Construction+Skill Package + D-019-78~81"
 parent_ticket: TASK-INF-0217
@@ -43,7 +44,9 @@ rollback_instructions: "批量回退4个Python文件"
 context_assembly_manifest:
   blueprint_content: "§20 第十五轮审计——实施落地层4小节: LLM Gateway(B150) + Vibe Coding Quality Gate(B151) + Skill Construction Reliability(B152) + Skill Package(B153)"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0218: 第十五轮审计盲点关闭
 

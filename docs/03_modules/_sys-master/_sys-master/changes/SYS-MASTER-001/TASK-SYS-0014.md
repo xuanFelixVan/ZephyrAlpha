@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0014"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§19 模型风险管理 MR101-MR113"
@@ -77,4 +78,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

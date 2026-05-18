@@ -1,11 +1,14 @@
 ---
+
 doc_type: index
 status: active
 title: "semantic-auditor — 目录索引"
 version: "1.0.0"
 created: "2026-05-08"
 updated: "2026-05-08"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # semantic-auditor
 

@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-INF-0220"
 source_blueprint: "MOD-INF-020"
 source_section: "蓝图 §2.15 AI 自身安全性——Prompt Injection 防护（决策 D-020-31）"
@@ -9,7 +10,10 @@ description: |
   1. `step_1_strip_instructions`: Unicode 转义 AI 指令关键词——ignore/disregard/override/bypass/system:/assistant:/user:
   2. `step_2_semantic_sandbox`: 条目包裹 [AUDIT_ENTRY_START]...[AUDIT_ENTRY_END]
   3. `step_3_length_limit`: 每条 entry 截断至 500 chars
-  4. `forbidden_patterns`: 检测并转义 --- / === / ``` / system:/assistant:/user: 前缀 / <function_call> / <invoke>
+  4. `forbidden_patterns`: 检测并转义
+blueprint_id: DOM-GOV-001
+---
+ / === / ``` / system:/assistant:/user: 前缀 / <function_call> / <invoke>
   5. `audit_self_defense`: injection 检测 → ANM-015 标记 + 自动脱毒
   6. `unicode_normalization`: NFKC 归一化防止同形字绕过（Cyrillic "і" 等）
   在 query.py 的 trail_for_ai_context() 中集成——任何 AI 读取审计数据前强制净化。

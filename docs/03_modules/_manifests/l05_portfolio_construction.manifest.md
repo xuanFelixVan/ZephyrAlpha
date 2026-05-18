@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # l05_portfolio_construction/ 文件清单（自动生成 2026-05-09）
 
 总计: 5 个文件

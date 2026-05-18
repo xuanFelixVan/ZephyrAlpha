@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # MOD-INF-010 Feedback Loop Engine — CHANGELOG
 
 ## v0.33.0 (2026-05-07)

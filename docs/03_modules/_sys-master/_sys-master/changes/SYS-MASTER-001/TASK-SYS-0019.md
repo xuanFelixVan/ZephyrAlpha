@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0019"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§26 可观测性仪表板 + §27 性能基线 + §89 DORA指标"
@@ -72,4 +73,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

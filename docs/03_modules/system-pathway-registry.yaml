@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # ============================================================================
 # ZephyrAlpha 全系统路径地图 — 唯一真源（System Pathway Registry SSoT）
 # ============================================================================
@@ -168,11 +175,11 @@ pathways:
     name: "system-telemetry"
     layer: "L12"
     blueprint: "docs/03_modules/l01_infrastructure/system-telemetry/blueprint.md"
-    source_dir: "src/zephyr/l12_system_telemetry/"
+    source_dir: "src/zephyr/system_telemetry/"
     test_dir: "tests/unit/l12/"
     config: "config/telemetry/"
     status: "implemented"
-    note: "可观测性蓝图真源为 MOD-INF-015（system-telemetry）；源码在 l12_system_telemetry/"
+    note: "可观测性蓝图真源为 MOD-INF-015（system-telemetry）；源码在 system_telemetry/"
 
   - module_id: "MOD-L13-001"
     name: "experimentation"
@@ -308,8 +315,8 @@ pathways:
     name: "resource-optimization-engine"
     layer: "cross_layer"
     blueprint: "docs/03_modules/_cross_layer/resource-optimization-engine/blueprint.md"
-    source_dir: "src/zephyr/shared/lifecycle/"
-    interface_file: "src/zephyr/shared/lifecycle/resource_optimization_engine.py"
+    source_dir: "src/zephyr/lifecycle_manager/"
+    interface_file: "src/zephyr/lifecycle_manager/resource_optimization_engine.py"
     test_dir: "tests/unit/resource_optimization/"
     config: "config/resource_optimization.yaml"
     status: "not_started"

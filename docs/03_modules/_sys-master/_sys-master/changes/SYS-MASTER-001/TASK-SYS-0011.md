@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0011"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§16 FMEA 故障模式分析 + §99 沉默故障聚合评分(AFS)"
@@ -69,4 +70,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

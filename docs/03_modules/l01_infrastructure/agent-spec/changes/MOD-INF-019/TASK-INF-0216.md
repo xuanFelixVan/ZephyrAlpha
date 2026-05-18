@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0216
 task_title: "§17-§18第十二三轮审计-MerkleAudit+Watermarking+Geofence+GreenScheduling+Topology+BCDR+WellKnownDiscovery+SchemaRegistry+NFR+Glossary + D-019-59~70"
 parent_ticket: TASK-INF-0215
@@ -65,7 +66,9 @@ rollback_instructions: "批量回退10个Python文件"
 context_assembly_manifest:
   blueprint_content: "§17(4小节: Merkle/Watemarking/Geofence/GreenScheduling) + §18(5小节: Topology/BCDR/WellKnown/Schema/NFR+Glossary)"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0216: 第十二十三轮审计盲点关闭
 

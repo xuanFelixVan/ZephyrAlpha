@@ -1,40 +1,103 @@
 ---
 module_id: "MOD-INF-016"
-title: "Shared + Core 蓝图 — 跨层共享基础设施"
+title: "Shared+Core 蓝图"
 doc_type: blueprint
 status: Active
-version: "0.15.0"
+version: "0.18.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
 date: "2026-05-03"
+last_updated: "2026-05-17"
 valid_from: "2026-05-03"
 ttl: permanent
 construction_progress: completed
+actual_disk_path: "src/zephyr/shared/ + src/zephyr/core/"
 belongs_to: "MOD-MASTER-001"
-summary: "ZephyrAlpha Shared + Core 蓝图 v0.15.0——Shared: 跨层数据契约 + Task基座（31字段） + 事件总线 + 能力定义 + 内容指纹 + DOS启动器 + 路径/时间/Token/Frontmatter SSoT + API索引 + 统一错误层次 + 枚举集中re-export + 事件体Schema + 韧性基座(重试/熔断/降级) + 生命周期钩子 + FeatureFlag + 类型别名 + diff/patch工具 + 安全文件操作(原子写/备份/rollback) + 配置加载校验 + 结构化日志(ZephyrLogger/trace_id传播) + AI快速参考(SHARED-QUICKREF) + 测试夹具/工厂(testing) + Schema迁移系统(migration) + API废弃策略(deprecation) + 死信队列(dlq) + 版本协商(__version__) + 健康聚合(health) + 统一序列化(serialization) + API Client基类(api_client) + Secrets管理(secrets) + 缓存抽象(cache) + 速率限制器(limiter) + 幂等性(idempotency) + 上下文传播(context) + Metrics收集(metrics) + 分页工具(pagination) + 时间工具(time_utils) + 环境检测(env) + 分布式锁(lock) + Outbox模式(outbox) + Schema Registry(schema_registry) + 蓝图路由评分(blueprint_scorer) + 全部10个early-bird已落盘已测试已审计(cost_budget/context_budget/evals/session_audit/durable_execution/post_process/constitutional_update/multi_agent/skill_registry/version_negotiation)。Core: BlueprintDecomposer + models.py v0.3.0（继承Task 31字段全链路贯通）。2 子系统 61 已跟踪文件已落盘（49 Phase 0-10 + 10 Phase 11-14 已测试 + 2 core）+ 44 orphan 已分类注册（3在§5.1 + 41在§5.1b）。施工 Phase 1-14 完成 + 测试完成。TD-SHARED-001（34对发散副本）已全部解决为 re-export wrapper。8轮审计 + 1轮红队对抗审计（48对抗测试全通过含A11孤儿链验证）。544 全量测试通过。"
-tags: [shared, core, cross-layer, contracts, ssot-guard, event-bus, blueprint-decomposer, infrastructure, v0.14.0, production-ready, phase-10-complete, audit-complete, blueprint-complete]
-priority: P1
+summary: "跨层共享基础设施，115+已跟踪文件，Shared 59 + Core 60 .py + ProcessLifecycleGateway (已实现)"
+tags: [shared, core, cross-layer, contracts, ssot-guard, event-bus, blueprint-decomposer, infrastructure, v0.17.0]
+priority: P0
+codification_level: L2
+last_verified: "2026-05-14"
+codification_at: "2026-05-15"
+generation: 2
+functional_domain: operations
+parent_module: ""
+rule_form: structural
+scope: global
+stability: evolving
+verifiability: hybrid
+references: []
 depends_on:
-  - {target: "architecture-model/layers/b_shared.yaml", at: "全篇", why: "Shared YAML SSoT——本蓝图真源"}
-  - {target: "architecture-model/layers/b_core.yaml", at: "全篇", why: "Core YAML SSoT——本蓝图真源"}
+  - {target: "architecture-model/layers/b_shared.yaml", at: "全篇", why: "Shared YAML SSoT"}
+  - {target: "architecture-model/layers/b_core.yaml", at: "全篇", why: "Core YAML SSoT"}
+  - {target: "MOD-INF-008", at: "blueprint.md", why: "Context Engine 消费 Shared 模型"}
+  - {target: "MOD-INF-003", at: "blueprint.md", why: "Script System 消费 Shared ProcessPoolManager"}
+  - {target: "MOD-INF-007", at: "blueprint.md", why: "Gate Engine 消费 Shared AsyncObserver"}
+  - {target: "MOD-INF-009", at: "blueprint.md", why: "Pipeline 消费 Shared 分层限流+PriorityLock"}
 ---
 
-# Shared + Core 蓝图
+# Shared Core 蓝图 — 跨层共享基础设施：事件总线/配置/缓存/限流/契约
 
-> **module_id**: MOD-INF-016 | **version**: 0.14.0 | **status**: active | **layer**: cross_layer
+> module_id: MOD-INF-016 | version: 0.18.0 | status: Active | layer: cross_layer
+> actual_disk_path: src/zephyr/shared/ + src/zephyr/core/ | generation: 2 | construction_progress: completed
+>
+> **SSoT 声明**: Shared canon SSoT 为 [b_shared.yaml](file:///D:/ZephyrAlpha/architecture-model/layers/b_shared.yaml)；Core canon SSoT 为 [b_core.yaml](file:///D:/ZephyrAlpha/architecture-model/layers/b_core.yaml)。Shared + Core 合并为单一蓝图（均为跨层基础设施，体积较小）。
 
-> **真源声明**：Shared canon SSoT 为 [b_shared.yaml](file:///D:/ZephyrAlpha/architecture-model/layers/b_shared.yaml)；
-> Core canon SSoT 为 [b_core.yaml](file:///D:/ZephyrAlpha/architecture-model/layers/b_core.yaml)。
-> Shared + Core 合并为一个蓝图（两者均为跨层基础设施，且体积较小）。
+**负向责任**：不涉及应用层业务逻辑 / GUI 渲染 / 外部 API 集成 / 数据库 Schema 设计（→ MOD-INF-012）。
 
-> **对标**：Google Monorepo `shared/` 模式 + DDD Shared Kernel（跨限界上下文共享领域模型）。
+**触发**：EventBus 集成 → §2.2；配置管理 → §2.6；缓存策略 → Phase 8；限流配置 → Phase 8；契约定义 → §2.1。
+
+## 概述
+
+本蓝图描述 Shared Core——ZephyrAlpha 跨层共享基础设施层，为所有模块提供 EventBus、配置中心、缓存层、限流器、幂等守卫、契约总线等 18 项基础组件。通过 daemon_registry 统一管理守护线程生命周期。当前 115+ 文件覆盖 shared/ 和 core/ 两目录，目标支撑 1,500 模块规模。被 AutoRuntime Core（MOD-INF-035）和资源优化引擎（MOD-INF-032）等上游消费。
+
+> **标准锚点**：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md) | [压缩工作流标准](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/compression-workflow-standard.md) | [code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
 
 ---
 
-## 1. 概述
+## §0 代码对齐验证
+
+> ⚠️ 防止 construction_progress 与实际代码不符。
+> 每次蓝图版本变更后**必须**重新填写此表。
+> **位置说明**：§0 放在概述之后——AI 进入蓝图先建立心理模型（概述），再确认文件现状（§0），再理解设计（§1-§15）。
+
+### §0.1 代码文件清单
+
+> 列出蓝图描述的**所有代码文件**。此清单 = 代码目录下的实际文件列表。
+> AI 施工者按此清单创建文件，审计者按此清单验证对齐。
+> **存在性状态受控词表**：`未实现` / `已实现` / `已阻塞` / `已废弃`
+
+| # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
+|---|--------|------------|------|:---:|-------------------|
+| 1 | shared/ (215 files) | §2 | 跨层共享基础设施 | 已实现 | |
+| 2 | core/ (60 files) | §3 | 核心模块 | 已实现 | |
+| 3 | shared/infra/process_lifecycle_gateway.py | §2.10 | 进程生命周期统一入口网关 | 已实现 | |
+| 4 | gates/invariants/en_process_lifecycle_gateway.py | §2.10 | 进程创建入口校验门禁 (AST 扫描) | 已实现 | |
+
+### §0.2 对齐验证矩阵
+
+> 每次蓝图版本升级后填写。验证 construction_progress 是否与代码实际状态一致。
+
+| 验证项 | 验证方法 | 结果 |
+|--------|---------|:---:|
+| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/shared/ src/zephyr/core/` | ☐ |
+| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☐ |
+| actual_disk_path 与 §11 产出物路径一致 | 路径核对 | ☐ |
+
+### §0.3 版本-代码映射
+
+> 记录蓝图版本与代码实现的对应关系。
+
+| 蓝图版本 | 代码覆盖范围 | 状态 |
+|---------|------------|:---:|
+| v0.17.0 | 115 已跟踪文件 + 109 shared子目录 + 53 core子目录 | ✅ |
+
+---
+
+## §1 设计背景与目标
 
 | 属性 | 值 |
 |------|-----|
@@ -42,6 +105,16 @@ depends_on:
 | 涵盖 | Shared (`src/zephyr/shared/`) + Core (`src/zephyr/core/`) |
 | 文件数 | Shared 49 文件(Phase 0-10 已审计) + 10 early-bird(Phase 11-14) + Core 2 文件 = 61 已跟踪文件（另有 ~43 orphan 待分类） |
 | 核心职责 | 提供所有系统共用的数据模型、基础设施、工具函数 |
+
+### 运行场景约束
+
+| 约束 | 影响 |
+|------|------|
+| 单机部署：i7-12700KF（12C20T）/ 64GB RAM / RTX 3090 24GB / 1TB NVMe SSD | 所有容量设计基于单机，不支持水平扩展 |
+| Python 3.12+ + Pydantic V2 | 所有数据模型必须继承 BaseModel，禁止 dataclass |
+| SQLite 单写者锁 | 写入串行化，需 WriteBatcher 批量合并 |
+| 100 AI 并发稳态 | 共享组件必须支持 100 并发读写 |
+| 1,500 模块 / 10,000 脚本目标容量 | 注册表和索引必须支持 O(1) 或 O(log N) 查询 |
 
 ---
 
@@ -60,6 +133,7 @@ depends_on:
 | §2.7 | 通用工具（utilities） | 类型别名 + diff/patch + 文件操作 + 常量 + FeatureFlag + 能力 + API索引 + 错误层次 + 枚举 + 日志 + SHARED-QUICKREF + 测试夹具 + Schema迁移 + 废弃策略 + 版本协商 + 健康聚合 | 24 |
 | §2.8 | 生产基础设施（production） | 序列化 + API Client + Secrets + 缓存 + 速率限制 + 幂等性 + 上下文 + Metrics + 分页 + 时间工具 + 环境检测 + 分布式锁 + Outbox + Schema Registry | 14 |
 | §2.9 | AI 专属基础设施（planned） | AI 成本预算与熔断 + Token/上下文预算管理 + Evals 框架 + Durable Execution + 后处理管道 + Session 审计轨迹 + Multi-Agent 编排 + Skill/Prompt 注册表 + Model Provider 抽象 + 上下文压缩 + 输出质量评分 + 宪法自更新 + DI 容器 + 代码沙箱 + 配置覆盖链 | 0（待施工） |
+| §2.10 | 进程生命周期网关（shared-infra） | ProcessLifecycleGateway — 统一进程创建入口 + idle_timeout 空闲回收 + DaemonRegistry 自动注册 + Gate 防绕过 | 2（已实现） |
 
 ### 2.1 shared-contracts（跨层数据契约）
 
@@ -158,14 +232,105 @@ depends_on:
 | `file_utils.py` | **atomic_write + backup_and_rollback**——POSIX 原子写入 + 自动备份回滚 |
 | `config/loader.py` | **load_yaml_config + Pydantic 校验**——三段式 YAML 加载（parse→merge→validate）|
 
----
+### 2.10 shared-process-lifecycle（进程生命周期网关）
 
-## 3. Core 模块（1 子模块, 2 文件）
+> ProcessLifecycleGateway — 统一进程创建入口 + idle_timeout 空闲回收 + DaemonRegistry 自动注册 + Gate 防绕过。
+> 设计根因: 裸 Popen/Process 绕过 MCPProcessPool 导致进程泄漏。
+> 依赖图: [DEP-GRAPH-process-lifecycle-001](file:///D:/ZephyrAlpha/data/asset_index/DEP-GRAPH-process-lifecycle-001.yaml)
 
 | 文件 | 职责 |
 |------|------|
-| `blueprint_decomposer.py` | 蓝图分解器——蓝图.md → 多个 TaskCard |
-| `models.py` | 核心数据模型 v0.3.0——继承 schemas.py Task（31字段：28业务+3 DB追踪），全链路贯通 |
+| `infra/process_lifecycle_gateway.py` | **ProcessLifecycleGateway** — launch() 启动子进程 (通过 ProcessPool) / launch_daemon() 启动后台进程 (通过 ProcessPool + DaemonRegistry) / terminate_all() 关闭所有池中进程。强制入口：所有 subprocess.Popen / multiprocessing.Process 必须经过此网关 |
+| `gates/invariants/en_process_lifecycle_gateway.py` | **进程创建入口校验门禁** — AST 扫描检测裸 subprocess.Popen/multiprocessing.Process 调用，CI 阻断 |
+
+**ProcessPool 增强** (modify existing `process_pool.py`):
+
+| 新增功能 | 说明 |
+|---------|------|
+| `idle_timeout_s` (默认 600s) | 空闲超时自动回收——自上次 get_or_create 后无复用超时则 terminate |
+| DaemonRegistry 集成 | 每个池化进程启动/回收时自动注册/注销到 DaemonRegistry |
+| `launch_daemon()` | 新增接口——启动 daemon 进程并注册到 DaemonRegistry |
+
+**不变量**:
+- 所有子进程创建必须经过 ProcessLifecycleGateway（Gate 门禁校验）
+- 所有池化进程 idle_timeout_s 后必须被回收
+- 所有池化进程必须在 DaemonRegistry 中注册
+- Gateway 本身不持有业务逻辑——只做路由和生命周期管理
+
+**消费者**: AutoRuntimeCore (ollama serve 启动) / MCPLauncher (MCP Server DAG 启动)
+
+---
+
+## §3 架构设计
+
+### 3.1 组件架构
+
+| # | 组件 | 职责 | 依赖 | 交互方式 |
+|---|------|------|------|---------|
+| 1 | shared/contracts | 跨层数据契约 SSoT | — | 同步调用 |
+| 2 | shared/events | 异步事件总线 | contracts | 发布/订阅 |
+| 3 | shared/resilience | 韧性基座（重试/熔断/降级） | — | 同步调用 |
+| 4 | shared/infra | 生产基础设施（缓存/限流/锁/Outbox/Metrics） | contracts, events | 同步调用 + 事件 |
+| 5 | core/blueprint_decomposer | 蓝图分解器 | contracts | 同步调用 |
+| 6 | core/event_bus | 核心事件总线 | events | 发布/订阅 |
+| 7 | core/models | Task 核心模型 | contracts | 同步调用 |
+| 8 | shared/infra/process_lifecycle_gateway | 进程生命周期统一入口 | ProcessPool, DaemonRegistry | 同步调用 + 注册 |
+
+### 3.2 数据流
+
+| # | 上游 | 处理逻辑 | 下游 | 数据格式 |
+|---|--------|---------|---------|---------|
+| 1 | 业务模块 | Task 创建/状态变更 | shared/schemas → SQLite | Task Pydantic Model |
+| 2 | 业务模块 | 事件发布 | shared/observer → outbox → 消费者 | EventSchema Pydantic Model |
+| 3 | AI Session | 缓存查询 | shared/cache (L1→L2→DB) | pickle / dict |
+| 4 | AI Session | 限流请求 | shared/limiter → cost_budget | TokenBucket 状态 |
+| 5 | 所有模块 | 日志写入 | shared/logging → JSONL 文件 | JSON 日志 |
+| 6 | AutoRuntimeCore/MCPLauncher | 进程启动请求 | ProcessLifecycleGateway → ProcessPool → subprocess | 进程句柄 + pid |
+| 7 | ProcessPool | 空闲超时回收 | ProcessLifecycleGateway → DaemonRegistry 注销 | 进程终止信号 |
+
+### 3.3 状态生命周期
+
+| 当前状态 | 触发事件 | 目标状态 | 守卫条件 |
+|---------|---------|---------|---------|
+| CircuitBreaker CLOSED | 失败率 > 阈值 | OPEN | 失败计数 ≥ min_requests |
+| CircuitBreaker OPEN | 超时到期 | HALF_OPEN | timeout 已过 |
+| CircuitBreaker HALF_OPEN | 探测成功 | CLOSED | 成功计数 ≥ success_threshold |
+| CircuitBreaker HALF_OPEN | 探测失败 | OPEN | 失败计数 ≥ 1 |
+| Task PENDING | 调度器分配 | RUNNING | 资源可用 |
+| Task RUNNING | 执行完成 | COMPLETED | 结果非空 |
+| Task RUNNING | 执行失败 | FAILED | 异常非空 |
+| IdempotencyKey IN_PROGRESS | 超时 30min | ABANDONED | 超过 max_execution_time |
+
+---
+
+## 3. Core 模块（16 子目录, 60 文件）
+
+> actual_disk_path: `src/zephyr/core/`（60 个 .py 文件：7 根目录 + 53 子目录）
+> construction_progress: 60/60 文件已落盘（根目录 7 文件 phase_0_14_complete，子目录 36 功能文件 early-bird，16 __init__.py 自动生成）
+
+### 3.1 core/ 文件蓝图归属表
+
+| 子目录 | 文件数 | 蓝图归属 | 施工程度 | 关键文件 |
+|--------|:---:|---------|:---:|------|
+| *(root)* | 7 | MOD-INF-016 | ✅ | `blueprint_decomposer`, `models` v0.3.0, `context_engine`, `healthcheck_service` |
+| adaptation/ | 3 | MOD-INF-016 | ✨ | `execution_tuner`, `prompt_version_manager` |
+| compensation/ | 2 | MOD-INF-016 | ✨ | `saga_compensator` |
+| dependency/ | 2 | MOD-INF-016 | ✨ | `dependency_graph` |
+| draft/ | 2 | MOD-INF-016 | ✨ | `draft_assistant` |
+| events/ | 5 | MOD-INF-016 | ✨ | `event_bus`, `event_reactor`, `event_store`, `hook_dispatcher` |
+| impact/ | 3 | MOD-INF-016 | ✨ | `impact_propagator`, `llm_impact_analyzer` |
+| knowledge/ | 4 | MOD-INF-016 | ✨ | `ke_linker`, `ke_structurer`, `kms_interface` |
+| lifecycle/ | 3 | MOD-INF-016 | ✨ | `scope_guard`, `task_lifecycle_manager` |
+| maintenance/ | 5 | MOD-INF-016 | ✨ | `autonomy_monitor`, `dogfooding`, `handbook`, `zero_config` |
+| observability/ | 6 | MOD-INF-016 | ✨ | `cli_summary`, `cost_tracker`, `failure_matcher`, `notifier`, `trace_decorator` |
+| quality/ | 2 | MOD-INF-016 | ✨ | `quality_monitor` |
+| queue/ | 3 | MOD-INF-016 | ✨ | `task_queue`, `task_scheduler` |
+| reliability/ | 5 | MOD-INF-016 | ✨ | `circuit_breaker`, `context_guard`, `diff_planner`, `retry_handler` |
+| session/ | 3 | MOD-INF-016 | ✨ | `session_boundary`, `session_continuity` |
+| sla/ | 2 | MOD-INF-016 | ✨ | `sla_monitor` |
+| sync/ | 2 | MOD-INF-016 | ✨ | `blueprint_code_sync` |
+
+> ✅ = phase_0_14_complete | ✨ = early-bird（已落盘已导入，缺单元测试）
 
 ---
 
@@ -226,7 +391,7 @@ depends_on:
 | `src/zephyr/shared/resilience/retry.py` | ✅ 已实现 | Phase 2 新增：async_retry 重试装饰器 |
 | `src/zephyr/shared/resilience/circuit_breaker.py` | ✅ 已实现 | Phase 2 新增：轻量熔断器三态状态机 |
 | `src/zephyr/shared/resilience/fallback.py` | ✅ 已实现 | Phase 2 新增：FallbackChain 降级策略链 |
-| `src/zephyr/shared/lifecycle/hooks.py` | ✅ 已实现 | Phase 2 新增：模块生命周期钩子 + 健康检查 |
+| `src/zephyr/lifecycle_manager/hooks.py` | ✅ 已实现 | Phase 2 新增：模块生命周期钩子 + 健康检查 |
 | `src/zephyr/shared/flags.py` | ✅ 已实现 | Phase 2 新增：FeatureFlag 功能开关系统 |
 | `src/zephyr/shared/types.py` | ✅ 已实现 | Phase 3 新增：13 个语义化 NewType |
 | `src/zephyr/shared/diff_utils.py` | ✅ 已实现 | Phase 3 新增：diff/patch 统一工具 |
@@ -416,6 +581,8 @@ depends_on:
 | Shared 代码 | `D:\ZephyrAlpha\src\zephyr\shared\` | 跨层共享模型/工具 |
 | Core 代码 | `D:\ZephyrAlpha\src\zephyr\core\` | 核心基础设施 |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\test_shared.py` + `test_core.py` | 单元测试 |
+| 契约基础框架 | `D:\ZephyrAlpha\src\zephyr\shared\contracts\core\base_event.py` + `enforcer.py` + `factories.py` + `registry.py` + `system_configuration.py` | 契约基类/执行器/工厂/注册表/系统配置（5个核心契约，★标记于§5.1a-core） |
+| 外部集成契约 | `D:\ZephyrAlpha\src\zephyr\shared\contracts\external\ext_001.py` ~ `ext_004.py` | 4个外部系统集成契约（★标记于§5.1a） |
 
 ---
 
@@ -466,6 +633,8 @@ depends_on:
 > 修改 `__version__.py` → 影响 **所有调用 check_shared_version() 的模块**。版本号递增安全，格式变更谨慎。
 > 修改 `health.py` 的 HealthStatus 枚举 → 影响 **所有 health check consumer**。新增状态值安全，删除/重命名谨慎。
 
+**漂移防护**：修改 Shared Core 接口 MUST 同步更新所有消费者蓝图的 depends_on（§7.1 表）；新增 shared/ 模块 MUST 更新 API_INDEX.py + SHARED-QUICKREF.yml + §5 文件清单；修改 schemas.py Task 31字段 MUST 更新 test_schema_stability.py 快照。
+
 ---
 
 ## 8. 需要更新的相关内容
@@ -477,27 +646,119 @@ depends_on:
 
 ---
 
-## 9. 已知风险与缓解
+## §6 错误处理
 
-| # | 风险 | 概率 | 影响 | 缓解策略 |
-|---|------|:---:|:---:|---------|
-| R1 | models.py 膨胀——所有模块的共享模型集中在一个文件 | 高 | 中 | 按域拆分：models_rbac.py / models_audit.py / models_task.py |
-| R2 | 循环依赖——shared ↔ core ↔ 业务模块 | 中 | 高 | 依赖方向严格单向：业务 → shared → core |
-| R3 | ~~models.py v0.3.0 破坏性变更——影响所有模块~~ | ~~中~~ | ~~高~~ | ✅ 已解决——v0.4.0 TaskCard 继承 Task 31字段全链路贯通，零破坏 |
+| # | 异常场景 | 检测方式 | 恢复策略 | 影响范围 |
+|---|---------|---------|---------|---------|
+| 1 | SQLite 写入拥塞（SQLITE_BUSY） | busy_timeout > 5s | WriteBatcher 批量合并 + 降级为内存队列 | 所有持久化操作 |
+| 2 | CircuitBreaker 熔断触发 | 失败率 > 阈值 | FallbackChain 降级 + 半开探测 | 依赖该外部服务的所有 Session |
+| 3 | Cache L2 命中率 < 50% | 监控指标 | 降级为仅 L1 + 关键查询走 DB 直连 | 上下文注入、蓝图查询 |
+| 4 | PriorityLock 死锁 | 等待 > 60s | DeadWorkerReaper 强制释放 + TTL 30min | 所有持锁操作 |
+| 5 | Outbox 积压 > 5,000 | pending 队列监控 | 背压拒绝新 append + fire-and-forget 降级 | 事件通知延迟 |
+| 6 | Worker 进程崩溃 | 心跳超时 30s | Controller 重启 Worker + 清理共享状态 | 该 Worker 上的所有任务 |
+| 7 | IdempotencyKey IN_PROGRESS 超时 | 超过 max_execution_time 30min | IdempotencyJanitor 标记 ABANDONED | 相同 idempotency_key 的后续请求 |
+| 8 | LLM API Rate Limit (429) | HTTP 状态码 | limiter.py 分区限流 + 指数退避重试 | 所有 LLM API 调用 |
 
 ---
 
-## 10. 后果（Consequences）
+---
 
-**正面后果**：
-- 统一模型定义——所有模块共享同一套 Pydantic 模型，消除类型不一致
-- 事件总线——模块间松耦合通信
-- 核心基础设施复用——避免每个模块重复实现
+## §8 安全考量
 
-**负面后果**：
-- shared 模块成为依赖瓶颈——修改 models.py 影响所有模块
-- 循环依赖风险——如果依赖方向不严格
-- 迁移成本——models.py 破坏性变更需要全项目适配
+| # | 威胁 | 影响 | 缓解措施 | 验证方式 |
+|---|------|------|---------|---------|
+| 1 | API Key 泄露 | 高 | secrets.py 环境变量/DotEnv Provider + sanitize 脱敏 | `scan_secret_leak.py` 扫描 |
+| 2 | SQL 注入 | 高 | Pydantic V2 参数化 + ORM 模式，禁止字符串拼接 | 代码审计 + 静态分析 |
+| 3 | 路径遍历 | 中 | paths.py SSoT 路径常量 + file_utils 路径校验 | 边界测试 |
+| 4 | 竞态条件（锁/幂等性） | 中 | PriorityLock TTL + IdempotencyKey 超时清理 | 并发压力测试 |
+| 5 | 日志敏感数据泄露 | 中 | ZephyrLogger 自动脱敏 + secrets.py sanitize | 日志审计 |
+
+---
+
+## §9 测试策略
+
+| # | 测试类型 | 覆盖范围 | 关键测试用例 | 通过标准 |
+|---|---------|---------|------------|---------|
+| 1 | 单元测试 | shared/ 所有公开类和函数 | Task 31字段创建/校验、Cache CRUD、Limiter 限流、Lock acquire/release、Idempotency start/complete | 覆盖率 > 80% |
+| 2 | 契约测试 | 跨模块 import 链 | 6 消费者导入验证 + Schema 稳定性快照 | 29/29 通过 |
+| 3 | 性能测试 | cache/limiter/serializer | P50/P95/P99 延迟对比基线 | 退化 < 10% |
+| 4 | 并发测试 | lock/observer/outbox/idempotency | 100 并发读写压力测试 | 无死锁、无数据丢失 |
+| 5 | 集成测试 | shared ↔ core ↔ 业务模块 | 端到端 Task 生命周期 | 全链路通过 |
+
+---
+
+## §10 依赖关系
+
+### 10.1 依赖声明
+
+> 详细消费者依赖索引见 [§7.1 反向依赖索引](#71-反向依赖索引--谁依赖-sharedcore)——12 消费者模块全部 traced。
+> 关键依赖：MOD-INF-008(Context Engine), MOD-INF-009(Pipeline), MOD-INF-007(Gate Engine), MOD-INF-012(Database), MOD-INF-002(Runtime Integration)。
+
+### 10.2 依赖图对齐声明
+
+> 蓝图 §10.1 声明的依赖 MUST 与全局依赖图一致。
+
+| # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
+|---|--------|---------|:-------:|---------|
+| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-INF-016` |
+| 2 | §11 产出物路径 ↔ 依赖图 §19 path_mappings | 路径一致 | 已对齐 | 同上 |
+| 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | 节点存在 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py` |
+
+### 10.3 内部依赖图
+
+> 全局依赖图只覆盖模块级，不覆盖脚本级。本节补充蓝图内部脚本/模块间的执行顺序和数据流依赖。
+
+#### 执行顺序依赖
+
+> 如无内部依赖，填写"无内部依赖"。
+
+| 上游脚本 | 下游脚本 | 依赖内容 | 验证方式 |
+|---------|---------|---------|---------|
+| — | — | — | — |
+
+#### 数据流依赖
+
+| 生产者 | 消费者 | 数据类型 | 传输方式 |
+|--------|--------|---------|---------|
+| shared/contracts | shared/schemas | Pydantic 数据模型 | 直接 import |
+| shared/events | core/events/event_bus | EventSchema | 发布/订阅 |
+| ProcessLifecycleGateway | ProcessPool | dict[str, PooledProcess] | 直接 import + 复合 |
+| ProcessPool | DaemonRegistry | ProcessLifecycle 注册事件 | 方法调用 |
+
+### 10.4 自动化规格
+
+#### 是否需要自动化
+
+| # | 自动化项 | 是否需要 | 理由 |
+|---|---------|:-------:|------|
+| 1 | 依赖图自动生成 | 否 | 消费者固定，手动维护即可 |
+| 2 | 依赖对齐自动验证 | 是 | 12个消费者，需 CI 门禁 |
+| 3 | 临时时态内容自动清理 | 否 | 施工已完成 |
+| 4 | 施工步骤完成度自动检测 | 否 | 施工已完成 |
+
+#### 如何自动化
+
+| # | 自动化项 | 实现方式 | 现有工具/脚本 | 缺口 |
+|---|---------|---------|-------------|------|
+| 2 | 依赖对齐自动验证 | CI门禁 | `validate_path_alignment.py` | 无 |
+
+#### 触发方式
+
+| # | 自动化项 | 触发方式 | 触发条件 |
+|---|---------|---------|---------|
+| 2 | 依赖对齐自动验证 | CI门禁 | PR提交时 |
+
+---
+
+## §14 已知风险与缓解
+
+| # | 风险/负面后果 | 概率 | 影响 | 缓解策略 | 类型 |
+|---|-------------|:---:|:---:|---------|------|
+| R1 | models.py 膨胀——所有模块的共享模型集中在一个文件 | 高 | 中 | 按域拆分：models_rbac.py / models_audit.py / models_task.py | 风险 |
+| R2 | 循环依赖——shared ↔ core ↔ 业务模块 | 中 | 高 | 依赖方向严格单向：业务 → shared → core | 风险 |
+| R3 | ~~models.py v0.3.0 破坏性变更——影响所有模块~~ | ~~中~~ | ~~高~~ | ✅ 已解决——v0.4.0 TaskCard 继承 Task 31字段全链路贯通，零破坏 | 风险 |
+| R4 | shared 模块成为依赖瓶颈——修改 models.py 影响所有模块；循环依赖风险；models.py 破坏性变更全项目适配成本 | 高 | 高 | §7.1 反向依赖索引 + §17.4 版本兼容性策略 + 消费者通知机制 | 负面后果 |
+| R5 | ProcessLifecycleGateway 单点故障——Gateway 故障导致所有进程无法启动 | 低 | 高 | Gateway 本身轻薄（无业务逻辑，纯路由）+ 启动失败时 fallback 到裸 Popen（带告警日志）+ DaemonRegistry 独立存活 | 风险 |
 
 ---
 
@@ -564,48 +825,23 @@ depends_on:
 
 ### 12.1 盲点总览（15 项，4 个优先级）
 
-| 优先级 | 盲点 ID | 缺失能力 | 对应 Phase | 专业对标 |
-|:---:|:---:|------|:---:|------|
-| 🔴 | B26 | **AI 成本预算与强制熔断**——LLM API 调用无硬性成本限制。Agent 异常循环可在 10 分钟内刷光 $200 配额。`metrics.py` 只有 technical metrics（latency/count），零成本感知 | 11 | AgentBudget、PydanticAI Logfire |
-| 🔴 | B27 | **AI 上下文文件自更新基础设施**——AGENTS.md 是静态的，AI 无法把"犯错-学到"写回宪法。Boris Cherny 的 CLAUDE.md 每周更新多次，所有 AI session 共享学习 | 14 | Claude Code CLAUDE.md、@.claude PR review |
-| 🔴 | B28 | **Token 计数与上下文预算管理**——`token_utils.py` 已存在于 shared/ 但未被 `__init__.py` 导出。缺少上下文配额分配、预算追踪器、超预算截断策略 | 11 | OpenAI tiktoken、LangChain token counter |
-| 🟠 | B29 | **Evals 框架**——有 contract tests（代码正确性），缺 Agent 输出质量系统评估。需要结构化 eval 用例定义、评分 rubrics、回归检测 | 12 | PydanticAI Evals、LangChain eval harness |
-| 🟠 | B30 | **Durable Execution（断点续跑）**——长流程 AI task 可能运行数小时。进程崩溃后从头重跑 → 浪费全部已消耗的 token 和成本 | 13 | PydanticAI Durable Execution、Temporal.io |
-| 🟠 | B31 | **AI 输出后处理管道**——Boris Cherny 的核心技巧：AI 生成代码后自动跑 lint/format/typecheck，修复最后 10% 质量问题 | 13 | Claude Code PostToolUse hooks、pre-commit |
-| 🟠 | B32 | **AI Session 完整审计轨迹**——每次 AI session 的记录（prompts、decisions、tool calls、costs、errors、outcomes）。1人+AI 维护下唯一的学习来源 | 12 | PydanticAI Logfire audit、AgentBudget webhooks |
-| 🟡 | B33 | **Multi-Agent 团队编排基座**——Agent role 定义 + task dispatch + result merge。Boris Cherny 三阶段流水线：Opus 规划→Sonnet 实现→Haiku 验证。**2026 深化**: A2A Protocol v1.0（Google Cloud 发起，50+ 合作伙伴）为生产级 agent-to-agent 通信标准——Agent Card 能力发现 + Task 生命周期 + Signed Agent Cards 密码学验证 | 14 | Claude Code Agent Teams、BridgeSwarm、A2A v1.0 |
-| 🟡 | B34 | **Agent Skill/Prompt 注册表（共享层）**——`prompt_registry.py` 在 `context_engine/` 而非 shared/。共享层应提供通用 PromptTemplate + Skill 注册接口 | 14 | PydanticAI Agent Skills、MCP prompts |
-| 🟡 | B35 | **Model Provider 抽象层**——`api_client.py` 有 HTTP 层统一 client，缺模型语义层（pricing-aware provider、自动 fallback、capability 查询） | 15 | PydanticAI model-agnostic providers、LiteLLM |
-| 🟡 | B36 | **上下文窗口压缩/截断策略**——当上下文接近模型上限时，需智能压缩（摘要旧消息、保留关键决策）。共享层应有 TruncationStrategy 接口 | 15 | LangChain summarization、Claude prompt caching |
-| 🔵 | B37 | **结构化 Agent 输出质量评分**——不仅是"对不对"，而是"好不好"。Relevance/Accuracy/Completeness 三维评分 + 自动回归 | 15 | PydanticAI Evals scoring rubrics |
-| 🔵 | B38 | **配置覆盖链（环境 > YAML > 默认）**——1人+AI 维护时需要清晰的配置优先级 | 15 | Spring Profiles、12-Factor §III |
-| 🔵 | B39 | **依赖注入容器**——AI agent 组件化：constructor injection → 组件可替换 → 测试可隔离 | 15 | Spring DI、FastAPI Depends |
-| 🔵 | B40 | **AI 代码生成沙箱（共享层统一接口）**——`process_sandbox.py` 在 `llm_security/`，shared/ 应有沙箱接口抽象 | 15 | LLMCore sandboxed execution |
-
-### 12.2 关键洞察
-
-| 维度 | 前三轮盲点 (B1-B25) | 本轮盲点 (B26-B40) |
-|------|--------------------|--------------------|
-| **关注层** | 通用软件工程基础设施 | **AI 专属工程基础设施** |
-| **驱动问题** | "这段逻辑是否可观测/可重试/可迁移？" | **"这个 AI agent 的行为是否可预测/可控制/可审计？"** |
-| **对标源** | Google/Netflix/Spring/K8s | **PydanticAI/AgentBudget/Boris Cherny 工作流** |
-| **缺失后果** | 代码质量下降、运维困难 | **成本失控、AI 行为不可预测、session 知识丢失** |
-
-### 12.3 能力成熟度阶梯
-
-```
-Lv.1 软件工程级 (v0.10.0 ✓):   类型安全 + 错误传播 + 韧性 + 可观测性 + 生产基础
-Lv.2 AI 成本可控 (Phase 11):    + B26 成本熔断 + B28 上下文预算
-Lv.3 AI 质量可控 (Phase 12):    + B29 Evals框架 + B32 Session审计
-Lv.4 AI 流程可控 (Phase 13):    + B30 断点续跑 + B31 后处理管道
-Lv.5 AI 团队可控 (Phase 14):    + B27 宪法自愈 + B33 多Agent编排 + B34 Skill注册
-Lv.6 AI 架构可控 (Phase 15):    + B35 Provider抽象 + B36 上下文压缩 + B37 输出评分 + B38 配置链 + B39 DI容器 + B40 沙箱
-Lv.7 AI 溯源可控 (Phase 16):    + B41 AIBOM + B42 Memory Bank
-Lv.8 AI 安全可控 (Phase 17):    + B43 DSPy优化 + B44 StructuredConcurrency + B45 DryRun
-Lv.9 AI 韧性可控 (Phase 18):    + B46 Backpressure + B47 Quota + B48 Degradation + B49 KG + B50 Drift
-Lv.10 AI 安全纵深 (Phase 19):   + B51 注入防御 + B52 结构化输出 + B53 LLM限流
-Lv.11 AI 校验护盾 (Phase 20):   + B54 参数护栏 + B55 缓存策略 + B56 语义降级
-```
+| 优先级 | 盲点 ID | 缺失能力 | 对应 Phase |
+|:---:|:---:|------|:---:|
+| 🔴 | B26 | **AI 成本预算与强制熔断**——LLM API 调用无硬性成本限制。Agent 异常循环可在 10 分钟内刷光 $200 配额 | 11 |
+| 🔴 | B27 | **AI 上下文文件自更新基础设施**——AGENTS.md 是静态的，AI 无法把"犯错-学到"写回宪法 | 14 |
+| 🔴 | B28 | **Token 计数与上下文预算管理**——`token_utils.py` 已存在于 shared/ 但未被 `__init__.py` 导出 | 11 |
+| 🟠 | B29 | **Evals 框架**——有 contract tests（代码正确性），缺 Agent 输出质量系统评估 | 12 |
+| 🟠 | B30 | **Durable Execution（断点续跑）**——长流程 AI task 可能运行数小时。进程崩溃后从头重跑 | 13 |
+| 🟠 | B31 | **AI 输出后处理管道**——AI 生成代码后自动跑 lint/format/typecheck | 13 |
+| 🟠 | B32 | **AI Session 完整审计轨迹**——每次 AI session 的记录（prompts、decisions、tool calls、costs、errors、outcomes） | 12 |
+| 🟡 | B33 | **Multi-Agent 团队编排基座**——Agent role 定义 + task dispatch + result merge | 14 |
+| 🟡 | B34 | **Agent Skill/Prompt 注册表（共享层）**——`prompt_registry.py` 在 `context_engine/` 而非 shared/ | 14 |
+| 🟡 | B35 | **Model Provider 抽象层**——`api_client.py` 有 HTTP 层统一 client，缺模型语义层 | 15 |
+| 🟡 | B36 | **上下文窗口压缩/截断策略**——当上下文接近模型上限时，需智能压缩 | 15 |
+| 🔵 | B37 | **结构化 Agent 输出质量评分**——Relevance/Accuracy/Completeness 三维评分 + 自动回归 | 15 |
+| 🔵 | B38 | **配置覆盖链（环境 > YAML > 默认）**——1人+AI 维护时需要清晰的配置优先级 | 15 |
+| 🔵 | B39 | **依赖注入容器**——AI agent 组件化：constructor injection → 组件可替换 → 测试可隔离 | 15 |
+| 🔵 | B40 | **AI 代码生成沙箱（共享层统一接口）**——`process_sandbox.py` 在 `llm_security/`，shared/ 应有沙箱接口抽象 | 15 |
 
 ---
 
@@ -617,49 +853,38 @@ Lv.11 AI 校验护盾 (Phase 20):   + B54 参数护栏 + B55 缓存策略 + B56 
 
 ### 13.1 盲点总览（10 项）
 
-| 优先级 | 盲点 ID | 缺失能力 | 对应 Phase | 专业对标 |
-|:---:|:---:|------|:---:|------|
-| 🔴 | B41 | **AIBOM — AI 物料清单与代码溯源** | 16 | Cisco AIBOM v0.5.2、Trusera ai-bom v3.6.0、SPDX 3.0 AI 扩展 |
-| 🔴 | B42 | **Memory Bank — Agent 跨会话持久记忆** | 16 | Claude Code auto-memory、Mem0、Memori |
-| 🟠 | B43 | **DSPy 风格声明式 Prompt 优化** | 17 | DSPy 3.0、MIPROv2、BetterTogether |
-| 🟠 | B44 | **Structured Concurrency — 结构化并发** | 17 | anyio.TaskGroup、trio.Nursery |
-| 🟠 | B45 | **Dry-run / Simulation Mode** | 17 | Claude Code /dry-run |
-| 🟡 | B46 | **Backpressure Protocol** | 18 | Reactive Streams、RxPY |
-| 🟡 | B47 | **Quota Management — 资源配额** | 18 | K8s ResourceQuota |
-| 🟡 | B48 | **Graceful Degradation Matrix** | 18 | Netflix Hystrix |
-| 🟡 | B49 | **Knowledge Graph Interface** | 18 | Mem0 Graph Memory、Neo4j |
-| 🟡 | B50 | **Data Drift Detection** | 18 | Evidently AI、NannyML |
+| 优先级 | 盲点 ID | 缺失能力 | 对应 Phase |
+|:---:|:---:|------|:---:|
+| 🔴 | B41 | **AIBOM — AI 物料清单与代码溯源** | 16 |
+| 🔴 | B42 | **Memory Bank — Agent 跨会话持久记忆** | 16 |
+| 🟠 | B43 | **DSPy 风格声明式 Prompt 优化** | 17 |
+| 🟠 | B44 | **Structured Concurrency — 结构化并发** | 17 |
+| 🟠 | B45 | **Dry-run / Simulation Mode** | 17 |
+| 🟡 | B46 | **Backpressure Protocol** | 18 |
+| 🟡 | B47 | **Quota Management — 资源配额** | 18 |
+| 🟡 | B48 | **Graceful Degradation Matrix** | 18 |
+| 🟡 | B49 | **Knowledge Graph Interface** | 18 |
+| 🟡 | B50 | **Data Drift Detection** | 18 |
 
 ---
 
 ## 14. 已发现未修复盲点（第六轮审计 | 2026-05-05）
 
 > **审计基线**: v0.12.0（49 文件，223 导出）
-> **审计方法**: 定向探索前几轮未触及维度——AI 安全纵深防御 / LLM 结构化输出强制保障 / LLM API 专属基础设施
-> **新增研究来源**: Microsoft FIDES、Entra AI Gateway、Galileo Runtime Protection、Instructor/PydanticAI、Temporal Durable AI Agents、Anthropic prompt caching
+> **审计方法**: AI 安全纵深防御 / LLM 结构化输出强制保障 / LLM API 专属基础设施
 
 ### 14.1 盲点总览（6 项）
 
-| 优先级 | 盲点 ID | 缺失能力 | 对应 Phase | 专业对标 |
-|:---:|:---:|------|:---:|------|
-| 🔴 | B51 | **Prompt Injection Defense — 标签式信任传播** | 19 | Microsoft FIDES (2026.4)、Entra AI Gateway |
-| 🔴 | B52 | **Structured Output Guarantee — LLM 输出强制校验+自动重试** | 19 | Instructor、PydanticAI |
-| 🟠 | B53 | **LLM API 专属速率限制 + Provider 降级** | 19 | OpenAI tiers、LiteLLM router |
-| 🟠 | B54 | **Tool Call Parameter Validation — 工具调用参数护栏** | 20 | agent_rbac input_guard |
-| 🟡 | B55 | **Prompt Caching Strategy — 上下文缓存策略** | 20 | Anthropic/OpenAI prompt caching |
-| 🟡 | B56 | **Multi-Provider Semantic Equivalence Fallback** | 20 | LiteLLM、OpenRouter |
+| 优先级 | 盲点 ID | 缺失能力 | 对应 Phase |
+|:---:|:---:|------|:---:|
+| 🔴 | B51 | **Prompt Injection Defense — 标签式信任传播** | 19 |
+| 🔴 | B52 | **Structured Output Guarantee — LLM 输出强制校验+自动重试** | 19 |
+| 🟠 | B53 | **LLM API 专属速率限制 + Provider 降级** | 19 |
+| 🟠 | B54 | **Tool Call Parameter Validation — 工具调用参数护栏** | 20 |
+| 🟡 | B55 | **Prompt Caching Strategy — 上下文缓存策略** | 20 |
+| 🟡 | B56 | **Multi-Provider Semantic Equivalence Fallback** | 20 |
 
-### 14.2 六轮审计全景
 
-```
-轮次1: ████████████ B1-B9   ——大量空白（日志/契约/测试/迁移）
-轮次2: ████████     B10-B16 ——中等空白（DLQ/版本/健康）
-轮次3: ██████       B17-B25 ——生产缺口（序列化/缓存/幂等）
-轮次4: ██████████   B26-B40 ——AI 专属新范式（成本/评估/编排）
-轮次5: ████         B41-B50 ——AI 前沿长尾（溯源/记忆/优化）
-轮次6: ██           B51-B56 ——安全/校验/API 专项切面
-合计:  56 项盲点，25 项已实现 (Phase 0-10)，31 项 planned (Phase 11-20)
-```
 
 ### 14.3 Shared 层准入边界规则
 
@@ -670,43 +895,7 @@ Lv.11 AI 校验护盾 (Phase 20):   + B54 参数护栏 + B55 缓存策略 + B56 
 
 ---
 
-## 15. 第七轮审计结论 —— 审计已达终点（2026-05-05）
 
-> **审计方法**: 三方向最终交叉验证——A2A v1.0 Agent 间通信 / OPA Policy as Code 声明式治理 / Agent CI/CD Evaluation Pipeline
-> **核心结论**: 无新增独立盲点
-
-### 15.1 三个维度的诚实判断
-
-| 探索维度 | 2026 行业实况 | 是否新盲点？ | 判断理由 |
-|------|------|:---:|------|
-| **A2A Protocol v1.0** | Google Cloud 发起，8 大公司技术委员会，50+ 技术合作伙伴。生产就绪 Agent Card 能力发现 + Task 生命周期 + Signed Agent Cards | **否——B33 深化** | B33 已 planned Phase 14。A2A v1.0 是 B33 实现时的具体对标标准，已写入 B33 备注 |
-| **OPA Policy as Code** | CNCF 毕业项目，Rego 声明式策略语言。策略决策与执行解耦 | **否——实现选择** | agent_rbac 模块已有七层 PermissionGuard。OPA 是具体技术选项，非 shared/ 层抽象 |
-| **Agent CI/CD Eval Pipeline** | Galileo 2026：40% agentic AI 项目因缺评估基础设施被取消。三阶段质量门 | **否——B29 延伸** | 先有 Evals 框架（B29 Phase 12）才能谈 CI/CD 集成。是 Phase 22+ 的自然延伸 |
-
-### 15.2 七轮审计全景终局
-
-```
-轮次1: ████████████ B1-B9   ——大量空白（日志/契约/测试/迁移）
-轮次2: ████████     B10-B16 ——中等空白（DLQ/版本/健康）
-轮次3: ██████       B17-B25 ——生产缺口（序列化/缓存/幂等）
-轮次4: ██████████   B26-B40 ——AI 专属新范式（成本/评估/编排）
-轮次5: ████         B41-B50 ——AI 前沿长尾（溯源/记忆/优化）
-轮次6: ██           B51-B56 ——安全/校验切面（注入防御/输出保障）
-轮次7: ·            ——边际确认（无新增——已有盲点深化）
-合计:  56 项盲点，25 项已实现 (Phase 0-10)，31 项 planned (Phase 11-20)
-```
-
-### 15.3 审计终局声明
-
-> **七轮审计后，MOD-INF-016 Shared+Core 蓝图已达到氛围编程语境下的顶尖水准。**
->
-> 对标三维交集——Google Monorepo shared/ 基础设施层 × DDD Shared Kernel × 2026 AI 工程前沿——56 项盲点全覆盖。
->
-> **剩余的不是"盲点"，而是实现深度问题**: 把 31 项 planned 盲点从 Phase 11 推进到 Phase 20。
->
-> **下一步建议**: 停止审计，开始施工 Phase 11。
-
----
 
 ## 16. ADR — 架构决策记录（Architecture Decision Records）
 
@@ -839,7 +1028,7 @@ logger = get_logger(__name__)
 | 维度 | 状态 | 评分 |
 |------|:---:|:---:|
 | 文件清单（§5） | ✅ 49 文件全部 indexed | 10/10 |
-| 盲点覆盖（§12-§15） | ✅ 56 盲点 + 审计终局 | 10/10 |
+| 盲点覆盖（§12-§14） | ✅ 56 盲点，25 已实现 (Phase 0-10)，31 planned (Phase 11-20) | 10/10 |
 | 施工阶段（§4） | ✅ Phase 0-20 全部 planned | 10/10 |
 | 依赖追踪（§7.1） | ✅ 12 消费者模块全部 traced | 9/10 |
 | AI 安全护栏（§7.1 底部） | ✅ 按文件/子模块粒度 | 10/10 |
@@ -902,70 +1091,52 @@ logger = get_logger(__name__)
 
 ---
 
-## 附录 A：版本历史
+## §17 容量升级
 
-| 版本 | 日期 | 变更 |
-|------|------|------|
-| 0.1.0 | 2026-05-03 | 初版：12文件清单，Shared+Core合并蓝图 |
-| 0.1.1 | 2026-05-05 | Phase 0 蓝图漂移修正：12→17文件、§2 补全5文件职责描述、paths.py DB_PATH 迁移至 data/、§7.1 新增反向依赖索引 |
-| 0.1.2 | 2026-05-05 | Phase 1 施工：新建 errors.py（ZephyrBaseError+12子类）、constants.py（22枚举集中re-export）、events/event_schemas.py（5事件体Pydantic Schema）|
-| 0.2.0 | 2026-05-05 | Phase 2 施工：新建 resilience/(retry/circuit_breaker/fallback)、lifecycle/hooks.py、flags.py。韧性基座+生命周期+FeatureFlag 三大体系。25文件清单。 |
-| 0.3.0 | 2026-05-05 | Phase 3 施工：新建 types.py（13 NewType）、diff_utils.py、file_utils.py（原子写+备份+rollback）、config/loader.py（YAML + Pydantic 校验）。29文件清单。 |
-| 0.4.0 | 2026-05-05 | 🎉 Backlog 清零：models.py v0.3.0 升级完成——TaskCard 继承 schemas.py Task（31字段：28业务+3 DB追踪）全链路贯通。17/17 测试通过，零破坏。construction_progress → completed，完整度 100%。 |
-| 0.5.0 | 2026-05-05 | Phase 4 施工：新建 logging.py（结构化日志 ZephyrLogger + trace_id 传播）、SHARED-QUICKREF.yml（AI 零歧义快速参考）、tests/contract/（契约测试框架——6 消费者导入验证 + Schema 稳定性快照）。31 文件清单。29/29 契约测试通过。 |
-| 0.6.0 | 2026-05-05 | Phase 5 施工：新建 testing.py（7 工厂函数——Task/AuditReport/KnowledgeEntry/FailurePattern/HandoffPackage）、migration.py（BFS 最短路径版本化迁移）、deprecation.py（@deprecated 装饰器 + warn/strict/silent 三模式）。34 文件清单。 |
-| 0.7.0 | 2026-05-05 | Phase 6 施工：新建 events/dlq.py（死信队列——SQLite 持久化 + 定时重试 + 保留策略）、__version__.py（PEP 440 版本常量 + check_shared_version() 运行时校验）、health.py（聚合健康检查——ALL_HEALTHY/DEGRADED/UNHEALTHY + JSON 可序列化）。37 文件清单。 |
-| 0.10.0 | 2026-05-05 | Phases 7-10 施工：新建 serialization.py（统一序列化——Decimal→str, datetime→ISO 8601）、api_client.py（统一API Client——超时/重试/熔断/metrics）、secrets.py（Secrets管理——Env/DotEnv Provider + sanitize）、cache.py（缓存抽象——TTL+LRU驱逐）、limiter.py（Token Bucket速率限制器）、idempotency.py（幂等性infrastructure——Stripe 24h TTL对齐）、context.py（结构化RequestContext——trace_id/span_id/tenant/agent）、metrics.py（Metrics Registry——Counter/Gauge/Histogram+Prometheus text）、pagination.py（统一分页——Page[T]/CursorPage[T]）、time_utils.py（时间工具——now_utc/freeze_time/parse_iso）、env.py（环境检测——is_dev/is_prod/is_test）、lock.py（分布式锁——MemoryLock+async context manager）、outbox.py（事务性Outbox——polling publisher+at-least-once）、schema_registry.py（Schema Registry——集中式版本编目+兼容性查询）。48 文件清单。 |
-| 0.10.1 | 2026-05-05 | 第四轮盲点审计：发现 15 项 AI 专属基础设施盲点（B26-B40）。新增 §12 盲点清单 + §2.9 AI 基础设施 planning + §4 Phases 11-15 planned。 |
-| 0.11.0 | 2026-05-05 | 第五轮盲点审计：发现 10 项 AI 工程前沿盲点（B41-B50）。新增 §13 盲点清单 + §4 Phases 16-18 planned。修复蓝图漂移：blueprint_scorer.py 入场（49文件清单）+ SHARED-QUICKREF v0.11.0 全量更新。新增 Shared 层准入边界规则。 |
-| 0.12.0 | 2026-05-05 | 第六轮盲点审计：发现 6 项 AI 安全/校验专项盲点（B51-B56）。新增 §14 盲点清单 + §4 Phases 19-20 planned + 能力成熟度阶梯 Lv.10-11。修复前后轮间 stale 值漂移。 |
-| 0.13.0 | 2026-05-05 | 第七轮审计结论——审计已达终点。三方向交叉验证（A2A v1.0 / OPA / Agent CI/CD Eval Pipeline）确认无新增独立盲点。B33 深化为 A2A v1.0 标准。新增 §15 审计终局声明。七轮全景总览。 |
-| 0.14.0 | 2026-05-05 | 第八轮审计——蓝图结构补充。新增 §16 ADR（5 项架构决策记录）+ §17 Consumer Onboarding Guide（消费者接入指南）+ §18 Blueprint Quality Self-Assessment（蓝图质量自评）+ §19 Testing Strategy（共享层测试策略）。修复 IC1（§2 标题 8→9 子模块, 45→46 文件）+ IC2（§5 标题 48→49 文件）。蓝图从"代码盲点全覆盖"升级为"蓝图文档结构化完整"。 |
+### 17.1 当前容量基线
 
-## 变更记录
+| 资源 | 设计目标 | 测量方式 |
+|------|---------|---------|
+| 模块数 | 1,500 | blueprint-registry.yaml |
+| 脚本数 | 10,000 | script_manifest.yaml |
+| AI 并发 | 100 Session | 运行时监控 |
+| 内存 | 64GB（单机 i7-12700KF） | psutil |
+| GPU | RTX 3090 24GB VRAM | nvidia-smi |
 
-| 日期 | 版本 | 变更内容 |
-|------|------|---------|
-| 2026-05-05 | 0.14.0 | 第八轮蓝图结构补充：§16 ADR + §17 Onboarding + §18 质量自评 + §19 测试策略。修复 IC1+IC2。蓝图结构化完整。 |
-| 2026-05-05 | 0.13.0 | 第七轮审计终点：三方向验证无新盲点。B33 深化 A2A v1.0。§15 审计终局声明。建议停止审计开始施工。 |
-| 2026-05-05 | 0.12.0 | 第六轮审计：发现 B51-B56（6 项 AI 安全/校验盲点）。§14 盲点清单 + Phases 19-20 planned。 |
-| 2026-05-05 | 0.11.0 | 第五轮审计：发现 B41-B50（10 项 AI 前沿盲点）。§13 盲点清单 + Phases 16-18 planned。漂移修复+准入规则。 |
-| 2026-05-05 | 0.10.1 | 第四轮审计：发现 B26-B40（15 项 AI 专属盲点）。§12 盲点清单 + Phases 11-15 planned。 |
-| 2026-05-05 | 0.10.0 | Phases 7-10 完成：11新模块(序列化/API Client/Secrets/缓存/速率限制/幂等/上下文/Metrics/分页/时间/环境/锁/Outbox/Schema Registry)，37→48文件。 |
-| 2026-05-05 | 0.7.0 | Phase 6 完成：dlq + __version__ + health。37文件。 |
-| 2026-05-05 | 0.6.0 | Phase 5 完成：testing + migration + deprecation。34文件。 |
-| 2026-05-05 | 0.5.0 | Phase 4 完成：logging + SHARED-QUICKREF + 契约测试。31文件。29/29通过。 |
-| 2026-05-05 | 0.4.0 | 🎉 Backlog 清零：models.py v0.3.0 升级完成。17/17 测试通过。100% 完成。 |
-| 2026-05-05 | 0.3.0 | Phase 3 施工：新建 types/diff/file_utils/config。29文件清单。 |
-| 2026-05-05 | 0.2.0 | Phase 2 施工：新建 resilience、lifecycle、flags。25文件清单。+ 补全标准模板六项。 |
-| 2026-05-05 | 0.1.2 | Phase 1 施工：新建 errors.py、constants.py、events/event_schemas.py。20文件清单。 |
-| 2026-05-05 | 0.1.1 | Phase 0 蓝图漂移修正。 |
-| 2026-05-03 | 0.1.0 | 初始创建——合并 Shared YAML + Core YAML。 |
+### 17.2 扩展触发条件
 
+| 触发条件 | 组件 | 动作 |
+|---------|------|------|
+| 并发写入 > 10/s | SQLite | WriteBatcher 批量合并 |
+| AI Session > 100 | MemoryCache | per-session L1 + shared L2 双层 |
+| 模块 > 1,500 | Metrics | Label 白名单 + Lock-Free Counter |
+| 并发 API 调用 > 20 | HTTP Client | per-provider 独立连接池 |
 
 ---
 
-## 施工落盘确认（2026-05-07 审计）
-| 维度 | 状态 |
-|------|------|
-| construction_progress | phase_10_complete（Phase 1-10 全部完成，49文件已实现） |
-| 源码路径 | `src/zephyr/shared/ + src/zephyr/core/` |
-| 源码文件数 | 190 个 .py/.yaml |
-| 测试路径 | `tests/unit/ (shared+core) + tests/architecture/` |
-| 配置文件 | `config/capabilities.yaml + config/ai_capability_matrix.yaml` |
-| 关键入口 | `shared.protocols.* + core.models.* + core.config.*` |
+## §18 决策记录
+
+| # | 决策ID | 决策 | 选项 | 选中 | 依据 | 日期 |
+|---|--------|------|------|------|------|------|
+| 1 | D-INF016-06 | ThreadPoolExecutor 替代串行 subprocess | ThreadPool / multiprocessing / serial | ThreadPool | I/O密集型+GIL无影响+轻量 | 2026-05-07 |
+| 2 | AD-001 | 跨层数据契约基座 | Pydantic V2 / dataclasses / TypedDict / Protocol Buffers | Pydantic V2 | 自动校验/序列化/AI友好 | 2026-05-05 |
+| 3 | AD-002 | Shared+Core 蓝图合并 vs 拆分 | 合并 / 拆分独立蓝图 | 合并 | 体积均<80文件+强耦合 | 2026-05-05 |
+| 4 | AD-003 | Resilience 持久化策略 | 纯内存 / SQLite持久化 | 纯内存 | 零DB依赖+gates已有持久化版 | 2026-05-05 |
+| 5 | AD-005 | SHARED-QUICKREF 派生文件定位 | AI派生文件 / SSoT | AI派生文件 | 从__all__派生，无消费者依赖 | 2026-05-05 |
+| 6 | AD-004 | Skill/Prompt注册表归属 | shared/ / context_engine/ | context_engine | Prompt模板与业务语义紧耦合 | 2026-05-05 |
+
+> AD-001~AD-005 详细决策记录 → [§16 ADR](#16-adr--架构决策记录architecture-decision-records)
+
+---
 
 ## 已知技术债务（2026-05-08 审计 · Session-20260508-001）
 
 ### TD-SHARED-001: 37文件发散副本（Phase 11 待修）
 
-**问题**: `src/zephyr/shared/` 下 37 个模块同时存在于顶层目录和子目录，
-且内容是**不同（发散）副本**，非 byte-identical 也非 re-export wrapper。
-
-**风险**:
-- 修改一个版本时另一个不会同步 → 行为不一致
-- 新 AI 不知道该用哪个路径 → 认知混乱
-- 典型案例: `shared/cache.py`(5595B) ≠ `shared/infra/cache.py`(5560B)
+| 维度 | 内容 |
+|------|------|
+| 问题 | 37 模块同时存在于顶层目录和子目录，内容是非 byte-identical 发散副本，非 re-export wrapper |
+| 风险 | 修改不同步 → 行为不一致；路径混乱 → AI 认知错误；典型案例 `shared/cache.py`(5595B) ≠ `shared/infra/cache.py`(5560B) |
 
 **规范路径策略（Phase 11 施行）**:
 | 顶层文件 | 规范子目录路径 | 处置 |
@@ -1015,3 +1186,97 @@ logger = get_logger(__name__)
 `__init__.py` 中 ~33 个 import 使用顶层路径（`from zephyr.shared.cache import`），
 ~16 个使用规范子目录路径（`from zephyr.shared.api.api_client import`）。
 TD-SHARED-001 修复完成后，统一改为子目录路径。
+
+## ⚠️ Vibe Coding 蓝图编写铁律
+
+> 以下铁律来自实战经验。违反任何一条都可能导致后续 AI 施工时出现幻觉、路径漂移、执行失败。
+> 本蓝图已合并蓝图（设计）和施工指引（实施）。
+> **时态属性**：本节属于**施工声明**——AI 进入蓝图修改/施工时必读。不可改为链接引用。
+
+| # | 铁律 | 违反后果 |
+|---|------|---------|
+| 1 | 所有路径必须是绝对路径（含盘符 `D:\`） | 文件创建到错误位置 |
+| 2 | 蓝图必须是最终设计结果——不记录决策过程 | 蓝图过厚，关键信息被噪音淹没 |
+| 3 | "待定"/"建议"/"按需"等模糊词禁止使用 | 执行漂移——AI 自行决定，可能选错 |
+| 4 | 蓝图必须自包含——关键信息不能只写"详见XX" | 信息缺失——AI 缺少关键上下文 |
+| 5 | construction_progress 必须与代码实际状态一致 | 重复造轮子或跳过施工 |
+| 6 | actual_disk_path 必须与 §11 产出物路径一致 | 搜索失败、导入错误 |
+| 7 | 容量估算必须写 | AI 不知道系统能容纳多少，可能设计出无法扩展的方案 |
+| 8 | 迁移/废弃方案必须写 | AI 不知道旧东西怎么处理，可能直接删除或保留 |
+| 9 | 必备链接不可省略——即使与前序文档重复也必须完整列出 | AI 每次新 session 是零记忆，不记得前序文档写了什么 |
+| 10 | 产出物路径必须与 GOV-DOC-002 一致 | AI 不知道项目目录规范，会自行创建路径 |
+| 11 | 涉及文件范围必须明确列出 | AI 不知道边界在哪，会越界修改 |
+| 12 | 删除文件必须遵守安全删除协议——禁止直接删除任何文件 | 没有git备份，删除不可逆 |
+| 13 | 已实现代码不在蓝图中重复——§0.1 标记`已实现`的模块，蓝图只保留接口签名（§4），不复制实现代码 | 代码文件是 SSoT，蓝图复制代码=双源漂移 |
+| 14 | 临时时态内容执行完毕后从蓝图删除——迁移方案、升级执行计划等临时时态内容，一旦执行完毕即成为历史，从蓝图删除 | 蓝图膨胀，关键信息被历史噪音淹没 |
+| 15 | 蓝图内容拆分判定——职责不同→拆分独立蓝图；职责相同→原地升级 | AI 不知道该读哪个蓝图，跨模块影响无法追踪 |
+
+---
+
+## 蓝图拆分判定标准
+
+> 铁律 #15 的操作定义——当蓝图内容超过 ~800 行或包含多个独立职责域时，MUST 执行拆分判定。
+
+### 判定流程
+
+```
+STEP 1: 识别职责域
+  蓝图中的内容是否属于同一职责域？
+  判定标准：该内容的服务对象、变更频率、依赖关系是否与蓝图主体一致？
+
+STEP 2: 职责域判定
+  ├ 职责相同（同一模块的升级/扩展）→ 原地升级
+  │   条件：服务对象相同 + 变更频率同步 + 依赖关系重叠
+  │   操作：在 §17 容量升级附录中增量记录
+  │
+  └ 职责不同（独立子系统/独立能力域）→ 拆分独立蓝图
+      条件（满足任一即触发）：
+      a) 有独立的 module_id 前缀
+      b) 有独立的 Phase 路线图和交付节奏
+      c) 有独立的依赖关系图（与蓝图主体的 depends_on 交集 <50%）
+      d) 内容超过 100 行且与蓝图主体无直接数据流
+      操作：创建子蓝图，本蓝图 §10 依赖关系引用子蓝图
+
+STEP 3: 拆分后验证
+  - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
+  - 拆分出的蓝图 belongs_to = 本蓝图 module_id
+  - 本蓝图 §10 依赖关系新增子蓝图引用
+  - blueprint-registry.yaml 同步更新
+```
+
+### 判定示例
+
+| 场景 | 判定 | 理由 |
+|------|------|------|
+| 本蓝图已达 1100+ 行，Shared + Core 均为跨层基础设施 | **原地** | 服务对象相同（所有L01-L13模块）+ 变更频率同步 + 依赖关系完全重叠 |
+
+---
+
+## ⚠️ 安全删除协议
+
+本蓝图不涉及文件删除。
+
+## 必备链接
+
+| # | 文件 | module_id | 完整绝对路径 | 编写时用途 |
+|---|------|-----------|------------|----------|
+| 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则、doc_type词表、frontmatter模板 |
+| 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\directory-structure-standard.md` | 路径映射、边界判据 |
+| 3 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | 编号注册 |
+| 4 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
+| 5 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index.yaml` | 现有规则索引 |
+| 6 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md` | AI 操作权限 |
+
+## 项目中已有类似功能
+
+无。
+
+## 涉及的文件范围
+
+| # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
+|---|---------|------------|------|---------|
+| 1 | shared/ | `D:\ZephyrAlpha\src\zephyr\shared\` | 修改/扩展 | 容量升级 + 新增模块 |
+| 2 | core/ | `D:\ZephyrAlpha\src\zephyr\core\` | 修改/扩展 | 容量升级 + 新增模块 |
+| 3 | shared/infra/process_lifecycle_gateway.py | `D:\ZephyrAlpha\src\zephyr\shared\infra\process_lifecycle_gateway.py` | 新增 | ProcessLifecycleGateway 统一入口 |
+| 4 | gates/invariants/en_process_lifecycle_gateway.py | `D:\ZephyrAlpha\src\zephyr\gates\invariants\en_process_lifecycle_gateway.py` | 新增 | 进程创建入口校验门禁 |
+| 5 | 测试 | `D:\ZephyrAlpha\tests\` | 新增 | 对应新模块的单元测试 |

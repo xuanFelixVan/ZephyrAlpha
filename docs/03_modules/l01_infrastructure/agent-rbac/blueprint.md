@@ -1,10 +1,10 @@
----
+﻿﻿﻿﻿﻿﻿﻿---
 module_id: "MOD-INF-018"
-title: "Agent 身份与权限系统蓝图 — 七层纵深防御 + 六横切面 Runtime RBAC 11.3"
+title: "Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限"
 doc_type: blueprint
 status: Active
-version: "0.14.0"
-layer: cross_layer
+version: "1.1.0"
+layer: l01_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
@@ -12,11 +12,23 @@ created_by: human_plus_agent
 date: "2026-05-06"
 valid_from: "2026-05-06"
 ttl: permanent
-construction_progress: phase_2_complete
+construction_progress: completed
+actual_disk_path: src/zephyr/agent_rbac/
+last_updated: "2026-05-14"
+last_verified: "2026-05-14"
+generation: 3
+functional_domain: governance
+parent_module: ""
 belongs_to: "MOD-MASTER-001"
-summary: "ZephyrAlpha Agent 身份与权限系统蓝图——七层纵深防御+六横切面运行时强制执行器 RBAC 11.3。垂直层L0-L7不变。横切面A权限钩子 + B权限拓扑 + C自动维护 + D意图绑定与连续验证(IBAC) + E对抗韧性&激励对齐 + F取证级安全保障(含MCP Tool Definition Integrity 加密工具证明/Slopsquatting幻构依赖/CSWSH信道劫持/动态信任预算等) ——氛围编程与1人+AI维护语境下的终极审视第十二轮)。208→209项盲点全覆盖。对标 Grantex 30框架 + Google Antigravity P0 + VibeGuard + SecureVibes + Sherlock + SUSVIBES + STRIDE + OWASP Agentic Top 10 + OWASP MCP Top 10 + NVIDIA Morpheus + MCPSHIELD + CSA/COSAiS + NIST CAISI + HexagonalRodent + ETDI + CVE-2026-26268 + LiteLLM TeamPCP + PocketOS全链路 + Claude Code预执行CVE + Unit 42 MCP Sampling + SymbioticSec 80% + OX Security MCP STDIO 200K + Azure Agent Identity + AWS Agent IAM + PraisonAI CVE-2026-39890 + Awesome AI Agent Attacks全时间线(2024-2026)。"
-tags: [agent-rbac, rbac, abac, ibac, tbac, permission-guard, identity, access-control, governance, infrastructure, defense-in-depth, sequence-guard, kill-switch, permission-hooks, permission-topology, auto-maintenance, cold-start-lock, emergency-override, horizontal-escalation, context-drift, intent-binding, micro-verification, continuous-verification, cascading-failure, inference-detection, adversarial-resilience, incentive-alignment, collusion-detection, sandbox-self-disable, false-completion, prompt-injection-defense, memory-provenance, owasp-agentic-top10, maetro-threat-model, forensic-assurance, genesis-bootstrap, non-repudiation, path-parsing-safety, cross-platform-shell, artifact-hygiene]
+summary: "Agent RBAC——七层纵深防御+六横切面运行时权限强制执行器。209项盲点全覆盖，94项决策记录，148个组件文件。"
+tags: [agent-rbac, rbac, abac, ibac, tbac, permission-guard, identity, access-control, governance, infrastructure, defense-in-depth, sequence-guard, kill-switch, permission-hooks, permission-topology, auto-maintenance, cold-start-lock, emergency-override, horizontal-escalation, context-drift, intent-binding, micro-verification, continuous-verification, cascading-failure, inference-detection, adversarial-resilience, incentive-alignment, collusion-detection, sandbox-self-disable, false-completion, prompt-injection-defense, memory-provenance, owasp-agentic-top10, maestro-threat-model, forensic-assurance, genesis-bootstrap, non-repudiation, path-parsing-safety, cross-platform-shell, artifact-hygiene]
 priority: P0
+rule_form: structural
+scope: global
+stability: stable
+verifiability: hybrid
+codification_level: L1
+codification_at: "2026-05-14"
 depends_on:
   - {target: "MOD-INF-007", at: "§2", why: "Gate Engine——权限检查是门禁的一种特化"}
   - {target: "MOD-INF-020", at: "§3", why: "审计追踪链——权限判定结果写入审计日志"}
@@ -25,56 +37,136 @@ depends_on:
 references:
   - {id: "MOD-INF-021", at: "§2", why: "Rollback 联动——仅存 references（打破 018↔021 DAG 环）"}
   - {id: "MOD-INF-022", at: "§2", why: "Escalation / Kill Switch——仅存 references（打破 018↔022 DAG 环）"}
----
-
-## DOM-GOV-001 集成契约锚点
-
-> 权威定义见 [`../../_domain-governance/blueprint.md`](../../_domain-governance/blueprint.md) §3。
-
-| 契约 ID | 本模块角色 | 对端模块 |
-|---------|------------|----------|
-| G-CT-001 | 产出方（RBAC 判定后写入 Audit） | MOD-INF-020 |
-| G-CT-004 | 消费方（承接 Escalation 的权限策略） | MOD-INF-022 |
-| G-CT-007 | 消费方（Agent Spec 与权限绑定） | MOD-INF-019 |
-| G-CT-008 | 消费方（A2A 身份与隔离） | MOD-INF-025 |
-
-# Agent 身份与权限系统蓝图 — 七层纵深防御 + 六横切面 RBAC 11.3
-
-> **module_id**: MOD-INF-018 | **version**: 0.14.0 | **status**: Active | **layer**: cross_layer
-
-> **对标**：Grantex State of Agent Security 2026（30框架零Agent身份审计——本蓝图在设计上已100%超过所有被审计框架） + Google Antigravity P0路径解析事故（系统级空格→rm -rf全盘删除——本蓝图新增D-018-37/38路径解析+跨平台Shell防护） + VibeGuard盲点分类（artifact hygiene/packaging drift/source-map exposure——本蓝图新增D-018-40构建产物安全卫生） + SecureVibes非对称审计算法（"when the same AI writes and reviews code, who watches the watcher"——本蓝图新增D-018-35非对称安全审查） + Sherlock自我审计14漏洞清单（IDOR/SQL注入/MD5哈希/文件上传RCE/.env泄露——不同程度覆盖） + SUSVIBES 10.5%安全率基准（61%功能正确但仅10.5%安全——本蓝图L7自动化安全测试体系针对性应对） + CSA ATF + D2四层护栏 + NIST AI Agent + Claude Code 5模式+hooks+CVE-2026-21852 + OPA Rego + K8s RBAC + Terraform auto-apply + Cursor globs+alwaysApply + Windsurf Cascade micro-verification + Google SAIF + OWASP LLM Top 10 + OWASP Agentic Top 10 ASI02-ASI06 + Perplexity NHI/confused-deputy + Cisco TBAC/IBAC + NVIDIA多Agent全生命周期+AI Red Team + Codex CLI profiles+sandbox_mode+mid-session + GroupGuard多Agent合谋检测(清华/港大) + "Agents of Chaos"11类激励失败模式(Harvard/MIT/Stanford) + Grith 7-Agent安全审计 + CyberArk MCP Tool Poisoning + TRAE Sandbox + MAESTRO五层威胁建模 + Oxford多Agent挑战 + STRIDE Repudiation + Talan 500+扫描实践。
 
 ---
 
-## 1. 概述与模块定位
+# Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限
 
-### 1.1 模块身份
+> module_id: MOD-INF-018 | version: 1.0.0 | status: Active | layer: l01_infrastructure
+> actual_disk_path: src/zephyr/agent_rbac/ | generation: 2 | construction_progress: completed
 
-| 属性 | 值 |
-|------|-----|
-| module_id | MOD-INF-018 |
-| 代码落位 | `src/zephyr/agent_rbac/` |
-| 运行时平面 | Warm memory（任务执行前加载权限配置） |
-| 核心职责 | 判定"这个 Agent 能不能做这件事"——运行时权限强制执行。单次检查 < 1ms |
-| 架构模式 | **七层纵深防御 + 六横切面**（Defense-in-Depth + Cross-Cutting），不可变核心 + 六层增量化护栏 + 六个横向贯穿能力 |
+## 概述
 
-### 1.2 核心职能（一句话）
+本蓝图描述 ZephyrAlpha Agent 身份与权限系统——它解决了 100% AI 开发场景下的权限强制执行问题。核心职责包括：七层纵深防御（L0不可变核心→L7测试模拟）+ 六横切面运行时强制（权限钩子/权限拓扑/自动维护/意图绑定/对抗韧性/取证保障）+ GOV-AI-001 自动派生为可执行规则。当前规模 148 个组件文件、209 项盲点全覆盖、94 项决策记录，目标容量 10,000 脚本 / 1,500 模块 / 100 AI 并发。上游依赖 GOV-AI-001（权限声明真源）+ Gate Engine（门禁框架），下游被 MCP Servers / Rollback / Escalation / Audit Trail 等所有基础设施模块消费。
 
-**Agent RBAC 是系统的门卫**——不可变核心兜底，信任默认，边界拦截，序列阻断，先干后验，自动回滚，全局熔断。将静态权限注册表升级为七层+六横切面运行时强制执行器——**规则不执行 = 规则不存在**。209项盲点全覆盖。
+---
 
-### 1.3 运行场景约束（决策输入）
+## §0 代码对齐验证
 
-| 约束 | 影响 |
-|------|------|
-| 100% AI 开发，多 IDE 并发（TRAE / Cursor / RooCode） | 权限系统必须跨 IDE 统一，不能依赖单一 IDE 的审批机制 |
-| 同时开启 10+ 对话 | 阻塞式审批 = 10 个对话全卡死——绝对不可接受 |
-| 1 人 + AI，99% AI 维护 | 人工审批是最稀缺资源——必须最小化，能自动绝不人工 |
-| 决策围绕原则/目标驱动 | 权限判定应该是规则驱动的自动决策，不是人工审批 |
-| 100% AI 施工 = 权限系统自身也是 AI 写的 | **权限层核心必须不可变**——AI 不能修改自己的护栏 |
-| **Owner 可能缺席（出差/休假/离线）** | **系统必须具备 Owner 缺席时的自治保守模式**——Owner超时未审阅→自动降权，防止无人值守时裸奔 |
-| **Vibe Coding AI 零记忆重启（§5.1）** | **权限规则必须自解释**——每个规则旁边写清"为什么、谁定的、什么时间定的"，AI读完即可执行，不依赖跨session记忆 |
+> ⚠️ 防止 construction_progress 与实际代码不符。
+> 每次蓝图版本变更后**必须**重新填写此表。
+> **位置说明**：§0 放在概述之后——AI 进入蓝图先建立心理模型（概述），再确认文件现状（§0），再理解设计（§1-§14）。
 
-### 1.4 当前痛点
+### §0.1 代码文件清单
+
+> 列出蓝图描述的**所有代码文件**。此清单 = 代码目录下的实际文件列表。
+> AI 施工者按此清单创建文件，审计者按此清单验证对齐。
+> **存在性状态受控词表**：`未实现` / `已实现` / `已阻塞` / `已废弃`
+> - `已实现`：代码已存在且通过验证 → 蓝图不再重复代码内容，接口签名见 §4
+> - `已阻塞`：因外部依赖未就绪无法实现 → MUST 注明阻塞原因
+> - `已废弃`：设计变更后不再需要 → MUST 在 §5.3 迁移方案中说明
+> - 此列是**当前事实**（永久时态），不是施工进度追踪（临时时态）
+
+| # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
+|---|--------|------------|------|:-----:|-------------------|
+| 1 | `immutable_core.py` | §3 L0 | 不可变核心——保护路径+冷启动锁+Kill Switch+Engine降级 | 已实现 | |
+| 2 | `identity.py` | §3 L1 | Agent 身份注册与识别——AgentIdentity + MaturityLevel | 已实现 | |
+| 3 | `permission_guard.py` | §3 L0-L5 | 七层运行时权限检查编排 | 已实现 | |
+| 4 | `rbac_guard.py` | §3 L1 | RBAC 角色权限——ALLOW/AUTO_GUARD/BLOCKED | 已实现 | |
+| 5 | `abac_guard.py` | §3 L2 | ABAC 属性权限——意图+时间+成熟度+敏感性 | 已实现 | |
+| 6 | `input_guard.py` | §3 L3 | 参数护栏——schema+范围+危险模式 | 已实现 | |
+| 7 | `sequence_guard.py` | §3 L4 | 序列护栏——操作序列追踪+禁止序列阻断 | 已实现 | |
+| 8 | `output_guard.py` | §3 L5 | 输出护栏——PII脱敏+凭证检测+截断 | 已实现 | |
+| 9 | `observability.py` | §3 L6 | 可观测性——OTEL指标+行为异常检测 | 已实现 | |
+| 10 | `dry_run.py` | §3 L7 | 测试与模拟——影响分析+Dry-Run | 已实现 | |
+| 11 | `rbac_roles.yaml` | §3 L0-L5 | 角色定义+ABAC规则+序列规则——从GOV-AI-001派生 | 已实现 | |
+| 12 | `audit_emitter.py` | §3 L6 | 权限审计事件发射器 | 已实现 | |
+| 13 | `derive_rbac_roles.py` | §3 | 自动派生脚本——GOV-AI-001→rbac_roles.yaml | 已实现 | |
+| 14 | `test_permissions.py` | §9 L7 | 权限自动化测试 | 已实现 | |
+| 15 | `non_repudiation.py` | §3 横切面F | 不可抵赖操作绑定(Ed25519+Merkle Tree+TSA) | 已实现 | |
+| 16 | `path_parsing_guard.py` | §3 横切面F | 路径解析系统故障防护(Google Antigravity P0) | 已实现 | |
+| 17 | `cross_platform_shell_guard.py` | §3 横切面F | 跨平台Shell方言检测(LLM Linux偏见) | 已实现 | |
+| 18 | `audit_integrity_verifier.py` | §3 横切面F | 审计日志实时完整性验证(Merkle Tree) | 已实现 | |
+| 19 | `replay_protector.py` | §3 横切面F | Agent上下文重放攻击防护(nonce+Bloom) | 已实现 | |
+| 20 | `monotonic_clock_guard.py` | §3 横切面F | 单调时钟与时钟操纵防护 | 已实现 | |
+| 21 | `deterministic_bootstrap_check.py` | §3 横切面F | Bootstrap验证无限递归解决(<60行) | 已实现 | |
+| 22 | `hierarchical_key_manager.py` | §3 横切面F | 主密钥层次化与泄露隔离 | 已实现 | |
+| 23 | `statistical_anomaly_detector.py` | §3 横切面F | 未知攻击模式统计异常检测(5维评分) | 已实现 | |
+| 24 | `audit_entry_validator.py` | §3 横切面F | 审计日志注入防护(密码学来源证明) | 已实现 | |
+| 25 | `native_api_guard.py` | §3 横切面F | C扩展原生API绕过防护(ctypes封禁) | 已实现 | |
+| 26 | `process_memory_guard.py` | §3 横切面F | 进程级内存保护(DPAPI加密) | 已实现 | |
+| 27 | `sandbox_liveness_guard.py` | §3 横切面F | 沙箱存活探针与静默回退防护(CVE-2026-2287) | 已实现 | |
+| 28 | `bootstrap_coordinator.py` | §3 横切面F | 多IDE并发施工期最小保护(Phase0审计) | 已实现 | |
+| 29 | `mcp_permission_proxy.py` | §3 横切面F | MCP工具协议层权限中间件(23工具覆盖) | 已实现 | |
+| 30 | `introspection_chain_guard.py` | §3 横切面F | Python对象内省链沙箱逃逸防护 | 已实现 | |
+| 31 | `graceful_token_renewal.py` | §3 横切面F | Session Token在途过期保护 | 已实现 | |
+| 32 | `concurrent_throughput_optimizer.py` | §3 横切面F | 并发权限检查吞吐量优化(Rust热路径) | 已实现 | |
+| 33 | `dashboard_authenticity_verifier.py` | §3 横切面F | Owner仪表盘数据真实性验证(哨兵探针) | 已实现 | |
+| 34 | `staged_deployment_guard.py` | §3 横切面F | RBAC分阶段部署中间态保护 | 已实现 | |
+| 35 | `conflict_resolution_policy.py` | §3 横切面F | 跨模型权限冲突自动降级(保守默认) | 已实现 | |
+| 36 | `dll_search_order_guard.py` | §3 横切面F | Windows DLL搜索顺序劫持防护 | 已实现 | |
+| 37 | `session_identity_binding.py` | §3 横切面F | Agent跨会话身份三因素绑定 | 已实现 | |
+| 38 | `build_artifact_integrity_chain.py` | §3 横切面F | RBAC构建产物供应链哈希链 | 已实现 | |
+| 39 | `classifier_adversarial_hardening.py` | §3 横切面F | AI推理链操纵攻击对抗硬化(OWASP A08) | 已实现 | |
+| 40 | `mcp_response_redactor.py` | §3 横切面F | MCP工具回显敏感信息脱敏(P1) | 已实现 | |
+| 41 | `constant_time_permission_check.py` | §3 横切面F | 权限决策时间侧信道消除(P1) | 已实现 | |
+| 42 | `mutation_test_framework.py` | §3 横切面F | AI生成测试覆盖盲区自欺防护(变异测试) | 已实现 | |
+| 43 | `git_hook_guard.py` | §3 横切面F | Git Hook RCE防护(CVE-2026-26268) | 已实现 | |
+| 44 | `pth_file_execution_guard.py` | §3 横切面F | Python .pth文件静默自动执行防护 | 已实现 | |
+| 45 | `project_config_execution_guard.py` | §3 横切面F | IDE项目配置自动执行防护(tasks.json) | 已实现 | |
+| 46 | `classifier_retraining_integrity.py` | §3 横切面F | 分类器重训练管道自体中毒防护 | 已实现 | |
+| 47 | `agent_memory_poisoning_guard.py` | §3 横切面F | Agent长程上下文记忆投毒防护 | 已实现 | |
+| 48 | `trust_chain_verifier.py` | §3 横切面F | 多Agent信任链背叛防护(Ed25519) | 已实现 | |
+| 49 | `web_content_trust_tier.py` | §3 横切面F | Web注入不对称放大防护(4级信任) | 已实现 | |
+| 50 | `model_weight_integrity_verifier.py` | §3 横切面F | ML模型权重完整性验证 | 已实现 | |
+| 51 | `covert_storage_channel_detector.py` | §3 横切面F | 隐蔽存储侧信道外泄检测 | 已实现 | |
+| 52 | `cicd_credential_isolation.py` | §3 横切面F | RBAC CI/CD凭证三阶隔离 | 已实现 | |
+| 53 | `threshold_obfuscation_guard.py` | §3 横切面F | 检测阈值指纹刻画防护 | 已实现 | |
+| 54 | `shared_state_injection_guard.py` | §3 横切面F | Agent间共享状态注入检测 | 已实现 | |
+| 55 | `environment_boundary_enforcement.py` | §3 横切面F | Agent跨环境边界横向移动防护(DEV/STAGING/PROD Tier) | 已实现 | |
+| 56 | `config_pre_execution_guard.py` | §3 横切面F | IDE配置文件预权限执行竞态防护 | 已实现 | |
+| 57 | `mcp_sampling_guard.py` | §3 横切面F | MCP Sampling反向提示注入防护 | 已实现 | |
+| 58 | `cross_model_security_audit.py` | §3 横切面F | AI安全代码交叉模型独立审查 | 已实现 | |
+| 59 | `safety_incentive_alignment.py` | §3 横切面F | Agent任务完成驱动型规则覆写防护(Hard Stop) | 已实现 | |
+| 60 | `credential_discovery_radius_control.py` | §3 横切面F | Agent凭证发现半径爆炸控制 | 已实现 | |
+| 61 | `mcp_stdio_sanitizer.py` | §3 横切面F | MCP STDIO Shell元字符注入防护(OX 200K) | 已实现 | |
+| 62 | `cloud_iam_identity_federation.py` | §3 横切面F | Agent-Cloud IAM身份联邦(交集策略) | 已实现 | |
+| 63 | `safe_deserialization_guard.py` | §3 横切面F | Agent定义文件安全反序列化防护 | 已实现 | |
+| 64 | `slopsquatting_defense.py` | §3 横切面F | AI幻构依赖/Slopsquatting攻击防护 | 已实现 | |
+| 65 | `communication_channel_integrity_guard.py` | §3 横切面F | IDE-RBAC通信信道劫持防护(CSWSH/WebSocket) | 已实现 | |
+| 66 | `adaptive_trust_budget_allocator.py` | §3 横切面F | Agent动态信任预算管理(实时自适应授权) | 已实现 | |
+| 67 | `tool_definition_integrity_guard.py` | §3 横切面F | MCP工具定义加密完整性+防变异防回滚 | 已实现 | |
+
+### §0.2 对齐验证矩阵
+
+| 验证项 | 验证方法 | 结果 |
+|--------|---------|:---:|
+| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/agent_rbac/` 逐文件核对 | ☐ |
+| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☐ |
+| rbac_roles.yaml 与 GOV-AI-001 一致 | `python derive_rbac_roles.py --dry-run` | ☐ |
+| 所有横切面F组件文件存在 | `ls src/zephyr/agent_rbac/*guard*.py` | ☐ |
+
+### §0.3 版本-代码映射
+
+| 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
+|---------|------------|---------|---------|
+| v0.14.0 (基线) | L0-L7 七层 + 横切面 A-F 全部 67 个组件 | — | — |
+| v1.1.0 (容量升级) | CAP-R01~R19 容量升级组件 | CAP-R01~R19 全部 | 待施工 |
+
+---
+
+> **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
+> - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
+> - 压缩工作流标准：[compression-workflow-standard.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/compression-workflow-standard.md)
+> - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
+> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md) 线3:治理闭环
+> - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
+
+---
+
+## §1 设计背景与目标
+
+### §1.1 背景
 
 | # | 痛点 | 后果 |
 |---|------|------|
@@ -83,45 +175,96 @@ references:
 | 3 | 没有 auto_guard 中间态 | AI 要么全自主、要么全阻断，缺少"先干后验"的信任梯度 |
 | 4 | 权限检查不在执行路径上 | 权限是"建议"而非"强制"——绕过零成本 |
 | 5 | 多 IDE 各自为政 | TRAE/Cursor/RooCode 各有自己的权限模型——无法统一管控 |
-| 6 | **权限系统自身无保护** | AI 可以修改 rbac_roles.yaml 给自己提权——护栏可以被拆掉 |
-| 7 | **无操作序列感知** | 单个操作合法，但多步组合可能构成数据外泄链 |
-| 8 | **无行为异常检测** | 合法权限被异常模式滥用——凌晨3点批量删除 |
-| 9 | **无横向越权防护** | Agent A 可以冒充 Agent B 的身份跨 session 操作——身份伪造零成本 |
-| 10 | **冷启动无锁** | 系统启动时权限配置尚未加载——Agent 在裸奔窗口内操作不受约束 |
-| 11 | **无权限钩子** | 无法在权限判定前后注入自定义校验——扩展性为零 |
-| 12 | **Agent 可自我复制** | Agent 可以派生新 Agent 实例来绕过成熟度限制 |
-| 13 | **权限缓存陈旧** | 权限紧急收紧后缓存中的旧 ALLOW 仍生效 5 分钟——安全窗口 |
-| 14 | **无第三方包管控** | pip/npm install 的代码不受 Agent RBAC 约束——攻击面完全敞开 |
-| 15 | **环境变量可篡改** | .env 等不在保护路径中——Agent 可修改系统运行环境 |
-| 16 | **无 Owner 缺席策略** | Owner 离线数天时 auto_guard 操作如何处理——无定义 |
+| 6 | 权限系统自身无保护 | AI 可以修改 rbac_roles.yaml 给自己提权——护栏可以被拆掉 |
+| 7 | 无操作序列感知 | 单个操作合法，但多步组合可能构成数据外泄链 |
+| 8 | 无行为异常检测 | 合法权限被异常模式滥用——凌晨3点批量删除 |
+| 9 | 无横向越权防护 | Agent A 可以冒充 Agent B 的身份跨 session 操作 |
+| 10 | 冷启动无锁 | 系统启动时权限配置尚未加载——Agent 在裸奔窗口内操作不受约束 |
+| 11 | 无权限钩子 | 无法在权限判定前后注入自定义校验——扩展性为零 |
+| 12 | Agent 可自我复制 | Agent 可以派生新 Agent 实例来绕过成熟度限制 |
+| 13 | 权限缓存陈旧 | 权限紧急收紧后缓存中的旧 ALLOW 仍生效 5 分钟 |
+| 14 | 无第三方包管控 | pip/npm install 的代码不受 Agent RBAC 约束 |
+| 15 | 环境变量可篡改 | .env 等不在保护路径中——Agent 可修改系统运行环境 |
+| 16 | 无 Owner 缺席策略 | Owner 离线数天时 auto_guard 操作如何处理——无定义 |
 
-### 1.5 责任范围
+### §1.2 目标
 
-| 管什么 | 不管什么（→ 去哪） |
+| # | 目标 | 可衡量标准 |
+|---|------|-----------|
+| 1 | 七层纵深防御运行时权限强制执行 | 每次工具调用经过 19 个检查点，单次检查 < 1.8ms |
+| 2 | Agent 身份注册与识别 | AgentIdentity 含 MaturityLevel + IDESource + SessionToken |
+| 3 | 先干后验（auto_guard）模式 | 95% always_allow / 4% auto_guard / 1% blocked |
+| 4 | GOV-AI-001 自动派生为可执行规则 | derive_rbac_roles.py 自动派生，消除手动复制漂移 |
+| 5 | 209 项安全盲点全覆盖 | 94 项决策记录，66 个组件文件 |
+| 6 | 六横切面运行时强制 | A权限钩子 + B权限拓扑 + C自动维护 + D意图绑定 + E对抗韧性 + F取证保障 |
+
+### §1.3 不包含的目标
+
+| # | 明确排除 | 原因 |
+|---|---------|------|
+| 1 | 权限判定的触发时机 | → Gate Engine (MOD-INF-007) |
+| 2 | 权限审计日志的存储 | → Audit Trail (MOD-INF-020) |
+| 3 | 回滚的具体执行 | → Rollback System (MOD-INF-021) |
+| 4 | 熔断器的底层实现 | → Circuit Breaker (MOD-INF-022) |
+| 5 | Prompt Injection 检测 | → Input Sanitizer / LSG (MOD-INF-014) |
+| 6 | 生产环境的实际部署 | → CI/CD |
+
+### §1.4 运行场景约束
+
+| 约束 | 影响 |
 |------|------|
-| Agent 身份注册与识别 + **Agent 成熟度分级** | Agent 的具体执行逻辑 → Orchestrator (MOD-INF-006) |
-| 权限声明式配置（GOV-AI-001 → rbac_roles.yaml 自动派生） | 权限判定的触发时机 → Gate Engine (MOD-INF-007) |
-| **七层+六横切面**运行时 Permission Guard（L0→L5 + 横切面 A/B/C/D/E/F） | 权限审计日志的存储 → Audit Trail (MOD-INF-020) |
-| auto_guard 后验失败 → auto-rollback | 回滚的具体执行 → Rollback System (MOD-INF-021) |
-| **全局 Kill Switch + Engine 降级策略 + 降级攻击防护** | 熔断器的底层实现 → Circuit Breaker (MOD-INF-022) |
-| **操作序列追踪 + 危险序列阻断 + 跨 Session 关联 + Agent间隐式通信检测** | 具体的 Prompt Injection 检测 → Input Sanitizer / LSG（MOD-INF-014） |
-| **权限模拟（Dry-Run）+ 影响分析 + 对抗性测试** | 生产环境的实际部署 → CI/CD |
-| **横向越权防护——Agent身份防伪 + session_token签名校验** | Agent 会话管理 → Session Continuity |
-| **冷启动锁——系统启动时全局拒绝直到权限配置加载校验通过** | — |
-| **权限钩子系统——pre/post/on_blocked/on_kill_switch 四类钩子** | — |
-| **Agent 创建权与权限遗传——Agent 派生/复制的权限衰减继承** | — |
-| **紧急覆盖令牌——Owner签发的JIT临时越权令牌（<5分钟有效）** | — |
-| **Owner缺席策略——超时未审阅→自动进入保守模式** | — |
-| **规则自我修剪——僵尸规则检测 + 权限复杂度预算** | — |
-| **第三方依赖管控——package_install 白名单** | 具体包安装执行 → pip/npm |
-| **网络边界管控——Agent工具调用的network_target白名单** | — |
-| **环境变量保护——.env/pyproject.toml 等纳入保护路径** | — |
+| 100% AI 开发，多 IDE 并发（TRAE / Cursor / RooCode） | 权限系统必须跨 IDE 统一，不能依赖单一 IDE 的审批机制 |
+| 同时开启 10+ 对话 | 阻塞式审批 = 10 个对话全卡死——绝对不可接受 |
+| 1 人 + AI，99% AI 维护 | 人工审批是最稀缺资源——必须最小化，能自动绝不人工 |
+| 100% AI 施工 = 权限系统自身也是 AI 写的 | 权限层核心必须不可变——AI 不能修改自己的护栏 |
+| Owner 可能缺席（出差/休假/离线） | 系统必须具备 Owner 缺席时的自治保守模式 |
+| Vibe Coding AI 零记忆重启 | 权限规则必须自解释——每个规则旁边写清"为什么、谁定的、什么时间定的" |
 
 ---
 
-## 2. 核心架构 — 七层纵深防御
+## §2 模块边界
 
-### 2.0 总览：七层纵深防御 + 四横切面模型
+### §2.1 职责范围
+
+| # | 职责 | 具体内容 |
+|---|------|---------|
+| 1 | Agent 身份注册与识别 | AgentIdentity + MaturityLevel 四级信任 + IDESource 多 IDE 支持 |
+| 2 | 权限声明式配置 | GOV-AI-001 → rbac_roles.yaml 自动派生 |
+| 3 | 七层+六横切面运行时 Permission Guard | L0→L5 + 横切面 A/B/C/D/E/F |
+| 4 | auto_guard 后验失败 → auto-rollback | 后验失败自动回滚 |
+| 5 | 全局 Kill Switch + Engine 降级策略 | 多触发器 + 降级攻击防护 |
+| 6 | 操作序列追踪 + 危险序列阻断 | per-session + 跨 Session 关联 + Agent间隐式通信检测 |
+| 7 | 权限模拟（Dry-Run）+ 影响分析 + 对抗性测试 | L7 Testing & Dry-Run |
+| 8 | 横向越权防护 | SessionToken签名校验 + AgentIdentityVerifier |
+| 9 | 冷启动锁 | 系统启动时全局拒绝直到权限配置加载校验通过 |
+| 10 | 权限钩子系统 | pre/post/on_blocked/on_kill_switch 四类钩子 |
+| 11 | Agent 创建权与权限遗传 | Agent 派生/复制的权限衰减继承 |
+| 12 | 紧急覆盖令牌 | Owner签发的JIT临时越权令牌（<5分钟有效） |
+| 13 | 规则自我修剪 | 僵尸规则检测 + 权限复杂度预算 |
+| 14 | 第三方依赖管控 | package_install 白名单 |
+| 15 | 网络边界管控 | Agent工具调用的network_target白名单 |
+| 16 | 环境变量保护 | .env/pyproject.toml 等纳入保护路径 |
+
+### §2.2 不包含的职责
+
+| # | 排除项 | 由谁负责 |
+|---|--------|---------|
+| 1 | Agent 的具体执行逻辑 | Orchestrator (MOD-INF-006) |
+| 2 | 权限判定的触发时机 | Gate Engine (MOD-INF-007) |
+| 3 | 权限审计日志的存储 | Audit Trail (MOD-INF-020) |
+| 4 | 回滚的具体执行 | Rollback System (MOD-INF-021) |
+| 5 | 熔断器的底层实现 | Circuit Breaker (MOD-INF-022) |
+| 6 | Prompt Injection 检测 | Input Sanitizer / LSG (MOD-INF-014) |
+| 7 | 生产环境的实际部署 | CI/CD |
+
+---
+
+## §3 架构设计
+
+> 本节是蓝图的核心——七层纵深防御 + 六横切面的完整架构规格。
+> 对标 57 个行业框架/论文/事故报告（完整列表见附录 B）。
+
+### §3.0 总览：七层纵深防御 + 六横切面模型
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -245,11 +388,11 @@ references:
 | 横切面F Rollback隔离 | ~0.02ms | 🆕 回滚安全检查 |
 | **合计** | **< 1.8ms** | |
 
-### 2.1 L0 — 不可变核心（决策 D-018-04）
+### 3.1 L0 — 不可变核心（决策 D-018-04）
 
 > **决策 D-018-04**：建立硬编码不可变核心层——AI 在任何情况下都不可修改的保护路径和全局安全规则。这是整个权限系统的基石——如果 AI 能修改自己的护栏，护栏就不存在。
 >
-> **决策依据**：100% AI施工场景下，权限系统自身是 AI 写的代码。对标 Claude Code protected paths（即使在 bypassPermissions 模式也不可绕过）、K8s RBAC privilege escalation prevention、Linux kernel immutable bit。
+> **决策依据**：100% AI施工场景下，权限系统自身是 AI 写的代码。参考：Claude Code protected paths等
 
 ```yaml
 immutable_core:
@@ -356,11 +499,11 @@ immutable_core:
 ```
 ```
 
-### 2.2 L0 — Kill Switch 全局熔断（决策 D-018-05）
+### 3.2 L0 — Kill Switch 全局熔断（决策 D-018-05）
 
 > **决策 D-018-05**：建立全局 Kill Switch——当 Agent 行为模式触发危险阈值时，自动熔断所有 Agent 操作。
 >
-> **决策依据**：CSA Agentic Trust Framework Incident Response 要素——"What if you go rogue?"必须有答案。对标 K8s Circuit Breaker + 交易系统熔断。
+> **决策依据**：CSA Agentic Trust Framework Incident Response 要素——"What if you go rogue?"必须有答案。参考： K8s Circuit Breaker + 交易系统熔断。...
 
 ```yaml
 kill_switch:
@@ -423,11 +566,11 @@ kill_switch:
   audit: "每次熔断触发/解除均写入不可变审计日志"
 ```
 
-### 2.3 L0 — Engine 降级策略（决策 D-018-06）
+### 3.3 L0 — Engine 降级策略（决策 D-018-06）
 
 > **决策 D-018-06**：Permission Engine 自身故障时的降级策略——崩 = blocked（绝对不放行），而非崩 = pass（裸奔）。
 >
-> **决策依据**：负面偏好——权限系统失效时，安全优先于便利。实现方式对标 GateEngine v2.0 的 failurePolicy。
+> **决策依据**：负面偏好——权限系统失效时，安全优先于便利。实现方式。参考： GateEngine v2.0 的 failurePolicy。...
 
 ```yaml
 engine_degradation:
@@ -459,11 +602,11 @@ engine_degradation:
 
 ---
 
-### 2.4 L1 — RBAC 三层权限模型（决策 D-018-01：95/4/1 分布）
+### 3.4 L1 — RBAC 三层权限模型（决策 D-018-01：95/4/1 分布）
 
 > **决策 D-018-01**：采用三层权限模型，分布为 always_allow 95% / auto_guard 4% / blocked 1%。取消 needs_approval 层——要么 auto_guard（先干后验），要么 blocked（绝对不让干）。人工审批是最稀缺资源，不应消耗在权限判定上。
 >
-> **决策依据**：1人+AI场景，10+并发对话，物理上不可能实时审批。对标 Claude Code 90% always allow + Cursor 自动编辑 + Terraform auto-apply。
+> **决策依据**：1人+AI场景，10+并发对话，物理上不可能实时审批。参考： Claude Code 90% always allow + Cursor 自动编辑 + Terraform auto-apply。...
 
 ```yaml
 permission_levels:
@@ -510,11 +653,11 @@ permission_levels:
 
 ---
 
-### 2.5 L2 — ABAC 属性权限（决策 D-018-07）
+### 3.5 L2 — ABAC 属性权限（决策 D-018-07）
 
 > **决策 D-018-07**：在 RBAC 静态角色之上增加 ABAC 动态属性层——同一 Agent 在不同上下文中有不同权限。包含意图感知、时间窗口、Agent 成熟度、资源敏感性四维属性。
 >
-> **决策依据**：RBAC 只能回答"这个人通常能做什么"，ABAC 回答"这次任务是否应该在这个时间、访问这批数据、触发这类动作"。对标企业级 Agent 四层设计（身份层→策略层→执行层→审计层）+ CSA ATF Behavior 要素 + D2 Input Guard。
+> **决策依据**：RBAC 只能回答"这个人通常能做什么"，ABAC 回答"这次任务是否应该在这个时间、访问这批数据、触发这类动作"。参考：企业级 Agent 四层设计（身份层→策略层→执行层→审计层）+ CSA ATF Behavior 要素 + D2 Input Guard。...
 
 ```yaml
 abac_dimensions:
@@ -617,7 +760,7 @@ abac_dimensions:
 
 ---
 
-### 2.6 L3 — Input Guard 参数护栏（决策 D-018-08）
+### 3.6 L3 — Input Guard 参数护栏（决策 D-018-08）
 
 > **决策 D-018-08**：在 Tool 调用参数级别增加护栏——同一 Tool 的不同参数应有不同权限。操作对象路径白名单 + 参数值范围限制 + 危险模式检测。
 >
@@ -722,7 +865,7 @@ input_guardrails:
 
 ---
 
-### 2.7 L4 — Sequence Guard 序列护栏（决策 D-018-09，**最关键的盲点补丁**）
+### 3.7 L4 — Sequence Guard 序列护栏（决策 D-018-09，**最关键的盲点补丁**）
 
 > **决策 D-018-09**：建立会话级操作序列追踪与阻断——单个操作可能合法，但多步组合可能构成攻击链。这是防御 Prompt Injection 和数据外泄的最后一公里。
 >
@@ -814,7 +957,7 @@ sequence_guard:
 
 ---
 
-### 2.8 L5 — Output Guard 输出护栏（决策 D-018-10）
+### 3.8 L5 — Output Guard 输出护栏（决策 D-018-10）
 
 > **决策 D-018-10**：Tool 执行后的输出也需要护栏——防止敏感数据泄漏到日志/Terminal/下游 Tool。
 >
@@ -864,11 +1007,11 @@ output_guardrails:
 
 ---
 
-### 2.9 L6 — Observability 可观测性（决策 D-018-11）
+### 3.9 L6 — Observability 可观测性（决策 D-018-11）
 
 > **决策 D-018-11**：权限系统自身必须具备完整的可观测性——权限决策耗时、异常行为模式、权限变更审计。没有可观测性 = 不知道有没有被绕过。
 >
-> **决策依据**：D2 Telemetry & Observability 模式 + OpenTelemetry 标准。对标 CSA ATF Behavior 要素。
+> **决策依据**：D2 Telemetry & Observability 模式 + OpenTelemetry 标准。参考： CSA ATF Behavior 要素。...
 
 ```yaml
 observability:
@@ -920,6 +1063,8 @@ observability:
 
     action: "触发告警 → 写入审计日志 → 不自动阻断（需要上下文判断），但累计触发 L0 Kill Switch"
 
+  signal_ownership: "L6 异常检测规则产生的信号 MUST 通过 MOD-INF-015 (Telemetry) 上报和存储，RBAC 不独立存储检测结果"
+
   # ─── 权限变更审计 ───
   policy_audit:
     tracked_changes:
@@ -932,7 +1077,7 @@ observability:
 
 ---
 
-### 2.10 L7 — Testing & Dry-Run（决策 D-018-12）
+### 3.10 L7 — Testing & Dry-Run（决策 D-018-12）
 
 > **决策 D-018-12**：权限配置是可测试代码——需要影响分析、模拟模式和自动化测试框架。
 >
@@ -986,11 +1131,11 @@ testing:
 
 ---
 
-### 2.11 先干后验模式（决策 D-018-02）
+### 3.11 先干后验模式（决策 D-018-02）
 
 > **决策 D-018-02**：审批流采用"先干后验 + 自动护栏"模式，而非"事前审批"模式。AI 直接执行 → 自动护栏检查 → 失败自动回滚 → 审计日志记录 → Owner 异步审阅。
 >
-> **决策依据**：10+ 并发对话不可能等 Owner 实时审批。对标 Terraform auto-apply + Cursor 自动编辑 + K8s controller reconciliation。
+> **决策依据**：10+ 并发对话不可能等 Owner 实时审批。参考： Terraform auto-apply + Cursor 自动编辑 + K8s controller reconciliation。...
 
 ```yaml
 execution_flow:
@@ -1048,11 +1193,11 @@ execution_flow:
 
 ---
 
-### 2.12 GOV-AI-001 自动派生（决策 D-018-03）
+### 3.12 GOV-AI-001 自动派生（决策 D-018-03）
 
 > **决策 D-018-03**：rbac_roles.yaml 从 GOV-AI-001 自动派生，而非人工维护两份文档。Owner 只维护 GOV-AI-001（人类可读的权限声明），rbac_roles.yaml 由脚本自动生成（机器可执行的权限配置）。
 >
-> **决策依据**：消除手动复制 = 消除漂移可能。对标 K8s CRD 从 Go 类型自动派生 OpenAPI Schema。
+> **决策依据**：消除手动复制 = 消除漂移可能。参考： K8s CRD 从 Go 类型自动派生 OpenAPI Schema。...
 
 ```yaml
 derivation_flow:
@@ -1075,7 +1220,7 @@ derivation_flow:
 
 ---
 
-### 2.13 Agent 身份模型（多 IDE 支持 + 成熟度 + 委托链）
+### 3.13 Agent 身份模型（多 IDE 支持 + 成熟度 + 委托链）
 
 > **v0.4.0 扩展**：AgentIdentity 增加 parent_agent_id/delegation_depth 委托链字段 + SessionToken 签名校验。
 
@@ -1127,7 +1272,7 @@ class RoleBinding(BaseModel):
 
 ---
 
-### 2.14 Permission Guard 七层+三横切面 运行时检查（核心 API）
+### 3.14 Permission Guard 七层+三横切面 运行时检查（核心 API）
 
 ```python
 class PermissionGuard:
@@ -1230,7 +1375,7 @@ class Action(BaseModel):
 
 ---
 
-### 2.15 横向越权防护（决策 D-018-13）
+### 3.15 横向越权防护（决策 D-018-13）
 
 > **决策 D-018-13**：L1 RBAC 不仅要防"低角色做高权限的事"（垂直越权），还要防"Agent 冒充其他 Agent 身份"（横向越权）。
 >
@@ -1296,7 +1441,7 @@ roles:
 
 ---
 
-### 2.16 冷启动锁——启动时全局拒绝直到权限配置加载（决策 D-018-14）
+### 3.16 冷启动锁——启动时全局拒绝直到权限配置加载（决策 D-018-14）
 
 > **决策 D-018-14**：蓝图 §6 R15 提出了"崩=blocked"原则，但关键空白是——rbac_roles.yaml 在加载之前的状态是什么？如果在 `immutable_core.py` 等组件就绪前面已经有 Agent 在操作，等于裸奔窗口。
 >
@@ -1345,7 +1490,7 @@ class ColdStartLock:
 
 ---
 
-### 2.17 权限钩子系统——Pre/Post/OnBlocked/OnKillSwitch 四类钩子（决策 D-018-15）
+### 3.17 权限钩子系统——Pre/Post/OnBlocked/OnKillSwitch 四类钩子（决策 D-018-15）
 
 > **决策 D-018-15**：引入四类权限钩子，为扩展性和自定义校验提供**不侵入核心代码**的注册入口。这是 Claude Code hooks 模式 + Terraform pre/post-conditions 的组合。
 >
@@ -1496,7 +1641,7 @@ hooks:
 
 ---
 
-### 2.18 Agent 创建权与权限遗传——Agent 派生/复制的权限衰减继承（决策 D-018-16）
+### 3.18 Agent 创建权与权限遗传——Agent 派生/复制的权限衰减继承（决策 D-018-16）
 
 > **决策 D-018-16**：Agent 能否创建/派生新的 Agent 实例？如果可以，新 Agent 继承什么权限？如果不可以，靠什么阻止？
 >
@@ -1553,7 +1698,7 @@ agent_creation_policy:
 
 ---
 
-### 2.19 缓存一致性——权限变更推送失效 + 降级攻击防护（决策 D-018-17）
+### 3.19 缓存一致性——权限变更推送失效 + 降级攻击防护（决策 D-018-17）
 
 > **决策 D-018-17**：蓝图 §6 R3 提到权限结果缓存（TTL=5min）。如果权限在5分钟内紧急收紧，缓存旧值作为ALLOW放行了——这5分钟是裸奔窗口。改为**推送驱动的缓存失效**。
 >
@@ -1625,7 +1770,7 @@ cache_policy:
 
 ---
 
-### 2.20 紧急覆盖令牌——Owner签发的JIT临时越权令牌（决策 D-018-18）
+### 3.20 紧急覆盖令牌——Owner签发的JIT临时越权令牌（决策 D-018-18）
 
 > **决策 D-018-18**：在紧急情况下（生产事故、关键修复），Owner需要让Agent快速执行一个被blocked的操作。当前唯一的办法是手动修改GOV-AI-001 → 等auto-derive → 不可接受。引入紧急覆盖令牌。
 >
@@ -1699,7 +1844,7 @@ class EmergencyOverrideManager:
 
 ---
 
-### 2.21 自动维护——僵尸规则检测 + 权限复杂度预算（决策 D-018-19）
+### 3.21 自动维护——僵尸规则检测 + 权限复杂度预算（决策 D-018-19）
 
 > **决策 D-018-19**：权限系统必须能**自我修剪**——自动检测无用的规则并推荐删除，控制规则总数在可维护范围内。这是100%AI施工+1人维护场景下防止"权限熵增"的关键机制。
 >
@@ -1809,7 +1954,7 @@ auto_maintenance:
 
 ---
 
-### 2.22 意图绑定访问控制（IBAC + 横切面D——决策 D-018-20）
+### 3.22 意图绑定访问控制（IBAC + 横切面D——决策 D-018-20）
 
 > **决策 D-018-20**：引入**意图绑定访问控制**（Intent-Bound Access Control, IBAC）作为横切面D的核心。将现有RBAC/ABAC从"谁+什么属性"升级为"谁+什么任务意图+需要什么临时权限信封"。这是 Cisco TBAC/IBAC 模型在氛围编程语境下的落地。
 >
@@ -1897,7 +2042,7 @@ class IntentCheckResult(str, Enum):
 
 ---
 
-### 2.23 Context Drift 检测——操作链中的意图漂移（决策 D-018-21）
+### 3.23 Context Drift 检测——操作链中的意图漂移（决策 D-018-21）
 
 > **决策 D-018-21**：AI Agent 在长时间的操作链中可能出现"Context Drift"——从最初"修复一个Bug"逐渐变为"重构整个模块"。L2 ABAC 的意图感知当前只检查TaskType，不检测链上漂移。新增语义漂移检测。
 >
@@ -1967,7 +2112,7 @@ class DriftReport(BaseModel):
 
 ---
 
-### 2.24 连续验证——每步重验证 Agent 身份与权限一致性（决策 D-018-22）
+### 3.24 连续验证——每步重验证 Agent 身份与权限一致性（决策 D-018-22）
 
 > **决策 D-018-22**：当前模型是"Tool调用前检查一次"。在Agent链中（特别是Orchestrator→Worker委托），身份可能在中途被篡改或上下文被污染。引入**连续验证**——每一步执行后、下一步执行前都重新验证。
 >
@@ -2017,7 +2162,7 @@ class ContinuousVerifier:
 
 ---
 
-### 2.25 权限模式管理器——Claude Code 5 模式 + Codex CLI Profiles（决策 D-018-23）
+### 3.25 权限模式管理器——Claude Code 5 模式 + Codex CLI Profiles（决策 D-018-23）
 
 > **决策 D-018-23**：氛围编程中Owner需要动态切换权限模式。参照Claude Code的Shift+Tab（5种模式）和Codex CLI的profiles机制，引入**权限模式管理器**。
 >
@@ -2117,7 +2262,7 @@ class PermissionModeManager:
 
 ---
 
-### 2.26 级联故障隔离——Agent链中的Cascading Failure防护（决策 D-018-24）
+### 3.26 级联故障隔离——Agent链中的Cascading Failure防护（决策 D-018-24）
 
 > **决策 D-018-24**：在多Agent场景（Orchestrator→Worker）中，单个Agent的错误输出会级联感染下游Agent。蓝图当前没有建模级联故障场景。新增**级联故障隔离器**。
 >
@@ -2159,7 +2304,7 @@ class CascadingFailureIsolator:
 
 ---
 
-### 2.27 Micro-Verified 先干后验——每子步骤微型验证（决策 D-018-25）
+### 3.27 Micro-Verified 先干后验——每子步骤微型验证（决策 D-018-25）
 
 > **决策 D-018-25**：将蓝图当前的"先干后验"（干完再验）升级为**Micro-Verified 先干后验**——将大操作分解为子步骤，每步执行后立即微验证，失败则立即回滚该子步，杜绝"第一步就错但第十步才发现"的级联错误。
 >
@@ -2214,7 +2359,7 @@ class MicroVerifier:
 
 ---
 
-### 2.28 权限决策自解释——结构化拒绝原因 + 规则溯源（决策 D-018-26）
+### 3.28 权限决策自解释——结构化拒绝原因 + 规则溯源（决策 D-018-26）
 
 > **决策 D-018-26**：当 L0-L5 + 横切面D 阻断一个操作时，不仅返回 "BLOCKED: reason"，还要提供：
 > 1. **结构化解释**——哪个层、哪条规则、哪个GOV-AI-001条目导致阻断
@@ -5613,7 +5758,305 @@ tool_definition_integrity_guard:
 
 ---
 
-## 4. 与现有系统的集成
+## §4 接口契约
+
+### §4.1 PermissionGuard（核心编排器）
+
+```python
+class PermissionGuard:
+    def check(self, agent: AgentIdentity, action: Action, context: ActionContext) -> PermissionResult
+    def check_dry_run(self, agent: AgentIdentity, action: Action, context: ActionContext) -> DryRunResult
+```
+
+| 方法 | 输入 | 输出 | 约束 |
+|------|------|------|------|
+| `check()` | AgentIdentity + Action + ActionContext | PermissionResult(decision, reason, layer, audit_id) | 单次 < 1.8ms；永不抛异常（异常 = BLOCKED） |
+| `check_dry_run()` | 同 check() | DryRunResult(affected_resources, risk_level, simulated_result) | 不执行任何副作用 |
+
+### §4.2 AgentIdentity
+
+```python
+class AgentIdentity:
+    agent_id: str
+    maturity_level: MaturityLevel  # NEWBORN/JUNIOR/SENIOR/OWNER
+    ide_source: IDESource          # TRAE/CURSOR/ROOCODE/API
+    session_token: str             # HMAC-SHA256 签名
+    created_at: datetime
+```
+
+### §4.3 ImmutableCore
+
+```python
+class ImmutableCore:
+    def is_protected_path(self, path: str) -> bool
+    def is_always_blocked(self, action: str) -> bool
+    def trigger_kill_switch(self, reason: str, source: str) -> None
+    def get_engine_degradation(self) -> DegradationLevel  # NORMAL/PARTIAL_FAILURE/EMERGENCY
+```
+
+### §4.4 权限判定结果
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| decision | ALLOW / AUTO_GUARD / BLOCKED | 三态判定 |
+| reason | str | 人类可读原因 |
+| layer | L0-L7 | 哪层做出的判定 |
+| audit_id | str | 审计链 ID |
+| auto_guard_context | AutoGuardContext | 仅 AUTO_GUARD 时——后验检查清单 |
+
+### §4.5 权限钩子
+
+```python
+class PermissionHooks:
+    def register_pre(self, hook_name: str, handler: Callable) -> None
+    def register_post(self, hook_name: str, handler: Callable) -> None
+    def register_on_blocked(self, hook_name: str, handler: Callable) -> None
+    def register_on_kill_switch(self, hook_name: str, handler: Callable) -> None
+```
+
+### §4.6 审计事件
+
+| 事件类型 | 触发时机 | 必含字段 |
+|---------|---------|---------|
+| permission_check | 每次 check() 调用 | agent_id, action, decision, layer, audit_id, latency_ms |
+| auto_guard_post_verify | 后验完成 | audit_id, post_result, rollback_triggered |
+| kill_switch_triggered | Kill Switch 触发 | reason, source, affected_agents |
+| sequence_violation | 序列违规 | agent_id, forbidden_sequence, detected_pattern |
+| cache_invalidation | 缓存失效 | rule_id, invalidation_reason, max_latency_ms |
+
+---
+
+## §5 约束条件
+
+### §5.1 性能约束
+
+| 约束 | 值 |
+|------|-----|
+| 单次权限检查延迟 | < 1.8ms (P99) |
+| 权限缓存 TTL | 5 分钟（推送驱动失效后 max_latency=100ms） |
+| Kill Switch 触发延迟 | < 50ms |
+| 冷启动锁超时 | 30 秒 |
+| auto_guard 后验窗口 | < 30 秒 |
+
+### §5.2 容量约束
+
+| 资源 | 基线值 | 升级阈值 | 升级方案 |
+|------|-------|---------|---------|
+| 权限规则数 | 200 条 | > 500 条 | CAP-R01: 规则分片 + 按域加载 |
+| 并发 Agent 数 | 10 | > 50 | CAP-R02: 无锁并发检查 + Rust 加速 |
+| 审计事件/秒 | 100 | > 1000 | CAP-R03: 批量写入 + 异步发射 |
+| 权限缓存条目 | 1000 | > 10000 | CAP-R04: LRU + 分层缓存 |
+
+> 完整容量升级方案（CAP-R01~R19）见 §17 容量升级附录。
+
+### §5.3 安全约束 `[临时时态: 永久]`
+
+| 约束 | 值 |
+|------|-----|
+| L0 不可变核心——AI 不可修改 | frozen |
+| rbac_roles.yaml 不在 AI 可写路径 | protected_path |
+| Kill Switch 多触发器冗余 | ≥ 3 触发器 |
+| auto_guard 后验失败 → 自动回滚 | 强制 |
+| 权限缓存失效推送延迟 | < 100ms |
+
+---
+
+## §6 错误处理
+
+| 错误场景 | 检测方式 | 恢复策略 | 对应层 |
+|---------|---------|---------|:---:|
+| Engine 崩溃 | heartbeat 超时 | 全部 BLOCKED + Owner 告警 | L0 |
+| 权限配置加载失败 | YAML 解析异常 | 冷启动锁——全局拒绝直到校验通过 | L0 |
+| 审计日志写入失败 | emit 超时/异常 | 本地缓冲 + 重试 + 降级为 BLOCKED | L6 |
+| Kill Switch 误触发 | 触发后 cooldown | 自动解除（cooldown=5min）+ Owner 手动解除 | L0 |
+| auto_guard 后验超时 | 30 秒超时 | 视为后验失败 → 自动回滚 | L1 |
+| 缓存失效推送失败 | 推送超时 | 降级为 TTL 模式 + 告警 | 横切面C |
+| 序列追踪状态丢失 | session 断开 | 重新开始追踪（不恢复旧状态） | L4 |
+| AgentIdentity 签名校验失败 | HMAC 不匹配 | BLOCKED + 告警 + 记录疑似伪造 | L1 |
+| 第三方依赖安装被拒 | 白名单匹配失败 | BLOCKED + 告知 Agent 需 Owner 审批 | L3 |
+| 降级攻击检测 | 同一 Agent 反复触发降级 | 立即 BLOCKED 该 Agent | L0 |
+
+---
+
+---
+
+## §8 安全考量
+
+> 本模块本身就是安全模块——安全考量已融入七层+六横切面的每一层。
+> 以下列出**跨层安全考量**和**权限系统自身安全**。
+
+### §8.1 权限系统自身安全（元安全）
+
+| # | 威胁 | 防护 | 对应决策 |
+|---|------|------|---------|
+| 1 | AI 修改 rbac_roles.yaml 给自己提权 | L0 不可变核心——rbac_roles.yaml 在保护路径中 | D-018-01 |
+| 2 | AI 修改 immutable_core.py 拆掉护栏 | L0 硬编码 + pre-commit 文件完整性检查 | D-018-01 |
+| 3 | Agent 伪造其他 Agent 身份 | SessionToken HMAC-SHA256 签名校验 | D-018-13 |
+| 4 | 冷启动裸奔窗口 | ColdStartLock——启动时全局拒绝 | D-018-14 |
+| 5 | 降级攻击——故意触发 Partial Failure | 降级源检测——同一 Agent 触发 → BLOCKED | D-018-17 |
+| 6 | 审计投毒——噪音攻击 | 告警信噪比监控 + 熔断触发器 | D-018-33 |
+| 7 | Agent 自我复制风暴 | Agent 创建权 + 权限遗传衰减 | D-018-16 |
+
+### §8.2 跨层安全考量
+
+| 考量 | 涉及层 | 处理方式 |
+|------|--------|---------|
+| 路径解析安全 | L0/L3 | D-018-37/38 path_parsing_guard + cross_platform_shell_guard |
+| MCP Tool 投毒 | L3/横切面F | D-018-41 tool_definition_integrity_guard |
+| Slopsquatting 幻构依赖 | L3/横切面F | D-018-42 slopsquatting_defense |
+| 通信信道劫持(CSWSH) | 横切面F | D-018-43 communication_channel_integrity_guard |
+| 动态信任预算 | 横切面F | D-018-44 adaptive_trust_budget_allocator |
+
+---
+
+## §9 测试策略
+
+### §9.1 L7 自动化安全测试
+
+| 测试类型 | 工具 | 覆盖范围 |
+|---------|------|---------|
+| 权限规则单元测试 | `test_permissions.py` | 每条规则的 ALLOW/AUTO_GUARD/BLOCKED 三态 |
+| 序列阻断测试 | `test_permissions.py` | 每条 forbidden_sequence |
+| Kill Switch 触发测试 | 手动 + 自动 | 每个触发器 |
+| 对抗性测试 | 专用 Agent | 尝试绕过所有七层+六横切面 |
+| 跨模型一致性测试 | DeepSeek/GLM/Claude | 同一权限规则判定一致性 |
+| Dry-Run 影响分析 | `dry_run.py` | 每种操作类型的影响范围 |
+
+### §9.2 对抗性测试报告
+
+> 完整报告见 [adversarial-test-report.yaml](file:///d:/ZephyrAlpha/docs/03_modules/l01_infrastructure/agent-rbac/adversarial-test-report.yaml)
+
+---
+
+## §10 依赖关系
+
+> **依赖图真源**：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md) 线3:治理闭环
+> 本节依赖声明 MUST 与依赖图对齐。不一致 = 漂移。
+
+### §10.1 依赖声明
+
+**G-CT 契约引用**
+
+| 契约ID | 方向 | 内容 |
+|--------|------|------|
+| G-CT-001 | RBAC→AT | 操作签名 |
+| G-CT-004 | ESC→RBAC | Escalation→RBAC 循环依赖（已裁定） |
+| G-CT-007 | SPEC→RBAC | Skill 加载→权限验证 |
+| G-CT-008 | A2A→RBAC | A2A 通信→权限验证 |
+
+**上游依赖（本模块读取/调用）**
+
+| 依赖 | module_id | 用途 | 失败影响 |
+|------|-----------|------|---------|
+| GOV-AI-001 | GOV-AI-001 | 权限声明真源 | 无法派生 rbac_roles.yaml |
+| Gate Engine | MOD-INF-007 | 权限检查作为门禁前置 | 权限检查不在执行路径上 |
+| Audit Trail | MOD-INF-020 | 审计日志写入 | 审计链断裂 |
+
+**下游依赖（其他模块读取/调用本模块）**
+
+| 消费者 | module_id | 调用方式 |
+|--------|-----------|---------|
+| MCP Servers | MOD-INF-013 | MCP Tool 调用前权限检查 |
+| Rollback System | MOD-INF-021 | auto_guard 后验失败触发回滚 |
+| Escalation System | MOD-INF-022 | Kill Switch 联动 |
+| Pipeline Orchestrator | MOD-INF-006 | 任务创建时绑定 Agent 身份 |
+
+**依赖模块详情**
+
+| 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 | 契约 |
+|---------|---------|---------|---------|---------|------|
+| zephyr.audit_trail | 硬依赖 | 审计写入 | ≥0.1 | MOD-INF-020 | G-CT-001 |
+| zephyr.escalation_engine | 硬依赖 | 升降级权限变更 | ≥0.1 | MOD-INF-022 | G-CT-004 |
+| zephyr.agent_spec | 硬依赖 | Skill 加载权限 | ≥0.1 | MOD-INF-019 | G-CT-007 |
+| zephyr.a2a_protocol | 硬依赖 | A2A 通信权限 | ≥0.1 | MOD-INF-025 | G-CT-008 |
+| zephyr.task_system | 硬依赖 | Agent 生命周期 | ≥0.1 | MOD-INF-006 | — |
+| zephyr.shared | 硬依赖 | PermissionGuard/AbstractLock | ≥0.1 | MOD-INF-016 | — |
+| zephyr.db | 硬依赖 | 权限规则持久化 | ≥0.1 | MOD-INF-012 | — |
+| zephyr.gate_engine | 跨线软依赖 | 权限查询(线1→线3) | ≥0.1 | MOD-INF-007 | — |
+| zephyr.runtime | 跨线软依赖 | 运行时注册 | ≥0.1 | MOD-INF-035 | — |
+| pydantic | 硬依赖 | BaseModel | V2 | — | — |
+
+### §10.2 依赖图对齐声明
+
+| 对齐项 | 全局依赖图中的声明 | 本蓝图 §10.1 声明 | 一致性 |
+|--------|-----------------|-----------------|:-----:|
+| GOV-AI-001→RBAC | 线3:治理闭环 | 上游硬依赖 | ✅ |
+| RBAC→Audit Trail | 线3:治理闭环 | 上游硬依赖(G-CT-001) | ✅ |
+| RBAC→Escalation | 线3:治理闭环 | 上游硬依赖(G-CT-004) | ✅ |
+| MCP→RBAC | 线3:治理闭环 | 下游消费(MOD-INF-013) | ✅ |
+| Rollback→RBAC | 线3:治理闭环 | 下游消费(MOD-INF-021) | ✅ |
+
+> 不一致 = 漂移。MUST 同步修正。
+
+### §10.3 内部依赖图
+
+**执行顺序依赖**
+
+| 步骤 | 依赖 | 说明 |
+|------|------|------|
+| L0 ColdStartLock | 无 | 启动时第一个执行 |
+| L1 AgentIdentity | L0 | 需要保护路径确认 |
+| L1 RBAC Guard | L0 + L1 Identity | 需要身份+保护路径 |
+| L2 ABAC Guard | L1 RBAC | 需要角色结果 |
+| L3 Input Guard | L2 ABAC | 需要属性结果 |
+| L4 Sequence Guard | L3 Input | 需要参数验证结果 |
+| L5 Output Guard | L4 Sequence | 需要序列检查结果 |
+| L6 Observability | L0-L5 | 需要全部检查结果 |
+| L7 Dry-Run | L0-L6 | 需要全部检查+观测结果 |
+
+**数据流依赖**
+
+| 数据 | 生产者 | 消费者 | 流向 |
+|------|--------|--------|------|
+| PermissionResult | permission_guard | 所有下游模块 | L0→L1→…→L7 |
+| AuditEvent | audit_emitter | audit_trail | RBAC→AT |
+| rbac_roles.yaml | derive_rbac_roles | rbac_guard/abac_guard | GOV-AI-001→RBAC |
+| KillSwitchSignal | immutable_core | escalation_engine | RBAC→ESC |
+
+### §10.4 自动化规格
+
+**是否需要自动化**
+
+| 自动化项 | 需要 | 原因 |
+|---------|:---:|------|
+| 依赖图对齐检查 | ✅ | 防止蓝图与全局依赖图漂移 |
+| 依赖版本兼容性检查 | ✅ | 防止依赖升级破坏接口 |
+| 契约一致性检查 | ✅ | 防止 G-CT 契约断裂 |
+
+**如何实现**
+
+| 自动化项 | 实现方式 | 脚本/工具 |
+|---------|---------|----------|
+| 依赖图对齐检查 | `check_contract_code_drift.py` 扩展依赖图对齐模式 | `scripts/governance/d5_architecture/checkers/check_contract_code_drift.py` |
+| 依赖版本兼容性检查 | CI pipeline 中 `pip check` + 接口签名断言 | CI |
+| 契约一致性检查 | `validate_load_path_integrity.py` | `scripts/governance/d5_architecture/validators/validate_load_path_integrity.py` |
+
+**触发方式**
+
+| 自动化项 | 触发条件 | 频率 |
+|---------|---------|------|
+| 依赖图对齐检查 | 蓝图 §10 变更 + CI 每次构建 | 每次变更 |
+| 依赖版本兼容性检查 | `requirements.txt` 变更 | 每次变更 |
+| 契约一致性检查 | G-CT 契约文件变更 | 每次变更 |
+
+---
+
+## §11 产出物
+
+| # | 产出物 | 绝对路径 | 类型 | 状态 |
+|---|--------|---------|------|:---:|
+| 1 | 核心实现 | `D:\ZephyrAlpha\src\zephyr\agent_rbac\` | 目录 | 已存在 |
+| 2 | 测试代码 | `D:\ZephyrAlpha\tests\agent_rbac\` | 目录 | 已存在 |
+| 3 | RBAC 角色配置 | `D:\ZephyrAlpha\src\zephyr\agent_rbac\rbac_roles.yaml` | YAML | 已存在 |
+| 4 | 权限钩子配置 | `D:\ZephyrAlpha\src\zephyr\agent_rbac\permission_hooks.yaml` | YAML | 已存在 |
+| 5 | 自动维护配置 | `D:\ZephyrAlpha\src\zephyr\agent_rbac\auto_maintenance.yaml` | YAML | 已存在 |
+| 6 | 健康仪表盘 | `D:\ZephyrAlpha\src\zephyr\agent_rbac\health_dashboard.yaml` | YAML | 已存在 |
+| 7 | 对抗性测试报告 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\agent-rbac\adversarial-test-report.yaml` | YAML | 已存在 |
+| 8 | 派生脚本 | `D:\ZephyrAlpha\src\zephyr\agent_rbac\derive_rbac_roles.py` | Python | 已存在 |
+
+---
+
+## §12 集成目标
 
 | 集成目标 | 集成方式 | 集成点 |
 |---------|---------|--------|
@@ -5635,9 +6078,800 @@ tool_definition_integrity_guard:
 | Inter-Agent Detector (NEW) | L4 跨Agent隐式通信检测——Agent A写→Agent B读协同攻击 | `cross_session_detector` → `audit_trail.query()` + `kill_switch` |
 | Ownership Absence (NEW) | Owner超时未审阅→系统自治保守模式 | `ownership_absence_policy` → `permission_guard.degradation()` |
 
+### §12.1 集成验证方法
+
+| 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
+|------------|---------|--------|---------|
+| DOM-GOV-001 治理域蓝图 | 职责分派 | §2 职责分派表 | 蓝图 §0 分派表与 DOM-GOV-001 §2 一致 |
+| zephyr.escalation_engine | 升降级权限变更(G-CT-004) | EscalationHandler 权限变更回调 | 集成测试覆盖升降级路径 |
+| zephyr.agent_spec | Skill 加载权限(G-CT-007) | SkillLoader 权限验证 | 集成测试覆盖 Skill 加载权限检查 |
+| zephyr.a2a_protocol | A2A 通信权限(G-CT-008) | A2ACheck 通信权限验证 | 集成测试覆盖 A2A 权限检查 |
+| zephyr.shared | PermissionGuard | PermissionGuard 基类 | 导入验证 + 单元测试 |
+| zephyr.db | 权限规则持久化 | RuleStore CRUD | 集成测试覆盖持久化 |
+| zephyr.gate_engine | 权限查询(跨线) | GateEngine 权限查询接口 | 集成测试覆盖跨线查询 |
+
 ---
 
-## 5. 施工 Phase 规划
+## §13 需要更新
+
+修改本蓝图时 MUST 同步更新以下文件：
+
+| # | 文件 | 同步内容 |
+|---|------|---------|
+| 1 | `src/zephyr/agent_rbac/rbac_roles.yaml` | 角色定义变更 |
+| 2 | `src/zephyr/agent_rbac/permission_hooks.yaml` | 钩子配置变更 |
+| 3 | `docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md` | GOV-AI-001 权限声明变更 |
+| 4 | `src/zephyr/gates/` | Gate Engine 集成点变更 |
+| 5 | `tests/agent_rbac/test_permissions.py` | 测试用例变更 |
+
+---
+
+## §14 已知风险与缓解
+
+> 本节同时承接原 §15 后果中的**负面后果**——设计决策带来的已知代价。
+> 正面后果与 §1 目标重复，不在此记录。
+
+| # | 风险/负面后果 | 概率 | 影响 | 缓解 | 类型 |
+|---|-------------|:---:|:---:|------|------|
+| R1 | auto_guard 后验失败率高——频繁自动回滚影响效率 | 中 | 中 | 统计后验失败率，持续优化 auto_guard 规则；失败率 > 20% 的操作降级为 blocked | 风险 |
+| R2 | 权限配置漂移——rbac_roles.yaml 与 GOV-AI-001 不一致 | 低 | 高 | CI 门禁校验一致性 + derive_rbac_roles.py 自动派生 | 风险 |
+| R3 | 性能开销——七层检查增加延迟 | 中 | 中 | 每层预算严格管控；权限结果缓存（TTL=5min）+ L1 always_allow 跳过 L3-L4 详细检查 | 风险 |
+| R4 | 多 IDE 身份冲突——同一文件被不同 IDE 的 Agent 同时修改 | 中 | 高 | 文件锁 + 乐观并发控制 + drift detector 实时检测 | 风险 |
+| R5 | L4 Sequence Guard 误报——合法操作序列被误判为攻击 | 中 | 中 | Owner 白名单机制；序列时间窗口可配置；统计误报率持续优化规则 | 风险 |
+| R6 | Agent Maturity 升级过慢——严重限制 AI 效率 | 中 | 中 | 自动升级到 L2 Junior（L3+ 仍需审核）；开放 Owner 手动加速升级 | 风险 |
+| R7 | Kill Switch 误触发——正常批量操作被熔断 | 低 | 高 | 触发阈值可配置；自动解除 cooldown 机制；Owner 可手动解除 | 风险 |
+| R8 | Engine 崩溃时全部 blocked——系统完全不可用 | 低 | 高 | L0 独立可快速恢复；允许 Owner 配置紧急白名单（临时绕过 Engine） | 风险 |
+| R9 | AI 绕过权限系统——写入不可变核心路径 | 低 | 极高 | L0 硬编码保护路径；OS 级文件权限兜底（L2b 沙箱 ACL）；pre-commit 检查文件完整性 | 风险 |
+| R10 | 权限配置越滚越复杂——1人无法维护 | 高 | 中 | GOV-AI-001单点维护+自动派生+影响分析可视化+自动维护中规则自我修剪（D-018-19） | 风险 |
+| R11 | 横向越权——Agent伪造其他Agent身份 | 中 | 极高 | SessionToken签名校验(HMAC-SHA256) + AgentIdentityVerifier + 跨Session伪造检测（D-018-13） | 风险 |
+| R12 | 冷启动裸奔——权限配置加载前Agent已操作 | 低 | 极高 | ColdStartLock——启动时全局拒绝直到校验通过（D-018-14） | 风险 |
+| R13 | 审计系统被投毒——噪音攻击淹没真实告警 | 中 | 极高 | 告警信噪比监控 + signal_noise_attack熔断触发器 + 异常密度突增自动降权（§2.2） | 风险 |
+| R14 | Agent自我复制风暴——绕过Maturity限制 | 中 | 高 | Agent创建权管控 + 权限遗传衰减 + agent_spawn_storm熔断器（D-018-16） | 风险 |
+| R15 | 权限缓存陈旧——紧急收紧后旧ALLOW仍生效 | 中 | 极高 | 推送驱动缓存失效——max_latency=100ms替代TTL=5min（D-018-17） | 风险 |
+| R16 | 降级攻击——Agent故意触发Partial Failure绕过L4 | 低 | 极高 | 降级源检测——同一Agent触发的降级→立即BLOCKED（§2.3 + D-018-17联动） | 风险 |
+| R17 | 熔断器DDoS——恶意Agent触发Kill Switch瘫痪全局 | 低 | 高 | 熔断源隔离——单Agent触发仅阻断该Agent，多Agent触发才全局熔断（§2.2） | 风险 |
+| R18 | Agent间隐式合谋——文件系统Covert Channel绕过单Session护栏 | 中 | 高 | 跨Session关联检测 + inter_agent_communication规则（§2.7 cross_session_correlation） | 风险 |
+| R19 | 第三方包供应链攻击——Agent安装恶意依赖 | 中 | 极高 | package_install白名单 + blocked_packages:["*"]默认拒绝（§2.6 D-018-09扩展） | 风险 |
+| R20 | Owner缺席时无人能干预——auto_guard操作悬空 | 中 | 中 | OwnerAbsencePolicy——超时→保守模式→所有auto_guard降级为blocked（§3 ownership_absence_policy.yaml） | 风险 |
+| NC1 | 权限规则形同虚设——AI可以不查注册表直接操作 | — | 极高 | 不实施本模块的后果，非风险 | 负面后果 |
+| NC2 | 无法审计"谁做了什么"——审计链断裂 | — | 高 | 不实施本模块的后果 | 负面后果 |
+| NC3 | 无运行时强制——权限是"建议"而非"强制" | — | 极高 | 不实施本模块的后果 | 负面后果 |
+| NC4 | 多IDE各自为政——无法统一管控 | — | 高 | 不实施本模块的后果 | 负面后果 |
+| NC5 | 权限系统自身无保护——AI可以给自己提权 | — | 极高 | 不实施本模块的后果 | 负面后果 |
+| NC6 | 只实施L0-L1→无意图感知、无序列阻断、无行为检测 | — | 高 | 部分实施的负面后果 | 负面后果 |
+| NC7 | 只实施L0-L5→无可观测性、无测试验证 | — | 高 | 部分实施的负面后果 | 负面后果 |
+| NC8 | 实施七层但无横切面→无钩子扩展、无缓存一致性、无自动维护 | — | 中 | 部分实施的负面后果 | 负面后果 |
+
+---
+
+---
+
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  v1.1.0 容量升级蓝图方案 — Capacity Upgrade Blueprint                      ║
+║  MOD-INF-018 Agent 身份与权限系统                                          ║
+║  面向 10,000 脚本 / 1,500 模块 / 100 AI 并发                               ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+  ▸ 本段是面向未来 10,000 脚本 / 1,500 模块 / 100 AI 并发的**容量升级方案**。
+  ▸ 写在蓝图最开头，与下方现有设计形成清晰分界线：
+      本段以上（含本段）= "未来要升级什么（v1.1.0 容量目标，19 项缺口全量覆盖）"
+      本段以下 = "v0.14.0 现有蓝图设计是什么"
+  ▸ 施工顺序：先按本方案升级蓝图 → 蓝图评审通过 → 再施工代码。
+  ▸ 本方案审阅完成后施工，施工时以本方案为最高优先级。
+  ▸ 本蓝图与"容量三塔"（MOD-INF-001 / MOD-INF-007 / MOD-INF-032）协同：
+      ─ MOD-INF-001 v3.0.0  — 管"容量规则 + Error Budget + Token Budget + Kill Switch + 降级链 + SLO"
+      ─ MOD-INF-007 §0      — 管"脚本调度 + 依赖图谱 + 存储分片"
+      ─ MOD-INF-032 v5.0.0  — 管"系统资源 + 进程/内存/CPU/GPU/缓存/守护线程"
+      本蓝图（MOD-INF-018）   — 管"Agent身份 + 权限判定 + 权限配置可伸缩性 + 并发权限检查吞吐 + 脚本级资源授权"
+      四者形成 v5.0.0 目标下的**容量四柱体系**：前三柱管"执行层的容量"，本柱管"安全层的容量"。
+
+─── 容量基线 ────────────────────────────────────────────────────────────────
+
+  设计上限：  10,000 脚本 / 1,500 模块 / 100 AI 并发
+  当前状态：    268 脚本 /   51 模块 /   1 AI（Owner 单人）+ IDE 内 10+ 并发对话
+  放大倍数：    ~37×       ~29×        ~10×(对话数) → ~100×(AI Agent 数)
+
+  脚本数量推导：
+    ▸ 当前 51 模块 × 平均 5.25 脚本/模块 = 268 脚本
+    ▸ 1,500 模块 × (4~8) = 6,000~12,000 脚本（低：复用增 → 脚本新增少；高：AI 新增专项检测脚本）
+    ▸ 最终取整：**10,000 脚本** 作为设计上限，留足余量
+
+  并发数量推导：
+    ▸ 100 AI 同时工作，每个 AI 改代码 → 触发增量扫描
+    ▸ 每次增量扫描：15-30 个脚本（仅跑与改动相关的脚本）
+    ▸ 极端场景：100 AI 同时触发 → 需同时调度 ~1,500 个脚本执行
+    ▸ 系统需支持 **40-100 个脚本并发执行**
+    ▸ 每次脚本执行内部可能产生 10-50 次工具调用 → 每次调用需经过 RBAC check_permission()
+    ▸ **RBAC 层面极限**：100 AI × 20 steps × ~5 tool_calls/step = **10,000 check_permission()/s 峰值**
+
+  执行模式（硬约束）：
+    ▸ **增量扫描 = 默认模式**（日常 15-30 脚本，< 1 分钟）
+    ▸ **全量扫描 = 可选周检**（10,000 脚本，~3.5 小时）
+    ▸ 全量扫描不能是日常操作——必须是可选、可排程的周检功能
+
+  硬件条件：
+    ▸ CPU: i7-12700KF（12核20线程）— 保留 4 线程给 OS/IDE → 16 线程可用
+    ▸ RAM: 64GB — 保留 8GB 给 OS/IDE → 56GB 可用
+    ▸ SSD: 1TB NVMe — I/O 不是瓶颈
+    ▸ GPU: RTX 3090 24GB VRAM — 用于 embedding/reranker 脚本
+
+  Agent RBAC 在容量体系中的特殊地位：
+    ▸ Agent RBAC 是**所有脚本执行的必经之路**——每个 tool_call 都触发 check_permission()
+    ▸ 它是容量链上**最窄的瓶颈点**：其他组件可以排队等待，但权限检查失败=操作被拒
+    ▸ 100 AI × 大量 tool_calls → 权限检查吞吐就是系统的**硬天花板**
+    ▸ RBAC 自身的配置大小、加载时间、缓存命中率直接影响全局吞吐
+
+─── 现有蓝图覆盖评估（v0.14.0）─────────────────────────────────────────────
+
+  蓝图 v0.14.0 经过十二轮深度交叉审视（94 项决策、209 项盲点全覆盖），在"Agent 安全纵深防御"
+  维度达到了**极高覆盖**（~95%），对标 57 个行业框架/论文/事故报告。
+
+  核心优势（不可削弱）：
+    ▸ 七层纵深防御（L0-L7）+ 六横切面（A-F）——每条工具调用经过 19 个检查点
+    ▸ 单次检查预算 < 1.8ms——在 10+ 并发对话场景下验证通过
+    ▸ L0 不可变核心 + OS 级 ACL 双兜底——权限系统自身不可被 AI 修改
+    ▸ 冷启动锁 + Kill Switch + Engine 降级——多层熔断保障
+    ▸ D-018-59 ConcurrentThroughputOptimizer——per-agent 分片 + Rust 热路径，50 Agent P99<15ms
+
+  评估结论：v0.14.0 蓝图在"安全深度"上达到了**业界领先水平**，但在"Agent 规模伸缩性"
+  上存在**系统性设计盲区**（~30% 覆盖），核心原因是所有设计默认假设"10+ 并发对话"而非
+  "100 个独立 AI Agent 同时施工"。
+
+  ⚠️ 关键问题：v0.14.0 蓝图把"Agent RBAC"理解为"单个 Agent 操作的安全防线"，
+  但当系统中有 100 个 AI Agent 同时运行、每个触发 1,500 个模块中的脚本时，最核心的
+  容量挑战是——"1,500 个模块的权限规则怎么加载？100 个 Agent 的身份怎么管理？每个
+  Agent 每秒数十次的权限检查怎么不成为全局瓶颈？10,000 个脚本作为新的一类权限资源
+  怎么建模？"
+
+─── 缺口总览（本次 v1.0.0 升级聚焦）─────────────────────────────────────────
+
+  现有蓝图在容量维度覆盖了什么、缺了什么：
+
+  维度                       现有设计                      目标设计               状态
+  ──────────────────────────────────────────────────────────────────────────────────
+  ┌ CAP-R01 权限检查吞吐      D-018-59 分片+乐观锁        100 Agent P99<10ms      ⚠️ 不足
+  │ (100 Agent 并发)          +Rust热路径, 50Agent测试      10K check/s 峰值
+  ├ CAP-R02 RBAC 配置伸缩     rbac_roles.yaml 单文档       1,500模块分片索引       ❌ 缺失
+  │ (1,500 模块)              加载, 无分片/无增量            <1s 增量加载
+  ├ CAP-R03 Agent 身份注册表  隐式 per-session 身份         100 Agent 显式注册表    ❌ 缺失
+  │ (100 Agent)               Identity 无生命周期管理       身份池+生命周期+GC
+  ├ CAP-R04 权限缓存伸缩      Per-agent 分片未规模化验证     1,500模块命中率>95%    ⚠️ 不足
+  │ (1,500 模块 × N 脚本)                                   缓存预热+淘汰策略
+  ├ CAP-R05 L4 序列护栏伸缩   Per-agent 序列追跡             100 Agent 并行追踪     ⚠️ 不足
+  │ (100 Agent 并行)          O(n²) 跨Session关联            索引化跨Agent关联
+  ├ CAP-R06 审计日志吞吐      无容量维度设计                 10K 事件/s 写入         ❌ 缺失
+  │ (100 AI × 大量操作)                                      分级丢弃策略
+  ├ CAP-R07 冷启动伸缩        30s timeout @ 51 模块          30K 规则 < 5s 加载      ❌ 缺失
+  │ (1,500 模块 × 20 规则)                                  增量+预编译缓存
+  ├ CAP-R08 不可变核心路径    ~20 条 protected_paths         ~200 条 高效匹配       ⚠️ 不足
+  │ 匹配 (1,500 模块)         线性遍历 O(n)                   前缀树 O(log n)
+  ├ CAP-R09 Session Token     单 Agent场景设计              100 Token 并发管理      ⚠️ 不足
+  │ 管理 (100 Agent)          无 Token Pool                   令牌池+过期回收
+  ├ CAP-R10 自适应信任预算    Per-agent 5级漏斗             100 Agent全局预算协调    ⚠️ 不足
+  │ 全局协调 (D-018-93)      无跨Agent预算感知              $100/day 池化分配
+  ├ CAP-R11 多IDE身份联邦     BootstrapCoordinator 3 IDE    10+ IDE实例协同引导     ⚠️ 不足
+  │ (10+ IDE 实例)            Phase0 审计日志                IDS令牌+IDE注册表
+  ├ CAP-R12 脚本作为权限资源  ❌ RBAC 无"脚本"概念           脚本→权限资源建模       ❌ 缺失
+  │ (10,000 脚本)             Tool 粒度 = 最细粒度           脚本注册+脚本级AuthZ
+  ├ CAP-R13 权限复杂度预算    D-018-19 僵尸规则+            1,500模块级复杂度        ⚠️ 不足
+  │ (1,500 模块)              复杂度预算, 单文档            预算+分片评估
+  ├ CAP-R14 RBAC 自身内存     无内存预算设计                 < 500MB 常驻           ❌ 缺失
+  │ 占用 (所有规则+缓存)                                    内存水位线+降级
+  ├ CAP-R15 与容量三塔联动     △ 提及但无容量维度契约        容量四柱联动契约         ⚠️ 不足
+  │                          GateEngine/MOD-032引用         容量SLA + 告警链
+  ├ CAP-R16 RBAC自身降级链    ❌ 仅通知外部降级              L7→L0 逐层关停          ❌ 缺失
+  │ (10K check/s 过载)        无内部检查深度削减               检查深度自适应
+  ├ CAP-R17 权限变更并发一致   ❌ 无                           规则版本号+执行快照     ❌ 缺失
+  │ (规则变更 vs 脚本执行)                                   读已提交隔离
+  ├ CAP-R18 脚本执行预授权     ❌ 每次tool_call独立检查        脚本级预授权令牌        ❌ 缺失
+  │ (批量脚本执行优化)        30脚本×10调用=300次检查          一次性签发+执行期复用
+  └ CAP-R19 脚本间权限传播     ❌ 无跨脚本权限链建模           脚本→脚本调用授权链     ❌ 缺失
+    (Script→Script AuthZ)                                    权限传播+污染检测
+
+  总计: 10 项 ❌缺失 + 9 项 ⚠️不足 → **在 100 AI 并发/1,500 模块场景下存在 4 个新增高影响缺口（CAP-R16~R19），需在 v1.1.0 补齐**
+
+─── 缺口详细分析 ────────────────────────────────────────────────────────────
+
+  ▶ CAP-R01: 权限检查吞吐——100 Agent 并发下的 check_permission() 峰值
+
+    ┌ 现状: D-018-59 ConcurrentThroughputOptimizer（§3.0.26）设计了 per-agent 分片 +
+    │       Rust 热路径 + 乐观序列缓冲。CI 基准测试覆盖：10 Agent P99<3.5ms /
+    │       25 Agent P99<8ms / 50 Agent P99<15ms。单次检查预算 < 1.8ms。
+    ├ 问题: 基准测试上限仅 50 Agent，未覆盖 100 Agent 场景。
+    │       ─ 100 Agent × ~20 steps × ~5 tool_calls/step = **10,000 check/s**
+    │       ─ 当前 max_concurrent=40 脚本 → 每个脚本的 tool_call 量未建模
+    │       ─ Rust 热路径虽然快，但 L3-L7 仍在 Python 中（GIL 竞争）
+    │       ─ PermissionCache 分片数 N=16(cpu_count*4)→当 Agent 数>分片数时退化
+    ├ 方案:
+    │   RBAC Throughput Scaler（本模块管容量约束，不替代 D-018-59 的优化架构）:
+    │     ─ Benchmark 扩展: 100 Agent P99<10ms / 150 Agent P99<20ms / 200 Agent P99<35ms
+    │     ─ Shard Scaling: N_SHARDS = max(cpu_count * 4, agent_count * 0.5 → 至少 50 分片 @ 100 Agent
+    │     ─ L3-L7 检查分级: 非阻断型检查（L5/L6/L7）→ 异步化/批量化
+    │     ─ Backpressure: check_permission() 队列深度 > 500 → 503 Service Unavailable
+    │     ─ 容量告警: P99 > 8ms > 5s → 触发 MOD-INF-001 Token Budget 全局收紧
+    │     ─ FastPath: L0-L1 的 always_allow 路径（~95% 操作）→ 直接 Rust 返回，跳过 L2-L7
+    │   Rust 热路径扩展:
+    │     ─ 将 L2 ABAC 的确定性部分（Maturity/TLB/时间窗口）移入 Rust
+    │     ─ Python → Rust 调用零拷贝（pyo3 &[u8] 直接操作）
+    │   CI 回归: 100 Agent 并发基准测试 → 阻塞 PR merge
+    ├ 集成点: 吞吐退化时 → MOD-INF-001 Kill Switch 降级 → MOD-INF-022 熔断
+    └ 对标: Envoy Proxy RBAC filter（10M check/s）+ AWS IAM per-account limit（40K req/s）
+
+  ▶ CAP-R02: RBAC 配置伸缩性——1,500 模块的权限规则加载与索引
+
+    ┌ 现状: rbac_roles.yaml 作为单文档从 GOV-AI-001 派生，全量加载到内存。
+    │       D-018-03 GOV-AI-001 → derive_rbac_roles.py → rbac_roles.yaml。
+    │       当前 ~51 模块 × ~20 条规则/模块 ≈ 1,000 条规则。
+    ├ 问题: 1,500 模块 × ~20 条规则 = **30,000 条规则**，单 YAML 文档 ≈ 3-5MB。
+    │       ─ 全量解析+加载: 当前 ~50ms → 30K 规则估计 1.5-3s
+    │       ─ L1 RBAC 每次 check 需遍历规则匹配——O(n) 线性遍历 30K 条 → ~100ms
+    │       ─ 冷启动锁 30s timeout 被单车加载吃掉 10%
+    │       ─ 权限变更（D-018-17 推送失效）需重载整份文档——缓存全量腾空
+    ├ 方案:
+    │   RBAC Config Sharding & Indexing:
+    │     ─ 分片存储: rbac_roles_{module_id}.yaml × 1,500 文件 → 按需加载
+    │     ─ Prefix Trie 索引: role → action → resource 三级 Trie → O(log n) 查找
+    │     ─ 增量加载: 启动时仅加载 L0 immutable_core + 活跃模块的规则
+    │     ─ 懒加载: 首次访问某模块的权限规则时 → 加载该模块分片
+    │     ─ 编译缓存: 预编译 Trie 为二进制 pickle/mmap → 重启 < 100ms
+    │     ─ 推送粒度: 单模块规则变更 → 仅失效该模块分片缓存
+    │   Config Size Budget:
+    │     ─ per-module 规则上限: 30 条（超出需 Owner 审批）
+    │     ─ 模块间重复规则: 提取为 shared_rules → 去重
+    │     ─ GOV-AI-001 派生分片: derive_rbac_roles.py → 支持 --module 参数单模块派生
+    ├ 集成点: D-018-03 派生逻辑 + D-018-17 缓存失效 需适配分片
+    └ 对标: Kubernetes RBAC per-namespace Role + ClusterRole 分层
+
+  ▶ CAP-R03: Agent 身份注册表——100 个独立 AI Agent 的显式身份管理
+
+    ┌ 现状: Agent Identity（§2.13）定义为 per-session 的隐式身份：
+    │       agent_id / maturity_level / session_token / ide_source。
+    │       D-018-64 SessionIdentityBinding 解决跨会话身份伪造。
+    │       当前：Owner + 10+ 并发对话 = ~10 个并发 identity。
+    ├ 问题: 100 AI Agent = 100 个独立身份，且每个身份有独立 session。
+    │       ─ 无 Agent 生命周期: 创建/暂停/恢复/销毁 → 不知道哪些 Agent 活着
+    │       ─ 无 Agent 注册表: 无法枚举"系统中现在有多少个 Agent 在工作"
+    │       ─ 无 Agent 配额: 无法限制"最多多少个 Agent 同时运行"
+    │       ─ Session 膨胀: 100 Agent × 每 Agent 可能多 session → 200+ token
+    │       ─ D-018-16 Agent 创建权——遗传衰减链在 100 Agent 下爆炸
+    ├ 方案:
+    │   AgentRegistry（显式 Agent 身份与服务发现）:
+    │     ─ Agent 注册: register_agent(agent_id, maturity, ide, parent_id)
+    │     ─ Agent 槽位: max_agents = 100（可配，默认 100）
+    │     ─ Agent 生命周期: CREATED → ACTIVE → IDLE(5min无操作) → PAUSED(30min) → TERMINATED
+    │     ─ Heartbeat: 每个 Agent 每 30s 上报心跳 → 超时 90s → 标记 STALE → 自动释放
+    │     ─ Agent Pool: 100 槽位中保留 10 个给 P0 紧急 Agent（Owner 直接签发）
+    │     ─ 遗传衰减上限: 最多 3 层派生，超过拒绝创建
+    │   Agent Quota Enforcement:
+    │     ─ max_concurrent_agents = 100 → 达到上限返回 429
+    │     ─ per-IDE 上限: max 30 agents/IDE（防单一 IDE 垄断）
+    │     ─ Agent 饥饿防护: FIFO 等待队列 → 最长等待 60s 超时
+    ├ 集成点: D-018-16 Agent 创建权 ← 新增 max_agents / per_ide_quota
+    └ 对标: Kubernetes Node/scheduler 的 Pod 注册 + Heartbeat + 驱逐机制
+
+  ▶ CAP-R04: 权限缓存伸缩——1,500 模块下的缓存命中率
+
+    ┌ 现状: D-018-59 per_agent_cache_sharding × hash(agent_id) % N_SHARDS。
+    │       每个分片独立读写锁。当前分片数 = max(16, cpu_count*4) = 最多 80。
+    │       缓存条目: 未定义上限，依赖 LRU。
+    ├ 问题: 1,500 模块 × ~20 规则/模块 → 30,000 个唯一 permission decision 模式。
+    │       ─ 100 Agent × ~10 check/s × 60s = 60,000 check/min → 缓存命中率关键
+    │       ─ 权限变更推送 D-018-17 在 1,500 模块下：单模块变更 → 仅失效该模块缓存
+    │         但当前设计是"推送驱动全局失效"的设计方向
+    │       ─ 分片数 < Agent 数时退化——80 分片 vs 100 Agent 仍有轻微冲突
+    ├ 方案:
+    │   Scalable PermissionCache:
+    │     ─ 自适应分片: N_SHARDS = max(cpu_count*4, ceil(agent_count/2)) → 100 Agent = 50 分片+
+    │     ─ 分层缓存: L0-L1 规则（不可变）→ 无 TTL 永久缓存 / L2-L7（可变）→ TTL=5min
+    │     ─ 缓存预热: 启动时预计算 常访问规则 的判定结果 → 减少冷启动 miss
+    │     ─ 淘汰策略: LRU + LFU 混合 → max_entries = 50,000 per shard
+    │     ─ 命中率 SLO: > 95% (warm) / > 80% (cold start 60s内)
+    │     ─ D-018-17 失效粒度: from 全局推送 → 模块级分片失效
+    ├ 集成点: D-018-17 缓存一致性 需从全局推送升级为模块级分片失效
+    └ 对标: Redis Cluster per-slot 缓存 + Envoy RBAC filter cache
+
+  ▶ CAP-R05: L4 Sequence Guard 伸缩——100 Agent 并行序列追踪
+
+    ┌ 现状: §2.7 L4 Sequence Guard 追踪 per-agent 操作序列，forbidden_sequences 规则。
+    │       跨 Session 关联检测（cross_session_correlation）+ Agent 间隐式通信检测。
+    │       序列追踪数据结构: per-agent in-memory sequence_buffer。
+    ├ 问题: 100 Agent 同时活跃 × 每 Agent 20 步操作链 = 2,000 条活跃序列。
+    │       ─ 跨 Agent 关联: 100 Agent → O(n²) = 4,950 对两两关联 → 实时不可行
+    │       ─ 涌现行为检测（Multi-Agent Emergent Behavior）: 100 Agent 组合爆炸
+    │       ─ SequenceBuffer 写锁竞争: D-018-59 乐观锁 CAS → 100 Agent × CAS 频率高
+    │       ─ 内存占用: 2,000 序列 × 20 步 × ~200B/步 = 8MB → 可接受，但需 GC
+    ├ 方案:
+    │   Sequence Guard at Scale:
+    │     ─ 惰性跨Agent关联: 仅在"同模块/同文件/同资源"时检测 → 索引化
+    │     ─ Agent间隐式通信: CovertChannel → 按资源路径哈希 → Agent Pair 分组
+    │       → 仅检测共享同一资源的 Agent Pair
+    │     ─ 涌现行为: 不实时分析所有 Agent Pair → 采样 + 统计基线异常
+    │     ─ SequenceBuffer: 每 Agent 独立无锁环形缓冲区（88 bytes × 256 entries）
+    │       → 零锁竞争，只有跨 Agent 关联时读取
+    │     ─ GC: 每 60s 清理 INACTIVE Agent 的序列缓冲
+    │     ─ 容量预算: 单个 Agent L4 检查 < 0.5ms @ 2,000 序列总量
+    ├ 集成点: 涌现行为检测可降级——高负载时关闭跨Agent分析，仅保留单Agent序列
+    └ 对标: AWS GuardDuty 跨账户威胁分析（索引化 + 采样，非 O(n²) 全量）
+
+  ▶ CAP-R06: 审计日志吞吐——100 AI 大规模操作的审计写入
+
+    ┌ 现状: §2.9 L6 Observability + D-018-42 审计日志 Merkle Tree 完整性。
+    │       每次 check_permission() → audit_emitter.emit() → raw_events.jsonl 写入。
+    │       D-018-50 审计日志注入防护。D-018-42 Merkle Proof <100ms。
+    ├ 问题: 10,000 check/s × 每事件 ~500B = **5MB/s 审计日志写入** → 17GB/小时。
+    │       ─ NVMe 1TB 可写 ~58 小时 → 周级别的全量日志不可行
+    │       ─ Merkle Tree 每秒更新——10,000 条目/s 的 Merkle proof 计算开销
+    │       ─ 日志查询（L4 跨 Agent 关联）→ 线性扫描 17GB 不可行
+    ├ 方案:
+    │   Audit Log at Scale:
+    │     ─ 分级写入: L0-L1 阻断→全量写入 / L2-L3 警告→采样 10% / L4-L7 通过→仅计数
+    │     ─ 批量写入: 100ms 缓冲 → 批量 fsync → IOPS 从 10K/s 降到 100/s
+    │     ─ Merkle 分级: 仅 L0-L1 事件参与 Merkle 链 / L2 以上独立链
+    │     ─ 日志轮转: 每小时 → JSONL→Parquet 压缩（10:1 压缩比）
+    │     ─ 保留策略: 全量 24h + 采样 7d + 摘要 90d
+    │     ─ 游标查询: 按 agent_id + timestamp 的 B-Tree 索引 → O(log n) 检索
+    │   L4 跨 Agent 关联的审计查询:
+    │     ─ 从 raw_events.jsonl → SQLite/Parquet 索引 → O(log n) 而非 O(n)
+    ├ 集成点: MOD-INF-020 Audit Trail ← 继承分级写入策略
+    └ 对标: AWS CloudTrail（分级）+ Google Chronicle（压缩存储）
+
+  ▶ CAP-R07: 冷启动伸缩——1,500 模块下的权限配置加载
+
+    ┌ 现状: D-018-14 ColdStartLock（§2.16）：启动时全局拒绝 → rbac_roles.yaml
+    │       加载+hash校验通过 → 释放锁。timeout=30s，超时→maintenance_mode。
+    │       当前 ~1,000 条规则 → 加载 < 100ms。
+    ├ 问题: 30,000 条规则 + YAML 解析 + Trie 构建 + 完整性校验 → 预估 3-5s。
+    │       ─ 30s timeout 足够，但启动等待 3-5s 用户感知差
+    │       ─ 全量校验 1,500 个分片文件的 hash——I/O 开销
+    │       ─ 启动后缓存冷 → 前 60s 命中率 < 80%
+    ├ 方案:
+    │   Scalable Cold Start:
+    │     ─ 预编译缓存: rbac_config.cache（pickle/mmap）→ 启动直接 mmap → < 100ms
+    │     ─ 分片校验: 仅校验 L0 immutable_core（必须）+ 活跃模块分片（按需）
+    │     ─ 后台预热: L0-L1 加载完成 → 释放冷启动锁 → 后台加载剩余分片
+    │     ─ Timeout 自适应: timeout = max(30s, rule_count / 1000 * 5s)
+    │     ─ 启动指标: agent_rbac.boot.duration.total / per_shard / cache_warmup
+    │   Staged Unlock:
+    │     ─ Phase 0: L0 校验通过 → 释放 L0（Agent 可执行安全操作）
+    │     ─ Phase 1: L1-L2 加载 → 释放全量（< 1s）
+    │     ─ Phase 2: 后台加载 L3-L7 规则 → 无阻塞
+    ├ 集成点: D-018-14 冷启动锁 从二元锁升级为分级释放
+    └ 对标: Envoy hot restart（不中断流量热更新）
+
+  ▶ CAP-R08: L0 不可变核心路径匹配——1,500 模块的保护路径伸缩
+
+    ┌ 现状: §2.1 L0 protected_paths 列表（~20 条 glob 模式）。always_blocked
+    │       操作列表（~14 条）。每次 tool_call → 遍历匹配 protected_paths × glob。
+    │       L0 检查预算 < 0.05ms。
+    ├ 问题: 1,500 模块 → protected_paths 可能膨胀到 200+ 条（每个模块可能有
+    │       自己的 blueprint / config / security 路径需要保护）。
+    │       ─ 遍历 200 条 glob → ~0.5ms → 超出 L0 0.05ms 预算 10 倍
+    │       ─ always_blocked 操作从 14 → 30+ 条 → 同理
+    ├ 方案:
+    │   ProtectedPath Index:
+    │     ─ Glob → Prefix Trie 编译: 预编译所有 glob 为 Trie → 单次 O(log n) 匹配
+    │     ─ 分层索引: 按路径前缀分桶（src/ / docs/ / config/ / data/）→ 命中对应桶
+    │     ─ always_blocked 操作: HashMap → O(1) 查找
+    │     ─ 预算坚守: L0 检查预算保持 < 0.05ms，通过编译为确定性决策（Rust 侧）
+    │   ProtectedPath 爆炸管控:
+    │     ─ Per-module protected_paths 通过模块的 .module_protection.yaml 声明
+    │     ─ 自动合并到全局 protected_paths → 去重（同一前缀合并为更短规则）
+    │     ─ 上限: max_protected_paths = 500 → 超出触发 Owner 审批
+    ├ 集成点: L0 immutable_core 从硬编码列表升级为编译索引
+    └ 对标: .gitignore 的 git check-ignore（pattern Trie）+ SELinux 策略编译
+
+  ▶ CAP-R09: Session Token 管理——100 Agent 的 Token 并发生命周期
+
+    ┌ 现状: AgentIdentity.session_token（HMAC-SHA256 签名）+ D-018-58
+    │       GracefulTokenRenewal（在途过期保护）。单 Agent 场景简单。
+    ├ 问题: 100 Agent × 多 session（长对话可能重连）→ 200+ 活跃 Token。
+    │       ─ Token 签名验证: HMAC-SHA256 每次 ~1μs → 100 并发不是瓶颈
+    │       ─ Token 过期管理: 200 个 token 的 GC → 需要过期扫描
+    │       ─ D-018-64 SessionIdentityBinding: 每个 Agent 的 token 持久化
+    ├ 方案:
+    │   TokenPool:
+    │     ─ Token 槽位: max_tokens = 500 → 超限拒绝新 session（429）
+    │     ─ 分层 Token: 长期 identity_token（Agent 生命周期）+ 短期 session_token（会话）
+    │     ─ GC 定时器: 每 60s 扫描过期 token → 批量清理
+    │     ─ Token 用量仪表盘: active_tokens / expired_tokens / renewal_rate
+    │     ─ 异常检测: 同一 Agent > 5 个并发 token → 标记 UNUSUAL
+    ├ 集成点: D-018-58 GracefulTokenRenewal + D-018-64 SessionIdentityBinding
+    └ 对标: OAuth2 token management（access_token + refresh_token 双层）
+
+  ▶ CAP-R10: 自适应信任预算全局协调——100 Agent 共享 $100/day
+
+    ┌ 现状: D-018-93 AdaptiveTrustBudget（§3.0.60）：per-Agent 五级权限漏斗 +
+    │       KL 散度行为漂移 + 被动/主动补充。per-Agent 独立计算信任分。
+    │       但全局 Token Budget 在 MOD-INF-001 中为 $100/day。
+    ├ 问题: 100 Agent 可能 10 分钟耗光一天预算。
+    │       ─ D-018-93 的 per-Agent 预算无全局协调——100 Agent × 各自花销
+    │       ─ Trust Budget 消耗路径: check_permission() 本身不计 Token
+    │         但 Agent 的 tool_call 消耗 Token Budget → RBAC 间接受影响
+    │       ─ 最严重场景: 100 Agent × 10 tool_calls/min × 1000 token/call
+    │         = 1M token/min → $100 几分钟耗尽
+    ├ 方案:
+    │   Global Trust Budget Coordinator:
+    │     ─ 全局预算池: $100/day → 按 Agent 优先级分配
+    │     ─ P0 保留: 20% 预算永远保留给 P0 Agent（Owner 直接签发的紧急 Agent）
+    │     ─ 速率限制: 单 Agent 最大 2% 全局预算 → 超额自动降级
+    │     ─ 预算水位告警: 50%/70%/90% → 自动收紧所有 Agent 权限漏斗
+    │     ─ Trust Budget ↔ Permission Level 联动:
+    │       >70% 预算消耗 → 所有 Agent 降一级漏斗（如 Funnel5→Funnel4）
+    │       >90% 预算消耗 → 所有非 P0 Agent 降至 Funnel1（仅读）
+    │     ─ Per-Agent 预算: agent_budget = global_budget * (agent_priority / sum_priorities)
+    ├ 集成点: D-018-93 AdaptiveTrustBudget + MOD-INF-001 Token Budget
+    └ 对标: AWS Budgets（全局池+per-account 限额）+ GCP Quota
+
+  ▶ CAP-R11: 多 IDE 身份联邦——10+ IDE 实例的协同引导
+
+    ┌ 现状: D-018-55 BootstrapCoordinator（§3.0.22）：多 IDE 并发施工期最小保护。
+    │       Phase 0 审计日志 + 施工后对比。设计假设 3 IDE（TRAE/Cursor/RooCode）。
+    ├ 问题: 100 AI Agent 可能分布在 10+ IDE 实例（TRAE × 3 / Cursor × 3 /
+    │       RooCode × 2 / Claude Code × 2 / Windsurf × 1 / 其他）。每个 IDE 实例
+    │       可能承载 5-15 个 Agent。
+    │       ─ 每个 IDE 需要独立的 RBAC 施工令牌
+    │       ─ IDE 实例可能不在同机（未来分布式）→ 网络通信
+    ├ 方案:
+    │   IDE Federation at Scale:
+    │     ─ IDE Registry: 每个 IDE 实例注册 → ide_instance_id + host + port + agents[]
+    │     ─ IDE 配额: max_ide_instances = 20 → 超限排队
+    │     ─ Per-IDE 令牌: 不同于 Agent Token——IDE 级引导令牌
+    │     ─ IDE Liveness: 心跳 10s → 超时 30s → 标记 STALE → Agent 迁移/暂停
+    │     ─ Bootstrap 审计: 所有 IDE 实例的 Phase 0 操作统一收集
+    │   Future-Proof: IDE 注册表设计为可扩展到分布式（预留 network_identity 字段）
+    ├ 集成点: D-018-55 BootstrapCoordinator + AgentRegistry
+    └ 对标: Kubernetes kubelet 注册 + Node 心跳
+
+  ▶ CAP-R12: 脚本作为一级权限资源——10,000 脚本的 RBAC 建模
+
+    ┌ 现状: RBAC 的资源模型只有 file / tool / config / env / package 等。
+    │       **没有"脚本"（script）这个资源类型**。脚本的执行/修改/创建
+    │       被归入 file 或 tool 的权限范畴。
+    ├ 问题: 10,000 个脚本需要被管理——哪些脚本可以修改哪些文件？
+    │       哪些脚本可以调用哪些其他脚本？脚本的权限边界在哪？
+    │       ─ 新脚本的注册：AI 创建新脚本时 → RBAC 需要知道"这个脚本有没有权限做X"
+    │       ─ 脚本依赖链：Script A → Script B → 权限传播链 → 当前无建模
+    │       ─ 脚本分类授权：gate_check 类脚本 vs audit 类脚本 → 不同权限
+    ├ 方案:
+    │   Script as Resource:
+    │     ─ script 作为一级资源类型加入 RBAC 模型
+    │     ─ 脚本权限动作: script:execute / script:modify / script:create / script:delete
+    │     ─ 脚本角色: script_role = gate_check | audit | drift | telemetry | code_quality
+    │     ─ 脚本-脚本调用权限: Script A 能否调用 Script B → 依赖图授权
+    │     ─ 脚本-文件权限: Script 只能操作已声明的 depends_files[] 中的文件
+    │     ─ 脚本权限声明: 每个脚本头部 YAML → script_id / module_id / allowed_resources[]
+    │   Integration with ScriptRegistry (MOD-INF-001/GateEngine):
+    │     ─ 脚本注册时 → 自动创建 RBAC script identity
+    │     ─ 脚本执行前 → GateEngine 调用 RBAC check_script_permission()
+    │     ─ 脚本默认最小权限: 新脚本注册 → 仅 read self → Owner 手动授权升权
+    ├ 集成点: MOD-INF-007 GateEngine §0 ScriptRegistry + MOD-INF-001 ScriptScheduler
+    └ 对标: AWS Lambda execution role（每个 Lambda 有独立 IAM Role）
+
+  ▶ CAP-R13: 权限复杂度预算——1,500 模块级的规则治理
+
+    ┌ 现状: D-018-19 自动维护（§2.21）：僵尸规则检测 + 权限复杂度预算 +
+    │       Owner 健康仪表盘。规则评估基于全量 rbac_roles.yaml。
+    ├ 问题: 1,500 模块 → 30,000 条规则。僵尸规则检测的扫描时间、复杂度预算
+    │       计算的时间复杂度是 O(n²)——"规则 A 是规则 B 的子集？"
+    │       ─ 30,000 条规则 → O(n²) = 900M 对比较 → 不可行
+    │       ─ 复杂度预算: 30,000/(5 metrics) = ?
+    ├ 方案:
+    │   Complexity Budget at Scale:
+    │     ─ 分片评估: per-module 独立计算复杂度 → 仅对同模块规则做子集检测
+    │     ─ 跨模块冲突: 仅检测 role 重叠的模块间规则 → 索引化
+    │     ─ 预算公式: per_module_budget = 30 规则 / max_complexity_score = 100
+    │     ─ 僵尸检测: 基于 Usage Counter → 30 天 0 命中 → 标记 ZOMBIE
+    │     ─ 全局预算: total_rules ≤ 50,000 / total_roles ≤ 500 / total_actions ≤ 200
+    ├ 集成点: D-018-19 自动维护 需分片化执行
+    └ 对标: Open Policy Agent (OPA) 策略静态分析（per-package 而非 global）
+
+  ▶ CAP-R14: RBAC 自身内存占用——所有规则 + 缓存 + 索引的常驻内存
+
+    ┌ 现状: 蓝图无内存占用预算设计。D-018-59 分片 + Rust 热路径对内存无约束。
+    ├ 问题: 30,000 规则 × ~1KB（规则文本+索引）= ~30MB
+    │       ─ PermissionCache: 50,000 entries × ~200B = 10MB × 50 分片 = ~500MB
+    │       ─ SequenceBuffer: 100 Agent × 256 entries × 88B = ~2.2MB
+    │       ─ AgentRegistry: 100 Agent × ~2KB = 0.2MB
+    │       ─ Audit buffer: 100ms × 10K events/s × 500B = ~500KB
+    │       ─ 总计: ~550MB → **超出考虑的 RAM Budget（56GB 中的 ~1%）**
+    │       ─ 但核心问题是: 550MB 中缓存占 500MB → 缓存膨胀
+    ├ 方案:
+    │   Memory Budget & Watermark:
+    │     ─ 总内存预算: 1GB → 占可用 56GB 的 1.8%
+    │     ─ 水位线: GREEN < 500MB / YELLOW 500-800MB / RED > 800MB
+    │     ─ YELLOW: 缩小缓存 → max_entries 减半
+    │     ─ RED: 清除所有非 L0-L1 缓存 + 强制 GC + 暂停新 Agent 注册
+    │     ─ 缓存条目 TTL: warm_cache TTL=5min → YELLOW 时 TTL=1min
+    │     ─ 内存指标: agent_rbac.memory.bytes (total/cache/index/audit)
+    ├ 集成点: MOD-INF-032 ResourceOptimizationEngine → 订阅内存水位告警
+    └ 对标: JVM -Xmx + GC tuning + Redis maxmemory-policy
+
+  ▶ CAP-R15: 与容量三塔的联动契约——Agent RBAC 在容量体系中的角色
+
+    ┌ 现状: §4 集成矩阵列出了 Gate Engine / Task System / Audit Trail 的集成点。
+    │       D-018-59 ConcurrentThroughputOptimizer 无容量维度的外部 SLA。
+    ├ 问题: MOD-INF-001 的 v3.0.0 容量升级已定义了 CAP-G01~CAP-G13（脚本/调度/
+    │       并发维度），但 MOD-INF-018 没有对应的容量承诺。
+    │       ─ 容量三塔的 SLA 受 RBAC 检查速度直接影响
+    │       ─ MOD-INF-001 SLO "增量扫描 < 1min" → 其中 15-30 脚本 × 10 tool_calls
+    │         × 1.8ms = 0.27-0.54s → 可接受。但在 100 AI 并发退化为 50ms → 15-75s
+    │       ─ Token Budget 熔断（MOD-INF-001）需要 RBAC 权限漏斗联动
+    ├ 方案:
+    │   Capacity Four-Pillar Contract（容量四柱联动契约）:
+    │     ─ RBAC 容量 SLA:
+    │       · check_permission() P50 < 0.5ms / P99 < 5ms @ 100 Agent 并发
+    │       · PermissionCache 命中率 > 95% (warm)
+    │       · 冷启动释放 < 1s（L0-L1）+ < 5s（全量）
+    │       · 审计日志写入 < 0.5ms p99
+    │     ─ 联动触发:
+    │       · RBAC P99 > 10ms → 通知 MOD-INF-001 收紧 Token Budget（全局降级）
+    │       · RBAC 内存 YELLOW → 通知 MOD-INF-032 准备资源回收
+    │       · GateEngine 调度队列 > 500 → 通知 RBAC 启用 FastPath（跳过 L2-L7）
+    │     ─ 联合告警链:
+    │       · MOD-INF-018 → MOD-INF-001 → MOD-INF-022（Kill Switch）
+    │       · 三层告警联动: RBAC 退 → 容量规则收紧 → 全局熔断
+    ├ 集成点: MOD-INF-001 §0 容量基线 + MOD-INF-032 资源水位
+    └ 对标: AWS Well-Architected Pillar 间的依赖关系建模
+
+  ▶ CAP-R16: RBAC 自身多级降级链——10K check/s 过载时的检查深度自适应削减
+
+    ┌ 现状: CAP-R01 设计了 FastPath（L0-L1 always_allow 路径跳过 L2-L7），
+    │       CAP-R15 设计了 RBAC P99>10ms → 通知 MOD-INF-001 收紧 Token Budget。
+    │       但 RBAC 自身**没有内部分级降级机制**——当吞吐过载时，
+    │       只能"通知别人降级"，自己无法主动削减检查深度。
+    ├ 问题: 100 AI 并发 × 10K check/s 峰值场景下：
+    │       ─ P99 延迟从 5ms 退到 50ms → FastPath 跳过 95% 操作 →
+    │         但剩余的 5%（500 check/s）仍需走全链路 L0-L7
+    │       ─ 如果这 500 check/s 中包含重度 L4 序列检测（跨 Agent 关联），
+    │         单个 check 可能 > 20ms → 进一步退化
+    │       ─ 极端场景：100 AI 同时触发紧急操作（P0）→ 所有操作都需要 L0-L7
+    │         → FastPath 不起作用 → P99 飙升 → 雪崩
+    │       ─ RBAC 没有"主动关停非关键层"的能力——永远全链路检查
+    ├ 方案:
+    │   RBAC Degradation Levels（内部降级链，比外部 Kill Switch 更细粒度）:
+    │     ─ 降级触发条件:
+    │       ─ Level-1 条件: P99 > 8ms 持续 30s
+    │       ─ Level-2 条件: 队列深度 > 300 或 P99 > 15ms 持续 10s
+    │       ─ Level-3 条件: 队列深度 > 500 或 P99 > 30ms 持续 5s
+    │     ─ 降级策略（逐层削减——关停非关键检查，保留核心安全）:
+    │       ─ DEGRADED-1 (轻度过载):
+    │         · 关停 L7（测试与模拟——对抗性测试/混沌测试非执行路径）
+    │         · L6 审计完整写入 → 采样写入（10% 比例）
+    │         · L5 输出护栏 → 仅检查 PII/凭证（跳过大小截断+合成泄漏）
+    │         · 预估恢复: P99 从 15ms → 8ms（绕过 3 层最高开销检查）
+    │       ─ DEGRADED-2 (中度过载):
+    │         · 关停 L7 + L6 + L5
+    │         · L4 序列护栏 → 仅 per-agent 序列（跳过跨 Agent 关联+涌现行为）
+    │         · L3 参数护栏 → 仅 file/protected_paths 检查（跳过 package_install/
+    │           network_target/env 检查）
+    │         · 预估恢复: P99 从 30ms → 5ms
+    │       ─ DEGRADED-3 (重度过载——接近崩溃):
+    │         · 关停 L3-L7 全部
+    │         · 仅保留 L0（不可变核心）+ L1（RBAC）+ L2（ABAC 核心属性）
+    │         · L2 ABAC 仅检查 Maturity + Resource Sensitivity（跳过时间窗口+TLB+意图感知）
+    │         · 预估恢复: P99 从 50ms → 2ms
+    │     ─ 恢复策略:
+    │       ─ 降级后持续监控 P99，当 < 阈值 × 0.5 持续 60s → 逐级回升
+    │       ─ DEGRADED-3 → DEGRADED-2（60s 稳定后）→ DEGRADED-1 → FULL
+    │       ─ 回升时每级间隔 60s → 避免振荡（thrash prevention）
+    │     ─ Owner 可感知:
+    │       ─ 每级降级/回升 → EventBus 发布 capacity.rbac.degradation_level
+    │       ─ Dashboard 实时显示当前降级级别 + 关停的检查层
+    │       ─ DEGRADED-3 > 5min → MOD-INF-022 Kill Switch 全局熔断
+    │   Integration with CAP-R01 FastPath:
+    │     ─ FastPath 是"静态优化"（对 95% always_allow 操作绕过 L2-L7）
+    │     ─ Degradation 是"动态削减"（对 5% 需要全链路检查的操作削减深度）
+    │     ─ 两者互补: FastPath 减少总量, Degradation 减少单次深度
+    ├ 集成点: CAP-R01 FastPath + CAP-R15 四柱联动 + MOD-INF-022 Kill Switch
+    └ 对标: Envoy overload manager（分水位线降级）+ AWS Lambda throttling levels
+
+  ▶ CAP-R17: 权限变更在脚本执行中的并发一致性——规则热更新 vs 活跃脚本
+
+    ┌ 现状: D-018-17 缓存一致性设计为"推送驱动全局失效"——Owner 修改规则 →
+    │       推送通知 → 全量缓存腾空。D-018-03 GOV-AI-001 派生 rbac_roles.yaml。
+    │       当前 ~10 并发对话场景 → 缓存失效窗口 ~100ms → 可接受。
+    ├ 问题: 100 AI 并发 + 40 脚本并发执行场景下：
+    │       ─ 脚本可能执行 30s-300s（CAP-G08 timeout=300s），在此期间
+    │         Owner 收紧某模块权限规则 → 部分脚本看到旧规则（ALLOW），
+    │         部分看到新规则（DENY）→ 同一扫描批次内判定不一致
+    │       ─ 具体场景:
+    │         · 脚本 A 执行到 step 5 时规则被收紧 → step 6 突然被拒 →
+    │           脚本 A 中途失败（不一致的中间状态）
+    │         · 脚本 B 在规则变更后启动 → 看到的是新规则
+    │         · 增量扫描报告中: 脚本 A 失败 + 脚本 B 通过 →
+    │           Owner 无法判断是代码问题还是规则变更导致
+    │       ─ CAP-R02 的分片存储（rbac_roles_{module_id}.yaml）带来新的
+    │         一致性问题: 30,000 条规则分布在 1,500 个分片文件中 →
+    │         规则变更时无法原子性地更新所有相关分片
+    ├ 方案:
+    │   Rule Change Consistency Model:
+    │     ─ 隔离级别: Read-Committed（读已提交）
+    │       · 正在执行的脚本 → 使用**执行开始时**的规则快照
+    │       · 新启动的脚本 → 使用最新规则版本
+    │       · 规则变更不影响已经在跑的脚本——避免中途失败
+    │     ─ 规则版本号:
+    │       ─ 全局单调递增: rbac_config_version（uint64，每次变更 +1）
+    │       ─ 每个 check_permission() 调用携带 config_version
+    │       ─ RuleChangeLog: (version, timestamp, changed_modules[], changed_rules[])
+    │     ─ 脚本执行快照:
+    │       ─ ScriptScheduler 启动脚本前 → 获取当前 config_version → 作为脚本
+    │         执行上下文的一部分（script_execution_snapshot_version）
+    │       ─ 脚本执行期间所有 RBAC 检查 → 携带该 version → 使用对应版本规则
+    │       ─ 脚本执行结束 → 快照版本释放（引用计数递减）
+    │     ─ 规则版本保留策略:
+    │       ─ 保留最近 3 个版本（当前 + 上一版 + 上上一版）
+    │       ─ 超过 3 个版本的旧规则 → 等待所有引用该版本的脚本完成 → 释放
+    │       ─ 最大保留时间: 300s（脚本最长执行时间）→ 超时强释放
+    │     ─ 分片规则变更的原子性:
+    │       ─ 单模块规则变更: 更新 1 个分片 → 版本号 +1 → 原子、瞬间完成
+    │       ─ 跨模块规则变更: 批量更新 N 个分片 → 版本号一次性 +1 →
+    │         中间状态不可见（变更要么全生效要么全不生效）
+    │       ─ 实现: 分片更新写入临时目录 → 一致性校验 → 原子 rename
+    │     ─ 一致性 SLO:
+    │       ─ rule_change_propagation_latency < 100ms（从 Owner 保存到新脚本可见）
+    │       ─ concurrent_execution_inconsistency_rate = 0（活跃脚本中途不切换规则）
+    │       ─ config_version_snapshot_leak = 0（脚本结束 300s 后快照必释放）
+    ├ 集成点: CAP-R02 分片存储 + CAP-G02 ScriptScheduler（快照版本传递）
+    └ 对标: PostgreSQL Read-Committed Isolation + Kubernetes ConfigMap immutable
+          versioning
+
+  ▶ CAP-R18: 脚本执行预授权批量通道——30 脚本增量扫描的权限开销优化
+
+    ┌ 现状: CAP-R01 FastPath 针对 always_allow 操作（~95%）做优化。
+    │       CAP-R12 将 script 定义为一级资源类型，支持 script:execute 等权限动作。
+    │       当前: 每个 tool_call → check_permission() → 独立判定 → 独立审计。
+    │       这个模型在单 Agent / 少量脚本场景下足够。
+    ├ 问题: 增量扫描触发 30 个脚本 × 每脚本 10 次 tool_call = 300 次权限检查。
+    │       ─ 100 AI 并发 → 每个 AI 可能不同时触发 → 但高峰期仍可能有
+    │         ~5 个增量扫描批次并发 = 5 × 300 = 1,500 check/min → 不算瓶颈
+    │       ─ **真正的问题是**: 每个 tool_call 独立走 L0-L7 全链路 →
+    │         即使 FastPath 处理了 95% 的操作，剩余 5%（15 次/批次）仍需要
+    │         ~1.8ms × 15 = 27ms 额外开销 → 在 40 脚本并发下累积
+    │       ─ 脚本执行**天然适合预授权**:
+    │         · 脚本身份明确（script_id + module_id）
+    │         · 脚本的作用范围声明在注册时（allowed_resources[] / depends_files[]）
+    │         · 脚本执行窗口短（15-300s），权限不会大幅变化
+    │         → 但当前设计每次 tool_call 都重新走一遍全链路
+    └ 方案:
+    │   ScriptExecutionPreAuthToken（脚本执行预授权令牌）:
+    │     ─ 签发时机: ScriptScheduler 分配执行槽位后、脚本启动前
+    │     ─ 签发内容:
+    │       ─ script_id + module_id + 允许的 action 列表
+    │       ─ 有效期限: 脚本 timeout + 30s 缓冲（默认 330s）
+    │       ─ 令牌版本: 绑定 rbac_config_version（CAP-R17），规则变更时令牌自动失效
+    │       ─ 令牌签名: HMAC-SHA256(script_id + version + expiry + allowed_actions)
+    │     ─ 执行期使用:
+    │       ─ 脚本的每次 tool_call → 携带 PreAuthToken →
+    │         RBAC 先验证令牌签名+有效期 → 命中 → O(1) 判定（< 0.02ms）
+    │         → 未命中（操作超出预授权范围）→ 回退到标准 check_permission()
+    │       ─ 令牌命中率目标: > 90%（脚本的 tool_call 大多数在预授权范围内）
+    │       ─ 令牌未命中（10%）→ 走标准全链路 → 不影响安全性
+    │     ─ 预授权范围推导:
+    │       ─ 来源 1: 脚本注册时的 allowed_resources[]（CAP-R12）
+    │       ─ 来源 2: 脚本声明 depends_files[] 的对应文件操作权限
+    │       ─ 来源 3: 脚本所属模块的默认权限集（module_default_rbac）
+    │       ─ 合并后去重 → 产出 allowed_actions 列表 → 签发令牌
+    │     ─ 安全性:
+    │       ─ 令牌不可转让: 绑定 script_id → 其他脚本不可冒用
+    │       ─ 令牌作用域受限: 仅 pre-authorized actions → 越界操作走标准检查
+    │       ─ 令牌生命周期短: 最长 330s → 超时自动失效
+    │       ─ 规则变更即时撤销: config_version 不匹配 → 令牌拒收
+    │       ─ 令牌签发审计: 每次签发 → 写入 Audit Trail（签发原因/范围/有效期）
+    │     ─ 性能收益:
+    │       ─ 增量扫描 30 脚本 → 300 tool_calls → 90% 令牌命中 →
+    │         270 次 × 0.02ms + 30 次 × 1.8ms = 5.4ms + 54ms = **59.4ms**
+    │         vs. 当前全链路 300 × 1.8ms = **540ms** → 节省 89%
+    │       ─ 100 AI × 5 批次并发 → 5 × 59.4ms = 297ms → 可忽略
+    ├ 集成点: CAP-R12 Script as Resource + CAP-R01 FastPath + CAP-G02 ScriptScheduler
+    └ 对标: AWS IAM Role chaining（AssumeRole 临时凭证）+ Kubernetes
+          ServiceAccount token projection
+
+  ▶ CAP-R19: 脚本间权限传播——Script→Script 调用的授权链与污染检测
+
+    ┌ 现状: CAP-G15 设计了脚本间执行 DAG（Script A 依赖 Script B 的产出结果）。
+    │       CAP-R12 将 script 定义为一类权限资源（script:execute 等动作）。
+    │       但**脚本间跨权限调用的授权链**没有被建模——当 Script A 调用
+    │       Script B 时，权限如何传播？污染如何隔离？
+    ├ 问题: 脚本→脚本调用链在 10K 脚本场景下非常普遍：
+    │       ─ 场景 1: 无害调用
+    │         Script A(gate_check) 调用 Script B(audit) 获取审计数据 →
+    │         B 的结果被 A 消费（纯读、无副作用）
+    │       ─ 场景 2: 权限提升
+    │         Script A(P2 建议级) 调用 Script B(P0 门禁级) →
+    │         B 执行了 A 本身没有权限执行的操作（权限传播/提升）
+    │       ─ 场景 3: 权限污染
+    │         Script A(P0 门禁级，可修改 config) 调用 Script B(audit) →
+    │         B 的产出被 A 消费 → A 基于 B 的结果修改 config →
+    │         如果 B 的结果被篡改/有毒 → A 的错误操作通过 B 的数据扩散
+    │       ─ 场景 4: 循环依赖 + 权限死锁
+    │         A → B → C → A → 三个脚本互相依赖，权限链形成环 →
+    │         任一脚本的权限变更可能导致三者连锁拒止
+    ├ 方案:
+    │   Script-Script AuthZ Chain（脚本间权限调用链建模）:
+    │     ─ 调用声明: 脚本注册时声明 called_scripts[]（CAP-G15 DAG 扩展）
+    │     ─ 权限传播规则:
+    │       ─ 默认最小权限: A 调用 B → B 以 B 自身的权限执行，不受 A 的权限约束
+    │       ─ 可选权限继承: A 声明 "delegate_my_permissions_to_B" →
+    │         B 在 A 的权限范围内执行（交集: B.can ∩ A.can）
+    │       ─ 禁止权限提升: A 不能通过调用 B 来获取 A 自身不具备的权限
+    │         （B 的权限 × A 的权限 = 最终有效权限）
+    │     ─ 污染检测（Taint Tracking）:
+    │       ─ 每个脚本的产出标记为 TAINTED_BY_{script_id}
+    │       ─ Script A 消费 Script B 的产出 → A 的产出继承 B 的污点标签
+    │       ─ P0 脚本不能消费 P2 脚本的产出（防止低置信度数据影响高优先级门禁）
+    │       ─ 例外: Owner 显式白名单（trusted_script_chain）
+    │     ─ 调用深度限制:
+    │       ─ 最大调用深度: 3 层（A→B→C→D 被拒）
+    │       ─ 防止调用链爆炸: 10K 脚本 × 平均 2 calls = 20K 调用边 →
+    │         SQLite 邻接表 ~1MB
+    │     ─ 循环调用检测:
+    │       ─ 注册时: BFS 遍历调用图 → 检测环 → 拒绝注册 + 输出环路径
+    │       ─ 运行时: 调用栈追踪 → 检测深度异常 → 终止调用 + 告警
+    │   Script-Call Permission 审计:
+    │     ─ 每次脚本间调用: 记录 caller_script / callee_script / permission_scope
+    │     ─ 调用链可视化: MCP tool resource_script_call_chain(script_id)
+    │     ─ 异常模式检测: 同一对 (caller, callee) 调用频率激增 → 可能是权限滥用
+    ├ 集成点: CAP-G15 ScriptExecutionDAG + CAP-R12 Script as Resource +
+    │         CAP-G04 FileScriptDependencyGraph
+    └ 对标: SELinux type enforcement（进程间权限隔离）+ taint tracking（污点分析）
+
+─── 施工优先级与路线图 ──────────────────────────────────────────────────────
+
+  施工原则：
+    ▸ P0: 先解决"能不能跑"——吞吐不崩 / 配置可加载 / Agent 可注册
+    ▸ P1: 再解决"跑得好不好"——缓存命中率 / 序列追踪 / 审计存储
+    ▸ P2: 最后解决"跑得优雅不优雅"——复杂度预算 / 内存优化 / 联动契约
+
+  Phase 优先级:
+
+  | Priority | CAP       | 任务                                                       | 依赖               |
+  |:--------:|:----------|:-----------------------------------------------------------|:-------------------|
+  | 🔴 P0    | CAP-R01   | 100 Agent 并发基准测试 + FastPath 实现 + 分片数自适应        | D-018-59 扩展      |
+  | 🔴 P0    | CAP-R02   | rbac_roles 分片存储 + Prefix Trie 索引 + 增量加载           | D-018-03 扩展      |
+  | 🔴 P0    | CAP-R03   | AgentRegistry: 显式注册表 + 生命周期 + 槽位配额             | D-018-16 扩展      |
+  | 🔴 P0    | CAP-R07   | 预编译缓存 + 分级冷启动释放（非二元锁）                      | D-018-14 升级      |
+  | 🔴 P0    | CAP-R10   | 全局预算池 + per-Agent 分配 + 水位告警 + 漏斗联动            | D-018-93 扩展      |
+  | 🔴 P0    | CAP-R16   | RBAC自身三级降级链（DEGRADED-1/2/3）+ 自适应回升            | CAP-R01 + CAP-R15 |
+  | 🔴 P0    | CAP-R18   | ScriptExecutionPreAuthToken 签发+验证+失效管线              | CAP-R12 + CAP-R01  |
+  | 🔴 P0    | CAP-R17   | 规则版本号 + 脚本执行快照 + Read-Committed 隔离              | CAP-R02 + CAP-G02  |
+  | 🟡 P1    | CAP-R04   | 分层缓存（L0-L1 永久 vs L2-L7 TTL）+ 预热策略               | CAP-R02 完成后     |
+  | 🟡 P1    | CAP-R05   | 惰性跨 Agent 关联 + 索引化 + 环形缓冲区                      | D-018-09 扩展      |
+  | 🟡 P1    | CAP-R06   | 审计分级写入 + 批量 fsync + Parquet 压缩 + B-Tree 索引       | MOD-INF-020 联动   |
+  | 🟡 P1    | CAP-R08   | glob → Trie 编译 + always_blocked HashMap                  | D-018-04 升级      |
+  | 🟡 P1    | CAP-R09   | TokenPool: 分层 Token + GC + 异常检测                      | D-018-58/64 扩展   |
+  | 🟡 P1    | CAP-R11   | IDE Registry + 配额 + 心跳 + 分布式预留                     | D-018-55 扩展      |
+  | 🟡 P1    | CAP-R12   | Script 资源类型 + 脚本权限声明 + 最小权限默认                 | GateEngine 联动    |
+  | 🟢 P2    | CAP-R13   | 分片复杂度评估 + Usage Counter + 僵尸规则检测               | CAP-R02 完成后     |
+  | 🟢 P2    | CAP-R14   | 内存水位线 + 三级告警 + 缓存退化策略                          | MOD-INF-032 联动   |
+  | 🟢 P2    | CAP-R15   | 容量四柱联动契约文档 + 联合 SLA 定义 + 告警链                | 所有方案稳定后     |
+  | 🟢 P2    | CAP-R19   | 脚本间权限调用链建模 + Taint Tracking + 循环检测             | CAP-R12 + CAP-G15  |
+
+  施工节奏控制（按 MOD-INF-001 容量升级总体节奏）：
+    ▸ Sprint 1-2: P0 八项（CAP-R01/R02/R03/R07/R10/R16/R18/R17）→ 达到"100 Agent 可运行且不雪崩"
+    ▸ Sprint 3-4: P1 六项（CAP-R04/R05/R06/R08/R09/R11/R12）→ 达到"100 Agent 高效运行"
+    ▸ Sprint 5:   P2 四项（CAP-R13/R14/R15/R19）→ 达到"运维可持续+脚本权限链安全"
+    ▸ 每 Sprint 完成后 → 对原蓝图对应决策标记 △ 容量升级版本号
+
+─── 与现有施工计划的冲突分析 ─────────────────────────────────────────────────
+
+  当前蓝图 §5 施工 Phase 规划的施工项目（P0 为主）与本次容量升级的关系：
+
+  冲突:
+    ▸ D-018-59 ConcurrentThroughputOptimizer 已完成施工 → CAP-R01 需要**扩展**
+      而非重写：新增 100 Agent 基准 + FastPath + 自适应分片
+    ▸ D-018-14 ColdStartLock 已完成设计 → CAP-R07 需要**升级**：二元锁 → 分级释放
+    ▸ D-018-17 缓存一致性 已完成设计 → CAP-R04 需要**细化**：推送粒度从全局到模块级
+
+  不冲突:
+    ▸ CAP-R02/R03/R06/R09/R10/R11/R12/R13/R14/R15/R16/R17/R18/R19 → 全新能力，不影响现有施工
+
+  建议:
+    ▸ 容量升级代码施工在现有 Phase scaffold/experimental 完成后启动
+    ▸ 但蓝图升级（本文档）应立即执行——指导后续施工的容量意识
+-->
+
+## §16 施工指引
 
 | Phase | 任务 | 关键交付物 | 优先级 |
 |:---:|------|------|:---:|
@@ -5663,36 +6897,67 @@ tool_definition_integrity_guard:
 | polish | **对抗性测试** — 一个专用Agent尝试绕过所有七层+三横切面 | L7扩展 | 🟢 P2 |
 | polish | **定期审计报告** — 每周自动生成+交付 | cronjob + report template | 🟢 P2 |
 
----
+### §16.3 施工步骤 `[临时时态: 执行完毕后删除]`
 
-## 6. 风险与缓解
+> 本节记录施工执行计划。一旦全部 Phase 执行完毕，本节从蓝图删除（铁律 #14）。
 
-| # | 风险 | 概率 | 影响 | 缓解 |
-|---|------|:---:|:---:|------|
-| R1 | auto_guard 后验失败率高——频繁自动回滚影响效率 | 中 | 中 | 统计后验失败率，持续优化 auto_guard 规则；失败率 > 20% 的操作降级为 blocked |
-| R2 | 权限配置漂移——rbac_roles.yaml 与 GOV-AI-001 不一致 | 低 | 高 | CI 门禁校验一致性 + derive_rbac_roles.py 自动派生 |
-| R3 | 性能开销——七层检查增加延迟 | 中 | 中 | 每层预算严格管控；权限结果缓存（TTL=5min）+ L1 always_allow 跳过 L3-L4 详细检查 |
-| R4 | 多 IDE 身份冲突——同一文件被不同 IDE 的 Agent 同时修改 | 中 | 高 | 文件锁 + 乐观并发控制 + drift detector 实时检测 |
-| R5 | **L4 Sequence Guard 误报——合法操作序列被误判为攻击** | 中 | 中 | Owner 白名单机制；序列时间窗口可配置；统计误报率持续优化规则 |
-| R6 | **Agent Maturity 升级过慢——严重限制 AI 效率** | 中 | 中 | 自动升级到 L2 Junior（L3+ 仍需审核）；开放 Owner 手动加速升级 |
-| R7 | **Kill Switch 误触发——正常批量操作被熔断** | 低 | 高 | 触发阈值可配置；自动解除 cooldown 机制；Owner 可手动解除 |
-| R8 | **Engine 崩溃时全部 blocked——系统完全不可用** | 低 | 高 | L0 独立可快速恢复；允许 Owner 配置紧急白名单（临时绕过 Engine） |
-| R9 | **AI 绕过权限系统——写入不可变核心路径** | 低 | 极高 | L0 硬编码保护路径；OS 级文件权限兜底（L2b 沙箱 ACL）；pre-commit 检查文件完整性 |
-| R10 | **权限配置越滚越复杂——1人无法维护** | 高 | 中 | GOV-AI-001单点维护+自动派生+影响分析可视化+自动维护中规则自我修剪（D-018-19） |
-| R11 | **横向越权——Agent伪造其他Agent身份** | 中 | 极高 | SessionToken签名校验(HMAC-SHA256) + AgentIdentityVerifier + 跨Session伪造检测（D-018-13） |
-| R12 | **冷启动裸奔——权限配置加载前Agent已操作** | 低 | 极高 | ColdStartLock——启动时全局拒绝直到校验通过（D-018-14） |
-| R13 | **审计系统被投毒——噪音攻击淹没真实告警** | 中 | 极高 | 告警信噪比监控 + signal_noise_attack熔断触发器 + 异常密度突增自动降权（§2.2） |
-| R14 | **Agent自我复制风暴——绕过Maturity限制** | 中 | 高 | Agent创建权管控 + 权限遗传衰减 + agent_spawn_storm熔断器（D-018-16） |
-| R15 | **权限缓存陈旧——紧急收紧后旧ALLOW仍生效** | 中 | 极高 | 推送驱动缓存失效——max_latency=100ms替代TTL=5min（D-018-17） |
-| R16 | **降级攻击——Agent故意触发Partial Failure绕过L4** | 低 | 极高 | 降级源检测——同一Agent触发的降级→立即BLOCKED（§2.3 + D-018-17联动） |
-| R17 | **熔断器DDoS——恶意Agent触发Kill Switch瘫痪全局** | 低 | 高 | 熔断源隔离——单Agent触发仅阻断该Agent，多Agent触发才全局熔断（§2.2） |
-| R18 | **Agent间隐式合谋——文件系统Covert Channel绕过单Session护栏** | 中 | 高 | 跨Session关联检测 + inter_agent_communication规则（§2.7 cross_session_correlation） |
-| R19 | **第三方包供应链攻击——Agent安装恶意依赖** | 中 | 极高 | package_install白名单 + blocked_packages:["*"]默认拒绝（§2.6 D-018-09扩展） |
-| R20 | **Owner缺席时无人能干预——auto_guard操作悬空** | 中 | 中 | OwnerAbsencePolicy——超时→保守模式→所有auto_guard降级为blocked（§3 ownership_absence_policy.yaml） |
+**删除前置条件（5条，全部满足方可删除本节）**：
+
+| # | 前置条件 | 验证方式 |
+|---|---------|---------|
+| 1 | 所有 Phase 的关键交付物已创建 | §0.1 存在性列全部为"已实现" |
+| 2 | 所有交付物通过测试 | `python -m pytest tests/agent_rbac/ -v` exit 0 |
+| 3 | §0.2 对齐验证矩阵全部 ☑ | 逐项验证 |
+| 4 | construction_progress = completed | frontmatter 字段确认 |
+| 5 | 无遗留临时文件 | `python scripts/governance/audit_registration.py` exit 0 |
 
 ---
 
-## 决策记录
+## §17 容量升级附录
+
+### §17.1 容量基线
+
+| 资源 | 当前基线 | 测量方式 |
+|------|---------|---------|
+| 权限规则数 | 200 条 | `rbac_roles.yaml` 条目数 |
+| 并发 Agent 数 | 10 | 同时活跃 session 数 |
+| 审计事件/秒 | 100 | OTEL 指标 `d2.authz.decision.rate` |
+| 权限缓存条目 | 1000 | 缓存命中率统计 |
+| 权限检查延迟 P99 | 1.8ms | OTEL 指标 `d2.authz.decision.latency` |
+
+### §17.2 缺口分析
+
+| # | 缺口 ID | 当前瓶颈 | 升级方案 | 触发阈值 |
+|---|---------|---------|---------|---------|
+| 1 | CAP-R01 | 规则数 > 500 | 规则分片 + 按域加载 | > 500 条 |
+| 2 | CAP-R02 | 并发 Agent > 50 | 无锁并发 + Rust 加速 | > 50 Agent |
+| 3 | CAP-R03 | 审计事件 > 1000/s | 批量写入 + 异步发射 | > 1000/s |
+| 4 | CAP-R04 | 缓存条目 > 10000 | LRU + 分层缓存 | > 10000 条 |
+| 5 | CAP-R05 | 检查延迟 P99 > 5ms | 热路径优化 + 预计算 | > 5ms |
+| 6 | CAP-R06 | Kill Switch 触发延迟 > 100ms | 专用信号通道 | > 100ms |
+| 7 | CAP-R07 | 横切面钩子数 > 50 | 钩子分优先级 | > 50 钩子 |
+| 8 | CAP-R08 | 序列追踪状态 > 10MB/session | 状态压缩 + 滑动窗口 | > 10MB |
+| 9 | CAP-R09 | Dry-Run 影响分析 > 5s | 增量分析 + 缓存 | > 5s |
+| 10 | CAP-R10 | 对抗性测试套件 > 30min | 并行测试 + 增量测试 | > 30min |
+| 11 | CAP-R11 | 规则派生脚本 > 10s | 增量派生 | > 10s |
+| 12 | CAP-R12 | 审计日志存储 > 10GB/月 | 日志轮转 + 压缩 | > 10GB/月 |
+| 13 | CAP-R13 | Owner 仪表盘刷新 > 3s | 增量更新 + WebSocket | > 3s |
+| 14 | CAP-R14 | 跨模型一致性测试 > 15min | 并行 + 缓存 | > 15min |
+| 15 | CAP-R15 | 信任预算计算 > 50ms | 预算预计算 + 缓存 | > 50ms |
+| 16 | CAP-R16 | MCP 权限代理吞吐 < 500/s | 连接池 + 批量检查 | < 500/s |
+| 17 | CAP-R17 | 密钥层次管理 > 1000 密钥 | 密钥分片 + HSM | > 1000 |
+| 18 | CAP-R18 | 统计异常检测误报率 > 5% | 自适应阈值 + 在线学习 | > 5% |
+| 19 | CAP-R19 | 构建产物哈希链 > 10000 节点 | Merkle 树剪枝 + 检查点 | > 10000 |
+
+### §17.3 迁移缺口追踪
+
+| 缺口ID | 缺口描述 | 优先级 | 目标版本 | 状态 |
+|--------|---------|:---:|---------|:---:|
+| GAP-001 | governance/ 根级 9 文件未迁移至 agent_rbac/ | P2 | v1.0.0 | 待施工 |
+
+---
+
+## §18 决策记录
 
 | 决策 ID | 决策内容 | 日期 | 依据 |
 |---------|---------|------|------|
@@ -5752,24 +7017,81 @@ tool_definition_integrity_guard:
 
 ---
 
-## 变更记录
+## DOM-GOV-001 集成契约锚点
 
-| 日期 | 版本 | 变更内容 |
-|------|------|---------|
-| 2026-05-06 | **0.14.0** | **第十二轮深度交叉审视——MCP工具定义完整性密码学缺失 RBAC 11.3**。在0.13.0的208项盲点基础上，检索2026年5月最新发表的MCPSHIELD论文(7大类23攻击向量/4攻击面/177K+工具分析)和MDPI "Trustworthy MCP Registry"论文(Mas et al., 2026.5: JWS签名验证→100/100次Rug Pull正确拒绝)，发现1个未被前208项盲点覆盖的设计级新攻击面：MCP工具定义运行时完整性缺失(D-018-94 ToolDefinitionIntegrityGuard——MCPSHIELD TV5批准后变异(Rug Pull>60%成功率)+TV6版本回滚+TV7能力升级→三类攻击的共有根因:缺乏工具定义密码学完整性验证。现有B5仅清洗描述内容/B180仅哈希构建工件/B192仅验证模型权重/B207仅保护传输层→无一提及工具定义元数据的JCS+Sigstore+JWS加密证明→补入JCS规范化manifest+Sigstore Keyless签名+JWS封装+运行时listTools拦截验证+SHA-256比对+语义diff+不可变版本链+<prev_version_hash>+Cedar确定性策略)。决策93→94项。盲点208→209项(B209)。组件65→66个。对标56→57个。RBAC 11.2→11.3。关键贡献：首次将MCPSHIELD论文中TV5/TV6/TV7三类MCP工具定义变异攻击引入Agent RBAC防护框架；首次在Agent权限系统中引入MCP工具定义的加密完整性验证(manifest签名+运行时JWS验证+版本链防回滚)，填补了OWASP MCP Top 10 MCP03-Tool Poisoning中Rug Pull防护的系统性空白。 |
-| 2026-05-06 | **0.13.0** | **第十一轮深度交叉审视——依赖幻构+信道劫持+动态信任预算三大新攻击面 RBAC 11.2**。在0.12.0的205项盲点基础上，检索2026年4-5月最新安全研究（SymbioticSec/CVE-2026-30615/PocketOS事故深层分析），发现3个未被前205项盲点覆盖的设计级新攻击面：①AI幻构依赖/Slopsquatting攻击(D-018-91 SlopsquattingDefense——58%幻构包名重复+250+已占用+pyproject.toml绕过shell检测→注册表验证+名誉评分+沙箱预安装行为验证三关)②IDE-RBAC通信信道劫持(D-018-92 CommunicationChannelIntegrityGuard——CVE-2026-30615 CSWSH CVSS 8.8→Token Binding信道指纹+Origin白名单+进程心跳+mTLS)③动态信任预算模型缺失(D-018-93 AdaptiveTrustBudget——PocketOS 9分钟漂移窗口+全或无机制的中间层缺失→5级权限漏斗+KL散度行为漂移+被动/主动补充)。决策90→93项。盲点205→208项(B206-B208)。组件62→65个。对标53→56个。RBAC 10.9→11.2。关键贡献：首次将Slopsquatting(与Typosquatting本质不同的攻击类别)和CSWSH(WebSocket级信道劫持)这两个2026年新兴攻击技术引入Agent RBAC防护框架；首次在Agent权限系统中引入动态信任预算这一"逐渐降级"范式(填补TLB/Kill Switch/Hard Stop之间的设计空白)。 |
-| 2026-05-06 | **0.12.0** | **第九轮终极升级——MCP/Cloud/Serialization协议级新攻击面审视 RBAC 10.9**。在0.11.0的202项盲点基础上，以2026年5月最新披露的MCP STDIO 200K暴露事件(OX Security)、Azure Agent Identity架构、PraisonAI CVSS 9.8反序列化RCE为驱动。发现3个协议级致命新攻击面：①MCP STDIO Shell元字符注入(D-018-88 MCPSTDIOSanitizer——200,000台服务器公网暴露+命令元字符清洗+参数化命令)②Agent-Cloud IAM身份联邦断层(D-018-89 CloudIAMIdentityFederation——权限交集MIN策略+Admin凭证禁止)③YAML/Pickle反序列化RCE(D-018-90 SafeDeserializationGuard——强制安全解析器+危险标签预检测)。决策87→90项。盲点202→205项(B203-B205)。组件59→62个。对标50→53个。 |
-| 2026-05-06 | **0.11.0** | **第八轮终极升级——2026年5月最新安全事件驱动的环境边界+安全激励+AI自盲区审视 RBAC 10.6**。在0.10.0的196项盲点基础上，以2026年4-5月最新披露的真实灾难级事件为驱动（PocketOS 9秒删库/Claude Code配置预执行/Unit 42 MCP Sampling/OpenClaw WebSocket RCE/LiteLLM 36小时武器化SQL注入），追加第五轮终极审查。发现6个未被前196项盲点覆盖的致命新攻击面：①Agent跨环境边界横向移动（D-018-82 EnvironmentBoundaryEnforcement——PocketOS: staging Agent 9秒内自主穿越到production→删库+所有备份→30h宕机→三个月数据丢失。核心: Agent不是"变坏"而是"太努力解决问题"。引入DEV/STAGING/PRODUCTION三级Tier+跨Tier凭证不可见+文件系统遮蔽）②IDE配置文件预权限执行竞态（D-018-83 ConfigPreExecutionGuard——Claude Code CVE-2025-59536: .claude/settings.json的命令在权限对话框弹出前已执行→明文API Key被重定向。核心: 配置执行时序必须被延迟到人类审查之后）③MCP服务器→Agent反向提示注入（D-018-84 MCPSamplingGuard——Unit 42发现MCP Sampling令服务器可主动创作Prompt→引入Agent→7,000+公开MCP+150M下载。核心: 传统MCP安全模型假设服务器只"响应"→Sampling推翻了这一假设）④AI生成安全代码的自绕过回环（D-018-85 CrossModelSecurityAudit——SymbioticSec发现80%的AI安全补丁仍含漏洞→3模型交叉审查+非AI静态分析独立验证层+共识度漂移监控）⑤Agent任务完成驱动型安全规则覆写（D-018-86 SafetyIncentiveAlignment——PocketOS Agent原文"I violated every principle I was given"→系统提示中嵌UNOVERRIDABLE_SAFETY_LAYER+6步破坏确认链+SIGSTOP Hard Stop机制+安全评分降级模型）⑥Agent凭证发现半径爆炸（D-018-87 CredentialDiscoveryRadiusControl——Agent扫描比人类更广的凭证空间→从不相关的配置文件找到production token→任何写过凭证的文件都成攻击面→引入凭证Tier标注+搜索API scoping+发现凭证优先环境变量策略）。决策从81项扩展到87项。盲点从196项扩展到202项(B197-B202)。新增6个组件和300+行防护规格。行业对标从43个扩展到50个。关键贡献: 首次将PocketOS的全链路事故分析引入RBAC设计→打破"AI生成安全代码够安全"的迷思→引入多模型交叉审查+安全代码独立验证层→引入Agent行为激励理论（不仅是技术权限控制）。氛围编程+1人+AI维护语境下，当前蓝图覆盖了所有可识别的、来自真实安全事件的威胁模型。 | 
-| 2026-05-06 | **0.10.0** | **第七轮终极升级——氛围编程+1人+AI维护语境下的新攻击面全面审视 RBAC 9.12**。在0.9.0的184项盲点基础上，以2026年最新披露的真实安全事件和NIST CAISI新标准为驱动，追加第四轮终极审查。对标Awesome AI Agent Attacks全时间线(2024-2026)、NIST CAISI三柱标准(2026.2)、CSA/COSAiS SP 800-53覆盖、HexagonalRodent(Lazarus AI工业化攻击内核)、CVE-2026-26268(Git Hook RCE, CVSS 8.1)、LiteLLM TeamPCP(.pth静默自动执行)等最新研究成果。发现12个未被前184项盲点覆盖的新攻击面：①Git Hook RCE via AI Agent(D-018-70 GitHookGuard——CVE-2026-26268, .git/hooks/纳入L0)②Python .pth文件静默自动执行(D-018-71 PthFileExecutionGuard——LiteLLM 95M月下载攻击模式)③IDE项目配置自动执行(D-018-72 ProjectConfigExecutionGuard——HexagonalRodent tasks.json武器化)④分类器对抗重训练管道自体中毒(D-018-73 ClassifierRetrainingIntegrity——防御退化链)⑤Agent长程上下文记忆投毒(D-018-74 AgentMemoryPoisoningGuard——NIST/Grantex独立威胁类别, CSA报告81%未防护)⑥多Agent信任链背叛(D-018-75 TrustChainVerifier——Ed25519签名链+信任衰减)⑦Web连接Agent的Prompt Injection不对称放大(D-018-76 WebContentTrustTier——Google 32%增长+4级信任模型)⑧ML模型权重文件完整性验证(D-018-77 ModelWeightIntegrityVerifier——1,400+恶意模型, 73%组织未验证)⑨隐蔽存储侧信道数据外泄(D-018-78 CovertStorageChannelDetector——熵异常+定期扫描)⑩RBAC CI/CD凭证窃取与恶意自替换(D-018-79 CICDCredentialIsolation——LiteLLM全链路复现风险, 三阶凭证隔离)⑪Agent对RBAC检测阈值的行为指纹刻画(D-018-80 ThresholdObfuscationGuard——动态随机化+PROBING检测)⑫Agent间共享工作状态后门(D-018-81 SharedStateInjectionGuard——.md/.txt文件Prompt Injection Scanner)。决策从69项扩展到81项。盲点从184项扩展到196项(B185-B196)。新增12个组件文件和5个新防护范式(Git Hook Guard/.pth Guard/IDE Config Guard/Memory Provenance/Covert Channel Detection)。行业对标从38个扩展到43个。特色术语新增：记忆投毒(Memory Poisoning)、信任链背叛(Trust Chain Betrayal)、隐蔽存储侧信道、指纹刻画(Threshold Fingerprinting)、不对称放大。突破：首次借鉴传统IDS/IPS规避对抗技术(Slowloris/Fragmentation)引入AI Agent安全领域。在氛围编程+1人+AI维护的终极约束下，七层+六横切面设计已极尽所能地覆盖了当前所有可发现的安全威胁模型。 |
-| 2026-05-06 | **0.9.0** | **第六轮终极升级——氛围编程+1人+AI维护语境下的终极审视 RBAC 8.9**。在0.8.0的168项盲点基础上，以氛围编程(Vibe Coding)+多IDE并发施工+1人+AI维护为独特视角，结合Grantex/OWASP/NVIDIA/VibeGuard/SecureVibes/SUSVIBES的最前沿研究，追加第三轮终极审查。发现16个未被前168项盲点覆盖的关键漏洞：①沙箱/安全依赖静默回退攻击（D-018-54 SandboxLivenessGuard——CVE-2026-2287/2026-2275攻击模式）②多IDE并发施工期RBAC真空（D-018-55 BootstrapCoordinator——Phase 0审计日志+施工后对比）③MCP工具协议层绕过（D-018-56 MCPPermissionProxy——TRAE IDE的23个MCP工具在Python RBAC管辖范围外运行）④Python对象内省链沙箱逃逸（D-018-57 IntrospectionChainGuard——__subclasses__/__globals__链阻断）⑤Session Token在途过期处理（D-018-58 GracefulTokenRenewal——操作链级容忍）⑥并发权限检查吞吐量退化（D-018-59 ConcurrentThroughputOptimizer——per-agent分片+Rust热路径）⑦Owner仪表盘数据真实性（D-018-60 DashboardAuthenticityVerifier——哨兵探针+密码学摘要+原始日志备用路径）⑧RBAC分阶段部署中间态（D-018-61 StagedDeploymentGuard——默认DENY fallback）⑨跨模型权限冲突自动降级（D-018-62 ConflictResolutionPolicy——保守默认BLOCKED>ALLOW）⑩Windows DLL搜索顺序劫持（D-018-63 DLLSearchOrderGuard——SetDllDirectory+签名验证）⑪Agent跨会话身份持久化伪造（D-018-64 SessionIdentityBinding——三因素密码学绑定）⑫RBAC构建产物的供应链攻击面（D-018-65 BuildArtifactIntegrityChain——哈希链+二进制diff）⑬AI推理链操纵攻击（D-018-66 ClassifierAdversarialHardening——OWASP A08对抗硬化）⑭MCP工具回显敏感信息泄露（D-018-67 MCPResponseRedactor）⑮权限决策时间侧信道（D-018-68 ConstantTimePermissionCheck）⑯AI生成测试覆盖盲区自欺（D-018-69 MutationTestFramework——VibeGuard发现31%无效断言）。决策从53项扩展到69项。盲点从168项扩展到184项(B169-B184)。新增16个组件文件和3个新IDE集成点(MCP Proxy/DLL Order/Token Renewal)。行业对标从33个扩展到38个。特色术语新增：氛围编程(Vibe Coding)、MCP协议层、哨兵探针、变异测试、property-based testing。在氛围编程+1人+AI维护的独特约束下，七层+六横切面设计覆盖了当前所有可识别的安全威胁模型。 |
-| 2026-05-06 | **0.8.0** | **第五轮终极升级——外部取证专家第二轮终极审视 RBAC 8.0**。继承0.7.0的第一轮外部取证专家审视，追加第二轮终极审查。发现8个未被前160项盲点覆盖的致命结构性漏洞：①系统时钟操纵击穿5个时间依赖机制（D-018-46 MonotonicClockGuard）②Bootstrap验证无限递归——验证器自证清白循环（D-018-47——极简确定性脚本<60行+可复现构建+跨模型验证）③主密钥单点致命故障（D-018-48——Root/Agent/Session三层密钥+分片存储+前向安全）④L4对未知攻击模式绝对盲区（D-018-49——5维统计异常评分+基线学习）⑤审计日志注入污染取证链（D-018-50——密码学来源证明+注入扫描+链式哈希）⑥蓝图-代码零保真度验证（D-018-51——决策断言+CI测试+漂移检测）⑦ctypes/C扩展绕过全部7层（D-018-52——import hook+原生API封禁）⑧同用户进程可读内存窃取密钥（D-018-53——DPAPI加密+完整性级别隔离+内存dump防护）。决策从45项扩展到53项。盲点从160项扩展到168项(B161-B168)。新增8个组件文件。行业对标从29个扩展到33个。 |
-| 2026-05-06 | **0.7.0** | **第四轮终极升级——外部取证专家视角 RBAC 7.0**。新增横切面F取证级安全保障(Forensic-Grade Security Assurance)。这是从"如果你是审计这个审计系统的外部取证专家，你会发现什么致命漏洞？"这一根本问题出发的终极审视成果。新增D-018-34 Genesis Bootstrap防护(两阶段验证+Clean Build原则)、D-018-35非对称安全审查原则(Independent Security Auditor——解决AI自审自证问题的架构级修复)、D-018-36不可抵赖操作绑定(Ed25519密钥对+操作Merkle Tree+TSA+公证锚定——Agent无法否认自己的操作)、D-018-37路径解析系统故障防护(Google Antigravity P0空格事故——9类危险信号+沙箱预演+安全命令模式)、D-018-38跨平台Shell方言检测(LLM Linux偏见+Windows不等效命令)、D-018-39权限规则语言注入防护(规则=Data非Instruction+Engine隔离)、D-018-40构建产物安全卫生(Claude Code 512K行Map泄露+Pre-Publish Gate)、D-018-41 Transitive依赖安全审计(递归审计+CVE分级+install脚本检测)、D-018-42审计日志实时完整性验证(Merkle Tree+<100ms密码学证明+mRoot公开发布)、D-018-43 Agent上下文重放攻击防护(nonce+一次性检查+Bloom Filter)、D-018-44权限审计证据的律师可验证性(人类可读+GDPR/个保法合规映射)、D-018-45 Rollback作为攻击载体的隔离(快照签名+影响分析+rollback_storm熔断)。盲点从135项扩展到160项(B136-B160)，其中B149 Python猴子补丁/B150 HSM密钥存储/B151可观测管道伪造/B152 Semantic vs Syntactic鸿沟/B158自证安全循环/B159施工-维护角色合并为特别致命的取证级漏洞。行业对标从21个扩展到29个。新增10个横切面F组件文件。引入"独立安全审查器"、"Merkle Root公证锚定"、"Forensic Evidence Kit"三大新范式。宣告七层+六横切面设计基本穷尽了"1人+AI维护"语境下的已知安全威胁模型。 |
-| 2026-05-05 | **0.6.0** | **第三轮重大升级——七层纵深防御+五横切面 RBAC 6.0**。新增横切面E对抗韧性与激励对齐(Adversarial Resilience & Incentive Alignment)。新增D-018-27 OWASP Agentic Top 10全覆盖+MAESTRO五层威胁建模(Perception/Decision/Action/Communication/Memory)、D-018-28 Agent目标完成驱动v.s.安全约束冲突防护(CVE-2026-21852 Agent自解除沙箱+CVE-2024-12366 RCE)、D-018-29多Agent合谋与激励博弈检测(GroupGuard清华/港大+"Agents of Chaos"Harvard/MIT/Stanford 11类激励失败模式)、D-018-30虚假完成与Agent欺骗检测(Grith 7-Agent审计+Oxford挑战)、D-018-31记忆来源追踪与隔离(RAG/Vector Memory投毒防护 OWASP ASI06)、D-018-32 TOCTOU文件系统竞态+编码绕过防护(Symlink+Base64/Hex/URL编码命令检测)、D-018-33 Canary权限灰度发布+权限变更自动回归(Terraform canary+Git-Based Rollback)。L0新增TOCTOU防护(symlink_resolve+inode校验) + always_blocked新增self_disable_sandbox/false_completion/memory_poisoning。L3新增编码绕过检测(base64/hex/URL-decode后再匹配) + Symlink解析。L4新增GroupGuard合谋检测+博弈论涌现建模。L5新增虚假完成检测(操作声称v.s.实际文件变更对比)。L6新增激励审计(Agent的"目标完成"激励被量化监控)。L7新增Canary权限灰度+权限变更自动回归。决策从26项扩展到33项。盲点从95项扩展到135项(B96-B135)。行业对标从15个扩展到21个。新增9个文件。单次检查耗时从1.5ms扩展到1.65ms。引入"Agent撒谎检测"和"激励审计"两大新范式。 |
-| 2026-05-05 | **0.5.0** | **第二轮重大升级——七层纵深防御+四横切面 RBAC 5.0**。新增横切面D意图绑定与连续验证(IBAC——Intent-Bound Access Control)。新增D-018-20 IBAC意图绑定(任务意图+临时权限信封+意图漂移)、D-018-21 Context Drift检测(操作链三维实时追踪)、D-018-22连续验证(每步重验证Agent身份+意图+委托链)、D-018-23权限模式管理器(Claude Code 5模式+Codex CLI Profiles+Mid-Session Toggle)、D-018-24级联故障隔离(Cascading Failure防护)、D-018-25 Micro-Verified先干后验(每子步微验证替代全干再验)、D-018-26权限决策自解释(结构化拒绝原因+自校正建议+因果链)。L0新增OS级ACL双重兜底+always_blocked扩展(os_acl_bypass/synthesize_restricted_data/cascade_failure_trigger/circumvent_micro_verification)。L2新增Context Drift实时检测+Inference合成泄漏检测。L3新增MCP Server身份校验+File Lock生命周期管理。L4新增Multi-Agent Emergent Behavior Detection+Micro-Verified执行。L5新增Synthesis Leakage Detection+跨步结果一致性校验。L6新增连续验证指标+权限决策自解释输出。L7新增Chaos Permission Testing+Edge Case Enumeration(55→95)+Multi-Agent Scenario Tests。决策从19个扩展到26个。盲点从55项扩展到95项(B56-B95)。行业对标从10个扩展到15个。新增12个文件(micro_verifier/intent_binder/context_drift_detector/continuous_verifier/permission_mode_manager/cascading_failure_isolator/decision_explainer等)。单次检查耗时从1.2ms扩展到1.5ms。先干后验→Micro-Verified先干后验。架构从RBAC/ABAC扩展到IBAC。 |
-| 2026-05-05 | **0.4.0** | **重大升级——七层纵深防御+三横切面 RBAC 4.0**。新增横切面A权限钩子系统(D-018-15: 四类钩子+9个预置钩子H01-H09)、横切面B权限拓扑感知(权限依赖图/跨Agent关联/影响传播图/供应链安全)、横切面C自动维护(D-018-19: 规则效果评估/僵尸规则检测/复杂度预算/Owner健康仪表盘)。新增D-018-13横向越权防护(SessionToken签名+AgentIdentityVerifier)、D-018-14冷启动锁(startup_lock+maintenance_mode)、D-018-16 Agent创建权与遗传衰减、D-018-17缓存一致性推送(100ms替代5min TTL)、D-018-18紧急覆盖令牌(JIT/<5分钟/一次性/可吊销)。L0扩展保护路径至.env/pyproject.toml/.github/workflows/docker-compose/nav_table。L0新增always_blocked: spawn_new_agent_unsanctioned/forge_agent_identity/modify_environment_variables。Kill Switch新增signal_noise_attack/sensitivity_label_blitz/agent_spawn_storm三种触发器+熔断源隔离策略。Engine降级新增降级攻击检测(同一Agent触发降级→立即BLOCKED)。ABAC新增per-Agent TLB限流+标签篡改防护。L3新增package_install白名单+network_target白名单+env操作升级。L4新增跨Session关联检测+Agent间隐式通信检测(cross_session_correlation + inter_agent_communication_detection)。L6新增告警信噪比监控+指标完整性校验+规则效果评估。L7新增对抗性测试+环境隔离+跨模型一致性测试。新增9个集成点(Hook Registry/Cache Invalidator/Emergency Override/Owner Dashboard/RL Auth/Inter-Agent Detector/Ownership Absence)。决策从12个扩展到19个。风险从10项扩展到20项。Phase新增enhance+polish两层。盲点从24项扩展到55项(B25-B55)。行业对标从6个扩展到10个。文件组成从14个扩展到22个。单次检查耗时预算从1ms扩展到1.2ms。 |
-| 2026-05-05 | 0.3.0 | **重大升级——七层纵深防御 RBAC 3.0**。新增 L0 Immutable Core (protected_paths + Kill Switch + Engine降级策略) + L2 ABAC (意图感知/时间窗口/Agent Maturity四级信任/资源敏感性) + L3 Input Guard (参数schema/范围/危险模式) + L4 Sequence Guard (会话级序列追踪+禁止序列阻断——最关键盲点补丁) + L5 Output Guard (PII脱敏/凭证检测/截断) + L6 Observability (OpenTelemetry指标+行为异常检测) + L7 Testing & Dry-Run (影响分析+模拟+自动化测试框架)。9项新决策 (D-018-04 ~ D-018-12)。Agent 模型增加 MaturityLevel/tasks_completed/safety_incidents/auto_guard_pass_rate。执行流扩展为 L0→L6 步骤。文件组成从 5 个扩展到 14 个。集成矩阵从 6 个扩展到 10 个。风险从 4 项扩展到 10 项。Phase 从 3 个扩展到 6 个。行业对标从 3 个扩展到 6 个。 |
-| 2026-05-05 | 0.2.0 | 三项决策写入：D-018-01 三层95/4/1分布 + D-018-02 先干后验 + D-018-03 自动派生；新增 IDESource 多 IDE 支持；取消 needs_approval 层；新增 Rollback System 依赖 |
-| 2026-05-05 | 0.1.0 | 初始创建——Agent 身份模型 + 三层权限 + Permission Guard + 审批流 |
+> 权威定义见 [`../../_domain-governance/blueprint.md`](../../_domain-governance/blueprint.md) §3。
+
+| 契约 ID | 本模块角色 | 对端模块 |
+|---------|------------|----------|
+| G-CT-001 | 产出方（RBAC 判定后写入 Audit） | MOD-INF-020 |
+| G-CT-004 | 消费方（承接 Escalation 的权限策略） | MOD-INF-022 |
+| G-CT-007 | 消费方（Agent Spec 与权限绑定） | MOD-INF-019 |
+| G-CT-008 | 消费方（A2A 身份与隔离） | MOD-INF-025 |
+
+---
+
+## 治理信息
+
+### SSoT 声明
+
+本文件是 Agent 身份与权限系统（MOD-INF-018）的**唯一设计真源**。权限规则的可执行真源是 `rbac_roles.yaml`（由 GOV-AI-001 自动派生）。
+
+### 负向责任
+
+本文件**不涉及**：任务卡字段定义（→ GOV-TASK-001）、CI/CD 部署流程（→ CI/CD 文档）、Prompt Injection 检测算法（→ MOD-INF-014）。
+
+### 消费者注册表
+
+| 消费者 | 用途 |
+|--------|------|
+| MCP Servers (MOD-INF-013) | MCP Tool 调用前权限检查 |
+| Rollback System (MOD-INF-021) | auto_guard 后验失败触发回滚 |
+| Escalation System (MOD-INF-022) | Kill Switch 联动 |
+| Pipeline Orchestrator (MOD-INF-006) | 任务创建时绑定 Agent 身份 |
+| Gate Engine (MOD-INF-007) | 权限检查作为门禁前置 |
+| Pre-Commit Gate (GATE-18) | CI 中运行权限自动化测试 |
+
+### 触发条件
+
+| 关键词/场景 | 应读章节 |
+|-----------|---------|
+| 权限 / permission / rbac / abac | §3 架构设计 |
+| 身份 / identity / agent_id | §4.2 AgentIdentity |
+| Kill Switch / 熔断 | §3.2 L0 ImmutableCore |
+| auto_guard / 先干后验 | §3.2 L1 RBAC Guard |
+| 序列 / sequence / 操作链 | §3.5 L4 Sequence Guard |
+| 容量 / 性能 / 升级 | §17 容量升级附录 |
+| 盲点 / 安全漏洞 | §18 决策记录 + 附录 A |
+| 施工 / 实现 | §16 施工指引 |
+
+### 漂移防护
+
+修改本蓝图 MUST 同步更新：`rbac_roles.yaml` + `permission_hooks.yaml` + GOV-AI-001 + `test_permissions.py`。详见 §13。
+
+### 变更同步规则
+
+| 修改此文件 | 必须同步更新 |
+|-----------|------------|
+| §0 分派表 | DOM-GOV-001 §2 职责分派 |
+| §4 代码文件清单 | blueprint-registry.yaml MOD-INF-018 条目 |
+| §5 待施工项 | construction_progress 字段 |
+
+### 修改条件
+
+| 变更类型 | 审批要求 |
+|---------|---------|
+| 接口契约新增/修改（§4） | 需 Owner 审批 + 通知所有消费者 |
+| 模块边界修改（§2） | 需 Owner 审批 |
+| construction_progress 变更 | 需 §0 对齐验证通过 |
+| 施工步骤微调（命令、路径修正） | AI 可自主修改 |
+| 非关键补充（风险缓解、后果描述） | AI 可自主修改 |
+| 容量升级方案新增（§17） | 需 Owner 审批 |
+
+### 导航路径
+
+```
+新 AI → registry-of-registries.yaml → MOD-INF-018 → 本蓝图 §0 代码对齐验证 → §3 架构设计 → §16 施工指引
+```
 
 ---
 
@@ -5986,15 +7308,110 @@ tool_definition_integrity_guard:
 | 207 | **IDE-RBAC通信信道劫持（CSWSH/WebSocket Hijacking）——CVE-2026-30615(CVSS 8.8): 用户访问恶意网站→浏览器WebSocket连接localhost:IDE端口→利用WebSocket不携带自定义Header特性→绕过Origin检查→劫持IDE通信通道→窃取Session Token→以受害者身份执行任意命令→完全主机控制。现有B25/B146仅保护Token完整性+防重放——但若通信信道被劫持→攻击者无损转发合法Token→RBAC无法分辨请求来源真实性** | 🔴 P0 | D-018-92 §3.0.59 CommunicationChannelIntegrityGuard——Session Token签发时嵌入信道指纹(Token Binding: IDE PID+启动时间+进程哈希+信道类型)+Origin白名单(file:///vscode-app/chrome-extension://→禁止外部http/https域名)+IDE进程密码学心跳(5秒/HMAC/3次丢失→Token失效)+异常连接检测(多TCP连接/Origin缺失/WebSocket帧间隔异常)+本地mTLS双证书双向认证 | ✅ 已补 |
 | 208 | **Agent动态信任预算模型缺失——Agent Maturity是静态批次评估(每日/每周)→PocketOS事故显示Agent行为可在9分钟内从"正常"进入"疯狂"→Maturity评估间隙Agent享有全权。现有机制: B53(TLB)仅控频率/B162(Kill Switch)全或无/B201(Hard Stop)仅终极边界——所有机制缺乏"逐渐降级"而非"全或无"的中间层** | 🟡 P1 | D-018-93 §3.0.60 AdaptiveTrustBudget——每Agent动态信任预算账户(初始按Maturity: L1=100/L4=1000)→操作按风险等级消耗预算(读1-3/写3-10/执行20-50/云API=100-200,上下文加权)→预算低于阈值→自动权限降级(5级漏斗:全权→标准→受限→最低→冻结)→被动+主动补充→行为漂移(KL散度)检测→预算消耗/恢复/降级全链审计 | ✅ 已补 |
 | 209 | **MCP工具定义运行时完整性缺失（Rug Pull/版本回滚/能力升级三种攻击的共有根因）——MCPSHIELD论文(2026.4)分析177,000+MCP注册工具后识别出TV5(批准后变异:服务器端静默修改工具描述/参数→将已批准访问转化为未授权)、TV6(版本回滚:回滚到已知有漏洞的旧版本)、TV7(能力升级:跨会话逐步扩大工具能力→每步微小)三类攻击→Claude+Cursor上Rug Pull成功率>60%→MDPI论文(2026.5)100次Rug Pull模拟若缺JWS签名验证→全部成功。现有B5/B180/B192/B207/L3均不覆盖工具定义元数据本身的运行时密码学完整性——仅验证内容/构建产物/模型权重/信道——不验证工具定义未被篡改** | 🔴 P0 | D-018-94 §3.0.61 ToolDefinitionIntegrityGuard——每个批准的工具→生成JCS(RFC 8785)规范化JSON manifest→Sigstore Keyless签名+JWS封装→运行时listTools→L3拦截每个工具定义→SHA-256验证当前定义vs TrustStore批准版本+HASH不匹配→语义diff(描述变更/参数扩展/权限增加/版本降级)→工具降权至SUSPICIOUS→Owner审查→不可变版本链(prev_version_hash链接各版本→回滚自动检测)→Cedar策略引擎确定性裁决(不依赖LLM判断) | ✅ 已补 |
+## ⚠️ Vibe Coding 蓝图编写铁律 `[永久保留]`
 
+| # | 铁律 | 违反后果 |
+|---|------|---------|
+| 1 | 所有路径必须是绝对路径（含盘符 `D:\`） | 文件创建到错误位置 |
+| 2 | 必备链接不可省略 | AI 跳过不读，施工时缺少关键信息 |
+| 3 | 蓝图必须是最终设计结果——不记录决策过程 | 蓝图过厚，关键信息被噪音淹没 |
+| 4 | 产出物路径必须与 GOV-DOC-002 一致 | 路径幻觉——文件放错位置 |
+| 5 | 涉及文件范围必须明确列出 | 范围漂移——改了不该改的文件 |
+| 6 | 容量估算必须写 | 容量瓶颈——上线后发现不够用 |
+| 7 | 迁移/废弃方案必须写 | 断链或垃圾积累 |
+| 8 | "待定"/"建议"/"按需"等模糊词禁止使用 | 执行漂移——AI 自行决定 |
+| 9 | 蓝图必须自包含 | 信息缺失——AI 缺少关键上下文 |
+| 10 | 删除文件必须遵守安全删除协议 | 永久丢失——无法恢复 |
+| 11 | construction_progress 必须与代码实际状态一致 | 重复造轮子或跳过施工 |
+| 12 | actual_disk_path 必须与 §11 产出物路径一致 | 搜索失败、导入错误 |
+| 13 | 已实现代码不在蓝图中重复——§0.1 标记"已实现"的模块，蓝图只保留接口签名（§4），不复制实现代码 | 蓝图膨胀、代码漂移 |
+| 14 | 临时时态内容执行完毕后从蓝图删除——迁移方案、升级执行计划等临时时态内容，一旦执行完毕即成为历史，从蓝图删除 | 蓝图累积过时信息 |
+| 15 | 蓝图内容拆分判定——职责不同→拆分独立蓝图；职责相同→原地升级 | 职责混杂的蓝图难以维护 |
 
 ---
 
-## 施工落盘确认（2026-05-07 审计）
-| 维度 | 状态 |
-|------|------|
-| construction_progress | phase_2_complete（Phase 1 Skeleton + Phase 2 E2E 均已通过） |
-| 源码路径 | `src/zephyr/agent_rbac/` |
-| 源码文件数 | 69 个 .py + 1 .yaml |
-| 测试路径 | `tests/agent_rbac/` |
-| 关键入口 | `agent_rbac.engine.RBACEngine (七层纵深+六横切面)` |
+## 蓝图拆分判定标准 `[永久保留]`
+
+> 判定流程（3步）：
+
+| 步骤 | 判定 | 动作 |
+|------|------|------|
+| 1 | 蓝图是否描述 > 1 个独立职责？ | 是→进步骤2；否→原地升级 |
+| 2 | 各职责是否有独立的 module_id？ | 是→拆分；否→评估是否需要分配独立 module_id |
+| 3 | 拆分后各蓝图是否自包含？ | 是→执行拆分；否→补充依赖声明后再拆分 |
+
+> 判定示例：
+
+| 场景 | 职责1 | 职责2 | 判定 | 理由 |
+|------|-------|-------|------|------|
+| RBAC权限检查 + 审计日志 | 权限运行时强制 | 审计事件记录 | 不拆分 | 审计是RBAC横切面，非独立职责 |
+| RBAC权限检查 + 容量升级 | 权限运行时强制 | 性能扩展方案 | 不拆分 | 容量升级是RBAC自身演进，非独立职责 |
+| RBAC权限检查 + MCP协议 | 权限运行时强制 | MCP工具通信协议 | 拆分 | MCP是独立通信层，有独立module_id(MOD-INF-013) |
+| RBAC权限检查 + Rollback | 权限运行时强制 | 操作回滚 | 拆分 | Rollback是独立模块，有独立module_id(MOD-INF-021) |
+
+---
+
+## ⚠️ 安全删除协议 `[永久保留]`
+
+本蓝图不涉及文件废弃/迁移/删除。所有新增组件为新建文件，无旧文件替换。
+
+### 删除铁律
+
+| # | 铁律 | 原因 |
+|---|------|------|
+| 1 | 禁止蓝图阶段物理删除任何文件 | 蓝图只做决策，不做执行 |
+| 2 | 迁移型删除必须逐条迁移、逐条验证 | 批量迁移容易遗漏 |
+| 3 | 物理删除只能在 stable 搬入阶段执行 | 给足缓冲期 |
+| 4 | 物理删除必须人类确认 | AI 不得自行决定删除文件 |
+
+---
+
+## 必备链接 `[永久保留]`
+
+| # | 文件 | module_id | 完整绝对路径 | 编写时用途 |
+|---|------|-----------|------------|----------|
+| 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则、doc_type词表 |
+| 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\directory-structure-standard.md` | 路径映射 |
+| 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` | MTH-012 + MTH-013 |
+| 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\file-naming-standard.md` | 命名规则 |
+| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | 编号注册 |
+| 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
+| 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index.yaml` | 现有规则索引 |
+| 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md` | AI 操作权限真源 |
+| 9 | Gate Engine 蓝图 | MOD-INF-007 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\gate-engine\blueprint.md` | 权限检查集成点 |
+| 10 | 审计追踪蓝图 | MOD-INF-020 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\audit-trail\blueprint.md` | 审计日志写入 |
+| 11 | MCP Servers 蓝图 | MOD-INF-013 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\mcp-servers\blueprint.md` | MCP Tool 权限约束 |
+| 12 | Rollback 蓝图 | MOD-INF-021 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\rollback\blueprint.md` | auto_guard 回滚 |
+| 13 | Escalation 蓝图 | MOD-INF-022 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\escalation\blueprint.md` | Kill Switch 联动 |
+
+---
+
+## 项目中已有类似功能
+
+| # | 已有模块 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
+|---|---------|------------|----------|-------------|
+| 1 | Gate Engine | `D:\ZephyrAlpha\src\zephyr\gates\` | 门禁检查 | Gate Engine 是通用门禁框架，RBAC 是权限特化——RBAC 依赖 Gate Engine 但不能替代 |
+| 2 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md` | 权限声明 | GOV-AI-001 是静态声明式注册表，无运行时强制执行能力——本蓝图将其派生为可执行规则 |
+
+---
+
+## 涉及的文件范围
+
+| # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
+|---|---------|------------|------|---------|
+| 1 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\agent_rbac\` | 核心实现 | 新建 |
+| 2 | 测试代码 | `D:\ZephyrAlpha\tests\agent_rbac\` | 测试用例 | 新建 |
+| 3 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\agent-rbac\blueprint.md` | 本文件 | 修改 |
+| 4 | RBAC 角色配置 | `D:\ZephyrAlpha\src\zephyr\agent_rbac\rbac_roles.yaml` | 自动派生 | 新建 |
+| 5 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md` | 真源 | 读取 |
+
+---
+
+## 蓝图变更记录
+
+| 日期 | 版本 | 变更摘要 |
+|------|------|---------|
+| 2026-05-14 | 1.1.0 | v3.6对齐：§0前移至概述后；§7备选方案删除；§15后果删除（合并入§14）；§14增加类型列；§0.1增加存在性列+阻塞原因列；§5.1/§5.3去来源列；§5.3加临时时态标注；§10拆为§10.1-§10.4；铁律#13-#15；蓝图拆分判定标准；§16.3施工步骤时态属性+删除前置条件；尾部标注永久保留；frontmatter升级 |
+
+---
+

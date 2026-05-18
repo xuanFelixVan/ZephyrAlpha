@@ -1,11 +1,14 @@
 ---
+
 doc_type: index
 status: Active
 title: "Agent RBAC — 七层纵深防御 + 六横切面 权限系统"
 version: "0.14.0"
 created: "2026-05-05"
 updated: "2026-05-08"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # Agent RBAC — 七层纵深防御 + 六横切面
 

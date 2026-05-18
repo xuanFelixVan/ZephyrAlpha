@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0215
 task_title: "§15-§16第十十一轮审计-Self-Correction+Adversarial+ColdStart+Portability+SelfHealing+Bandwidth+Perf+SemanticAlignment+FailureArchetypes+Drift+Handoff+Escalation+ReliabilityGap+RuntimeVerification + D-019-45~58"
 parent_ticket: TASK-INF-0214
@@ -64,7 +65,9 @@ rollback_instructions: "批量回退14个Python文件"
 context_assembly_manifest:
   blueprint_content: "§15(7小节: Self-Correction/Adversarial/Cold-Start/Portability/Self-Healing/Bandwidth/Performance) + §16(7小节: SemanticAlignment/FailureArchetypes/Drift/Handoff/Escalation/ReliabilityGap/RuntimeVerification)"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0215: 第十十一轮审计盲点关闭
 

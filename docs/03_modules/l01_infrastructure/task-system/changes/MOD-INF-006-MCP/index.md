@@ -1,11 +1,14 @@
 ---
+
 doc_type: index
 status: active
 title: "MOD-INF-006-MCP — 目录索引"
 version: "1.0.0"
 created: "2026-05-03"
 updated: "2026-05-03"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # MOD-INF-006-MCP
 

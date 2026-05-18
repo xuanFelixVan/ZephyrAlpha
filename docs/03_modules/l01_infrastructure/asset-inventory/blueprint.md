@@ -1,55 +1,1175 @@
 ---
-module_id: "MOD-INF-026"
+module_id: MOD-INF-026
 title: "资产盘点系统蓝图 — 全量资产发现→自动分类→统一登记→持续对账→生命周期管理"
 doc_type: blueprint
+template_for: blueprint
 status: Active
-version: "1.0.0"
-generation: 4
-layer: cross_layer
-maturity: "design_100_pct_14_orders_recursive_closure"
+version: "3.1.0"
+layer: L01
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
-date: "2026-05-07"
-valid_from: "2026-05-07"
+date: "2026-05-12"
 ttl: permanent
-construction_progress: phase_1_complete
-belongs_to: "MOD-MASTER-001"
-summary: "ZephyrAlpha 资产盘点系统蓝图 v0.1.0——盘点系统是审计系统的前置基础。自动发现六大目录（src/scripts/docs/config/tests/data）下全部文件资产，按类型/层级/状态/优先级四维自动分类，与24个注册表持续对账，检测三类偏移（ORPHAN未注册/GHOST注册已删/DRIFT注册信息不一致），产出统一资产仪表盘。全生命周期状态机追踪每个资产从 created→active→modified→deprecated→retired→archived 的完整历程，每次状态变更触发 MOD-INF-020 审计记录。对标 ITIL 4 ITAM（发现→分类→登记→对账→生命周期五步标准流程）+ ISO 19770 IT资产管理 + CMDB 单一事实来源原则 + VibeCode Digital Twin 代码库快照理念。适配 1人+AI 100%自动化施工——发现自动触发、分类规则引擎驱动（无需AI判断）、对账机械diff二进制结果、常见问题自愈修复。"
-tags: [asset-inventory, asset-management, itam, discovery, classification, reconciliation, lifecycle, cmdb, single-source-of-truth, drift-detection, ghost-detection, orphan-detection, auto-discovery, auto-classification, self-healing, dashboard, infrastructure, governance, itil, iso19770, digital-twin, vibe-coding, zero-touch]
-priority: P0
+construction_progress: completed
+actual_disk_path: "src/zephyr/asset_inventory/"
+last_updated: "2026-05-15"
+last_verified: "2026-05-15"
+generation: 3
+functional_domain: operations
+summary: "资产盘点系统——五层架构（发现→分类→登记→对账→生命周期），支撑 75,000 资产 / 100 AI 并发"
+tags: [asset-inventory, asset-discovery, classification, registration, reconciliation, lifecycle, capacity-upgrade]
+priority: P1
+belongs_to: MOD-MASTER-001
+parent_module: ""
+rule_form: structural
+scope: global
+stability: evolving
+verifiability: hybrid
 depends_on:
-  - {target: "MOD-INF-012", at: "§3", why: "Database——资产索引与对账结果的持久化存储"}
-  - {target: "MOD-INF-020", at: "§2", why: "Audit Trail——每次资产状态变更写入不可变审计日志"}
-  - {target: "MOD-INF-016", at: "§2.6", why: "Shared Core——AssetSchema Pydantic V2 模型定义"}
-  - {target: "MOD-INF-015", at: "§2", why: "System Telemetry——资产盘点指标上报（资产总数/孤儿率/漂移率）"}
-  - {target: "MOD-INF-007", at: "§2", why: "Gate Engine——G?.asset_inventory_gate CI 门禁阻断孤儿资产"}
-  - {target: "MOD-INF-005", at: "§3", why: "Script System——盘点扫描脚本的调度与执行"}
-references:
-  - {id: "MOD-INF-002", at: "§2", why: "Runtime Integration——RI EventStore 消费盘点事件"}
-  - {id: "MOD-INF-023", at: "§2", why: "Drift Detector——盘点对账产生的漂移信号写入漂移检测器"}
-  - {id: "MOD-INF-022", at: "§2", why: "Escalation Engine——资产异常（孤儿率骤升/批量幽灵）升级路径"}
-  - {id: "MOD-INF-010", at: "§2", why: "Feedback Loop——盘点数据回写 Policy 驱动资产策略演进"}
-  - {target: "GOV-CMP-003", at: "§2", why: "审计协议——盘点结果纳入 12 维度审计清单"}
-  - {target: "ADR-0010", at: "§4.4", why: "三层治理边界——Policy/Factory/Runtime 盘点策略闭环"}
+  - target: MOD-INF-035
+    at: "§0"
+    why: "容量参数配置"
+  - target: MOD-INF-016
+    at: "§0"
+    why: "数据库双库路由"
+references: []
+codification_level: L2
+codification_at: "2026-05-13"
+---
+> module_id: MOD-INF-026 | version: 3.1.0 | status: active | layer: L01
+> actual_disk_path: src/zephyr/asset_inventory/ | generation: 3 | construction_progress: completed
+
+# Asset Inventory 蓝图 — 全量资产发现→自动分类→统一登记→持续对账→生命周期管理
+
+## 概述
+
+Asset Inventory 是 ZephyrAlpha 的资产盘点系统——解决"不知道有什么 = 没法管"的核心问题。核心职责包括：资产发现（Scanner）、资产分类（Classifier）、资产登记（IndexGenerator）、持续对账（Reconciler）、生命周期管理（LifecycleManager）。当前规模 75,000 资产，目标容量 100 AI 并发写入。上游依赖文件系统和 24 个注册表，下游被 Dashboard、Gate Engine、scaffold.py 消费。
+
 ---
 
-## DOM-GOV-001 集成契约锚点
+> **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
+> - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
+> - 压缩工作流标准：[compression-workflow-standard.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/compression-workflow-standard.md)
+> - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
+> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
-> 权威定义见 [`../../_domain-governance/blueprint.md`](../../_domain-governance/blueprint.md) §3。
+---
 
-| 契约 ID | 本模块角色 | 对端模块 |
-|---------|------------|----------|
-| G-CT-001 | 产出方（资产归属权限校验结果） | MOD-INF-018 |
-| G-CT-002 | 消费方（盘点对账异常触发 Rollback 条件） | MOD-INF-021 |
-| G-CT-007 | 产出方（资产 Spec 执行结果登记） | MOD-INF-019 |
+## §0 代码对齐验证
 
-# 资产盘点系统蓝图 — 全量资产发现→自动分类→统一登记→持续对账→生命周期管理
+### §0.1 代码文件清单
 
-> **module_id**: MOD-INF-026 | **version**: 0.1.0 | **status**: draft | **layer**: cross_layer
+| # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
+|---|--------|------------|------|:-----:|-------------------|
+| 1 | `__init__.py` | §3.1 | 包初始化 | 已实现 | |
+| 2 | `scanner.py` | §3.1 L1 | 资产发现扫描 | 已实现 | |
+| 3 | `classifier.py` | §3.1 L2 | 资产分类引擎 | 已实现 | |
+| 4 | `models.py` | §4.2 | 数据模型（ClassifiedAsset 等） | 已实现 | |
+| 5 | `index_generator.py` | §3.1 L3 | 资产登记/索引生成 | 已实现 | |
+| 6 | `reconciler.py` | §3.1 L4 | 持续对账 | 已实现 | |
+| 7 | `lifecycle.py` | §3.1 L5 | 生命周期管理 | 已实现 | |
+| 8 | `dashboard.py` | §5 | 资产仪表盘 | 已实现 | |
+| 9 | `mcp_server.py` | §3.5 | MCP 接口 | 已实现 | |
+| 10 | `registry_adapter.py` | §3.1 | 24 注册表适配器 | 已实现 | |
+| 11 | `telemetry.py` | §5 | 遥测 | 已实现 | |
+| 12 | `trust_anchor.py` | §3.1 | 信任锚点 | 已实现 | |
+| 13 | `metadata.py` | §4.2 | 元数据工具 | 已实现 | |
+| 14 | `dependency.py` | §4.3 | 依赖图 | 已实现 | |
+| 15 | `__main__.py` | §3.5 | CLI 入口 | 已实现 | |
 
-> **对标**：ITIL 4 ITAM 五步标准流程（Discovery→Classification→Registration→Reconciliation→Lifecycle）+ ISO 19770 IT资产管理 + CMDB 单一事实来源（SSoT）原则 + VibeCode Digital Twin 代码库序列化快照理念 + K8s `kubectl api-resources`（进集群先看有什么资源）+ Linux `man hier`（进系统先了解目录结构）。
+### §0.2 对齐验证矩阵
+
+| 验证项 | 验证方法 | 结果 |
+|--------|---------|:---:|
+| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/asset_inventory/` 逐文件核对 | ☐ |
+| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" src/zephyr/asset_inventory/*.py` | ☐ |
+
+### §0.3 版本-代码映射
+
+| 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
+|---------|------------|---------|---------|
+| v1.0.0 (基线) | scanner/classifier/models/index_generator/reconciler/lifecycle/dashboard | — | — |
+| v3.0.0 (容量升级) | mcp_server/registry_adapter/telemetry/trust_anchor/metadata/dependency/__main__ | — | — |
+
+### SSoT 声明
+
+| SSoT | 位置 | 格式 | 消费者 |
+|------|------|------|--------|
+| `unified_asset_index.yaml` | `data/asset_index/` | YAML（v1.0）/ SQLite（v3.0） | 所有 AI Session、CI Gate、Dashboard |
+
+### 消费者注册表
+
+| # | 消费者模块 | 消费方式 | 依赖字段 |
+|---|----------|---------|---------|
+| 1 | MOD-INF-020 audit-trail | 资产事件写入审计日志 | asset_path, status |
+| 2 | MOD-INF-007 gate-engine | CI 门禁阻断孤儿超标 | orphan_rate |
+| 3 | MOD-INF-015 system-telemetry | 资产指标遥测上报 | health_score |
+| 4 | MOD-INF-022 escalation-engine | 孤儿率骤升升级 | orphan_rate_trend |
+| 5 | MOD-INF-005 governance-automation | 治理脚本调度 | scan_result |
+
+### 变更同步规则
+
+| # | 修改本蓝图时 | 必须同步更新 |
+|---|------------|------------|
+| 1 | §0 代码文件清单 | `src/zephyr/asset_inventory/` 实际文件 |
+| 2 | §4 数据模型 | `models.py` Pydantic 模型 |
+| 3 | §11 产出物路径 | `data/` 目录实际路径 |
+| 4 | frontmatter construction_progress | 代码实际施工状态 |
+| 5 | §17 注册表格式 | `src/zephyr/asset_inventory/classifier.py` 适配器 |
+
+### 负向责任
+
+| # | 本蓝图不涉及 | 由谁负责 |
+|---|------------|---------|
+| 1 | 代码质量分析 | lint/质量脚本 |
+| 2 | 安全漏洞扫描 | security 扫描脚本 |
+| 3 | 性能基准测试 | observability 模块 |
+| 4 | 文件内容语义分析 | LLM 推理层 |
+| 5 | 跨项目资产联邦 | 未规划 |
+
+### 触发条件
+
+| 触发场景 | 执行动作 |
+|---------|---------|
+| 新 AI Session 冷启动 | STEP 4.5 读 unified_asset_index.yaml |
+| CI/CD Pipeline | G_asset_inventory gate 检查 |
+| 文件创建/删除/移动 | scaffold.py → AssetInventory.register() |
+| 定时扫描（每小时） | 全量扫描 → 对账 → Dashboard 更新 |
+| 孤儿率 > 5% | CI RED + Escalation 触发 |
+
+### 蓝图级禁止清单
+
+| # | 禁止 | 原因 |
+|---|------|------|
+| 1 | 禁止扫描 `session-logs/` `.ailocks/` `_backup/` `_archive/` | 安全+性能 |
+| 2 | 禁止扫描 `.env*` `*_key*` `*_token*` `*.pem` 内容 | 安全 |
+| 3 | 禁止分类器调用 LLM/语义推断 | 确定性 100% |
+| 4 | 禁止蓝图阶段物理删除任何文件 | 蓝图只做决策 |
+| 5 | 禁止 `open(path, "w")` 省略 `encoding="utf-8"` | 编码安全 |
+
+---
+
+---
+
+## 〇、容量升级方案（§17 容量升级附录） — v1.0.0→v3.0.0 从 600 资产到 75,000 资产的规模跃迁设计
+
+> **定位**：v1.0.0（600资产）→ v3.0.0（75K资产）升级路径。YAML SSoT/串行分类/全量扫描在 75K 规模失效。
+
+> **对齐文件**：
+> - `config/capacity_params.yaml` CFG-CAP-001——所有容量参数的来源
+> - `docs/03_modules/_sys-master/blueprint.md` §〇——系统级 Worker Pool / 硬件感知
+> - `docs/03_modules/_cross_layer/database/blueprint.md` §〇——Database v3.0 双库路由
+> - `docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md` §〇——审计总控容量审计（触发本审查的源头）
+
+---
+
+### 〇-A、规模基线重定义
+
+| 指标 | v1.0.0 当前设计前提 | v3.0.0 目标 | 对 AssetInventory 的冲击 |
+|------|:--:|:--:|------|
+| 总资产数 | ~600 | **~75,000**（1,500 模块 × ~50 文件/模块） | 资产数量 ×125 |
+| 注册表数 | 24 | 24（不变——注册表数量不随模块膨胀） | 对账查找从 600×24=14,400 次 → 75,000×24=1,800,000 次 |
+| 单次全量扫描 | ~30s（600 文件） | **>5min**（75,000 文件，max_workers=8） | 扫描速度不够——必须增量默认 |
+| `unified_asset_index.yaml` 大小 | ~120KB | **~15MB**（75,000 × 200 bytes） | 单 YAML 文件不可行——100 AI 并发加载 15MB → 1.5GB 内存 |
+| AI 并发 Session | 1（隐含假设） | **100** | 100 个 Session 同时读取资产索引——YAML 无并发读 |
+| 分类引擎 | 串行（600 文件 <5s） | 串行 75,000 文件 >5min | 分类必须并行化 |
+| 扫描频率 | 全量 1 次/小时 + 对账 | 增量默认（每次 commit）+ 全量周检 | 架构翻转——增量扫描是新核心 |
+| 资产仪表盘 | 每次全量扫描后重新计算 | 需预聚合——75,000 资产逐条计算不现实 | Dashboard 改为 SQL 聚合查询 |
+
+---
+
+### 〇-B、10 项容量缺口识别与设计决策
+
+#### GAP-AI-001：资产存储爆炸 —— YAML→SQLite 迁移 🔴 P0
+
+| 维度 | v1.0.0 | v3.0.0 |
+|------|--------|--------|
+| 存储 | `unified_asset_index.yaml` 单文件 | `asset_inventory.db` (SQLite WAL, 7表) + YAML/JSON 导出缓存 |
+| 容量 | 75K条×200B=~15MB, 100 Session=1.5GB | SQLite WAL 并发读, 每 Session ~50KB |
+| 性能 | YAML parse >30s/次 | SQL SELECT <1ms |
+
+```yaml
+D-AI-001: 资产存储架构从 YAML SSoT 升级为 SQLite SSoT + YAML 导出缓存
+  before:
+    unified_asset_index.yaml  (单文件, 全量 YAML)
+  after:
+    asset_inventory.db        (SQLite, WAL 模式, 7 表)
+    ├── assets                (主表, ~75K rows, indexed by path/layer/type/status/priority)
+    ├── scans                 (扫描历史, indexed by scan_time)
+    ├── reconciliations       (对账结果, indexed by reconciliation_time)
+    ├── lifecycle_events      (状态迁移历史, indexed by asset_path + timestamp)
+    ├── registry_index        (24 注册表扁平化索引, indexed by path)
+    ├── reference_graph       (import/ref 图, indexed by from_path)
+    └── dashboard_cache       (预聚合统计, 单行 JSON blob)
+    unified_asset_index.yaml  (降级为导出缓存, 只做 human-readable 快照)
+    unified_asset_index.json  (降级为导出缓存, 只做 AI-consumable 快照)
+```
+
+```python
+# assets 主表——接口签名
+CREATE TABLE assets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    relative_path TEXT NOT NULL UNIQUE,
+    absolute_path TEXT NOT NULL, file_name TEXT NOT NULL,
+    extension TEXT NOT NULL, size_bytes INTEGER NOT NULL,
+    sha256 TEXT NOT NULL, mtime_utc TEXT NOT NULL,
+    asset_type TEXT NOT NULL CHECK(asset_type IN ('module','script','doc','config','gate','test','data','infra','registry','unknown')),
+    layer TEXT NOT NULL, status TEXT NOT NULL CHECK(status IN ('active','inactive','orphan','ghost','drift','archived','unknown')),
+    priority TEXT NOT NULL CHECK(priority IN ('P0','P1','P2','P3')),
+    registered_in TEXT NOT NULL DEFAULT '[]',
+    auto_classified INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX idx_assets_path ON assets(relative_path);
+CREATE INDEX idx_assets_type ON assets(asset_type);
+CREATE INDEX idx_assets_layer ON assets(layer);
+CREATE INDEX idx_assets_status ON assets(status);
+CREATE INDEX idx_assets_priority ON assets(priority);
+# registry_index 表: (relative_path, registry_id, sha256, layer) PK=(relative_path, registry_id)
+# dashboard_cache 表: 单行 JSON blob——total_assets/by_type/by_layer/by_status/by_priority/health_score/orphan_rate_pct/ghost_rate_pct/drift_rate_pct
+```
+
+**升级操作**：
+
+| 步骤 | 操作 | 影响 |
+|:--:|------|------|
+| 1 | 新增 `src/zephyr/asset_inventory/db.py`——SQLite CRUD + 迁移 | 新文件 |
+| 2 | `index_generator.py` 输出从 YAML 改为 SQLite INSERT + YAML export | 修改 |
+| 3 | `scanner.py` 写入路径从 YAML append 改为 SQLite INSERT OR REPLACE | 修改 |
+| 4 | `models.py` ClassifiedAsset 增加 `to_row()` / `from_row()` 方法 | 修改 |
+| 5 | Dashboard 从全量 Pydantic 计算改为 `SELECT ... FROM dashboard_cache` | 修改 |
+
+---
+
+#### GAP-AI-002：发现扫描并行化 🔴 P0
+
+| 维度 | v1.0.0 | v3.0.0 |
+|------|--------|--------|
+| workers | `max_workers=8` 硬编码 | `min(max(4, cpu_count//2), 20)` 自适应 |
+| 扫描模式 | 全量默认 | 增量默认（git diff），全量周检 |
+| 性能 | 75K文件 ~5-8min | 增量 P95 <3s, 全量 P95 <3min |
+
+```yaml
+D-AI-002: 发现扫描从硬编码 8 workers 升级为自适应 workers + 增量扫描默认
+  before:
+    ThreadPoolExecutor(max_workers=8)
+  after:
+    adaptive_workers = min(max(4, cpu_count // 2), 20)  # i7-12700KF → 10 workers
+    priority: idle
+    default_mode: incremental ("git diff HEAD~1 → changed files → scan only those")
+    full_scan: weekly cron
+    增量扫描 P95: <3s（15-30 changed files）
+    全量扫描 P95: <3min（75,000 files, ThreadPoolExecutor(10)）
+```
+
+```python
+class AdaptiveScanner:
+    def __init__(self): self.max_workers = min(max(4, os.cpu_count() // 2), 20)
+    def scan_incremental(self, changed_files: list[str]) -> list[RawAssetEntry]: ...
+    def scan_full(self) -> RawAssetScan: ...
+```
+
+---
+
+#### GAP-AI-003：分类流水线并行化 🟠 P1
+
+| 维度 | v1.0.0 | v3.0.0 |
+|------|--------|--------|
+| 流水线 | 串行 4 分类器 × 75K = 300K 调用 | ThreadPoolExecutor per classifier batch, 1000条/批 |
+| 性能 | 75K串行 >5min | P95 <30s |
+
+```yaml
+D-AI-003: 分类从串行升级为流水线并行 + 批处理
+  before: 单条串行 pipeline (4 classifiers × 75K = 300K 次调用)
+  after: ThreadPoolExecutor per classifier batch
+    批量大小: 1,000 条/批
+    四分类器并行: Type + Layer together → Status → Priority
+    内存: 每批 ~200KB（1,000 × 200 bytes）→ Pydantic objects
+    P95: <30s（75,000 条全量分类）
+```
+
+```python
+class ParallelClassifier:
+    BATCH_SIZE = 1000
+    def classify_batch(self, raw_entries: list[RawAssetEntry]) -> list[ClassifiedAsset]: ...
+```
+
+---
+
+#### GAP-AI-004：24 注册表对账索引化 🔴 P0
+
+| 维度 | v1.0.0 | v3.0.0 |
+|------|--------|--------|
+| 查找 | O(N×24) 逐一搜索 | O(N) SQLite registry_index |
+| 600资产 | ~14,400次查找 (0.5s) | ~600次 SQL (0.1s) |
+| 75K资产 | ~1,800,000次查找 (>30min) | ~75K次 SQL JOIN (<2s) |
+
+```yaml
+D-AI-004: 对账从 O(N×24) 升级为 O(N) 索引化
+  before: for asset in assets:
+            for registry in registries:
+              if asset.path in registry.entries: ...
+  after:  pre-build registry_index (SQLite, 一次 24 注册表全量 INSERT)
+          → SELECT * FROM registry_index WHERE relative_path = ?  (O(1) hash lookup)
+          → 对账变为: 发现清单 vs registry_index SQLite JOIN
+```
+
+```python
+class IndexedReconciler:
+    def __init__(self, db_path: str = "data/asset_index/asset_inventory.db"): ...
+    def build_registry_index(self, registries: list[BaseRegistryAdapter]): ...
+    def reconcile_one(self, asset: ClassifiedAsset) -> list[str]: ...
+    def reconcile_all(self, assets: list[ClassifiedAsset]) -> ReconciliationReport: ...
+```
+
+---
+
+#### GAP-AI-005：100 AI Session 并发读取 🟠 P1
+
+| 维度 | v1.0.0 YAML | v3.0.0 SQLite WAL |
+|------|:---|:---|
+| 1 Session 加载 | ~0.2s (120KB parse) | ~0.005s (单行 SQL) |
+| 100 Session 并发 | Crash (1.5GB / parse 竞态) | <0.01s each, 零阻塞 |
+| Dashboard 摘要 | 加载全量→计算 | 读单行 cache |
+
+```yaml
+D-AI-005: 资产读取从全量 YAML 加载升级为 SQLite WAL 查询
+  before: yaml.safe_load(all_assets) → 内存中 ClassifiedAsset[]
+  after:  SQLite WAL mode → SELECT 按需读取
+          WAL mode 支持无限并发读 (readers don't block each other)
+          内存: 每 Session ~50KB（只查询所需资产，非全量加载）
+          API: AssetInventory.query(type="module", layer="L01", status="active")
+```
+
+```python
+class AssetQueryAPI:
+    def __init__(self, db_path: str = "data/asset_index/asset_inventory.db"): ...
+    def query(self, asset_type: str = None, layer: str = None, status: str = None, priority: str = None, limit: int = 100) -> list[dict]: ...
+    def summary(self) -> dict: ...
+```
+
+**并发读性能**：1 Session ~0.005s, 100 Session 并发 <0.01s each, Dashboard 读单行 cache。
+
+---
+
+#### GAP-AI-006：增量扫描默认模式 🟠 P1
+
+| 维度 | v1.0.0 | v3.0.0 |
+|------|--------|--------|
+| 默认模式 | 全量 1次/小时 | 增量默认（git diff），全量周检 |
+| 触发 | 定时 | post-commit hook / git diff HEAD~1 |
+
+```yaml
+D-AI-006: 扫描模式从"全量默认"翻转为"增量默认"
+  before: 全量扫描 1 次/小时 + 全量对账
+  after:
+    default_mode: incremental  (git diff 驱动)
+    incremental_trigger: post-commit hook / git diff HEAD~1
+    full_scan: weekly cron (周日 03:00)
+    full_reconciliation: after full scan only
+    增量对账: 每次 incremental scan 后立即执行（只对变更文件）
+
+  增量扫描流程:
+    git diff --name-only HEAD~1 → changed_files (15-30 files per commit)
+    → AdaptiveScanner.scan_incremental(changed_files) → new/updated assets
+    → ParallelClassifier.classify_batch(new_assets) → ClassifiedAsset[]
+    → IndexedReconciler.reconcile_subset(changed_assets) → ReconciliationReport
+```
+
+---
+
+#### GAP-AI-007：Dashboard 预聚合 🟡 P2
+
+| 维度 | v1.0.0 | v3.0.0 |
+|------|--------|--------|
+| 计算 | 每次全量遍历 | `dashboard_cache` 单行表，扫描/对账后 UPDATE |
+| 冷启动 | 全量计算 | `summary()` → SELECT 单行 (1μs) |
+
+```yaml
+D-AI-007: Dashboard 从实时计算升级为预聚合缓存
+  before: 每次全量计算所有统计
+  after:
+    dashboard_cache 表（单行，全量扫描/对账后 UPDATE）
+    增量扫描后: UPDATE dashboard_cache SET total_assets = (SELECT COUNT(*) FROM assets WHERE status != 'archived')
+    AI Session 冷启动: summary() → SELECT * FROM dashboard_cache (1μs)
+    完整 Dashboard: dashboard_query → dashboard_cache + 趋势表
+```
+
+---
+
+#### GAP-AI-008：L5 生命周期状态机 SQLite 化 🟡 P2
+
+| 维度 | v1.0.0 | v3.0.0 |
+|------|--------|--------|
+| 存储 | YAML inline `StateTransition[]` | `lifecycle_events` 表 (per-transition row, indexed) |
+| 容量 | 75K×5×200B=75MB YAML | SQLite indexed, 按需查询 |
+
+```yaml
+D-AI-008: 生命周期从 YAML inline 升级为 SQLite lifecycle_events 表
+  before: AssetLifecycle.state_history: list[StateTransition]  (inline in YAML)
+  after: lifecycle_events 表（per-transition row, indexed）
+    CREATE TABLE lifecycle_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      asset_path TEXT NOT NULL,
+      from_state TEXT NOT NULL,
+      to_state TEXT NOT NULL,
+      timestamp_utc TEXT NOT NULL,
+      triggered_by TEXT NOT NULL,
+      audit_event_id TEXT
+    );
+    CREATE INDEX idx_lifecycle_path ON lifecycle_events(asset_path, timestamp_utc);
+
+  每个资产的状态:
+
+  # 当前状态:
+  SELECT to_state FROM lifecycle_events
+  WHERE asset_path = ? ORDER BY timestamp_utc DESC LIMIT 1
+
+  # 完整历史:
+  SELECT * FROM lifecycle_events
+  WHERE asset_path = ? ORDER BY timestamp_utc ASC
+```
+
+---
+
+#### GAP-AI-009：资产优先级预计算 🟡 P2
+
+| 维度 | v1.0.0 | v3.0.0 |
+|------|--------|--------|
+| 计算 | 分类时实时扫描 import + 引用 | `reference_graph` 表预建，全量/增量扫描后更新 |
+| 查询 | 实时计算 | `SELECT COUNT(*) FROM reference_graph WHERE to_path = ?` |
+
+```yaml
+D-AI-009: 优先级从"分类时计算"升级为"预建引用图"
+  before: PriorityClassifier 实时扫描 import + 引用
+  after:
+    reference_graph 表: (from_path, to_path, ref_type, ref_count)
+    全量扫描后: ReferenceGraphBuilder 解析全量 import → 构建图
+    增量扫描后: 只更新变更文件的引用关系
+    Priority: SELECT COUNT(*) FROM reference_graph WHERE to_path = ?  → 引用数决定 P0/P1/P2/P3
+```
+
+---
+
+#### GAP-AI-010：自愈批量化 🟡 P2
+
+| 维度 | v1.0.0 | v3.0.0 |
+|------|--------|--------|
+| 修复 | per-orphan `subprocess.run(scaffold.py)` | `scaffold.py --batch-register --from-file orphan_list.json` 或 `from zephyr.scaffold import batch_register` |
+
+```yaml
+D-AI-010: 自愈从 per-orphan subprocess 升级为 batch 调用
+  before: for orphan in orphans: subprocess.run(["scaffold.py", "module", ...])
+  after:
+    scaffold.py --batch-register --from-file orphan_list.json
+    单次 subprocess 调用，传入 JSON 批量清单
+    或直接导入: from zephyr.scaffold import batch_register
+```
+
+---
+
+#### GAP-AI-011：ScriptImpactMap — 治理脚本到资产的反向影响映射 🔴 P0
+
+| 维度 | v1.0.0 | v3.0.0 |
+|------|--------|--------|
+| 映射 | 无 script↔file 映射 | `script_impact_map` 表 (script_id, target_file, impact_type, module_id) |
+| 增量扫描 | 模块级（跑该模块全部 ~5-7 个脚本） | 脚本级精确（3-5 个相关脚本） |
+| 容量 | — | ~200K 映射记录 (10K脚本×~20文件/脚本) |
+
+```yaml
+D-AI-011: 新增 ScriptImpactMap 表 + ImpactMapBuilder 引擎
+  before: 无脚本→文件映射，增量扫描 = 扫描变更文件 ≠ 触发正确脚本
+  after:
+    新增 SQLite 表:
+    CREATE TABLE script_impact_map (
+      script_id      TEXT NOT NULL,          -- 脚本 registry ID
+      script_path    TEXT NOT NULL,          -- 脚本文件路径
+      target_file    TEXT NOT NULL,          -- 受影响的资产路径
+      impact_type    TEXT NOT NULL CHECK(impact_type IN ('direct','indirect','module_scope')),
+      module_id      TEXT,                   -- 所属模块
+      sha256         TEXT,                   -- 脚本自身 SHA256（检测脚本变更）
+      last_built_at  TEXT NOT NULL DEFAULT (datetime('now')),
+      PRIMARY KEY (script_id, target_file)
+    );
+    CREATE INDEX idx_sim_target ON script_impact_map(target_file);
+    CREATE INDEX idx_sim_script ON script_impact_map(script_id);
+    CREATE INDEX idx_sim_module ON script_impact_map(module_id);
+
+  构建策略:
+    - ImpactMapBuilder 全量构建（周检时跑一次）:
+      遍历 10,000 脚本 → 解析每个脚本的 AST / 配置 → 确定其影响文件列表
+      产出 ~200,000 条映射记录 → 写入 script_impact_map 表
+    - 增量更新（每次增量扫描后）:
+      新增/修改的脚本 → 重新解析 → UPDATE 其映射
+      新增/修改的资产 → 检查是否有脚本引用 → INSERT 新映射
+```
+
+```python
+class ImpactMapBuilder:
+    def __init__(self, db_path: str): ...
+    def build_full(self, all_scripts: list, all_assets: list): ...
+    def query_scripts_for_files(self, changed_files: list[str]) -> list[str]: ...
+    def query_files_for_script(self, script_id: str) -> list[str]: ...
+```
+
+**关键影响分辨率**：
+
+| impact_type | 含义 | 判定规则 | 示例 |
+|-------------|------|---------|------|
+| `direct` | 脚本直接扫描/检查此文件 | 脚本 AST 中包含此文件路径 | lint 脚本直接引用 `.py` 文件 |
+| `indirect` | 脚本通过 import/依赖间接影响 | 脚本检查的模块依赖此文件 | `check_imports.py` 检查的模块引用了 `utils.py` |
+| `module_scope` | 脚本作用于整个模块范围 | 脚本配置 `scope: module` | `validate_module.py` 验证整个模块 |
+
+**增量扫描完整流程（含 ScriptImpactMap）**：
+
+```
+git diff --name-only HEAD~1 → changed_files (15-30 files)
+    ↓
+ImpactMapBuilder.query_scripts_for_files(changed_files)
+    → affected_scripts (15-30 个脚本，精确到脚本级)
+    ↓
+ScriptSystem.execute(affected_scripts)  → 增量扫描结果
+    ↓
+AdaptiveScanner.scan_incremental(changed_files)
+    → new/updated assets
+    ↓
+ParallelClassifier.classify_batch(new_assets)
+IndexedReconciler.reconcile_subset(changed_assets)
+    ↓
+增量对账完成 + 资产索引更新
+```
+
+---
+
+#### GAP-AI-012：增量扫描去抖与合并 🟠 P1
+
+| 维度 | v1.0.0 | v3.0.0 |
+|------|--------|--------|
+| 去抖 | 无 | `DebounceManager` 500ms per-module 去抖 |
+| 合并 | 无 | `ScanCoalescer` 1000ms 合并窗口 → 取 changed_files 并集 → 1次扫描 |
+| 100 AI 同秒 commit | 100 次增量扫描 | 1 次合并扫描 |
+
+```yaml
+D-AI-012: 新增 DebounceManager + ScanCoalescer
+  before: 每次 git diff 直接触发增量扫描
+  after:
+    per_module_debounce_window: 500ms（capacity_params 的 debounce_ms）
+    coalesce_window: 1000ms（合并窗口——在此窗口内的多次触发合并为一次）
+    
+    去抖逻辑:
+      模块 M 在 500ms 内收到第 2 次触发 → 取消第 1 次 → 重置计时器 → 500ms 后只跑 1 次
+    合并逻辑:
+      1000ms 窗口内，收集所有触发（可能来自不同 session） → 取 changed_files 并集
+      → 跑一次增量扫描覆盖所有变更文件
+
+    debounce_coalesce(changed_files_batch) → merged_file_set → 一次 SQLite 写入
+```
+
+```python
+class DebounceManager:
+    def __init__(self, debounce_ms: int = 500, coalesce_ms: int = 1000): ...
+    def enqueue(self, module_id: str, changed_files: set[str]): ...
+    def _flush(self): ...
+```
+```
+
+---
+
+#### GAP-AI-013：Shard-Aware 资产分区 🟠 P1
+
+| 维度 | 单数据库 | 16 分片 |
+|------|:---:|:---:|
+| 单 shard 资产数 | 75,000 | ~4,700 |
+| 并发写能力 | 1 writer | 16 独立 writer |
+| 全量查询 | 1 次 SQL | 16 次 SQL + UNION (~2s) |
+| 增量写 | 100 AI → 串行排队 | 100 AI → 分散到 16 shard (~6-7/shard) |
+
+```yaml
+D-AI-013: 资产存储按模块归属 Hash 分片
+  before: 单 asset_inventory.db，全量资产
+  after:
+    data/asset_index/
+    ├── shard_00/asset_inventory.db  (模块 hash % 16 == 0, ~4,700 资产)
+    ├── shard_01/asset_inventory.db  (模块 hash % 16 == 1)
+    ├── ...
+    ├── shard_15/asset_inventory.db
+    └── global_index.db              (全局聚合——轻量存 dashboard_cache + cross_shard_refs)
+
+    分片策略: consistent_hashing (capacity_params)
+    shard_id = hash(module_id) % 16
+    
+    每 shard: 独立 SQLite WAL → 独立 writer → 16x 并发写
+    跨 shard 查询: global_index 用于汇总查询 → union shard results
+```
+
+```python
+class ShardRouter:
+    SHARD_COUNT = 16
+    @staticmethod
+    def shard_for_asset(relative_path: str) -> int: ...
+    @staticmethod
+    def shard_db_path(shard_id: int) -> Path: ...
+    def scan_incremental_sharded(self, changed_files: list[str]) -> dict[int, list[str]]: ...
+```
+
+---
+
+#### GAP-AI-014：热资产内存缓存 🟡 P2
+
+| 维度 | v1.0.0 | v3.0.0 |
+|------|--------|--------|
+| 缓存 | 无，每 query → DB SELECT | LRU cache (5000 条目, 300s TTL) |
+| 读路径 | query → SQLite | query → L1: LRU → L2: SQLite shard |
+| 失效 | — | 增量扫描 → 变更文件缓存条目失效 |
+
+```yaml
+D-AI-014: 新增 LRU 内存缓存 + 与 capacity_params 对齐
+  before: 无缓存，每 query → DB SELECT
+  after:
+    LRU cache (capacity_params: scan_result_cache_max_entries=5000, TTL=300s)
+    缓存策略:
+      读缓存: query(module_id=X) → L1: LRU cache → L2: SQLite shard
+      写失效: incremental scan → 变更文件的缓存条目全部失效
+      预加载: 阶段启动时预热前 5000 个最热资产
+    capacity_params 对齐:
+      scan_result_cache_max_entries: 5000
+      scan_result_cache_ttl_seconds: 300
+```
+
+```python
+class HotAssetCache:
+    def __init__(self, max_entries: int = 5000, ttl_seconds: int = 300): ...
+    def get(self, path: str) -> dict | None: ...
+    def set(self, path: str, data: dict): ...
+    def invalidate(self, paths: list[str]): ...
+    def invalidate_shard(self, shard_id: int): ...
+```
+
+---
+
+#### GAP-AI-015：紧急/降级扫描模式集成 🟡 P2
+
+| 维度 | v1.0.0 | v3.0.0 |
+|------|--------|--------|
+| 模式 | full + incremental | incremental / full / partial / emergency 四模式 |
+| 降级 | 无 | incremental → (失败) → partial → (仍失败) → full |
+| 紧急 | 无 | SEV1 → emergency → bypass queue → 只扫 P0 资产 |
+
+```yaml
+D-AI-015: 四模式扫描体系 + 自动降级
+  scan_modes:
+    incremental: 默认——git diff 驱动，15-30 脚本，<1min
+    full:        周检——全量 10,000 脚本，~3.5h，周日凌晨
+    partial:     降级——增量失败时，按模块分批（5 模块/批），<10min/批
+    emergency:   应急——SEV1/Kill Switch 触发，bypass_queue=true，只扫 P0 资产
+
+  降级链: incremental → (失败) → partial → (仍失败) → full (最小回退)
+  紧急链: SEV1 事件 → emergency → bypass all queues → 扫 P0 资产 → report
+```
+
+```python
+class ScanModeSelector:
+    INCREMENTAL_TIMEOUT = 180
+    PARTIAL_TIMEOUT = 600
+    FULL_TIMEOUT = 10800
+    def select_mode(self, trigger: str, context: dict) -> str: ...
+    def fallback(self, current_mode: str, error: Exception) -> str: ...
+
+class EmergencyScanner:
+    P0_ASSET_COUNT_ESTIMATE = 500
+    def scan_emergency(self) -> ScanResult: ...
+```
+
+---
+
+#### GAP-AI-016：资产变更事件总线 🟡 P2
+
+| 维度 | v1.0.0 | v3.0.0 |
+|------|--------|--------|
+| 通知 | 文件写入 → 下游轮询 (延迟 30-60s) | Channel 1: 进程内 EventBus (零延迟) + Channel 2: SQLite change_log (跨进程持久化) |
+| 消费者 | — | MOD-INF-020/022/023 (push), Gate/Script/Dashboard (pull) |
+
+```yaml
+D-AI-016: 进程内事件总线 + SQLite 变更日志双通道
+  before: 文件写入 → 下游轮询（延迟 30-60s）
+  after:
+    Channel 1: 进程内 EventBus（Python asyncio.Queue —— 零延迟，同进程）
+    Channel 2: SQLite change_log 表（跨进程持久化，WAL 模式可并发读）
+    
+    事件保留策略: capacity_params.audit_log_retention_days=90
+    
+    新增表:
+    CREATE TABLE change_log (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      event_type  TEXT NOT NULL,
+      asset_path  TEXT NOT NULL,
+      old_sha256  TEXT,
+      new_sha256  TEXT,
+      old_status  TEXT,
+      new_status  TEXT,
+      triggered_by TEXT NOT NULL,
+      timestamp   TEXT NOT NULL DEFAULT (datetime('now')),
+      consumed_by TEXT NOT NULL DEFAULT '[]'
+    );
+    CREATE INDEX idx_change_log_ts ON change_log(timestamp);
+    CREATE INDEX idx_change_log_path ON change_log(asset_path);
+```
+
+```python
+class AssetEventBus:
+    def __init__(self, max_queue_size: int = 4096): ...
+    async def publish(self, event: AssetLifecycleEvent): ...
+    def subscribe(self, callback): ...
+    async def drain(self, batch_size: int = 100): ...
+```
+
+---
+
+### 〇-C、架构升级决策汇总（ADR 级）
+
+| ADR-ID | 标题 | 覆盖缺口 |
+|--------|------|:---:|
+| ADR-0061 | YAML→SQLite 资产存储迁移——SQLite 为 SSoT，YAML 为导出缓存 | GAP-AI-001 |
+| ADR-0062 | 发现扫描并行化——自适应 workers + 增量默认 | GAP-AI-002, GAP-AI-006 |
+| ADR-0063 | 分类流水线并行化——四分类器批处理 | GAP-AI-003 |
+| ADR-0064 | RegisterIndex——24 注册表合并索引，对账 O(N) | GAP-AI-004 |
+| ADR-0065 | SQLite WAL 并发读——100 AI Session 友好 | GAP-AI-005 |
+| ADR-0066 | DashboardCache——预聚合单行表 | GAP-AI-007 |
+| ADR-0067 | LifecycleEvents 表——状态机 SQLite 化 | GAP-AI-008 |
+| ADR-0068 | ReferenceGraph 预建——优先级离线计算 | GAP-AI-009 |
+| ADR-0069 | 自愈批量注册——scaffold --batch | GAP-AI-010 |
+| ADR-0070 | ScriptImpactMap——脚本→资产反向影响映射，增量扫描精确到脚本级 | GAP-AI-011 |
+| ADR-0071 | DebounceManager + ScanCoalescer——去抖 500ms + 合并 1s 窗口 | GAP-AI-012 |
+| ADR-0072 | ShardRouter——16 分片 consistent hashing，每 shard 独立 SQLite | GAP-AI-013 |
+| ADR-0073 | HotAssetCache——5000 条目 LRU + 300s TTL 内存缓存 | GAP-AI-014 |
+| ADR-0074 | ScanModeSelector——四模式（inc/full/partial/emergency）+ 自动降级链 | GAP-AI-015 |
+| ADR-0075 | AssetEventBus——进程内 Queue + SQLite change_log 双通道事件总线 | GAP-AI-016 |
+
+> ADR 编号从 0061 起（SemanticAuditor 使用 ADR-0050~0060）。本组新增 ADR-0070~0075。
+
+---
+
+### 〇-D、3 Phase 升级路线
+
+#### Phase 0-Prep：存储底座迁移（预计 1-2 天）
+
+| 任务 | 描述 | 依赖 |
+|------|------|------|
+| PH0-AI-01 | 新增 `db.py`——SQLite 7 表 DDL + WAL + migration runner | 无 |
+| PH0-AI-02 | 新增 `migrate_yaml_to_sqlite.py`——一次性迁移现有 YAML→SQLite | PH0-AI-01 |
+| PH0-AI-03 | `models.py` ClassifiedAsset 增加 `to_row()` / `from_row()` | 无 |
+| PH0-AI-04 | `index_generator.py` 双写——SQLite INSERT + YAML 导出缓存 | PH0-AI-02 |
+| PH0-AI-05 | `db.py` 新增 `script_impact_map` 表 + `change_log` 表 DDL | PH0-AI-01 |
+| PH0-AI-06 | 分片基础设施——`shard_router.py` + 16 shard 目录自动创建 | PH0-AI-01 |
+
+**Phase 0 验收**：
+- `asset_inventory.db` 可正常创建 + 查询
+- 现有 600 资产完整从 YAML 迁移到 SQLite
+- `unified_asset_index.yaml` 仍可导出（向下兼容）
+- `script_impact_map` + `change_log` 表 DDL 就绪
+- 16 个 shard 目录 + `global_index.db` 可自动创建
+
+#### Phase 1：核心引擎并行化（预计 2-3 天）
+
+| 任务 | 描述 | 依赖 |
+|------|------|------|
+| PH1-AI-07 | `scanner.py` 自适应 workers + 增量扫描路径 | Phase 0 |
+| PH1-AI-08 | `classifier.py` 批处理并行 + SQLite 写入 | Phase 0 |
+| PH1-AI-09 | `reconciler.py` 索引化对账（registry_index 表） | Phase 0 |
+| PH1-AI-10 | RegistryIndexBuilder——24 注册表扁平化到 SQLite | PH1-AI-09 |
+| PH1-AI-11 | 增量扫描默认——git diff 集成 | PH1-AI-07 |
+| PH1-AI-12 | `ImpactMapBuilder`——ScriptImpactMap 全量构建 + query_scripts_for_files | PH0-AI-05 |
+| PH1-AI-13 | `DebounceManager`——500ms 去抖 + 1000ms 合并窗口 | PH1-AI-11 |
+
+**Phase 1 验收**：
+- 全量扫描 75,000 文件（模拟） <3min
+- 增量扫描 30 文件 <3s
+- 75,000 资产对账 <5s（SQL JOIN）
+- 分类批处理 P95 <30s
+- ScriptImpactMap 全量构建 10,000 脚本→~200K 映射 <60s
+- 100 AI 并发 commit → 去抖合并 → 仅触发 1 次增量扫描
+
+#### Phase 2：并发与运维（预计 2-3 天）
+
+| 任务 | 描述 | 依赖 |
+|------|------|------|
+| PH2-AI-14 | `AssetQueryAPI`——per-Session 查询 + summary | Phase 1 |
+| PH2-AI-15 | `DashboardCache`——预聚合 + 自动刷新 | Phase 1 |
+| PH2-AI-16 | `lifecycle_events` 表 + 迁移 | Phase 1 |
+| PH2-AI-17 | `ReferenceGraph` 预建 + Priority 离线计算 | Phase 1 |
+| PH2-AI-18 | `scaffold.py --batch-register` 自愈批量化 | Phase 1 |
+| PH2-AI-19 | 100 Session 并发读压测（SQLite WAL） | PH2-AI-14 |
+| PH2-AI-20 | `ShardRouter`——16 分片 consistent hashing + 跨 shard 查询 | PH0-AI-06 |
+| PH2-AI-21 | `HotAssetCache`——5000 条目 LRU + 300s TTL | PH2-AI-14 |
+| PH2-AI-22 | `ScanModeSelector`——四模式选择 + 自动降级链 | PH1-AI-07 |
+| PH2-AI-23 | `AssetEventBus`——双通道事件总线 + 下游消费者对接 | PH2-AI-16 |
+| PH2-AI-24 | 100 Session 全管道压测——增量扫描→ScriptImpactMap→对账→事件总线 | PH2-AI-19, PH2-AI-23 |
+
+**Phase 2 验收**：
+- 100 Session 并发 `summary()` 无阻塞、无错误
+- Dashboard 缓存即时刷新
+- 全量扫描 → 自愈（批量注册 100 孤儿）<5s
+- 16 分片并发写入——100 AI 分散到 ~6-7 writers/shard
+- 100 Session 全管道 P95 延迟 <5s（增量扫描 + 对账 + 事件分发）
+- 紧急模式 SEV1 P0 扫描 <10s
+
+---
+
+### 〇-E、与现有蓝图的对齐校验
+
+| 现有设计元素 | v1.0.0 描述 | v3.0.0 升级影响 | 冲突？ |
+|------------|------------|----------------|:---:|
+| D-026-02 | `ThreadPoolExecutor(max_workers=8)` | 升级为自适应 workers | 🟡 值更新 |
+| D-026-04 | `unified_asset_index.yaml = SSoT` | **推翻**——SQLite 为新 SSoT，YAML 降为导出缓存 | 🔴 决策推翻 |
+| D-026-05 | ORPHAN 逐条修复 | 升级为 batch 修复 | 🟡 实现增强 |
+| D-026-08 | 全量扫描 1 次/小时 | **推翻**——增量扫描默认，全量周检 | 🔴 决策翻转 |
+| D-026-09 | 五阶自举 | 新增 Stage 0（SQLite 初始化）→ 变为六阶自举 | 🟡 补充 |
+| §7 事件流 | `unified_asset_index.yaml` 更新路径 | 改为 SQLite INSERT → YAML export + AssetEventBus 双通道 | 🔴 实现变更 |
+| §8 文件落位 | `unified_asset_index.yaml` 在 `data/asset_index/` | 新增 `asset_inventory.db` + 16 shard 目录 + `global_index.db` | 🟡 新增文件 |
+| §10.1 风险 | "资产膨胀到 1500+ 后扫描变慢" | 已由本方案解决 | ✅ 风险消除 |
+| §10.1 新增风险 | 无并发写入冲突描述 | 新增：100 AI 并发写 SQLite 单 writer 瓶颈 → 16 shard 分片解决 | 🔵 新增风险 |
+| §3.5 集成 | 无 Script System 联动 | 新增 ScriptImpactMap——资产变更精确触发治理脚本 | 🔵 新增集成 |
+| §5 Dashboard | 每次全量计算 | 升级为 dashboard_cache 预聚合 + HotAssetCache 内存缓存 | 🟡 实现增强 |
+| §15 自举 | 五阶自举（文件→分类→对账→索引→元盘点） | 新增 Stage 0-: SQLite + shard 初始化 → 变为七阶自举 | 🟡 补充 |
+
+> **关键结论**：v1.0.0 的五层架构逻辑设计**不需要变**——Discovery→Classification→Registration→Reconciliation→Lifecycle 的管道是正确的。**需要升级的是管道的存储层、执行架构和跨模块联动**——从 YAML SSoT 到 SQLite、从串行到并行、从全量到增量、从单机到分片、从被动轮询到主动事件推送。
+
+---
+
+### 〇-F、与 audit-orchestrator 的集成确认
+
+| 审计总控依赖 | AssetInventory v3.0.0 响应 | 状态 |
+|-------------|---------------------------|:---:|
+| 100 Session 并发读取资产数据 | ✅ SQLite WAL 模式 + 16 shard 分片，per-Session 查询 | 已设计 |
+| 增量扫描后的资产变更通知 | ✅ git diff → DebounceManager → ScriptImpactMap → incremental scan → 对账 → AssetEventBus | 已设计 |
+| 70,000+ 资产的索引加载 | ✅ D-AI-001 SQLite + 索引 + HotAssetCache，全量查询 <1s | 已设计 |
+| Rule Document Registry 驱动（SemanticAuditor） | ✅ ADR-0064 registry_index → O(1) 查找 | 已设计 |
+| 审计总控 Phase 0-Prep 对 MOD-INF-026 的依赖 | ✅ 本蓝图 Phase 0-Prep 可同步并行施工 | 已设计 |
+| 100 Session 同时触发的增量扫描风暴 | ✅ ADR-0071 DebounceManager 500ms 去抖 + 1000ms 合并 → 1 次批量扫描 | 已设计 |
+| 紧急事件（SEV1/Kill Switch）的快速扫描 | ✅ ADR-0074 ScanModeSelector emergency 模式 → P0 资产 <10s | 已设计 |
+| 资产变更的实时事件推送 | ✅ ADR-0075 AssetEventBus Channel 1 push + Channel 2 pull | 已设计 |
+
+---
+
+> v3.0.0 容量升级方案 ↑ | v1.0.0 现有蓝图 ↓
+
+---
+
+## §1 设计背景与目标
+
+### 1.1 背景
+
+| # | 痛点 | 后果 |
+|---|------|------|
+| 1 | 24 个注册表分散，无统一资产视图 | AI 和 Owner 不知道项目有多少文件/模块/脚本 |
+| 2 | 孤儿文件只能事后发现 | audit_registration.py 跑一次才发现，文件可能已孤儿数周 |
+| 3 | 幽灵资产无人清理 | 注册表引用已删除文件 → CI 假阳性 |
+| 4 | 没有资产生命周期概念 | 不知道哪些活跃、哪些废弃、哪些临时 |
+| 5 | scaffold.py 注册 ≠ 全局盘点 | 文件移动/重命名/删除后注册表过期 |
+| 6 | 没有资产健康度评分 | 孤儿率/漂移率/幽灵率全是盲区 |
+| 7 | 新 AI session 不知道项目规模 | 每个新 session 第一个问题"项目多大？"无数字回答 |
+
+### 1.2 目标范围
+
+| # | 类型 | 内容 | 标准/原因 |
+|---|------|------|----------|
+| 1 | ✅包含 | 全量资产发现 | 六大目录 100% 扫描覆盖，零遗漏 |
+| 2 | ✅包含 | 四维自动分类 | type/layer/status/priority 四维交叉分类，未知率 <10% |
+| 3 | ✅包含 | 统一资产索引 | unified_asset_index.yaml 为 SSoT，75K 资产可查询 |
+| 4 | ✅包含 | 持续对账 | 与 24 注册表交叉验证，ORPHAN/GHOST/DRIFT 三类偏移检测 |
+| 5 | ✅包含 | 生命周期管理 | 五态状态机 + 三种偏移态 + 自动退役 |
+| 6 | ✅包含 | 健康评分 | A~F 健康评分，孤儿率 <2% 为 A 级 |
+| 7 | ❌排除 | 代码质量检测 | 已由 lint 脚本覆盖 |
+| 8 | ❌排除 | 安全漏洞扫描 | 已由 security 扫描脚本覆盖 |
+| 9 | ❌排除 | 性能基准测试 | 已由 observability 模块覆盖 |
+| 10 | ❌排除 | 外部 API/服务资产发现 | 项目当前无外部服务依赖 |
+| 11 | ❌排除 | 资产财务估值 | 个人项目不涉及财务核算 |
+| 12 | ❌排除 | Web UI 仪表盘 | Phase 2 考虑，当前 YAML/JSON 输出已满足 AI 消费 |
+| 13 | ❌排除 | 实时文件监控（inotify/watchdog） | Windows 兼容性差，定时扫描足以覆盖 |
+
+---
+
+## §3 架构设计
+
+### 3.1 组件架构
+
+| # | 组件 | 职责 | 依赖 | 交互方式 |
+|---|------|------|------|---------|
+| 1 | Scanner | 文件系统发现（ThreadPoolExecutor） | 文件系统 | 同步调用 |
+| 2 | Classifier | 四维分类（type/layer/status/priority） | Scanner 输出 | 流水线 |
+| 3 | IndexGenerator | 资产登记/索引生成 | Classifier 输出 | 流水线 |
+| 4 | Reconciler | 持续对账（24 注册表交叉验证） | IndexGenerator + 24 注册表 | 定时触发 |
+| 5 | Lifecycle | 生命周期管理（五态+三偏移） | IndexGenerator | 事件驱动 |
+| 6 | Dashboard | 健康评分/仪表盘 | IndexGenerator | 查询 |
+| 7 | RegistryAdapter | 24 注册表统一解析 | 24 注册表文件 | 适配器模式 |
+| 8 | MCP Server | IDE/Agent 查询接口 | IndexGenerator | HTTP/SSE |
+| 9 | TrustAnchor | 三重信任锚验证 | Git/pytest/Audit | 同步调用 |
+
+### 3.2 数据流
+
+| # | 上游 | 处理逻辑 | 下游 | 数据格式 |
+|---|--------|---------|---------|---------|
+| 1 | 文件系统 | Scanner.scan() → 递归扫描六大目录 | Classifier | `ScanResult` (Pydantic) |
+| 2 | Scanner | Classifier.classify() → 四维分类 | IndexGenerator | `ClassificationResult` (Pydantic) |
+| 3 | Classifier + 24 注册表 | IndexGenerator.generate() → 统一索引 | Reconciler | `UnifiedAssetIndex` (Pydantic) |
+| 4 | IndexGenerator + 24 注册表 | Reconciler.reconcile() → 对账 | Dashboard | `ReconciliationReport` (Pydantic) |
+| 5 | Reconciler | Lifecycle.evaluate() → 状态迁移 | Audit Trail | `AssetLifecycleEvent` (Pydantic) |
+| 6 | IndexGenerator | Dashboard.generate() → 健康评分 | 人类/AI | `DashboardData` (Pydantic) |
+| 7 | scaffold.py | AssetInventory.on_asset_created() → 创建即登记 | IndexGenerator | 函数调用 |
+
+### 3.3 状态生命周期
+
+| 当前状态 | 触发事件 | 目标状态 | 守卫条件 |
+|---------|---------|---------|---------|
+| active | 90天无引用 | stale | 无下游依赖 |
+| stale | 重新被引用 | active | — |
+| stale | 确认废弃 | deprecated | Owner 审批 |
+| deprecated | 迁移完成 | retired | 所有引用已清除 |
+| ghost | 发现实体 | active | 注册表验证通过 |
+
+---
+
+## §4 接口契约
+
+### 4.1 公共 API
+
+```python
+class Scanner:
+    def __init__(self, directories: list[str] | None = None, excludes: set[str] | None = None,
+                 max_workers: int = 8, timeout_seconds: int = 300, max_file_size_mb: int = 50,
+                 max_depth: int = 15, root: Path | None = None): ...
+    def scan(self, *, incremental: bool = False, last_scan_time: datetime | None = None) -> ScanResult: ...
+
+class Classifier:
+    def __init__(self, type_mapping: list[tuple[str, list[str], AssetType]] | None = None,
+                 unknown_threshold_pct: float = 10.0): ...
+    def classify(self, scan_result: ScanResult) -> ClassificationResult: ...
+
+class IndexGenerator:
+    def __init__(self, root: Path | None = None): ...
+    def generate(self, classified_result: ClassificationResult,
+                 registry_entries: list[RegistryEntry] | None = None) -> UnifiedAssetIndex: ...
+    def save(self, index: UnifiedAssetIndex, output_path: Path | None = None) -> Path: ...
+
+class Reconciler:
+    def __init__(self, orphan_tolerance_hours: int = 24, ghost_max_age_days: int = 30,
+                 root: Path | None = None): ...
+    def reconcile(self, scan_result: ScanResult, classified: ClassificationResult,
+                  existing_index: UnifiedAssetIndex | None = None, *, dry_run: bool = True) -> ReconciliationReport: ...
+
+class Lifecycle:
+    def __init__(self, decay_days: dict[AssetType, int] | None = None, root: Path | None = None): ...
+    def evaluate(self, index: UnifiedAssetIndex) -> tuple[list[AssetLifecycleEvent], UnifiedAssetIndex]: ...
+
+class Dashboard:
+    def __init__(self, root: Path | None = None): ...
+    def generate(self, index: UnifiedAssetIndex) -> DashboardData: ...
+
+class TripleTrustAnchorGate:
+    def __init__(self, project_root: Path): ...
+    def verify(self, force: bool = False) -> TrustAnchorResult: ...
+```
+
+### 4.2 数据模型
+
+> 详见 `src/zephyr/asset_inventory/models.py`。核心模型：
+
+| 模型 | 用途 | 关键字段 |
+|------|------|---------|
+| `RawFileEntry` | 扫描原始条目 | relative_path, sha256, size_bytes, mtime_utc |
+| `ScanResult` | 扫描结果 | scan_id, total_files, entries: list[RawFileEntry] |
+| `ClassifiedAsset` | 四维分类资产 | asset_type, layer, status, priority, registered_in |
+| `ClassificationResult` | 分类结果 | total_classified, unknown_pct, by_type, by_layer |
+| `RegistryEntry` | 注册表条目 | registry_id, entry_path, entry_type |
+| `UnifiedAssetIndex` | 统一资产索引 SSoT | total_assets, health_score, orphan_rate_pct, assets |
+| `ReconciliationReport` | 对账报告 | matched, orphans, ghosts, drifts, renames |
+| `DashboardData` | 仪表盘数据 | health_score, orphan_rate_pct, alerts, trend_orphan |
+| `HealthScore` | 健康评分 | grade(A-F), numeric(0-100), 四维权重 |
+| `AssetLifecycleEvent` | 生命周期事件 | event_type, from_status, to_status |
+
+枚举类型：`AssetType`(9值) / `AssetLayer`(7值) / `AssetStatus`(6值) / `Priority`(4值) / `DriftType`(5值) / `ReconStatus`(5值) / `HealthGrade`(5值)
+
+### 4.3 输入契约
+
+| 接口 | 输入字段 | 必填 | 约束 |
+|------|---------|:---:|------|
+| `Scanner.scan()` | `incremental` | ❌ | bool，默认 False |
+| `Scanner.scan()` | `last_scan_time` | ❌ | 增量模式时使用，datetime |
+| `Classifier.classify()` | `scan_result` | ✅ | ScanResult 实例，entries 非空 |
+| `IndexGenerator.generate()` | `classified_result` | ✅ | ClassificationResult 实例 |
+| `IndexGenerator.generate()` | `registry_entries` | ❌ | list[RegistryEntry] |
+| `Reconciler.reconcile()` | `scan_result` | ✅ | ScanResult 实例 |
+| `Reconciler.reconcile()` | `classified` | ✅ | ClassificationResult 实例 |
+| `Reconciler.reconcile()` | `dry_run` | ❌ | bool，默认 True |
+
+### 4.4 输出契约
+
+| 接口 | 成功输出 | 失败输出 |
+|------|---------|---------|
+| `Scanner.scan()` | `ScanResult`：scan_id + entries + total_files | errors: list[str]（部分失败仍返回结果） |
+| `Classifier.classify()` | `ClassificationResult`：classified assets + by_type/by_layer | unknown_pct > threshold → 告警 |
+| `IndexGenerator.generate()` | `UnifiedAssetIndex`：SSoT 索引 | OSError（写入失败） |
+| `Reconciler.reconcile()` | `ReconciliationReport`：matched/orphans/ghosts/drifts | 部分注册表跳过 → skipped_registry_ids |
+| `Lifecycle.evaluate()` | `(events, updated_index)` | — |
+| `Dashboard.generate()` | `DashboardData`：health_score + alerts | — |
+
+### 4.6 契约版本
+
+| 契约部分 | 兼容性 | 说明 |
+|---------|:---:|------|
+| 新增枚举值（AssetType/AssetStatus） | ✅ 向后兼容 | 不破坏已有分类逻辑 |
+| 新增 ClassifiedAsset 字段 | ✅ 向后兼容 | Pydantic default 处理 |
+| 删除/重命名模型字段 | ❌ 破坏性 | 需 Owner 审批 + 迁移方案 |
+| UnifiedAssetIndex schema_version 变更 | ⚠️ 需通知 | 消费者需更新解析逻辑 |
+| MCP Tool 新增 | ✅ 向后兼容 | 不影响已有消费者 |
+| MCP 输入 Schema 修改 | ⚠️ 需通知 | 消费者需更新参数 |
+
+**变更通知**：破坏性变更→Owner审批+蓝图minor+1。兼容性变更→AI自主+patch+1。
+
+---
+
+## §5 约束条件
+
+### 5.1 技术约束
+
+| # | 约束 | 值 |
+|---|------|-----|
+| 1 | 扫描并行度 | max_workers=8（RULE-SEVEN） |
+| 2 | 单文件大小上限 | 50MB（超过跳过） |
+| 3 | 目录递归深度 | max_depth=15 |
+| 4 | 全量扫描 TTL | 5 分钟（超时终止） |
+| 5 | 扫描间隔 | ≥1 小时（全量），增量实时 |
+| 6 | 分类确定性 | 100% 规则驱动，禁止 LLM |
+| 7 | 写入原子性 | temp-file + os.replace()（RULE-ONE） |
+| 8 | 孤儿容忍时间 | 24 小时（orphan_tolerance_hours） |
+| 9 | 幽灵最大存活 | 30 天（ghost_max_age_days） |
+| 10 | 编码 | 所有文件读写 encoding="utf-8" |
+| 11 | 存储格式 | YAML SSoT（v1.0）→ SQLite WAL（v3.0） |
+
+### 5.2 容量估算
+
+| 维度 | 当前规模 | 峰值需求 | 系统极限 | 是否够用 | 扩展方案 |
+|------|:------:|:------:|:------:|:------:|---------|
+| 总资产数 | ~75,000 | 100,000 | SQLite 单表 ~1M | ✅ | 16 分片（GAP-AI-013） |
+| AI 并发 Session | 10 | 100 | SQLite WAL 无限并发读 | ✅ | ShardRouter 分片写 |
+| 单次全量扫描 | ~3min | <5min | 5min TTL | ✅ | 增量默认（GAP-AI-006） |
+| unified_asset_index.yaml | ~15MB | — | 100 AI 并发加载 1.5GB | ❌ | SQLite 迁移（GAP-AI-001） |
+| 对账查找 | O(N×24) | O(N) | — | ❌ | registry_index 表（GAP-AI-004） |
+| 分类吞吐 | 串行 75K >5min | <30s | — | ❌ | 批处理并行（GAP-AI-003） |
+
+### 5.4 非功能需求与服务水平
+
+> ⚠️ 非功能需求是盘点系统作为基础设施的运行保障——不满足则治理系统无法信赖盘点数据。
+
+| # | 需求类别 | 指标 | 目标值 | 验证方式 |
+|---|---------|------|--------|---------|
+| 1 | 可用性 | 索引可查询时间占比 | ≥99.9%（月度） | 监控 `asset_inventory.db` 可访问时长 |
+| 2 | 恢复性 | MTTR（平均恢复时间） | <15min | 从故障检测到索引可用的时长 |
+| 3 | 可观测性 | 关键指标覆盖率 | 100%（扫描/分类/对账/生命周期/Dashboard） | `InventorySelfMetrics` 全维度上报 |
+| 4 | 一致性 | 索引与磁盘最终一致 | ≤60s 延迟（增量模式） | Glide Window + 增量扫描验证 |
+| 5 | 幂等性 | 重复扫描不产生副作用 | 任意次全量扫描结果相同 | `sha256` 基准对比 |
+| 6 | 隔离性 | 盘点故障不阻塞 CI | CircuitBreaker + 缓存兜底 | 熔断后 CI 仍可运行（旧数据） |
+| 7 | 安全性 | 敏感文件零读取 | SECRET_PATTERNS 100% 跳过 | `security_access_log.jsonl` 审计 |
+
+
+> ⚠️ SLO 为盘点系统提供可量化的质量承诺——未达标触发告警，持续未达标触发 Escalation。
+
+| # | SLO | 目标 | 计算方式 | 未达标动作 |
+|---|-----|------|---------|-----------|
+| 1 | 扫描完成率 | ≥99.5% | `completed_scans / total_scan_attempts` | 连续 3 次失败 → CircuitBreaker OPEN |
+| 2 | 分类准确率 | 100% | `rule_classified / total_classified`（规则驱动 = 确定性） | `unknown_pct > threshold` → 降级 + 告警 |
+| 3 | 对账一致性 | ≥99% | `(matched + auto_fixed) / total_assets` | 一致性 <99% → 告警 + 人工对账 |
+| 4 | 索引新鲜度 | ≤1h | `now - last_scan_time` | 新鲜度 >2h → 被动通知；>6h → 半主动告警 |
+| 5 | 健康评分可用性 | ≥99% | Dashboard 可查询时间 / 总时间 | Dashboard 失效 → 返回上次快照 + `stale_since` |
+| 6 | 增量扫描延迟 | P95 <3s | 增量扫描耗时分布 | 超时 → 降级为 partial → full |
+
+### 5.7 禁止模式与导入约束
+
+> ⚠️ 禁止模式是盘点系统的安全红线——违反即安全事件，与 §20 六不得铁律互补。
+
+| # | 禁止模式 | 原因 | 替代方案 | 检测方式 |
+|---|---------|------|---------|---------|
+| 1 | **禁止递归符号链接** | 符号链接可指向项目外目录 → 越权扫描 + 无限递归 | `os.path.islink()` 检测后跳过 | 单元测试 + `security_access_log.jsonl` |
+| 2 | **禁止读取 .env / .secrets** | 密钥泄露 | `SECRET_FILENAME_PATTERNS` 匹配跳过 | `security_access_log.jsonl` 审计 |
+| 3 | **禁止全量扫描生产环境** | 生产环境文件量大 + 安全合规 | 增量模式默认 + `ScanModeSelector` 降级链 | `config/capacity/asset_inventory.yaml` 约束 |
+| 4 | **禁止 LLM 参与分类** | AI 判断不可复现 → 确定性丧失 | 100% 规则引擎驱动 | `auto_classified` 字段审计 |
+| 5 | **禁止跨进程文件锁** | Windows NTFS 锁 + Defender 阻塞 | 乐观扫描 + Glide Window + 原子写入 | 无 `.ailocks/` 读取 |
+
+> ⚠️ 导入约束防止盘点系统与业务模块循环依赖——盘点是基础设施，不应依赖上层。
+
+| # | 允许/禁止 | 模块路径 | 原因 |
+|---|:---------:|---------|------|
+| 1 | ✅ 允许 | `zephyr.asset_inventory.*` | 自身模块 |
+| 2 | ✅ 允许 | `zephyr.gates.*` | 门禁系统是平级基础设施 |
+| 3 | ✅ 允许 | `zephyr.l01_infrastructure.a2a_protocol.*` | A2A 通信是底层协议 |
+| 4 | ✅ 允许 | `zephyr.l01_infrastructure.audit_logger.*` | 审计日志是底层服务（MOD-INF-020） |
+| 5 | ✅ 允许 | 标准库 + 第三方（pydantic/sqlite3/pathlib） | 运行时依赖 |
+| 6 | ❌ 禁止 | `zephyr.task_system.*` | 任务系统是上层业务，盘点不应依赖任务调度 |
+| 7 | ❌ 禁止 | `zephyr.orchestrator.*` | 编排器是上层调度，盘点不应依赖编排 |
+| 8 | ❌ 禁止 | `zephyr.pipeline.*` | Pipeline 是上层编排，盘点只被 Pipeline 消费 |
+| 9 | ❌ 禁止 | `zephyr.runtime.*` | 运行时是系统大脑，盘点不应反向依赖 |
+
+---
+
+## §6 错误处理
+
+| # | 异常场景 | 检测方式 | 恢复策略 | 影响范围 |
+|---|---------|---------|---------|---------|
+| 1 | 全量扫描超时 | TTL=5min 超时 | 终止扫描，返回部分结果 + 错误详情 | 无新扫描结果，用上次缓存 |
+| 2 | 对账失败 | try/except | 不阻断 Pipeline，标记 reconciliation_failed: true 并告警 | 对账报告缺失 |
+| 3 | 24 注册表部分损坏 | RegistryParseError | 损坏注册表 skip，其余正常，标记 skipped_registry_ids | 损坏注册表资产可能误报 orphan |
+| 4 | 分类器异常 | unknown_pct > threshold | 未知资产标记 UNKNOWN，不阻断 | 分类不完整 |
+| 5 | 索引写入失败 | OSError/PermissionError | temp-file + os.replace() 原子写入，失败时旧索引保留 | 索引不更新 |
+| 6 | Scanner 组件失败 | CircuitBreaker | 熔断后快速失败，60s 自动恢复，用上次缓存 | 无新扫描结果 |
+| 7 | Classifier 组件失败 | CircuitBreaker | 降级：资产保留 UNKNOWN type | 不能自动分类 |
+| 8 | Dashboard 组件失败 | CircuitBreaker | 返回上次快照 + stale_since 标记 | 健康评分不及时 |
+| 9 | 审计 Trail 不可用 | MOD-INF-020 异常 | 生命周期事件写入本地 buffer，审计恢复后 flush | 审计记录间断 |
+| 10 | 并发写入冲突 | Glide Window | 乐观扫描 + 下次扫描自动修正 | 短暂不一致 |
+
+---
+
+## §8 安全考量
+
+| # | 威胁 | 影响 | 缓解措施 | 验证方式 |
+|---|------|------|---------|---------|
+| 1 | 扫描器读取敏感文件内容 | 高 | 只读元数据（path/size/mtime/SHA256），不读文件内容 | SecurityFilter.should_scan() 单元测试 |
+| 2 | 密钥文件被扫描 | 高 | SECRET_FILENAME_PATTERNS 匹配跳过（.env/*_key*/*.pem） | security_access_log.jsonl 审计 |
+| 3 | 盘点数据库被 AI 篡改 | 中 | YAML SSoT 可 Git diff；原子写入 RULE-ONE | git diff 验证 |
+| 4 | 符号链接越权扫描 | 中 | os.path.islink() 检查，禁止递归符号链接 | 测试符号链接场景 |
+| 5 | 大文件 SHA256 DoS | 低 | 50MB 上限，超过跳过 | MAX_FILE_SIZE_BYTES 常量检查 |
+| 6 | SHA256 指纹泄露 | 低 | 日志分级：DEBUG 可见 SHA256，INFO 只显示 count | 日志级别测试 |
+| 7 | .ailocks/ 目录信息泄露 | 中 | 目录级排除 | DEFAULT_EXCLUDES 包含 .ailocks |
+| 8 | session-logs/ 敏感对话 | 中 | 目录级排除 | DEFAULT_EXCLUDES 包含 session-logs |
+
+---
+
+## §9 测试策略
+
+| # | 测试类型 | 覆盖范围 | 关键测试用例 | 通过标准 |
+|---|---------|---------|------------|---------|
+| 1 | 单元测试 | Scanner/Classifier/Reconciler/Lifecycle/Dashboard | 扫描六大目录、四维分类、ORPHAN/GHOST/DRIFT 检测、状态迁移、健康评分 | 覆盖率 >80% |
+| 2 | 集成测试 | Scanner→Classifier→IndexGenerator→Reconciler 流水线 | 全量扫描→分类→索引→对账端到端 | 端到端通过 |
+| 3 | 边界测试 | 空目录/超大文件/损坏注册表/并发写入 | 空扫描结果、50MB 文件跳过、损坏 YAML 跳过 | 无崩溃，优雅降级 |
+| 4 | 安全测试 | SecurityFilter/六不得铁律 | .env 跳过、.ailocks 跳过、符号链接跳过 | 零敏感文件扫描 |
+| 5 | 回归测试 | 修改后已有功能 | 每次修改后跑全量测试 | 全部 pass |
+
+---
+
+## §12 集成目标
+
+| 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
+|------------|---------|--------|---------|
+| scaffold.py | 新增接口 | `_atomic_write` 成功后调用 `AssetInventory.register()` | 创建文件后检查 unified_asset_index.yaml 包含新条目 |
+| MOD-INF-020 audit-trail | 事件订阅 | 每次对账/状态变更 → `AuditTrail.record(event)` | 审计日志包含资产事件 |
+| MOD-INF-007 gate-engine | 新增 Gate | `G_asset_inventory` 门禁（orphan_rate <2%, ghost_rate =0%） | CI Pipeline 通过/阻断 |
+| MOD-INF-015 telemetry | 数据上报 | asset_count / orphan_rate / drift_rate / health_score | 遥测数据包含资产指标 |
+| MOD-INF-022 escalation | 事件订阅 | orphan_rate 骤升 >10% 或 >50 ghost → `Escalation.trigger()` | 升级事件触发 |
+| Pipeline | 定时触发 | `run_full_scan` / `run_reconciliation` | 定时任务产出扫描结果 |
+| MCP Client | MCP Server | 6 Tool + 2 Resource | IDE 内可查询资产信息 |
 
 ---
 
@@ -63,7 +1183,7 @@ references:
 | 代码落位 | `src/zephyr/asset_inventory/` |
 | 运行时平面 | Warm（定时扫描 + 事件驱动对账） |
 | 核心职责 | **"仓库管理员 + 资产会计"**：知道项目有什么（发现）、属于哪类（分类）、登记在哪（注册）、对不对得上（对账）、处于什么阶段（生命周期） |
-| 设计哲学 | **"不知道有什么 = 没法管"**——盘点系统是审计系统和所有治理系统的前置基础。对标 K8s API Resources：进系统第一件事，先看资源清单 |
+| 设计哲学 | **"不知道有什么 = 没法管"**——盘点系统是审计系统和所有治理系统的前置基础 |
 
 ### 1.2 核心职能（一句话 + 五层架构）
 
@@ -133,7 +1253,7 @@ references:
 | 项目持续膨胀 | 从当前 ~600 资产 → 未来可能数千 → 扫描器必须支持增量模式 + 并行（RULE-SEVEN ThreadPoolExecutor） |
 | 99% AI 消费者 | 盘点输出格式必须 AI 零推理可消费——结构化 YAML/JSON，禁止自然语言描述关键字段 |
 
-### 1.4 当前痛点（为什么需要盘点系统）
+### 1.4 当前痛点
 
 | # | 痛点 | 后果 | 本蓝图如何解决 |
 |---|------|------|-------------|
@@ -145,15 +1265,77 @@ references:
 | 6 | **没有资产健康度评分** | Owner 无法一眼看出"项目资产健康吗"——孤儿率、漂移率、幽灵率全是盲区 | L5 Dashboard——A~F 健康评分 + 趋势指标 |
 | 7 | **新 AI session 不知道项目规模** | 每个新 session 第一个问题是"这个项目多大？"—没有数字回答 | L3 `unified_asset_index.yaml` 第一行就是 `total_assets: N` |
 
+### 1.5 利益相关者映射
+
+> ⚠️ 明确利益相关者才能确保盘点系统的每个产出都有消费者，避免 RULE-TWO 孤儿。
+
+| 利益相关者 | 角色 | 消费的盘点产出 | 交互方式 |
+|-----------|------|--------------|---------|
+| Owner | AI 架构决策者 | Dashboard 健康评分、对账报告、告警通知 | `python -m zephyr.asset_inventory dashboard` |
+| CI/CD Pipeline | 门禁检查执行者 | `unified_asset_index.yaml`、孤儿率指标 | Gate `G_asset_inventory` 自动读取 |
+| 下一个 AI Session | 资产发现消费者 | `unified_asset_index.yaml` 首行 `total_assets`、`by_type`/`by_layer` 分布 | 冷启动 STEP 4.5 自动加载 |
+| MOD-INF-020 审计系统 | 审计日志消费者 | 生命周期事件（`AssetLifecycleEvent`） | `AssetEventBus` Channel 2 推送 |
+| scaffold.py | 创建时注册联动 | 注册表索引（`registry_index`） | 创建后触发增量扫描 |
+| MCP Client（IDE） | 实时查询消费者 | 6 Tool + 2 Resource | MCP 协议 |
+
+### 1.6 当前态/目标态差距
+
+> ⚠️ 从 §17 容量升级 GAP-AI-001~015 提取核心差距，确保蓝图与实现的对齐。
+
+| GAP ID | 差距 | 当前态 | 目标态 | 优先级 | 解决方案 |
+|--------|------|--------|--------|:------:|---------|
+| GAP-AI-001 | 资产存储爆炸 | YAML 单文件 ~15MB，100 Session 加载 1.5GB | SQLite WAL 7 表 + YAML 导出缓存 | 🔴 P0 | `asset_inventory.db` |
+| GAP-AI-002 | 发现扫描并行化不足 | 硬编码 `max_workers=8` | 自适应 `min(max(4, cpu//2), 20)` + 增量默认 | 🔴 P0 | `AdaptiveScanner` |
+| GAP-AI-003 | 分类流水线串行 | 75K 串行 >5min | 批处理并行 P95 <30s | 🟠 P1 | `ParallelClassifier` |
+| GAP-AI-004 | 对账查找 O(N×24) | 嵌套循环遍历 24 注册表 | `registry_index` 表 O(1) hash lookup | 🔴 P0 | `IndexedReconciler` |
+| GAP-AI-005 | 100 AI 并发读取 | YAML 全量加载 | SQLite WAL 无限并发读 | 🟠 P1 | WAL 模式 |
+| GAP-AI-006 | 全量扫描为默认 | 每次全量 ~5min | 增量默认（git diff）P95 <3s | 🟠 P1 | `ScanModeSelector` |
+| GAP-AI-007 | Dashboard 实时计算 | 每次全量 Pydantic 计算 | 预聚合单行表 `dashboard_cache` | 🟡 P2 | `DashboardCache` |
+| GAP-AI-008 | 生命周期状态内存存储 | 无持久化 | `lifecycle_events` SQLite 表 | 🟡 P2 | SQLite 化 |
+| GAP-AI-009 | 优先级实时计算 | 每次查询时遍历引用图 | `reference_graph` 预建 + 离线计算 | 🟡 P2 | `ReferenceGraph` |
+| GAP-AI-010 | 自愈逐条执行 | 单条 scaffold 补注册 | `scaffold --batch` 批量注册 | 🟡 P2 | 批量化 |
+| GAP-AI-011 | 无脚本→资产反向映射 | 无法评估治理脚本影响 | `ScriptImpactMap` 脚本→资产映射 | 🔴 P0 | `ImpactMapBuilder` |
+| GAP-AI-012 | 增量扫描无去抖 | 100 AI 同秒 commit → 100 次扫描 | 500ms 去抖 + 1s 合并窗口 | 🟠 P1 | `DebounceManager` |
+| GAP-AI-013 | 单 SQLite writer 瓶颈 | 100 AI 并发写排队 | 16 分片独立 writer | 🟠 P1 | `ShardRouter` |
+| GAP-AI-014 | 无热资产缓存 | 每次查询穿透 SQLite | LRU 5000 + 300s TTL | 🟡 P2 | `HotAssetCache` |
+| GAP-AI-015 | 无降级扫描模式 | 全量或失败 | 四模式 + 自动降级链 | 🟡 P2 | `ScanModeSelector` |
+
+### 1.7 典型场景
+
+> ⚠️ 典型场景覆盖盘点系统五层架构的完整生命周期，确保每个功能点都有端到端验证路径。
+
+| # | 场景 | 触发 | 五层覆盖 | 预期产出 |
+|---|------|------|---------|---------|
+| 1 | **冷启动扫描** | 新 AI Session 进入，`unified_asset_index.yaml` 不存在 | L1→L2→L3 | `determine_bootstrap_level()` → Level 0 → 全量扫描 → `raw_asset_scan.json` |
+| 2 | **资产分类** | 扫描完成，`raw_asset_scan.json` 存在 | L2 | 四维分类引擎 → `classified_assets.json`（type/layer/status/priority） |
+| 3 | **资产登记** | 分类完成，首次写入索引 | L3 | `IndexGenerator.generate()` → `unified_asset_index.yaml` + SQLite INSERT |
+| 4 | **持续对账** | 定时（1h）或事件驱动（scaffold 创建后） | L4 | `Reconciler.reconcile()` → `reconciliation_report.md`（orphan/ghost/drift） |
+| 5 | **生命周期迁移** | 资产 30 天零引用 / Owner 标记废弃 | L5 | `Lifecycle.evaluate()` → `AssetLifecycleEvent` → 状态迁移 + 审计记录 |
+| 6 | **增量扫描** | git commit 触发 | L1 | `AdaptiveScanner` 增量模式 → 只扫变更文件 → P95 <3s |
+| 7 | **紧急旁路** | 盘点系统自身故障导致 CI RED | 跨层 | Owner 创建 `inventory_override.yaml` → Gate 强制 GREEN → 24h 自动过期 |
+
 ---
 
 ## 2. 核心架构
 
-### 2.1 资产分类体系（Asset Taxonomy）
+### 2.1 职责边界
 
-> **决策 D-026-01**：资产按四个维度分类——类型（asset_type）、层级（layer）、状态（status）、优先级（priority）。四维交叉定位每个资产。对标 ITIL CMDB CI 分类（硬件/软件/网络/数据）+ Linux FHS 目录语义分类。
+| # | 类型 | 内容 | 标准/原因 |
+|---|------|------|----------|
+| 1 | ✅包含 | 资产发现 | 扫描文件系统，发现所有项目资产 |
+| 2 | ✅包含 | 资产分类 | 按类型/层级/状态/优先级分类 |
+| 3 | ✅包含 | 资产登记 | 注册到 unified_asset_index |
+| 4 | ✅包含 | 持续对账 | 与 24 个注册表交叉验证 |
+| 5 | ✅包含 | 生命周期管理 | 资产状态迁移和退役 |
+| 6 | ❌排除 | 代码质量检测 | 由 lint 脚本负责 |
+| 7 | ❌排除 | 安全漏洞扫描 | 由 security 扫描脚本负责 |
+| 8 | ❌排除 | 性能基准测试 | 由 observability 模块负责 |
 
-#### 2.1.1 asset_type（资产类型——基于目录位置 + 扩展名）
+### 2.3 资产分类体系（Asset Taxonomy）
+
+> **决策 D-026-01**：资产按四个维度分类——类型（asset_type）、层级（layer）、状态（status）、优先级（priority）。四维交叉定位每个资产。
+
+#### 2.3.1 asset_type（资产类型——基于目录位置 + 扩展名）
 
 ```python
 from enum import StrEnum
@@ -185,13 +1367,13 @@ class AssetType(str, Enum):
 | 根目录 | `.toml/.bat/.ps1` | `infra` |
 | 任意 | `_registry.yaml/_manifest.yaml` | `registry` |
 
-#### 2.1.2 layer（层级归属——C 轨 L00~L13 + cross_layer）
+#### 2.3.2 layer（层级归属——C 轨 L00~L13 + cross_layer）
 
 - 从目录路径提取：`src/zephyr/l04_risk_management/` → `L04`
 - B 轨模块（无 C 轨目录前缀）→ `cross_layer`
 - `docs/03_modules/l01_infrastructure/` → `L01`
 
-#### 2.1.3 status（资产状态——五态 + 三种偏移）
+#### 2.3.3 status（资产状态——五态 + 三种偏移）
 
 ```python
 class AssetStatus(str, Enum):
@@ -207,7 +1389,7 @@ class AssetStatus(str, Enum):
     UNKNOWN = "unknown"            # 无法判定
 ```
 
-#### 2.1.4 priority（优先级——P0~P3，基于引用频率 + 依赖链深度）
+#### 2.3.4 priority（优先级——P0~P3，基于引用频率 + 依赖链深度）
 
 ```python
 class AssetPriority(str, Enum):
@@ -217,7 +1399,7 @@ class AssetPriority(str, Enum):
     P3 = "P3"  # 低优资产——临时文件 / 生成产物 / 缓存
 ```
 
-### 2.2 L1: 资产发现（Asset Discovery）— 决策 D-026-02
+### 2.4 L1: 资产发现（Asset Discovery）— 决策 D-026-02
 
 > **决策 D-026-02**：全量发现采用文件系统递归扫描，ThreadPoolExecutor(max_workers=8) 并行扫六大目录。每次扫描产出 `raw_asset_scan.json`。增量发现通过文件系统事件（watchdog）或 Git diff 实现。
 
@@ -233,7 +1415,7 @@ class AssetPriority(str, Enum):
 | `data/` | `**/*.db` + `**/*.yaml` + `**/*.jsonl` | ~20 |
 | 根目录 | `pyproject.toml` / `.gitignore` / `*.bat` / `*.ps1` | ~10 |
 
-**排除模式**（对标 `audit_registration.py` 的 EXCLUDE_PATTERNS）：
+**排除模式**：
 
 ```python
 EXCLUDE_DIRS: set[str] = {
@@ -247,36 +1429,20 @@ EXCLUDE_DIRS: set[str] = {
 **数据模型（Pydantic V2）**：
 
 ```python
-from pydantic import BaseModel, Field
-from datetime import datetime
-
 class RawAssetEntry(BaseModel):
-    """单条原始资产记录——文件系统直接采集，未经分类/对账"""
-    absolute_path: str = Field(..., description="D:\\ZephyrAlpha\\... 完整绝对路径")
-    relative_path: str = Field(..., description="src/zephyr/...  项目相对路径")
-    file_name: str = Field(..., description="文件名（含扩展名）")
-    extension: str = Field(..., description="扩展名 .py / .md / .yaml ...")
-    size_bytes: int = Field(..., description="文件大小（字节）")
-    sha256: str = Field(..., description="SHA-256 哈希（64字符hex）")
-    mtime_utc: datetime = Field(..., description="最后修改时间 UTC")
-    ctime_utc: datetime = Field(..., description="创建时间 UTC")
-    is_locked: bool = Field(default=False, description="是否被 .ailocks/ 锁定")
+    absolute_path: str; relative_path: str; file_name: str; extension: str
+    size_bytes: int; sha256: str; mtime_utc: datetime; ctime_utc: datetime
+    is_locked: bool = False
 
 class RawAssetScan(BaseModel):
-    """全量扫描结果"""
-    scan_id: str = Field(..., description="格式 SCAN-{UUID7}")
-    scan_time_utc: datetime = Field(default_factory=datetime.utcnow)
-    scan_duration_ms: int = Field(..., description="扫描耗时 ms")
-    total_files_scanned: int = Field(..., description="扫描文件总数")
-    total_assets_found: int = Field(..., description="产出资产总数（排除目录）")
-    assets: list[RawAssetEntry] = Field(default_factory=list)
-    by_extension: dict[str, int] = Field(default_factory=dict)
-    errors: list[str] = Field(default_factory=list)
+    scan_id: str; scan_time_utc: datetime; scan_duration_ms: int
+    total_files_scanned: int; total_assets_found: int
+    assets: list[RawAssetEntry] = []; by_extension: dict[str, int] = {}; errors: list[str] = []
 ```
 
-### 2.3 L2: 资产分类（Asset Classification）— 决策 D-026-03
+### 2.5 L2: 资产分类（Asset Classification）— 决策 D-026-03
 
-> **决策 D-026-03**：分类引擎纯规则驱动——不调用 LLM、不做语义推断。基于目录前缀 + 扩展名 + 文件命名约定的**机械映射表**，确保确定性 100%。对标 Linux `file` 命令的 magic bytes 检测思路。
+> **决策 D-026-03**：分类引擎纯规则驱动——不调用 LLM、不做语义推断。基于目录前缀 + 扩展名 + 文件命名约定的**机械映射表**，确保确定性 100%。
 
 **分类流水线**（每个 `RawAssetEntry` → 依次过四个分类器）：
 
@@ -291,79 +1457,34 @@ RawAssetEntry
 
 ```python
 class ClassifiedAsset(BaseModel):
-    """分类后的资产条目"""
-    # 继承原始发现字段
-    absolute_path: str
-    relative_path: str
-    sha256: str
-    size_bytes: int
-    mtime_utc: datetime
-
-    # 分类四维标签
-    asset_type: AssetType
-    layer: str = Field(..., description="L00~L13 或 cross_layer")
-    status: AssetStatus
-    priority: AssetPriority
-
-    # 分类置信度
-    type_confidence: float = Field(default=1.0, ge=0.0, le=1.0)
-    layer_confidence: float = Field(default=1.0, ge=0.0, le=1.0)
-    auto_classified: bool = Field(default=True)
-
-    # 注册表关联
-    registered_in: list[str] = Field(default_factory=list, description="在哪些注册表中登记——registry_ids")
+    absolute_path: str; relative_path: str; sha256: str; size_bytes: int; mtime_utc: datetime
+    asset_type: AssetType; layer: str; status: AssetStatus; priority: AssetPriority
+    type_confidence: float = 1.0; layer_confidence: float = 1.0; auto_classified: bool = True
+    registered_in: list[str] = []
 ```
 
-### 2.4 L3: 资产登记（Asset Registration）— 决策 D-026-04
+### 2.6 L3: 资产登记（Asset Registration）— 决策 D-026-04
 
 > **决策 D-026-04**：统一资产索引（`unified_asset_index.yaml`）为 SSoT——一份文件 = 全项目资产视图。由 `generate_asset_index.py` 生成，输入 = 最新扫描 + 24个注册表。与 `scaffold.py` 联动——创建文件时同步写入索引。
 
 **`unified_asset_index.yaml` 结构**：
 
 ```yaml
+# unified_asset_index.yaml — 关键字段约束
 schema_version: "1.0.0"
-generated_at: "2026-05-07T15:30:00Z"
-generated_by: "generate_asset_index.py v0.1.0"
 summary:
-  total_assets: 612
-  total_size_mb: 45.3
-  by_type:
-    module: 128
-    script: 388
-    doc: 154
-    config: 12
-    gate: 20
-    test: 35
-    data: 8
-    infra: 6
-    registry: 24
-    unknown: 0
-  by_layer:
-    cross_layer: 380
-    L01: 42
-    L00: 12
-    # ... L02~L13
-  by_status:
-    active: 580
-    orphan: 12
-    ghost: 3
-    drift: 5
-    archived: 12
-  by_priority:
-    P0: 45
-    P1: 120
-    P2: 300
-    P3: 147
-  health_score: "B"
-  orphan_rate_pct: 1.96
-  ghost_rate_pct: 0.49
-  drift_rate_pct: 0.82
+  total_assets: N; total_size_mb: N
+  by_type: {module: N, script: N, doc: N, config: N, gate: N, test: N, data: N, infra: N, registry: N, unknown: 0}
+  by_layer: {cross_layer: N, L01: N, ...}
+  by_status: {active: N, orphan: N, ghost: N, drift: N, archived: N}
+  by_priority: {P0: N, P1: N, P2: N, P3: N}
+  health_score: "A"|"B"|"C"|"D"|"F"; orphan_rate_pct: float; ghost_rate_pct: float; drift_rate_pct: float
 assets: []  # 全量 ClassifiedAsset 列表
 ```
 
-### 2.5 L4: 持续对账（Reconciliation）— 决策 D-026-05
+### 2.7 L4: 持续对账（Reconciliation）— 决策 D-026-05
 
-> **决策 D-026-05**：对账 = 发现清单（L1） vs 24个注册表的**机械 diff**。产出三类偏移清单 + 自动修复建议。对标 ITIL Reconciliation——"注册表不是真相，磁盘才是。注册表只是磁盘的缓存。"
+> **决策 D-026-05**：对账 = 发现清单（L1） vs 24个注册表的**机械 diff**。产出三类偏移清单 + 自动修复建议。
 
 **对账三步**：
 
@@ -424,9 +1545,9 @@ class ReconciliationSummary(BaseModel):
 | DRIFT（mtime 不一致） | ✅ | 自动更新注册表 mtime |
 | DRIFT（layer 不一致） | ❌ | 告警——目录移动后 layer 可能需重新判定 |
 
-### 2.6 L5: 生命周期管理（Lifecycle）— 决策 D-026-06
+### 2.8 L5: 生命周期管理（Lifecycle）— 决策 D-026-06
 
-> **决策 D-026-06**：每个资产维护一个状态机。状态变更触发 MOD-INF-020 审计记录 + MOD-INF-015 遥测上报。对标 ITIL Asset Lifecycle（Plan→Acquire→Deploy→Manage→Retire）。
+> **决策 D-026-06**：每个资产维护一个状态机。状态变更触发 MOD-INF-020 审计记录 + MOD-INF-015 遥测上报。
 
 **状态机**：
 
@@ -471,46 +1592,30 @@ class ReconciliationSummary(BaseModel):
 
 ```python
 class AssetLifecycle(BaseModel):
-    """单个资产的生命周期追踪"""
-    asset_path: str
-    current_state: str = Field(..., description="created/active/modified/drift/orphan/deprecated/retired/archived")
-    state_history: list[StateTransition] = Field(default_factory=list)
-    created_at: datetime
-    last_modified_at: datetime
-    last_reconciled_at: Optional[datetime] = None
-    days_since_last_reconciliation: int = Field(default=-1)
-    deprecation_date: Optional[datetime] = None
-    retirement_date: Optional[datetime] = None
+    asset_path: str; current_state: str; state_history: list[StateTransition] = []
+    created_at: datetime; last_modified_at: datetime; last_reconciled_at: datetime | None = None
+    days_since_last_reconciliation: int = -1; deprecation_date: datetime | None = None; retirement_date: datetime | None = None
 
 class StateTransition(BaseModel):
-    """状态迁移记录"""
-    from_state: str
-    to_state: str
-    timestamp_utc: datetime
-    triggered_by: str = Field(..., description="manual / auto-scanner / gate / scaffold")
-    audit_event_id: str  # 关联 MOD-INF-020 的审计事件 ID
+    from_state: str; to_state: str; timestamp_utc: datetime; triggered_by: str; audit_event_id: str
 ```
 
 ---
 
 ## 3. 与现有系统集成
 
-### 3.1 集成矩阵
+### 3.1 组件架构
 
-```
-┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐
-│   scaffold.py    │    │  Asset Inventory │    │   MOD-INF-020    │
-│   (RULE-FOUR)    │───→│   (MOD-INF-026)  │───→│  (Audit Trail)   │
-│   创建即注册      │事件│   资产大脑       │事件│   不可变审计      │
-└──────────────────┘    └────────┬─────────┘    └──────────────────┘
-                                 │
-              ┌──────────────────┼──────────────────┐
-              ↓                  ↓                  ↓
-    ┌──────────────┐   ┌──────────────┐   ┌──────────────┐
-    │ Gate Engine  │   │   Pipeline   │   │  Telemetry   │
-    │ G?.inventory │   │ M?.reconcil  │   │ asset metrics│
-    └──────────────┘   └──────────────┘   └──────────────┘
-```
+| # | 组件 | 职责 | 依赖 | 交互方式 |
+|---|------|------|------|---------|
+| 1 | Scanner | 文件系统发现 | 文件系统 | 同步调用 |
+| 2 | Classifier | 资产分类 | Scanner 输出 | 流水线 |
+| 3 | IndexGenerator | 资产登记/索引生成 | Classifier 输出 | 流水线 |
+| 4 | Reconciler | 持续对账 | 24 注册表 | 定时触发 |
+| 5 | LifecycleManager | 生命周期管理 | IndexGenerator | 事件驱动 |
+| 6 | Dashboard | 健康评分/仪表盘 | IndexGenerator | 查询 |
+
+### 3.2 集成矩阵
 
 | 集成点 | 方向 | 机制 |
 |--------|:--:|------|
@@ -522,7 +1627,19 @@ class StateTransition(BaseModel):
 | Inventory → Drift Detector | → | 对账产生的 DRIFT 条目 → `DriftDetector.register_drift()` |
 | Inventory → Escalation | → | orphan_rate 骤升 > 10% 或 >50 ghost → `Escalation.trigger()` |
 
-### 3.2 scaffold.py 集成（创建即登记）
+### 3.3 状态生命周期
+
+> 详见本蓝图 §2.3.3 status（资产状态——五态 + 三种偏移）和 §2.8 L5 生命周期管理。
+
+| 当前状态 | 触发事件 | 目标状态 | 守卫条件 |
+|---------|---------|---------|---------|
+| active | 90天无引用 | stale | 无下游依赖 |
+| stale | 重新被引用 | active | — |
+| stale | 确认废弃 | deprecated | Owner 审批 |
+| deprecated | 迁移完成 | retired | 所有引用已清除 |
+| ghost | 发现实体 | active | 注册表验证通过 |
+
+### 3.4 scaffold.py 集成（创建即登记）
 
 在 `scaffold.py` 的 `_atomic_write` 成功后追加：
 
@@ -537,7 +1654,7 @@ inventory.on_asset_created(
 )
 ```
 
-### 3.3 Gate Engine 集成（资产盘点门禁）
+### 3.5 Gate Engine 集成（资产盘点门禁）
 
 新增 Gate `G?.asset_inventory_gate`：
 
@@ -591,41 +1708,13 @@ checks:
 
 ```python
 class AssetDashboard(BaseModel):
-    """资产仪表盘——每次全量扫描 + 对账后更新"""
-    generated_at: datetime
-    based_on_scan: str  # scan_id
-
-    # 总数
-    total_assets: int
-    total_size_mb: float
-
-    # 分类分布
-    by_type: dict[str, int]
-    by_layer: dict[str, int]
-    by_status: dict[str, int]
-    by_priority: dict[str, int]
-
-    # 健康指标
-    health_score: str = Field(..., description="A~F")
-    orphan_count: int
-    orphan_rate_pct: float
-    ghost_count: int
-    ghost_rate_pct: float
-    drift_count: int
-    drift_rate_pct: float
-
-    # 趋势（最近 10 次扫描）
-    trend_orphan: list[int] = Field(default_factory=list)
-    trend_total: list[int] = Field(default_factory=list)
-    trend_health: list[str] = Field(default_factory=list)
-
-    # Top 异常
-    top_orphans: list[str] = Field(default_factory=list, description="最早被发现的 5 个孤儿")
-    top_ghosts: list[str] = Field(default_factory=list, description="最关键的 5 个幽灵")
-
-    # 上次对账
-    last_reconciliation_time: Optional[datetime] = None
-    last_reconciliation_scan_id: Optional[str] = None
+    generated_at: datetime; based_on_scan: str; total_assets: int; total_size_mb: float
+    by_type: dict[str, int]; by_layer: dict[str, int]; by_status: dict[str, int]; by_priority: dict[str, int]
+    health_score: str; orphan_count: int; orphan_rate_pct: float; ghost_count: int; ghost_rate_pct: float
+    drift_count: int; drift_rate_pct: float
+    trend_orphan: list[int] = []; trend_total: list[int] = []; trend_health: list[str] = []
+    top_orphans: list[str] = []; top_ghosts: list[str] = []
+    last_reconciliation_time: datetime | None = None; last_reconciliation_scan_id: str | None = None
 ```
 
 ### 5.2 健康评分算法
@@ -648,42 +1737,44 @@ F: 孤儿率≥20% 或 幽灵率≥10%  — 触发 Escalation
 
 ---
 
-## 6. 关键架构决策（ADR 级）
+## 6. 关键架构决策（§18 决策记录）
 
-| 决策 ID | 决策 | 依据 |
-|---------|------|------|
-| **D-026-01** | 四维分类（type/layer/status/priority） | ITIL ITAM 实践——多维交叉定位优于单维 |
-| **D-026-02** | 全量发现 = 文件系统递归扫描 + ThreadPoolExecutor | 无外部依赖，Windows 兼容，RULE-SEVEN 合规 |
-| **D-026-03** | 分类引擎 = 纯规则驱动，禁止 LLM | AI 判断不可复现——确定性 > 灵活性 |
-| **D-026-04** | `unified_asset_index.yaml` = SSoT | YAML 可 Git diff + AI 零推理消费 + 人类可读——优于 SQLite |
-| **D-026-05** | ORPHAN 自动修复仅限 .py 文件（scaffold 可处理），.md 需人工 | scaffold.py 无法判定 .md 应归入哪个模块目录 |
-| **D-026-06** | 状态机 7 态 + 每次迁移触发审计 | MOD-INF-020 已有完整审计骨架——只消费不新建 |
-| **D-026-07** | 盘点数据只存元数据不存内容——SHA256 为唯一内容指纹 | 安全性 + 存储效率——600 个 45MB 代码库的 SHA256 清单 < 100KB |
-| **D-026-08** | 全量扫描 1 次/小时，增量对账实时（事件驱动） | 平衡新鲜度与资源消耗——10+ AI 并发写文件不宜扫描太频繁 |
-| **D-026-09** | 五阶自举——从裸盘恢复完整索引 | Linux initramfs 哲学——最小可启动集 + 逐阶重建 |
-| **D-026-10** | 乐观扫描 + Glide Window + 原子写入 | MVCC 无锁哲学——AI session 不应为盘点系统等待 |
-| **D-026-11** | 注册表适配器模式（ABC + 7 格式） | ETL 管道——异构数据源统一为 `list[RegistryEntry]` |
-| **D-026-12** | ast 提取依赖图 + 环路检测 | HRT Tangle Tools 经验——在 100 万行代码上验证过的方案 |
-| **D-026-13** | CircuitBreaker + 6 组件退化矩阵 | Netflix Hystrix——熔断后快速失败，60s 自动恢复 |
-| **D-026-14** | 六不得铁律——安全扫描边界 | 最小权限 + 防御性编程——不读取 .env / .ailocks / session-logs |
-| **D-026-15** | MCP Server: 6 tool + 2 resource | IDE 内直接查询资产——AI agent 不需要离开 IDE |
-| **D-026-16** | TIME-DECAY / ZERO-REF / DIR-CONVENTION | ITIL 自动化退役规则——从 active 到 archived 全自动 |
-| **D-026-17** | 多 IDE 规则文件映射（5 IDE） | Trae .trae/rules/ + Cursor .cursor/rules/ + Claude CLAUDE.md |
-| **D-026-18** | Git log/blame → GitAssetMetadata | CodePulse/GitPrime——代码考古学，第四维资产信息 |
-| **D-026-19** | TripleTrustAnchorGate（Git+pytest+Audit） | TUF 信任根——3/3=FULL, 2/3=PARTIAL, ≤1/3=BROKEN |
-| **D-026-20** | InventorySelfMetrics + 告警阈值 | OpenTelemetry 三支柱（Metrics/Traces/Logs） |
-| **D-026-21** | Emergency Bypass + 自动过期 24h | IAM Break Glass——Owner 手动创建文件即可跳过所有 Gate |
-| **D-026-22** | 6 产物保留策略 + 自动清理脚本 | Prometheus TSDB retention + S3 lifecycle——每个产物都有 TTL |
-| **D-026-23** | KnowledgeTransferGate + 六种跨 session 知识 | Anthropic Artifact + LangChain Memory——index 文件 = 跨对话记忆 |
-| **D-026-24** | CLI: `python -m zephyr.asset_inventory` 7 子命令 | kubectl 子命令模式——scan/classify/reconcile/dashboard/check/bootstrap/clean |
-| **D-026-25** | 配置集中: `config/capacity/asset_inventory.yaml` | pyproject.toml 的工具配置节——scanner/classifier/reconciler 全套可配置 |
-| **D-026-26** | Dry-run/P Preview 模式——Safe-by-Default | Terraform plan vs apply——所有变更操作默认预览，明确传 --apply 才执行 |
-| **D-026-27** | Schema Evolution: AUTOMIGRATE + 迁移脚本 | Flyway/Liquibase——schema_version 递增 + 逐版本迁移脚本 |
-| **D-026-28** | RenameDetector: SHA256 交叉匹配 Ghost vs Orphan | Git diff --find-renames——SHA256 一致 + mtime 接近 = 高置信度 RENAME |
-| **D-026-29** | 三层通知: Passive/Semi-Active/Blocking | PagerDuty 告警分级——P3/P2 下次 session 见，P1/P0 立即阻断 CI |
-| **D-026-30** | tags + custom_metadata 扩展四维分类 | AWS Tags + K8s Labels/Annotations——Owner 可自定义语义标签 |
-| **D-026-31** | Blueprint Self-Asset Registration: 蓝图自身登记到 index | RULE-TWO 自我指涉——盘点系统通过盘点自己来证明自己存在 |
-| **D-026-32** | 14+19=33 阶递归闭合证明 | Gödel 不完备的工程类比——33 阶全覆盖 = 设计完备，仅剩代码实现 |
+> **时态属性：永久时态**。本节覆盖原§7备选方案和原§15后果。
+
+| 决策 ID | 决策 | 选项 | 选中 | 依据 | 日期 |
+|---------|------|------|------|------|------|
+| **D-026-01** | 四维分类（type/layer/status/priority） | 单维/多维 | 多维 | ITIL ITAM 实践——多维交叉定位优于单维 | 2026-04 |
+| **D-026-02** | 全量发现 = 文件系统递归扫描 + ThreadPoolExecutor | 串行/并行 | 并行 | 无外部依赖，Windows 兼容，RULE-SEVEN 合规 | 2026-04 |
+| **D-026-03** | 分类引擎 = 纯规则驱动，禁止 LLM | 规则/LLM | 规则 | AI 判断不可复现——确定性 > 灵活性 | 2026-04 |
+| **D-026-04** | `unified_asset_index.yaml` = SSoT | YAML/SQLite | YAML→SQLite | YAML 可 Git diff + AI 零推理消费 + 人类可读；75K 资产后迁移 SQLite | 2026-04 |
+| **D-026-05** | ORPHAN 自动修复仅限 .py 文件，.md 需人工 | 全自动/半自动 | 半自动 | scaffold.py 无法判定 .md 应归入哪个模块目录 | 2026-04 |
+| **D-026-06** | 状态机 7 态 + 每次迁移触发审计 | 5态/7态 | 7态 | MOD-INF-020 已有完整审计骨架——只消费不新建 | 2026-04 |
+| **D-026-07** | 盘点数据只存元数据不存内容——SHA256 为唯一内容指纹 | 存内容/存指纹 | 存指纹 | 安全性 + 存储效率——600 个 45MB 代码库的 SHA256 清单 < 100KB | 2026-04 |
+| **D-026-08** | 全量扫描 1 次/小时，增量对账实时（事件驱动） | 实时/定时 | 混合 | 平衡新鲜度与资源消耗 | 2026-04 |
+| **D-026-09** | 五阶自举——从裸盘恢复完整索引 | 手动/自动 | 自动 | Linux initramfs 哲学——最小可启动集 + 逐阶重建 | 2026-04 |
+| **D-026-10** | 乐观扫描 + Glide Window + 原子写入 | 悲观锁/乐观 | 乐观 | MVCC 无锁哲学——AI session 不应为盘点系统等待 | 2026-04 |
+| **D-026-11** | 注册表适配器模式（ABC + 7 格式） | 硬编码/适配器 | 适配器 | ETL 管道——异构数据源统一为 `list[RegistryEntry]` | 2026-04 |
+| **D-026-12** | ast 提取依赖图 + 环路检测 | 正则/AST | AST | HRT Tangle Tools 经验——在 100 万行代码上验证过的方案 | 2026-04 |
+| **D-026-13** | CircuitBreaker + 6 组件退化矩阵 | 无/熔断 | 熔断 | Netflix Hystrix——熔断后快速失败，60s 自动恢复 | 2026-04 |
+| **D-026-14** | 六不得铁律——安全扫描边界 | 无限制/限制 | 限制 | 最小权限 + 防御性编程——不读取 .env / .ailocks / session-logs | 2026-04 |
+| **D-026-15** | MCP Server: 6 tool + 2 resource | 无/有 | 有 | IDE 内直接查询资产——AI agent 不需要离开 IDE | 2026-04 |
+| **D-026-16** | TIME-DECAY / ZERO-REF / DIR-CONVENTION | 手动/自动 | 自动 | ITIL 自动化退役规则——从 active 到 archived 全自动 | 2026-04 |
+| **D-026-17** | 多 IDE 规则文件映射（5 IDE） | 单IDE/多IDE | 多IDE | Trae .trae/rules/ + Cursor .cursor/rules/ + Claude CLAUDE.md | 2026-04 |
+| **D-026-18** | Git log/blame → GitAssetMetadata | 无/有 | 有 | CodePulse/GitPrime——代码考古学，第四维资产信息 | 2026-04 |
+| **D-026-19** | TripleTrustAnchorGate（Git+pytest+Audit） | 单锚/三锚 | 三锚 | TUF 信任根——3/3=FULL, 2/3=PARTIAL, ≤1/3=BROKEN | 2026-04 |
+| **D-026-20** | InventorySelfMetrics + 告警阈值 | 无/有 | 有 | OpenTelemetry 三支柱（Metrics/Traces/Logs） | 2026-04 |
+| **D-026-21** | Emergency Bypass + 自动过期 24h | 无/有 | 有 | IAM Break Glass——Owner 手动创建文件即可跳过所有 Gate | 2026-04 |
+| **D-026-22** | 6 产物保留策略 + 自动清理脚本 | 无/有 | 有 | Prometheus TSDB retention + S3 lifecycle | 2026-04 |
+| **D-026-23** | KnowledgeTransferGate + 六种跨 session 知识 | 无/有 | 有 | Anthropic Artifact + LangChain Memory | 2026-04 |
+| **D-026-24** | CLI: `python -m zephyr.asset_inventory` 7 子命令 | 无/有 | 有 | kubectl 子命令模式 | 2026-04 |
+| **D-026-25** | 配置集中: `config/capacity/asset_inventory.yaml` | 分散/集中 | 集中 | pyproject.toml 的工具配置节 | 2026-04 |
+| **D-026-26** | Dry-run/Preview 模式——Safe-by-Default | 直接执行/预览 | 预览 | Terraform plan vs apply | 2026-04 |
+| **D-026-27** | Schema Evolution: AUTOMIGRATE + 迁移脚本 | 手动/自动 | 自动 | Flyway/Liquibase——schema_version 递增 + 逐版本迁移脚本 | 2026-04 |
+| **D-026-28** | RenameDetector: SHA256 交叉匹配 Ghost vs Orphan | 无/有 | 有 | Git diff --find-renames | 2026-04 |
+| **D-026-29** | 三层通知: Passive/Semi-Active/Blocking | 单层/三层 | 三层 | PagerDuty 告警分级 | 2026-04 |
+| **D-026-30** | tags + custom_metadata 扩展四维分类 | 固定/可扩展 | 可扩展 | AWS Tags + K8s Labels/Annotations | 2026-04 |
+| **D-026-31** | Blueprint Self-Asset Registration: 蓝图自身登记到 index | 无/有 | 有 | RULE-TWO 自我指涉 | 2026-04 |
+| **D-026-32** | 14+19=33 阶递归闭合证明 | 无/有 | 有 | Gödel 不完备的工程类比——33 阶全覆盖 = 设计完备 | 2026-04 |
 
 ---
 
@@ -746,7 +1837,7 @@ scaffold.py → asset.created
 | `lifecycle.py` | `src/zephyr/asset_inventory/lifecycle.py` | 状态机 + MOD-INF-020 联动 |
 | `dashboard.py` | `src/zephyr/asset_inventory/dashboard.py` | 健康评分 + Dashboard 生成 |
 | `index_generator.py` | `scripts/governance/generators/generate_asset_index.py` | 统一资产索引生成脚本 |
-| `schemas.py` | `src/zephyr/asset_inventory/schemas.py` | 本蓝图全部 Pydantic V2 模型定义 |
+| `models.py` | `src/zephyr/asset_inventory/models.py` | 本蓝图全部 Pydantic V2 模型定义 |
 | `__init__.py` | `src/zephyr/asset_inventory/__init__.py` | 导出 AssetInventory / AssetScanner 等核心类 |
 | `test_*.py` | `tests/asset_inventory/` | 对应测试文件 |
 | `raw_asset_scan.json` | `data/scans/` | 原始扫描结果 |
@@ -755,19 +1846,9 @@ scaffold.py → asset.created
 
 ---
 
-## 9. 对标清单
+## 9. 框架映射
 
-| 对标 | 来源 | 在我们的实现 |
-|------|------|------------|
-| ITIL 4 ITAM 五步 | ServiceNow CMDB 最佳实践 | L1~L5 一一对应 |
-| ISO 19770 | IT资产管理国际标准 | 状态机 + 生命周期追踪 |
-| CMDB SSoT | "单一配置管理数据库"原则 | `unified_asset_index.yaml` = SSoT |
-| K8s `kubectl api-resources` | 进集群先看有什么资源 | L3 统一资产索引 = 项目级的 api-resources |
-| Linux `man hier` | 进系统先了解目录结构 | §2.1.1 TypeClassifier 基于目录语义 |
-| Digital Twin (VibeCode) | 代码库序列化 + 加密清单 | raw_asset_scan.json = 代码库快照 |
-| Goldman SecDB immutable log | 不可变审计日志 | 生命周期事件 → MOD-INF-020 审计记录 |
-| ITIL Problem Management | 已知问题追踪闭环 | orphan/ghost/drift 的发现→修复→验证闭环 |
-| `audit_registration.py` | 当前项目孤儿检测 | 升级为 L4 持续对账的完整版 |
+> 框架映射保留：ITIL 4 ITAM 五步（L1~L5）/ ISO 19770 / CMDB SSoT / K8s api-resources / Linux man hier。
 
 ---
 
@@ -775,12 +1856,13 @@ scaffold.py → asset.created
 
 ### 10.1 已知风险
 
-| 风险 | 可能性 | 影响 | 缓解 |
-|------|:--:|------|------|
-| 扫描器 CPU/IO 占用过高 | 中 | 影响并行 AI session 的 IDE 性能 | max_workers=8 + 扫描间隔 ≥ 1h + 可选 `--low-priority` 模式 |
-| 注册表格式不统一导致对账误报 | 高 | DRIFT 假阳性——耗尽 Owner 注意力 | 对账前先 normalize 所有注册表格式（已知 5 个注册表 entry_count 标记为 `?`） |
-| 24 个注册表中部分已损坏（REG-PATHWAY-001 CORRUPTED） | 高 | 对账时读取损坏注册表崩溃 | 每个注册表读取用 try/except——损坏的不阻断，只标记 `registry_skip: [REG-PATHWAY-001]` |
-| 资产膨胀到 1500+ 后扫描变慢 | 中 | 从 <30s 膨胀到 >2min | 增量扫描模式——只扫 mtime > last_scan_time 的文件 |
+| 类型 | 风险 | 可能性 | 影响 | 缓解 |
+|------|------|:--:|------|------|
+| 风险 | 扫描器 CPU/IO 占用过高 | 中 | 影响并行 AI session 的 IDE 性能 | max_workers=8 + 扫描间隔 ≥ 1h + 可选 `--low-priority` 模式 |
+| 风险 | 注册表格式不统一导致对账误报 | 高 | DRIFT 假阳性——耗尽 Owner 注意力 | 对账前先 normalize 所有注册表格式（已知 5 个注册表 entry_count 标记为 `?`） |
+| 风险 | 24 个注册表中部分已损坏（REG-PATHWAY-001 CORRUPTED） | 高 | 对账时读取损坏注册表崩溃 | 每个注册表读取用 try/except——损坏的不阻断，只标记 `registry_skip: [REG-PATHWAY-001]` |
+| 风险 | 资产膨胀到 1500+ 后扫描变慢 | 中 | 从 <30s 膨胀到 >2min | 增量扫描模式——只扫 mtime > last_scan_time 的文件 |
+| 负面后果 | 乐观扫描窗口内并发写入丢失 | 低 | 短暂不一致 | Glide Window + 下次扫描自动修正 |
 
 ### 10.2 明确不做（Out of Scope for v0.1.0）
 
@@ -837,14 +1919,26 @@ scaffold.py → asset.created
 | [MOD-INF-020 audit-trail](../audit-trail/blueprint.md) | **兄弟模块**——本模块产出资产事件，MOD-INF-020 做不可变审计记录 |
 | [MOD-INF-012 database](../../_cross_layer/database/blueprint.md) | **存储依赖**——资产索引的对账结果写入 SQLite |
 | [MOD-INF-016 shared-core](../../_cross_layer/shared-core/blueprint.md) | **Schema 依赖**——AssetEntry/AssetScan 等 Pydantic V2 模型 |
-| [MOD-INF-005 script-system](../script-system/blueprint.md) | **调度依赖**——`generate_asset_index.py` 作为治理脚本 |
+| [MOD-INF-005 governance-automation](../governance-automation/blueprint.md) | **调度依赖**——`generate_asset_index.py` 作为治理脚本 |
 | [MOD-INF-007 gate-engine](../../_cross_layer/gate-engine/blueprint.md) | **门禁集成**——`G_asset_inventory` CI 阻断孤儿超标 |
 | [MOD-INF-015 system-telemetry](../system-telemetry/blueprint.md) | **遥测上报**——资产指标写入遥测通道 |
 | [GOV-CMP-003 审计协议](../../../01_policies_and_standards/governance/compliance/audit-protocol.md) | **治理依赖**——盘点结果纳入 12 维度审计清单 |
 
+### §12.1 域契约锚点
+
+> 权威定义见 [`../../_domain-governance/blueprint.md`](../../_domain-governance/blueprint.md) §3。
+
+| 契约 ID | 本模块角色 | 对端模块 |
+|---------|------------|----------|
+| G-CT-001 | 产出方（资产归属权限校验结果） | MOD-INF-018 |
+| G-CT-002 | 消费方（盘点对账异常触发 Rollback 条件） | MOD-INF-021 |
+| G-CT-007 | 产出方（资产 Spec 执行结果登记） | MOD-INF-019 |
+
 ---
 
 ## 13. 反孤儿集成设计 — 确保每个新 AI Session 自动发现并使用
+
+> 仅本蓝图需要：资产盘点系统的核心价值 = 被发现，其他蓝图不需要专门的发现漏斗
 
 > **本节是 RULE-TWO + RULE-EIGHT 的具体执行**：盘点系统自身不能成为孤儿功能。它必须在每个 AI 的发现路径上——"AI 不知道有这个功能" = "这个功能不存在"。
 
@@ -904,7 +1998,7 @@ scaffold.py → asset.created
 
 ### 13.2 注册登记清单（盘点系统必须登记到的位置）
 
-> **对标 RULE-TWO 强制集成清单**——每项产出必须注册，否则 = 孤儿。
+> **RULE-TWO 强制集成清单**——每项产出必须注册，否则 = 孤儿。
 
 | # | 登记位置 | 条目 | 状态 |
 |---|---------|------|:--:|
@@ -931,6 +2025,8 @@ scaffold.py → asset.created
 ---
 
 ## 14. 全自动化策略 — 1人+AI，100% Vibe Coding，尽量零触碰
+
+> 仅本蓝图需要：盘点系统的自动化触发矩阵是独有的
 
 > **本节是本蓝图最核心的哲学节**：盘点系统是为人+AI 协同开发的极致自动化设计的。它的目标不是"写出一个完美的盘点工具"，而是"让盘点**自动发生**，人类永远不需要主动去运行它"。
 
@@ -1004,42 +2100,13 @@ scaffold.py → asset.created
 
 ---
 
-## 附录 A: 术语对照表
-
-| 术语 | 英文 | 定义 |
-|------|------|------|
-| 资产 | Asset | ZephyrAlpha 项目中的任何文件——.py/.md/.yaml/.json 等 |
-| 盘点 | Inventory / Stocktake | 全量发现 + 分类 + 登记 = 知道"有什么" |
-| 对账 | Reconciliation | 盘点清单 vs 注册表 = 发现"哪里不对" |
-| SSoT | Single Source of Truth | `unified_asset_index.yaml`——唯一权威资产清单 |
-| 孤儿 | Orphan | 磁盘存在但零注册表登记的资产 |
-| 幽灵 | Ghost | 注册表登记但磁盘不存在的资产 |
-| 漂移 | Drift | 注册信息（SHA256/size/layer）与磁盘实际不一致 |
-| 自愈 | Self-healing | 系统自动修复可确定的异常（.py 孤儿→scaffold 补注册） |
-| 元盘点 | Meta-inventory | 盘点系统盘点自己——确保盘点器自身在 active 状态 |
-| 氛围编程 | Vibe Coding | AI 先写后管、先干后验的快速迭代开发模式 |
-| 零触碰 | Zero-touch | 自动化到人类不需要主动触发任何操作的理想状态 |
-
----
-
-## 附录 B: 版本演进路线图
-
-| 版本 | 功能 | 预计 |
-|------|------|------|
-| v0.1.0 | 本蓝图 Draft——五层架构设计完成 | ✅ 2026-05-07 |
-| v0.2.0 | Phase 0 骨架：6 个模块空壳 + 测试骨架 | construction-20260507 |
-| v0.3.0 | Phase 1 核心：Scanner + Classifier + Index Generator | 2-3 sessions |
-| v0.4.0 | Phase 1 补充：Reconciler + Lifecycle + Dashboard | 1-2 sessions |
-| v0.5.0 | Phase 2 集成：scaffold 联动 + Gate 注册 + Telemetry | 1-2 sessions |
-| v1.0.0 | 生产就绪：全部自愈流程 + MCP Server + 审计协议集成 | TBD |
-
----
-
 ---
 
 ## 15. 元盘点自举 — 从零开始发现一切的机制
 
-> **决策 D-026-09**：盘点系统必须能在"没有任何 pre-existing index"的状态下自举——无论 unified_asset_index.yaml 丢失/损坏/不存在，都能通过一次全量扫描重建一切。对标 Linux `initramfs`（内核自举所需的最小文件系统）+ K8s `kubeadm init`（从零拉起的自举流程）。
+> 仅本蓝图需要：盘点系统的自举能力是独有的
+
+> **决策 D-026-09**：盘点系统必须在无 pre-existing index 时自举——unified_asset_index.yaml 丢失/损坏/不存在，一次全量扫描重建一切。
 
 ### 15.1 自举五阶（从最坏情况逐步恢复）
 
@@ -1097,13 +2164,15 @@ def determine_bootstrap_level() -> BootstrapLevel:
 | 5 阶 | 盘点器作为审计证据的完整性 | MOD-INF-020 审计日志中盘点器自身的状态变更是否连贯（无跳变/无丢失） | ✅ MOD-INF-020 覆盖 |
 | 6 阶（终阶） | Owner 对盘点器整体的信任 | Owner 任意时刻跑 `python -m pytest tests/asset_inventory/ -q` 全绿 = 信任。这是终阶——不再需要更高阶的验证，因为测试通过 = 功能正常 | ✅ 测试驱动信任 |
 
-**终止条件定理**：递归到第 6 阶自然终止，因为"Owner 跑测试全绿"的信任基础是数学确定性（测试通过 → 功能正确），而非链式验证的无穷递归。对标 Gödel 不完备定理的工程类比——系统无法自证完全正确，但可以通过外部独立验证（测试）建立 trust anchor。
+**终止条件定理**：递归到第 6 阶自然终止，因为"Owner 跑测试全绿"的信任基础是数学确定性（测试通过 → 功能正确），而非链式验证的无穷递归。
 
 ---
 
 ## 16. 跨会话并发模型 — 多个 AI Session 同时写入时的资产一致性
 
-> **决策 D-026-10**：多 AI session 并发创建/修改文件时，盘点扫描可能读到不完整或过期的文件状态。采用"乐观扫描 + 原子写入 + 时间戳窗口 + 重试"策略，不引入悲观锁。对标 MVCC（多版本并发控制）+ Git 的无锁合并策略。
+> 仅本蓝图需要：资产索引的并发写入模型是独有的
+
+> **决策 D-026-10**：多 AI session 并发时采用"乐观扫描 + 原子写入 + 时间戳窗口 + 重试"，不引入悲观锁。
 
 ### 16.1 并发冲突矩阵
 
@@ -1160,11 +2229,129 @@ Scanner 2 产出 → raw_scan_2.json (timestamp T2, T2 > T1)
     └─ 都在，sha256 不同 → 取 mtime 更新的那个（文件被修改了）
 ```
 
+### 16.7 参考实现规格
+
+| 组件 | 核心算法/协议 | 输入 | 输出 | 关键约束 |
+|------|-------------|------|------|---------|
+| **AdaptiveScanner** | `workers = min(max(4, cpu_count//2), 20)`；增量模式 `git diff --name-only HEAD~1` → 只扫变更文件；全量模式递归六大目录 | `changed_files: list[str]`（增量）/ 无（全量） | `list[RawAssetEntry]` | 增量 P95 <3s，全量 P95 <3min |
+| **ParallelClassifier** | 四分类器批处理：Type+Layer 同批 → Status → Priority；`BATCH_SIZE=1000`；每批 `ThreadPoolExecutor` 并行 | `list[RawAssetEntry]` | `list[ClassifiedAsset]` | 75K 全量分类 P95 <30s；确定性 100%，禁止 LLM |
+| **IndexedReconciler** | 预建 `registry_index` 表（24 注册表全量 INSERT）→ `SELECT * FROM registry_index WHERE relative_path = ?` O(1) hash lookup → 发现清单 vs registry_index SQLite JOIN | `list[ClassifiedAsset]` + `list[BaseRegistryAdapter]` | `ReconciliationReport` | 75K 对账 <5s（SQL JOIN） |
+| **DebounceManager** | per-module 500ms 去抖 + 1000ms 合并窗口 → 收集窗口内所有触发 → 取 changed_files 并集 → 1 次扫描 | `module_id + changed_files: set[str]` | 合并后 `merged_file_set` | 100 AI 同秒 commit → 仅 1 次增量扫描 |
+| **ShardRouter** | `shard_id = hash(module_id) % 16`；每 shard 独立 SQLite WAL；跨 shard 查询走 `global_index.db` 聚合 | `relative_path: str` | `shard_id: int` + `shard_db_path: Path` | 16 独立 writer → 16x 并发写 |
+| **HotAssetCache** | LRU 5000 条目 + 300s TTL；读路径 query → L1: LRU → L2: SQLite shard；增量扫描 → 变更文件缓存失效 | `path: str` | `dict \| None` | 容量 `scan_result_cache_max_entries=5000` |
+| **ScanModeSelector** | 四模式：incremental（默认）/ full（周检）/ partial（降级，5 模块/批）/ emergency（SEV1，只扫 P0）；降级链 incremental → partial → full | `trigger: str + context: dict` | `mode: str` | incremental timeout=180s, partial=600s, full=10800s |
+| **RenameDetector** | Ghost+Orphan SHA256 交叉匹配；`SIMILARITY_THRESHOLD=0.90`；置信度 ≥0.95 自动修复 | `ghosts + orphans` | `list[RenameEvent]` | 置信度 <0.95 → 告警不自动修复 |
+| **ImpactMapBuilder** | 遍历脚本 AST/配置 → 构建 script→file 映射；增量更新只重解析变更脚本 | `all_scripts + all_assets` | `script_impact_map` 表 | 全量构建 10K 脚本→200K 映射 <60s |
+| **AssetEventBus** | Channel 1: asyncio.Queue 进程内零延迟；Channel 2: SQLite change_log 跨进程持久化 | `AssetLifecycleEvent` | 推送/拉取 | max_queue_size=4096；retention=90d |
+
+### 16.8 施工参考卡
+
+| # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |
+|---|:----:|------|----------|----------|----------|
+| 1 | 命令 | `python -m zephyr.asset_inventory scan` | 全量/增量扫描 | `--incremental`: 增量模式; `--dry-run`: 预览 | scan_result.json |
+| 2 | 命令 | `python -m zephyr.asset_inventory classify` | 四维分类 | `--batch-size`: 批大小(默认1000) | classified_assets.json |
+| 3 | 命令 | `python -m zephyr.asset_inventory reconcile` | 对账检测 | `--mode`: incremental/full | reconciliation_report.json |
+| 4 | 命令 | `python -m zephyr.asset_inventory health` | 健康评分 | `--verbose`: 详细输出 | health_score.json |
+| 5 | 配置 | `asset_inventory.yaml` → `scan_mode` | 扫描模式选择 | str/必填/incremental | incremental/full/partial/emergency |
+| 6 | 配置 | `asset_inventory.yaml` → `cache_max_entries` | LRU缓存大小 | int/必填/5000 | ≥1000 |
+| 7 | 配置 | `asset_inventory.yaml` → `debounce_ms` | 去抖窗口 | int/必填/500 | 100-2000 |
+| 8 | 配置 | `asset_inventory.yaml` → `shard_count` | 分片数量 | int/必填/16 | 8/16/32 |
+
+### 16.10 故障与操作手册
+
+| # | 故障模式 | 触发条件 | 症状 | 恢复策略 | 恢复时间 | 影响范围 |
+|---|---------|---------|------|---------|:--:|---------|
+| FM-01 | Scanner 超时 | 全量扫描 >5min TTL | 无新扫描结果，索引不更新 | 终止扫描，返回部分结果 + 错误详情；用上次缓存 | <1s | 无新资产发现，用旧缓存 |
+| FM-02 | Scanner 熔断 | 连续 3 次扫描失败 | `scan_failure_streak >= 3`，CircuitBreaker OPEN | 60s 自动恢复探测；期间用缓存 | 60s | 无新扫描 |
+| FM-03 | Classifier 降级 | 分类引擎异常 | `unknown_pct > threshold` | 资产保留 UNKNOWN type，不阻断管道 | 下次扫描 | 分类不完整 |
+| FM-04 | Reconciler 对账失败 | try/except 捕获异常 | `reconciliation_failed: true` | 不阻断 Pipeline，标记失败并告警 | 下次对账 | 对账报告缺失 |
+| FM-05 | 注册表部分损坏 | REG-PATHWAY-001 CORRUPTED 等 | 损坏注册表 skip，标记 `skipped_registry_ids` | 损坏注册表资产可能误报 orphan | 人工修复 | 部分资产误报 |
+| FM-06 | 全部注册表损坏 | 极端情况 | 跳过所有注册表对账，全部标记 UNKNOWN | index 只含发现资产，无对账 | 人工修复 | 无对账能力 |
+| FM-07 | Dashboard 失效 | Dashboard 组件异常 | 返回上次快照 + `stale_since` 标记 | CircuitBreaker 60s 自动恢复 | 60s | 健康评分不及时 |
+| FM-08 | 审计 Trail 不可用 | MOD-INF-020 异常 | 审计记录间断 | 生命周期事件写入本地 buffer，审计恢复后 flush | 审计恢复 | 审计记录间断 |
+| FM-09 | 并发写入冲突 | 多 AI 同时写 unified_asset_index | 短暂不一致 | Glide Window + 下次扫描自动修正 | <60s | 短暂不一致 |
+| FM-10 | SHA256 计算不一致 | 文件正在被写（IDE auto-save） | SHA256 两次扫描不同 | retry 3 次，200ms 间隔；3 次都不同 → 跳过 | <1s | 单文件跳过 |
+| FM-11 | SQLite 单 writer 瓶颈 | 100 AI 并发写 | 写入排队阻塞 | ShardRouter 16 分片 → 16 独立 writer | <1s | 无（分片解决） |
+| FM-12 | 索引文件丢失 | `unified_asset_index.yaml` 不存在 | 冷启动 STEP 4.5 失败 | 自动触发五阶自举（§15）从零重建 | 全量扫描时间 | 重建期间无索引 |
+| FM-13 | 增量扫描失败 | git diff 异常 / HEAD 损坏 | 增量扫描报错 | 降级链：incremental → partial → full（§16.7 ScanModeSelector） | 自动 | 扫描模式降级 |
+| FM-14 | 热缓存雪崩 | LRU cache 大面积失效 | 大量请求穿透到 SQLite | 预加载前 5000 最热资产；穿透请求走 SQLite WAL 并发读 | <5s | 短暂延迟上升 |
+| FM-15 | 事件总线溢出 | `asyncio.Queue` 满（>4096） | 事件丢失 | Channel 2 SQLite change_log 兜底；溢出事件写 change_log | 持久化 | 进程内推送丢失，跨进程可补 |
+
+
+> ⚠️ 操作手册是 Owner 和运维人员的快速参考——灾难恢复/迁移/紧急操作必须有 SOP，不能靠"记住怎么做"。
+
+#### 16.11.1 灾难恢复 SOP
+
+| # | 步骤 | 命令/操作 | 验证 |
+|---|------|---------|------|
+| 1 | 确认灾难级别 | `python -m zephyr.asset_inventory status` | 输出 `level: LEVEL_N` |
+| 2 | Level 0（裸盘） | `python -m zephyr.asset_inventory scan --full` | `raw_asset_scan.json` 存在 |
+| 3 | Level 1→2（分类） | `python -m zephyr.asset_inventory classify` | `classified_assets.json` 存在 |
+| 4 | Level 2→3（对账+索引） | `python -m zephyr.asset_inventory reconcile` | `unified_asset_index.yaml` 存在 + 健康评分 ≥C |
+| 5 | Level 3→4（元盘点验证） | `python -m zephyr.asset_inventory self-check` | `self_orphan_warning: false` |
+| 6 | 验证完整性 | `python -m pytest tests/asset_inventory/ -q` | 全绿 |
+
+#### 16.11.2 迁移 SOP（YAML→SQLite）
+
+| # | 步骤 | 命令/操作 | 验证 |
+|---|------|---------|------|
+| 1 | 备份当前 YAML | `copy data\asset_index\unified_asset_index.yaml data\asset_index\unified_asset_index.yaml.bak` | `.bak` 文件存在 |
+| 2 | 执行迁移 | `python -m zephyr.asset_inventory migrate --to sqlite` | `asset_inventory.db` 存在 |
+| 3 | 验证数据完整性 | `python -m zephyr.asset_inventory verify --source sqlite --count` | 行数 = 原 YAML 条目数 |
+| 4 | 验证 YAML 导出缓存 | `python -m zephyr.asset_inventory export --format yaml` | 导出文件可读 |
+| 5 | 回退（如需） | `copy data\asset_index\unified_asset_index.yaml.bak data\asset_index\unified_asset_index.yaml` | 原 YAML 恢复 |
+
+#### 16.11.3 紧急操作 SOP
+
+| # | 场景 | 操作 | 命令 |
+|---|------|------|------|
+| 1 | 盘点系统阻塞 CI | 激活紧急旁路 | `echo "enabled: true`nreason: CI_BLOCKED`nactivated_by: OWNER`nexpires_at: $(date -d '+24h' +%Y-%m-%dT%H:%M:%S)" > config/capacity/inventory_override.yaml` |
+| 2 | 旁路过期/恢复 | 删除旁路配置 | `del config\capacity\inventory_override.yaml` |
+| 3 | 索引损坏 | 触发全量重建 | `python -m zephyr.asset_inventory scan --full --force` |
+| 4 | 扫描器熔断 | 等待自动恢复（60s）或手动重置 | `python -m zephyr.asset_inventory reset-circuit-breaker --component scanner` |
+| 5 | 磁盘空间不足 | 清理历史扫描产物 | `python -m zephyr.asset_inventory cleanup --retention` |
+
+### 16.12 并发操作模型
+
+> ⚠️ 并发模型定义多 AI Session 同时操作时的行为规范——不定义则数据竞争和死锁不可避免。
+
+#### 16.12.1 并发角色与权限
+
+| 角色 | 读操作 | 写操作 | 并发限制 |
+|------|:------:|:------:|---------|
+| AI Session（L1 Trae） | ✅ 自由读 | ❌ 不直接写索引（通过 scaffold 间接触发） | 无限制 |
+| AI Session（L2 Local） | ✅ 自由读 | ❌ 同上 | 无限制 |
+| Scanner 进程 | ✅ 读文件系统 | ✅ 写 `raw_asset_scan.json` + SQLite | 同一时刻仅 1 个 Scanner 写同一 shard |
+| Reconciler 进程 | ✅ 读扫描结果 + 24 注册表 | ✅ 写 `reconciliation_report.md` + 索引更新 | 同一时刻仅 1 个 Reconciler |
+| Dashboard 进程 | ✅ 读索引 | ✅ 写 `dashboard_cache` | 单 writer |
+
+#### 16.12.2 冲突解决策略
+
+| 冲突类型 | 检测方式 | 解决策略 | 最大不一致窗口 |
+|---------|---------|---------|:------------:|
+| 双 Scanner 同时写索引 | `os.replace()` 原子性保证最后写入胜出 | Last-Writer-Wins + 下次扫描自动修正 | ≤1h（下次全量扫描） |
+| Scanner 读到写了一半的文件 | SHA256 两次计算不一致 | retry 3 次 + 200ms 间隔；3 次都不同 → 跳过 | ≤1s（单文件） |
+| 文件创建/删除与扫描并发 | Glide Window 60s | 60s 内新建/删除的文件不参与对账 | ≤60s |
+| 多 Session 同时创建文件 | scaffold 注册竞争 | 孤儿检测 24h 后自动补注册 | ≤24h |
+| 索引写入与 Dashboard 读取 | SQLite WAL 读写不阻塞 | WAL 模式天然 MVCC | 0（无阻塞） |
+
+#### 16.12.3 并发安全不变量
+
+| # | 不变量 | 违反后果 | 保护机制 |
+|---|--------|---------|---------|
+| 1 | 索引文件永不处于中间态 | 读取到损坏的 YAML/SQLite | RULE-ONE temp-file + `os.replace()` 原子写入 |
+| 2 | 同一 shard 同一时刻仅一个 writer | 数据覆盖/损坏 | `ShardRouter` 分片 + SQLite WAL 单 writer |
+| 3 | 扫描结果最终一致 | 短暂不一致被误报为漂移 | Glide Window + 下次扫描修正 |
+| 4 | Dashboard 永远可返回（即使是旧数据） | CI 因无健康评分而 RED | CircuitBreaker + 缓存快照兜底 |
+| 5 | 审计事件不丢失 | 生命周期变更无记录 | Channel 2 SQLite change_log 持久化兜底 |
+
 ---
 
 ## 17. 注册表格式标准化 — 24 个异构注册表的统一解析
 
-> **决策 D-026-11**：ZephyrAlpha 的 24 个注册表格式不统一（YAML list、YAML dict、CSV、TOML、markdown table），对账引擎需要一套注册表适配器（Registry Adapter）模式——每个注册表格式一个适配器，统一输出 `list[RegistryEntry]`。对标 ETL（Extract-Transform-Load）管道 + Python `abc.ABC` 抽象基类模式。
+> 仅本蓝图需要：24 个注册表适配器是盘点系统独有的
+
+> **决策 D-026-11**：24 个注册表格式不统一（YAML list/dict/CSV/TOML/markdown table），对账引擎采用注册表适配器模式——每个格式一个适配器，统一输出 `list[RegistryEntry]`。
 
 ### 17.1 注册表格式谱系
 
@@ -1181,66 +2368,35 @@ Scanner 2 产出 → raw_scan_2.json (timestamp T2, T2 > T1)
 ### 17.2 统一接口
 
 ```python
-from abc import ABC, abstractmethod
-
 class RegistryEntry(BaseModel):
-    registry_id: str          # REG-*-001
-    source_path: str          # 注册表文件路径
-    asset_relative_path: str  # 被引用的文件 project-relative path
-    metadata: dict            # 注册表中关于该文件的所有字段
-    raw_line: Optional[int] = None  # 在注册表中的行号（用于诊断）
+    registry_id: str; source_path: str; asset_relative_path: str; metadata: dict; raw_line: int | None = None
 
 class RegistryAdapter(ABC):
-    """统一接口——所有注册表格式适配器的基类"""
-
     @abstractmethod
-    def parse(self, raw_content: str) -> list[RegistryEntry]:
-        """解析注册表文本 → 统一 RegistryEntry 列表"""
-        ...
-
+    def parse(self, raw_content: str) -> list[RegistryEntry]: ...
     @abstractmethod
-    def can_handle(self, file_path: str) -> bool:
-        """此适配器是否能解析该注册表文件"""
-        ...
-
+    def can_handle(self, file_path: str) -> bool: ...
     @property
     @abstractmethod
-    def registry_id(self) -> str:
-        """此适配器对应的注册表 ID"""
-        ...
+    def registry_id(self) -> str: ...
 ```
 
 ### 17.3 损坏注册表隔离策略
 
 ```python
 class RegistryManager:
-    """管理 25 个注册表的解析——损坏注册表隔离"""
-
-    def load_all(self) -> tuple[list[RegistryEntry], list[str]]:
-        """返回 (成功解析的所有条目, 跳过的损坏注册表 IDs)"""
-        entries: list[RegistryEntry] = []
-        skipped: list[str] = []
-
-        for registry_path in self.all_registry_paths:
-            adapter = self._find_adapter(registry_path)
-            try:
-                raw = self._atomic_read(registry_path)
-                entries.extend(adapter.parse(raw))
-            except (RegistryParseError, yaml.YAMLError, PermissionError) as e:
-                logger.error(f"Skipping corrupted registry: {registry_path} — {e}")
-                skipped.append(adapter.registry_id)
-                continue
-
-        return entries, skipped
+    def load_all(self) -> tuple[list[RegistryEntry], list[str]]: ...
 ```
 
 ---
 
 ## 18. 资产依赖图 — 超越平铺清单的导入关系追踪
 
-> **决策 D-026-12**：Phase 2 引入依赖图——不只是列出文件，而是理解文件之间的 import 关系。对标 HRT Tangle Tools（百万行 Python 代码库的依赖分析系统）+ Python `ast` 标准库 + `pipdeptree` 包依赖可视化。
+> 仅本蓝图需要：资产依赖图是盘点系统独有的
 
-### 18.1 为什么需要依赖图
+> **决策 D-026-12**：Phase 2 引入依赖图——不只是列出文件，而是理解文件之间的 import 关系。
+
+### 18.1 依赖图需求
 
 | 问题 | 平铺清单答不了 | 依赖图能答 |
 |------|:--:|---------|
@@ -1254,64 +2410,22 @@ class RegistryManager:
 
 ```python
 class DependencyGraph(BaseModel):
-    """项目级依赖图——从 Python ast 提取"""
-    generated_at: datetime
-    based_on_scan: str  # scan_id
-
-    nodes: dict[str, DependencyNode] = Field(default_factory=dict)
-    edges: list[DependencyEdge] = Field(default_factory=list)
-
-    # 派生指标
-    most_depended_upon: list[str] = Field(default_factory=list)  # Top 10
-    circular_dependencies: list[list[str]] = Field(default_factory=list)
-    orphan_imports: list[str] = Field(default_factory=list)  # import 了不存在的模块
+    generated_at: datetime; based_on_scan: str
+    nodes: dict[str, DependencyNode] = {}; edges: list[DependencyEdge] = []
+    most_depended_upon: list[str] = []; circular_dependencies: list[list[str]] = []; orphan_imports: list[str] = []
 
 class DependencyNode(BaseModel):
-    file_path: str              # project-relative
-    layer: str                  # L00~L13
-    imported_by_count: int      # 被多少文件依赖
-    imports_count: int          # 依赖多少文件
-    is_leaf: bool               # 无传出边 = 叶子节点
-    is_root: bool               # 无传入边 = 根节点
+    file_path: str; layer: str; imported_by_count: int; imports_count: int; is_leaf: bool; is_root: bool
 
 class DependencyEdge(BaseModel):
-    from_file: str              # import 方
-    to_module: str              # 被 import 的模块（可能不在同一文件）
-    import_type: str            # "absolute" | "relative" | "stdlib" | "third_party"
-    line_number: int            # import 语句所在行号
+    from_file: str; to_module: str; import_type: str; line_number: int
 ```
 
 ### 18.3 依赖提取引擎
 
 ```python
-import ast
-
 class DependencyExtractor:
-    """从 Python ast 提取 import 关系——机械操作，不调 LLM"""
-
-    def extract(self, file_path: str, source_code: str) -> list[DependencyEdge]:
-        tree = ast.parse(source_code)
-        edges: list[DependencyEdge] = []
-
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                for alias in node.names:
-                    edges.append(self._to_edge(file_path, alias.name, node.lineno))
-            elif isinstance(node, ast.ImportFrom):
-                module = node.module or ""
-                for alias in node.names:
-                    full_name = f"{module}.{alias.name}" if module else alias.name
-                    edges.append(self._to_edge(file_path, full_name, node.lineno))
-
-        return edges
-
-    def _to_edge(self, file_path: str, imported: str, lineno: int) -> DependencyEdge:
-        return DependencyEdge(
-            from_file=file_path,
-            to_module=imported,
-            import_type=self._classify_import(imported),
-            line_number=lineno,
-        )
+    def extract(self, file_path: str, source_code: str) -> list[DependencyEdge]: ...
 ```
 
 ### 18.4 依赖图与资产优先级的联动
@@ -1328,7 +2442,9 @@ class DependencyExtractor:
 
 ## 19. 故障恢复与退化模式 — 部分失败时如何优雅降级
 
-> **决策 D-026-13**：盘点系统有 6 个可独立失败的组件。每个组件的失败最多导致功能降级，不会全系统崩溃。对标 Netflix Hystrix（熔断降级）+ K8s Pod `readinessProbe`（就绪探测）。
+> 仅本蓝图需要：盘点系统的退化矩阵是独有的
+
+> **决策 D-026-13**：盘点系统有 6 个可独立失败的组件。每个组件的失败最多导致功能降级，不会全系统崩溃。
 
 ### 19.1 退化矩阵
 
@@ -1345,48 +2461,18 @@ class DependencyExtractor:
 
 ```python
 class CircuitBreaker:
-    """三次连续失败 → OPEN（60s 不尝试）→ 一次成功 → CLOSED"""
-
-    FAILURE_THRESHOLD = 3
-    RECOVERY_TIMEOUT_SEC = 60
-
-    def __init__(self, component_name: str):
-        self.name = component_name
-        self.failures = 0
-        self.state: Literal["CLOSED", "OPEN", "HALF_OPEN"] = "CLOSED"
-        self.last_failure_time: Optional[float] = None
-
-    def call(self, func: Callable) -> Optional[Any]:
-        if self.state == "OPEN":
-            if time.time() - self.last_failure_time > RECOVERY_TIMEOUT_SEC:
-                self.state = "HALF_OPEN"
-            else:
-                return None  # 快速失败
-
-        try:
-            result = func()
-            self._on_success()
-            return result
-        except Exception:
-            self._on_failure()
-            return None  # 降级返回 None，不抛异常
-
-    def _on_failure(self):
-        self.failures += 1
-        self.last_failure_time = time.time()
-        if self.failures >= FAILURE_THRESHOLD:
-            self.state = "OPEN"
-
-    def _on_success(self):
-        self.failures = 0
-        self.state = "CLOSED"
+    FAILURE_THRESHOLD = 3; RECOVERY_TIMEOUT_SEC = 60
+    def __init__(self, component_name: str): ...
+    def call(self, func: Callable) -> Any | None: ...
 ```
 
 ---
 
 ## 20. 安全与隐私边界 — 盘点系统绝对不能碰的东西
 
-> **决策 D-026-14**：盘点扫描器的安全边界——六个"不得"。对标 MCP 安全最佳实践（最小权限 + 防御性编程 + 输入验证）。
+> 仅本蓝图需要：盘点系统的安全边界是独有的
+
+> **决策 D-026-14**：盘点扫描器安全边界——六个"不得"。
 
 ### 20.1 六不得铁律
 
@@ -1400,26 +2486,11 @@ class CircuitBreaker:
 | 6 | **不得递归符号链接** | 符号链接可能指向项目外目录 → 越权扫描 | `os.path.islink()` 检查 |
 
 ```python
-SECRET_FILENAME_PATTERNS: list[str] = [
-    "*.env*", "*.secrets*", "*_key*", "*_token*",
-    "*credentials*", "*.pem", "*.pkcs12"
-]
-
-MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024  # 50 MB
+SECRET_FILENAME_PATTERNS = ["*.env*", "*.secrets*", "*_key*", "*_token*", "*credentials*", "*.pem", "*.pkcs12"]
+MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024
 
 class SecurityFilter:
-    def should_scan(self, path: Path) -> bool:
-        if self._matches_secret_pattern(path.name):
-            return False
-        if any(part.startswith(".ailocks") for part in path.parts):
-            return False
-        if "session-logs" in path.parts:
-            return False
-        if path.stat().st_size > MAX_FILE_SIZE_BYTES:
-            return False
-        if path.is_symlink():
-            return False
-        return True
+    def should_scan(self, path: Path) -> bool: ...
 ```
 
 ### 20.2 审计追踪——盘点器自己读了什么
@@ -1435,7 +2506,8 @@ class SecurityFilter:
 
 ## 21. MCP Server 集成设计 — 让 IDE 和 AI Agent 直接查询资产
 
-> **决策 D-026-15**：Phase 2 暴露 `asset-inventory` MCP Server——提供 6 个 Tool（查询/统计/搜索）+ 2 个 Resource（索引/图）。对标 MCP 协议规范（tools/list + tools/call + resources/read）+ 单一职责原则。
+
+> **决策 D-026-15**：Phase 2 暴露 `asset-inventory` MCP Server——6 Tool + 2 Resource。
 
 ### 21.1 MCP Tools
 
@@ -1458,37 +2530,18 @@ class SecurityFilter:
 ### 21.3 MCP Server 骨架
 
 ```python
-# src/zephyr/asset_inventory/mcp_server.py
-# server_id: "asset_inventory"  — 对标 MOD-INF-013 MCP 规范
-
-from mcp.server import Server, NotificationOptions
-from mcp.server.models import InitializationCapabilities
-
 server = Server("asset-inventory")
-
-@server.list_tools()
-async def list_tools() -> list[Tool]:
-    return [
-        Tool(name="query_asset_by_path", description="按 project-relative path 查询单个资产的完整信息",
-             inputSchema={"type": "object", "properties": {"relative_path": {"type": "string"}}, "required": ["relative_path"]}),
-        Tool(name="get_dashboard_summary", description="获取最新资产仪表盘摘要（总数/健康评分/孤儿率）",
-             inputSchema={"type": "object", "properties": {}}),
-        Tool(name="search_asset_by_name", description="按文件名模式搜索资产",
-             inputSchema={"type": "object", "properties": {"name_pattern": {"type": "string"}, "limit": {"type": "integer", "default": 20}}}),
-        Tool(name="list_assets_by_type", description="按资产类型列出资产（module/script/doc/config/gate/test/data）",
-             inputSchema={"type": "object", "properties": {"asset_type": {"type": "string"}, "limit": {"type": "integer", "default": 50}}}),
-        Tool(name="get_reconciliation_report", description="获取最近一次或指定 scan_id 的对账报告",
-             inputSchema={"type": "object", "properties": {"scan_id": {"type": "string"}}}),
-        Tool(name="check_file_registration", description="检查单个文件在哪些注册表中登记了",
-             inputSchema={"type": "object", "properties": {"relative_path": {"type": "string"}}, "required": ["relative_path"]}),
-    ]
+# Tools: query_asset_by_path, get_dashboard_summary, search_asset_by_name,
+#        list_assets_by_type, get_reconciliation_report, check_file_registration
+# Resources: asset://index/latest.yaml, asset://graph/latest.json
 ```
 
 ---
 
 ## 22. 生命周期自动化策略 — 资产何时自动标记为 Deprecated / Retired
 
-> **决策 D-026-16**：资产生命周期不是被动追踪——它是主动策略驱动。定义三类自动化规则：基于时间的衰减、基于引用的死代码检测、基于目录约定的退役触发。对标 ITIL Asset Lifecycle Policy（自动化退役规则）+ Google "Code Health" 折旧策略。
+
+> **决策 D-026-16**：资产生命周期主动策略驱动。三类自动化规则：时间衰减、引用死代码检测、目录约定退役触发。
 
 ### 22.1 三类自动规则
 
@@ -1527,6 +2580,7 @@ archived (终态)
 
 ## 23. 全景集成验证清单 — 每个 AI Session 启动时可以回答的问题
 
+
 > **本节是 RULE-TWO 强制五问的盘点系统特化版**——十个问题，每个 AI session 启动时 MUST 能回答。
 
 ### 23.1 十问全景
@@ -1537,7 +2591,7 @@ archived (终态)
 | 2 | **谁调用它？** | Pipeline cron + scaffold.py hook + Phase Manager gate + 冷启动 STEP 4.5 | `phase_manager.py` + `project_rules.md` |
 | 3 | **下一个 AI session 怎么知道它存在？** | 冷启动 STEP 4.5 + REG-INV-001 + TRAE-010 | `registry-of-registries.yaml` + `rule-registry.md` |
 | 4 | **改一个文件会触发什么盘点动作？** | scaffold.py → `asset.created` → 实时更新 index | 事件契约 §7 |
-| 5 | **一个文件如果是 orphan，盘点会做什么？** | 24h 容错窗口 → auto scaffold register（.py） / 告警（.md） | §2.5 L4 自愈策略 |
+| 5 | **一个文件如果是 orphan，盘点会做什么？** | 24h 容错窗口 → auto scaffold register（.py） / 告警（.md） | §2.7 L4 自愈策略 |
 | 6 | **盘点数据在哪？** | `data/asset_index/unified_asset_index.yaml` + `data/scans/raw_asset_scan.json` | §8 文件落位标准 |
 | 7 | **盘点自己能自举吗？** | §15 五阶自举——unified_asset_index.yaml 不存在也能重建 | §15 |
 | 8 | **什么情况下盘点会失败？** | 熔断器 OPEN（三次失败→60s 不尝试）+ 回退到缓存 | §19 退化矩阵 |
@@ -1561,6 +2615,41 @@ hooks:
         0: "PASS — 健康评分 ≥ C，孤儿率 < 2%"
         1: "FAIL — 健康评分 < C 或孤儿率超标 → 查看 reconciliation_report.md"
 ```
+
+---
+
+## 附录 A: 术语对照表
+
+> **[蓝图特有]** MOD-INF-026 资产盘点系统关键术语定义。来源：git commit 23d213b3ab 版本恢复。
+
+| 术语 | 英文 | 定义 |
+|------|------|------|
+| 资产 | Asset | ZephyrAlpha 项目中的任何文件——.py/.md/.yaml/.json 等 |
+| 盘点 | Inventory / Stocktake | 全量发现 + 分类 + 登记 = 知道"有什么" |
+| 对账 | Reconciliation | 盘点清单 vs 注册表 = 发现"哪里不对" |
+| SSoT | Single Source of Truth | `unified_asset_index.yaml`——唯一权威资产清单 |
+| 孤儿 | Orphan | 磁盘存在但零注册表登记的资产 |
+| 幽灵 | Ghost | 注册表登记但磁盘不存在的资产 |
+| 漂移 | Drift | 注册信息（SHA256/size/layer）与磁盘实际不一致 |
+| 自愈 | Self-healing | 系统自动修复可确定的异常（.py 孤儿→scaffold 补注册） |
+| 元盘点 | Meta-inventory | 盘点系统盘点自己——确保盘点器自身在 active 状态 |
+| 氛围编程 | Vibe Coding | AI 先写后管、先干后验的快速迭代开发模式 |
+| 零触碰 | Zero-touch | 自动化到人类不需要主动触发任何操作的理想状态 |
+
+---
+
+## 附录 B: 版本演进路线图
+
+> **[蓝图特有]** MOD-INF-026 Phase 规划路线图。来源：git commit 23d213b3ab 版本恢复。
+
+| 版本 | 功能 | 预计 |
+|------|------|------|
+| v0.1.0 | 本蓝图 Draft——五层架构设计完成 | ✅ 2026-05-07 |
+| v0.2.0 | Phase 0 骨架：6 个模块空壳 + 测试骨架 | construction-20260507 |
+| v0.3.0 | Phase 1 核心：Scanner + Classifier + Index Generator | 2-3 sessions |
+| v0.4.0 | Phase 1 补充：Reconciler + Lifecycle + Dashboard | 1-2 sessions |
+| v0.5.0 | Phase 2 集成：scaffold 联动 + Gate 注册 + Telemetry | 1-2 sessions |
+| v1.0.0 | 生产就绪：全部自愈流程 + MCP Server + 审计协议集成 | TBD |
 
 ---
 
@@ -1592,7 +2681,7 @@ hooks:
 
 ## 附录 D: 全部集成触点的完整映射
 
-> **盘点系统与 ZephyrAlpha 各系统的每一个集成点——无遗漏列表。对标 K8s `kubectl describe` + AWS Architecture Diagram。**
+> **盘点系统与 ZephyrAlpha 各系统的每一个集成点——无遗漏列表。**
 
 | 集成对端 | 方向 | 触发方式 | 数据格式 | 频率 | 当前状态 |
 |---------|:--:|---------|---------|:--:|:--:|
@@ -1606,7 +2695,7 @@ hooks:
 | `MOD-INF-012 database` | → | 资产索引缓存写入 | SQLite `asset_index_cache` 表 | 每小时 | ⬜ Phase 1 |
 | `MOD-INF-013 MCP` | ← | AI Agent 查询资产 | `tools/call` JSON-RPC | 按需 | ⬜ Phase 2 |
 | `MOD-INF-016 shared-core` | ← | Schema 定义依赖 | import `AssetSchema` | import-time | ⬜ Phase 0 |
-| `MOD-INF-005 script-system` | ← | 定时扫描调度 | `run_all.py` 调用 | 每小时 | ⬜ Phase 1 |
+| `MOD-INF-005 governance-automation` | ← | 定时扫描调度 | `run_all.py` 调用 | 每小时 | ⬜ Phase 1 |
 | `MOD-INF-018 RBAC` | → | 资产归属权限校验 | G-CT-001 | 按需 | ⬜ Phase 2 |
 | `MOD-INF-021 rollback` | ← | 对账异常触发回滚条件 | G-CT-002 | 事件触发 | ⬜ Phase 2 |
 | `MOD-INF-019 spec-executor` | → | 资产 Spec 执行结果登记 | G-CT-007 | 按需 | ⬜ Phase 2 |
@@ -1638,7 +2727,8 @@ hooks:
 
 ## 24. 多 IDE 兼容策略 — Trae/Cursor/Claude Code/RooCode 的跨平台发现机制
 
-> **决策 D-026-17**：ZephyrAlpha 在多个 AI IDE 中同时施工——Trae（`.trae/rules/project_rules.md`）、Cursor（`.cursor/rules/*.mdc`）、Claude Code（`CLAUDE.md`）。资产盘点系统的 STEP 4.5 必须在每种 IDE 的规则机制中都有触发点。对标跨平台 CI/CD（一份 `.github/workflows/` + 一份 `.gitlab-ci.yml` = 同一套逻辑两个格式）。
+
+> **决策 D-026-17**：STEP 4.5 必须在 Trae/Cursor/Claude Code 三种 IDE 规则机制中都有触发点。
 
 ### 24.1 IDE 规则文件映射
 
@@ -1652,20 +2742,11 @@ hooks:
 
 ### 24.2 Cursor Rule 文件模板
 
-```markdown
----
+```yaml
 description: "ZephyrAlpha 资产盘点系统——每个 session 必须了解项目规模"
 globs: ["**/*"]
 alwaysApply: true
----
-
-# ZephyrAlpha Asset Inventory
-
-**每个 session 启动时必须执行：**
-读取 `data/asset_index/unified_asset_index.yaml` 了解全项目资产：
-- 总数 / 分类分布 / 健康评分 / 孤儿率
-
-对标: K8s `kubectl api-resources` + Linux `man hier`
+# 内容: 每个 session 启动时读 data/asset_index/unified_asset_index.yaml（总数/分类/健康评分/孤儿率）
 ```
 
 ### 24.3 多 IDE 并发的特殊考量
@@ -1680,80 +2761,27 @@ alwaysApply: true
 
 ## 25. Git 历史元数据集成 — 超越文件系统的第四维资产信息
 
-> **决策 D-026-18**：文件系统的 stat（size/mtime/ctime）只是静态快照。Git 历史提供了第四维——时间轴上的资产演变。`git log` + `git blame` 可提取每个文件的：创建日期、最后人类编辑者、AI vs 人类编辑比例、变更频率、耦合文件组。对标 CodePulse / GitPrime 的工程智能分析 + Software Heritage 的代码考古学。
+
+> **决策 D-026-18**：Git 历史提供第四维——时间轴上的资产演变。`git log` + `git blame` 提取创建日期/编辑者/AI vs 人类比例/变更频率/耦合文件组。
 
 ### 25.1 Git 元数据字段
 
 ```python
 class GitAssetMetadata(BaseModel):
-    """从 git log 提取的资产历史维度"""
-    file_path: str                                  # project-relative
-
-    # 时间维度
-    first_commit_sha: str                           # 文件首次出现的 commit
-    first_commit_date: datetime                     # 文件创建日期（git 视角）
-    last_commit_sha: str                            # 最近一次修改的 commit
-    last_commit_date: datetime                      # 最近修改日期
-    total_commits: int                              # 总共被多少 commit 修改过
-
-    # 人/AI 维度
-    authors: list[str]                              # 所有编辑过此文件的作者
-    primary_author: str                             # 编辑次数最多的作者
-    ai_commits_ratio: float                         # AI 提交占比（通过 commit message 中的 [AI] / agent 标记检测）
-
-    # 变更维度
-    lines_added_total: int                          # 历史总计添加行数
-    lines_deleted_total: int                        # 历史总计删除行数
-    net_lines: int                                  # lines_added - lines_deleted（净增长）
-    churn_rate: float                               # (added + deleted) / current_lines（改动率，>1 = 重写过）
-    bug_fix_commits: int                            # commit message 含 "fix" / "bug" 的数量
-
-    # 耦合维度
-    co_changed_files: list[str]                     # 经常与此文件在同一 commit 中一起修改的文件（Top 5）
-    co_changed_count: int                           # 耦合文件数量
+    file_path: str
+    first_commit_sha: str; first_commit_date: datetime
+    last_commit_sha: str; last_commit_date: datetime; total_commits: int
+    authors: list[str]; primary_author: str; ai_commits_ratio: float
+    lines_added_total: int; lines_deleted_total: int; net_lines: int; churn_rate: float; bug_fix_commits: int
+    co_changed_files: list[str]; co_changed_count: int
 ```
 
 ### 25.2 Git 元数据提取引擎
 
 ```python
-import subprocess
-import re
-
 class GitMetadataExtractor:
-    """从 git log 提取资产历史维度——不读文件内容，只读 git metadata"""
-
-    def extract(self, file_path: str) -> GitAssetMetadata:
-        # git log — 最完整的文件变更历史
-        log = self._run_git_log(file_path)
-        # git blame — 行级归属
-        blame = self._run_git_blame(file_path) if file_path.endswith(".py") else {}
-        # 耦合分析 — 哪些文件常与此文件一起变
-        co_changed = self._find_co_changed(file_path, limit=5)
-
-        return GitAssetMetadata(
-            file_path=file_path,
-            first_commit_sha=log[0].sha if log else "",
-            first_commit_date=log[-1].date if log else datetime.min,
-            last_commit_sha=log[-1].sha if log else "",
-            last_commit_date=log[0].date if log else datetime.min,
-            total_commits=len(log),
-            authors=list({c.author for c in log}),
-            primary_author=self._most_frequent([c.author for c in log]),
-            ai_commits_ratio=self._calc_ai_ratio(log),
-            lines_added_total=sum(c.lines_added for c in log),
-            lines_deleted_total=sum(c.lines_deleted for c in log),
-            churn_rate=(sum(c.lines_added + c.lines_deleted for c in log) / max(1, self._current_lines(file_path))),
-            bug_fix_commits=sum(1 for c in log if re.search(r"\b(fix|bug|hotfix)\b", c.message, re.I)),
-            co_changed_files=co_changed,
-            co_changed_count=len(co_changed),
-        )
-
-    def _run_git_log(self, file_path: str) -> list[GitCommitInfo]:
-        result = subprocess.run(
-            ["git", "log", "--follow", "--numstat", "--format=%H|%an|%ai|%s", "--", file_path],
-            capture_output=True, text=True, cwd=PROJECT_ROOT,
-        )
-        return self._parse_log_output(result.stdout)
+    def extract(self, file_path: str) -> GitAssetMetadata: ...
+    def _run_git_log(self, file_path: str) -> list[GitCommitInfo]: ...
 ```
 
 ### 25.3 对资产管理和 AI Session 的价值
@@ -1771,59 +2799,17 @@ class GitMetadataExtractor:
 
 ## 26. 三重信任锚验证门 — R20 的完整设计
 
-> **决策 D-026-19**：R20（元盘点逼近极限）要求三重信任锚——Git + pytest + Audit Trail。本节定义 TripleTrustAnchorGate 的完整实现。对标 TUF（The Update Framework）的信任根模型 + Bitcoin 的"不信任，验证"原则。
+
+> **决策 D-026-19**：R20（元盘点逼近极限）要求三重信任锚——Git + pytest + Audit Trail。本节定义 TripleTrustAnchorGate 的完整实现。
 
 ### 26.1 三重验证流程
 
 ```python
 class TripleTrustAnchorGate:
-    """
-    验证盘点器自身的可信度 —— R20 的机械化执行
-
-    三重验证:
-    Gate 1 (Git):     盘点器源码是否在 Git 中 clean？git status --porcelain = ""
-    Gate 2 (pytest):  盘点器测试是否全绿？pytest tests/asset_inventory/ -q = exit 0
-    Gate 3 (Audit):   盘点器自身的审计记录是否连续？最近 N 条 audit event 的时间戳无 24h+ 间断
-    """
-
-    def verify(self) -> TrustAnchorResult:
-        git_ok = self._check_git_clean()
-        test_ok = self._run_pytest()
-        audit_ok = self._check_audit_continuity()
-
-        trust_level = self._calculate_trust(git_ok, test_ok, audit_ok)
-
-        return TrustAnchorResult(
-            git_ok=git_ok, test_ok=test_ok, audit_ok=audit_ok,
-            trust_level=trust_level,  # "FULL" | "PARTIAL" | "BROKEN"
-            recommendation=self._recommend(trust_level),
-        )
-
-    def _check_git_clean(self) -> bool:
-        result = subprocess.run(
-            ["git", "status", "--porcelain", "--", "src/zephyr/asset_inventory/"],
-            capture_output=True, text=True, cwd=PROJECT_ROOT,
-        )
-        return result.stdout.strip() == ""  # empty = clean
-
-    def _run_pytest(self) -> bool:
-        result = subprocess.run(
-            ["python", "-m", "pytest", "tests/asset_inventory/", "-q", "--tb=line"],
-            capture_output=True, text=True, cwd=PROJECT_ROOT,
-        )
-        return result.returncode == 0
-
-    def _check_audit_continuity(self) -> bool:
-        """盘点器自身的审计事件链——时间戳无大间断"""
-        events = self._query_audit_events("src/zephyr/asset_inventory/")
-        if len(events) < 2:
-            return False  # 审计记录太少——不可信
-        # 检查最大时间间隔
-        max_gap_h = max(
-            (events[i+1].ts - events[i].ts).total_seconds() / 3600
-            for i in range(len(events) - 1)
-        )
-        return max_gap_h < 24  # 24h 内至少一条审计记录
+    def verify(self) -> TrustAnchorResult: ...
+    def _check_git_clean(self) -> bool: ...
+    def _run_pytest(self) -> bool: ...
+    def _check_audit_continuity(self) -> bool: ...
 ```
 
 ### 26.2 信任等级与行为
@@ -1838,43 +2824,21 @@ class TripleTrustAnchorGate:
 
 ## 27. 可观测性与自监控 — 盘点系统的健康指标
 
-> **决策 D-026-20**：盘点系统自身必须有可观测性——否则"盘点系统挂了但没人知道"。输出自身指标到 MOD-INF-015 Telemetry + 自身 Dashboard。对标 OpenTelemetry 三大支柱（Metrics/Traces/Logs）+ Datadog 基础设施监控。
+
+> **决策 D-026-20**：盘点系统自身必须有可观测性——否则"挂了但没人知道"。输出自身指标到 MOD-INF-015 + 自身 Dashboard。
 
 ### 27.1 自身健康指标
 
 ```python
 class InventorySelfMetrics(BaseModel):
-    """盘点系统自身性能与健康指标——每次扫描+对账后更新"""
     timestamp: datetime
-
-    # 扫描性能
-    last_scan_duration_ms: int               # 最近一次扫描耗时
-    last_scan_files_per_second: float        # 扫描吞吐量
-    scan_failure_streak: int                 # 连续失败次数（>3 → 熔断器 OPEN）
-
-    # 分类质量
-    classification_unknown_rate: float       # UNKNOWN 分类占比（>5% → 分类规则需更新）
-    classification_confidence_avg: float     # 平均分类置信度
-
-    # 对账时效
-    last_reconciliation_age_minutes: int     # 距上次对账的分钟数
-    reconciliation_success_streak: int       # 连续成功次数
-
-    # 索引状态
-    index_size_bytes: int                    # unified_asset_index.yaml 文件大小
-    index_entry_count: int                   # 索引条目数
-    index_staleness_minutes: int             # 索引过期分钟数（>60 → stale）
-
-    # 自愈效果
-    auto_fix_total_today: int                # 今天自动修复了多少 .py 孤儿
-    auto_fix_success_rate: float             # 自动修复成功率
-
-    # 安全
-    files_skipped_security: int              # 因安全策略跳过的文件数
-    files_skipped_locked: int                # 因 .ailocks 跳过的文件数
-
-    # 熔断器状态
-    circuit_breaker_states: dict[str, str]   # {scanner: "CLOSED", reconciler: "CLOSED", ...}
+    last_scan_duration_ms: int; last_scan_files_per_second: float; scan_failure_streak: int
+    classification_unknown_rate: float; classification_confidence_avg: float
+    last_reconciliation_age_minutes: int; reconciliation_success_streak: int
+    index_size_bytes: int; index_entry_count: int; index_staleness_minutes: int
+    auto_fix_total_today: int; auto_fix_success_rate: float
+    files_skipped_security: int; files_skipped_locked: int
+    circuit_breaker_states: dict[str, str]
 ```
 
 ### 27.2 告警阈值
@@ -1891,21 +2855,16 @@ class InventorySelfMetrics(BaseModel):
 
 ## 28. 紧急旁路协议 — 当盘点系统自身成为瓶颈时
 
-> **决策 D-026-21**：盘点系统是为治理服务的，不是为阻塞服务的。当盘点系统自身故障导致 CI/CD 全线 RED 时，必须有紧急旁路——Owner 一句话即可跳过盘点门禁。对标 K8s `kubectl drain`（紧急排空节点）+ AWS IAM "Break Glass" 紧急访问流程。
+
+> **决策 D-026-21**：盘点系统为治理服务，不为阻塞服务。自身故障导致 CI RED 时，Owner 可紧急旁路跳过盘点门禁。
 
 ### 28.1 旁路机制
 
 ```yaml
-# 文件: config/capacity/inventory_override.yaml
+# config/capacity/inventory_override.yaml — 紧急旁路配置
 # 存在此文件 → 所有盘点 Gate 自动 GREEN（跳过检查）
 # 此文件绝不自动创建——只有 Owner 手动写入
-
-enabled: false           # false = 紧急旁路激活
-reason: "盘点扫描器因 Windows Defender 更新导致 SHA256 全量失败——临时旁路"
-activated_by: "ZephyrAlpha-Owner"
-activated_at: "2026-05-07T16:00:00Z"
-expires_at: "2026-05-08T16:00:00Z"  # 最长 24h——到期后 Gate 自动恢复 RED
-notification_channel: "dashboard"   # Dashboard 持续显示"BYPASS ACTIVE"
+enabled: false; reason: str; activated_by: str; activated_at: datetime; expires_at: datetime; notification_channel: str
 ```
 
 ### 28.2 旁路激活流程
@@ -1926,27 +2885,15 @@ Owner 恢复:  删除 inventory_override.yaml
 ```python
 class BypassManager:
     MAX_BYPASS_HOURS = 24
-
-    def get_bypass_state(self) -> BypassState:
-        override = Path("config/capacity/inventory_override.yaml")
-        if not override.exists():
-            return BypassState(enabled=True, reason="")
-
-        data = yaml.safe_load(override.read_text())
-        activated_at = data.get("activated_at")
-        if activated_at and (datetime.now() - activated_at).total_seconds() > MAX_BYPASS_HOURS * 3600:
-            # 自动过期——恢复门禁
-            self._log("BYPASS_EXPIRED", f"Emergency bypass auto-expired after {MAX_BYPASS_HOURS}h")
-            return BypassState(enabled=True, reason="bypass expired")
-
-        return BypassState(enabled=data.get("enabled", True), reason=data.get("reason", ""))
+    def get_bypass_state(self) -> BypassState: ...
 ```
 
 ---
 
 ## 29. 资产索引产物的数据生命周期 — 多少库存多久后过期
 
-> **决策 D-026-22**：盘点系统产出的文件本身也需要生命周期管理——`raw_asset_scan.json` 每 1 小时生成一份，累积 1 个月就是 720 份文件。定义各产物的保留策略。对标 Prometheus TSDB 的 retention policy + S3 的对象生命周期策略。
+
+> **决策 D-026-22**：盘点产物需生命周期管理。`raw_asset_scan.json` 每小时一份，累积 720 份/月。定义各产物保留策略。
 
 ### 29.1 产物保留策略
 
@@ -1962,9 +2909,6 @@ class BypassManager:
 ### 29.2 自动清理脚本
 
 ```python
-# scripts/governance/cleanup_inventory_artifacts.py
-# 按 RULE-SEVEN ThreadPoolExecutor 并行清理 + RULE-ONE temp-file 原子删除
-
 RETENTION_MAP = {
     "data/scans/raw_asset_scan_*.json": Retention(max_count=48),
     "data/scans/classified_assets_*.json": Retention(max_count=24),
@@ -1976,26 +2920,12 @@ RETENTION_MAP = {
 
 ## 30. 知识传递机制 — 盘点数据如何教育未来 AI Session
 
-> **决策 D-026-23**：资产盘点不仅是"管理工具"，更是"跨 session 知识传递的媒介"。下一个 AI 无法记住上一个 AI 做了什么——但 `unified_asset_index.yaml` + `reconciliation_report.md` 作为持久化文件，可以跨对话窗口传递"项目是什么样的"这一核心认知。对标 Anthropic 的 Artifact 协议（持久化 AI 产出）+ LangChain Memory（跨会话状态保持）。
+
+> **决策 D-026-23**：资产盘点是跨 session 知识传递的媒介。`unified_asset_index.yaml` + `reconciliation_report.md` 跨对话窗口传递项目认知。
 
 ### 30.1 知识传递链
 
-```
-Session N    → unified_asset_index.yaml（持久化到磁盘）
-                  ↓
-Session N+1  → 冷启动 STEP 4.5: 读 unified_asset_index.yaml
-                  ↓
-              AI 获得:
-              1. 项目规模认知（"这是个 612 个文件的项目"）
-              2. 健康状态认知（"项目健康评分 B，孤儿率 1.96%"）
-              3. 优先级认知（"P0 资产 45 个——这些是关键文件"）
-              4. 风险认知（"有 5 个已知漂移资产需要修复"）
-                  ↓
-              AI 工作时有:
-              - baseline 参照（"新增文件不应让孤儿率飙升"）
-              - gate 意识（"新增文件需要注册，否则 G_asset_inventory 会 RED"）
-              - scope awareness（"要改的文件是 P0——必须走 RULE-ZERO 锁协议"）
-```
+> Session N → unified_asset_index.yaml → Session N+1 冷启动 STEP 4.5 → AI 获得规模/健康/优先级/风险认知
 
 ### 30.2 传递的六种知识
 
@@ -2012,35 +2942,15 @@ Session N+1  → 冷启动 STEP 4.5: 读 unified_asset_index.yaml
 
 ```python
 class KnowledgeTransferGate:
-    """
-    确保跨 session 知识传递不被中断:
-    - 冷启动时必须能读到最新 index
-    - 如果 index 不存在 → 触发 self_bootstrap（§15）
-    - 如果 index 损坏 → 告警 → 使用最新备份
-    """
-
-    def ensure_knowledge_continuity(self) -> KnowledgeState:
-        index_path = Path("data/asset_index/unified_asset_index.yaml")
-        if not index_path.exists():
-            self._bootstrap()  # §15
-            return KnowledgeState.BOOTSTRAPPED
-
-        try:
-            data = yaml.safe_load(index_path.read_text())
-            return KnowledgeState.AVAILABLE if data else KnowledgeState.CORRUPTED
-        except yaml.YAMLError:
-            backup = self._find_latest_backup()
-            if backup:
-                shutil.copy(backup, index_path)
-                return KnowledgeState.RECOVERED_FROM_BACKUP
-            return KnowledgeState.LOST  # 最终退化——需全量重建
+    def ensure_knowledge_continuity(self) -> KnowledgeState: ...
 ```
 
 ---
 
 ## 31. CLI/API 界面设计 — 盘点系统的完整调用入口
 
-> **决策 D-026-24**：盘点系统通过 `python -m zephyr.asset_inventory` 暴露 7 个子命令。每个命令支持 `--dry-run`（预览不写入）、`--output`（json/yaml/text）、`--verbose`（调试日志）。对标 `kubectl` 子命令模式 + `git` 的 porcelain/plumbing 分层。
+
+> **决策 D-026-24**：盘点系统通过 `python -m zephyr.asset_inventory` 暴露 7 个子命令。每个命令支持 `--dry-run`（预览不写入）、`--output`（json/yaml/text）、`--verbose`（调试日志）。
 
 ### 31.1 命令树
 
@@ -2058,38 +2968,13 @@ python -m zephyr.asset_inventory
 ### 31.2 命令详细参数
 
 ```python
-# scan — 全量扫描
-#   python -m zephyr.asset_inventory scan
-#   python -m zephyr.asset_inventory scan --incremental        # 增量模式（只扫 mtime > last_scan）
-#   python -m zephyr.asset_inventory scan --dirs src/,scripts/ # 只扫指定目录
-#   python -m zephyr.asset_inventory scan --dry-run            # 预览会扫描多少文件，不写盘
-#   python -m zephyr.asset_inventory scan --output json        # JSON 输出到 stdout
-
-# classify — 分类
-#   python -m zephyr.asset_inventory classify --scan-id SCAN-xxx
-#   python -m zephyr.asset_inventory classify --from-file data/scans/raw_asset_scan.json
-#   python -m zephyr.asset_inventory classify --dry-run
-
-# reconcile — 对账
-#   python -m zephyr.asset_inventory reconcile --scan-id SCAN-xxx
-#   python -m zephyr.asset_inventory reconcile --dry-run       # 显示会发现多少孤儿/幽灵/漂移，不修改索引
-#   python -m zephyr.asset_inventory reconcile --auto-fix       # 自动修复可修复的孤儿（.py → scaffold register）
-
-# dashboard — 仪表盘
-#   python -m zephyr.asset_inventory dashboard
-#   python -m zephyr.asset_inventory dashboard --show-trends    # 含趋势图数据
-
-# check — Gate 检查（CI/CD 集成）
-#   python -m zephyr.asset_inventory check                      # exit 0=GREEN, 1=RED
-#   python -m zephyr.asset_inventory check --json               # JSON 输出检查详情
-
-# bootstrap — 自举恢复
-#   python -m zephyr.asset_inventory bootstrap                  # 等价 scan → classify → reconcile → dashboard
-#   python -m zephyr.asset_inventory bootstrap --from-scratch   # 强制从 Level 0 开始
-
-# clean — 清理过期产物
-#   python -m zephyr.asset_inventory clean --dry-run            # 预览会删除什么
-#   python -m zephyr.asset_inventory clean --apply              # 实际删除
+# scan: [--incremental] [--dirs src/,scripts/] [--dry-run] [--output json]
+# classify: --scan-id SCAN-xxx | --from-file raw_asset_scan.json [--dry-run]
+# reconcile: --scan-id SCAN-xxx [--dry-run] [--auto-fix]
+# dashboard: [--show-trends]
+# check: [--json]  # exit 0=GREEN, 1=RED
+# bootstrap: [--from-scratch]  # scan→classify→reconcile→dashboard
+# clean: [--dry-run] [--apply]
 ```
 
 ### 31.3 共享标志
@@ -2116,114 +3001,36 @@ python -m zephyr.asset_inventory
 ### 31.5 Python API（供 scaffold.py / Pipeline 等模块 import 调用）
 
 ```python
-from zephyr.asset_inventory import (
-    AssetInventory,        # 顶层门面
-    AssetScanner,          # 扫描器
-    AssetClassifier,       # 分类器
-    ReconciliationEngine,  # 对账引擎
-    AssetDashboard,        # 仪表盘
-    InventoryCheck,        # Gate 检查
-)
-
+from zephyr.asset_inventory import AssetInventory, AssetScanner, AssetClassifier, ReconciliationEngine, AssetDashboard, InventoryCheck
 inventory = AssetInventory(config_path="config/capacity/asset_inventory.yaml")
-
-# 编程式 API（不经过 CLI）
-scan_result = inventory.scan(dry_run=False)
-classified = inventory.classify(scan_id=scan_result.scan_id)
-report = inventory.reconcile(scan_id=scan_result.scan_id, auto_fix=True)
-dashboard = inventory.dashboard()
-gate_ok = inventory.check()  # → bool
+# API: inventory.scan() / .classify(scan_id) / .reconcile(scan_id, auto_fix=True) / .dashboard() / .check() → bool
 ```
 
 ---
 
 ## 32. 配置 Schema — 盘点系统全部可配置项
 
-> **决策 D-026-25**：盘点系统配置集中在 `config/capacity/asset_inventory.yaml`。对标 `pyproject.toml` 的工具配置节 + K8s ConfigMap。
+
+> **决策 D-026-25**：盘点系统配置集中在 `config/capacity/asset_inventory.yaml`。
 
 ### 32.1 配置文件结构
 
 ```yaml
-# config/capacity/asset_inventory.yaml
-
-version: "1.0.0"
-
+# config/capacity/asset_inventory.yaml — 关键字段约束
 scanner:
-  directories:
-    - "src/zephyr/"
-    - "scripts/"
-    - "docs/"
-    - "config/"
-    - "tests/"
-    - "data/"
-  root_files: ["pyproject.toml", ".gitignore", "*.bat", "*.ps1"]
-  exclude_dirs:
-    - "__pycache__"
-    - ".pytest_cache"
-    - ".mypy_cache"
-    - "node_modules"
-    - ".git"
-    - ".venv"
-    - "dist"
-    - "build"
-    - ".ailocks"
-    - "session-logs"
-    - "_backup"
-    - "_archive"
-  max_workers: 8
-  timeout_seconds: 300       # 5 min
-  max_file_size_mb: 50
-  max_depth: 15
-  glide_window_seconds: 60
-
+  directories: [src/zephyr/, scripts/, docs/, config/, tests/, data/]
+  exclude_dirs: [__pycache__, .pytest_cache, .mypy_cache, .git, .venv, .ailocks, session-logs]
+  max_workers: 8; timeout_seconds: 300; max_file_size_mb: 50; max_depth: 15; glide_window_seconds: 60
 classifier:
-  type_mapping:
-    "src/zephyr/gates/": {ext: ".yaml", type: "gate"}
-    "src/zephyr/": {ext: ".py", type: "module"}
-    "scripts/": {ext: ".py", type: "script"}
-    "docs/": {ext: ".md", type: "doc"}
-    "config/": {ext: [".yaml", ".json", ".toml"], type: "config"}
-    "tests/": {ext: ".py", type: "test"}
-    "data/": {ext: [".db", ".jsonl", ".yaml"], type: "data"}
-  registry_patterns: ["*_registry.yaml", "*_manifest.yaml"]
-  unknown_threshold_pct: 10.0
-
+  type_mapping: {目录前缀+扩展名→asset_type}; registry_patterns: [*_registry.yaml, *_manifest.yaml]
 reconciler:
-  orphan_tolerance_hours: 24
-  auto_fix_enabled: true
-  auto_fix_types: [".py"]
-  ghost_max_age_days: 30     # 超过 30d 的幽灵标记为 candidates_for_cleanup
-  drift_sha256_tolerance: 0  # SHA256 必须完全一致
-
+  orphan_tolerance_hours: 24; auto_fix_enabled: true; auto_fix_types: [.py]; drift_sha256_tolerance: 0
 dashboard:
-  health_weights:
-    orphan_rate: 0.35
-    ghost_rate: 0.35
-    drift_rate: 0.20
-    reconciliation_age: 0.10
-
+  health_weights: {orphan_rate: 0.35, ghost_rate: 0.35, drift_rate: 0.20, reconciliation_age: 0.10}
 security:
-  secret_filename_patterns:
-    - "*.env*"
-    - "*.secrets*"
-    - "*_key*"
-    - "*_token*"
-    - "*credentials*"
-    - "*.pem"
-  skip_session_logs: true
-  skip_ailocks: true
-
-retention:
-  raw_scan: {max_count: 48}
-  classified: {max_count: 24}
-  index_snapshots: {max_count: 30}
-  security_logs: {max_days: 90}
-  git_metadata: {max_count: 7}
-
-notifications:
-  dashboard_alert_level: "P1"    # P1+ 问题出现在 Dashboard 告警区
-  handoff_injection: true        # Session 结束时注入资产摘要
-  gate_blocking: true            # Gate RED 阻断 CI
+  secret_filename_patterns: [*.env*, *.secrets*, *_key*, *.pem]; skip_session_logs: true; skip_ailocks: true
+retention: {raw_scan: 48, classified: 24, index_snapshots: 30, security_logs: 90d, git_metadata: 7}
+notifications: {dashboard_alert_level: P1, handoff_injection: true, gate_blocking: true}
 ```
 
 ### 32.2 配置加载器（对齐 `src/zephyr/shared/config/loader.py`）
@@ -2250,7 +3057,8 @@ def load_inventory_config(path: str = "config/capacity/asset_inventory.yaml") ->
 
 ## 33. Dry-run & Preview 模式 — 零风险预演
 
-> **决策 D-026-26**：盘点系统的所有变更性操作必须在 `--dry-run` 模式下可预览。Dry-run 输出"如果执行会发生什么"的结构化报告，与实际执行输出格式完全一致——只是实际不落盘。对标 Terraform `plan` vs `apply` + SQL `BEGIN` / `ROLLBACK`。
+
+> **决策 D-026-26**：盘点系统的所有变更性操作必须在 `--dry-run` 模式下可预览。Dry-run 输出"如果执行会发生什么"的结构化报告，与实际执行输出格式完全一致——只是实际不落盘。
 
 ### 33.1 Dry-run 行为矩阵
 
@@ -2295,26 +3103,16 @@ $ python -m zephyr.asset_inventory reconcile --dry-run --auto-fix
 ### 33.3 Safe-by-Default 原则
 
 ```python
-# 所有变更操作默认 --dry-run=True，明确传 --apply 才真正执行
-# 这是 RULE-TWO 安全边界的 CLI 层执行
-
 class InventoryCLI:
-    def reconcile(self, *, apply: bool = False, auto_fix: bool = False) -> ReconciliationReport:
-        report = self._compute_diff()  # 始终计算 diff——这一步是只读的
-
-        if not apply:
-            report.dry_run = True
-            return report
-
-        # --apply 确认后：写 unified_asset_index.yaml + 调 scaffold + 写 report
-        return self._apply_changes(report, auto_fix=auto_fix)
+    def reconcile(self, *, apply: bool = False, auto_fix: bool = False) -> ReconciliationReport: ...
 ```
 
 ---
 
 ## 34. Schema Evolution & 数据迁移策略
 
-> **决策 D-026-27**：`unified_asset_index.yaml` 是持久化 SSoT，其 schema 会随版本演进。每次 schema 变更 MUST：① `schema_version` 递增 ② 提供从上一版本迁移的脚本 ③ 保留所有历史快照以便回滚。对标 Flyway/Liquibase 数据库迁移 + Kubernetes CRD 版本演进（`apiextensions.k8s.io/v1` → `v1beta1`）。
+
+> **决策 D-026-27**：`unified_asset_index.yaml` 是持久化 SSoT，其 schema 会随版本演进。每次 schema 变更 MUST：① `schema_version` 递增 ② 提供从上一版本迁移的脚本 ③ 保留所有历史快照以便回滚。
 
 ### 34.1 Schema 版本历史
 
@@ -2328,145 +3126,47 @@ class InventoryCLI:
 
 ```python
 # scripts/governance/migrations/asset_index/migrate_1_0_to_1_1.py
-"""迁移 unified_asset_index.yaml: schema 1.0.0 → 1.1.0"""
-
-import yaml
-from pathlib import Path
-
-INDEX_PATH = Path("data/asset_index/unified_asset_index.yaml")
-
-def migrate() -> bool:
-    raw = yaml.safe_load(INDEX_PATH.read_text(encoding="utf-8"))
-    if raw.get("schema_version") != "1.0.0":
-        return False  # 不是目标版本——跳过
-
-    # 新增字段：给所有资产添加空的 tags 和 custom_metadata
-    for asset in raw.get("assets", []):
-        asset.setdefault("tags", [])
-        asset.setdefault("custom_metadata", {})
-
-    raw["schema_version"] = "1.1.0"
-    raw["migrated_from"] = "1.0.0"
-    raw["migrated_at"] = datetime.utcnow().isoformat()
-
-    # RULE-ONE: temp-file + atomic rename
-    tmp = f"{INDEX_PATH}.{os.getpid()}.tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
-        yaml.dump(raw, f, allow_unicode=True, sort_keys=False)
-    os.replace(tmp, INDEX_PATH)
-
-    return True
+def migrate() -> bool: ...
 ```
 
 ### 34.3 AUTOMIGRATE 自动检测
 
 ```python
 class SchemaMigrationGate:
-    """每次读取 unified_asset_index.yaml 时检查 schema_version——过期则触发迁移"""
-
     EXPECTED_VERSION = "1.0.0"
-
-    def check_and_migrate(self) -> SchemaState:
-        if not INDEX_PATH.exists():
-            return SchemaState.MISSING  # → 触发 §15 自举
-
-        data = yaml.safe_load(INDEX_PATH.read_text(encoding="utf-8"))
-        current = data.get("schema_version", "0.0.0")
-
-        if current == self.EXPECTED_VERSION:
-            return SchemaState.CURRENT
-        elif self._can_migrate(current):
-            self._run_migration(current, self.EXPECTED_VERSION)
-            return SchemaState.MIGRATED
-        else:
-            return SchemaState.STALE  # 无迁移路径 → 告警 → 建议 rebuild via bootstrap
+    def check_and_migrate(self) -> SchemaState: ...
 ```
 
 ---
 
 ## 35. 资产重命名/移动检测 — 消除 Ghost+Orphan 假阳性
 
-> **决策 D-026-28**：当文件被 `git mv` 重命名或直接移动到另一目录时，盘点系统会同时报告：①旧路径 Ghost（注册表有，磁盘无）②新路径 Orphan（磁盘有，注册表无）。这两个是同一资产——应该被合并识别为 RENAME 事件。机制：对每个 Ghost 的 SHA256（来自注册表缓存）与每个 Orphan 的 SHA256（来自扫描）做交叉匹配。SHA256 一致且 mtime 接近 → 高置信度 RENAME。对标 Git 的 rename detection（`git diff --find-renames`）+ `rsync --fuzzy` 的模糊匹配。
+
+> **决策 D-026-28**：文件重命名/移动时，旧路径 Ghost + 新路径 Orphan → SHA256 交叉匹配 → 高置信度 RENAME 事件。
 
 ### 35.1 检测算法
 
 ```python
 class RenameDetector:
-    """Ghost vs Orphan SHA256 交叉匹配——检测文件重命名"""
-
-    SIMILARITY_THRESHOLD = 0.90  # SHA256 匹配 = 100% 确定（内容完全一致）
-
-    def detect_renames(
-        self, ghosts: list[GhostEntry], orphans: list[ClassifiedAsset]
-    ) -> list[RenameEvent]:
-        renames: list[RenameEvent] = []
-
-        # 构建 orphan SHA256 索引
-        orphan_by_sha: dict[str, ClassifiedAsset] = {}
-        for o in orphans:
-            if o.sha256:
-                orphan_by_sha[o.sha256] = o
-
-        for ghost in ghosts:
-            if not ghost.cached_sha256:
-                continue
-            matching_orphan = orphan_by_sha.get(ghost.cached_sha256)
-            if matching_orphan:
-                # SHA256 一致 → 同一文件被移动/重命名
-                confidence = self._calc_confidence(ghost, matching_orphan)
-                renames.append(RenameEvent(
-                    old_path=ghost.registry_path,
-                    new_path=matching_orphan.relative_path,
-                    sha256=ghost.cached_sha256,
-                    confidence=confidence,  # 0.0~1.0
-                ))
-                # 从 orphan/ghost 列表中移除（不再单独报告）
-                orphans.remove(matching_orphan)
-                ghosts.remove(ghost)
-
-        return renames
-
-    def _calc_confidence(self, ghost: GhostEntry, orphan: ClassifiedAsset) -> float:
-        # SHA256 完全一致 → base confidence 0.95
-        conf = 0.95
-        # mtime 接近（5 分钟内）→ 加分
-        if ghost.last_known_mtime:
-            delta = abs((ghost.last_known_mtime - orphan.mtime_utc).total_seconds())
-            if delta < 300:
-                conf = min(1.0, conf + 0.05)
-        return conf
+    SIMILARITY_THRESHOLD = 0.90
+    def detect_renames(self, ghosts: list[GhostEntry], orphans: list[ClassifiedAsset]) -> list[RenameEvent]: ...
+    def _calc_confidence(self, ghost: GhostEntry, orphan: ClassifiedAsset) -> float: ...
 ```
 
 ### 35.2 自愈动作
 
 ```python
 class RenameAutoFix:
-    """对于高置信度 RENAME 事件自动修复注册表"""
-
-    CONFIDENCE_AUTO_FIX = 0.95  # SHA256 完全一致 = 0.95 → 自动修复
-
-    def auto_fix(self, event: RenameEvent) -> bool:
-        if event.confidence < self.CONFIDENCE_AUTO_FIX:
-            return False  # 需人工确认
-
-        # 1. 更新注册表中的路径引用
-        for registry_id in event.affected_registries:
-            self._update_path_in_registry(registry_id, event.old_path, event.new_path)
-
-        # 2. 写入审计记录
-        MOD_INF_020.record(AssetRenameAudit(
-            old_path=event.old_path, new_path=event.new_path,
-            detected_by="sha256_cross_match", auto_fixed=True,
-        ))
-
-        return True
+    CONFIDENCE_AUTO_FIX = 0.95
+    def auto_fix(self, event: RenameEvent) -> bool: ...
 ```
 
 ---
 
 ## 36. 通知与告警策略 — Owner 如何感知资产异常
 
-> **决策 D-026-29**：在 1 人项目中，Owner 不会主动查看 Dashboard。通知策略分三层：被动（下次 session 可见）、半主动（Session handoff 摘要注入）、阻断（CI Gate RED）。对标 PagerDuty 告警分级 + GitHub Actions CI 失败通知。
+
+> **决策 D-026-29**：1人项目中 Owner 不会主动看 Dashboard。通知分三层：被动（下次 session 可见）、半主动（Session handoff 注入）、阻断（CI Gate RED）。
 
 ### 36.1 三层通知矩阵
 
@@ -2479,23 +3179,8 @@ class RenameAutoFix:
 ### 36.2 Session Handoff 资产摘要注入
 
 ```python
-# SessionContinuity.generate_and_save() 追加资产健康段：
-def _inject_asset_summary(self, session_id: str):
-    dashboard = AssetDashboard.load_latest()
-    summary = (
-        f"项目资产: {dashboard.total_assets} 个文件 | "
-        f"健康评分: {dashboard.health_score} | "
-        f"孤儿率: {dashboard.orphan_rate_pct:.1f}%"
-    )
-    if dashboard.orphan_rate_pct > 2.0:
-        summary += f" ⚠️ 孤儿率超过 2% 阈值——{dashboard.orphan_count} 个文件未注册"
-    if dashboard.ghost_count > 0:
-        summary += f" | 👻 {dashboard.ghost_count} 个幽灵引用需清理"
-
-    self.db.execute(
-        "INSERT INTO session_handoffs (session_id, asset_summary) VALUES (?, ?)",
-        (session_id, summary),
-    )
+# SessionContinuity.generate_and_save() 追加资产健康段
+def _inject_asset_summary(self, session_id: str): ...
 ```
 
 ### 36.3 未来通知渠道（Phase 2 预留）
@@ -2514,18 +3199,14 @@ class ConsoleOnly(NotificationChannel): ...     # Phase 1 默认——stdout
 
 ## 37. 自定义元数据与标签 — 超越四维分类的扩展维度
 
-> **决策 D-026-30**：四维自动分类（type/layer/status/priority）覆盖了 95% 的资产管理需求。但 5% 的场景需要人类/Owner 添加语义标签——如"这 3 个脚本属于同一个 workflow""这 5 个文件是 v2.0 重构目标"。每个 ClassifiedAsset 支持 `tags: list[str]` + `custom_metadata: dict[str, str]`。对标 AWS Resource Tags + GCP Labels + K8s Labels/Annotations。
+
+> **决策 D-026-30**：四维自动分类覆盖 95% 需求。5% 需人类/Owner 添加语义标签。每个 ClassifiedAsset 支持 `tags: list[str]` + `custom_metadata: dict[str, str]`。
 
 ### 37.1 数据模型扩展
 
 ```python
 class ClassifiedAsset(BaseModel):
-    # ... 现有字段 ...
-
-    # 新增 —— Phase 2 起生效
-    tags: list[str] = Field(default_factory=list, description="Owner/系统添加的语义标签")
-    custom_metadata: dict[str, str] = Field(default_factory=dict, description="用户自定义键值对")
-    tags_last_updated: Optional[datetime] = Field(default=None, description="标签最近更新时间")
+    tags: list[str] = []; custom_metadata: dict[str, str] = {}; tags_last_updated: datetime | None = None
 ```
 
 ### 37.2 标签来源
@@ -2540,32 +3221,16 @@ class ClassifiedAsset(BaseModel):
 ### 37.3 MCP 标签查询
 
 ```python
-# MCP Tool 新增参数
-Tool(
-    name="search_asset_by_tag",
-    description="按标签搜索资产——找出所有标记为 'v2-refactor' 的文件",
-    inputSchema={
-        "type": "object",
-        "properties": {
-            "tag": {"type": "string"},
-            "limit": {"type": "integer", "default": 50},
-        },
-        "required": ["tag"],
-    },
-)
-
-Tool(
-    name="list_all_tags",
-    description="列出项目中所有被使用的标签及其出现次数",
-    inputSchema={"type": "object", "properties": {}},
-)
+Tool(name="search_asset_by_tag", inputSchema={"properties": {"tag": {"type": "string"}, "limit": {"type": "integer", "default": 50}}, "required": ["tag"]})
+Tool(name="list_all_tags", inputSchema={"properties": {}})
 ```
 
 ---
 
 ## 38. 蓝图自资产注册 — 本蓝图在盘点系统中的自我定位
 
-> **决策 D-026-31**：RULE-TWO/RULE-FOUR 要求每个产出都必须被系统发现。本蓝图 `docs/03_modules/l01_infrastructure/asset-inventory/blueprint.md` 自身就是一个 doc 类型资产——必须被盘点系统扫描并登记到 `unified_asset_index.yaml` 中。盘点系统通过盘点自己来证明自己存在——这是 §15.3 六阶元盘点的第一阶的自动化执行。
+
+> **决策 D-026-31**：蓝图自身是 doc 资产，必须被盘点系统扫描并登记到 `unified_asset_index.yaml`。盘点系统通过盘点自己证明自己存在——§15.3 六阶元盘点的自动化执行。
 
 ### 38.1 自动登记流程
 
@@ -2596,41 +3261,25 @@ unified_asset_index.yaml 中:
 ### 38.2 扩展 scaffold.py 支持 docs 蓝图
 
 ```python
-# scripts/scaffold.py 扩展
-# python scripts/scaffold.py doc l01_infrastructure/asset-inventory blueprint
-#   → 创建 docs/03_modules/l01_infrastructure/asset-inventory/blueprint.md
-#   → 同时自动注册到 module-registry + blueprint-registry + unified_asset_index
-
-def scaffold_doc(layer_path: str, doc_type: str) -> Path:
-    """创建蓝图文档 + 自动注册"""
-    file_path = DOCS_ROOT / "03_modules" / layer_path / f"{doc_type}.md"
-    # ... 创建文件 ...
-    # 自动注册到 Asset Inventory
-    AssetInventory.on_asset_created(
-        absolute_path=str(file_path),
-        asset_type="doc",
-        registered_by="scaffold.py",
-        priority="P0",
-        tags=["blueprint", layer_path.replace("/", "-"), f"auto-registered"],
-    )
-    return file_path
+def scaffold_doc(layer_path: str, doc_type: str) -> Path: ...
 ```
 
 ---
 
 ## 39. 最终递归闭合证明 — 从一阶到十四阶的全覆盖矩阵
 
-> **决策 D-026-32**：设计的完备性不是通过"感觉足够了"来判定的——是通过自问"这个系统的第 N 阶问题是什么，答案在蓝图哪个章节"来机械验证的。十四阶全覆盖 = 设计的 Gödel 极限——到此为止，再多就是实现细节而非设计。
+
+> **决策 D-026-32**：设计完备性通过自问"第 N 阶问题是什么，答案在蓝图哪个章节"机械验证。十四阶全覆盖 = 设计的 Gödel 极限。
 
 ### 39.1 十四阶递归全覆盖矩阵
 
 | 阶 | 递归问题 | 答案章节 | 覆盖率 |
 |:--:|---------|---------|:--:|
-| **1st** | 项目有什么文件？ | §2.1 分类体系 + §2.2 L1 发现 | 100% |
-| **2nd** | 这些文件属于什么类别？ | §2.1.1 + §2.3 L2 分类 | 100% |
-| **3rd** | 它们登记在哪了？ | §2.4 L3 登记 + 注册表适配器 §17 | 100% |
-| **4th** | 登记和实际一致吗？ | §2.5 L4 对账 + 三类偏移 | 100% |
-| **5th** | 不匹配时怎么办？ | §2.5 自愈策略 + §14.2 零触碰自愈 | 100% |
+| **1st** | 项目有什么文件？ | §2.3 分类体系 + §2.4 L1 发现 | 100% |
+| **2nd** | 这些文件属于什么类别？ | §2.3.1 + §2.5 L2 分类 | 100% |
+| **3rd** | 它们登记在哪了？ | §2.6 L3 登记 + 注册表适配器 §17 | 100% |
+| **4th** | 登记和实际一致吗？ | §2.7 L4 对账 + 三类偏移 | 100% |
+| **5th** | 不匹配时怎么办？ | §2.7 自愈策略 + §14.2 零触碰自愈 | 100% |
 | **6th** | 谁盘点盘点器？（元盘点） | §15.3 六阶自指递归 | 100% |
 | **7th** | 多 AI 并发写怎么保证一致性？ | §16 跨会话并发模型 | 100% |
 | **8th** | 24 个注册表格式不统一怎么读？ | §17 注册表格式标准化 | 100% |
@@ -2667,17 +3316,7 @@ def scaffold_doc(layer_path: str, doc_type: str) -> Path:
 
 ### 39.3 闭合声明
 
-> **"从一阶到三十三阶，每阶的递归自问都有确定性的答案。没有一级的答案是'不知道'或'以后再说'。设计的递归闭合点不是'写到不想写了'——而是'每多问一个问题，答案已经在蓝图里'。"**
-
-**定理（设计完备性等价于递归闭合）**：当且仅当对任意 N≥1，第 N 阶自指问题的答案都已经在蓝图中时，设计才是 100% 完备的。本蓝图 33 阶全覆盖——此即完备性证明。
-
-**剩余工作清单（纯实现——不再是设计）**：
-1. Phase 0: 创建模块骨架（scaffold.py）
-2. Phase 1: AssetDiscoveryScanner + AssetClassifier + UnifiedAssetIndex 生成器
-3. Phase 1: ReconciliationEngine + AssetLifecycle + AssetDashboard
-4. Phase 2: scaffold.py 集成 + Gate 注册 + Telemetry + MCP Server
-5. Phase 2: 多 IDE 规则文件创建 + CLI --dry-run 实现
-6. Phase 2: 配置加载 + Schema 迁移引擎 + 通知渠道
+33 阶全覆盖，无"不知道"或"以后再说"。剩余工作 = 纯实现（Phase 0-2 代码施工）。
 
 ---
 
@@ -2726,13 +3365,15 @@ def scaffold_doc(layer_path: str, doc_type: str) -> Path:
 | `lifecycle.py` | `tests/asset_inventory/test_lifecycle.py` | > 85% | 状态迁移合法性、非法迁移拒绝、事件触发 MOD-INF-020、TIME-DECAY 规则 |
 | `dashboard.py` | `tests/asset_inventory/test_dashboard.py` | > 85% | 健康评分 A~F、趋势计算、Top 异常列表、信任等级 |
 | `index_generator.py` | `tests/asset_inventory/test_index_generator.py` | > 80% | 完整管道（扫描→分类→对账→索引）、增量更新、备份恢复 |
-| `schemas.py` | 包含在以上各测试中 | > 95% | 所有 Pydantic 模型的正向/反向验证、边界值 |
+| `models.py` | 包含在以上各测试中 | > 95% | 所有 Pydantic 模型的正向/反向验证、边界值 |
 | TripleTrustAnchor | `tests/asset_inventory/test_trust_anchor.py` | > 80% | Git clean/pytest green/audit continuous 三重全组合 |
 | BypassManager | `tests/asset_inventory/test_bypass.py` | > 80% | 旁路激活/恢复/自动过期、base_case 文件不存在 |
 
 ---
 
 ## 附录 I: 最终蓝图成熟度声明
+
+> **[蓝图特有]** MOD-INF-026 蓝图成熟度声明（完成标准）。来源：git commit 23d213b3ab 版本恢复。
 
 | 维度 | 章节 | 成熟度 | 说明 |
 |------|------|:--:|------|
@@ -2780,13 +3421,9 @@ def scaffold_doc(layer_path: str, doc_type: str) -> Path:
 
 ---
 
-*蓝图生成: 2026-05-07 | 版本: 0.3.0 | 状态: Draft | 成熟度: 设计 100% 三十三阶递归闭合（39 节 + 12 份附录 + 32 ADR + 12 模型 + 20 集成点） | 预计 Phase 1 启动: construction-20260507*
-
----
-
 ## 附录 J: CLI 命令快速参考卡
 
-> **每个 AI 开发者实现盘点系统时可直接复制到终端的命令速查。**
+> **[蓝图特有]** MOD-INF-026 CLI 命令速查卡（AI 施工时直接消费的可执行产物）。来源：git commit 23d213b3ab 版本恢复。
 
 ```
 # 全量扫描
@@ -2825,7 +3462,7 @@ python -m zephyr.asset_inventory tag src/zephyr/asset_inventory/scanner.py --lis
 
 ## 附录 K: 配置文件完整参考
 
-> **`config/capacity/asset_inventory.yaml` 的完整可复制版本——创建此文件即可启动盘点系统。**
+> **[蓝图特有]** MOD-INF-026 配置文件参考（AI 施工时直接消费的可执行产物）。来源：git commit 23d213b3ab 版本恢复。
 
 ```yaml
 # ============================================================
@@ -2922,6 +3559,8 @@ notifications:
 
 ## 附录 L: 33 阶递归闭合完整证明
 
+> **[蓝图特有]** MOD-INF-026 递归闭合证明声明（完成标准）。来源：git commit 23d213b3ab 版本恢复。
+
 > **从第一阶"项目有什么"到第三十三阶"有没有快速参考卡"——每一阶的答案都在蓝图中。此附录为最终机械验证——下一个 AI session 可以逐行对照，不再需要"判断"。**
 
 ```
@@ -2971,13 +3610,183 @@ ZephyrAlpha MOD-INF-026 Asset Inventory Blueprint
 ═══════════════════════════════════════════════════
 ```
 
+---
+
+## 已知问题与盲点登记
+
+| # | 问题/盲点 | 来源 | 严重度 | 当前状态 | 缓解措施 |
+|---|----------|------|:--:|---------|---------|
+| BS-01 | 扫描器 CPU/IO 占用过高影响并行 AI session | §10.1 | 中 | 已缓解 | max_workers=8 + 扫描间隔 ≥1h + `--low-priority` 模式 |
+| BS-02 | 24 注册表格式不统一导致对账 DRIFT 假阳性 | §10.1 | 高 | 已缓解 | 对账前先 normalize 所有注册表格式 |
+| BS-03 | REG-PATHWAY-001 等 5 个注册表标记 CORRUPTED | §10.1 | 高 | 已缓解 | try/except 隔离，损坏注册表 skip 不阻断 |
+| BS-04 | 资产膨胀到 75K+ 后 YAML SSoT 不可行 | §10.1 / GAP-AI-001 | 🔴 | v3.0 已解决 | SQLite 迁移（ADR-0061） |
+| BS-05 | 乐观扫描窗口内并发写入丢失 | §10.1 | 低 | 已接受 | Glide Window + 下次扫描自动修正 |
+| BS-06 | 100 AI 并发写 SQLite 单 writer 瓶颈 | §10.1 新增 | 🔴 | v3.0 已解决 | 16 shard 分片（ADR-0072） |
+| BS-07 | 盘点扫描可能读到 `.ailocks/` 锁定中的不完整文件 | §1.3 | 中 | 已缓解 | 扫描时检测锁文件并跳过 |
+| BS-08 | `.env` / `*_key*` 等敏感文件名匹配可能误判 | §20.1 | 低 | 已接受 | `SECRET_FILENAME_PATTERNS` 匹配跳过，宁可多跳不漏扫 |
+| BS-09 | 符号链接越权扫描风险 | §8 #4 | 中 | 已缓解 | `os.path.islink()` 检查，禁止递归符号链接 |
+| BS-10 | 孤儿 .md 文件无法自动判定归属模块 | §2.7 | 中 | 设计限制 | scaffold 无法判定 .md 归属 → 需人工处理 |
+| BS-11 | GHOST 清除需 Owner 确认——不可自动删除注册表条目 | §22.3 | 中 | 设计限制 | 告警 + 报告，Owner 手动确认 |
+| BS-12 | 实时文件监控（inotify/watchdog）Windows 兼容性差 | §10.2 | 低 | 不做 | 定时扫描 + git diff 增量足以覆盖 |
+| BS-13 | 跨项目资产联邦——多项目资产统一盘点 | §10.2 | 低 | 不做 | 项目当前为单体，无联邦需求 |
+| BS-14 | Web UI 仪表盘 | §10.2 | 低 | Phase 2 | YAML/JSON 输出已满足 AI 消费 |
+| BS-15 | 分类器无法处理语义层面分类（如"这个模块是认证相关"） | §2.5 D-026-03 | 中 | 设计限制 | 纯规则驱动确保确定性；语义分类由 tags + custom_metadata 补充 |
 
 ---
 
-## 施工落盘确认（2026-05-07 审计）
+## 版本演进路线图
 
-| 维度 | 状态 |
-|------|------|
-| construction_progress | not_started |
-| 源码路径 | 无代码落盘 (2026-05-07 新建蓝图，SSoT阶段) |
-| 说明 | 蓝图已创建，代码尚未施工 |
+| 版本 | 里程碑 | 核心变更 | 对应蓝图章节 | 状态 |
+|------|--------|---------|------------|:--:|
+| v0.1.0 | 蓝图 Draft | 五层架构设计完成 | §1-5 | ✅ 2026-05-07 |
+| v0.2.0 | Phase 0 骨架 | 6 个模块空壳 + 测试骨架 | §11 Phase 0 | ✅ |
+| v0.3.0 | Phase 1 核心 | Scanner + Classifier + Index Generator | §2.4-2.6 | ✅ |
+| v0.4.0 | Phase 1 补充 | Reconciler + Lifecycle + Dashboard | §2.7-2.8, §5 | ✅ |
+| v1.0.0 | 生产就绪 | 全部自愈流程 + MCP Server + 审计协议集成 | §14, §21 | ✅ |
+| v3.0.0 | 容量升级 | YAML→SQLite + 并行化 + 增量扫描 + 分片 + 事件总线 | §〇 GAP-AI-001~016 | ✅ 2026-05-13 |
+| v3.1.0 | 规格化 | 蓝图规格化砍削 + v4.0 新增章节 | §16.7, §16.10, blindspots, closure, roadmap, checklist | ✅ 2026-05-15 |
+| v4.0.0 | 全量压测通过 | 100 AI 并发全管道压测 P95 <5s + 75K 资产全量扫描 <3min | §〇 Phase 2 验收 | ⬜ |
+| v5.0.0 | 拆分评估 | 蓝图拆分为集成蓝图 + 子蓝图（扫描/分类/对账/生命周期各自独立） | 蓝图拆分判定标准 | ⬜ 75K 资产后 |
+
+---
+
+## 自检与闭合清单
+
+| # | 验证项 | 验证方法 | 通过标准 | 验证频率 |
+|---|--------|---------|---------|:--:|
+| CV-01 | **五层管道闭合**：Discovery→Classification→Registration→Reconciliation→Lifecycle 全链路端到端 | `python -m zephyr.asset_inventory bootstrap --from-scratch` | exit 0 + `unified_asset_index.yaml` 生成 + 健康评分 ≥ C | 每次全量扫描 |
+| CV-02 | **对账闭环**：ORPHAN/GHOST/DRIFT 三类偏移检测 → 自愈/告警 → 下次对账验证修复 | `python -m zephyr.asset_inventory reconcile --apply --auto-fix` 后再跑 `reconcile --dry-run` | 自愈项 orphans=0；非自愈项出现在 `needs_owner_decision` | 每次对账 |
+| CV-03 | **元盘点闭合**：盘点系统自身在 `unified_asset_index.yaml` 中为 active 状态 | `grep "asset_inventory" data/asset_index/unified_asset_index.yaml` | `src/zephyr/asset_inventory/` 下所有模块 status=active | 每次索引更新 |
+| CV-04 | **跨 session 知识传递闭合**：Session N 写入 → Session N+1 冷启动 STEP 4.5 可读 | 新 session 冷启动后检查资产摘要输出 | 输出包含 total_assets + health_score + orphan_rate | 每次 session 启动 |
+| CV-05 | **故障恢复闭合**：任一组件失败 → 降级不崩溃 → 恢复后功能完整 | 模拟 FM-01~FM-15 各故障模式 | 降级后系统仍可只读查询；恢复后全功能恢复 | Phase 2 压测 |
+
+| # | 检查项 | 检查方法 | 通过标准 | 章节 |
+|---|--------|---------|---------|------|
+| CL-01 | 五层架构完整：Discovery→Classification→Registration→Reconciliation→Lifecycle | 代码文件清单 §0.1 全部已实现 | 15/15 文件存在 | §0 |
+| CL-02 | 四维分类覆盖率：type/layer/status/priority | `classify --dry-run` 输出 unknown_pct | unknown_pct < 10% | §2.5 |
+| CL-03 | 对账三类偏移检测：ORPHAN/GHOST/DRIFT | `reconcile --dry-run` 输出 | 三类偏移均有检测逻辑 | §2.7 |
+| CL-04 | 自愈能力：.py 孤儿自动注册 | 创建未注册 .py → 等待 24h → 检查 status | status=active | §14.2 |
+| CL-05 | 健康评分算法：A~F 五级 | Dashboard 输出 health_score | 评分与公式一致 | §5.2 |
+| CL-06 | 六不得安全铁律 | `security_access_log.jsonl` 无 SCAN_OK 记录在敏感文件 | 零敏感文件扫描 | §20 |
+| CL-07 | 五阶自举：从裸盘恢复 | 删除 `unified_asset_index.yaml` → `bootstrap --from-scratch` | 索引重建成功 | §15 |
+| CL-08 | 元盘点：盘点器自身在 active 列表 | `grep "asset_inventory" unified_asset_index.yaml` | status=active | §15.3 |
+| CL-09 | 并发安全：100 AI 并发读无阻塞 | 压测 100 Session 并发 `summary()` | 零错误，P95 <0.01s | §16 |
+| CL-10 | 24 注册表适配器全部可用 | `reconcile --dry-run` 输出 skipped_registry_ids | skipped=0（或仅已知 CORRUPTED） | §17 |
+| CL-11 | Gate 门禁：orphan_rate <2%, ghost_rate=0% | `check` 命令 exit code | exit 0 | §3.5 |
+| CL-12 | 冷启动 STEP 4.5 可执行 | 新 session 冷启动读 `unified_asset_index.yaml` | 输出资产摘要 | §13.1 |
+| CL-13 | 退化矩阵：6 组件独立失败不崩溃 | 模拟各组件失败 | 降级后仍可只读查询 | §19 |
+| CL-14 | CLI 7 子命令全部可用 | 逐命令 `--help` + `--dry-run` | exit 0 | §31 |
+| CL-15 | 配置文件可加载 | `load_inventory_config()` | 无异常 | §32 |
+
+---
+
+## §13 需要更新的相关内容
+
+| # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
+|---|------------|------------|---------|---------|
+| 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | 确认 MOD-INF-026 已注册 | 规格化同步 |
+| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 确认已注册 | 规格化同步 |
+| 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index.yaml` | 确认已注册 | 规格化同步 |
+
+---
+
+## ⚠️ Vibe Coding 蓝图编写铁律
+
+> **时态属性：永久保留**——不可改为链接引用。
+
+| # | 铁律 | 违反后果 |
+|---|------|---------|
+| 1 | 所有路径必须是绝对路径（含盘符 `D:\`） | 文件创建到错误位置 |
+| 2 | 必备链接不可省略 | AI 跳过不读，施工时缺少关键信息 |
+| 3 | 蓝图必须是最终设计结果 | 蓝图过厚，关键信息被噪音淹没 |
+| 4 | 产出物路径必须与 GOV-DOC-002 一致 | 路径幻觉 |
+| 5 | 涉及文件范围必须明确列出 | 范围漂移 |
+| 6 | 容量估算必须写 | 容量瓶颈 |
+| 7 | 迁移/废弃方案必须写 | 断链或垃圾积累 |
+| 8 | "待定"/"建议"/"按需"等模糊词禁止使用 | 执行漂移 |
+| 9 | 蓝图必须自包含 | 信息缺失 |
+| 10 | 删除文件必须遵守安全删除协议 | 永久丢失 |
+| 11 | construction_progress 必须与代码实际状态一致 | 重复造轮子或跳过施工 |
+| 12 | actual_disk_path 必须与 §11 产出物路径一致 | 搜索失败、导入错误 |
+| 13 | 已实现代码不在蓝图中重复——只保留接口签名和约束 | 蓝图膨胀，代码与蓝图漂移 |
+| 14 | 临时时态内容执行完毕后从蓝图删除 | 过时信息误导施工 |
+| 15 | 蓝图内容拆分判定——超过 5000 行或 18+ 章节时必须评估拆分 | 蓝图不可维护 |
+
+### 蓝图拆分判定标准
+
+当蓝图满足以下任一条件时，MUST 执行拆分评估：
+
+| 条件 | 判定值 | 当前状态 |
+|------|-------|---------|
+| 总行数 | > 5000 行 | ⚠️ 接近阈值 |
+| 章节数 | > 18 个主要章节 | ⚠️ 超过阈值 |
+| 独立功能域 | > 3 个 | ⚠️ 扫描/分类/对账/生命周期/MCP/CLI/Schema 均为独立域 |
+
+**拆分流程**：
+
+1. 识别独立功能域（低耦合、高内聚的章节群）
+2. 每个独立域拆分为子蓝图，保留本蓝图为集成蓝图
+3. 集成蓝图只保留：概述、§0 代码清单、§10 依赖、§18 决策记录、铁律
+4. 子蓝图继承集成蓝图的 frontmatter `parent_blueprint` 字段
+5. 拆分后集成蓝图 ≤ 1500 行，子蓝图各 ≤ 3000 行
+
+---
+
+## ⚠️ 安全删除协议
+
+> **时态属性：永久保留**——不可改为链接引用。
+
+### 蓝图中的删除决策清单
+
+| # | 待删除/废弃文件 | 完整绝对路径 | 删除类型 | 接收文件 | 安全删除方案 |
+|---|---------------|------------|---------|---------|------------|
+| — | 本蓝图不涉及文件删除 | — | — | — | — |
+
+### 删除铁律
+
+| # | 铁律 | 原因 |
+|---|------|------|
+| 1 | 禁止蓝图阶段物理删除任何文件 | 蓝图只做决策，不做执行 |
+| 2 | 迁移型删除必须逐条迁移、逐条验证 | 批量迁移容易遗漏 |
+| 3 | 物理删除只能在 stable 搬入阶段执行 | 给足缓冲期 |
+| 4 | 物理删除必须人类确认 | AI 不得自行决定删除文件 |
+| 5 | "宁可慢，不可漏" | 没有git备份，删了就没了 |
+
+---
+
+## 必备链接
+
+> **时态属性：永久保留**——不可改为链接引用。
+
+| # | 文件 | module_id | 完整绝对路径 | 编写时用途 |
+|---|------|-----------|------------|----------|
+| 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则、doc_type词表 |
+| 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\directory-structure-standard.md` | 路径映射 |
+| 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` | MTH-012 + MTH-013 |
+| 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\file-naming-standard.md` | 命名规则 |
+| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | 编号注册 |
+| 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
+| 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index.yaml` | 现有规则索引 |
+| 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md` | AI 操作权限 |
+
+---
+
+## 项目中已有类似功能
+
+> **时态属性：永久保留**——不可改为链接引用。
+
+| # | 已有模块/文件 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
+|---|-------------|------------|----------|-------------|
+| — | 无类似功能 | — | — | — |
+
+---
+
+## 涉及的文件范围
+
+> **时态属性：永久保留**——不可改为链接引用。
+
+| # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
+|---|---------|------------|------|---------|
+| 1 | 资产盘点核心代码 | `D:\ZephyrAlpha\src\zephyr\asset_inventory\` | 修改 | 容量升级 |
+| 2 | 资产索引文件 | `D:\ZephyrAlpha\data\unified_asset_index.yaml` | 修改 | YAML→SQLite 迁移 |
+| 3 | 资产盘点蓝图 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\asset-inventory\blueprint.md` | 修改 | 规格化 |

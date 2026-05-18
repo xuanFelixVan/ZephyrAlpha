@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0205
 task_title: "跨模块八项集成实现——AuditTrail/Rollback/FeedbackLoop/RBAC/Budget/Script/Escalation/KB"
 parent_ticket: TASK-INF-0201
@@ -55,7 +56,9 @@ rollback_instructions: "回退 skill_executor.py 和 skill_freshness.py 到集�
 context_assembly_manifest:
   blueprint_content: "§3 跨模块集成——Agent Spec 不是孤立模块，与已有八个模块深度集成"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0205: 跨模块八项集成
 

@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0012"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§17 测试策略金字塔 + §48 策略验证与统计严谨性"
@@ -73,4 +74,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

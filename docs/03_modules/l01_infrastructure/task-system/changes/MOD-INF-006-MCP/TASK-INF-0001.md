@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-INF-0001"
 source_blueprint: "MOD-INF-006"
 source_section: "§11.3 步骤1"
@@ -6,7 +7,10 @@ source_section: "§11.3 步骤1"
 # ===== 内容 =====
 title: "更新注册表"
 description: "| 产出位置 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` |
-|---------|------|
+|
+blueprint_id: DOM-GOV-001
+---
+------|------|
 | 验收标准 | MOD-INF-006 条目 version→**0.3.0**，blueprint_status→approved，registry changelog 追加 v0.3.0 说明（对齐蓝图 §11.3 步骤1） |"
 priority: "P1"
 

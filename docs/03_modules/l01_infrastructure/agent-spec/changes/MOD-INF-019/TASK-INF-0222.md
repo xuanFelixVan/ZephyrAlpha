@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0222
 task_title: "代码块实现全量落实——蓝图中所有YAML/Python/JavaScript代码块落地"
 parent_ticket: TASK-INF-0219
@@ -49,7 +50,9 @@ rollback_instructions: "批量回退代码块实现文件"
 context_assembly_manifest:
   blueprint_content: "全量YAML(50+块)/Python(20+块)/JavaScript(2块)代码块——每个代码块必须在对应.py中实现"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0222: 代码块全量实现
 

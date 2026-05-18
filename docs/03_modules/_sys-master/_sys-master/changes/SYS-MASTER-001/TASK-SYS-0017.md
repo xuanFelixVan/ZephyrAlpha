@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0017"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§22 合规映射 + §23 纵深防御L1-L6 + §47 金融合规与法律"
@@ -73,4 +74,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

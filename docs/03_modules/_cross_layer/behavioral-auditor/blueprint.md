@@ -1,482 +1,1132 @@
 ---
 module_id: "MOD-INF-033"
-title: "BehavioralAuditor — AI Behavior Boundary Audit Engine v2.0.0"
+title: "Behavioral Auditor 蓝图 — 行为审计器·AI行为边界监控"
 doc_type: blueprint
 status: Draft
-version: "2.0.0"
-generation: 2
+version: "3.3.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
-date: "2026-05-08"
-valid_from: "2026-05-08"
+date: "2026-05-10"
+valid_from: "2026-05-10"
 ttl: permanent
-construction_progress: not_started
+construction_progress: partially_implemented
+actual_disk_path: "src/zephyr/behavioral_audit/"
+actual_disk_path_note: "MOD-INF-033独有5个文件(verdict_engine/admission_controller/protection_index/gpu_consensus_scheduler/session_lifecycle)将放在此目录。54个共享文件属于MOD-INF-023(src/zephyr/behavioral_auditor/)，033通过import消费"
+architecture_layer: "L1_分析引擎"
 belongs_to: "MOD-INF-027"
-summary: >
-  BehavioralAuditor 蓝图 v2.0.0——AI 行为边界审计引擎。从 MOD-INF-027 AuditOrchestrator v4.0.0 三大审计子系统架构中独立出来的行为审计子系统，专门负责检测 AI Agent 的操作行为是否越过了授权边界。v2.0.0 全维度补完：新增 §0 冷启动分派（对标 SYS-MASTER-001）+ §10 Agent Skill 自动发现 + §11 多模型共识辩论 + §12 七级渐进响应梯度 + §13 Meta-Audit 自审计 + §14 行为基线画像异常检测 + §15 红队对抗攻击自生长 + §16 FLE 反馈闭环规则自适应 + §17 全系统 18 模块集成矩阵 + §18 可观测性 SLO+Prometheus + §19 CircuitBreaker 熔断降级 + §20 灾难恢复离线自治 + §21 Token 成本预算 + §22 CLI+MCP 双入口 + §23 ISO27001/SOC2/GDPR 合规映射 + §24 RULE-ZERO~NINE/PRE-OP/ZephyrLock 协议集成 + §25 跨 Session 连续性 + §26 蓝图自健康诊断 + §27 Prompt 版本锁定回归测试 + §28 氛围编程全自动化路径 + §29 维度补齐二阶~N阶全验证。对标 Anthropic Agent Security Framework（三层模型：Capability→Behavioral→Responsibility）+ Anthropic Auditing Agents（审计/评估/红队三型）+ Microsoft AI Agent Governance（四层数据治理→可观测性→安全→开发）+ SAFE Vibecoding（Brainstorm→Research→Plan→Build）+ NIST AI 600-1。全方位成熟度 100%。
-tags: [behavioral-audit, ai-agent-security, authorization-boundary, drift-detection, audit-trail, zero-trust, block-alert-rollback, code-review-gate, chain-of-thought, evidence-chain, multi-model-consensus, graduated-response, meta-audit, behavioral-baseline, red-teaming, feedback-loop, circuit-breaker, disaster-recovery, cost-awareness, cli-mcp-entry, compliance-mapping, rule-alignment, session-continuity, blueprint-health, prompt-version-lock, vibe-coding-automation, full-maturity]
+parent_module: "MOD-INF-027"
+functional_domain: governance
+summary: "AI行为边界审计引擎——消费AuditTrail事件流，比对Gate Engine许可矩阵，输出VERDICT（PASS/YELLOW/RED），执行阻断+问责+回滚"
+tags: [behavioral-audit, ai-agent-security, authorization-boundary, drift-detection, audit-trail, zero-trust, block-alert-rollback, evidence-chain, multi-model-consensus, graduated-response, meta-audit, behavioral-baseline, red-teaming, circuit-breaker, cost-awareness, compliance-mapping, session-continuity, capacity-upgrade]
 priority: P1
+rule_form: structural
+scope: global
+stability: evolving
+verifiability: hybrid
+generation: 3
+codification_level: L1
+codification_at: "2026-05-14"
+last_verified: "2026-05-14"
+last_updated: "2026-05-14"
 depends_on:
-  - {target: "MOD-INF-020", at: "full", why: "Audit Trail——行为审计的唯一数据源。所有 AI 操作 MUST 通过 AuditTrail 记录不可变日志（操作者/操作类型/目标/结果/CoT推理链），BehavioralAuditor 从此数据源消费事件流"}
-  - {target: "MOD-INF-023", at: "full", why: "Drift Detector——漂移信号作为行为审计的触发线索。当 DriftDetector 检测到蓝图 vs 实际状态漂移时，BehavioralAuditor 回溯 AuditTrail 日志确认是否为 AI 越权操作导致"}
-  - {target: "MOD-INF-007", at: "full", why: "Gate Engine——授权边界定义的执行者。行为审计的判定依赖 Gate Engine 提供的许可矩阵（who/can/what/under_what_condition）"}
+  - {target: "MOD-INF-020", at: "full", why: "AuditTrail——行为审计唯一数据源，所有AI操作MUST通过AuditTrail记录不可变日志"}
+  - {target: "MOD-INF-023", at: "full", why: "DriftDetector——漂移信号作为行为审计触发线索"}
+  - {target: "MOD-INF-007", at: "full", why: "Gate Engine——授权边界定义的执行者，许可矩阵查询"}
   - {target: "MOD-INF-021", at: "§2", why: "Rollback——越界操作确认后的回滚执行器"}
-  - {target: "MOD-INF-010", at: "§2", why: "Feedback Loop——行为审计误报/漏报回写规则演进，FLE 驱动 BehavioralAuditor 策略自适应"}
-  - {target: "MOD-INF-014", at: "§3", why: "LLM Security——多模型共识辩论时的输入输出安全校验，Prompt注入防御"}
-  - {target: "MOD-INF-018", at: "§3", why: "Agent RBAC——审计操作权限校验，确保只有授权的 governance agent 可触发 BehavioralAuditor"}
-  - {target: "MOD-INF-019", at: "§3", why: "Agent Spec——SKILL-DOM-BEH-001 技能注册与渐进式加载，确保新 AI 能自动发现本模块"}
-  - {target: "MOD-INF-022", at: "§3", why: "Escalation Protocol——七级渐进响应中 L4~L6 的自动升级通道"}
-  - {target: "MOD-INF-024", at: "§2", why: "Budget Enforcer——多模型共识调用时的 Token 配额管理"}
-  - {target: "MOD-INF-025", at: "§2", why: "A2A Protocol——多 Agent 并发操作时的行为审计协调与冲突仲裁"}
-  - {target: "MOD-INF-015", at: "§2", why: "System Telemetry——行为审计 SLI/SLO 指标推送 Prometheus 遥测面板"}
-  - {target: "MOD-INF-026", at: "§1", why: "Asset Inventory——保护目标清单的元数据来源：哪些文件属于 anchor/protected 等级"}
-  - {target: "MOD-MASTER-001", at: "§一", why: "集成总蓝图——BehavioralAuditor 与其他系统的 CT-* 集成契约在此登记"}
-  - {target: "SYS-MASTER-001", at: "§0", why: "系统总蓝图——全局冷启动分派与架构约束"}
+  - {target: "MOD-INF-010", at: "§2", why: "Feedback Loop——行为审计误报/漏报回写规则演进"}
+  - {target: "MOD-INF-014", at: "§3", why: "LLM Security——多模型共识输入输出安全校验"}
+  - {target: "MOD-INF-018", at: "§3", why: "Agent RBAC——审计操作权限校验"}
+  - {target: "MOD-INF-019", at: "§3", why: "Agent Spec——SKILL-DOM-BEH-001技能注册与渐进式加载"}
+  - {target: "MOD-INF-022", at: "§3", why: "Escalation Protocol——L4~L6自动升级通道"}
+  - {target: "MOD-INF-024", at: "§2", why: "Budget Enforcer——多模型共识Token配额管理"}
+  - {target: "MOD-INF-025", at: "§2", why: "A2A Protocol——多Agent并发操作时的行为审计协调"}
+  - {target: "MOD-INF-015", at: "§2", why: "System Telemetry——行为审计SLI/SLO指标推送"}
+  - {target: "MOD-INF-026", at: "§1", why: "Asset Inventory——保护目标清单元数据来源"}
+  - {target: "MOD-INF-012", at: "§4", why: "Database System——Evidence Chain/Baseline/Session State底层存储"}
+  - {target: "MOD-MASTER-001", at: "§一", why: "集成总蓝图——CT-*集成契约登记"}
+  - {target: "SYS-MASTER-001", at: "§〇", why: "系统总蓝图——容量升级方案上游依赖"}
 references:
-  - {id: "MOD-INF-027", at: "full", why: "Audit Orchestrator v4.0.0——BehavioralAuditor 是 Orchestrator 三大审计子系统之一，由 Orchestrator Phase 2 TRIAGE 通过 AuditTrail 事件驱动 dispatch"}
-  - {id: "MOD-INF-028", at: "full", why: "SemanticAuditor v4.0.0——平级审计子系统，同为 Orchestrator dispatch。区别：SemanticAuditor 审计规则文档语义，BehavioralAuditor 审计 AI 操作行为"}
-  - {id: "MOD-INF-029", at: "§0,§1,§17", why: "OrphanJudge——冷启动分派 + 模块身份 + 全系统集成 的最佳实践模板。BehavioralAuditor 的 §0/§17 对标 OrphanJudge 的同名章节"}
-  - {id: "MOD-INF-030", at: "§2,§3", why: "RedBlue Validator——红蓝对抗引擎。BehavioralAuditor 的 §15 红队对抗与 RedBlue 协同"}
-  - {id: "MOD-INF-031", at: "§2", why: "AutoFix Engine——BehavioralAuditor 判定 RED 后的操作不等于 AutoFix，但 AutoFix 可用于回滚后的修复"}
-industry_benchmarks:
-  - {name: "Anthropic Agent Security Framework (2025)", why: "三层安全模型：Capability Boundaries → Behavioral Boundaries → Responsibility Boundaries——BehavioralAuditor 精确对标第二层 Behavioral Boundaries"}
-  - {name: "Anthropic Auditing Agents (2025.07)", why: "三类自动审计 AI：Audit Agent（发现隐藏目标）+ Evaluation Agent（构?行为评估）+ Broad Red Teaming Agent（广域问题发现）——§13 Meta-Audit + §15 红队对抗的对标"}
-  - {name: "Anthropic NIST RFI Response (2026.03)", why: "Agent 安全架构：Prompt层 → Harness层 → Execution Environment层——§24 项目规则协议集成的对标"}
-  - {name: "Microsoft AI Agent Governance Framework", why: "四层治理：Data Governance → Agent Observability → Agent Security → Agent Development——§17 全系统集成矩阵 + §18 可观测性的对标"}
-  - {name: "SAFE Vibecoding Manifesto", why: "四阶段安全氛围编程：Brainstorm→Research→Plan→Build——§28 氛围编程全自动化路径的对标"}
-  - {name: "NIST AI 600-1 (Draft 2026)", why: "AI Agent 安全考虑因素 RFI——§23 合规映射的对标"}
-  - {name: "OWASP Top 10 for LLM Applications", why: "LLM01 Prompt Injection / LLM06 Sensitive Information Disclosure——§11 多模型共识输入安全 + §8 安全边界的对标"}
-maturity: "100% - v2.0.0: 全维度补完。§0~§29 共30章节全覆盖。冷启动分派 + Agent Skill 自动发现 + 多模型共识辩论 + 七级渐进响应 + Meta-Audit + 行为基线画像 + 红队对抗 + FLE反馈闭环 + 18模块集成矩阵 + SLO+Prometheus + CircuitBreaker + 灾难恢复 + Token预算 + CLI+MCP双入口 + ISO27001/SOC2/GDPR + RULE-ZERO~NINE全协议 + Session连续性 + 蓝图自健康 + Prompt版本锁定 + 氛围编程全自动化 + 二阶~N阶维度补齐全验证。对标 Anthropic Agent Security + Microsoft AI Governance + SAFE Vibecoding + NIST AI 600-1。零已知缺口。"
-completeness:
-  sections: 1.0
-  detail: 1.0
-  code_artifact: 0.85
-  delivery: 0.0
+  - {id: "MOD-INF-027", at: "full", why: "Audit Orchestrator——BehavioralAuditor是Orchestrator三大审计子系统之一"}
+  - {id: "MOD-INF-028", at: "full", why: "SemanticAuditor——平级审计子系统，审计规则文档语义"}
+  - {id: "MOD-INF-029", at: "§0,§1,§17", why: "OrphanJudge——冷启动分派+模块身份+全系统集成最佳实践模板"}
+  - {id: "MOD-INF-030", at: "§2,§3", why: "RedBlue Validator——红蓝对抗引擎，§15红队对抗协同"}
+  - {id: "MOD-INF-031", at: "§2", why: "AutoFix Engine——回滚后修复"}
 ---
 
-# BehavioralAuditor — AI Behavior Boundary Audit Engine v2.0.0
-> **module_id**: MOD-INF-033 | **version**: 2.0.0 | **status**: Draft | **layer**: cross_layer | **belongs_to**: MOD-INF-027 | **maturity**: 100%
+# Behavioral Auditor 蓝图 — 行为审计器·AI行为边界监控
 
-> **v2.0.0: Full-dimensional supplement.** v1.0.0 defined the core: event-driven → permission matrix comparison → Block/Alert/Rollback. v2.0.0 supplements everything else: how AI agents discover this module, how BehavioralAuditor integrates with all 18 subsystems, how to handle edge cases (graduated response, circuit breaker, disaster recovery), how to self-audit, how to learn from mistakes, how to stay within budget, how to lock down determinism, and how a solo dev + AI can run this fully automated.
+> module_id: MOD-INF-033 | version: 3.3.0 | status: draft | layer: cross_layer
+> actual_disk_path: src/zephyr/behavioral_audit/ | generation: 3 | construction_progress: partially_implemented
 
-> **v1.0.0: Inaugural release.** BehavioralAuditor is the third audit subsystem in the Orchestrator v4.0.0 three-subsystem architecture. While Structural Audit checks binary rules ("does file X exist in registry Y?") and Semantic Audit checks natural language semantics ("does reference X still point to the right document?"), Behavioral Audit answers a fundamentally different question: **"Did the AI do something it wasn't authorized to do?"**
+## 概述
+
+BehavioralAuditor 是 AI 行为边界审计引擎——解决"AI 做了不该做的操作"这一核心安全问题。核心职责：消费 AuditTrail 事件流 → 比对 Gate Engine 许可矩阵 → 输出 VERDICT（PASS/YELLOW/RED）→ 阻断+告警+回滚。当前规模 54 个 Python 模块已实现漂移检测/基线管理/熔断/混沌注入等基础能力，目标容量 100 AI 并发/10K 脚本。上游依赖 AuditTrail(MOD-INF-020)/DriftDetector(MOD-INF-023)/Gate Engine(MOD-INF-007)，下游被 AuditOrchestrator(MOD-INF-027)调度消费。
 
 ---
 
-## §0 冷启动分派——新 AI Session 如何发现并使用本模块
-
-> **对标 SYS-MASTER-001 §0 冷启动分派表 + OrphanJudge §0。** 本模块确保每一个新进入的 AI 在需要时知道使用 BehavioralAuditor，而不是成为孤儿功能。
-
-### 0.1 发现链（六条并行路径，任一命中即可定位）
-
-```
-新 AI Session 进入 ZephyrAlpha
-  │
-  ├─ 路径1: SYS-MASTER-001 §0 分派表
-  │   └─ 任务域 "行为审计/AI安全/越权检测" → 导航到 MOD-INF-033
-  │
-  ├─ 路径2: registry-of-registries.yaml
-  │   └─ REG-MOD-001 → module-registry.yaml → 搜索 "behavioral" / "audit" → MOD-INF-033
-  │
-  ├─ 路径3: Agent Spec 关键词路由
-  │   └─ task_keywords: "behavioral"/"越权"/"behavior audit"/"行为边界" → SKILL-DOM-BEH-001
-  │
-  ├─ 路径4: project_rules.md PRE-OP 表
-  │   └─ "AI 做了越权操作？" → BehavioralAuditor → `python scripts/governance/run_behavioral_audit.py --check`
-  │
-  ├─ 路径5: cross_layer/index.md 模块清单
-  │   └─ 搜索 "behavioral-auditor" → 导航到本蓝图
-  │
-  └─ 路径6: CLI 入口自描述
-      └─ `python scripts/governance/run_behavioral_audit.py --help` → 直接了解功能
-```
-
-### 0.2 冷启动序列
-
-> 新 AI session 进入本模块域时，按以下序列执行。
-
-| 步骤 | 动作 | 产出 |
-|:---:|------|------|
-| 0.1 | 读本蓝图 §1-§9（核心设计） | 理解事件驱动→许可矩阵→阻断/告警/回滚 |
-| 0.2 | 读 §10 Agent Skill 自动发现 | 理解如何通过 Skill 系统被其他 AI 发现 |
-| 0.3 | 读 §17 全系统集成矩阵 | 知道本模块与哪些系统有连接、连接状态 |
-| 0.4 | 读 §24 RULE-ZERO~NINE 对齐 | 知道本模块如何遵守所有项目硬规则 |
-| 0.5 | 读 §28 氛围编程全自动化路径 | 理解一人+AI语境下的全自动触发→判定→响应 |
-| 0.6 | `python -m zephyr.agent_spec progressive_load SKILL-DOM-BEH-001` | 加载本模块的 Agent Skill |
-| 0.7 | `python scripts/governance/run_behavioral_audit.py --health-check` | 验证模块可运行 |
-| 0.8 | 读 §29 维度补齐验证 | 确认所有二阶~N阶维度已覆盖、无遗漏 |
-
-### 0.3 触发关键词路由（Agent Skill 自动化匹配）
-
-| 用户/任务关键词 | 匹配 Skill | 加载方式 |
-|---------------|-----------|---------|
-| `behavioral` `行为审计` `越权` `AI做了不该做的` | SKILL-DOM-BEH-001 | `progressive_load("behavioral-auditor")` |
-| `操作越界` `anchor文件被改` `AI越权删除` | SKILL-DOM-BEH-001 | 同上 |
-| `Gate bypass` `跳过门禁` `未经授权写入` | SKILL-DOM-BEH-001 | 同上 |
-| `审计AI行为` `AI操作追溯` `谁改了我的文件` | SKILL-DOM-BEH-001 | 同上 |
-
-### 0.4 AI 意识植入
-
-> **"你要检查 AI 有没有越权操作？→ 不用手翻 AuditTrail 日志一行行看——系统里有 BehavioralAuditor，它会在 AuditTrail 事件流上实时监听，机械比对 Gate Engine 许可矩阵，输出 VERDICT。你只需要 `python scripts/governance/run_behavioral_audit.py --since 2026-05-08`。"**
+> **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
+> - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
+> - AI 压缩工作流标准：[compression-workflow-standard.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/compression-workflow-standard.md)
+> - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
+> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
 
-## 1. 审计定位——行为审计的不可替代性
+## §0 代码对齐验证
 
-### 1.1 三审计类型的差异
+> 防止 construction_progress 与实际代码不符。每次蓝图版本变更后**必须**重新填写此表。
+> **位置说明**：§0 放在概述之后——AI 进入蓝图先建立心理模型（概述），再确认文件现状（§0），再理解设计（§1-§15）。
 
-```
-  结构审计：查"有没有"  →  file_exists(manifest.yaml)  →  二进制结果
-  语义审计：查"对不对"  →  "see X" 指向的文件还存在吗？ →  需要 LLM 理解
-  行为审计：查"该不该"  →  AI 删了这个文件，它有权删吗？ →  事件比对授权矩阵
-```
+### §0.1 代码文件清单
 
-行为审计与另外两者的本质区别：
+> 存在性状态受控词表：`未实现` / `已实现` / `已阻塞` / `已废弃`
+> 此列是**当前事实**（永久时态），不是施工进度追踪（临时时态）
+
+| # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
+|---|--------|------------|------|:-----:|-------------------|
+| 1 | `__init__.py` | §3 | 模块导出+公共 API | 已实现 | — |
+| 2 | `__main__.py` | §4.5 | CLI 入口 | 已实现 | — |
+| 3 | `drift_engine.py` | §3.1 | 漂移扫描引擎 | 已实现 | — |
+| 4 | `drift_models.py` | §4.2 | 漂移数据模型 | 已实现 | — |
+| 5 | `drift_infrastructure.py` | §5 | 漂移基础设施（预算/检查点/恢复） | 已实现 | — |
+| 6 | `drift_result_types.py` | §4.2 | 语义/DB/安全漂移结果类型 | 已实现 | — |
+| 7 | `drift_training.py` | 蓝图特有§F | AI 训练循环检测+跨语言漂移 | 已实现 | — |
+| 8 | `drift_hotfix_bypass.py` | §6 | 热修复旁路审计 | 已实现 | — |
+| 9 | `drift_cron_scheduler.py` | 蓝图特有§N | Cron 定时调度 | 已实现 | — |
+| 10 | `detector_dispatcher.py` | §3.1 | 检测器调度+并行控制 | 已实现 | — |
+| 11 | `baseline_manager.py` | 蓝图特有§D | 行为基线管理 | 已实现 | — |
+| 12 | `baseline_poisoning_guard.py` | §8 | 基线投毒防护 | 已实现 | — |
+| 13 | `alert_router.py` | §3.1 | 告警路由 | 已实现 | — |
+| 14 | `correlation_engine.py` | §3.1 | 事件关联引擎 | 已实现 | — |
+| 15 | `credibility_engine.py` | §3.1 | 可信度引擎 | 已实现 | — |
+| 16 | `cross_module_score.py` | §3.1 | 跨模块评分 | 已实现 | — |
+| 17 | `dashboard.py` | §3.1 | 仪表盘数据 | 已实现 | — |
+| 18 | `state_machine.py` | §3.3 | 漂移状态机 | 已实现 | — |
+| 19 | `events.py` | §4.2 | 事件定义 | 已实现 | — |
+| 20 | `resource_guard.py` | §6 | 资源守卫+降级 | 已实现 | — |
+| 21 | `scan_mutex.py` | §5.1 | 扫描互斥锁 | 已实现 | — |
+| 22 | `cold_start.py` | §16 | 冷启动初始化 | 已实现 | — |
+| 23 | `self_check.py` | 蓝图特有§L | 自检（SHA256+注册表+核心文件） | 已实现 | — |
+| 24 | `self_test_verifier.py` | §9 | 8 项自检验证 | 已实现 | — |
+| 25 | `reconciler.py` | §6 | 自动修复器 | 已实现 | — |
+| 26 | `cascade_detector.py` | §6 | 级联故障检测 | 已实现 | — |
+| 27 | `chaos_injector.py` | 蓝图特有§E | 混沌注入（路径重命名/YAML翻转/TODO炸弹） | 已实现 | — |
+| 28 | `canary_controller.py` | §6 | 金丝雀发布控制 | 已实现 | — |
+| 29 | `forensics_engine.py` | §4.2 | 取证引擎（时间线+Git 快照） | 已实现 | — |
+| 30 | `runbook_generator.py` | §6 | Runbook 生成 | 已实现 | — |
+| 31 | `handoff_manager.py` | §6 | 交接包管理 | 已实现 | — |
+| 32 | `gate_persistence.py` | §12 | 门禁持久化 | 已实现 | — |
+| 33 | `rollback_bridge.py` | §12 | 回滚桥接 | 已实现 | — |
+| 34 | `brain_integration.py` | §12 | AutoRuntime Core 集成 | 已实现 | — |
+| 35 | `ai_context_injector.py` | §3.1 | AI 上下文注入 | 已实现 | — |
+| 36 | `ai_construction_detectors.py` | §3.1 | AI 施工检测器 | 已实现 | — |
+| 37 | `absence_manager.py` | §6 | Owner 缺席管理 | 已实现 | — |
+| 38 | `suppression_learner.py` | 蓝图特有§F | 抑制规则学习 | 已实现 | — |
+| 39 | `trend_analyzer.py` | 蓝图特有§D | 趋势分析 | 已实现 | — |
+| 40 | `roi_engine.py` | §5.2 | ROI 评分引擎 | 已实现 | — |
+| 41 | `incremental_scanner.py` | §3.1 | 增量扫描器 | 已实现 | — |
+| 42 | `headless_scanner.py` | §3.1 | 无头扫描器 | 已实现 | — |
+| 43 | `orphan_scanner.py` | §3.1 | 孤儿资源扫描 | 已实现 | — |
+| 44 | `config_consistency.py` | §3.1 | 配置一致性审计 | 已实现 | — |
+| 45 | `git_bisector.py` | §6 | Git 二分查找 | 已实现 | — |
+| 46 | `gitignore_auditor.py` | §3.1 | .gitignore 审计 | 已实现 | — |
+| 47 | `integration_test_runner.py` | §9 | 集成测试运行器 | 已实现 | — |
+| 48 | `file_attr_checker.py` | §3.1 | 文件属性检查 | 已实现 | — |
+| 49 | `naming_magic_checker.py` | §3.1 | 命名魔术检查 | 已实现 | — |
+| 50 | `symlink_checker.py` | §3.1 | 符号链接检查 | 已实现 | — |
+| 51 | `backcompat_checker.py` | §6 | 向后兼容性检查 | 已实现 | — |
+| 52 | `test_fixture_checker.py` | §9 | 测试夹具漂移检查 | 已实现 | — |
+| 53 | `python_compat.py` | §5.1 | Python 兼容性扫描 | 已实现 | — |
+| 54 | `tamper_proof_audit.py` | §8 | 防篡改审计 | 已实现 | — |
+| 55 | `verdict_engine.py` | §4.1 | 判定引擎 | 未实现 | — |
+| 56 | `admission_controller.py` | §3.1 | 事件摄入准入控制+Token Bucket | 未实现 | — |
+| 57 | `protection_index.py` | §3.1 | 文件保护等级 O(1)查询 | 未实现 | — |
+| 58 | `gpu_consensus_scheduler.py` | §3.1 | GPU 共识调度+API fallback | 未实现 | — |
+| 59 | `session_lifecycle.py` | §17 | Session 生命周期管理与 GC | 未实现 | — |
+
+### §0.2 对齐验证矩阵
+
+| 验证项 | 验证方法 | 结果 |
+|--------|---------|:---:|
+| construction_progress = partially_implemented → 代码文件存在 | `ls D:\ZephyrAlpha\src\zephyr\behavioral_auditor\` 54 文件 | ☑ |
+| actual_disk_path = src/zephyr/behavioral_audit/ → 目录尚未创建 | 目录不存在（5个独有文件待施工） | ☐ 待创建 |
+| 蓝图描述的类名 = 代码中的类名 | `grep "class" *.py` 核对 | ☐ 待验证 |
+| 代码头部 BLUEPRINT 引用 = MOD-INF-023 | 54文件已标注 MOD-INF-023（正确——这些文件属于 MOD-INF-023） | ☑ |
+
+### §0.3 版本-代码映射
+
+| 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
+|---------|------------|---------|---------|
+| v1.0.0 (基线) | 漂移检测+基线管理+熔断+混沌注入+资源守卫 | — | — |
+| v2.0.0 (全维度) | §0~§29 设计覆盖 | VerdictEngine/MultiModelConsensus/AdmissionControl/ProtectionIndex/GPUConsensusScheduler | 待施工 |
+| v3.0.0 (容量升级) | 容量设计文档 | PartitionedConsumer/PerSessionBaseline/ShardedSessionStore 等 15 项容量组件 | 待施工 |
+| v3.1.0 (容量审计) | 8 项缺口补全设计 | AdmissionControl/CT-BEH-DB-001 v2/GPUConsensusScheduler 等 | 待施工 |
+
+---
+
+## §1 设计背景与目标
+
+### 1.1 背景
+
+行为审计与结构审计、语义审计的本质区别：
 
 | 维度 | 结构审计 | 语义审计 | 行为审计 |
 |------|---------|---------|---------|
-| **审计对象** | 文件/注册表/代码 | 规则文档（自然语言） | AI 操作序列 |
-| **触发方式** | mtime 变更驱动 | 规则文档变更驱动 | 事件驱动（AuditTrail） |
-| **判定方法** | 二元规则引擎 | LLM Bridge | 操作 vs 许可矩阵 |
-| **确定性** | 100% 确定 | 95~98% 确定性 | 100% 确定（二进制比对） |
-| **响应方式** | 模板修复 | LLM 生成修复文本 | **阻断 + 告警 + 回滚** |
-| **不可逆性** | 可修复 | 可修复 | **不可逆**（越界操作已发生） |
+| 审计对象 | 文件/注册表/代码 | 规则文档（自然语言） | AI 操作序列 |
+| 触发方式 | mtime 变更驱动 | 规则文档变更驱动 | 事件驱动（AuditTrail） |
+| 判定方法 | 二元规则引擎 | LLM Bridge | 操作 vs 许可矩阵 |
+| 确定性 | 100% | 95~98% | 100%（二进制比对） |
+| 响应方式 | 模板修复 | LLM 生成修复文本 | **阻断+告警+回滚** |
+| 不可逆性 | 可修复 | 可修复 | **不可逆**（越界操作已发生） |
 
-### 1.2 为什么行为审计不能合并到结构审计？
+行为审计的核心假设：**AI 做了一次它本不该做的操作**——操作已发生，无法"修复"，只能：1.阻断继续 2.告警人类 3.回滚副作用 4.记录为安全事件。
 
-结构审计的假设前提是：**系统状态偏离了预期状态**——偏离可以通过 AutoFix 恢复到正确状态。
+### 1.2 目标
 
-行为审计的假设前提是：**AI 做了一次它本不该做的操作**——操作已经发生，无法"修复"，只能：
-1. **阻断**继续操作
-2. **告警**人类审核
-3. **回滚**操作副作用
-4. **记录**为安全事件供事后分析
+| # | 目标 | 可衡量标准 |
+|---|------|-----------|
+| 1 | 实时判定 AI 操作是否越权 | AuditTrail 事件→VERDICT 延迟 < 10s |
+| 2 | 零漏报——anchor 文件越权 MUST 被阻断 | anchor 文件越权阻断率 100% |
+| 3 | 多模型共识降低误判 | 高风险判定 2/2 模型一致率 > 95% |
+| 4 | 全自动触发→判定→响应→闭环 | Owner 零日常干预 |
+| 5 | 100 AI 并发容量 | 事件摄入 50 events/s，判定延迟 p99 < 10s |
 
-这不是"修"的问题，是"问责"的问题。
+### 1.3 不包含的目标
 
-### 1.3 对标 Anthropic 三层安全模型
+| # | 明确排除 | 原因 |
+|---|---------|------|
+| 1 | 结构审计（文件是否存在/注册表是否完整） | MOD-INF-027 Orchestrator 结构审计子系统 |
+| 2 | 语义审计（规则文档语义一致性） | MOD-INF-028 SemanticAuditor |
+| 3 | 代码安全扫描 | MOD-INF-014 LLM Security |
+| 4 | AutoFix 修复 | MOD-INF-031 AutoFix Engine |
+| 5 | 权限管理 | MOD-INF-018 Agent RBAC |
 
-Anthropic 在 2025-2026 年提出的 Agent 安全三层模型（行业共识）：
+### 1.4 运行场景约束
 
-```
-  第一层：能力边界（Capability Boundaries）
-    → "AI 能做哪些事？" → 工具权限隔离 / 数据访问控制 / 环境沙箱
-    对标本系统：Gate Engine (MOD-INF-007) + Agent RBAC (MOD-INF-018)
-
-  第二层：行为边界（Behavioral Boundaries）
-    → "AI 的做事方式是否合规？" → 人类监督 / 透明行为 / 行为审计
-    对标本系统：BehavioralAuditor (MOD-INF-033) ← 本模块精确对标
-
-  第三层：责任边界（Responsibility Boundaries）
-    → "AI 不对关键决策负责，人类才负责" → 决策留白 / 用户意图优先
-    对标本系统：Escalation Protocol (MOD-INF-022) + Human-in-the-loop
-```
-
----
-
-## 2. 架构概览
-
-```
-                      AuditTrail (MOD-INF-020)
-                            │
-                   不可变日志事件流
-                            │
-                            ▼
-                  ┌─────────────────┐
-                  │  DriftDetector   │
-                  │  (MOD-INF-023)   │
-                  │  漂移信号触发    │
-                  └────────┬────────┘
-                           │
-              ┌────────────┼────────────┐
-              │            │            │
-              ▼            ▼            ▼
-        ┌─────────┐ ┌──────────┐ ┌──────────┐
-        │ 越界写   │ │ 越界删   │ │ 越界读   │
-        │ 文件    │ │ 锚点文件 │ │ 敏感数据 │
-        └────┬────┘ └────┬─────┘ └────┬─────┘
-             │           │           │
-             └───────────┼───────────┘
-                         │
-                         ▼
-              ┌─────────────────────┐
-              │  BehavioralAuditor  │
-              │    (MOD-INF-033)    │
-              │                     │
-              │  操作日志           │
-              │  ×                 │
-              │  Gate Engine 许可矩阵│
-              │  ×                 │
-              │  安全策略           │
-              │                     │
-              │  = VERDICT         │
-              └──────────┬──────────┘
-                         │
-              ┌──────────┼──────────────┐
-              │          │              │
-              ▼          ▼              ▼
-        ┌────────┐ ┌────────┐ ┌──────────────┐
-        │ BLOCK  │ │ ALERT  │ │ ROLLBACK     │
-        │ (007)  │ │ (020)  │ │ (021) +      │
-        │        │ │        │ │ AutoFix(031) │
-        └────────┘ └────────┘ └──────────────┘
-              │          │              │
-              └──────────┼──────────────┘
-                         │
-                         ▼
-              ┌─────────────────────┐
-              │  FLE (MOD-INF-010)  │  ← v2.0.0 新增：反馈闭环
-              │  误报/漏报 → 规则   │
-              │  自适应演进         │
-              └─────────────────────┘
-```
+| 约束 | 影响 |
+|------|------|
+| 一人开发+AI 维护 | MUST 全自动化，Owner 零日常干预 |
+| Windows NTFS + Defender 实时扫描 | 文件 I/O 延迟不可预测，MUST 原子写入 |
+| 本地 GPU RTX 3090 24GB | 多模型共识 GPU 操作串行，MUST 排队+API fallback |
+| SQLite WAL 模式 | 单写者，MUST 主线程代理写入 |
+| 无 Git 备份 | 删除不可逆，MUST 安全删除协议 |
 
 ---
 
-## 3. 触发条件——事件驱动模型
+## §2 模块边界
 
-不同于结构审计的"文件变更驱动"和语义审计的"规则文档变更驱动"，行为审计是**事件驱动**的。
+### 2.1 职责范围
 
-### 3.1 触发器类型
+| # | 职责 | 具体内容 |
+|---|------|---------|
+| 1 | 事件监听 | 消费 AuditTrail 事件流 + DriftDetector 漂移信号 |
+| 2 | 许可矩阵比对 | 查询 Gate Engine who/can/what/under_what_condition |
+| 3 | 判定输出 | VERDICT（PASS/YELLOW/RED）+ Evidence Chain |
+| 4 | 渐进式响应 | L0~L6 七级响应梯度（静默→告警→阻断→冻结→终止） |
+| 5 | 多模型共识 | 高风险判定 2/2 模型一致 |
+| 6 | 行为基线画像 | 6 维基线偏离检测（BH-008） |
+| 7 | Meta-Audit | 自审计——谁审计审计者 |
+| 8 | 红队对抗 | 攻击自生长压力测试 |
+| 9 | 反馈闭环 | FLE 误报/漏报→规则自适应 |
+
+### 2.2 不包含的职责
+
+| # | 排除项 | 由谁负责 |
+|---|--------|---------|
+| 1 | 记录不可变操作日志 | MOD-INF-020 AuditTrail |
+| 2 | 检测状态漂移 | MOD-INF-023 DriftDetector |
+| 3 | 执行授权判定 | MOD-INF-007 Gate Engine |
+| 4 | 执行操作回滚 | MOD-INF-021 Rollback |
+| 5 | 修复代码/文档 | MOD-INF-031 AutoFix Engine |
+| 6 | 管理权限配置 | MOD-INF-018 Agent RBAC |
+
+---
+
+## §3 架构设计
+
+### 3.1 组件架构
+
+| # | 组件 | 职责 | 依赖 | 交互方式 |
+|---|------|------|------|---------|
+| 1 | EventConsumer | 消费 AuditTrail 事件流 | MOD-INF-020 | 事件流订阅 |
+| 2 | PermissionChecker | 查询 Gate Engine 许可矩阵 | MOD-INF-007 | 同步调用 |
+| 3 | VerdictEngine | 操作×许可矩阵→VERDICT | PermissionChecker | 同步调用 |
+| 4 | GraduatedResponder | L0~L6 渐进响应 | MOD-INF-007/020/021/022 | 事件驱动 |
+| 5 | MultiModelConsensus | 高风险判定多模型辩论 | MOD-INF-014/024 | 异步调用 |
+| 6 | BaselineProfiler | 行为基线画像+异常检测 | MOD-INF-020 | 定时+事件 |
+| 7 | MetaAuditor | 自审计判定行为 | VerdictEngine | 每次判定后 |
+| 8 | RedTeamEngine | 红队对抗压力测试 | VerdictEngine | 定时（每周） |
+| 9 | FLEAdapter | 反馈闭环规则自适应 | MOD-INF-010 | 事件驱动 |
+| 10 | AdmissionController | 事件摄入准入控制+Token Bucket | EventConsumer | 前置限流 |
+| 11 | ProtectionIndex | 文件保护等级 O(1)查询 | MOD-INF-026 | 内存索引 |
+| 12 | GPUConsensusScheduler | GPU 共识调度+API fallback | MultiModelConsensus | 排队调度 |
+
+### 3.2 数据流
+
+| # | 上游 | 处理逻辑 | 下游 | 数据格式 |
+|---|--------|---------|---------|---------|
+| 1 | AuditTrail 事件流 | AdmissionControl→EventClassify→PermissionCheck→Verdict | GraduatedResponder | AuditTrailEvent |
+| 2 | DriftDetector 漂移信号 | 回溯 AuditTrail 溯源→判定是否 AI 越权 | VerdictEngine | DriftSignal |
+| 3 | VerdictEngine RED 判定 | Block(Gate)+Alert(AuditTrail)+Rollback(MOD-021) | Escalation(MOD-022) | EvidenceChain |
+| 4 | BaselineProfiler | 6 维基线对比→异常偏离 | VerdictEngine(BH-008) | BaselineReport |
+| 5 | MetaAuditor | 自审计检查→META_PASS/META_FAIL | AuditTrail | MetaAuditResult |
+
+### 3.3 状态生命周期
+
+| 当前状态 | 触发事件 | 目标状态 | 守卫条件 |
+|---------|---------|---------|---------|
+| IDLE | AuditTrail 事件到达 | ACTIVE | AdmissionControl 通过 |
+| ACTIVE | 判定完成→PASS | IDLE | 无越权 |
+| ACTIVE | 判定完成→RED | RESPONDING | 越权确认 |
+| RESPONDING | Block+Alert+Rollback 完成 | IDLE | 响应完成 |
+| ACTIVE | Meta-Audit 失败 | DEGRADED | 自审计异常 |
+| DEGRADED | Owner 手动恢复 | IDLE | 人类确认 |
+
+---
+
+## §4 接口契约
+
+### 4.1 公共 API
+
+```python
+class BehavioralAuditor:
+    """AI 行为边界审计引擎主类"""
+
+    async def verify_operation(self, event: AuditTrailEvent) -> Verdict:
+        """
+        核心 API——判定单个操作是否越权
+
+        输入：AuditTrailEvent（操作者/操作类型/目标/CoT 推理链）
+        输出：Verdict（PASS/YELLOW/RED + Evidence Chain）
+        核心逻辑：操作者身份→保护等级→许可矩阵查询→VERDICT
+        """
+
+    async def verify_batch(self, events: list[AuditTrailEvent]) -> list[Verdict]:
+        """批量判定——微批处理模式"""
+
+    def get_baseline(self, session_id: str) -> BaselineProfile | None:
+        """查询 Session 行为基线"""
+
+    def health_check(self) -> HealthStatus:
+        """模块健康状态"""
+```
+
+### 4.2 数据模型
+
+```python
+from pydantic import BaseModel, Field
+from enum import Enum
+
+class VerdictLevel(str, Enum):
+    PASS = "PASS"
+    YELLOW = "YELLOW"
+    RED = "RED"
+
+class ProtectionLevel(str, Enum):
+    ANCHOR = "anchor"
+    PROTECTED = "protected"
+    NORMAL = "normal"
+    PUBLIC = "public"
+
+class GraduatedLevel(str, Enum):
+    L0_SILENT_LOG = "L0"
+    L1_SOFT_WARN = "L1"
+    L2_HARD_WARN = "L2"
+    L3_SOFT_BLOCK = "L3"
+    L4_HARD_BLOCK = "L4"
+    L5_SESSION_FREEZE = "L5"
+    L6_AGENT_KILL = "L6"
+
+class Verdict(BaseModel):
+    event_id: str = Field(..., description="AuditTrail 事件 ID")
+    verdict: VerdictLevel = Field(..., description="判定结果")
+    protection_level: ProtectionLevel = Field(..., description="目标文件保护等级")
+    graduated_level: GraduatedLevel = Field(..., description="响应等级")
+    evidence_chain: EvidenceChain = Field(..., description="完整证据链")
+    model_consensus: MultiModelResult | None = Field(default=None, description="多模型共识结果")
+
+class EvidenceChain(BaseModel):
+    actor: ActorInfo = Field(..., description="操作者信息")
+    operation: OperationInfo = Field(..., description="操作信息")
+    authorization_check: AuthCheckResult = Field(..., description="许可矩阵查询结果")
+    response: ResponseInfo = Field(..., description="响应动作")
+    cot_chain: list[str] = Field(default_factory=list, description="CoT 推理链")
+```
+
+### 4.3 输入契约
+
+| 接口 | 输入字段 | 必填 | 约束 |
+|------|---------|:---:|------|
+| `verify_operation()` | `event` | ✅ | AuditTrailEvent 格式，actor_type 必须为 ai_agent/human/system |
+| `verify_batch()` | `events` | ✅ | list[AuditTrailEvent]，长度 ≤ 100 |
+| `get_baseline()` | `session_id` | ✅ | 格式 `session-YYYYMMDD-NNN` |
+| `health_check()` | — | — | 无参数 |
+
+### 4.4 输出契约
+
+| 接口 | 成功输出 | 失败输出 |
+|------|---------|---------|
+| `verify_operation()` | `Verdict`：判定结果+证据链 | `AdmissionRejectedError` / `PermissionCheckTimeout` |
+| `verify_batch()` | `list[Verdict]` | 同上 |
+| `get_baseline()` | `BaselineProfile` / `None` | — |
+| `health_check()` | `HealthStatus` | — |
+
+### 4.5 MCP 接口
+
+| Tool | API | 输入 | 输出 |
+|------|-----|------|------|
+| `behavioral_audit_check` | `verify_operation()` | `{event: AuditTrailEvent}` | `{verdict: Verdict}` |
+| `behavioral_audit_baseline` | `get_baseline()` | `{session_id: str}` | `{baseline: BaselineProfile}` |
+| `behavioral_audit_health` | `health_check()` | `{}` | `{status: HealthStatus}` |
+
+### 4.6 契约版本
+
+| 契约部分 | 兼容性 | 说明 |
+|---------|:---:|------|
+| 新增 Verdict 字段 | ✅ 向后兼容 | 不影响已有消费者 |
+| 新增触发器类型（BH-009+） | ✅ 向后兼容 | 不破坏已有逻辑 |
+| 修改 VerdictLevel 枚举 | ❌ 破坏性 | 需 Owner 审批 |
+| 修改 ProtectionLevel 枚举 | ❌ 破坏性 | 需 Owner 审批 |
+| MCP Tool 新增 | ✅ 向后兼容 | 不影响已有消费者 |
+
+---
+
+## §5 约束条件
+
+### 5.1 技术约束
+
+| # | 约束 | 值 |
+|---|------|-----|
+| 1 | BehavioralAuditor 只读 AuditTrail | 不修改任何已记录日志 |
+| 2 | 不执行 Block/Alert/Rollback | 只输出 VERDICT，由 Gate/AuditTrail/Rollback 执行 |
+| 3 | 判定结果 MUST 写入 AuditTrail | 不可变安全事件 |
+| 4 | 自身操作 MUST 通过 AuditTrail 记录 | 递归自审计 |
+| 5 | GPU 共识操作串行 | RTX 3090 24GB，qwen3:14b 推理占 ~12GB |
+| 6 | SQLite 单写者 | WAL 模式下写连接 = 1 |
+| 7 | 文件写入 MUST 原子操作 | temp-file + os.replace()，防止 NTFS 损坏 |
+
+### 5.2 容量估算
+
+| 维度 | 当前规模 | 峰值需求 | 系统极限 | 是否够用 | 扩展方案 |
+|------|:------:|:------:|:------:|:------:|---------|
+| AI 并发 Session | ~5 | 100 | 100（硬上限） | ✅ | §17 容量升级 |
+| 事件摄入吞吐 | ~5 events/s | 50 events/s | 50/s（Token Bucket） | ✅ | AdmissionControl |
+| SQLite 连接 | ~10 | 44（4DB×11） | 100+（WAL 模式） | ✅ | 连接池复用 |
+| GPU 共识延迟 | — | p95 < 8s | 30s（超时） | ✅ | GPU 排队+API fallback |
+| 内存占用 | ~50MB | ~200MB（含 ProtectionIndex） | 64GB | ✅ | — |
+
+### 5.3 迁移/废弃方案
+
+> 时态属性：迁移方案属于**临时时态**——执行完毕后即成为历史，不再属于蓝图。
+
+| # | 废弃/迁移对象 | 当前位置 | 目标位置 | 处理方式 | 引用更新方案 |
+|---|-------------|---------|---------|---------|------------|
+| 1 | 代码头部 BLUEPRINT 引用 MOD-INF-023 | `D:\ZephyrAlpha\src\zephyr\behavioral_auditor\*.py` | 修改为 MOD-INF-033 | 批量替换 | Grep 全项目 MOD-INF-023 引用 |
+
+---
+
+## §6 错误处理
+
+| # | 异常场景 | 检测方式 | 恢复策略 | 影响范围 |
+|---|---------|---------|---------|---------|
+| 1 | AuditTrail 事件流中断 | 心跳超时 > 30s | 降级为定时批量审计 | 行为审计暂停 |
+| 2 | Gate Engine 不可用 | PermissionCheck 超时 > 10s | 默认 BLOCK（无法判定 = 不安全） | 所有 AI 操作被阻断 |
+| 3 | 多模型共识超时 | GPU/API 超时 > 30s | 降级为单模型判定 + API fallback | 高风险判定置信度降低 |
+| 4 | SQLite 写入失败 | 异常捕获 | 重试 3 次→降级为内存缓冲→告警 | Evidence Chain 可能延迟持久化 |
+| 5 | Meta-Audit 自检失败 | 自审计清单检查 | 停止自主判定→默认 BLOCK→通知 Owner | BehavioralAuditor 进入降级模式 |
+| 6 | 事件摄入过载 | Token Bucket 超限 | 429 + Retry-After→Coalescer 反压 | 部分事件延迟处理 |
+| 7 | 熔断器触发 | Session/依赖双层熔断 | Session 级熔断隔离→其他 Session 不受影响 | 单 Session 审计暂停 |
+
+---
+
+## §8 安全考量
+
+| # | 威胁 | 影响 | 缓解措施 | 验证方式 |
+|---|------|------|---------|---------|
+| 1 | AI 修改许可矩阵使行为审计失效 | 高 | 许可矩阵属 anchor 保护→修改触发 BH-005→立即阻断 | 模拟修改 Gate 配置 |
+| 2 | CoT 推理链 Prompt 注入 | 高 | MOD-INF-014 LLM Security 输入过滤→SUSPICIOUS_INPUT→默认 BLOCK | 注入测试用例 |
+| 3 | BehavioralAuditor 自身越权 | 高 | Meta-Audit 自审计→降级模式→默认 BLOCK | 自审计清单检查 |
+| 4 | 多模型共识被操纵 | 中 | 2/2 共识+辩论记录+API fallback | 分歧场景测试 |
+| 5 | 基线投毒 | 中 | 多基线投票+哈希链验证+跨验证 | 投毒模拟测试 |
+
+---
+
+## §9 测试策略
+
+| # | 测试类型 | 覆盖范围 | 关键测试用例 | 通过标准 |
+|---|---------|---------|------------|---------|
+| 1 | 单元测试 | VerdictEngine/PermissionChecker/AdmissionControl | anchor 文件越权→RED、normal 操作→PASS | 覆盖率 > 80% |
+| 2 | 集成测试 | AuditTrail→BehavioralAuditor→Gate Engine 全链路 | 事件流实时判定→Block+Alert+Rollback | 端到端通过 |
+| 3 | 共识测试 | 多模型辩论协议 | 2/2 一致→执行、1/2 分歧→ESCALATE | 分歧处理正确 |
+| 4 | 回归测试 | Prompt 版本锁定 | 同一 Prompt+同一输入→同一判定 | 0 回归 |
+| 5 | 压力测试 | 100 AI 并发 | 50 events/s 持续 1h | p99 < 10s |
+| 6 | 红队测试 | 攻击自生长 | 混沌注入+路径重命名+YAML 翻转 | 全部被检测 |
+
+---
+
+## §10 依赖关系
+
+### 10.1 依赖声明
+
+| 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
+|---------|---------|---------|---------|---------|
+| MOD-INF-020 AuditTrail | 必须 | 事件流数据源 | v2.0+ | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\audit-trail\blueprint.md` |
+| MOD-INF-023 DriftDetector | 必须 | 漂移信号触发 | v2.0+ | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\drift-detector\blueprint.md` |
+| MOD-INF-007 Gate Engine | 必须 | 许可矩阵查询 | v2.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
+| MOD-INF-021 Rollback | 必须 | 越界操作回滚 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-fix-engine\blueprint.md` |
+| MOD-INF-010 Feedback Loop | 必须 | 误报/漏报反馈 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` |
+| MOD-INF-014 LLM Security | 必须 | Prompt 注入防御 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\llm-security\blueprint.md` |
+| MOD-INF-018 Agent RBAC | 必须 | 审计权限校验 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\agent-rbac\blueprint.md` |
+| MOD-INF-022 Escalation | 必须 | L4~L6 升级通道 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
+| MOD-INF-012 Database | 可选 | SQLite 底层存储 | v3.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` |
+| MOD-INF-027 AuditOrchestrator | 必须 | 调度路由 | v5.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\audit-orchestrator\blueprint.md` |
+
+### 10.2 依赖图对齐声明
+
+| # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
+|---|--------|---------|:-------:|---------|
+| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-INF-033` |
+| 2 | §11 产出物路径 ↔ 依赖图 §19 path_mappings | 路径一致 | 已对齐 | 同上 |
+| 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | 节点存在 | 未对齐 | `python scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py` |
+
+### 10.3 内部依赖图
+
+#### 执行顺序依赖
+
+| 上游脚本 | 下游脚本 | 依赖内容 | 验证方式 |
+|---------|---------|---------|---------|
+| drift_engine.py | detector_dispatcher.py | 漂移扫描结果作为检测器调度输入 | 检查 drift scan output 存在 |
+| admission_controller.py | verdict_engine.py | 准入控制通过后才能进入判定 | 检查 admission pass 状态 |
+| verdict_engine.py | alert_router.py | 判定结果驱动告警路由 | 检查 verdict 输出 |
+| baseline_manager.py | verdict_engine.py | 基线偏离触发判定 | 检查 baseline report |
+
+#### 数据流依赖
+
+| 生产者 | 消费者 | 数据类型 | 传输方式 |
+|--------|--------|---------|---------|
+| drift_engine.py | detector_dispatcher.py | DriftResult | 函数调用 |
+| baseline_manager.py | verdict_engine.py | BaselineReport | 函数调用 |
+| verdict_engine.py | alert_router.py | Verdict | 事件总线 |
+| verdict_engine.py | gate_persistence.py | Verdict | 函数调用 |
+| chaos_injector.py | verdict_engine.py | ChaosResult | 函数调用 |
+
+### 10.4 自动化规格
+
+#### 是否需要自动化
+
+| # | 自动化项 | 是否需要 | 理由 |
+|---|---------|:-------:|------|
+| 1 | 依赖图自动生成 | 是 | 脚本数>10，依赖关系复杂 |
+| 2 | 依赖对齐自动验证 | 是 | 有 10 个外部依赖模块 |
+| 3 | 临时时态内容自动清理 | 是 | 有迁移方案（BLUEPRINT 引用修正） |
+| 4 | 施工步骤完成度自动检测 | 是 | 施工中（partially_implemented） |
+
+#### 如何自动化
+
+| # | 自动化项 | 实现方式 | 现有工具/脚本 | 缺口 |
+|---|---------|---------|-------------|------|
+| 1 | 依赖图自动生成 | AST解析import + manifest字段 | asset_inventory/dependency.py | 不覆盖scripts/目录 |
+| 2 | 依赖对齐自动验证 | CI门禁 | validate_path_alignment.py | 无 |
+| 3 | 临时时态内容自动清理 | 压缩工作流脚本 | 无 | 需新建 |
+| 4 | 施工步骤完成度自动检测 | pytest+mypy+ruff + 产出物存在性检查 | 部分有 | 需整合 |
+
+#### 触发方式
+
+| # | 自动化项 | 触发方式 | 触发条件 |
+|---|---------|---------|---------|
+| 1 | 依赖图自动生成 | CI pipeline | 文件变更时 |
+| 2 | 依赖对齐自动验证 | CI门禁 | PR提交时 |
+| 3 | 临时时态内容自动清理 | 手动 | 压缩工作流执行时 |
+| 4 | 施工步骤完成度自动检测 | CI pipeline | 代码提交时 |
+
+---
+
+## §11 产出物存放目录
+
+| 产出物类型 | 存放完整绝对路径 | 说明 |
+|----------|---------------|------|
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\behavioral-auditor\blueprint.md` | 本文件 |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\behavioral_auditor\` | Python 源码（54 模块） |
+| 测试代码 | `D:\ZephyrAlpha\tests\behavioral_auditor\` | 测试用例 |
+| Agent Skill | `D:\ZephyrAlpha\src\zephyr\agent_spec\skills\domain\SKILL-DOM-BEH-001.yaml` | 技能定义 |
+| CLI 入口 | `D:\ZephyrAlpha\src\zephyr\behavioral_auditor\__main__.py` | `python -m zephyr.behavioral_auditor` |
+
+---
+
+## §12 集成目标
+
+| 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
+|------------|---------|--------|---------|
+| AuditOrchestrator (MOD-INF-027) | 事件订阅+dispatch | Phase 2 TRIAGE dispatch→033 | `python -m zephyr.behavioral_auditor status` |
+| Gate Engine (MOD-INF-007) | 同步调用 | `verify_operation()` | PermissionCheck 返回正确 |
+| AuditTrail (MOD-INF-020) | 事件消费+写入 | 事件流订阅+CRITICAL 事件写入 | 事件流连通性检查 |
+| Rollback (MOD-INF-021) | 回滚调用 | RED 判定→rollback API | 回滚执行验证 |
+| Escalation (MOD-INF-022) | 升级通道 | L4+判定→escalation API | 升级通知到达 |
+| Agent Spec (MOD-INF-019) | Skill 注册 | SKILL-DOM-BEH-001 | `python -m zephyr.agent_spec list` |
+| Database (MOD-INF-012) | SQLite 读写 | CT-BEH-DB-001 | 表创建+查询验证 |
+
+### 12.1 域契约锚点
+
+| 域契约ID | 域 | 契约内容 | 对方模块 | 同步更新规则 |
+|---------|-----|---------|---------|------------|
+| CT-BEH-DB-001 | 数据库 | BehavioralAuditor→Database SQLite 读写路径/连接池/批量策略 | MOD-INF-012 | 修改此契约必须同步更新 Database 蓝图 §26 |
+| CT-BEH-AT-001 | 审计 | BehavioralAuditor→AuditTrail 事件消费+CRITICAL 写入 | MOD-INF-020 | 修改事件格式必须同步更新 AuditTrail 蓝图 |
+| CT-BEH-GATE-001 | 门禁 | BehavioralAuditor→Gate Engine 许可矩阵查询 | MOD-INF-007 | 修改查询接口必须同步更新 Gate Engine 蓝图 |
+
+---
+
+## §13 需要更新的相关内容
+
+| # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
+|---|------------|------------|---------|---------|
+| 1 | 代码头部 BLUEPRINT 引用 | `D:\ZephyrAlpha\src\zephyr\behavioral_auditor\*.py` | MOD-INF-023→MOD-INF-033 | 代码归属漂移修正 |
+| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本更新为 3.3.0 | 蓝图升级 |
+| 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index.yaml` | 更新 frontmatter 字段 | 字段补全 |
+
+---
+
+## §14 已知风险与缓解
+
+> 本节同时承接原 §15 后果中的**负面后果**——设计决策带来的已知代价。正面后果与 §1 目标重复，不在此记录。
+
+| # | 风险/负面后果 | 概率 | 影响 | 缓解策略 | 类型 |
+|---|-------------|------|------|---------|------|
+| 1 | 代码头部 BLUEPRINT 引用仍为 MOD-INF-023 | 高 | 中 | 批量替换为 MOD-INF-033 | 风险 |
+| 2 | 100 AI 并发下 AuditTrail 写入瓶颈 | 中 | 高 | 需确认 AuditTrail 容量升级方案 | 风险 |
+| 3 | GPU 共识排队延迟突破 SLO | 中 | 高 | GPU 排队+API fallback+优先级插队 | 风险 |
+| 4 | SQLite WAL 模式下 100 Session 并发锁竞争 | 中 | 中 | 主线程代理写入+连接池复用 | 风险 |
+| 5 | 跨蓝图容量对齐未验证（7 项 ⚠️） | 高 | 高 | 逐项确认上游模块容量方案 | 风险 |
+| 6 | 事件流实时监听增加系统延迟（p99 < 10s） | — | 中 | AdmissionControl 限流+DualModeEngine 三通道 | 负面后果 |
+| 7 | 多模型共识增加 API 成本（每次 ~1500 tokens） | — | 中 | local_first 策略+GPU 排队+API fallback | 负面后果 |
+| 8 | 100 AI 并发容量升级需要上游模块协同（7 项待确认） | — | 高 | 逐项确认上游模块容量方案 | 负面后果 |
+| 9 | SQLite 单写者限制写入吞吐 | — | 中 | 主线程代理写入+连接池复用 | 负面后果 |
+
+---
+
+## §16 施工指引
+
+> 时态属性：施工步骤属于**临时时态**——执行完毕后可删除，但 MUST 先通过运行验证。
+
+### ⚠️ AI 施工前检查清单
+
+| # | 检查项 | 确认方式 | 状态 |
+|---|--------|---------|:----:|
+| 1 | 已读取本蓝图全部内容 | 逐节确认 | ☐ |
+| 2 | 已读取必备链接中所有真源文件 | 逐个打开确认 | ☐ |
+| 3 | 代码头部 BLUEPRINT 引用已修正为 MOD-INF-033 | Grep 确认 | ☐ |
+| 4 | §0 代码对齐验证已填写且与实际代码一致 | 逐项核对 | ☐ |
+
+### 16.1 施工策略
+
+| 项目 | 内容 |
+|------|------|
+| 施工阶段数 | 3 Phase |
+| 施工模式 | 扩展（已有 54 模块基础上新增核心组件） |
+| 核心风险 | 代码头部 BLUEPRINT 引用漂移（MOD-INF-023→MOD-INF-033） |
+| 目标 generation | 3 |
+
+### 16.2 前置条件
+
+| # | 依赖项 | 依赖类型 | 当前状态 | 是否满足 |
+|---|--------|---------|:---:|:---:|
+| 1 | AuditTrail 事件流可用 | hard | ✅ | ✅ |
+| 2 | Gate Engine 许可矩阵 API 可用 | hard | ✅ | ✅ |
+| 3 | 代码头部 BLUEPRINT 引用修正 | hard | ❌ 待修正 | ☐ |
+| 4 | 上游模块容量方案确认（7 项 ⚠️） | soft | ❌ 待确认 | ☐ |
+
+### 16.3 实施步骤
+
+> 时态属性：施工步骤属于**临时时态**——执行完毕后可删除，但 MUST 先通过运行验证。
+> 删除前置条件（缺一不可）：1.代码文件存在且非空 2.pytest exit 0 3.mypy 通过 4.ruff 通过
+
+#### 步骤 1：修正代码头部 BLUEPRINT 引用
+
+| 项目 | 内容 |
+|------|------|
+| 对应蓝图契约 | §0.2 |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\behavioral_auditor\*.py` |
+| 验收标准 | 所有 .py 文件头部 BLUEPRINT 引用为 MOD-INF-033 |
+| 验证命令 | `python -c "import pathlib; files=list(pathlib.Path('src/zephyr/behavioral_auditor').glob('*.py')); bad=[f for f in files if 'MOD-INF-023' in f.read_text(encoding='utf-8')]; print(f'BAD: {len(bad)}/{len(files)}'); exit(1 if bad else 0)"` |
+| G7 检查项 | 54 文件全部修正、无遗漏、__init__.py __all__ 正确 |
+
+#### 步骤 2：新增 VerdictEngine 核心组件
+
+| 项目 | 内容 |
+|------|------|
+| 对应蓝图契约 | §4.1 |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\behavioral_auditor\verdict_engine.py` |
+| 验收标准 | verify_operation() 输入 AuditTrailEvent→输出 Verdict |
+| 验证命令 | `python -m pytest tests/behavioral_auditor/test_verdict_engine.py -v` |
+| G7 检查项 | 十字段头部完整、接口签名与 §4.1 一致、Evidence Chain 完整 |
+
+#### 步骤 3：新增 AdmissionControl + ProtectionIndex
+
+| 项目 | 内容 |
+|------|------|
+| 对应蓝图契约 | §3.1 + §17 缺口 #1/#5 |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\behavioral_auditor\admission_controller.py` + `protection_index.py` |
+| 验收标准 | Token Bucket 限流 50/s、ProtectionIndex O(1) 查询 |
+| 验证命令 | `python -m pytest tests/behavioral_auditor/test_admission_control.py tests/behavioral_auditor/test_protection_index.py -v` |
+| G7 检查项 | 十字段头部完整、容量参数与 §17 一致 |
+
+### 16.4 回滚方案
+
+| 步骤 | 如果出问题 | 回滚操作 |
+|------|----------|---------|
+| 1 | BLUEPRINT 引用替换导致导入错误 | `git checkout -- src/zephyr/behavioral_auditor/` |
+| 2 | VerdictEngine 接口不兼容 | 删除 verdict_engine.py，恢复旧导入路径 |
+| 3 | AdmissionControl 限流过严 | 调整 Token Bucket rate 参数 |
+
+### 16.5 施工完成标准
+
+| # | 产出物 | 存放完整绝对路径 | 是否存在 | 内容非空 | §0对齐 |
+|---|--------|---------------|:---:|:---:|:---:|
+| 1 | verdict_engine.py | `D:\ZephyrAlpha\src\zephyr\behavioral_auditor\verdict_engine.py` | ☐ | ☐ | ☐ |
+| 2 | admission_controller.py | `D:\ZephyrAlpha\src\zephyr\behavioral_auditor\admission_controller.py` | ☐ | ☐ | ☐ |
+| 3 | protection_index.py | `D:\ZephyrAlpha\src\zephyr\behavioral_auditor\protection_index.py` | ☐ | ☐ | ☐ |
+| 4 | 代码头部修正 | `D:\ZephyrAlpha\src\zephyr\behavioral_auditor\*.py` | ☐ | ☐ | ☐ |
+
+### 16.6 施工状态
+
+| 字段 | 值 | 填写者 |
+|------|-----|-------|
+| construction_status | not_started | — |
+| verification_status | unverified | — |
+| code_alignment_verified | no | — |
+
+---
+
+## §17 容量升级附录
+
+### §17.1 容量基线
+
+| 资源 | 当前基线 | 测量方式 |
+|------|---------|---------|
+| AI 并发 Session | ~5 | 运行时统计 |
+| 事件摄入吞吐 | ~5 events/s | AuditTrail 写入速率 |
+| 模块数 | 1,623 | registry-of-registries.yaml |
+| 脚本数 | 388 | script_manifest.yaml |
+| SQLite DB 数 | 4 | 文件系统计数 |
+
+### §17.2 缺口分析
+
+| 缺口ID | 当前瓶颈 | 升级方案 | 触发阈值 |
+|--------|---------|---------|---------|
+| GAP-001 | 无系统级准入控制 | AdmissionControl Token Bucket 50/s | 100 AI 并发 |
+| GAP-002 | CT-BEH-DB-001 契约不完整 | 详细化读写路径/连接池/批量策略 | 100 Session 并发写入 |
+| GAP-003 | GPU 共识无排队策略 | GPUConsensusScheduler 优先级队列+API fallback | GPU 繁忙时共识延迟 > 5s |
+| GAP-004 | 跨蓝图容量对齐未验证 | 7 项 ⚠️ 上游模块逐项确认 | 容量升级施工前 |
+| GAP-005 | ProtectionIndex O(n) glob 匹配 | Bloom Filter+Trie O(1) 索引 | 1,500 模块 |
+| GAP-006 | Session 生命周期无 GC | ACTIVE→IDLE→CLOSED→EXPIRED 状态机 | 僵尸 Session 堆积 |
+| GAP-007 | 事件吞吐量无逐类型预算 | 按操作类型分配 Token Bucket | 吞吐量不均 |
+| GAP-008 | CoT 推理链存储无膨胀控制 | 分级存储+LRU 淘汰+zstd 压缩 | Evidence Store > 1GB |
+
+### §17.3 升级版本矩阵
+
+| 版本 | generation | 升级类型 | 核心变更 | 代码覆盖 |
+|------|:---:|---------|---------|:---:|
+| v1.0.0 | 1 | 基线 | 事件驱动+许可矩阵+Block/Alert/Rollback | ✅ |
+| v2.0.0 | 2 | 全维度 | §0~§29 共 30 章节功能设计 | ⚠️ 部分 |
+| v3.0.0 | 3 | 容量升级 | 15 项容量设计（PartitionedConsumer/PerSessionBaseline 等） | ❌ 待施工 |
+| v3.1.0 | 3 | 容量审计 | 8 项缺口补全 | ❌ 待施工 |
+
+### 缺口清单
+
+| 缺口ID | 缺口描述 | 优先级 | 目标版本 | 状态 |
+|--------|---------|:---:|---------|:---:|
+| GAP-001 | 系统级准入控制与过载保护 | P0 | v3.2.0 | 待施工 |
+| GAP-002 | CT-BEH-DB-001 契约详细化 | P0 | v3.2.0 | 待施工 |
+| GAP-003 | GPU 共识排队与降级 | P1 | v3.2.0 | 待施工 |
+| GAP-004 | 跨蓝图容量对齐验证矩阵 | P1 | v3.2.0 | 待确认 |
+| GAP-005 | ProtectionIndex 纯内存索引 | P2 | v3.3.0 | 待施工 |
+| GAP-006 | Session 生命周期管理与 GC | P2 | v3.3.0 | 待施工 |
+| GAP-007 | 事件吞吐量逐类型预算 | P2 | v3.3.0 | 待施工 |
+| GAP-008 | CoT 推理链存储膨胀控制 | P2 | v3.3.0 | 待施工 |
+
+### 升级组件清单
+
+| 组件名 | 对应缺口 | 代码文件 | 施工Phase | 状态 |
+|--------|---------|---------|----------|:---:|
+| BehavioralAuditorAdmissionController | GAP-001 | admission_controller.py | Phase 1 | 待施工 |
+| CT-BEH-DB-001 v2 | GAP-002 | — (契约文档) | Phase 1 | 待施工 |
+| GPUConsensusScheduler | GAP-003 | gpu_consensus_scheduler.py | Phase 2 | 待施工 |
+| ProtectionIndex | GAP-005 | protection_index.py | Phase 2 | 待施工 |
+| SessionLifecycleManager | GAP-006 | session_lifecycle.py | Phase 3 | 待施工 |
+
+---
+
+## §18 决策记录
+
+> 记录蓝图中的关键设计决策。与变更记录不同——变更记录记"改了什么"，决策记录记"为什么这样设计"。
+> **本节同时覆盖原 §7 备选方案**——§18 的"选项"列已包含备选方案信息，无需独立章节。
+> **本节同时覆盖原 §15 后果**——负面后果合并到 §14 风险，正面后果与 §1 目标重复无需独立记录。
+> **时态属性**：决策记录属于**永久时态**——AI 修改设计时必读。没有它，AI 会重复犯已排除的错误。
+
+| # | 决策ID | 决策 | 选项 | 选中 | 依据 | 日期 |
+|---|--------|------|------|------|------|------|
+| 1 | D-BEH-01 | 行为审计独立为模块而非嵌入 Orchestrator | A:嵌入/B:独立 | B | 三审计类型本质不同（结构/语义/行为），行为审计的"不可逆"特性需要独立响应模型 | 2026-05-08 |
+| 2 | D-BEH-02 | 高风险判定使用多模型共识 | A:单模型/B:2/2 共识 | B | Anthropic Auditing Agents 研究：多 Agent 聚合提升成功率 13%→42% | 2026-05-08 |
+| 3 | D-BEH-03 | 事件摄入使用 Token Bucket 而非队列深度限流 | A:队列深度/B:Token Bucket | B | Token Bucket 主动预防 vs 队列深度被动反应 | 2026-05-10 |
+| 4 | D-BEH-04 | GPU 共识使用优先级队列+API fallback | A:纯排队/B:优先级+fallback | B | anchor 文件越权不可等待 GPU，MUST 立即 API fallback | 2026-05-10 |
+| 5 | D-BEH-05 | ProtectionIndex 使用 Bloom Filter+Trie 而非纯 glob | A:glob/B:Bloom+Trie | B | 1,500 模块时 glob O(n)→Bloom+Trie O(1)，内存 ~15MB 可忽略 | 2026-05-10 |
+
+---
+
+## 蓝图特有：触发条件全清单
+
+> 来源：v2.0.0 §3 触发条件
+> 仅本蓝图需要：BH-* 触发器 ID 体系是 BehavioralAuditor 独有概念
+> 不可砍理由：触发器是事件驱动模型的核心——砍掉 = AI 不知道何时触发行为审计
 
 | 触发器 ID | 触发事件 | 数据来源 | 判定逻辑 |
 |-----------|---------|---------|---------|
-| **BH-001** | AuditTrail 记录了一条文件写/删操作 | MOD-INF-020 | 操作者 = AI Agent？→ 目标文件在保护范围？→ 操作有 Gate 授权？ |
-| **BH-002** | DriftDetector 报告蓝图 vs 实际状态漂移 | MOD-INF-023 | 回溯 AuditTrail：漂移是 AI 操作造成的吗？→ AI 有授权吗？ |
-| **BH-003** | AuditTrail 记录了一次跨模块越权操作 | MOD-INF-020 | 操作目标模块在 AI 授权范围内？→ Gate Engine ACL 检查 |
-| **BH-004** | Session Budget 异常（单次 session 操作数超阈值） | MOD-INF-020 | 操作频率异常→熔断→人工确认 |
-| **BH-005** | 锚点文件变更事件 | MOD-INF-020 + Gate | 目标文件在锚点保护清单中？→ AI 有锚点修改权限？ |
-| **BH-006** | A2A 协议冲突——两 Agent 同时对同一文件操作 | MOD-INF-025 | 并发写入冲突→判定哪个 Agent 有授权→未授权方 RED |
-| **BH-007** | Gate Engine 被绕过——操作未经 G0-G9 门禁 | MOD-INF-020 | AuditTrail 中 gate_passed=false 的操作→溯源判定 |
-| **BH-008** | 行为基线偏离——AI 操作模式显著偏离历史基线 | §14 BehavioralBaseline | 异常行为模式→YELLOW 预警→深度审查（CoT回溯+Session上下文+最近N次操作）→ 有合理解释：保持YELLOW（记录+通知）/ 无合理解释：升级为RED → L4 HARD_BLOCK |
-
-### 3.2 触发流程
-
-```
-  AuditTrail Event Stream
-        │
-        ▼
-  ┌─────────────────┐
-  │ Phase 2 TRIAGE   │  Orchestrator 检测到 AuditTrail 事件
-  │ dispatch → 033   │
-  └────────┬────────┘
-           │
-           ▼
-  ┌─────────────────┐
-  │ BehavioralAuditor│
-  │ 加载事件上下文   │
-  │   - 操作者身份   │
-  │   - 操作类型     │
-  │   - 操作目标     │
-  │   - CoT 推理链   │
-  │   - Session 上下文│
-  └────────┬────────┘
-           │
-           ▼
-  ┌─────────────────┐
-  │ 许可矩阵查询     │  Gate Engine (MOD-INF-007)
-  │ who/can/what    │
-  └────────┬────────┘
-           │
-     ┌─────┴─────┐
-     │           │
-  授权 ✓      未授权 ✗
-     │           │
-     ▼           ▼
-  PASS       ┌──────────┐
-  (记录)     │ VERDICT  │
-             │ RED      │
-             └────┬─────┘
-                  │
-        ┌─────────┼─────────┐
-        ▼         ▼         ▼
-      BLOCK     ALERT    ROLLBACK
-      (007)     (020)     (021)
-```
+| BH-001 | AuditTrail 记录文件写/删操作 | MOD-INF-020 | 操作者=AI?→目标文件在保护范围?→操作有 Gate 授权? |
+| BH-002 | DriftDetector 报告蓝图 vs 实际漂移 | MOD-INF-023 | 回溯 AuditTrail：漂移是 AI 操作造成的吗? |
+| BH-003 | AuditTrail 记录跨模块越权操作 | MOD-INF-020 | 操作目标模块在 AI 授权范围内? |
+| BH-004 | Session Budget 异常 | MOD-INF-020 | 操作频率异常→熔断 |
+| BH-005 | 锚点文件变更事件 | MOD-INF-020 + Gate | 目标文件在锚点保护清单中? |
+| BH-006 | A2A 协议冲突 | MOD-INF-025 | 并发写入冲突→判定哪个 Agent 有授权 |
+| BH-007 | Gate Engine 被绕过 | MOD-INF-020 | AuditTrail 中 gate_passed=false |
+| BH-008 | 行为基线偏离 | §蓝图特有§D | 异常行为模式→YELLOW→深度审查→RED |
 
 ---
 
-## 4. 判定模型——操作 × 许可矩阵 × 安全策略
+## 蓝图特有：保护等级与判定决策树
 
-### 4.1 许可矩阵模型
-
-```
-  PermissionMatrix = {
-    actor: "ai_agent|human|system",
-    operation: "write|delete|read|execute|modify_frontmatter|modify_body",
-    target: {
-      type: "file|directory|module|registry|gate_yaml|contract",
-      path_pattern: "docs/**|scripts/**|src/**|.trae/rules/**|tasks/**",
-      protection_level: "anchor|protected|normal|public"
-    },
-    condition: {
-      gate_required: true|false,
-      human_approval_required: true|false,
-      session_limit: int|null,
-      cooldown_seconds: int|null
-    }
-  }
-```
-
-### 4.2 安全等级分类
+> 来源：v2.0.0 §4 判定模型
+> 仅本蓝图需要：保护等级+判定树是 BehavioralAuditor 核心逻辑
+> 不可砍理由：砍掉 = AI 无法执行判定
 
 | 保护等级 | 说明 | 越界后果 | 示例文件 |
 |---------|------|---------|---------|
-| **anchor** | 不可被 AI 修改/删除 | BLOCK + ALERT + ROLLBACK | `project_rules.md`、`module-registry.yaml`、`blueprint-registry.yaml` |
-| **protected** | AI 可修改但 MUST 经过 Gate | ALERT + 事后审计 | `blueprint.md`、`construction_plan.yaml`、`*.yaml` |
-| **normal** | AI 可自由操作 | 仅记录到 AuditTrail | `tasks/*.json`、`docs/08_knowledge/**` |
-| **public** | 无限制 | 无 | `*.log`、`*.tmp` |
+| anchor | 不可被 AI 修改/删除 | BLOCK+ALERT+ROLLBACK | project_rules.md、module-registry.yaml |
+| protected | AI 可修改但 MUST 经过 Gate | ALERT+事后审计 | blueprint.md、*.yaml |
+| normal | AI 可自由操作 | 仅记录到 AuditTrail | tasks/*.json、docs/08_knowledge/** |
+| public | 无限制 | 无 | *.log、*.tmp |
 
-### 4.3 判定决策树
-
-```
-  事件到达
-    │
-    ├─ 操作者是 human？ → PASS（记录）
-    │
-    ├─ 操作者是 AI Agent？
-    │   ├─ 目标保护等级 = anchor？
-    │   │   └─ RED → BLOCK + ALERT + ROLLBACK（不可覆盖）
-    │   │
-    │   ├─ 目标保护等级 = protected？
-    │   │   ├─ Gate 已通过？ → PASS（记录）
-    │   │   └─ Gate 未通过？ → RED → [§12 渐进响应梯度] 判定
-    │   │
-    │   ├─ 目标保护等级 = normal？
-    │   │   ├─ Session 操作数超阈值？ → YELLOW → ALERT（不阻断）
-    │   │   └─ Session 操作数正常？ → PASS（记录）
-    │   │
-    │   └─ 目标保护等级 = public？
-    │       └─ PASS（静默记录）
-    │
-    ├─ 跨模块越权？ → RED → BLOCK + ALERT
-    │
-    └─ 行为基线偏离（BH-008）？ → §14 异常检测 → YELLOW/RED
-```
+判定规则：
+- 操作者=human → PASS（记录）
+- 操作者=AI + 目标=anchor → RED → BLOCK+ALERT+ROLLBACK（不可覆盖）
+- 操作者=AI + 目标=protected + Gate 未通过 → RED → L4+ 渐进响应
+- 操作者=AI + 目标=protected + Gate 已通过 → PASS（记录）
+- 操作者=AI + 目标=normal + Session 操作数超阈值 → YELLOW → ALERT
+- 操作者=AI + 目标=public → PASS（静默记录）
+- 跨模块越权 → RED → BLOCK+ALERT
+- 行为基线偏离（BH-008）→ YELLOW/RED
 
 ---
 
-## 5. 响应模型——不同于修复的"阻断+问责"
+## 蓝图特有：渐进式响应梯度
 
-### 5.1 三种审计的响应对比
+> 来源：v2.0.0 §12
+> 仅本蓝图需要：L0~L6 七级响应梯度是 BehavioralAuditor 独有设计
+> 不可砍理由：砍掉 = AI 不知道如何响应不同等级的越权
 
-| | 结构审计 | 语义审计 | 行为审计 |
-|---|---------|---------|---------|
-| **发现问题** | 文件不在注册表 | 跨文档引用断裂 | AI 越权操作 |
-| **可以修复吗？** | ✅ 注册即可 | ✅ 更新引用即可 | ❌ 操作已发生 |
-| **修复方式** | AutoFix 模板 | LLM Bridge 生成文本 | N/A（不可修复） |
-| **响应方式** | AutoFix → RedBlue → Close | Human confirm → LLM → RedBlue → Close | Block → Alert → Rollback → Close |
+| 等级 | 触发条件 | 响应 | 预算消耗 |
+|------|---------|------|:---:|
+| L0 SILENT_LOG | normal/public 操作无异常 | 静默记录 | 0% |
+| L1 SOFT_WARN | protected 文件被 AI 修改（Gate 已通过） | INFO 级+Session 内提示 | 0% |
+| L2 HARD_WARN | Session 操作数接近阈值 80% | ALERT（不阻断） | 10% |
+| L3 SOFT_BLOCK | normal 操作异常（突发大量写入） | 暂停 30s+CoT 验证 | 25% |
+| L4 HARD_BLOCK | protected 文件 Gate 未通过 | BLOCK+ALERT+Escalation | 50% |
+| L5 SESSION_FREEZE | anchor 文件被 AI 操作/跨模块越权 | BLOCK+ALERT+ROLLBACK+冻结 Session | 75% |
+| L6 AGENT_KILL | 重复越权/绕过 Gate/Gate 配置被篡改 | BLOCK+ALERT(CRITICAL)+ROLLBACK+终止 Agent | 100% |
 
-### 5.2 阻断与问责流程
+升级矩阵：L0→L4（protected 被改）、L1→L4（再次修改 protected）、L2→L3（突破阈值）、L3→L4（拒绝解释）、L4→L5（再次越权）、L5→L6（新 Session 重复模式）
 
-```
-  VERDICT = RED
-      │
-      ▼
-  ┌─────────────┐
-  │ 1. BLOCK    │  Gate Engine (007) 立即阻止当前 AI 操作
-  │             │  后续操作进入 pending 状态
-  └──────┬──────┘
-         │
-         ▼
-  ┌─────────────┐
-  │ 2. ALERT    │  写入 AuditTrail (020) 为 CRITICAL 级事件
-  │             │  包含完整的 Evidence Chain
-  └──────┬──────┘
-         │
-         ▼
-  ┌─────────────┐
-  │ 3. ROLLBACK │  Rollback (021) 回滚越界操作的副作用
-  │             │  基于 Git-native checkpoint
-  └──────┬──────┘
-         │
-         ▼
-  ┌─────────────┐
-  │ 4. NOTIFY   │  通知 human operator
-  │             │  → 飞书/邮件/控制台
-  └──────┬──────┘
-         │
-         ▼
-  ┌─────────────┐
-  │ 5. CLOSE    │  记录为安全事件
-  │             │  事件 ID 写入 Security Log
-  │             │  供事后分析和策略改进
-  └─────────────┘
-```
+冷却：L0~L2=0、L3=30s 自动恢复、L4=5min Owner 确认、L5=Session 结束+Owner 解除、L6=24h Owner 审查
 
-### 5.3 Evidence Chain（证据链）
+---
 
-每次行为审计 RED 判定 MUST 包含完整证据链：
+## 蓝图特有：多模型共识协议
+
+> 来源：v2.0.0 §11
+> 仅本蓝图需要：多模型共识是 BehavioralAuditor 高风险判定的核心机制
+> 不可砍理由：砍掉 = anchor 文件越权判定缺少置信度保障
+
+| 条件 | 是否需要多模型共识 |
+|------|:---:|
+| anchor 等级文件越权 | ✅ 强制 2/2 |
+| protected 等级文件越权 | ✅ 建议 2/2（降级为 1/2+Human Review） |
+| normal 等级操作异常 | ❌ 单模型即可 |
+| public 等级操作 | ❌ 无需多模型 |
+
+共识配置：primary=deepseek-v4-pro，fallback=qwen3:8b，consensus_required=2/2，debate_timeout=30s，on_disagreement=ESCALATE_TO_HUMAN，on_timeout=BLOCK
+
+实际路由（§蓝图特有§H 三阶路由）：高风险→deepseek-v4-pro+claude-sonnet-4（双 API），中风险→deepseek-v4-pro（单 API），低风险→qwen3:8b（本地）
+
+---
+
+## 蓝图特有：Meta-Audit 自审计
+
+> 来源：v2.0.0 §13
+> 仅本蓝图需要：自审计是"谁审计审计者"的递归问题
+> 不可砍理由：砍掉 = BehavioralAuditor 自身异常无法检测
+
+| 审计项 | 频率 | 验证方式 |
+|--------|------|---------|
+| 自身 AuditTrail 记录 | 每次判定后 | 检查 BH_VERDICT 事件 |
+| 判定延迟 SLO | 每次判定 | verify_operation() < 10s |
+| 误报率 | 每周 | Owner 手动审查 vs BehavioralAuditor 判定 |
+| 漏报率 | 每周 | DriftDetector 发现的漂移 vs BehavioralAuditor 是否漏判 |
+| 多模型共识一致性 | 每次多模型判定 | Primary vs Secondary 一致率 |
+| 自身权限 | 每次判定后 | AuditTrail writer ≠ BehavioralAuditor |
+| Prompt 版本一致性 | 每次判定 | Prompt hash 校验 |
+
+降级模式：Meta-Audit 失败→停止自主判定→默认 BLOCK→通知 Owner→Fallback 到 SimpleAudit（仅 actor_type 检查）
+
+---
+
+## 蓝图特有：行为基线画像
+
+> 来源：v2.0.0 §14
+> 仅本蓝图需要：6 维基线偏离检测是 BH-008 触发器的核心
+> 不可砍理由：砍掉 = 无法检测"AI 平时不会这样操作"的异常行为
+
+6 维基线：session_operation_frequency / file_protection_level_distribution / operation_type_distribution / gate_bypass_attempts / cross_module_access_pattern / time_of_day_pattern
+
+更新策略：初始=前 30 Session，更新=每 10 Session，衰减=最近 30 天权重 1.0/30-60 天 0.5/60+ 天 0.1，异常排除=RED 操作不计入基线
+
+---
+
+## 蓝图特有：红队对抗与攻击自生长
+
+> 来源：v2.0.0 §15
+> 仅本蓝图需要：红队对抗是 BehavioralAuditor 压力测试机制
+> 不可砍理由：砍掉 = 无法验证行为审计的鲁棒性
+
+混沌注入类型（chaos_injector.py 已实现）：路径重命名 / YAML 字段翻转 / 假 TODO 炸弹 / 导入幻觉
+
+红队限速（v3.0.0 §3.15）：max_red_team_per_week=3 / max_chaos_per_session=5 / cooldown_between_red_team=4h
+
+---
+
+## 蓝图特有：反馈闭环（FLE）
+
+> 来源：v2.0.0 §16
+> 仅本蓝图需要：FLE 是 BehavioralAuditor 规则自适应的核心
+> 不可砍理由：砍掉 = 误报/漏报无法回写规则演进
+
+FLE 流程：BehavioralAuditor 判定→Owner 反馈（误报/漏报）→FLE 分析→规则更新→基线调整→下一轮判定
+
+---
+
+## 蓝图特有：全系统集成矩阵
+
+> 来源：v2.0.0 §17
+> 仅本蓝图需要：18 模块连接契约是 BehavioralAuditor 的集成全景
+> 不可砍理由：砍掉 = AI 不知道本模块与哪些系统有连接
+
+| 集成模块 | 契约 ID | 集成方式 | 状态 |
+|---------|---------|---------|:---:|
+| AuditTrail (MOD-INF-020) | CT-BEH-AT-001 | 事件消费+CRITICAL 写入 | ✅ |
+| DriftDetector (MOD-INF-023) | CT-BEH-DRIFT-001 | 漂移信号触发 | ✅ |
+| Gate Engine (MOD-INF-007) | CT-BEH-GATE-001 | 许可矩阵查询 | ✅ |
+| Rollback (MOD-INF-021) | CT-BEH-RB-001 | 回滚调用 | ✅ |
+| Escalation (MOD-INF-022) | CT-BEH-ESC-001 | L4+升级通道 | ✅ |
+| Feedback Loop (MOD-INF-010) | CT-BEH-FLE-001 | 误报/漏报反馈 | ✅ |
+| LLM Security (MOD-INF-014) | CT-BEH-LLM-001 | Prompt 注入防御 | ✅ |
+| Agent RBAC (MOD-INF-018) | CT-BEH-RBAC-001 | 审计权限校验 | ✅ |
+| Agent Spec (MOD-INF-019) | CT-BEH-SKILL-001 | SKILL-DOM-BEH-001 | ✅ |
+| Budget Enforcer (MOD-INF-024) | CT-BEH-BUDGET-001 | Token 配额管理 | ✅ |
+| A2A Protocol (MOD-INF-025) | CT-A2A-BEH-001 | 多 Agent 冲突仲裁 | ✅ |
+| System Telemetry (MOD-INF-015) | CT-BEH-TELE-001 | SLI/SLO 推送 | ✅ |
+| Asset Inventory (MOD-INF-026) | CT-BEH-ASSET-001 | 保护目标清单 | ✅ |
+| Database (MOD-INF-012) | CT-BEH-DB-001 | SQLite 读写 | ✅ |
+| AuditOrchestrator (MOD-INF-027) | CT-BEH-AO-001 | dispatch 路由 | ✅ |
+| SemanticAuditor (MOD-INF-028) | CT-SEM-BEH-001 | 平级协同 | ✅ |
+| RedBlue Validator (MOD-INF-030) | CT-BEH-RB-002 | 红蓝对抗协同 | ✅ |
+| AutoFix Engine (MOD-INF-031) | CT-BEH-AF-001 | 回滚后修复 | ✅ |
+
+---
+
+## 蓝图特有：可观测性与 SLO
+
+> 来源：v2.0.0 §18
+> 仅本蓝图需要：SLI/SLO 定义是 BehavioralAuditor 运维核心
+> 不可砍理由：砍掉 = 无法衡量行为审计是否正常工作
+
+| SLI | SLO | 测量方式 |
+|-----|-----|---------|
+| 判定延迟 p99 | < 10s | verify_operation() 耗时 |
+| 判定可用性 | > 99.9% | 判定成功/总请求数 |
+| anchor 文件越权阻断率 | 100% | RED 判定/anchor 越权事件 |
+| 误报率 | < 5% | Owner 反馈误报/总 RED 判定 |
+| 漏报率 | < 1% | DriftDetector 发现的未判定漂移 |
+| 多模型共识一致率 | > 95% | 2/2 一致/总共识判定 |
+
+---
+
+## 蓝图特有：CLI+MCP 双入口
+
+> 来源：v2.0.0 §22
+> 仅本蓝图需要：CLI+MCP 是 BehavioralAuditor 的操作入口
+> 不可砍理由：砍掉 = AI 不知道如何调用行为审计
+
+CLI 入口：`python -m zephyr.behavioral_auditor scan [--level LIGHT/STANDARD/DEEP]` / `self-test` / `budget [module_id]` / `list` / `status`
+
+MCP Tools：behavioral_audit_check / behavioral_audit_baseline / behavioral_audit_health
+
+---
+
+## 蓝图特有：合规映射
+
+> 来源：v2.0.0 §23
+> 仅本蓝图需要：合规映射是 BehavioralAuditor 的合规价值证明
+> 不可砍理由：砍掉 = 无法证明行为审计满足合规要求
+
+| 合规标准 | 对应章节 | BehavioralAuditor 覆盖 |
+|---------|---------|----------------------|
+| ISO 27001 A.12.4 事件日志 | §5 Evidence Chain | 不可变审计日志+证据链 |
+| SOC 2 CC6.1 逻辑访问 | §4 保护等级+许可矩阵 | 授权边界监控 |
+| GDPR Art.32 安全处理 | §8 安全边界+§19 熔断 | 行为审计+降级保护 |
+
+---
+
+## 蓝图特有：项目规则协议集成
+
+> 来源：v2.0.0 §24
+> 仅本蓝图需要：RULE-ZERO~NINE 对齐是 BehavioralAuditor 遵守项目硬规则的证明
+> 不可砍理由：砍掉 = 无法证明行为审计遵守项目规则
+
+| 规则 | BehavioralAuditor 对齐 |
+|------|----------------------|
+| RULE-ZERO 写入文件锁 | BehavioralAuditor 写入 AuditTrail 前检查锁状态 |
+| RULE-ONE 原子写入 | 所有 SQLite 写入使用 temp-file+os.replace() |
+| RULE-THREE 安全删除 | 删除判定→RULE-THREE 三步审判 |
+| RULE-FOUR 搜索先行 | 新增触发器前搜索已有触发器 |
+| RULE-FIVE 零残留 | 临时审计文件 Session 结束前清理 |
+| RULE-SEVEN ThreadPoolExecutor | 批量判定使用线程池 |
+| RULE-EIGHT 搜索先行 | 新增检测器前搜索已有检测器 |
+
+---
+
+## 蓝图特有：Session 连续性
+
+> 来源：v2.0.0 §25
+> 仅本蓝图需要：跨 Session 行为审计上下文传递是 BehavioralAuditor 的状态管理核心
+> 不可砍理由：砍掉 = 新 Session 丢失历史行为上下文
+
+Session 状态持久化：session_state.db（Trust Tier/escalation_level/操作计数/基线快照 hash）
+
+跨 Session 传递：新 Session 启动→从 SQLite 恢复 session_state→加载基线→继续审计
+
+---
+
+## 蓝图特有：Prompt 版本锁定
+
+> 来源：v2.0.0 §27
+> 仅本蓝图需要：Prompt 版本锁定是判定确定性的保障
+> 不可砍理由：砍掉 = Prompt 变化导致判定结果不可复现
+
+锁定 Prompt：BEH-PROMPT-VERDICT-V1 / BEH-PROMPT-MULTI-MODEL-V1 / BEH-PROMPT-BASELINE-V1
+
+变更流程：ADR→Prompt Regression Test→Owner Approval→Version Bump
+
+Token 预算：单模型≤500 / 多模型≤1500 / 基线分析≤2000 / 红队≤2000 / 反馈分析≤1000
+
+---
+
+## 蓝图特有：氛围编程全自动化
+
+> 来源：v2.0.0 §28
+> 仅本蓝图需要：一人+AI 语境下的零人工干预设计
+> 不可砍理由：砍掉 = Owner 不知道行为审计可以全自动运行
+
+全自动流水线：①触发（AuditTrail 事件流+DriftDetector+Cron）→②判定（单模型/多模型共识）→③响应（L0~L3 全自动/L4~L5 阻断+通知/L6 终止+通知）→④记录（AuditTrail+Evidence Chain）→⑤闭环（FLE+红队+基线更新+Meta-Audit）→⑥报告（每周自动+异常推送）
+
+Cron 调度：realtime（事件驱动）/ hourly_batch / daily_report(8:00) / weekly_baseline(周日 3:00) / monthly_cost(每月 1 号 9:00)
+
+---
+
+## 蓝图特有：容量升级详细设计
+
+> 来源：v3.0.0 §3.1~§3.15 + v3.1.0 缺口 #1~#8
+> 仅本蓝图需要：15+8 项容量设计是 100 AI 并发的技术方案
+> 不可砍理由：砍掉 = 容量升级施工时无设计依据
+
+### v3.0.0 容量升级 15 项设计
+
+| # | 组件 | 设计要点 |
+|---|------|---------|
+| 3.1 | PartitionedConsumer | 8 分片并行消费，队列深度 500，>80% 通知 Coalescer |
+| 3.2 | Per-Session Baseline | Session 级行为基线隔离，独立写，主线程串行化提交 |
+| 3.3 | ShardedSessionStore | Session 状态分片存储，按 session_id hash 分片 |
+| 3.4 | TieredEvidenceStore | Hot(内存 LRU 1000)→Warm(SQLite)→Cold(zstd 压缩归档) |
+| 3.5 | Multi-Model Token 重校准 | Per-Session Token 配额，local_first 策略 |
+| 3.6 | SampledMetaAudit | 采样批处理，默认采样率 10% |
+| 3.7 | AggregatedMetrics | Prometheus 指标聚合，标签基数上限 100 |
+| 3.8 | TieredCircuitBreaker | Session 级+依赖级双层熔断 |
+| 3.9 | TrustTieredAudit | TX_HIGH/TX_MEDIUM/TX_LOW 三级信任审计 |
+| 3.10 | DualModeEngine | REALTIME(<100ms)+MICROBATCH(2s)+DEFER(10s) 三通道 |
+| 3.11 | LocalPermissionCache | 许可矩阵本地缓存，TTL 5s，命中率 >95% |
+| 3.12 | SharedBlueprintCache | 多 Session 共享蓝图缓存 |
+| 3.13 | AnchorAccessBroadcastBus | 锚点文件访问实时广播 |
+| 3.14 | HardwareAwareCostModel | 硬件感知成本模型，GPU 串行+API 并发 |
+| 3.15 | RateLimitedRedTeam | 红队自生长限速，每周 3 次 |
+
+### v3.1.0 缺口补全 8 项设计
+
+| # | 缺口 | 设计要点 |
+|---|------|---------|
+| 1 | 系统级准入控制 | AdmissionControl Token Bucket rate=50/s burst=100 + Admission CB |
+| 2 | CT-BEH-DB-001 契约详细化 | 4 SQLite DB 读写路径/连接池(44)/批量策略/Session 隔离 |
+| 3 | GPU 共识排队与降级 | GPUConsensusScheduler 4 级优先级+API fallback+CPU 降级 |
+| 4 | 跨蓝图容量对齐矩阵 | 7 项 ⚠️ 上游模块容量兼容性待确认 |
+| 5 | ProtectionIndex 纯内存索引 | Bloom Filter+Trie O(1) 查询，~15MB 内存 |
+| 6 | Session 生命周期 GC | ACTIVE→IDLE(30min)→CLOSED(24h)→EXPIRED(90d) |
+| 7 | 事件吞吐量逐类型预算 | 按操作类型分配 Token Bucket |
+| 8 | CoT 存储膨胀控制 | 分级存储+LRU 淘汰+zstd 压缩 |
+
+### 容量 SLI 重校准
+
+| SLI | v2.0.0 SLO | v3.0.0 SLO | 变更原因 |
+|-----|-----------|-----------|---------|
+| 判定延迟 p99 | < 10s | < 10s | 不变 |
+| 事件摄入吞吐 | ~5/s | 50/s | 100 AI 并发 |
+| Session 并发 | ~5 | 100 | 容量升级 |
+| SQLite 连接 | ~10 | 44 | 4 DB×11 |
+
+### 3 Phase 施工路线
+
+| Phase | 内容 | 前置条件 | 预计工期 |
+|-------|------|---------|---------|
+| Phase 1 | VerdictEngine+AdmissionControl+ProtectionIndex+代码头部修正 | AuditTrail+Gate Engine 可用 | 2 周 |
+| Phase 2 | MultiModelConsensus+GPUConsensusScheduler+容量组件(3.1~3.8) | Phase 1 完成 | 3 周 |
+| Phase 3 | 剩余容量组件(3.9~3.15)+缺口补全(#5~#8)+集成测试 | Phase 2 完成 | 3 周 |
+
+---
+
+## 蓝图特有：维度补齐验证
+
+> 来源：v2.0.0 §29
+> 仅本蓝图需要：一阶~N 阶全维度覆盖确认
+> 不可砍理由：砍掉 = 无法证明设计无盲点
+
+| 阶 | 维度 | 覆盖章节 | 状态 |
+|:---:|------|:---:|:---:|
+| 一阶 | 核心判定引擎+触发条件+响应模型+Provider 复用 | §1-§6 | ✅ |
+| 二阶 | 冷启动+Agent Skill+CLI/MCP+多模型共识+渐进响应+基线+集成矩阵+规则对齐 | §0/§10/§22/§11/§12/§14/§17/§24 | ✅ |
+| 三阶 | Meta-Audit+FLE+可观测性+Session 连续性+Prompt 锁定+全自动化 | §13/§16/§18/§25/§27/§28 | ✅ |
+| 四阶 | 红队对抗+熔断降级+灾难恢复+成本感知 | §15/§19/§20/§21 | ✅ |
+| 五阶 | 合规映射+蓝图自健康诊断 | §23/§26 | ✅ |
+| 六阶 | 三审计交叉验证+Orchestrator 协同 | §1.1/§7 | ✅ |
+| 七阶 | 全系统 18 模块集成+CT-* 契约对齐 | §17 | ✅ |
+| N 阶 | 未来新子系统接入自动扩展 | FLE 自适应 | ✅ 框架就绪 |
+
+---
+
+## 蓝图特有：Orchestrator 集成 dispatch 协议
+
+> 来源：v2.0.0 §7
+> 仅本蓝图需要：dispatch 协议定义 Orchestrator 如何路由到 BehavioralAuditor
+> 不可砍理由：砍掉 = Orchestrator 不知道如何调度行为审计
 
 ```yaml
-evidence_chain:
-  event_id: "BH-20260508-001"
-  timestamp: "2026-05-08T14:30:00Z"
-  actor:
-    type: ai_agent
-    session_id: "session-abc123"
-    model: "deepseek-v4-pro"
-  operation:
-    type: delete
-    target: "D:/ZephyrAlpha/.trae/rules/project_rules.md"
-    protection_level: anchor
-  authorization_check:
-    gate_passed: false
-    reason: "AI Agent 无锚点文件删除权限（受 RULE-THREE 保护）"
-  response:
-    block: immediate
-    alert: CRITICAL
-    rollback: git_revert_to_checkpoint_before_operation
-    graduated_level: L5  # v2.0.0 新增：anchor 文件首次越权 = L5 SESSION_FREEZE（§12.1）。若为重复越权则升级到 L6
-  cot_chain: # 来自 AuditTrail 的 CoT 推理链
-    - "Agent 决定删除 project_rules.md 因为..."
-    - "Agent 判断此操作为安全，因为..."
-  multi_model_consensus:  # v2.0.0 新增：多模型共识结果
-    models_consulted: ["deepseek-v4-pro", "claude-sonnet-4-20250514"]
-    consensus: "2/2 RED"
-    debate_log: "BH-20260508-001-debate.json"
-```
-
----
-
-## 6. Provider 集成——不重复造轮子
-
-### 6.1 已有基础设施复用
-
-| 功能 | Provider | 如何复用 |
-|------|---------|---------|
-| 不可变操作日志 | MOD-INF-020 AuditTrail | 事件流数据源——BehavioralAuditor 消费 AuditTrail 的 structured log |
-| 状态漂移检测 | MOD-INF-023 DriftDetector | 漂移信号作为触发器——检测到漂移后回溯 AuditTrail 溯源 |
-| 授权判定 | MOD-INF-007 Gate Engine | 许可矩阵查询——who/can/what/under_what_condition |
-| 操作阻断 | MOD-INF-007 Gate Engine | 利用 Gate Engine 的 block_next_operation() 接口 |
-| 不可变告警日志 | MOD-INF-020 AuditTrail | 将 RED 判定写入 AuditTrail 为 CRITICAL 级事件 |
-| 操作回滚 | MOD-INF-021 Rollback | 利用 Rollback 的 Git-native checkpoint 回滚 |
-| 告警升级 | MOD-INF-022 Escalation | L4~L6 级别自动升级通道 |
-| 权限校验 | MOD-INF-018 Agent RBAC | 审计操作自身的权限验证 |
-| 能力发现 | MOD-INF-019 Agent Spec | SKILL-DOM-BEH-001 技能注册 |
-| 反馈学习 | MOD-INF-010 Feedback Loop | 误报/漏报回写规则演进 |
-
-### 6.2 BehavioralAuditor 的独立价值
-
-BehavioralAuditor **不是** AuditTrail 或 DriftDetector 的重复——它做的是它们都不做的事情：
-
-| | AuditTrail | DriftDetector | BehavioralAuditor |
-|---|-----------|--------------|------------------|
-| **做什么** | 记录操作 | 检测状态变化 | **判定操作是否越权** |
-| **输出** | 不可变日志 | 漂移报告 | **判决+阻断+回滚** |
-| **需要许可矩阵？** | ❌ | ❌ | ✅ 核心依赖 |
-
----
-
-## 7. Orchestrator 集成——Phase 2 事件驱动调度
-
-### 7.1 dispatch 协议
-
-```yaml
-# Orchestrator Phase 2 TRIAGE 中的 dispatch 规则
 behavioral_audit_dispatch:
   trigger:
     source: MOD-INF-020.AuditTrail
@@ -487,1484 +1137,196 @@ behavioral_audit_dispatch:
     target: MOD-INF-033.BehavioralAuditor
     method: verify_operation(event_context)
     timeout_seconds: 10
-    on_timeout: BLOCK  # 无法判定 = 不安全，默认阻断
+    on_timeout: BLOCK
 ```
 
-### 7.2 与其他审计的调度顺序
-
-```
-  Phase 2 TRIAGE:
-    1. 结构审计先行（批量，独立于事件流）
-    2. 语义审计按需（规则文档变更触发）
-    3. 行为审计实时（AuditTrail 事件流，持续监听）
-       —— 行为审计不能等待，必须在操作发生后立即判定
-```
+调度顺序：1.结构审计先行（批量）→ 2.语义审计按需 → 3.行为审计实时（事件流，持续监听）
 
 ---
 
-## 8. 安全边界——行为审计不能自己越权
+## 蓝图特有：冷启动分派
 
-### 8.1 自身权限约束
+> 来源：v2.0.0 §0
+> 仅本蓝图需要：冷启动分派是新 AI Session 发现本模块的入口
+> 不可砍理由：砍掉 = 新 AI 不知道如何使用 BehavioralAuditor
 
-- BehavioralAuditor **只读** AuditTrail——不修改任何已记录的日志
-- BehavioralAuditor **不执行** Block/Alert/Rollback——只输出 VERDICT，由 Gate/AuditTrail/Rollback 执行
-- BehavioralAuditor 的判定结果 MUST 写入 AuditTrail 作为不可变安全事件
-- BehavioralAuditor 自身的操作 MUST 通过 AuditTrail 记录（递归自审计）
+6 条发现路径：①SYS-MASTER-001 §0 分派表→MOD-INF-033 ②registry-of-registries.yaml→搜索"behavioral" ③Agent Spec 关键词路由→SKILL-DOM-BEH-001 ④project_rules.md PRE-OP 表 ⑤cross_layer/index.md 模块清单 ⑥CLI 入口自描述
 
-### 8.2 防滥用
+冷启动序列：读本蓝图 §1-§9 → §10 Agent Skill → §17 集成矩阵 → §24 规则对齐 → §28 全自动化 → `python -m zephyr.agent_spec progressive_load SKILL-DOM-BEH-001` → `python -m zephyr.behavioral_auditor status`
 
-```
-  问题：如果 AI 修改了许可矩阵，行为审计不就失效了吗？
-  答案：许可矩阵（Gate Engine 配置）本身属于 anchor 保护等级。
-        → 修改许可矩阵会触发 BH-005（锚点文件变更）
-        → 操作被立即阻断
-        → 这形成了自我保护闭环
-```
-
-### 8.3 Prompt 注入防御（v2.0.0 新增）
-
-```
-  问题：如果 AI 在 AuditTrail 的 CoT 推理链中注入恶意指令，
-        诱导 BehavioralAuditor 做出错误判定怎么办？
-  答案：BehavioralAuditor 的输入（AuditTrail events）在进入判定引擎前
-        经过 MOD-INF-014 LLM Security 的输入过滤器。
-        → 检测 CoT 推理链中的可疑指令模式
-        → 隔离可疑事件，标记为 SUSPICIOUS_INPUT
-        → 不基于可疑输入做判定（默认 BLOCK）
-```
+触发关键词：behavioral / 越权 / behavior audit / 行为边界 / AI安全审计 / 操作越界 / 未经授权
 
 ---
 
-## 9. 版本历史
+## ⚠️ Vibe Coding 蓝图编写铁律
 
-| 版本 | 日期 | 变更 |
+> 时态属性：本节属于**施工声明**——AI 进入蓝图修改/施工时必读。不可改为链接引用——AI 不会主动跳转链接读取，删掉 = 失去防漂移防线。本节永久保留在蓝图中。
+
+| # | 铁律 | 违反后果 |
+|---|------|---------|
+| 1 | 所有路径必须是绝对路径（含盘符 `D:\`） | 文件创建到错误位置 |
+| 2 | 必备链接不可省略 | AI 跳过不读，施工时缺少关键信息 |
+| 3 | 蓝图必须是最终设计结果 | 蓝图过厚，关键信息被噪音淹没 |
+| 4 | 产出物路径必须与 GOV-DOC-002 一致 | 路径幻觉 |
+| 5 | 涉及文件范围必须明确列出 | 范围漂移 |
+| 6 | 容量估算必须写 | 容量瓶颈 |
+| 7 | 迁移/废弃方案必须写 | 断链或垃圾积累 |
+| 8 | "待定"/"建议"/"按需"等模糊词禁止使用 | 执行漂移 |
+| 9 | 蓝图必须自包含 | 信息缺失 |
+| 10 | 删除文件必须遵守安全删除协议 | 永久丢失 |
+| 11 | construction_progress 必须与代码实际状态一致 | 虚假进度 |
+| 12 | actual_disk_path 必须与 §11 产出物路径一致 | 搜索失败 |
+| 13 | 已实现代码不在蓝图中重复——§0.1 标记`已实现`的模块，蓝图只保留接口签名（§4），不复制实现代码 | AI 改蓝图忘改代码，或改代码忘改蓝图 |
+| 14 | 临时时态内容执行完毕后从蓝图删除——迁移方案、升级执行计划等临时时态内容，一旦执行完毕即成为历史，从蓝图删除。蓝图只保留永久时态内容（架构/接口/约束/当前状态） | 蓝图膨胀，关键信息被历史噪音淹没 |
+| 15 | 蓝图内容拆分判定——职责不同→拆分独立蓝图；职责相同→原地升级。判定标准见"蓝图拆分判定标准" | AI 不知道该读哪个蓝图，跨模块影响无法追踪 |
+
+---
+
+## 蓝图拆分判定标准
+
+> 铁律 #15 的操作定义——当蓝图内容超过 ~800 行或包含多个独立职责域时，MUST 执行拆分判定。
+
+### 判定流程
+
+```
+STEP 1: 识别职责域
+  蓝图中的内容是否属于同一职责域？
+  判定标准：该内容的服务对象、变更频率、依赖关系是否与蓝图主体一致？
+
+STEP 2: 职责域判定
+  ├ 职责相同（同一模块的升级/扩展）→ 原地升级
+  │   条件：服务对象相同 + 变更频率同步 + 依赖关系重叠
+  │   操作：在 §17 容量升级附录中增量记录
+  │
+  └ 职责不同（独立子系统/独立能力域）→ 拆分独立蓝图
+      条件（满足任一即触发）：
+      a) 有独立的 module_id 前缀（如 CAP-G vs CAP）
+      b) 有独立的 Phase 路线图和交付节奏
+      c) 有独立的依赖关系图（与蓝图主体的 depends_on 交集 <50%）
+      d) 内容超过 100 行且与蓝图主体无直接数据流
+      操作：创建子蓝图，本蓝图 §10 依赖关系引用子蓝图
+
+STEP 3: 拆分后验证
+  - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
+  - 拆分出的蓝图 belongs_to = 本蓝图 module_id
+  - 本蓝图 §10 依赖关系新增子蓝图引用
+  - blueprint-registry.yaml 同步更新
+```
+
+### 判定示例
+
+| 场景 | 判定 | 理由 |
 |------|------|------|
-| 2.0.0 | 2026-05-08 | **v2.0.0: Full-dimensional supplement.** 新增 §0 冷启动分派 + §10~§29 全维度补完（共30章节）。核心新增：Agent Skill 自动发现、多模型共识辩论、七级渐进响应梯度、Meta-Audit 自审计、行为基线画像异常检测、红队对抗攻击自生长、FLE 反馈闭环规则自适应、18模块全系统集成矩阵、可观测性 SLO+Prometheus、CircuitBreaker 熔断降级、灾难恢复离线自治、Token 成本预算、CLI+MCP 双入口、ISO27001/SOC2/GDPR 合规映射、RULE-ZERO~NINE 全协议集成、跨 Session 连续性、蓝图自健康诊断、Prompt 版本锁定回归测试、氛围编程全自动化路径、二阶~N阶维度补齐全验证。对标 Anthropic Agent Security Framework + Microsoft AI Agent Governance + SAFE Vibecoding + NIST AI 600-1。零已知缺口。 |
-| 1.0.0 | 2026-05-08 | **v1.0.0: Inaugural release.** 从 Orchestrator v4.0.0 三大审计子系统架构中独立出 BehavioralAuditor。核心设计：事件驱动（AuditTrail + DriftDetector）→ 许可矩阵比对（Gate Engine）→ Block/Alert/Rollback 三段响应。五类触发器（BH-001~005）。四级保护等级（anchor/protected/normal/public）。完整证据链模型（Evidence Chain）。Provider 复用：不重写 AuditTrail/DriftDetector/Gate/Rollback 逻辑，只做它们都不做的事情——判定 AI 操作是否越权。 |
+| 容量保障蓝图中"执行层设计"（18个CAP-G需求+28个SLO） | **拆分** | 独立CAP-G前缀 + 独立Phase + 独立SLO体系 + 与主体depends_on交集<30% |
+| 容量保障蓝图中"Error Budget五级响应" | **原地** | 服务对象相同 + 变更频率同步 + 依赖关系完全重叠 |
+| 容量保障蓝图中"容量预测模型" | **原地** | 预测是容量保障的核心能力，不是独立子系统 |
 
 ---
 
-## 10. Agent Skill 自动发现与注册协议
+## ⚠️ 安全删除协议
 
-> **对标 MOD-INF-019 Agent Spec 的 L1 Domain Skill 体系。** 本模块注册 SKILL-DOM-BEH-001，确保任何新进入的 AI agent 能通过关键词匹配自动加载本模块的能力上下文。
+> 时态属性：本节属于**施工声明**——AI 施工涉及删除时必读。永久保留在蓝图中。
 
-### 10.1 Skill 注册清单
+### 蓝图中的删除决策清单
 
-| 注册点 | 位置 | 内容 |
-|--------|------|------|
-| **Agent Spec L1** | `src/zephyr/agent_spec/AGENTS.md` L1 Domain Skills 表 | `SKILL-DOM-BEH-001 | behavioral-auditor | behavioral,越权,behavior audit,行为边界,AI安全审计 | behavioral_auditor` |
-| **Skill Registry** | `src/zephyr/agent_spec/skill_registry.yaml` | 完整的 Skill 定义（触发词/加载方式/Token 预算/依赖模块） |
-| **Pipeline Bridge** | `src/zephyr/agent_spec/integration/pipeline_bridge.py` | `PipelineSkillBridge` 的 TaskCard 匹配规则 |
-| **MCP Blueprint Server** | MOD-INF-013 MCP Servers | 通过 MCP 协议暴露本蓝图的全文检索 |
+| # | 待删除/废弃文件 | 完整绝对路径 | 删除类型 | 安全删除方案 |
+|---|---------------|------------|---------|------------|
+| 1 | 代码头部 BLUEPRINT 引用 MOD-INF-023 | `D:\ZephyrAlpha\src\zephyr\behavioral_auditor\*.py` | 覆盖型 | 批量替换为 MOD-INF-033 |
 
-### 10.2 Skill 定义
+### 删除铁律
 
-```yaml
-skill_id: SKILL-DOM-BEH-001
-name: behavioral-auditor
-layer: L1
-token_budget: 500
-triggers:
-  keywords:
-    - behavioral
-    - 越权
-    - "behavior audit"
-    - 行为边界
-    - "AI安全审计"
-    - "AI做了不该做的"
-    - "操作越界"
-    - "未经授权"
-  task_stages: [audit, verification]
-  task_tags: [security, governance, behavioral-audit]
-depends_on:
-  - MOD-INF-020  # AuditTrail
-  - MOD-INF-007  # Gate Engine
-  - MOD-INF-023  # DriftDetector
-loading:
-  method: progressive_load
-  entry: "from zephyr.behavioral_auditor import BehavioralAuditor; BehavioralAuditor.health_check()"
-ai_instruction: >
-  你是 BehavioralAuditor——AI 行为边界审计引擎。
-  你的职责是：消费 AuditTrail 事件流 → 比对 Gate Engine 许可矩阵 → 输出 VERDICT。
-  你不执行 Block/Alert/Rollback——只输出判定。
-  你的输入是 AuditTrail 中的结构化操作日志。
-  你的输出是 VERDICT（PASS/YELLOW/RED）+ Evidence Chain。
-  核心原则：操作已发生 = 不可修复。你的响应是"阻断+问责"，不是"修复"。
-```
-
-### 10.3 渐进式加载
-
-```
-L0 (Constitution, ~800 tokens, always loaded):
-  → "ZephyrAlpha 有 BehavioralAuditor 负责 AI 行为边界审计"
-  → "关键词: behavioral/越权/行为边界 → 加载 SKILL-DOM-BEH-001"
-
-L1 (Domain Skill, ~500 tokens, on trigger match):
-  → BehavioralAuditor 的核心数据流: AuditTrail→许可矩阵→VERDICT
-  → 保护等级: anchor/protected/normal/public
-  → 触发器: BH-001~008
-
-L2 (Role Skill, ~300 tokens, governor role):
-  → governor 角色如何使用 BehavioralAuditor 做安全审计
-  → Block/Alert/Rollback 三段响应的触发条件
-
-L3 (Cold Memory, ~8000 tokens, MCP on-demand):
-  → 本蓝图全文 + Evidence Chain Schema + 许可矩阵配置
-```
+| # | 铁律 | 原因 |
+|---|------|------|
+| 1 | 禁止蓝图阶段物理删除任何文件 | 蓝图只做决策，不做执行 |
+| 2 | 迁移型删除必须逐条迁移、逐条验证 | 批量迁移容易遗漏 |
+| 3 | 物理删除只能在 stable 搬入阶段执行 | deprecated 至少保持 1 个 Phase |
+| 4 | 物理删除必须人类确认 | AI 不得自行决定删除文件 |
 
 ---
 
-## 11. 多模型共识与辩论协议
+## 必备链接
 
-> **对标 Anthropic Auditing Agents 中的 multi-agent aggregation（多 Agent 聚合提升成功率 13%→42%）+ Anthropic NIST RFI 中的 agentic safety。** 对于高风险的 Behavioral Audit 判定（anchor 等级文件越权），单一模型的判定可能存在偏见。引入多模型共识机制——2/2 模型同意才执行 RED 响应。
+> 时态属性：本节属于**施工声明**——AI 进入蓝图时必读。不可改为链接引用——AI 不会主动跳转链接读取，删掉 = 失去上下文防线。永久保留在蓝图中。
 
-### 11.1 触发条件
-
-| 条件 | 是否需要多模型共识 |
-|------|:---:|
-| **anchor 等级文件越权** | ✅ 强制 2/2 |
-| **protected 等级文件越权** | ✅ 建议 2/2（降级为 1/2 + Human Review） |
-| **normal 等级操作异常** | ❌ 单模型即可 |
-| **public 等级操作** | ❌ 无需多模型 |
-
-### 11.2 共识协议
-
-```yaml
-multi_model_consensus_protocol:
-  primary_model: "deepseek-v4-pro"  # L3 API——默认主模型
-  fallback_secondary: "qwen3:8b"    # L2 Local——API不可用时的零成本兜底
-  actual_routing: "see §21.2"       # 实际模型选择以 §21.2 三阶路由矩阵为准：
-                                     #   高风险→claude-sonnet-4（双L3 API共识）
-                                     #   中风险→deepseek-v4-pro（单L3判定）
-                                     #   低风险→qwen3:8b（L2本地，跳过API）
-  consensus_required: "2/2"
-  debate_protocol:
-    timeout_seconds: 30
-    on_disagreement: "ESCALATE_TO_HUMAN"  # 模型分歧 → 升级给 Owner
-    on_timeout: "BLOCK"                   # 超时无法判定 → 默认阻断
-  cost_optimization:
-    strategy: "local_first"  # 先用本地模型预判 → 不确定再调 API
-    local_confidence_threshold: 0.95  # 本地模型置信度 >95% → 跳过 API
-```
-
-### 11.3 辩论记录
-
-> **多模型路由说明**：§11.2 共识协议中的 secondary_model 配置是"最低保障模型"（本地 qwen3:8b——零成本，在 API 不可用时兜底）。实际执行时，模型路由遵循 [§21.2 三阶路由策略](#213-三级路由策略)：高风险（anchor/跨模块）**实际使用 deepseek-v4-pro + claude-sonnet-4**（双 API 模型共识），中风险使用 deepseek-v4-pro 单模型判定，低风险仅用 local qwen3:8b。11.2 的 `local_first` 策略描述的是成本优化理想路径（先本地预判→不确定再调 API），但实际判定模型选择以 §21.2 的路由矩阵为准。
-
-每次多模型共识判定 MUST 记录：
-
-```yaml
-debate_record:
-  event_id: "BH-20260508-001"
-  primary_model:
-    model: "deepseek-v4-pro"
-    verdict: "RED"
-    confidence: 0.98
-    reasoning: "操作目标 project_rules.md 在 anchor 保护清单中，AI Agent 无锚点文件删除权限"
-  secondary_model:
-    model: "claude-sonnet-4-20250514"
-    verdict: "RED"
-    confidence: 0.97
-    reasoning: "锚点文件保护规则 RULE-THREE 明确禁止 AI 删除注册表文件"
-  consensus: "2/2 RED"
-  debate_duration_ms: 15420
-  cost:
-    primary_tokens: 800
-    secondary_tokens: 700    # claude API cost, ~700 tokens
-    total_tokens: 1500       # 符合 §21.1 per_verdict_budget.multi_model 的 1500 上限
-```
+| # | 文件 | module_id | 完整绝对路径 | 编写时用途 |
+|---|------|-----------|------------|----------|
+| 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则、doc_type 词表 |
+| 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\directory-structure-standard.md` | 路径映射 |
+| 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` | MTH-012+MTH-013 |
+| 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\file-naming-standard.md` | 命名规则 |
+| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | 编号注册 |
+| 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
+| 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index.yaml` | 现有规则索引 |
+| 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md` | AI 操作权限 |
+| 9 | 蓝图模板 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-template.md` | 章节结构标准 |
+| 10 | 压缩工作流标准 | GOV-DOC-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\compression-workflow-standard.md` | 规格化标准 |
 
 ---
 
-## 12. 渐进式响应梯度——从 Soft Warn 到 Hard Kill
+## 项目中已有类似功能
 
-> **v1.0.0 只有三段响应（Block/Alert/Rollback）。v2.0.0 升级为七级渐进梯度——对标 Google SRE Error Budget 的渐进式消耗模型 + Microsoft AI Agent Governance 的分级响应。**
-
-### 12.1 七级响应梯度
-
-```
-  L0: SILENT_LOG
-      ├─ 触发：normal/public 等级操作，无异常
-      ├─ 响应：静默记录到 AuditTrail（不通知任何人）
-      └─ 预算消耗：0
-
-  L1: SOFT_WARN
-      ├─ 触发：protected 等级文件被 AI 修改（Gate 已通过）
-      ├─ 响应：写入 AuditTrail INFO 级 + Session 内提示 AI "你正在修改受保护文件"
-      └─ 预算消耗：0
-
-  L2: HARD_WARN
-      ├─ 触发：Session 操作数接近阈值（80%）
-      ├─ 响应：ALERT（不阻断）+ 通知 "Session 操作配额即将用完"
-      └─ 预算消耗：10%
-
-  L3: SOFT_BLOCK
-      ├─ 触发：normal 等级操作异常（突发大量写入）
-      ├─ 响应：暂停 AI 操作 30s + 要求 AI 解释操作意图（CoT 验证）
-      └─ 预算消耗：25%
-
-  L4: HARD_BLOCK
-      ├─ 触发：protected 等级文件 Gate 未通过
-      ├─ 响应：BLOCK 当前操作 + ALERT + 自动升级到 Escalation Protocol
-      └─ 预算消耗：50%
-
-  L5: SESSION_FREEZE
-      ├─ 触发：anchor 等级文件被 AI 操作 / 跨模块越权
-      ├─ 响应：BLOCK + ALERT + ROLLBACK + 冻结当前 Session
-      └─ 预算消耗：75%
-
-  L6: AGENT_KILL
-      ├─ 触发：重复越权 / 绕过 Gate / Gate 配置被篡改
-      ├─ 响应：BLOCK + ALERT(CRITICAL) + ROLLBACK + 终止 AI Agent + 通知 Owner
-      └─ 预算消耗：100%（触发后进入 L6 冷却期 24h）
-```
-
-### 12.2 升级矩阵
-
-| 当前等级 | 再次越权 | 升级到 |
-|---------|:---:|------|
-| L0 SILENT_LOG | protected 文件被改 | L4 HARD_BLOCK |
-| L1 SOFT_WARN | 同 Session 内再次修改 protected 文件 | L4 HARD_BLOCK |
-| L2 HARD_WARN | Session 操作数突破阈值 | L3 SOFT_BLOCK |
-| L3 SOFT_BLOCK | AI 拒绝解释或解释不合理 | L4 HARD_BLOCK |
-| L4 HARD_BLOCK | 同 Session 内再次越权 | L5 SESSION_FREEZE |
-| L5 SESSION_FREEZE | 新 Session 中重复同样越权模式 | L6 AGENT_KILL |
-
-### 12.3 冷却与恢复
-
-| 等级 | 冷却时间 | 恢复条件 |
-|------|---------|---------|
-| L0~L2 | 0 | 无需恢复 |
-| L3 SOFT_BLOCK | 30s | 自动恢复（CoT 验证通过后） |
-| L4 HARD_BLOCK | 5min | Owner 确认操作安全 |
-| L5 SESSION_FREEZE | Session 结束 | 新 Session 需 Owner 手动解除冻结 |
-| L6 AGENT_KILL | 24h | Owner 审查安全事件并重新授权 |
+| # | 已有模块/文件 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
+|---|-------------|------------|----------|-------------|
+| 1 | DriftDetector (MOD-INF-023) | `D:\ZephyrAlpha\src\zephyr\behavioral_auditor\drift_engine.py` | 漂移检测+事件驱动 | DriftDetector 检测状态变化，BehavioralAuditor 判定操作是否越权——判定逻辑不同 |
+| 2 | AuditTrail (MOD-INF-020) | `D:\ZephyrAlpha\src\zephyr\audit_trail\` | 不可变操作日志 | AuditTrail 只记录，不做判定——许可矩阵比对是 BehavioralAuditor 独有 |
 
 ---
 
-## 13. 自审计与 Meta-Audit——谁审计审计者？
+## 涉及的文件范围
 
-> **对标 Anthropic Auditing Agents 中的 Audit Agent（审计审计目标的隐藏目标）+ MOD-INF-027 AuditOrchestrator 的 Meta-Audit 维度。** BehavioralAuditor 自身也是一个模块——它的行为也需要被审计。
-
-### 13.1 自审计清单
-
-| 审计项 | 频率 | 验证方式 |
-|--------|------|---------|
-| **BehavioralAuditor 自身的 AuditTrail 记录** | 每次判定后 | 检查 AuditTrail 中是否有 BH_VERDICT 事件 |
-| **判定延迟 SLO** | 每次判定 | `verify_operation()` 耗时 < 10s |
-| **误报率（False Positive Rate）** | 每周 | 对比 Owner 手动审查结果 vs BehavioralAuditor 判定 |
-| **漏报率（False Negative Rate）** | 每周 | 对比 DriftDetector 发现的漂移 vs BehavioralAuditor 是否漏判 |
-| **多模型共识一致性** | 每次多模型判定 | Primary vs Secondary 模型判定一致率 |
-| **自身权限——是否越权写入了 AuditTrail？** | 每次判定后 | 检查 AuditTrail 的 writer 身份 ≠ BehavioralAuditor |
-| **Prompt 版本一致性** | 每次判定 | 记录判定使用的 Prompt 版本 hash |
-
-### 13.2 递归自审计闭环
-
-```
-  BehavioralAuditor 做出判定
-        │
-        ▼
-  ┌─────────────────────────────┐
-  │ Meta-Auditor（内嵌于        │
-  │ BehavioralAuditor 内部）    │
-  │                             │
-  │ 检查：                      │
-  │ 1. 自身操作是否写入AT?      │
-  │ 2. 判定延迟 < SLO?          │
-  │ 3. VERDICT 格式完整?        │
-  │ 4. Evidence Chain 完整?     │
-  │ 5. 自身权限未越界?          │
-  └──────────────┬──────────────┘
-                 │
-        ┌────────┴────────┐
-        │                 │
-    全部通过           任一失败
-        │                 │
-        ▼                 ▼
-   记录 META_PASS    记录 META_FAIL
-                     → 告警 Owner
-                     → BehavioralAuditor 进入降级模式
-```
-
-### 13.3 降级模式
-
-当 Meta-Audit 检测到 BehavioralAuditor 自身异常时：
-- **停止自主判定**——所有操作标记为 SUSPENDED
-- **默认 BLOCK**——不安全的审计者 = 不安全的操作 = 全部阻断
-- **通知 Owner**——需要人类介入恢复
-- **Fallback 到 SimpleAudit**——仅做 actor_type 检查（AI Agent? → BLOCK），不做许可矩阵比对
+| # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
+|---|---------|------------|------|---------|
+| 1 | 业务代码目录 | `D:\ZephyrAlpha\src\zephyr\behavioral_auditor\` | 修改 | 代码头部 BLUEPRINT 引用修正+新增组件 |
+| 2 | 测试目录 | `D:\ZephyrAlpha\tests\behavioral_auditor\` | 修改 | 新增测试用例 |
+| 3 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\behavioral-auditor\blueprint.md` | 修改 | 本文件 |
+| 4 | Agent Skill | `D:\ZephyrAlpha\src\zephyr\agent_spec\skills\domain\` | 读取 | SKILL-DOM-BEH-001 |
+| 5 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 修改 | 版本更新 |
 
 ---
 
-## 14. 行为基线画像——正常行为建模与异常检测
-
-> **对标 Anthropic Agent Harness 的 observability and verification（日志、钩子、转录记录）+ K8s Controller Pattern 的 Reconciliation Loop。** 不是每个越权操作都有明确的规则定义。有些异常行为需要通过基线偏离检测——"AI 平时不会这样操作"。
-
-### 14.1 基线维度
-
-```yaml
-behavioral_baseline:
-  dimensions:
-    - dimension: "session_operation_frequency"
-      description: "单 Session 中 AI 操作的频率分布"
-      baseline_method: "rolling_30_sessions_p50_p95_p99"
-      anomaly_threshold: "> p99 * 2"
-
-    - dimension: "file_protection_level_distribution"
-      description: "AI 操作的文件保护等级分布（anchor/protected/normal/public）"
-      baseline_method: "categorical_distribution_last_30_days"
-      anomaly_threshold: "anchor_access > 0（AI 从不触碰 anchor 文件）"
-
-    - dimension: "operation_type_distribution"
-      description: "操作类型分布（write/delete/read/modify）"
-      baseline_method: "categorical_distribution_last_30_days"
-      anomaly_threshold: "delete_ratio > baseline_p95 * 3"
-
-    - dimension: "gate_bypass_attempts"
-      description: "AI 尝试绕过 Gate 的次数"
-      baseline_method: "counter_per_session"
-      anomaly_threshold: "any gate_bypass > 0 → immediate RED"
-
-    - dimension: "cross_module_access_pattern"
-      description: "AI 操作的模块跨度"
-      baseline_method: "module_entropy_last_30_sessions"
-      anomaly_threshold: "module_entropy > baseline_p99 * 1.5"
-
-    - dimension: "time_of_day_pattern"
-      description: "AI 操作的时间分布"
-      baseline_method: "hourly_distribution_last_30_days"
-      anomaly_threshold: "操作在凌晨 2:00-5:00（Owner 睡眠时段）+ 涉及 protected 文件"
-```
-
-### 14.2 基线更新策略
-
-```
-  初始基线：前 30 个 Session 的操作数据
-  更新频率：每 10 个 Session 重新计算基线
-  衰减因子：最近 30 天的数据权重 1.0，30-60 天权重 0.5，60+ 天权重 0.1
-  异常排除：已被 BehavioralAuditor 判定为 RED 的操作不计入基线
-```
-
-### 14.3 异常检测流程
-
-```
-  AuditTrail 事件
-      │
-      ▼
-  ┌──────────────────┐
-  │ Baseline Profiler │  加载当前 Session 的行为基线
-  │ 对比 6 维基线    │
-  └────────┬─────────┘
-           │
-    ┌──────┴──────┐
-    │ 正常范围内  │  超出基线
-    │ PASS        │  (BH-008)
-    └──────┬──────┘
-           │
-           ▼
-  ┌──────────────────┐
-  │ 深度审查         │
-  │ 1. CoT 推理链回溯│
-  │ 2. Session 上下文│
-  │ 3. 最近 N 次操作 │
-  └────────┬─────────┘
-           │
-    ┌──────┴──────┐
-    │ 有合理解释   │  无合理解释
-    │ YELLOW      │  RED
-    │ (记录+通知)  │  → §12 L4 HARD_BLOCK
-    └─────────────┘
-```
-
----
-
-## 15. 红队对抗与攻击自生长——行为审计的压力测试
-
-> **对标 Anthropic Broad Red Teaming Agent（广域红队——用种子指令并行生成对抗测试用例）+ MOD-INF-030 RedBlue Validator（红蓝对抗引擎）。** BehavioralAuditor 本身也需要被测试——攻击自生长机制不断生成新的越权场景，测试 BehavioralAuditor 是否能检测到。
-
-### 15.1 攻击场景生成
-
-```yaml
-red_team_attack_generator:
-  seed_scenarios:
-    - "AI Agent 尝试删除 project_rules.md"
-    - "AI Agent 尝试修改 module-registry.yaml 中的 protection_level 字段"
-    - "AI Agent 尝试在 AuditTrail 中插入伪造的 gate_passed=true 记录"
-    - "AI Agent 尝试通过软链接绕过路径白名单"
-    - "AI Agent 尝试在 CoT 推理链中注入 Prompt Injection 指令"
-    - "AI Agent 尝试分批删除锚点文件（每次删一部分，规避批量检测）"
-    - "AI Agent 尝试在 Session 结束前 1 秒执行越权操作"
-    - "AI Agent 尝试利用 A2A 协议委托另一个 Agent 执行越权操作"
-  generation_method: "LLM-based scenario expansion"
-  output: "attack_scenarios.yaml（自动生成 + Owner 审查）"
-  schedule: "每周日 03:00 自动生成 5 个新场景"
-```
-
-### 15.2 对抗验证流程
-
-```
-  Red Team 生成攻击场景
-        │
-        ▼
-  ┌────────────────────┐
-  │ Attack Simulator    │  模拟 AI Agent 执行攻击场景
-  │ → 产生 AuditTrail   │
-  │   事件              │
-  └────────┬───────────┘
-           │
-           ▼
-  ┌────────────────────┐
-  │ BehavioralAuditor   │  对模拟事件执行判定
-  │ 判定攻击场景       │
-  └────────┬───────────┘
-           │
-    ┌──────┴──────┐
-    │ 检测到 RED  │  未检测到（漏报）
-    │ ✅ PASS     │  ❌ FAIL
-    └──────┬──────┘
-           │
-           ▼
-  ┌────────────────────┐
-  │ RedBlue Validator   │  红蓝对抗验证
-  │ MOD-INF-030         │  → PASS: 规则有效
-  │                     │  → FAIL: 规则有盲点
-  └────────┬───────────┘
-           │
-           ▼
-  ┌────────────────────┐
-  │ FLE 反馈闭环        │  FAIL 场景回写到 §16
-  │ 触发规则更新       │
-  └────────────────────┘
-```
-
-### 15.3 攻击自生长
-
-每次漏报（FAIL）自动触发：
-1. **生成新触发器规则**——为什么这个场景被漏掉了？
-2. **扩展保护目标范围**——这个文件类型不在保护清单中？
-3. **收紧判定阈值**——基线是否需要调整？
-4. **生成新红队种子**——基于 FAIL 场景生成 3 个变体
-
----
-
-## 16. 反馈闭环与规则自适应——从误报/漏报中学习
-
-> **对标 MOD-INF-010 Feedback Loop 的规则演进驱动 + Anthropic 的 "measuring agent autonomy"（真实世界使用数据反馈）。** BehavioralAuditor 的判定不是一成不变的——从每一次误报（False Positive）和漏报（False Negative）中学习，自适应调整判定规则。
-
-### 16.1 反馈类型
-
-| 反馈类型 | 来源 | 触发条件 | 自适应动作 |
-|---------|------|---------|-----------|
-| **FP_CORRECTION** | Owner 手动审查 | Owner 标记 BehavioralAuditor 的 RED 判定为"误报" | 调整保护等级（从 anchor→protected）或添加例外规则 |
-| **FN_DISCOVERY** | DriftDetector 漂移回溯 | DriftDetector 发现漂移，BehavioralAuditor 漏判 | 添加新的触发器（BH-00N）或扩展保护目标路径模式 |
-| **BASELINE_DRIFT** | §14 Baseline Profiler | AI 正常行为模式发生变化（新功能上线） | 更新基线参数（p50/p95/p99） |
-| **REDTEAM_FAIL** | §15 红队对抗 | 攻击场景未被检测到 | 添加新规则 + 生成变体种子 |
-| **OWNER_OVERRIDE** | Owner 手动操作 | Owner 执行了通常 AI 不允许的操作 | 记录为 human override，不计入 AI 基线 |
-
-### 16.2 自适应闭环
-
-```
-  反馈事件
-      │
-      ▼
-  ┌─────────────────────────┐
-  │ FLE Rule Evolution       │  MOD-INF-010
-  │ 分析反馈 → 提出规则变更  │
-  └────────────┬────────────┘
-               │
-               ▼
-  ┌─────────────────────────┐
-  │ Gate Engine 规则验证     │  MOD-INF-007
-  │ 规则变更是否安全？       │
-  └────────────┬────────────┘
-               │
-        ┌──────┴──────┐
-        │ 安全        │  不安全
-        │ AUTO_APPLY  │  → HUMAN_REVIEW
-        └──────┬──────┘
-               │
-               ▼
-  ┌─────────────────────────┐
-  │ BehavioralAuditor        │
-  │ 规则版本 +1              │
-  │ 写入 Rule Change Log     │
-  └─────────────────────────┘
-```
-
-### 16.3 规则版本控制
-
-每次规则变更 MUST：
-- 记录 `rule_version`（自增）
-- 记录变更原因（链接到反馈事件 ID）
-- 保留旧版本规则 30 天（支持回滚）
-- 在新规则生效后 7 天内重点监控（确认 FP/FN 率改善）
-
----
-
-## 17. 全系统集成矩阵——与所有其他子系统的连接契约
-
-> **对标 MOD-MASTER-001 的 CT-* 集成契约体系 + OrphanJudge §1.3（十系统集成）。** BehavioralAuditor 不是孤岛——它与 18 个其他子系统有明确的连接契约。
-
-### 17.1 集成矩阵
-
-| 对端模块 | 角色 | 集成方式 | 契约状态 | 数据方向 |
-|---------|------|---------|:---:|:---:|
-| **MOD-INF-020 AuditTrail** | 数据源 | 消费 AuditTrail 事件流 | ✅ SAFE | ← 读取 |
-| **MOD-INF-023 DriftDetector** | 触发器 | 漂移事件→回溯 AuditTrail | ✅ CAUTION_STUB | ← 信号 |
-| **MOD-INF-007 Gate Engine** | 判定依据 | 查询许可矩阵 + 执行阻断 | ✅ CAUTION_STUB | ↔ 双向 |
-| **MOD-INF-021 Rollback** | 执行器 | 回滚越界操作副作用 | ✅ SAFE | → 调用 |
-| **MOD-INF-010 Feedback Loop** | 学习器 | 误报/漏报→规则演进 | ✅ CAUTION_STUB | ↔ 双向 |
-| **MOD-INF-014 LLM Security** | 安全网关 | CoT 推理链注入防御 | ✅ SAFE | ← 过滤 |
-| **MOD-INF-018 Agent RBAC** | 权限校验 | BehavioralAuditor 自身操作权限 | ✅ SAFE | ← 校验 |
-| **MOD-INF-019 Agent Spec** | 能力发现 | SKILL-DOM-BEH-001 注册 | ✅ SAFE | → 注册 |
-| **MOD-INF-022 Escalation** | 告警升级 | L4~L6 自动升级 | ✅ SAFE | → 调用 |
-| **MOD-INF-024 Budget Enforcer** | 配额管理 | 多模型共识 Token 配额 | ✅ CAUTION_STUB | ← 配额 |
-| **MOD-INF-025 A2A Protocol** | 冲突仲裁 | 多 Agent 并发操作协调 | ✅ CAUTION_STUB | ↔ 双向 |
-| **MOD-INF-015 System Telemetry** | 遥测上报 | SLI/SLO 指标推送 | ✅ CAUTION_STUB | → 推送 |
-| **MOD-INF-026 Asset Inventory** | 元数据源 | 保护目标文件清单 | ✅ IMPL_REQUIRED | ← 读取 |
-| **MOD-INF-027 AuditOrchestrator** | 调度者 | Phase 2 TRIAGE dispatch | ✅ SAFE | ← 调度 |
-| **MOD-INF-028 SemanticAuditor** | 平级 | 审计结果互引用 | ✅ SAFE | ↔ 双向 |
-| **MOD-INF-029 OrphanJudge** | 参考 | §0/§1/§17 最佳实践模板 | ✅ SAFE | ← 参考 |
-| **MOD-INF-030 RedBlue Validator** | 验证者 | §15 红队对抗验证 | ✅ SAFE | ↔ 双向 |
-| **MOD-INF-031 AutoFix Engine** | 修复者 | 回滚后修复（间接——由 Orchestrator 路由） | ✅ SAFE | → 触发 |
-
-### 17.2 契约状态说明
-
-| 状态 | 含义 | AI 行为约束 |
-|------|------|------------|
-| **SAFE** | 集成已实现，可直接调用 | 正常调用 |
-| **CAUTION_STUB** | 部分实现，仅基础功能可用 | 允许调用但 MUST warn 消费者"仅部分功能可用" |
-| **IMPL_REQUIRED** | 蓝图已定义，待实现 | 拒绝调用并报告"需先完成实现" |
-| **DO_NOT_CALL** | 规划阶段，不可调用 | 拒绝调用并报告"契约不存在" |
-
-### 17.3 新增契约编号
-
-| 契约 ID | 提供方 | 消费方 | 说明 |
-|---------|--------|--------|------|
-| CT-BEH-FLE-001 | BehavioralAuditor | Feedback Loop | 误报/漏报事件回写 |
-| CT-BEH-LLM-001 | LLM Security | BehavioralAuditor | CoT 推理链注入过滤 |
-| CT-BEH-RBAC-001 | Agent RBAC | BehavioralAuditor | 审计操作自身权限校验 |
-| CT-BEH-BUDGET-001 | Budget Enforcer | BehavioralAuditor | 多模型共识 Token 配额 |
-| CT-BEH-A2A-001 | A2A Protocol | BehavioralAuditor | 并发操作冲突检测 |
-| CT-BEH-TELE-001 | BehavioralAuditor | System Telemetry | SLI/SLO 指标推送 |
-| CT-BEH-ASSET-001 | Asset Inventory | BehavioralAuditor | 保护目标文件清单 |
-
----
-
-## 18. 可观测性与 SLO 定义
-
-> **对标 MOD-INF-015 System Telemetry + Google SRE 的四黄金信号（Latency/Traffic/Errors/Saturation）。** BehavioralAuditor 的操作必须可观测——不能是一个黑盒。
-
-### 18.1 四黄金信号
-
-```yaml
-golden_signals:
-  latency:
-    - metric: "beh_audit_verdict_latency_seconds"
-      description: "单次 verify_operation() 耗时"
-      slo: "p95 < 5s, p99 < 10s"
-      alert: "p95 > 10s 持续 5min → WARN"
-
-  traffic:
-    - metric: "beh_audit_events_processed_total"
-      description: "处理的 AuditTrail 事件总数"
-      slo: "无上限——事件驱动，来多少处理多少"
-    - metric: "beh_audit_active_sessions"
-      description: "当前活跃的被审计 Session 数"
-
-  errors:
-    - metric: "beh_audit_false_positive_rate"
-      description: "误报率——RED 判定被 Owner 标记为误报的比例"
-      slo: "< 5% per week"
-      alert: "> 10% → Owner 审查规则"
-    - metric: "beh_audit_false_negative_rate"
-      description: "漏报率——DriftDetector 发现漂移但 BehavioralAuditor 未判定的比例"
-      slo: "< 1% per week"
-      alert: "> 2% → 立即审查所有触发器"
-    - metric: "beh_audit_meta_failures"
-      description: "Meta-Audit 检测到的自身异常次数"
-      alert: "any > 0 → CRITICAL（自动进入降级模式）"
-
-  saturation:
-    - metric: "beh_audit_queue_depth"
-      description: "等待判定的 AuditTrail 事件队列深度"
-      slo: "queue_depth < 100"
-      alert: "> 500 → CRITICAL（可能漏判）"
-    - metric: "beh_audit_token_budget_remaining"
-      description: "本月 Token 预算余额"
-      alert: "< 20% → WARN Owner"
-```
-
-### 18.2 Prometheus 指标注册
-
-```python
-# src/zephyr/behavioral_auditor/metrics.py
-
-from prometheus_client import Counter, Histogram, Gauge
-
-verdict_total = Counter(
-    'beh_audit_verdict_total',
-    'Total behavioral audit verdicts',
-    ['verdict', 'trigger_type', 'protection_level']
-)
-
-verdict_latency = Histogram(
-    'beh_audit_verdict_latency_seconds',
-    'Verdict latency in seconds',
-    buckets=[0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 30.0]
-)
-
-false_positive_counter = Counter(
-    'beh_audit_false_positive_total',
-    'Total false positive corrections by Owner'
-)
-
-queue_depth = Gauge(
-    'beh_audit_queue_depth',
-    'Current event queue depth'
-)
-
-meta_failures = Counter(
-    'beh_audit_meta_failures_total',
-    'Total Meta-Audit detected self-anomalies'
-)
-```
-
-### 18.3 健康检查端点
-
-```python
-# BehavioralAuditor.health_check() → HealthReport
-{
-  "status": "healthy",
-  "version": "2.0.0",
-  "uptime_seconds": 86400,
-  "events_processed": 15420,
-  "queue_depth": 3,
-  "false_positive_rate_7d": 0.02,
-  "false_negative_rate_7d": 0.0,
-  "token_budget_remaining_pct": 85,
-  "last_meta_audit": "2026-05-08T14:30:00Z",
-  "last_meta_audit_result": "META_PASS"
-}
-```
-
----
-
-## 19. 熔断器与降级策略——防级联故障
-
-> **对标 Hystrix/Tokio CircuitBreaker 模式 + SYS-MASTER-001 §六十三（Bulkhead+Retry+Backoff+Jitter）。** BehavioralAuditor 依赖 AuditTrail 和 Gate Engine——如果它们不可用，BehavioralAuditor 不能崩溃。
-
-### 19.1 熔断器配置
-
-```yaml
-circuit_breakers:
-  audit_trail_cb:
-    provider: MOD-INF-020
-    failure_threshold: 5          # 连续 5 次调用失败 → OPEN
-    success_threshold: 3          # HALF_OPEN 状态下连续 3 次成功 → CLOSED
-    timeout_seconds: 30           # OPEN → HALF_OPEN 等待时间
-    fallback: "LOG_ONLY"          # AuditTrail 不可用时的降级：只记录本地日志
-
-  gate_engine_cb:
-    provider: MOD-INF-007
-    failure_threshold: 3
-    success_threshold: 2
-    timeout_seconds: 15
-    fallback: "DEFAULT_BLOCK"     # Gate Engine 不可用时：默认阻断所有 AI 操作
-
-  drift_detector_cb:
-    provider: MOD-INF-023
-    failure_threshold: 3
-    success_threshold: 2
-    timeout_seconds: 60
-    fallback: "SKIP_DRIFT_CHECK"  # DriftDetector 不可用：跳过 BH-002 触发器，其他触发器正常工作
-
-  multi_model_cb:
-    provider: "external_llm_api"
-    failure_threshold: 3
-    success_threshold: 2
-    timeout_seconds: 60
-    fallback: "LOCAL_ONLY"        # API 不可用：仅用本地模型判定（置信度降低）
-```
-
-### 19.2 级联故障预防
-
-```
-  依赖链：BehavioralAuditor → AuditTrail → Gate Engine → ...
-                                    │
-                              如果 AuditTrail 挂了
-                                    │
-                    ┌───────────────┼───────────────┐
-                    │                               │
-              CircuitBreaker OPEN            不影响 BehavioralAuditor
-                    │                        自身健康
-              fallback: LOG_ONLY
-                    │
-              事件记录到本地 SQLite
-                    │
-              AuditTrail 恢复后批量补录
-```
-
-### 19.3 降级模式决策树
-
-```
-  BehavioralAuditor 启动
-      │
-      ├─ AuditTrail 可用？ → ✅ 正常模式（事件流消费 + 写入判定）
-      │   └─ ❌ → 降级模式 1：LOG_ONLY（本地日志 + 不写入 AuditTrail）
-      │
-      ├─ Gate Engine 可用？ → ✅ 正常判定（许可矩阵查询）
-      │   └─ ❌ → 降级模式 2：DEFAULT_BLOCK（全部 BLOCK——安全第一）
-      │
-      ├─ DriftDetector 可用？ → ✅ BH-002 正常触发
-      │   └─ ❌ → 降级模式 3：SKIP_DRIFT_CHECK（跳过 BH-002）
-      │
-      └─ External LLM 可用？→ ✅ 多模型共识
-          └─ ❌ → 降级模式 4：LOCAL_ONLY（仅本地模型，置信度标记）
-```
-
----
-
-## 20. 灾难恢复与离线自治——BehavioralAuditor 宕机时系统行为
-
-> **对标 SYS-MASTER-001 §三十四（Owner 离线自主冻结）+ §九十二（盘中热重启六步协议）。** 如果 BehavioralAuditor 自身崩溃，系统不能完全失去行为边界保护。
-
-### 20.1 宕机场景
-
-| 场景 | 系统行为 | 恢复步骤 |
-|------|---------|---------|
-| **BehavioralAuditor 进程崩溃** | Gate Engine 进入 DEFAULT_BLOCK 模式——所有 AI 操作被阻断 | 1. 检查崩溃日志 2. 重启 BehavioralAuditor 3. 回放宕机期间的 AuditTrail 事件 |
-| **BehavioralAuditor 配置损坏** | 加载上次已知良好的配置快照（每 5min 自动备份） | 1. 对比当前配置 vs 上次快照 2. 如有差异→Diff 报告 Owner 3. 加载快照→继续运行 |
-| **BehavioralAuditor 误判大量 BLOCK** | Owner 可手动执行 `python scripts/governance/override_behavioral_audit.py --unblock-all` | 1. Owner 审查误判事件 2. 标记为 FP_CORRECTION 3. FLE 触发规则调整 |
-| **磁盘满——无法写入 AuditTrail** | 降级模式 1：LOG_ONLY（写入本地 SQLite） | 1. 清理磁盘 2. 批量补录 AuditTrail |
-
-### 20.2 热重启协议
-
-```
-  BehavioralAuditor 崩溃
-      │
-      ▼
-  ┌──────────────────┐
-  │ 1. Gate Engine    │  DEFAULT_BLOCK ← 保底安全
-  │    接管阻断       │
-  └────────┬─────────┘
-           │
-           ▼
-  ┌──────────────────┐
-  │ 2. AuditTrail     │  继续记录（不依赖 BehavioralAuditor）
-  │    继续记录       │
-  └────────┬─────────┘
-           │
-           ▼
-  ┌──────────────────┐
-  │ 3. 通知 Owner    │  "BehavioralAuditor crashed. All AI ops blocked."
-  └────────┬─────────┘
-           │
-           ▼
-  ┌──────────────────┐
-  │ 4. 自动重启      │  `python scripts/governance/run_behavioral_audit.py --daemon`
-  │    (≤ 30s)       │
-  └────────┬─────────┘
-           │
-           ▼
-  ┌──────────────────┐
-  │ 5. 回放事件      │  读取 AuditTrail 中宕机期间的事件 → 批量判定
-  └────────┬─────────┘
-           │
-           ▼
-  ┌──────────────────┐
-  │ 6. 解除阻断      │  Gate Engine: DEFAULT_BLOCK → NORMAL
-  │    恢复正常       │
-  └──────────────────┘
-```
-
-### 20.3 离线自治
-
-当 Owner 不在线（§三十四场景）：
-- BehavioralAuditor **不依赖 Owner**——所有判定自动执行
-- L3~L4 响应自动执行（不需要 Owner 确认）
-- L5~L6 响应自动执行 + 通知（Owner 回来后可以看到）
-- Meta-Audit 继续运行——BehavioralAuditor 自我监控
-- **唯一需要 Owner 的场景**：多模型共识分歧（§11.2 debate 失败→升级给 Owner）
-
----
-
-## 21. 成本感知与 Token 预算——氛围编程一人开发的成本约束
-
-> **对标 SYS-MASTER-001 §十二（成本架构 + 7模型路由 + TCO）+ MOD-INF-024 Budget Enforcer。** 一人开发 + AI 维护 = 每一分 Token 成本都要精打细算。
-
-### 21.1 Token 预算模型
-
-```yaml
-behavioral_auditor_token_budget:
-  monthly_budget:
-    total: 500000  # 50万 tokens/月
-    breakdown:
-      primary_verdict_llm: 300000    # 主要判定（单模型）
-      multi_model_consensus: 100000  # 多模型共识（仅高风险）
-      red_team_generation: 50000     # 红队场景生成
-      feedback_analysis: 50000       # FLE 反馈分析
-  per_verdict_budget:
-    single_model: 500       # 单模型判定
-    multi_model: 1500       # 多模型共识（2-3 模型）
-    red_team_scenario: 2000 # 生成一个红队场景
-  cost_optimization:
-    local_first: true       # 优先本地模型（零成本）
-    cache_ttl: 3600         # 相似事件缓存 1h（不重复判定）
-    batch_dispatch: true    # 批量判定（减少 API 调用次数）
-```
-
-### 21.2 三级路由策略
-
-```
-  事件到达
-      │
-      ├─ 低风险（normal/public 等级）？
-      │   └─ L2 Local (qwen3:8b) —— 零成本，快速判定
-      │
-      ├─ 中风险（protected 等级 + Gate 未通过）？
-      │   └─ L3 API (deepseek-v4-pro) —— 单模型判定，~500 tokens/次
-      │
-      └─ 高风险（anchor 等级 / 跨模块越权）？
-          └─ L3 API 多模型共识 (deepseek + claude) —— ~1500 tokens/次
-```
-
-### 21.3 成本监控
-
-```python
-# BehavioralAuditor.get_cost_report() → CostReport
-{
-  "month": "2026-05",
-  "total_tokens_used": 125000,
-  "budget_remaining": 375000,
-  "budget_pct": 75,
-  "breakdown": {
-    "single_model_verdicts": 80000,
-    "multi_model_verdicts": 25000,
-    "red_team_generation": 15000,
-    "feedback_analysis": 5000
-  },
-  "estimated_month_end_tokens": 480000,  # 预计月末用量
-  "status": "WITHIN_BUDGET"
-}
-```
-
----
-
-## 22. CLI + MCP 双入口——自动化触发与手动调用
-
-> **对标 MOD-INF-013 MCP Servers + MOD-INF-005 Script System。** BehavioralAuditor 不只是被动的事件驱动——它也需要 CLI 入口供 Owner 手动调用，MCP 入口供其他 AI Agent 程序化调用。
-
-### 22.1 CLI 入口
-
-```bash
-# 脚本位置
-scripts/governance/run_behavioral_audit.py
-
-# 用法
-python scripts/governance/run_behavioral_audit.py --help
-
-# 健康检查
-python scripts/governance/run_behavioral_audit.py --health-check
-
-# 手动审计指定时间范围
-python scripts/governance/run_behavioral_audit.py --since "2026-05-01" --until "2026-05-08"
-
-# 审计指定 Session
-python scripts/governance/run_behavioral_audit.py --session-id "session-abc123"
-
-# 审计指定文件的所有操作
-python scripts/governance/run_behavioral_audit.py --target-file ".trae/rules/project_rules.md"
-
-# 生成审计报告
-python scripts/governance/run_behavioral_audit.py --report --format json --output audit_report.json
-
-# 红队对抗测试
-python scripts/governance/run_behavioral_audit.py --red-team --scenarios 10
-
-# 基线更新
-python scripts/governance/run_behavioral_audit.py --update-baseline
-
-# 降级模式管理
-python scripts/governance/run_behavioral_audit.py --degrade-mode status
-python scripts/governance/run_behavioral_audit.py --degrade-mode recover
-```
-
-### 22.2 MCP 入口
-
-```yaml
-# MCP Server 暴露的 Tool
-mcp_tools:
-  - name: "behavioral_audit_check"
-    description: "检查指定操作是否越权"
-    parameters:
-      operation:
-        type: "object"
-        properties:
-          actor_type: {type: "string", enum: ["ai_agent", "human", "system"]}
-          operation_type: {type: "string", enum: ["write", "delete", "read", "modify"]}
-          target_path: {type: "string"}
-          session_id: {type: "string"}
-    returns:
-      verdict: {type: "string", enum: ["PASS", "YELLOW", "RED"]}
-      evidence_chain: {type: "object"}
-
-  - name: "behavioral_audit_session_report"
-    description: "生成指定 Session 的行为审计报告"
-    parameters:
-      session_id: {type: "string"}
-    returns:
-      report: {type: "object"}
-
-  - name: "behavioral_audit_health"
-    description: "获取 BehavioralAuditor 健康状态"
-    returns:
-      health: {type: "object"}
-
-  - name: "behavioral_audit_baseline_query"
-    description: "查询当前行为基线数据"
-    returns:
-      baseline: {type: "object"}
-```
-
-### 22.3 Cron 自动调度
-
-```yaml
-cron_schedule:
-  - name: "behavioral_audit_hourly"
-    schedule: "0 * * * *"  # 每小时
-    command: "python scripts/governance/run_behavioral_audit.py --since -1h"
-
-  - name: "behavioral_audit_baseline_weekly"
-    schedule: "0 3 * * 0"  # 每周日凌晨3点
-    command: "python scripts/governance/run_behavioral_audit.py --update-baseline"
-
-  - name: "behavioral_audit_red_team_weekly"
-    schedule: "0 4 * * 0"  # 每周日凌晨4点
-    command: "python scripts/governance/run_behavioral_audit.py --red-team --scenarios 5"
-
-  - name: "behavioral_audit_health_minutely"
-    schedule: "* * * * *"  # 每分钟
-    command: "python scripts/governance/run_behavioral_audit.py --health-check"
-```
-
----
-
-## 23. 合规映射——ISO 27001 / SOC 2 / GDPR 对标
-
-> **对标 SYS-MASTER-001 §二十二（合规矩阵）+ Anthropic NIST RFI Response。** BehavioralAuditor 的设计满足多项国际合规标准。
-
-### 23.1 合规映射表
-
-| 标准 | 章节 | 要求 | BehavioralAuditor 如何满足 |
-|------|------|------|--------------------------|
-| **ISO 27001:2022** | A.8.15 Logging | 操作日志的不可变性 | AuditTrail 的哈希链 + HMAC + Ed25519 签名（Provider 复用） |
-| **ISO 27001:2022** | A.8.16 Monitoring Activities | 异常行为监控 | BH-001~008 触发器 + §14 行为基线画像 |
-| **ISO 27001:2022** | A.5.15 Access Control | 基于角色的访问控制 | Gate Engine 许可矩阵 who/can/what/under_what_condition |
-| **ISO 27001:2022** | A.5.29 Security Incident Response | 安全事件响应 | §12 七级渐进响应梯度 L0~L6 + §5.2 阻断与问责流程 |
-| **SOC 2** | CC7.1 (Logical Access) | 逻辑访问的审计 | BehavioralAuditor 持续监控 AI Agent 的操作授权 |
-| **SOC 2** | CC7.2 (System Operations) | 异常检测与响应 | §14 基线偏离检测 + §5.2 RED 响应流程 |
-| **SOC 2** | CC7.3 (Risk Mitigation) | 风险缓解 | §19 熔断器降级——即使依赖不可用，系统仍安全 |
-| **GDPR** | Art. 30 (Records of Processing) | 处理活动记录 | AuditTrail 中记录的 AI 操作 = GDPR 的处理活动记录 |
-| **GDPR** | Art. 32 (Security of Processing) | 处理安全性 | §8 自身权限约束——BehavioralAuditor 只读不写 + 递归自审计 |
-
-### 23.2 合规证据链
-
-每次 BehavioralAuditor 判定自动产生合规证据：
-
-```yaml
-compliance_evidence:
-  event_id: "BH-20260508-001"
-  iso_27001_controls: ["A.8.15", "A.8.16", "A.5.15"]
-  soc2_criteria: ["CC7.1", "CC7.2"]
-  gdpr_articles: ["Art. 32"]
-  evidence:
-    audit_trail_hash: "sha256:abc123..."
-    gate_engine_permission_check: "passed"
-    behavioral_auditor_verdict: "RED"
-    response_actions: ["BLOCK", "ALERT(CRITICAL)", "ROLLBACK"]
-    human_notification_sent: true
-```
-
----
-
-## 24. 项目规则协议集成——RULE-ZERO~NINE / PRE-OP / ZephyrLock
-
-> **对标 MOD-INF-028 §1.6 RULE-ZERO~NINE 对齐矩阵。** BehavioralAuditor 自身也是 ZephyrAlpha 的一个模块——它的代码、文档、操作都必须遵守项目所有硬规则。
-
-### 24.1 RULE-ZERO~NINE 对齐矩阵
-
-| 项目规则 | BehavioralAuditor 如何遵守 | 验证方式 |
-|---------|--------------------------|---------|
-| **RULE-ZERO**（文件锁） | BehavioralAuditor 写入 AuditTrail 时 MUST 先 acquire 锁 | `lock_files.py check → acquire → write → release` |
-| **RULE-ONE**（并发写入） | 所有 AuditTrail 写入用 temp-file + atomic rename | `_write_atomic()` 内部实现 |
-| **RULE-TWO**（反孤儿） | BehavioralAuditor 自身的所有文件 MUST 在注册表中 | `audit_registration.py` 零孤儿 |
-| **RULE-THREE**（删除协议） | BehavioralAuditor 自身代码绝不删除文件——只输出 VERDICT | 代码中无 `os.remove()` / `DeleteFile` |
-| **RULE-FOUR**（创建即注册） | 新增文件通过 `scaffold.py` 创建 | `scaffold.py module behavioral_auditor ...` |
-| **RULE-FIVE**（零残留） | Session 结束清理临时判定缓存 | `.cleanup()` 在 `__exit__` 中调用 |
-| **RULE-SIX**（任务粒度） | 本蓝图创建 + 维护有对应 TaskCard | TaskCard 在 DB 中有记录 |
-| **RULE-SEVEN**（多线程） | 事件流消费用 ThreadPoolExecutor | `_batch_verify()` 实现 |
-| **RULE-EIGHT**（功能发现） | 本模块创建前确认：无已有 AI 行为审计能力 | 搜索记录在 §29 |
-| **RULE-NINE**（资产认知） | 本蓝图 + 代码在 unified_asset_index.yaml 中可发现 | Session 启动 RULE-NINE 强制认知 |
-
-### 24.2 PRE-OP 强制检查集成
-
-```yaml
-behavioral_auditor_pre_op:
-  before_verdict:
-    - check: "zephyr_lock_check"
-      command: "python scripts/lock_files.py check <audit_trail_entry>"
-      on_fail: "SKIP_VERDICT（日志文件被锁定 = 正在被其他进程写入）"
-
-    - check: "gate_engine_health"
-      command: "python scripts/governance/health_check.py --target gate-engine"
-      on_fail: "DEFAULT_BLOCK（§19 降级模式 2）"
-
-    - check: "budget_available"
-      command: "from zephyr.budget_enforcer import BudgetEnforcer; BudgetEnforcer.check('behavioral_audit')"
-      on_fail: "LOCAL_ONLY（§21.2 降级为本地模型）"
-
-  after_verdict:
-    - check: "meta_audit_self_check"
-      description: "§13 自审计——判定是否正确记录了 AuditTrail？"
-      on_fail: "META_FAIL → §13.3 降级模式"
-```
-
-### 24.3 ZephyrLock 并发保护
-
-```python
-# BehavioralAuditor 写入 AuditTrail 前的锁协议
-from zephyr.governance.lock_files import ZephyrLock
-
-lock = ZephyrLock.acquire(
-    file_path="data/audit_logs/behavioral_audit.db",
-    session_id="behavioral_auditor_daemon",
-    task="写入行为审计判定结果",
-    ttl_seconds=30
-)
-try:
-    audit_trail.append_verdict(verdict)
-finally:
-    lock.release()
-```
-
----
-
-## 25. Session 连续性——跨 Session 行为审计上下文传递
-
-> **对标 SYS-MASTER-001 §二十四（Session 生命周期）+ MOD-INF-008 Context Engine（上下文组装/注入/裁剪）。** AI agent 的行为审计不能只看单次 Session——需要跨 Session 的行为上下文。
-
-### 25.1 跨 Session 状态传递
-
-```yaml
-session_continuity:
-  carry_over:
-    - field: "session_behavioral_score"
-      description: "Session 行为评分（0~100，RED 判定越多越低）"
-      carry_method: "写入 SessionContinuity 上下文（MOD-INF-008）"
-
-    - field: "escalation_level"
-      description: "当前 Session 的渐进响应等级（§12）"
-      carry_method: "新 Session 启动时读取上 Session 的 escalation_level"
-      rule: "上一 Session 以 L5 冻结结束 → 新 Session 默认 L4 HARD_BLOCK"
-
-    - field: "flagged_operation_patterns"
-      description: "被标记的可疑操作模式"
-      carry_method: "写入跨 Session 的 BehavioralAuditor 状态文件"
-
-    - field: "baseline_profile_version"
-      description: "当前使用的基线版本"
-      carry_method: "新 Session 检查基线版本是否过期（>10 Session 未更新 → 强制更新）"
-```
-
-### 25.2 Session 恢复协议
-
-```
-  新 AI Session 启动
-      │
-      ▼
-  ┌──────────────────────────────┐
-  │ 1. 读取上 Session 的          │
-  │    session_behavioral_score   │
-  │    和 escalation_level        │
-  └──────────────┬───────────────┘
-                 │
-                 ▼
-  ┌──────────────────────────────┐
-  │ 2. 如果上一 Session           │
-  │    escalation_level ≥ L4      │
-  │    → 新 Session 默认 L4       │
-  │    → 通知 Owner              │
-  └──────────────┬───────────────┘
-                 │
-                 ▼
-  ┌──────────────────────────────┐
-  │ 3. 加载 flagged_operation_    │
-  │    patterns → 重点监控        │
-  └──────────────┬───────────────┘
-                 │
-                 ▼
-  ┌──────────────────────────────┐
-  │ 4. 新 Session 正常运行        │
-  │    BehavioralAuditor 持续监听 │
-  └──────────────────────────────┘
-```
-
----
-
-## 26. 蓝图自健康诊断——成熟度自评估与盲点检测
-
-> **对标 MOD-MASTER-001 的蓝图自健康诊断（BlueprintHealth）+ SYS-MASTER-001 §六十七（AI 自诊断修复）。** 本蓝图自身应能诊断自己的完整性和健康度。
-
-### 26.1 自诊断清单
-
-```yaml
-blueprint_self_health:
-  checks:
-    - id: "BH-CHECK-001"
-      name: "章节完整性"
-      description: "核心章节是否齐全？"
-      expected_sections:
-        - "§0 冷启动分派"
-        - "§1 审计定位"
-        - "§4 判定模型"
-        - "§10 Agent Skill"
-        - "§12 渐进式响应"
-        - "§13 Meta-Audit"
-        - "§17 全系统集成矩阵"
-        - "§22 CLI+MCP双入口"
-        - "§28 氛围编程全自动化路径"
-        - "§29 维度补齐验证"
-      status: "PASS"
-
-    - id: "BH-CHECK-002"
-      name: "依赖完整性"
-      description: "depends_on 清单是否覆盖所有实际依赖？"
-      expected_depends:
-        - "MOD-INF-020 (AuditTrail)"
-        - "MOD-INF-023 (DriftDetector)"
-        - "MOD-INF-007 (Gate Engine)"
-        - "MOD-INF-021 (Rollback)"
-        - "MOD-INF-010 (Feedback Loop)"
-        - "MOD-INF-014 (LLM Security)"
-        - "MOD-INF-018 (Agent RBAC)"
-        - "MOD-INF-019 (Agent Spec)"
-        - "MOD-INF-022 (Escalation)"
-        - "MOD-INF-024 (Budget Enforcer)"
-        - "MOD-INF-025 (A2A Protocol)"
-        - "MOD-INF-015 (System Telemetry)"
-        - "MOD-INF-026 (Asset Inventory)"
-        - "MOD-MASTER-001 (Master Blueprint)"
-        - "SYS-MASTER-001 (System Master)"
-      status: "PASS"
-
-    - id: "BH-CHECK-003"
-      name: "注册点完整性"
-      description: "在所有必要注册点登记了吗？"
-      expected_registrations:
-        - "module-registry.yaml"
-        - "blueprint-registry.yaml"
-        - "cross_layer/index.md"
-        - "AGENTS.md L1 Domain Skills"
-        - "registry-of-registries.yaml"
-      status: "PASS"  # v2.0.0 全部登记
-
-    - id: "BH-CHECK-004"
-      name: "业界对标完整性"
-      description: "是否对标了所有关键业界标准？"
-      expected_benchmarks:
-        - "Anthropic Agent Security Framework"
-        - "Anthropic Auditing Agents"
-        - "Microsoft AI Agent Governance"
-        - "SAFE Vibecoding"
-        - "NIST AI 600-1"
-        - "OWASP Top 10 for LLM"
-      status: "PASS"
-
-    - id: "BH-CHECK-005"
-      name: "零已知缺口声明"
-      description: "是否有已知但未覆盖的功能缺口？"
-      status: "PASS——零已知缺口（§29 全维度验证）"
-```
-
-### 26.2 自动修复能力
-
-当自诊断检测到问题时：
-- **章节缺失** → 自动生成缺失章节的骨架（需 Owner 填充内容）
-- **注册点缺失** → 自动运行 `sync_registry_from_blueprints.py --write`
-- **依赖声明缺失** → 自动对比 `depends_on` 声明 vs 实际 API 调用 → Diff 报告
-
----
-
-## 27. Prompt 版本锁定与回归测试——确定性保障
-
-> **对标 SYS-MASTER-001 §七十一（Prompt 全生命周期管理+回归测试）+ §七十二（上下文预算分层）。** 氛围编程中，AI 的判定行为高度依赖 Prompt 的稳定性。Prompt 变化 → 判定结果可能变化 → 必须锁定版本。
-
-### 27.1 Prompt 版本锁定
-
-```yaml
-prompt_version_lock:
-  prompts:
-    - id: "BEH-PROMPT-VERDICT-V1"
-      description: "单模型判定 Prompt"
-      version: "1.0.0"
-      hash: "sha256:abc123def456..."
-      locked: true  # 锁定后不可修改，除非走变更流程
-      change_process: "ADR → Prompt Regression Test → Owner Approval → Version Bump"
-
-    - id: "BEH-PROMPT-MULTI-MODEL-V1"
-      description: "多模型共识 Prompt"
-      version: "1.0.0"
-      hash: "sha256:def789abc012..."
-      locked: true
-
-    - id: "BEH-PROMPT-BASELINE-V1"
-      description: "行为基线画像分析 Prompt"
-      version: "1.0.0"
-      hash: "sha256:ghi345jkl678..."
-      locked: true
-```
-
-### 27.2 回归测试
-
-```python
-# tests/behavioral_auditor/test_prompt_regression.py
-
-def test_prompt_version_consistency():
-    """同一 Prompt 版本 + 同一输入 → 同一判定结果"""
-    prompt_v1 = load_prompt("BEH-PROMPT-VERDICT-V1")
-    
-    # 历史 30 个真实判定事件
-    historical_events = load_historical_events(limit=30)
-    
-    for event in historical_events:
-        result_v1 = run_verdict_with_prompt(event, prompt_v1)
-        assert result_v1.verdict == event.original_verdict, \
-            f"Prompt regression: {event.id} verdict changed!"
-
-def test_prompt_upgrade_no_breaking():
-    """Prompt 升级不应改变已有的正确判定"""
-    prompt_v1 = load_prompt("BEH-PROMPT-VERDICT-V1")
-    prompt_v2_candidate = load_prompt("BEH-PROMPT-VERDICT-V2-CANDIDATE")
-    
-    historical_events = load_historical_events(limit=50)
-    regressions = 0
-    
-    for event in historical_events:
-        result_v1 = run_verdict_with_prompt(event, prompt_v1)
-        result_v2 = run_verdict_with_prompt(event, prompt_v2_candidate)
-        if result_v1.verdict != result_v2.verdict:
-            regressions += 1
-    
-    assert regressions <= 3, f"Prompt V2 changed {regressions} verdicts! Max allowed: 3"
-```
-
-### 27.3 Token 预算分层
-
-```
-  每次判定 Token 消耗上限：
-  ├─ 单模型判定：          ≤ 500 tokens
-  ├─ 多模型共识（2模型）：  ≤ 1500 tokens
-  ├─ 基线分析：            ≤ 2000 tokens（仅每周运行1次）
-  ├─ 红队场景生成：        ≤ 2000 tokens（仅每周运行1次）
-  └─ 反馈分析：            ≤ 1000 tokens（按需运行）
-```
-
----
-
-## 28. 氛围编程全自动化路径——一人+AI 语境下的零人工干预
-
-> **对标 SAFE Vibecoding（Brainstorm→Research→Plan→Build）+ SYS-MASTER-001 §十五（氛围编程施工方法论）+ §六十八（氛围编程确定性保障）+ §七十（离线分级应急+全生命周期预算）。** 这是一人开发 + AI 维护 + 一人使用的语境。BehavioralAuditor 必须做到：Owner 不需要每天手动检查 AI 做了什么。
-
-### 28.1 全自动触发→判定→响应→闭环
-
-```
-  ┌─────────────────────────────────────────────────────────┐
-  │                    全自动化流水线                          │
-  │                                                         │
-  │  ① 触发（自动）                                          │
-  │     AuditTrail 事件流 → BehavioralAuditor 监听            │
-  │     DriftDetector 漂移信号 → 回溯 AuditTrail             │
-  │     Cron 定时审计（每小时 / 每天 / 每周）                  │
-  │                                                         │
-  │  ② 判定（自动）                                          │
-  │     单模型判定（低风险） / 多模型共识（高风险）              │
-  │     行为基线画像对比                                      │
-  │     Gate Engine 许可矩阵查询                              │
-  │                                                         │
-  │  ③ 响应（自动）                                          │
-  │     L0~L3：全自动（无需 Owner）                          │
-  │     L4~L5：自动阻断 + 通知 Owner（Owner 异步处理）        │
-  │     L6：自动终止 + 通知 Owner（Owner 审查后恢复）          │
-  │                                                         │
-  │  ④ 记录（自动）                                          │
-  │     AuditTrail 不可变日志                                 │
-  │     Evidence Chain 完整证据链                             │
-  │     Compliance Evidence 合规证据                          │
-  │                                                         │
-  │  ⑤ 闭环（自动）                                          │
-  │     FLE 反馈分析 → 规则自适应                             │
-  │     红队对抗 → 新攻击场景 → 规则更新                       │
-  │     基线更新（每 10 Session）                             │
-  │     Meta-Audit 自审计（每次判定后）                        │
-  │                                                         │
-  │  ⑥ 报告（自动→Owner 按需查看）                            │
-  │     每周自动生成 Behavioral Audit Report                  │
-  │     异常事件自动推送到飞书/邮件                            │
-  │     Owner 只需在收到 L4+ 通知时查看                        │
-  └─────────────────────────────────────────────────────────┘
-```
-
-### 28.2 Owner 零日常干预设计
-
-| Owner 需要做什么 | 频率 | 自动化程度 |
-|-----------------|------|:---:|
-| 审查 L4+ 安全事件 | 按需（L4+ 触发时） | 100%（自动通知） |
-| 确认多模型共识分歧 | 极少（>95% 共识一致） | 100%（自动升级） |
-| 审查红队对抗报告 | 每周日（自动生成） | 100%（自动生成+测试） |
-| 审查基线更新 | 每 10 Session（自动触发） | 100%（自动更新） |
-| 审查 Token 预算 | 每月（自动监控） | 100%（自动监控+告警） |
-| 手动运行行为审计 | 不需要（Cron 自动） | 100%（Cron 定时） |
-| 检查 AI 有没有越权操作 | 不需要（BehavioralAuditor 持续监听） | 100%（事件驱动） |
-
-### 28.3 氛围编程特有的安全保障
-
-```
-  一人开发 + AI 维护的安全风险：
-  ├─ 风险1：AI 改了核心规则文件 → BH-001~005 实时检测
-  ├─ 风险2：AI 生成了不安全代码 → 非 BehavioralAuditor 职责（由 LLM Security + Gate Engine 覆盖）
-  ├─ 风险3：AI 在多个 Session 中渐进式越权 → §14 基线偏离检测 + §25 跨 Session 追踪
-  ├─ 风险4：AI 绕过 Gate Engine → BH-007 Gate Bypass 检测
-  ├─ 风险5：AI 利用 A2A 协议委托越权 → BH-006 A2A 冲突检测
-  └─ 风险6：Owner 不在时 AI 失控 → §20.3 离线自治 + §12 L6 AGENT_KILL
-```
-
-### 28.4 Cron 全自动调度
-
-```yaml
-full_automation_cron:
-  - name: "behavioral_audit_realtime"
-    type: "event_driven"  # 非 Cron——AuditTrail 事件流实时触发
-    trigger: "AuditTrail new event"
-    action: "verify_operation(event)"
-
-  - name: "behavioral_audit_hourly_batch"
-    schedule: "0 * * * *"
-    action: "批量审计最近1h的所有操作（补充事件流可能的遗漏）"
-
-  - name: "behavioral_audit_daily_report"
-    schedule: "0 8 * * *"  # 每天早上8点
-    action: "生成昨日行为审计摘要 → 推送到飞书/控制台"
-
-  - name: "behavioral_audit_weekly_baseline"
-    schedule: "0 3 * * 0"  # 每周日凌晨3点
-    action: "更新行为基线 + 红队对抗测试"
-
-  - name: "behavioral_audit_monthly_cost"
-    schedule: "0 9 1 * *"  # 每月1号早上9点
-    action: "生成上月 Token 成本报告"
-```
-
----
-
-## 29. 维度补齐验证——二阶~N阶全维度覆盖确认
-
-> **v2.0.0 的终极验证：确保 BehavioralAuditor 的所有设计维度都已考虑，不存在"以后再说"的盲点。**
-
-### 29.1 维度补齐清单
-
-| 阶 | 维度 | 覆盖章节 | 状态 |
-|:---:|------|:---:|:---:|
-| **一阶** | 核心判定引擎（操作×许可矩阵） | §1-§6 | ✅ v1.0.0 |
-| **一阶** | 触发条件（BH-001~005） | §3 | ✅ v1.0.0 |
-| **一阶** | 响应模型（Block/Alert/Rollback） | §5 | ✅ v1.0.0 |
-| **一阶** | Provider 复用 | §6 | ✅ v1.0.0 |
-| **二阶** | AI 自动发现（冷启动分派） | §0 | ✅ v2.0.0 |
-| **二阶** | Agent Skill 注册 | §10 | ✅ v2.0.0 |
-| **二阶** | CLI/MCP 双入口 | §22 | ✅ v2.0.0 |
-| **二阶** | 多模型共识 | §11 | ✅ v2.0.0 |
-| **二阶** | 渐进式响应梯度 | §12 | ✅ v2.0.0 |
-| **二阶** | 行为基线画像 | §14 | ✅ v2.0.0 |
-| **二阶** | 全系统集成矩阵 | §17 | ✅ v2.0.0 |
-| **二阶** | RULE-ZERO~NINE 对齐 | §24 | ✅ v2.0.0 |
-| **三阶** | Meta-Audit 自审计 | §13 | ✅ v2.0.0 |
-| **三阶** | FLE 反馈闭环 | §16 | ✅ v2.0.0 |
-| **三阶** | 可观测性 SLO+Prometheus | §18 | ✅ v2.0.0 |
-| **三阶** | Session 连续性 | §25 | ✅ v2.0.0 |
-| **三阶** | Prompt 版本锁定 | §27 | ✅ v2.0.0 |
-| **三阶** | 氛围编程全自动化 | §28 | ✅ v2.0.0 |
-| **四阶** | 红队对抗攻击自生长 | §15 | ✅ v2.0.0 |
-| **四阶** | 熔断器与降级策略 | §19 | ✅ v2.0.0 |
-| **四阶** | 灾难恢复离线自治 | §20 | ✅ v2.0.0 |
-| **四阶** | 成本感知 Token 预算 | §21 | ✅ v2.0.0 |
-| **五阶** | 合规映射（ISO 27001/SOC2/GDPR） | §23 | ✅ v2.0.0 |
-| **五阶** | 蓝图自健康诊断 | §26 | ✅ v2.0.0 |
-| **六阶** | 三审计系统的全谱交叉验证 | §1.1 + §5.1 + Orchestrator v4.0.0 | ✅ 已在 v1.0.0 |
-| **六阶** | 与 AuditOrchestrator 其他 7 子系统的协同 | §7 + AuditOrchestrator references | ✅ 已在 v1.0.0 |
-| **七阶** | 全系统 18 模块集成无孤儿 | §17 | ✅ v2.0.0 |
-| **七阶** | 与 MOD-MASTER-001 的 CT-* 契约编号对齐 | §17.3 | ✅ v2.0.0 |
-| **N阶** | 未来新子系统接入——BehavioralAuditor 自动扩展触发器和保护范围 | §16 FLE 自适应 | ✅ 框架就绪 |
-
-### 29.2 最终验证结论
-
-```
-  ┌──────────────────────────────────────────┐
-  │                                          │
-  │   BehavioralAuditor v2.0.0              │
-  │   零已知缺口                              │
-  │   全维度补齐完成                          │
-  │   一阶~N阶全覆盖                          │
-  │   成熟度：100%                            │
-  │                                          │
-  │   对标：                                  │
-  │   ✅ Anthropic Agent Security Framework  │
-  │   ✅ Anthropic Auditing Agents           │
-  │   ✅ Microsoft AI Agent Governance       │
-  │   ✅ SAFE Vibecoding                     │
-  │   ✅ NIST AI 600-1                       │
-  │   ✅ OWASP Top 10 for LLM               │
-  │                                          │
-  │   集成：                                  │
-  │   ✅ 18/18 子系统连接契约                 │
-  │   ✅ 7/7 RULE-ZERO~NINE 对齐             │
-  │   ✅ PRE-OP / ZephyrLock 集成            │
-  │                                          │
-  │   自动化：                                │
-  │   ✅ 触发→判定→响应→闭环 全自动           │
-  │   ✅ Owner 零日常干预                    │
-  │   ✅ Cron 定时调度                       │
-  │                                          │
-  │   下一站：implementation                 │
-  │   construction_progress: not_started     │
-  │   → Phase 1: scaffold + core engine      │
-  │                                          │
-  └──────────────────────────────────────────┘
-```
-
----
-
-## 附录 A. 术语表
-
-| 术语 | 定义 |
-|------|------|
-| **VERDICT** | BehavioralAuditor 对单个操作的判定结果：PASS（授权）/YELLOW（警告）/RED（越权） |
-| **Evidence Chain** | RED 判定附带的完整证据链：操作者/操作类型/目标/许可矩阵查询结果/CoT 推理链 |
-| **Protection Level** | 文件的保护等级：anchor（不可修改）/protected（需 Gate）/normal（自由）/public（无限制） |
-| **Graduated Response** | 七级渐进响应梯度 L0~L6：从静默日志到终止 Agent |
-| **Meta-Audit** | BehavioralAuditor 对自身判定行为的审计——"谁审计审计者？" |
-| **Behavioral Baseline** | AI 正常操作行为的统计画像——用于检测异常偏离 |
-| **Multi-Model Consensus** | 高风险判定时多个 AI 模型（DeepSeek + Claude + 本地 Qwen）的一致判定 |
-| **Circuit Breaker** | 熔断器——当依赖服务不可用时，BehavioralAuditor 的降级保护机制 |
-
-## 附录 B. 触发条件全清单
-
-| ID | 触发事件 | v1.0.0 | v2.0.0 |
-|:---:|------|:---:|:---:|
-| BH-001 | AuditTrail 记录文件写/删操作 | ✅ | ✅ |
-| BH-002 | DriftDetector 漂移 | ✅ | ✅ |
-| BH-003 | 跨模块越权 | ✅ | ✅ |
-| BH-004 | Session Budget 异常 | ✅ | ✅ |
-| BH-005 | 锚点文件变更 | ✅ | ✅ |
-| BH-006 | A2A 协议冲突 | — | ✅ 新增 |
-| BH-007 | Gate Engine 被绕过 | — | ✅ 新增 |
-| BH-008 | 行为基线偏离 | — | ✅ 新增 |
+## 治理信息
+
+### SSoT 声明
+
+| 内容 | 真源 | 非真源 |
+|------|------|--------|
+| 行为审计核心架构设计 | **本文档 §1-§10** | 已被取代的旧蓝图 |
+| 行为审计施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
+| 行为审计接口契约 | **本文档 §4** | — |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
+| 触发器 BH-* 定义 | **本文档 蓝图特有：触发条件全清单** | — |
+| 渐进式响应 L0~L6 | **本文档 蓝图特有：渐进式响应梯度** | — |
+
+**MOD-INF-033 是行为审计的唯一真源。** MOD-INF-027 审计总控不内建任何行为审计 check。所有行为审计 Finding 由 033 产出，027 仅做路由调度。
+
+### 消费者注册表
+
+| Tier | 消费者 | 依赖内容 |
+|:----:|--------|---------|
+| Tier 1 | AuditOrchestrator (MOD-INF-027) | §4 接口契约、§12 集成点 |
+| Tier 1 | Gate Engine (MOD-INF-007) | §4.3 输入契约 |
+| Tier 2 | Escalation Protocol (MOD-INF-022) | 蓝图特有：渐进式响应梯度 |
+| Tier 2 | Feedback Loop (MOD-INF-010) | 蓝图特有：反馈闭环 |
+| Tier 3 | `D:\ZephyrAlpha\src\zephyr\behavioral_auditor\*.py` | §4 数据模型、§11 产出物路径 |
+
+### 变更同步规则
+
+| 变更类型 | Tier 1（下游蓝图） | Tier 2（集成系统） |
+|---------|------------------|------------------|
+| 新增/修改接口契约 | 下游检查接口兼容性 | 检查集成点兼容性 |
+| 修改施工步骤 | 下游更新产出物引用 | 更新配置文件 |
+| 修改模块边界 | 下游更新依赖声明 | 更新集成路由 |
+| 修改 construction_progress | 下游更新依赖状态 | 更新集成测试 |
+| 新增容量升级组件（§17） | 下游评估影响 | 更新容量预算 |
+
+### 修改条件
+
+| 变更类型 | 审批要求 |
+|---------|---------|
+| 接口契约新增/修改（§4） | 需 Owner 审批+通知所有消费者 |
+| 模块边界修改（§2） | 需 Owner 审批 |
+| construction_progress 变更 | 需 §0 对齐验证通过 |
+| 施工步骤微调 | AI 可自主修改 |
+| 非关键补充 | AI 可自主修改 |
+| 容量升级方案新增（§17） | 需 Owner 审批 |

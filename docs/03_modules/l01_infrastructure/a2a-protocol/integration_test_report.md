@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # MOD-INF-025 A2A Protocol 集成测试报告 (v0.10.0)
 # 测试时间: 2026-05-07
 # 蓝图: docs/03_modules/l01_infrastructure/a2a-protocol/blueprint.md

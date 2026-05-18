@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0220
 task_title: "决策记录全量追踪——D-019-01~84 共84项设计决策实施状态矩阵"
 parent_ticket: TASK-INF-0219
@@ -47,7 +48,9 @@ rollback_instructions: "删除 decision_tracker.yaml"
 context_assembly_manifest:
   blueprint_content: "决策记录表格——84项设计决策从D-019-01到D-019-84，覆盖四层架构/multi-agent/security/economics/compliance/observability等全部维度"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0220: 84项决策全量追踪
 

@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0217
 task_title: "§19第十四轮审计-AgentTrace可观测性+SkillsBench效能校准+RAGEN自进化保真度+Token经济学+AB实验+Walkthroughs+SoloTriage + D-019-71~77"
 parent_ticket: TASK-INF-0216
@@ -53,7 +54,9 @@ rollback_instructions: "批量回退7个Python文件"
 context_assembly_manifest:
   blueprint_content: "§19 第十四轮审计——反向实证视角5小节: AgentTrace可观测性(B143) + SkillsBench效能校准(B144) + RAGEN自进化保真度(B145) + Token经济学(B146) + A/B实验+Walkthrough+SoloTriage(B147-149)"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0217: 第十四轮审计盲点关闭
 

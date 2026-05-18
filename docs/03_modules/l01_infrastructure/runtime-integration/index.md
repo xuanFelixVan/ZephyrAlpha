@@ -1,9 +1,12 @@
 ---
+
 doc_type: index
 status: active
 generated: '2026-05-02'
 updated: '2026-05-05'
+blueprint_id: DOM-GOV-001
 ---
+
 
 # Runtime Integration — 目录索引
 

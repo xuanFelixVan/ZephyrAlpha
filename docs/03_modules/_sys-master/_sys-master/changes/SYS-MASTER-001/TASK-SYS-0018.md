@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0018"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§24 会话生命周期 + §25 环境管理 + §36 人机带宽优化"
@@ -75,4 +76,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # MOD-INF-019 CHANGELOG (v0.1.0 → v0.17.0)
 
 ## v0.1.0 (2026-05-06)

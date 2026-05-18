@@ -1,11 +1,14 @@
 ---
+
 doc_type: index
 status: active
 title: "llm-security — MOD-INF-014 目录索引"
 version: "0.3.0"
 created: "2026-05-03"
 updated: "2026-05-05"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # LLM Security Gateway (MOD-INF-014)
 

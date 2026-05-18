@@ -1,21 +1,33 @@
 ---
 module_id: "MOD-INF-007"
-title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 熔断器"
+title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁域熔断器"
 doc_type: blueprint
+template_for: blueprint
 status: Draft
-version: "0.5.0"
+version: "0.8.1"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
-date: "2026-05-05"
-valid_from: "2026-05-05"
+date: "2026-05-10"
+valid_from: "2026-05-10"
 ttl: permanent
-construction_progress: phase_1_partial
+construction_progress: partially_implemented
+actual_disk_path: "src/zephyr/gates/"
 belongs_to: "MOD-MASTER-001"
-summary: "ZephyrAlpha Gate Engine 终极蓝图——G0-G7 任务门禁 + G1-G5 KMS 决策门 + GATE-16 蓝图读取合规检查（P1-2强制合规，experimental软合规WARNING + beta硬阻断P0）+ 熔断器 circuit_breaker + 门禁评估管线（排序/组合/上下文传播）+ 影子模式/渐进式激活 + Owner紧急旁路 + 可观测性/审计完整性 + 模拟/幂等/性能自保 + 版本化/生命周期 + 人机协同审批 + 自适应/状态记忆 + 健康仪表板 + **法证审计完整性（SHA-256哈希链+决策快照）+ 自我指涉硬化（GateEngineIntegrityGuard+信任根）+ 威胁模型（STRIDE+TOCTOU+AI博弈）+ 深度合规（G7D形式vs实质）**。GATE-18 pre-commit 硬阻断 + 自指防护。脚本exit code→Gate判定映射（CT-SCRIPT-GATE-001）。九重对标：ITIL Change Enablement + K8s Admission Controller + LaunchDarkly四支柱 + OpenFeature(CNCF) + Unleash/Flagsmith + Certificate Transparency(RFC 6962) + TPM measured boot + STRIDE威胁建模 + SOC 2/DORA。"
-tags: [gate-engine, gates, g0-g7, g1-g5, circuit-breaker, pre-commit, admission-controller, task-gate, kms-gate, infrastructure, shadow-mode, emergency-override, observability, gate-pipeline, gate-context, gate-simulation, hash-chain, forensic-audit, integrity-guard, threat-model, stride, deep-compliance]
+parent_module: "MOD-MASTER-001"
+last_updated: "2026-05-18"
+last_verified: "2026-05-14"
+generation: 1
+functional_domain: governance
+rule_form: structural
+scope: global
+stability: evolving
+verifiability: hybrid
+codification_level: L1
+summary: "G0-G7任务门禁+G1-G5 KMS决策门+门禁域熔断器+容量架构(10K脚本/100AI并发)+法证审计+自指硬化"
+tags: [gate-engine, gates, g0-g7, g1-g5, circuit-breaker, pre-commit, admission-controller, task-gate, kms-gate, infrastructure, shadow-mode, emergency-override, observability, gate-pipeline, gate-context, gate-simulation, hash-chain, forensic-audit, integrity-guard, threat-model, stride, deep-compliance, capacity, scalability, concurrency, sharding, dependency-graph, capacity-upgrade]
 priority: P0
 depends_on:
   - {target: "MOD-MASTER-001", at: "§2.8", why: "CT-SCRIPT-GATE-001 集成契约——脚本exit code→Gate判定"}
@@ -24,1810 +36,1596 @@ depends_on:
   - {target: "MOD-INF-006", at: "§4", why: "任务系统——Gate判定输出目标（status→BLOCKED）"}
   - {target: "MOD-KB-001", at: "§3.2", why: "知识库——G1-G5 KMS门禁判定对象"}
   - {target: "architecture-model/layers/b_gates.yaml", at: "全篇", why: "Gates YAML SSoT——本蓝图真源"}
+  - {target: "MOD-INF-001", at: "§13", why: "容量 SLO 注册表——门禁容量指标对齐 CAP-001~013"}
+  - {target: "MOD-INF-001", at: "§5", why: "容量风险注册表——R1(SQLite) + R19(资产膨胀) + R20(元盘点) 与门禁容量联动"}
+references:
+  - {path: "d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md", section: "REQUIRED_SECTIONS", why: "蓝图模板 v3.5 合规基准"}
+  - {path: "d:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/compression-workflow-standard.md", section: "§0.5", why: "压缩工作流标准——Layer 1/2 执行规范"}
+ssot_claims:
+  - {claim: "G0-G7任务门禁规则SSoT", scope: "global"}
+  - {claim: "G1-G5 KMS决策门规则SSoT", scope: "global"}
+  - {claim: "门禁域熔断器参数SSoT", scope: "module"}
+  - {claim: "门禁评估管线SSoT", scope: "global"}
+  - {claim: "法证审计协议SSoT", scope: "module"}
+  - {claim: "自指硬化协议SSoT", scope: "module"}
 ---
 
-# Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门
+# Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁域熔断器
 
-> **module_id**: MOD-INF-007 | **version**: 0.1.0 | **status**: draft | **layer**: cross_layer
+## 概述
+<!-- temporal_type: permanent -->
 
-> **真源声明**：本蓝图的 canonical SSoT 为 [b_gates.yaml](file:///D:/ZephyrAlpha/architecture-model/layers/b_gates.yaml)。
-> 本蓝图是其人类可读翻译——发现不一致以 YAML 为准。
-> 代码落位：`src/zephyr/gates/`（5 个 .py + 5 个门禁 YAML 配置）。
+本蓝图描述 Gate Engine——ZephyrAlpha 的门禁引擎。它解决了任务执行和知识生命周期关键决策点的合规判定问题。核心职责包括：G0-G7 八门禁覆盖任务全生命周期、G1-G5 KMS 决策门覆盖知识生命周期、熔断器阻断异常传播、法证审计完整性。当前规模 ~268 脚本/51 模块，目标容量 10000 脚本/1500 模块/100 AI 并发。上游依赖脚本系统(MOD-INF-005)提供 exit code，下游被 Orchestrator(MOD-INF-006)消费判定结果。
 
-> **对标**：ITIL Change Enablement（变更前评估影响+授权）+ K8s Admission Controller（硬阻断不合规请求）+ 熔断器模式（Michael Nygard "Release It!"）。
+> module_id: MOD-INF-007 | version: 0.8.1 | status: Draft | layer: cross_layer
+> actual_disk_path: src/zephyr/gate_engine/ + src/zephyr/gates/ | generation: 1 | construction_progress: partially_implemented
+> **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
+> - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
+> - AI 压缩工作流标准：[compression-workflow-standard.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/compression-workflow-standard.md)
+> - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
+> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
 
-## 1. 概述与模块定位
+## §0 代码对齐验证
+<!-- temporal_type: permanent -->
 
-### 1.1 模块身份
+### §0.1 代码文件清单
 
-| 属性 | 值 |
-|------|-----|
-| module_id | MOD-INF-007 |
-| 代码落位 | `src/zephyr/gates/` |
-| 运行时平面 | Warm memory（任务触发时加载） |
-| 核心职责 | 判定"这个任务/这个KE 能不能过"——决定放行还是阻断 |
+| # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） | 归属判定 |
+|---|--------|------------|------|:-----:|-------------------|---------|
+| 1 | gate_engine.py | §3.1 | 核心门禁引擎——加载配置→管线编排→执行判定→返回PASS/FAIL | 已实现 | | 本模块 |
+| 2 | gate_context.py | §3.1 | 门禁上下文传播——GateContext构建/序列化/跨模块注入 | 已实现 | | 本模块 |
+| 3 | gate_pipeline.py | §3.1 | 门禁评估管线——排序解析、组合逻辑(AND/OR/NOT)、并行调度 | 已实现 | | 本模块 |
+| 4 | gate_simulator.py | §3.1 | 门禁模拟器——dry-run全链路演练，不修改任何状态 | 已实现 | | 本模块 |
+| 5 | gate_override.py | §3.1 | Owner紧急旁路——时间限定的门禁临时绕过+审计追踪 | 已实现 | | 本模块 |
+| 6 | gate_health.py | §3.1 | 门禁健康仪表板——per-gate SLI报告、误报率、延迟分布 | 已实现 | | 本模块 |
+| 7 | task_completion_gate.py | §3.1 | G7交付前门禁——运行关联文件审计→判定 | 已实现 | | 本模块 |
+| 8 | circuit_breaker.py | §3.1 | 熔断器——检测异常传播→切断故障链路+门禁自保熔断 | 已实现 | | ⚠️与MOD-INF-016重叠(已声明委托) |
+| 9 | contract_template_manager.py | §3.1 | 契约模板管理——加载G1-G5 KMS门禁YAML配置 | 已实现 | | 本模块 |
+| 10 | adaptive_threshold.py | §3.1 | 自适应阈值——从历史FAIL/PASS数据学习门禁参数调整 | 已实现 | | 本模块 |
+| 11 | gate_integrity_guard.py | §3.1 | 门禁引擎完整性守卫——启动前自检SHA-256+信任根验证 | 已实现 | | 本模块 |
+| 12 | audit_chain_verifier.py | §3.1 | 审计链验证工具——独立重放+哈希链完整性校验 | 已实现 | | 本模块 |
+| 13 | ai_capability_guard.py | §3.1 | AI能力边界守卫——task操作在能力矩阵内 | 已实现 | | 本模块 |
+| 14 | kms/ g1~g5.yaml (5个) | §A.2 | KMS入库/分拣/评估/激活/提取门禁配置 | 已实现 | | 本模块 |
+| 15 | g6_blueprint_compliance.yaml | §A.1 | G6蓝图读取合规门禁 | 已实现 | | 本模块 |
+| 16 | g6_ctr_compliance.yaml | §A.1 | G6 CTR合规门禁 | 已实现 | | 本模块 |
+| 17 | g7d_depth_compliance.yaml | §A.1 | G7D深度合规——形式+实质双重验证 | 未实现 | | 本模块 |
+| 18 | g7c_cross_gate_consistency.yaml | §A.1 | G7C跨门禁时序一致性 | 未实现 | | 本模块 |
+| 19 | task/ g0_entry.yaml + g7_orc_gate_engine.yaml | §A.1 | G0准入+G7 Orc门禁 | 已实现 | | 本模块 |
+| 20 | admission/ mad_001~004.yaml | §A.1 | MAD-001~004模块准入门禁 | 已实现 | | 本模块 |
+| 21 | invariants/ en_001~003.yaml (3个) | §3.3 | EN-001循环依赖/EN-002执行模式/EN-003契约兼容 | 已实现 | | 本模块 |
+| 22 | zero_residue.yaml | §3.4 | ZERO-RESIDUE零残留门禁 | 已实现 | | 本模块 |
+| 23 | governance/ (8个: g9+gct_016~025) | §3.5 | G9跨蓝图集成+GCT-016~025集成门禁 | 已实现 | | 本模块 |
+| 24 | infrastructure/ (4个: g8+sys_master+vms+observability) | §3.6 | G8 SSoT+系统蓝图合规+向量库健康+可观测性 | 已实现 | | 本模块 |
+| 25 | trading/ (3个: position+leverage+correlation) | §3.7 | G10持仓限制+G11杠杆限制+G12策略相关性 | 已实现 | shadow | 本模块 |
+| 26 | fle/ (43个FLE门禁) | §3.8 | FLE-ACTION-REVERSIBILITY~FLE-SCOPE-CREEP-MONITOR + FLE-SAFETY-GATE-L1~L67（归属MOD-INF-010） | 已实现 | | ⚠️建议迁移至MOD-INF-010 |
+| 27 | _registry.yaml | §3.1 | 全部门禁注册表SSoT | 已实现 | | 本模块 |
+| 28 | _template.yaml | §3.1 | 门禁标准模板——11节完整字段 | 已实现 | | 本模块 |
 
-### 1.2 核心职能（一句话）
+### §0.2 对齐验证矩阵
 
-**Gate Engine 是系统的一致性守卫**——它不生产任何内容，只在关键决策点上判断"是否合规"。相当于施工工地的安全员——检查安全帽、检查脚手架、不合格就不准入内。
+| 验证项 | 验证方法 | 结果 |
+|--------|---------|:---:|
+| construction_progress = partially_implemented → 已实现章节的代码存在 | `ls src/zephyr/gates/*.py` 核对 | ☐ |
+| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" src/zephyr/gates/gate_engine.py` | ☐ |
+| 门禁YAML注册表 = _registry.yaml内容 | `cat src/zephyr/gates/_registry.yaml` | ☐ |
+| 测试文件覆盖核心模块 | `ls tests/unit/test_gate_*.py` | ☐ |
+| G0-G7 YAML规则与蓝图§A描述一致 | 逐文件核对entry_conditions | ☐ |
 
-### 1.3 责任范围
+### §0.3 版本-代码映射
 
-| 管什么 | 不管什么（→ 去哪） |
+| 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
+|---------|------------|---------|---------|
+| v0.6.0 (基线) | gate_engine.py + circuit_breaker.py + 5个KMS YAML + task_completion_gate.py + contract_template_manager.py + ai_capability_guard.py + _registry.yaml + _template.yaml + G0/G6/G7 YAML + MAD YAML | gate_context/pipeline/simulator/override/health/integrity_guard/audit_chain_verifier/adaptive_threshold | 未实现(Beta/Experimental) |
+| v0.7.0 (容量升级) | 同v0.6.0 | cold_start.py / script_cache.py / backpressure.py / agent_quota.py / degradation.py / hot_reload.py / metrics.py / bulkhead第5池 | Phase A/B/C 待施工 |
+
+### §0.4 SSoT 与责任唯一性声明
+
+| # | 声明维度 | 本蓝图是真源 | 真源在别处（委托） | 委托目标 |
+|---|---------|:----------:|:---------------:|---------|
+| 1 | G0-G7任务门禁规则 | ✅ | ❌ | — |
+| 2 | G1-G5 KMS决策门规则 | ✅ | ❌ | — |
+| 3 | 门禁域熔断器参数 | ✅ | ❌ | — |
+| 4 | 熔断器基类(CircuitBreaker状态机) | ❌ | ✅ | MOD-INF-016 §2.4 |
+| 5 | 门禁评估管线 | ✅ | ❌ | — |
+| 6 | 容量架构(六大支柱+12缺口+SLO) | ✅ | ❌ | — |
+| 7 | 法证审计协议(哈希链+决策快照) | ✅ | ❌ | — |
+| 8 | 自指硬化协议(完整性守卫+信任根) | ✅ | ❌ | — |
+| 9 | 容量SLO全局注册 | ❌ | ✅ | MOD-INF-001 §13 |
+| 10 | 指标采集/聚合/Grafana | ❌ | ✅ | MOD-INF-015 |
+
+### §0.5 代码目录唯一性声明
+
+| # | 声明项 | 值 |
+|---|--------|-----|
+| 1 | 主代码目录 | `src/zephyr/gates/`（MUST与 frontmatter.actual_disk_path 一致） |
+| 2 | 已知副本目录 | `src/zephyr/gate_engine/` — re-export shim（1文件） |
+| 3 | 副本处置状态 | shim保留——向后兼容导入路径 |
+
+---
+
+## §1 设计背景与目标
+<!-- temporal_type: permanent -->
+
+### §1.1 背景
+
+门禁引擎将脚本exit code转化为PASS/FAIL决策并阻断不合规操作——覆盖任务执行前/后、知识入库/激活、代码提交时。
+
+### §1.2 目标范围
+
+| # | 目标 | 类型 | 可验证标准 |
+|---|------|:---:|----------|
+| 1 | G0-G7 八门禁覆盖任务全生命周期 DRAFT→COMPLETED | ✅ | 每个TaskStatus迁移点有对应门禁 |
+| 2 | G1-G5 KMS决策门覆盖知识生命周期 | ✅ | 入库→分拣→评估→激活→提取全链路 |
+| 3 | 容量支撑 10,000 脚本 / 1,500 模块 / 100 AI 并发 | ✅ | 增量扫描 < 1min，门禁评估 P99 < 200ms |
+| 4 | 法证审计完整性——SHA-256哈希链+决策快照 | ✅ | 外部取证专家可独立验证任意历史判定 |
+| 5 | 自指硬化——GateEngineIntegrityGuard+信任根 | ✅ | AI修改gate_engine.py时被检测并阻断 |
+| 6 | 威胁模型覆盖——STRIDE 8类威胁全缓解 | ✅ | 每类威胁有对应缓解措施 |
+| 7 | 门禁判定的具体检测逻辑 | ❌ | 脚本系统 MOD-INF-005 |
+| 8 | 知识入库的具体规则 | ❌ | 知识库 MOD-KB-001 |
+| 9 | pre-commit钩子框架 | ❌ | `.pre-commit-config.yaml` |
+| 10 | 熔断后的修复执行 | ❌ | Orchestrator MOD-INF-006 |
+| 11 | 容量SLO全局注册 | ❌ | MOD-INF-001 §13 |
+
+### §1.4 运行场景约束
+
+| 约束 | 影响 |
 |------|------|
-| G0-G7 任务门禁：任务执行前/后的合规判定 | 门禁判定的具体检测逻辑 → 脚本系统 (MOD-INF-005) |
-| G1-G5 KMS 决策门：知识生命周期的阶段性判定 | 知识入库的具体规则 → 知识库 (MOD-KB-001) |
-| GATE-18 pre-commit：提交时全量测试收集 | pre-commit 钩子框架 → `.pre-commit-config.yaml` |
-| GATE-16 蓝图读取合规检查：AI 改代码前是否读了蓝图（P1-2 强制合规）| experimental 软合规 WARNING — beta 硬阻断 P0 |
-| 熔断器 circuit_breaker：异常传播阻断 | 熔断后的修复执行 → Orchestrator (MOD-INF-006) |
+| 施工轨道：T轨可施工 | 门禁引擎核心已实现，容量升级Phase A/B/C待施工 |
+| 硬件：i7-12700KF + 64GB + 1TB NVMe + RTX 3090 | 单机部署，无分布式 |
+| Python 3.12+ / Pydantic V2 | 数据模型强制BaseModel |
+| SQLite WAL / 单写者 | 并发写入需分片 |
+| subprocess执行脚本 | GIL不影响，但启动开销存在 |
+
+### §1.5 利益相关者映射
+
+| 角色 | 关注点 | 参与阶段 | 约束 |
+|------|--------|---------|------|
+| Owner | 架构决策+熔断器参数+override审批 | 设计+施工 | 审批权限 |
+| AI Agent | 门禁评估触发+结果消费 | 执行 | 遵守门禁判定 |
+| Task System | TaskCard.status迁移触发门禁 | 集成 | CT-ORC-GATE-001 |
+| Script System | 脚本exit code→门禁输入 | 集成 | CT-SCRIPT-GATE-001 |
+
+### §1.6 当前态/目标态差距
+
+| 维度 | 当前态 | 目标态 | 差距 | 优先级 |
+|------|--------|--------|------|:------:|
+| 门禁自动触发 | 手动调用evaluate() | TaskCard.status迁移自动触发 | CT-ORC-GATE-001未落地 | P0 |
+| 脚本exit code→Gate判定 | 未接通 | 自动映射PASS/FAIL | CT-SCRIPT-GATE-001未落地 | P0 |
+| 容量支撑 | ~268脚本/1-3AI | 10K脚本/100AI | 12个容量缺口 | P1 |
+| 门禁域熔断器全链路 | 未测试 | OPEN→HALF_OPEN→CLOSED循环 | 无自动化测试 | P1 |
+| 法证审计 | 代码存在但未验证 | 外部取证专家可独立验证 | 哈希链未端到端测试 | P2 |
+
+### §1.7 典型场景
+
+| 场景 | 触发 | 处理流程 | 输出 |
+|------|------|---------|------|
+| 任务准入 | TaskCard DRAFT→TODO | G0字段校验→PASS/FAIL | 任务进入TODO或留在DRAFT |
+| 蓝图合规 | TaskCard TODO→IN_PROGRESS | G1蓝图存在性→G2依赖完整→G3容量检查 | 任务进入IN_PROGRESS或BLOCKED |
+| 交付前审计 | TaskCard REVIEW→COMPLETED | G7关联脚本全量审计→PASS/FAIL | 任务完成或BLOCKED |
+| 熔断触发 | 连续5次门禁FAIL | CLOSED→OPEN→60s→HALF_OPEN→试探 | 请求拒绝或恢复 |
+| Owner旁路 | 紧急情况 | override(gate_id, justification, 24h)→审计记录 | 门禁临时绕过 |
 
 ---
 
-## 2. 双门禁体系
+## §2 模块边界
+<!-- temporal_type: permanent -->
 
-### 2.1 G0-G7 任务门禁（任务生命周期判定）
+### §2.1 职责范围
 
-```
-G0 — 任务准入门禁
-  • 触发：任务 DRAFT → QUEUED
-  • 检查：TaskCard 必填字段完整？task_id 格式正确？
-  • FAIL → 任务留在 DRAFT + 错误提示
+| 管什么 | 说明 |
+|--------|------|
+| G0-G7 任务门禁 | 任务执行前/后的合规判定 |
+| G1-G5 KMS 决策门 | 知识生命周期的阶段性判定 |
+| GATE-18 pre-commit | 提交时全量测试收集 |
+| GATE-16 蓝图读取合规检查 | AI改代码前是否读了蓝图（P1-2强制合规） |
+| 门禁域熔断器 circuit_breaker | SQLite持久化+门禁集成版，基类SSoT=MOD-INF-016 |
+| 门禁评估管线 | 排序/组合/上下文传播 |
+| 影子模式/渐进式激活 | 新门禁安全上线 |
+| 法证审计完整性 | SHA-256哈希链+决策快照 |
+| 自指硬化 | GateEngineIntegrityGuard+信任根 |
+| 容量调度 | 三级调度+反压+降级 |
 
-G1-G3 — 施工前门禁
-  • G1 蓝图合规：目标模块是否有 approved 蓝图？
-  • G2 依赖完整：depends_on 依赖的模块实现状态
-  • G3 容量检查：当前是否在全局容量预算内？
-  • FAIL → status: BLOCKED
+#### 职责唯一性声明
 
-G4-G6 — 执行中门禁
-  • G4 沙箱合规：sandbox_profile 与 task_type 匹配？
-  • G5 模型合规：execution_model 在模型能力矩阵内？
-  • G6 安全合规：tool_call 白名单检查？
-  • FAIL → 中断执行 + status: FAILED
+| 声明项 | 无重叠模块 | 验证方式 |
+|--------|-----------|---------|
+| G0-G7任务门禁判定 | MOD-INF-006(消费方,非判定方) | Task System蓝图声明"门禁判定委托MOD-INF-007" |
+| G1-G5 KMS决策门 | MOD-INF-013(消费方) | MCP Servers蓝图引用gate_engine_server.py |
+| 门禁域熔断器(特化版) | MOD-INF-016(基类SSoT) | §0.4声明委托关系+§10.5登记重叠 |
+| 门禁评估管线 | MOD-INF-009(执行流门控,非合规判定) | §10.5术语区分 |
+| 法证审计哈希链 | MOD-INF-021(回滚后G0验证,消费方) | Rollback蓝图声明依赖MOD-INF-007 §2.3 |
 
-G7 — 交付前门禁
-  • 触发：任务 REVIEWING → COMPLETED
-  • 检查：任务关联文件全量审计 exit 0？
-  • FAIL → status: BLOCKED（修复后再提交 G7）
-```
+### §2.2 不包含的职责
 
-### 2.2 G1-G5 KMS 决策门（知识生命周期判定）
-
-```
-G1 Ingest Gate — 入库门禁
-  • 判定：这个内容是否值得进入知识库？
-  • 检查：来源可追溯？内容可验证？格式合规？
-  • FAIL → 拒绝入库
-
-G2 Triage Gate — 分拣门禁
-  • 判定：这个KE应该归档/激活/丢弃？
-  • 检查：重复性、时效性、关联性
-  • FAIL → 分流到 ARCHIVE 或废弃
-
-G3 Evaluate Gate — 评估门禁
-  • 判定：这个KE的质量是否达标？
-  • 检查：四模型审计流水线通过？
-  • FAIL → 退回修改
-
-G4 Activate Gate — 激活门禁
-  • 判定：这个KE是否可以注入Agent上下文？
-  • 检查：人工确认 + 新鲜度 + 冲突裁决
-  • FAIL → 保持 ANALYZED 状态
-
-G5 Extract Gate — 提取门禁
-  • 判定：是否可以从历史KE中提取模式？
-  • 检查：≥3 个同类KE存在？模式置信度？
-  • FAIL → 等待更多同类KE积累
-```
+| 不管什么 | 去哪 |
+|----------|------|
+| 门禁判定的具体检测逻辑 | 脚本系统 MOD-INF-005 |
+| 知识入库的具体规则 | 知识库 MOD-KB-001 |
+| pre-commit钩子框架 | `.pre-commit-config.yaml` |
+| 熔断后的修复执行 | Orchestrator MOD-INF-006 |
+| 全局容量SLO注册 | MOD-INF-001 §13 |
+| 指标采集/聚合/Grafana | Telemetry MOD-INF-015 |
 
 ---
 
-## 3. 核心架构
+## §3 架构设计
+<!-- temporal_type: permanent -->
 
-### 3.1 文件组成
+### §3.1 组件架构
 
-| 文件 | 职责 |
+#### 双门禁体系
+
+| 门禁体系 | 门禁ID | 触发点 | 核心检查 |
+|---------|--------|--------|---------|
+| G0-G7 任务门禁 | G0 任务准入 | DRAFT→TODO | TaskCard必填字段完整 |
+| | G1 蓝图合规 | TODO→IN_PROGRESS | 目标模块有approved蓝图 |
+| | G2 依赖完整 | → | depends_on模块已实现 |
+| | G3 容量检查 | → | 在全局容量预算内 |
+| | G4 沙箱合规 | 执行中 | sandbox_profile匹配task_type |
+| | G5 模型合规 | → | execution_model在能力矩阵内 |
+| | G6 安全合规 | → | tool_call白名单检查 |
+| | G7 交付前 | REVIEW→COMPLETED | 关联脚本exit 0 |
+| G1-G5 KMS决策门 | G1 Ingest | 入库 | 来源可追溯?内容可验证?格式合规? |
+| | G2 Triage | 分拣 | 归档/激活/丢弃? |
+| | G3 Evaluate | 评估 | 四模型审计流水线通过? |
+| | G4 Activate | 激活 | 人工确认+新鲜度+冲突裁决 |
+| | G5 Extract | 提取 | ≥3个同类KE存在?模式置信度? |
+
+> 代码文件清单见 §0.1。
+
+#### 熔断器模式
+
+> 已实现——代码文件是SSoT。蓝图只保留状态转换约束。
+
+| 转换 | 条件 |
 |------|------|
-| `gate_engine.py` | 核心门禁引擎——加载门禁配置 → 管线编排 → 执行判定 → 返回 PASS/FAIL |
-| `gate_context.py` | 门禁上下文传播——GateContext 构建/序列化/跨模块注入（beta） |
-| `gate_pipeline.py` | 门禁评估管线——排序解析、组合逻辑（AND/OR/NOT）、并行调度（beta） |
-| `gate_simulator.py` | 门禁模拟器——dry-run 全链路门禁演练，不修改任何状态（beta） |
-| `gate_override.py` | Owner 紧急旁路——时间限定的门禁临时绕过 + 审计追踪（beta） |
-| `gate_health.py` | 门禁健康仪表板——per-gate SLI 报告、误报率、延迟分布、1人+AI运维视图（beta） |
-| `task_completion_gate.py` | G7 交付前门禁——运行关联文件审计 → 判定 |
-| `circuit_breaker.py` | 熔断器——检测异常传播 → 切断故障链路 + 门禁自保熔断（meta-CB） |
-| `contract_template_manager.py` | 契约模板管理——加载 G1-G5 KMS 门禁 YAML 配置 |
-| `adaptive_threshold.py` | 自适应阈值——从历史 FAIL/PASS 数据学习门禁参数调整（experimental） |
-| `gate_integrity_guard.py` | 门禁引擎完整性守卫——启动前自检 SHA-256 + 信任根验证（beta） |
-| `audit_chain_verifier.py` | 审计链验证工具——独立重放+哈希链完整性校验（beta） |
-| `g1_ingest.yaml` ~ `g5_extract.yaml` | 五个 KMS 门禁的声明式配置（条件+阈值+动作） |
-| `g6_blueprint_compliance.yaml` | G6 蓝图读取合规——beta 硬阻断 P0 |
-| `task/g0_orc_gate_engine.yaml` | G0 Orc 门禁——task_id/priority/fields 硬校验 |
-| `task/g7_orc_gate_engine.yaml` | G7 Orc 门禁——verification/audit_findings 硬校验 |
-| `admission/mad_001~004.yaml` | MAD-001~004 模块准入门禁（4×4~6条规则） |
-| `g7_position_limits.yaml`~`g9_strategy_correlation.yaml` | G10-G12 交易域门禁（shadow） |
-| `g7d_depth_compliance.yaml` | G7D 深度合规——形式+实质双重验证（experimental） |
-| `g7c_cross_gate_consistency.yaml` | G7C 跨门禁时序一致性——G1→G7 版本一致校验（shadow） |
-| `_registry.yaml` | 全部门禁注册表 SSoT——16+ 门禁登记 |
-| `_template.yaml` | 门禁标准模板——11节完整字段 |
+| CLOSED→OPEN | 连续FAIL次数≥5 |
+| OPEN→HALF_OPEN | OPEN状态持续≥60s |
+| HALF_OPEN→CLOSED | 试探全部PASS |
 
-### 3.2 Gate 判定接口
+### §3.2 数据流
+
+| 输入 | 映射 | 输出 |
+|------|------|------|
+| 脚本 exit 0 | → GATE-n PASS | 任务状态不变 |
+| 脚本 exit 1 | → GATE-n PASS_WITH_WARNINGS | 任务 ⚠️ |
+| 脚本 exit 2 | → GATE-n FAIL | 关联任务 BLOCKED |
+| 脚本 exit 3 | → GATE-n CRITICAL_FAIL | 全部活跃任务 BLOCKED |
+| TaskCard.status transition | → 对应门禁评估 | → PASS/FAIL → TaskCard.status迁移 |
+| 文件变更 | → 依赖图谱L1→L2→L3 | → 增量脚本列表 → 门禁评估 |
+
+### §3.3 状态生命周期
+
+#### 门禁生命周期
+
+| 状态 | 说明 | 转换规则 |
+|------|------|---------|
+| draft | 初始 | — |
+| shadow | 评估→记录→不阻断 | →active: Owner审批 + ≥7d + 误报率<5% |
+| active | 评估→阻断 | →deprecated: 需替代门禁active≥14d |
+| deprecated | 退役中 | →removed: 最后引用removed满30d |
+| removed | 已清理 | — |
+
+#### Shadow Mode 三级激活
+
+| 阶段 | 行为 | 持续条件 | 退出标准 |
+|------|------|---------|---------|
+| shadow | 评估→记录→不阻断 | ≥50次评估 且 ≥7天 | 误报率<5% 且 P0漏检率<1% |
+| beta_enforce | P0阻断→P1/P2仅告警 | ≥100次评估 且 ≥14天 | P0误报率<1% 且 override次数<3 |
+| full_enforce | P0/P1阻断→P2告警 | — | 连续30天无override |
+
+#### 降级生命周期
+
+| 级别 | 负载 | 激活门禁 | 不可降级底线 |
+|------|------|---------|------------|
+| tier_0_full | <70% | ALL门禁 | — |
+| tier_1_degraded | 70-90% | 暂停shadow + P2全量拒绝 | — |
+| tier_2_severe | 90-150% | G7D/G7C暂停 + 缓存ttl延长 | — |
+| tier_3_critical | >150% | 仅G0+G6+熔断器 | G0+G6+熔断器 |
+
+---
+
+## §4 接口契约
+<!-- temporal_type: permanent -->
+
+### §4.1 公共 API
 
 ```python
-class GateResult:
-    gate_id: str          # "G0"~"G7" | "G1"~"G5" (KMS) | "GATE-18"
-    status: GateStatus    # PASS | PASS_WITH_WARNINGS | FAIL | CRITICAL_FAIL
-    reasons: list[str]    # 失败原因
-    affected_tasks: list[str]  # 受影响的任务 ID
-    timestamp: datetime
-```
+class GateEngine:
+    def evaluate(self, task: Task, gate_id: str, *, force_reevaluate=False) -> GateResult: ...
+    def evaluate_pipeline(self, task: Task, pipeline_mode: str = "sequential") -> PipelineResult: ...
 
-### 3.3 熔断器模式
-
-```yaml
-circuit_breaker:
-  states:
-    CLOSED: "正常——请求通过"
-    OPEN: "熔断——请求直接拒绝"
-    HALF_OPEN: "试探——允许少量请求测试恢复"
-
-  triggers:
-    - condition: "连续 FAIL 次数 ≥ threshold"
-      threshold: 5
-      action: "CLOSED → OPEN"
-    - condition: "OPEN 状态持续 ≥ cooldown"
-      cooldown: 60s
-      action: "OPEN → HALF_OPEN"
-    - condition: "HALF_OPEN 试探全部 PASS"
-      action: "HALF_OPEN → CLOSED"
-```
-
----
-
-## 四、集成概览（CT-SCRIPT-GATE-001）
-
-> 详见总蓝图 [MOD-MASTER-001 §2.8](file:///D:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint.md)。
-
-```
-脚本 exit 0 → GATE-n PASS → 任务状态不变
-脚本 exit 1 → GATE-n PASS_WITH_WARNINGS → 任务 ⚠️
-脚本 exit 2 → GATE-n FAIL → 关联任务 BLOCKED
-脚本 exit 3 → GATE-n CRITICAL_FAIL → 全部活跃任务 BLOCKED
-```
-
----
----
-
-## 五、核心流程 — G0-G7 任务门禁结构化规则
-
-> 以下将蓝图 §2 中的自然语言门禁描述升级为**确定性 YAML 规则**——AI agent 可直接消费。
-> 每一条 `check` 是布尔表达式（禁止问句），每一条 `on_failure` 有明确的 `fix_hint`。
-
-### 5.1 G0 — 任务准入门禁
-
-```yaml
-gate_id: G0
-gate_name: task_entry
-title: "G0 Task Entry Gate"
-description: "任务从DRAFT进入TODO前的合规判定——确保任务卡片字段完整性"
-trigger:
-  event: "TaskCard.status DRAFT → TODO"
-  precondition: "TaskCard.deliverables 非空"
-  frequency: per_task
-entry_conditions:
-  - id: G0-C00
-    name: required_fields_present
-    type: schema_validation
-    check: "task_id matches ^TASK-[0-9]{6}$ AND priority IN {P0,P1,P2,P3} AND assignee IS NOT NULL AND deadline IS NOT NULL"
-    severity: error
-    on_failure: reject
-    fix_hint: "补齐缺失字段后重新提交——task_id格式TASK-NNNNNN，priority默认P2"
-    anti_pattern:
-      description: "AI创建任务时遗漏priority字段导致门禁拒绝"
-      example: "AI直接 assignee='ai-agent' 但未填 priority → G0-C00 FAIL"
-  - id: G0-C01
-    name: task_type_valid
-    type: enumeration
-    check: "task_type IN {CODE_GEN, CODE_REVIEW, ANALYSIS, OPS, DOC, TEST, REFACTOR, AUDIT}"
-    severity: error
-    on_failure: reject
-    fix_hint: "从合法枚举中选择task_type"
-```
-
-### 5.2 G1-G3 — 施工前门禁
-
-```yaml
-gate_id: G1
-gate_name: blueprint_compliance
-title: "G1 Blueprint Compliance Gate"
-trigger:
-  event: "TaskCard.status TODO → IN_PROGRESS"
-  precondition: "任务关联的目标模块已登记"
-entry_conditions:
-  - id: G1-C00
-    name: module_has_approved_blueprint
-    type: registry_lookup
-    check: "target_module_id IN MODULE_REGISTRY AND module.blueprint.status == 'approved'"
-    severity: error
-    on_failure: reject
-    fix_hint: "先创建/审批目标模块蓝图后再执行任务"
-    anti_pattern:
-      description: "AI对未登记模块直接开发——绕过蓝图→产生不可追溯的代码"
-      example: "AI创建一个新模块MOD-INF-999但没有先写蓝图→G1-C00 FAIL"
-
-gate_id: G2
-gate_name: dependency_complete
-title: "G2 Dependency Gate"
-entry_conditions:
-  - id: G2-C00
-    name: depends_on_modules_implemented
-    type: dependency_check
-    check: "ALL depends_on modules status IN {implemented, active}"
-    severity: error
-    on_failure: defer
-    fix_hint: "等待依赖模块实现完成——进入deferred_queue(≤72h)"
-
-gate_id: G3
-gate_name: capacity_check
-title: "G3 Capacity Gate"
-entry_conditions:
-  - id: G3-C00
-    name: within_global_token_budget
-    type: capacity
-    check: "current_token_usage + estimated_task_tokens <= global_capacity_budget"
-    severity: warning
-    on_failure: defer
-    fix_hint: "等待token容量释放或降低任务token估算"
-```
-
-### 5.3 G4-G6 — 执行中门禁
-
-```yaml
-gate_id: G4
-gate_name: sandbox_compliance
-title: "G4 Sandbox Compliance Gate"
-entry_conditions:
-  - id: G4-C00
-    name: sandbox_profile_matches_task_type
-    type: sandbox
-    check: "sandbox_profile.task_type == task.task_type AND sandbox_profile.active == true"
-    severity: error
-    on_failure: reject
-    fix_hint: "选择与task_type匹配的sandbox_profile——或创建新profile"
-
-gate_id: G5
-gate_name: model_compliance
-title: "G5 Model Compliance Gate"
-entry_conditions:
-  - id: G5-C00
-    name: model_in_capability_matrix
-    type: capability
-    check: "execution_model IN MODEL_CAPABILITY_MATRIX AND model.supports(task.task_type)"
-    severity: error
-    on_failure: reject
-    fix_hint: "选择能力矩阵中支持此task_type的模型"
-
-gate_id: G6
-gate_name: security_compliance
-title: "G6 Security Gate"
-entry_conditions:
-  - id: G6-C00
-    name: tool_call_whitelist
-    type: security
-    check: "ALL requested_tool_calls IN TOOL_CALL_WHITELIST"
-    severity: error
-    on_failure: reject
-    fix_hint: "移除不在白名单内的tool_call——或提交白名单扩展申请"
-```
-
-### 5.4 G7 — 交付前门禁
-
-```yaml
-gate_id: G7
-gate_name: delivery_gate
-title: "G7 Delivery Gate"
-trigger:
-  event: "TaskCard.status REVIEW → COMPLETED"
-  precondition: "任务关联文件已修改"
-entry_conditions:
-  - id: G7-C00
-    name: all_associated_scripts_audit_pass
-    type: script_execution
-    check: "ALL scripts in task.associated_scripts exit_code == 0"
-    severity: error
-    on_failure: reject
-    fix_hint: "运行失败脚本→修复错误→重新触发G7判定"
-    anti_pattern:
-      description: "AI在脚本exit≠0时强行推进任务到COMPLETED"
-      example: "run_all.py exit 2 但AI调用 task.status=COMPLETED → G7-C00 FAIL → 回退到REVIEW"
-```
-
----
-
-## 六、设计决策集中表
-
-| ID | 决策 | 理由 | 被否决替代方案 | 重新评估条件 |
-|----|------|------|--------------|------------|
-| DD1 | **G0-G7 八门禁而非五或十** | 覆盖任务生命周期DRAFT→COMPLETED的7个状态过渡点+1个准入门 | 五门禁——不足覆盖；十二门禁——过度细粒度 | 新增TaskStatus时重新评估 |
-| DD2 | **Validating-only（当前），Mutating为可选** | experimental优先实现硬阻断——自动修正是beta增强 | "所有门禁都提供自动修正"——experimental不可行 | beta引入时评估 |
-| DD3 | **熔断器 threshold=5, cooldown=60s** | 连续5次FAIL表明系统性问题——单次FAIL可能是偶发；60s足够短暂恢复 | threshold=3（太敏感）, cooldown=300s（太慢恢复） | 生产环境运行数据收集后 |
-| DD4 | **G1-G5 KMS和G0-G7任务门共享同一gate_engine** | 减少引擎碎片化——同一判定接口(GateResult)复用 | "各自独立的门禁引擎"——增加维护负担 | 任务门和KMS门的check_type差异超过50%时 |
-| DD5 | **GATE-18 pre-commit独立于G0-G7** | pre-commit是git层守卫（hot路径≤50ms），G0-G7是任务层守卫（warm路径）| "统一为一个门禁列表"——hot/warm混合导致pre-commit过慢 | —无— |
-| DD6 | **门禁目录按category而非module_id组织** | 门禁的核心维度的category(6种)——按module_id会1500个目录×2-3个门禁=碎片化 | "每个模块一个门禁目录"——目录树过深，AI遍历成本高 | —无— |
-
----
-
-## 七、Anti-Patterns — AI agent 绝对禁止的集成行为
-
-> 门控引擎是"AI被约束的地方"——Anti-Patterns比普通模块更重要。
-
-| # | Anti-Pattern | 违反后果 | 正确做法 |
-|---|-------------|---------|---------|
-| AP1 | **绕过门禁直接修改TaskCard.status** — AI用 `task.status=COMPLETED` 而非通过 `task_repo.transition()` | G0-G7全部门禁被跳过——相当于安全员被支开 | 状态变更必须通过 task_repo.transition() → 自动触发对应门禁 |
-| AP2 | **跳过G1-G5 KMS门禁直接写入知识库** — AI直接写 `docs/08_knowledge/ke-*.md` 而不通过activate→extract管道 | 未审查的知识进入AI上下文——可能包含错误/过时/冲突内容 | KE入库必须经过 G1→G2→G3→G4→G5 完整管道 |
-| AP3 | **门禁规则留问句** — 写 `check: "TaskCard必填字段完整？"` | AI无法直接执行——需要"猜测"什么算完整 | check必须是布尔表达式：`check: "task_id IS NOT NULL AND priority IS NOT NULL"` |
-| AP4 | **熔断器触发后手动override** — AI在circuit_breaker=OPEN时强行reset | 连续故障的系统性问题被掩盖——可能积累成灾难性故障 | OPEN期间只能等待cooldown到期——HALF_OPEN自动试探恢复 |
-| AP5 | **创建门禁但不注册** — AI新建YAML但不写入 _registry.yaml | 门禁成为孤儿——引擎无法发现——形式上存在但实际不执行 | 新建门禁 = copy _template.yaml + 写入 _registry.yaml |
-| AP6 | **废弃门禁直接删除** — AI `rm g5_extract.yaml` | 历史session回溯时找不到"当时为什么这个门禁存在" | 废弃= `status: deprecated` + 移到 `_deprecated/` ——铁律四 |
-| AP7 | **门禁的on_failure只有reject没有fix_hint** | AI被拒绝后不知道"怎么才能通过"——反复重试→无限循环 | 每条reject的entry_condition必须配 fix_hint |
-
----
-
-## 八、集成契约
-
-### 8.1 CT-SCRIPT-GATE-001：脚本exit code → Gate判定
-
-> 详见总蓝图 [MOD-MASTER-001 · CT-SCRIPT-GATE-001](file:///D:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint.md)。
-
-```
-脚本 exit 0 → GATE-n PASS → 任务状态不变
-脚本 exit 1 → GATE-n PASS_WITH_WARNINGS → 任务 ⚠️
-脚本 exit 2 → GATE-n FAIL → 关联任务 BLOCKED
-脚本 exit 3 → GATE-n CRITICAL_FAIL → 全部活跃任务 BLOCKED
-```
-
-### 8.2 CT-ORC-GATE-001：任务系统 → 门控引擎
-
-> 详见总蓝图 [MOD-MASTER-001 · CT-ORC-GATE-001](file:///D:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint.md)。
-> 核心：TaskCard完整28字段 → G0-G7门禁判定 → PASS/FAIL → TaskCard.status迁移。
-
----
-
-## 九、风险与缓解
-
-| # | 风险 | 概率 | 影响 | 缓解 |
-|---|------|:---:|:---:|------|
-| R1 | **门禁过度阻断** — 过于严格的门禁导致合法任务被拒绝 | 中 | 高 | severity=error仅用于不可逆损失——可逆问题用warning |
-| R2 | **门禁规则漂移** — YAML中的check与代码实际检查逻辑不一致 | 高 | 高 | CI门禁 validate_gate_yaml.py → 交叉校验YAML vs gate_engine代码 |
-| R3 | **熔断器误触发** — 正常流量波动被判定为异常 | 低 | 中 | threshold=5（足够容纳偶发失败）+ cooldown=60s（快速恢复） |
-| R4 | **门禁目录碎片化** — 1500模块后每个模块各自的gates子目录管理混乱 | 中 | 高 | 统一_category分类（6种）→ module专属门禁放入 modules/<MOD-XXX>/ |
-
----
-
-## 十、施工/演进指南
-
-> 门控引擎核心8个文件已实现,8个Beta/Experimental文件规划中(construction_progress=phase_1_partial)——本章是**修改和演进指南**，非新建指南。
-
-### 10.1 添加新门禁的标准流程
-
-```
-1. cp src/zephyr/gates/_template.yaml → src/zephyr/gates/<category>/<new_gate>.yaml
-2. 按 _template.yaml 的11节填写全部字段（check必须是布尔表达式）
-3. 写入 _registry.yaml 的 gates 列表
-4. 在 gate_engine.py 的 _GATE_FILES 映射中添加
-5. 写 tests/unit/test_<new_gate>.py ——至少覆盖每条 entry_condition 的 PASS/FAIL 两路径
-6. 运行 validate_gate_discipline.py → 确认注册一致
-```
-
-### 10.2 修改现有门禁规则
-
-```
-1. 修改 YAML 中的 entry_conditions
-2. bump change_log.version
-3. 重新运行相关 test_<gate>.py
-4. CI校验 validate_gate_yaml.py 自动触发
-```
-
-### 10.3 门禁模板本身升级流程
-
-```
-1. 修改 _template.yaml → bump schema_version
-2. 归档当前模板 → _template_v{N}.yaml（铁律四——不删除）
-3. 在 gate-engine blueprint 变更记录中登记
-4. 通知所有门禁维护者评估是否需要迁移
-```
-
----
----
-
-## 十一、施工 Phase 规划
-
-| Phase | 任务 | 状态 |
-|:---:|------|:---:|
-| scaffold | gate_engine.py + 5个KMS门禁YAML | ✅ implemented |
-| experimental | G0-G7 完整判定逻辑 + CT-SCRIPT-GATE-001 落地 | 📋 Backlog |
-| beta | 熔断器全链路测试 + CI门禁自动交叉校验 | 📋 Backlog |
-
----
-
-## 十二、已实现代码完整路径索引
-
-> **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
-> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> 门禁引擎——gate_engine.py+5个KMS YAML门禁已实现
-
-### 6.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/gates/circuit_breaker.py` | ✅ 已实现 | |
-| `src/zephyr/gates/contract_template_manager.py` | ✅ 已实现 | |
-| `src/zephyr/gates/g1_ingest.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/g2_triage.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/g3_evaluate.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/g4_activate.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/g5_extract.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/gate_engine.py` | ✅ 已实现 | |
-| `src/zephyr/gates/task_completion_gate.py` | ✅ 已实现 | |
-
-### 6.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/unit/test_gate_engine.py` | ✅ 已实现 | |
-| `tests/unit/test_task_completion_gate.py` | ✅ 已实现 | |
-| `tests/unit/test_circuit_breaker.py` | ✅ 已实现 | |
-| `tests/unit/test_contract_template_manager.py` | ✅ 已实现 | |
-| `tests/integration/test_gate_e2e.py` | ✅ 已实现 | |
-
-### 6.4 治理脚本
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `scripts/governance/d6_security/validate_gate_discipline.py` | ✅ 已实现 | |
-
-### 6.5 路径索引使用指南
-
-**新 AI session 读取顺序**：
-1. 读本蓝图 §6（本节）→ 知道「哪些已实现、在哪里」
-2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
-3. 读施工 Phase 规划 → 知道「下一步该做什么」
-
-**路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\`
-- 源码在 `src/zephyr/` 下
-- 测试在 `tests/` 下
-- 配置在 `config/` 下
-- 治理脚本在 `scripts/governance/` 下
-
----
-
-## 4. 已实现代码完整路径索引
-
-> **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
-> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> 门禁引擎——gate_engine.py+5个KMS YAML门禁已实现
-
-### 4.1 源码文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `src/zephyr/gates/_registry.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/_template.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/admission/mad_001_architecture_necessity.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/admission/mad_002_phase_relevance.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/admission/mad_003_dependency_compliance.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/admission/mad_004_interface_definability.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/ai_capability_guard.py` | ✅ 已实现 | |
-| `src/zephyr/gates/circuit_breaker.py` | ✅ 已实现 | |
-| `src/zephyr/gates/contract_template_manager.py` | ✅ 已实现 | |
-| `src/zephyr/gates/g1_ingest.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/g2_triage.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/g3_evaluate.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/g4_activate.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/g5_extract.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/g6_blueprint_compliance.yaml` | ✅ 已实现 | Phase 2 硬合规——G6 蓝图读取合规门禁 |
-| `src/zephyr/gates/g6_ctr_compliance.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/gate_engine.py` | ✅ 已实现 | |
-| `src/zephyr/gates/task/g0_entry.yaml` | ✅ 已实现 | |
-| `src/zephyr/gates/task_completion_gate.py` | ✅ 已实现 | |
-
-### 4.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/unit/test_gate_engine.py` | ✅ 已实现 | |
-| `tests/unit/test_task_completion_gate.py` | ✅ 已实现 | |
-| `tests/unit/test_circuit_breaker.py` | ✅ 已实现 | |
-| `tests/unit/test_contract_template_manager.py` | ✅ 已实现 | |
-| `tests/integration/test_gate_e2e.py` | ✅ 已实现 | |
-
-### 4.3 治理脚本
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `scripts/governance/d6_security/validate_gate_discipline.py` | ✅ 已实现 | |
-
-### 4.5 路径索引使用指南
-
-**新 AI session 读取顺序**：
-1. 读本蓝图 §4（本节）→ 知道「哪些已实现、在哪里」
-2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
-3. 读施工 Phase 规划 → 知道「下一步该做什么」
-
-**路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\`
-- 源码在 `src/zephyr/` 下
-- 测试在 `tests/` 下
-- 配置在 `config/` 下
-- 治理脚本在 `scripts/governance/` 下
-
----
-
-## 十三、依赖关系（结构化）
-
-| 依赖目标 | 关系类型 | 为什么 |
-|------|:--:|------|
-| MOD-INF-006 (Task System) | runtime_call | 读取 TaskCard 28字段 → G0-G7 判定 |
-| MOD-INF-005 (Script System) | runtime_call | 脚本 exit code → GATE-n PASS/FAIL (CT-SCRIPT-GATE-001) |
-| MOD-KB-001 (Knowledge Base) | data_flow | KE → G1-G5 KMS 门禁管道 |
-| MOD-INF-008 (Context Engine) | config_consume | blueprint_routing.yaml 上下文范围 |
-| MOD-INF-014 (LLM Security) | sibling_check | fail-closed 模式双门禁互校验 |
-| MOD-INF-015 (Telemetry) | emit_to | GATE-16 blueprint_read_check → BLUEPRINT-READ-FREQ SLI |
-| `architecture-model/layers/b_gates.yaml` | ssoT | Gates YAML canonical source |
-
-## 十四、产出物存放目录
-
-| 产出物 | 路径 |
-|------|------|
-| 门禁引擎代码 | `src/zephyr/gates/gate_engine.py` |
-| 门禁 YAML 配置 | `src/zephyr/gates/g1_ingest.yaml` ~ `g6_blueprint_compliance.yaml` |
-| 熔断器 | `src/zephyr/gates/circuit_breaker.py` |
-| 门禁测试 | `tests/unit/test_gate_engine.py` 等 5 文件 |
-| 门禁治理脚本 | `scripts/governance/d6_security/validate_gate_discipline.py` |
-| 门禁注册表 | `src/zephyr/gates/_registry.yaml` |
-| 门禁模板 | `src/zephyr/gates/_template.yaml` |
-
-## 十五、集成目标
-
-| 集成目标 | 状态 | 验证方式 |
-|------|:--:|------|
-| G6 硬合规阻断 P0 | ✅ 已实现 | `session_simulator.py` Phase 2 验证 |
-| G0-G7 全部 8 门禁 YAML 规则化 | ✅ 已实现 | G5 YAML §5.1-§5.4 |
-| CT-SCRIPT-GATE-001 落地 | 📋 Backlog | 脚本 exit code → Gate 判定链路 |
-| CT-ORC-GATE-001 落地 | 📋 Backlog | TaskCard.status transition → Gate 触发 |
-| 熔断器全链路测试 | 📋 Backlog | OPEN→HALF_OPEN→CLOSED 循环 |
-
-## 十六、需要更新的相关内容
-
-当本蓝图变更时，同步更新：
-1. `docs/03_modules/blueprint-registry.yaml` — 版本号和完整度
-2. `config/blueprint_routing.yaml` — R009 路由项 keywords/path_patterns
-3. `src/zephyr/mcp/gate_engine_server.py` — MCP 工具描述引用本蓝图
-4. `src/zephyr/mcp/blueprint_search_server.py` — 若 keyword 变更
-5. `docs/03_modules/_master-blueprint/blueprint.md` — MOD-MASTER-001 §2.8 CT-SCRIPT-GATE-001
-
----
-
-## 十七、门禁评估管线 — 排序、组合与上下文传播
-
-> **盲点覆盖**：T1-1 Gate评估排序 / T1-4 上下文传播(GateContext) / T1-5 门禁组合逻辑(AND/OR) / T1-12 AI能力边界门禁集成
-> **对标**：LaunchDarkly flag hierarchy + prerequisite flags；OpenFeature evaluation context；K8s Mutating→Validating admission管线
-
-### 17.1 评估管线模型
-
-当前`evaluate(task, gate_id)`是点对点调用——Orchestrator每次调一个门禁。16+门禁需管线化：
-
-```
-                    Gate Pipeline
-TaskCard.status  →  [G0] ──→ [G1,G2,G3] ──→ [G4,G5,G6] ──→ [G7]
- transition        准入      施工前并行       执行中并行      交付前
-
-PipelineMode: single | parallel_and | parallel_or | sequential | weighted
-```
-
-```yaml
-gate_pipeline:
-  stages:
-    - stage: entry
-      mode: single
-      gates: [G0]
-      on_fail: "任务留在DRAFT"
-    - stage: pre_exec
-      mode: parallel_and
-      gates: [G1, G2, G3]
-      on_fail: "任务→BLOCKED，有fix_hint的进入deferred_queue"
-    - stage: during_exec
-      mode: parallel_and
-      gates: [G4, G5, G6]
-      on_fail: "中断执行 + status→FAILED"
-    - stage: delivery
-      mode: single
-      gates: [G7]
-      on_fail: "任务→BLOCKED，修复后重新触发G7判定"
-  inter_gate_dependencies:
-    - {prerequisite: G6, dependent: G7, rule: "G6 must PASS before G7 evaluation"}
-    - {prerequisite: G1, dependent: G2, rule: "G1 rejected → skip G2"}
-```
-
-### 17.2 门禁组合逻辑
-
-当前`entry_conditions`是扁平AND——顶尖设计应支持任意布尔组合：
-
-```yaml
-check_expression: "(G0-C00 AND G0-C01) OR (admin_override == true)"
-# 支持: AND / OR / NOT / 括号 / severity_weighted
-# 对标: LaunchDarkly targeting rules的多条件组合
-```
-
-### 17.3 GateContext — 上下文传播
-
-当前上下文散落在`check.params`中。需标准化`GateContext`：
-
-```python
-@dataclass
-class GateContext:
-    task_id: str
-    task_type: str
-    priority: str
-    assigned_model: str
-    target_module_id: str
-    module_blueprint_version: str
-    module_dependencies: list[str]
-    session_id: str
-    blueprint_reads: list[str]     # 本次session已读蓝图
-    tool_calls_made: list[str]
-    recent_gate_results: dict[str, GateResult]
-    circuit_breaker_states: dict[str, str]
-    capability_level: str          # AI能力等级
-    global_token_usage: int
-
-    def serialize(self) -> dict: ...
-    @classmethod
-    def from_task_and_session(cls, task, session) -> GateContext: ...
-```
-
-### 17.4 AI能力边界门禁集成
-
-`ai_capability_guard.py`已实现但未纳入门禁YAML体系。需注册为第19种CheckType：
-
-```yaml
-gate_id: G6B                               # G6子门禁—AI能力边界
-gate_name: ai_capability_boundary
-entry_conditions:
-  - id: G6B-C00
-    name: task_within_ai_capability
-    type: capability_boundary              # 第19种CheckType
-    severity: error
-    check: "task.operation IN config/ai_capability_matrix.yaml.allowed_operations"
-    on_failure: reject
-    params:
-      matrix_path: "config/ai_capability_matrix.yaml"
-      require_declaration: true
-    anti_pattern:
-      description: "AI接受超出其能力边界的任务——可能导致破坏性操作"
-      example: "AI被分配要求修改_registry.yaml的全权任务→G6B-C00 FAIL→REJECT"
-```
-
----
-
-## 十八、影子模式与渐进式激活
-
-> **盲点覆盖**：T1-2 Shadow Mode正式化 / T2-12 渐进式门禁激活 / T2-9 门禁模拟器
-> **对标**：LaunchDarkly Guarded Rollouts + dark launch；K8s dry-run
-
-### 18.1 Shadow Mode 三级激活体系
-
-```yaml
-gate_activation_stages:
-  - stage: shadow
-    description: "门禁评估→记录结果→不阻断任务"
-    duration: "≥50次评估 且 ≥7天"
-    exit_criteria: "误报率<5% 且 P0漏检率<1%"
-  - stage: beta_enforce
-    description: "门禁评估→P0阻断→P1/P2仅告警"
-    duration: "≥100次评估 且 ≥14天"
-    exit_criteria: "P0误报率<1% 且 override次数<3"
-  - stage: full_enforce
-    description: "门禁评估→P0/P1阻断→P2告警"
-    exit_criteria: "连续30天无override"
-
-activation_lifecycle: shadow → beta_enforce → full_enforce
-# 每个阶段升级需Owner显式确认（不可自动化）
-```
-
-### 18.2 渐进式门禁激活
-
-对标LaunchDarkly percentage rollout：
-
-```yaml
-gradual_activation:
-  targeting_rules:
-    - {rule: "仅P0任务", percent: 100}
-    - {rule: "仅src/zephyr/gates/目录修改", percent: 100}
-    - {rule: "全部模块，5%任务采样→25%→50%→100%", percent: [5,25,50,100]}
-  auto_rollback:
-    condition: "新门禁P0阻断率 > 历史基线×3"
-    action: "自动回退shadow+通知Owner"
-```
-
-### 18.3 门禁模拟器
-
-```python
 class GateSimulator:
-    """门禁全链路模拟——不写SQLite/不改状态/不触发事件"""
+    def simulate_all(self, task: Task, session_context: dict) -> SimulationReport: ...
 
-    def simulate_all(self, task: Task, session_context: dict) -> SimulationReport:
-        """返回全部已注册门禁的模拟判定——PASS/FAIL预测+fix_hint+severity+耗时"""
-
-@dataclass
-class SimulationReport:
-    task_id: str
-    total_gates: int
-    passed: int
-    blocked: int
-    warnings: int
-    results: dict[str, GateResult]
-    summary: str          # "7/10 PASS, 2 BLOCKED, 1 WARNING"
-    fix_checklist: list[str]  # 按优先级排序的修复步骤清单
-    @property
-    def would_pass_all(self) -> bool: ...
-```
-
----
-
-## 十九、Owner紧急旁路协议
-
-> **盲点覆盖**：T1-3 Gate Override/Emergency Bypass
-> **对标**：LaunchDarkly kill switch + admin override API + audit log
-
-### 19.1 受控旁路机制
-
-```yaml
-override_protocol:
-  principle: "Owner is the final authority, every override permanently recorded"
-  constraints:
-    - max_duration: "24h"
-    - require_justification: true
-    - audit_permanent: true     # SQLite + JSONL双写
-    - limit_per_month: 10
-    - scope: "per_gate"
-    - auto_reenable: true
-  forbidden:
-    - 不能override circuit_breaker OPEN（AP4）
-    - 不能override GATE-18 pre-commit
-    - 不能批量override（一次一个gate）
-```
-
-### 19.2 实现接口
-
-```python
 class GateOverride:
     def override(self, gate_id: str, justification: str, duration_hours: float=24.0) -> OverrideRecord: ...
     def list_active_overrides(self) -> list[OverrideRecord]: ...
     def revoke(self, gate_id: str) -> bool: ...
 
-@dataclass
-class OverrideRecord:
-    override_id: str; gate_id: str; justification: str
-    created_at: datetime; expires_at: datetime
-    revoked_at: datetime | None; created_by: str
-```
+class GateEngineIntegrityGuard:
+    def verify_before_load(self) -> IntegrityCheckResult: ...
+    def bootstrap_known_good_state(self, git_commit_hash: str) -> bool: ...
+    def seal_current_state(self, owner_pgp_signature: bytes) -> bool: ...
 
----
+class AuditChainVerifier:
+    def verify_chain_integrity(self, decisions: list[HashedGateDecision]) -> ChainVerificationReport: ...
+    def verify_single_decision(self, snapshot: DecisionSnapshot) -> bool: ...
 
-## 二十、门禁可观测性与审计完整性
-
-> **盲点覆盖**：T1-7 Gate Observability / T2-13 Gate Audit Trail Completeness
-> **对标**：LaunchDarkly Observability支柱；OpenFeature evaluation hooks
-
-### 20.1 Per-Gate SLI
-
-```yaml
-gate_slis:
-  - {sli: gate_latency_p99_ms, target: "<50ms(hot)/<200ms(warm)"}
-  - {sli: gate_false_positive_rate, target: "<5%"}
-  - {sli: gate_p0_block_rate, target: "1%-5%"}
-  - {sli: gate_fix_hint_effectiveness, target: ">70%"}
-  - {sli: gate_coverage, target: ">80%"}
-```
-
-### 20.2 审计扩展Schema
-
-```sql
-ALTER TABLE gates ADD COLUMN context_json TEXT;
-ALTER TABLE gates ADD COLUMN triggered_by TEXT;
-ALTER TABLE gates ADD COLUMN override_id TEXT;
-ALTER TABLE gates ADD COLUMN evaluation_duration_ms INTEGER;
-ALTER TABLE gates ADD COLUMN affected_artifacts TEXT;
-ALTER TABLE gates ADD COLUMN session_id TEXT;
-```
-
-### 20.3 门禁变更追踪
-
-```python
-def detect_undeclared_gate_changes() -> list[GateChangeRecord]:
-    """交叉比对: gate YAML change_log vs git diff——检测漂移"""
-```
-
----
-
-## 二十一、门禁性能预算与幂等性保障
-
-> **盲点覆盖**：T2-10 Gate Idempotency / T2-11 性能预算+自保熔断 / T2-21 Gate Rate Limiting
-> **对标**：LaunchDarkly 六层韧性；OpenFeature ≤2ms SLA
-
-### 21.1 门禁幂等性
-
-```python
-class GateEngine:
-    _RESULT_CACHE: dict[tuple[str,str], GateResult] = {}
-
-    def evaluate(self, task: Task, gate_id: str, *, force_reevaluate=False) -> GateResult:
-        cache_key = (task.task_id, gate_id)
-        if not force_reevaluate and cache_key in self._RESULT_CACHE:
-            cached = self._RESULT_CACHE[cache_key]
-            if task.content_hash == cached.details.get("task_content_hash"):
-                cached.details["from_cache"] = True
-                return cached
-        result = self._do_evaluate(task, gate_id)
-        result.details["task_content_hash"] = task.content_hash
-        self._RESULT_CACHE[cache_key] = result
-        return result
-```
-
-### 21.2 性能预算
-
-```yaml
-gate_performance_budgets:
-  hot_path:   {max_latency_ms: 50,  timeout: "PASS(fail-open)"}
-  warm_path:  {max_latency_ms: 200, timeout: "FAIL(fail-closed)"}
-  cold_path:  {max_latency_ms: 2000, timeout: "标记+继续"}
-```
-
-### 21.3 Meta Circuit Breaker
-
-```yaml
-gate_engine_self_protection:
-  meta_circuit_breaker:
-    triggers:
-      - {condition: "总延迟>500ms持续10s", action: "降级—仅P0门禁评估"}
-      - {condition: "错误率>5%(3min窗口)", action: "降级—仅G0+G7评估"}
-    recovery: "恢复正常(<200ms+错误率<1%)持续60s→自动恢复"
-  rate_limiting:
-    per_gate_max_qps: 20
-    global_max_concurrent: 50
-```
-
----
-
-## 二十二、门禁版本化与生命周期管理
-
-> **盲点覆盖**：T2-13 Gate Versioning & Migration / T2-14 Gate Lifecycle / T2-22 Gate Inheritance
-> **对标**：LaunchDarkly flag lifecycle；Unleash/Flagsmith生命周期
-
-### 22.1 门禁生命周期状态机
-
-```yaml
-gate_lifecycle:
-  states: [draft, shadow, active, deprecated, removed]
-  rules:
-    - shadow→active: "Owner审批 + ≥7d shadow + 误报率<5%"
-    - active→deprecated: "需替代门禁active≥14d才能退役"
-    - deprecated→removed: "最后一个引用removed满30d→可清理"
-```
-
-### 22.2 门禁版本化
-
-```python
-class GateMigrationPolicy:
-    def determine_policy(self, old_ver: str, new_ver: str) -> MigrationAction:
-        # PATCH: in-flight任务用新规则重评(不阻塞)
-        # MINOR: 新任务用新规则，in-flight沿用旧规则
-        # MAJOR: 全部in-flight任务暂停+通知Owner
-```
-
-### 22.3 门禁继承(extends)
-
-```yaml
-gate_id: G1-MOD-TRADE-001
-extends: G1
-scope: "module:MOD-TRADE-001"
-entry_conditions:  # 继承G1全部 + 追加
-  - id: G1-TRADE-C00
-    name: trade_data_format_valid
-    type: format_validation
-    check: "data_format IN {OHLCV, TICK, ORDER_BOOK}"
-    severity: error
-# 原则: extends只追加，不删除/修改基类（Liskov substitution for gates）
-```
-
----
-
-## 二十三、人机协同审批门禁
-
-> **盲点覆盖**：T2-16 Human-in-the-Loop Gate
-> **对标**：ITIL CAB approval + LaunchDarkly approval workflow
-
-### 23.1 真实审批接口
-
-当前G4的`manual_approval`仅校验字段——空壳。需升级为真实审批流：
-
-```yaml
-entry_conditions:
-  - id: G4-C01
-    name: owner_approval_required
-    type: manual_approval
-    severity: error
-    params:
-      approval_timeout_h: 72
-      required_review_dimensions: ["准确性","时效性","冲突裁决","可信度"]
-```
-
-```python
 class ManualApprovalGate:
     def request_approval(self, ke_id: str, ctx: GateContext) -> ApprovalRequest: ...
     def approve(self, approval_id: str, approver: str, notes: str) -> ApprovalResult: ...
     def reject(self, approval_id: str, approver: str, reason: str) -> ApprovalResult: ...
-    def list_pending(self) -> list[ApprovalRequest]: ...
+```
 
-@dataclass
-class ApprovalRequest:
-    approval_id: str; ke_id: str; gate_id: str
-    requested_at: datetime; expires_at: datetime
-    status: str; review_checklist: list[str]; context_snapshot: dict
+### §4.2 数据模型
+
+> 已实现——代码文件是SSoT，蓝图只保留字段清单。
+
+**GateResult**: gate_id: str | status: GateStatus(PASS/PASS_WITH_WARNINGS/FAIL/CRITICAL_FAIL) | reasons: list[str] | affected_tasks: list[str] | timestamp: datetime
+
+**GateContext**: task_id: str | task_type: str | priority: str | assigned_model: str | target_module_id: str | module_blueprint_version: str | module_dependencies: list[str] | session_id: str | blueprint_reads: list[str] | tool_calls_made: list[str] | recent_gate_results: dict[str, GateResult] | circuit_breaker_states: dict[str, str] | capability_level: str | global_token_usage: int
+
+**HashedGateDecision**: decision_id: str | sequence_number: int | previous_hash: str | gate_id: str | gate_result: GateResult | context_hash: str | snapshot_hash: str | timestamp: datetime | signature: str | None
+
+**DecisionSnapshot**: task_card_snapshot: dict | gate_yaml_snapshot: dict | gate_yaml_version: str | gate_context_snapshot: dict | external_inputs: dict | evaluation_timestamp: datetime | gate_engine_version: str | python_version: str | gate_result: GateResult | evaluation_duration_ms: int
+
+### §4.3 输入契约
+
+| 接口 | 输入字段 | 必填 | 约束 |
+|------|---------|:---:|------|
+| GateEngine.evaluate() | task: Task, gate_id: str | ✅ | gate_id MUST在_registry.yaml中注册 |
+| GateEngine.evaluate_pipeline() | task: Task, pipeline_mode: str="sequential" | ✅ | pipeline_mode ∈ {sequential, parallel_and, parallel_or, weighted, conditional} |
+| GateSimulator.simulate_all() | task: Task, session_context: dict | ✅ | — |
+| GateOverride.override() | gate_id: str, justification: str, duration_hours: float=24.0 | ✅ | owner MUST在OWNER_IDS中；circuit_breaker OPEN时禁止 |
+| GateOverride.revoke() | gate_id: str | ✅ | — |
+| GateEngineIntegrityGuard.verify_before_load() | — | — | — |
+| GateEngineIntegrityGuard.bootstrap_known_good_state() | git_commit_hash: str | ✅ | — |
+| GateEngineIntegrityGuard.seal_current_state() | owner_pgp_signature: bytes | ✅ | — |
+| AuditChainVerifier.verify_chain_integrity() | decisions: list[HashedGateDecision] | ✅ | — |
+| AuditChainVerifier.verify_single_decision() | snapshot: DecisionSnapshot | ✅ | — |
+| ManualApprovalGate.request_approval() | ke_id: str, ctx: GateContext | ✅ | — |
+| ManualApprovalGate.approve() | approval_id: str, approver: str, notes: str | ✅ | — |
+| ManualApprovalGate.reject() | approval_id: str, approver: str, reason: str | ✅ | — |
+
+### §4.4 输出契约
+
+| 接口 | 成功输出 | 失败输出 |
+|------|---------|---------|
+| GateEngine.evaluate() | GateResult(passed=True/False, gate_id, violations=[]) | GateEvaluationError(gate_id未注册/评估超时) |
+| GateEngine.evaluate_pipeline() | PipelineResult(dict[gate_id, GateResult]) | GateEvaluationError(管线配置无效) |
+| GateSimulator.simulate_all() | SimulationReport(dict[gate_id, SimulationResult]) | — |
+| GateOverride.override() | OverrideRecord(gate_id, owner, expires_at) | OverrideDeniedError(非Owner/circuit_breaker OPEN) |
+| GateOverride.revoke() | bool | — |
+| GateEngineIntegrityGuard.verify_before_load() | IntegrityCheckResult(status, violations) | — |
+| GateEngineIntegrityGuard.bootstrap_known_good_state() | bool | — |
+| GateEngineIntegrityGuard.seal_current_state() | bool | — |
+| AuditChainVerifier.verify_chain_integrity() | ChainVerificationReport(is_valid, broken_at) | — |
+| AuditChainVerifier.verify_single_decision() | bool | — |
+| ManualApprovalGate.request_approval() | ApprovalRequest | — |
+| ManualApprovalGate.approve() | ApprovalResult | — |
+| ManualApprovalGate.reject() | ApprovalResult | — |
+
+### §4.5 MCP 接口
+
+| Tool | API | 输入 | 输出 | 错误码 |
+|------|-----|------|------|--------|
+| gate_evaluate | gate_engine.evaluate | {task_id, gate_id} | GateResult | 404=gate未注册, 429=熔断器OPEN |
+| gate_batch_evaluate | gate_engine.evaluate_pipeline | {task_id, pipeline_mode} | PipelineResult | 同上 |
+| gate_health | gate_engine.health_summary | {} | HealthReport | — |
+| gate_override | gate_engine.override | {gate_id, justification, owner} | OverrideRecord | 403=非Owner, 409=熔断OPEN |
+| gate_simulate | gate_engine.simulate | {task_id, session_context} | SimulationReport | — |
+| gate_integrity | gate_engine.integrity_check | {} | IntegrityCheckResult | 503=验证失败 |
+| blueprint_search | blueprint_search_server.search | {keywords} | list[BlueprintMatch] | — |
+
+### §4.6 契约版本
+
+| 契约 | 版本 | 稳定性 | 兼容性 | 说明 |
+|------|------|--------|--------|------|
+| GateEngine.evaluate() | v1 | stable | ✅向后兼容 | 核心API不变 |
+| GateResult | v1 | stable | ✅向后兼容 | Pydantic模型 |
+| GateContext | v0.1 | evolving | ⚠️需通知 | 字段可能扩展 |
+| CBGManager | v1 | evolving | ⚠️需通知 | 池配置可能扩展 |
+| GateOverride | v1 | evolving | ⚠️需通知 | TTL策略可能调整 |
+| HashedGateDecision | v0.1 | evolving | ⚠️需通知 | 哈希算法可能升级 |
+| CT-SCRIPT-GATE-001 | v1.0 | stable | ✅向后兼容 | exit code映射契约 |
+| CT-ORC-GATE-001 | v1.0 | stable | ✅向后兼容 | TaskCard状态迁移触发契约 |
+| 门禁YAML schema | v1 | evolving | ❌破坏性 | 新增check_type需注册 |
+
+### §4.7 OCP 扩展点
+
+| 扩展点 | 基类/接口 | 默认实现 | 扩展契约 | 注册方式 |
+|--------|----------|---------|---------|---------|
+| CheckType | check_types/ct_*.py | field_presence/classification/regex_pattern等30+ | MUST继承CheckType基类+实现check()方法+注册到check_type_registry.py | check_type_registry.py自动发现 |
+| 门禁YAML | _template.yaml | 11节完整字段 | MUST遵循_template.yaml schema+写入_registry.yaml | _registry.yaml手动注册 |
+| Bulkhead池 | circuit_breaker.py CBGManager | 4池(quick/content_analysis/ai_generated/disruptive) | 新增池MUST声明workers+threshold+cooldown | CBGManager配置注入 |
+
+---
+
+## §5 约束条件
+<!-- temporal_type: permanent -->
+
+### §5.1 技术约束
+
+| # | 约束 | 值 |
+|---|------|-----|
+| 1 | Python 版本 + 数据校验 | Python 3.12+ / Pydantic V2 |
+| 2 | 数据库模式 | SQLite WAL / 单写者 |
+| 3 | 脚本执行方式 | subprocess（非线程内import） |
+| 4 | YAML解析安全 | yaml.safe_load + 1MB/20层/5s |
+| 5 | 门禁YAML完整性 | 11节完整字段（_template.yaml强制） |
+| 6 | check字段格式 | 布尔表达式 |
+| 7 | reject配fix_hint | 每条reject的entry_condition必须配fix_hint |
+| 8 | 状态变更通道 | task_repo.transition()（绕过=跳过门禁） |
+
+### §5.2 容量估算
+
+| 维度 | 当前规模 | 峰值需求 | 系统极限 | 是否够用 | 扩展方案 |
+|------|------|------|------|:---:|------|
+| 受管模块数 | ~51 | 1,500 | 4 shard × 375 = 1,500 | 刚好 | shard扩展至8(>500模块/shard时) |
+| 治理脚本数 | 268 | 10,000 | 增量15-30脚本/次 | 需验证 | 增量扫描+脚本缓存+依赖图谱 |
+| 并发 AI Agent | 1-3 | 100 | 50 worker(三级调度) | 不够 | 三级调度+反压+Bulkhead隔离 |
+| 脚本并发执行 | 8-24 worker | 40-100 | 50 worker | 不够 | Bulkhead 4+1池+优先级队列 |
+| 增量扫描耗时 | ~1min | < 1min | 增量15-30脚本 | 够 | 依赖图谱增量更新 |
+| 门禁评估延迟 P99 | 未测量 | < 200ms(warm) / < 50ms(hot) | subprocess启动开销 | 需验证 | 脚本缓存+热路径优化 |
+
+**资源预算**：
+
+| 资源 | 分配 | 饱和阈值 |
+|------|------|---------|
+| CPU | subprocess 40-50 workers(~80%逻辑线程) + gate_eval 8-12 workers + background 4 workers | 80% |
+| 内存 | subprocess 10GB峰值 + gate_engine 500MB + vector_models 8GB + OS 8GB + headroom 37GB | 85% (54.4GB) |
+| 磁盘 | SQLite shards 200MB + WAL 16MB + audit ~10MB/d + logs ~100MB/30d | NVMe 3GB/s读/2GB/s写 |
+
+### §5.3 迁移/废弃方案
+<!-- temporal_type: construction_temporary -->
+
+> ⚠️ 临时时态：迁移方案执行完毕后从蓝图删除。
+
+| # | 废弃/迁移对象 | 当前位置 | 目标位置 | 处理方式 | 引用更新方案 | 执行状态 |
+|---|------|------|------|------|------|:-------:|
+| 1 | SQLite单库写入 | `data/audit/gate_chain.db`(单文件) | 4-way分片 `gate_chain_shard_{0-3}.db` | 激活ShardRouter——新数据按module_id写入对应shard | 100+并发写入触发 | 未执行 |
+| 2 | 历史数据 | 单库 | 按module_id重新分配到4 shard | 一次性迁移脚本 | Phase 1完成后 | 未执行 |
+| 3 | shard_count扩展 | 4 shard | 8 shard | 扩展shard_count至8 | 单shard > 500模块 | 未执行 |
+
+### §5.4 非功能需求与服务水平
+
+| 维度 | NFR指标 | NFR目标 | 测量方式 | SLI | SLO | Error Budget | 告警阈值 |
+|------|--------|--------|---------|-----|-----|-------------|---------|
+| 可用性 | 门禁评估可用率 | 99.9% | 门禁评估成功/总请求 | gate_eval_success_rate | 99.9% | 每月允许0.1%失败 | <99.5%告警 |
+| 延迟 | 门禁评估P99 | hot<50ms/warm<200ms | 评估耗时直方图 | gate_latency_p99_ms | <200ms(warm) | 超SLO=预算消耗 | >500ms告警 |
+| 吞吐 | 门禁评估QPS | 50 eval/s | 评估计数/秒 | gate_eval_qps | ≥50/s | — | <30/s告警 |
+| 误报 | 门禁误报率 | <5% | override次数/总FAIL | gate_false_positive_rate | <5% | — | >10%告警 |
+
+### §5.5 自动化触发机制
+
+| 操作 | 触发方式 | 调度策略 | 当前状态 |
+|------|---------|---------|---------|
+| 门禁评估(TaskCard状态迁移) | auto_event | TaskCard.status transition→自动触发对应门禁 | ⚠️待实现(CT-ORC-GATE-001) |
+| 门禁评估(脚本exit code) | auto_event | 脚本执行完成→exit code映射→Gate判定 | ⚠️待实现(CT-SCRIPT-GATE-001) |
+| 门禁YAML热更新 | auto_event | 文件变更监控→原子替换→模拟验证 | ⚠️待实现(GAP-C12) |
+| 依赖图谱增量更新 | auto_scheduled | 文件变更时增量+每日全量重建 | ⚠️待实现(GAP-C04) |
+| 容量压测 | auto_scheduled | 每个设计里程碑跑BM-01~05 | ⚠️待实现(GAP-C08) |
+| Owner紧急旁路 | on_demand | 手动调用GateOverride.override() | ✅已实现 |
+| 门禁健康报告 | on_demand | 手动调用GateHealthDashboard.generate_report() | ✅已实现 |
+| 门禁模拟 | on_demand | 手动调用GateSimulator.simulate_all() | ✅已实现 |
+
+### §5.7 禁止模式与导入约束
+
+| # | 类型 | 禁止项 | 替代/允许项 | 原因 |
+|---|:----:|--------|-----------|------|
+| 1 | 编码模式 | 绕过门禁直接修改TaskCard.status | task_repo.transition()→自动触发门禁 | AP1 |
+| 2 | 编码模式 | 跳过KMS门禁直接写入知识库 | G1→G2→G3→G4→G5完整管道 | AP2 |
+| 3 | 编码模式 | 熔断器OPEN时手动override | 等待cooldown到期 | AP4 |
+| 4 | 编码模式 | 全量扫描作为默认模式 | 增量扫描默认 | AP9 |
+| 5 | 导入源 | 从zephyr.shared.resilience.circuit_breaker导入CircuitBreaker在门禁域 | 从zephyr.gates.circuit_breaker导入CBGManager | 门禁域需SQLite持久化版 |
+| 6 | 编码模式 | 创建门禁但不注册_registry.yaml | 新建=copy _template.yaml+写入_registry.yaml | AP5 |
+
+---
+
+## §6 错误处理
+<!-- temporal_type: permanent -->
+
+| 错误场景 | 处理方式 | 恢复 |
+|----------|---------|------|
+| 门禁YAML解析失败 | 保留旧配置 + P1告警 + 记录失败原因 | 修复YAML后热更 |
+| 脚本执行超时 | SIGTERM→wait 5s→SIGKILL + 标记该脚本FAIL | 修复脚本后重新触发G7 |
+| gate_engine.py未捕获异常 | 外部看门狗检测进程僵死→重启→从快照恢复 | 连续3次重启→fail-closed deny-all |
+| 熔断器OPEN | 等待cooldown到期→HALF_OPEN自动试探 | 禁止手动reset(AP4) |
+| 依赖图谱未就绪 | 返回503 Service Unavailable + 预估就绪时间 | Agent指数退避重试 |
+| hash chain断裂 | P0 alert + 从JSONL副本重建SQLite+重建hash链 | Owner手动验证 |
+| 跨分片写入Phase 2失败 | 定期扫描PENDING条目→重试Phase 2 | 自动恢复 |
+| 热更新配置差异>20% | 拒绝热更 + P0告警 | Owner审查差异 |
+
+### §6.1 可观测性规格
+
+| 指标名 | 类型 | 采集方式 | 告警阈值 | 告警级别 |
+|--------|------|---------|---------|---------|
+| gate_eval_duration_ms | Histogram | 自动埋点 | P99>500ms | P1 |
+| gate_eval_total | Counter | 自动埋点 | — | — |
+| gate_eval_fail_total | Counter | 自动埋点 | 错误率>5%(3min) | P1 |
+| circuit_breaker_state | Gauge | 自动埋点 | OPEN持续>5min | P0 |
+| gate_override_active | Gauge | 自动埋点 | >3个同时active | P2 |
+| gate_false_positive_rate | Gauge | 周期计算 | >10% | P2 |
+| gate_cache_hit_rate | Gauge | 周期计算 | <60% | P2 |
+
+### §6.2 退化矩阵
+
+| 组件 | 失败后可用功能 | 不可用功能 | 降级策略 | 恢复条件 |
+|------|-------------|-----------|---------|---------|
+| GateEngine | — | 全部门禁评估 | 外部看门狗检测→重启→快照恢复 | 进程恢复健康 |
+| circuit_breaker | 仅G0+G6评估 | G1-G5/G7评估 | tier_3_critical降级 | 负载<70% |
+| 依赖图谱 | 全量扫描兜底(3.5h) | 增量扫描 | 返回503+预估就绪时间 | 图谱重建完成 |
+| SQLite审计 | 从JSONL副本重建 | 实时写入 | P0 alert+重建hash链 | 重建完成+验证 |
+| known_good_hashes | fail-closed deny-all | 所有AI操作 | Owner PGP重新签名 | 签名验证通过 |
+
+---
+
+## §8 安全考量
+<!-- temporal_type: permanent -->
+
+### 攻击面与缓解
+
+| 威胁类型 | 具体攻击 | 缓解 |
+|---------|---------|------|
+| Spoofing | AI伪造blueprint_read记录 | §L hash chain + 来源验证 |
+| Tampering | 修改gate_engine.py添加bypass | §M GateEngineIntegrityGuard |
+| Tampering | 修改SQLite审计记录 | §L hash chain |
+| Repudiation | AI否认执行过危险操作 | §L decision snapshot + hash chain |
+| Information Disclosure | 读取其他模块蓝图(未授权) | 需新增模块级蓝图读取范围检查 |
+| Denial of Service | 构造极端任务触发门禁递归评估 | §G meta CB + 门禁评估深度限制 |
+| Denial of Service | YAML billion laughs attack | YAML size limit + 解析超时 + yaml.safe_load |
+| Elevation of Privilege | AI通过override获得不该有的权限 | §E override仅限Owner + PGP验证 |
+
+### YAML解析安全
+
+| 约束 | 值 |
+|------|-----|
+| max_file_size | 1MB |
+| parse_timeout_ms | 5000 |
+| max_depth | 20 |
+| max_aliases | 100 |
+| forbidden_constructors | !!python/object, !!python/name |
+| MUST使用 | yaml.safe_load |
+
+### TOCTOU硬化
+
+| 约束 | 值 |
+|------|-----|
+| gate_id | G7 |
+| trigger | deploy action invoked |
+| check | ALL scripts re-run exit_code==0 AND files_checksum==G7_snapshot.files_checksum AND elapsed_since_G7<300s |
+| on_fail | 拒绝部署+任务回退到REVIEW |
+
+### AI博弈防护
+
+| 行为 | 检测 | 缓解 |
+|------|------|------|
+| AI修复仅满足形式不解决实质 | fix_hint_effectiveness持续下降 | 随机抽查10%已通过G7任务→Owner深度审查 |
+| AI避开需读蓝图的修改 | 被修改文件分布偏离任务分配分布 | 不确定性注入——偶尔显示门禁可能更严 |
+
+---
+
+## §9 测试策略
+<!-- temporal_type: permanent -->
+
+| 测试类型 | 覆盖范围 | 位置 |
+|----------|---------|------|
+| 单元测试 | gate_engine / circuit_breaker / contract_template_manager / task_completion_gate | `tests/unit/test_*.py` |
+| 集成测试 | G0-G7端到端门禁评估链路 | `tests/integration/test_gate_e2e.py` |
+| 门禁YAML校验 | 每条entry_condition的PASS/FAIL两路径 | `validate_gate_discipline.py` |
+| 容量压测 | BM-01~05五场景(见§17) | `scripts/benchmark/gate_engine_load_gen.py` |
+| 哈希链验证 | 全链完整性+单决策重放 | `audit_chain_verifier.py` |
+| 完整性守卫 | gate_engine.py/circuit_breaker.py哈希校验 | `gate_integrity_guard.py` |
+| 热更新安全 | 新配置模拟评估→差异>20%拒绝 | `gate_pipeline.py simulate mode` |
+
+---
+
+## §10 依赖关系
+<!-- temporal_type: permanent -->
+
+### §10.1 依赖声明
+
+| 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
+|------|------|------|------|------|
+| MOD-INF-006 (Task System) | runtime_call | 读取TaskCard 28字段→G0-G7判定 | v1.0+ | docs/03_modules/_cross_layer/task-system/blueprint.md |
+| MOD-INF-005 (Script System) | runtime_call | 脚本exit code→GATE-n PASS/FAIL (CT-SCRIPT-GATE-001) | v1.0+ | docs/03_modules/_cross_layer/script-system/blueprint.md |
+| MOD-KB-001 (Knowledge Base) | data_flow | KE→G1-G5 KMS门禁管道 | v1.0+ | docs/03_modules/_cross_layer/knowledge-base/blueprint.md |
+| MOD-INF-008 (Context Engine) | config_consume | blueprint_routing.yaml上下文范围 | v0.5+ | docs/03_modules/_cross_layer/context-engine/blueprint.md |
+| MOD-INF-014 (LLM Security) | sibling_check | fail-closed模式双门禁互校验 | v0.1+ | docs/03_modules/_cross_layer/llm-security/blueprint.md |
+| MOD-INF-015 (Telemetry) | emit_to | GATE-16 blueprint_read_check→BLUEPRINT-READ-FREQ SLI | v0.5+ | docs/03_modules/_cross_layer/telemetry/blueprint.md |
+| MOD-INF-009 (Session) | data_flow | session_id→Agent身份+配额管理 | v1.0+ | docs/03_modules/_cross_layer/session/blueprint.md |
+| MOD-INF-001 (Capacity) | data_consume | 容量SLO注册表+风险注册表 | v1.0+ | docs/03_modules/_master-blueprint/blueprint.md |
+| `architecture-model/layers/b_gates.yaml` | ssot | Gates YAML canonical source | — | architecture-model/layers/b_gates.yaml |
+
+### §10.2 依赖图对齐声明
+
+> 蓝图 §10.1 声明的依赖 MUST 与全局依赖图一致。不一致 = 漂移。
+> 全局依赖图 SSoT：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> 机器 SSoT：[cross-module-dependency-registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml)
+
+| # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
+|---|--------|---------|:-------:|---------|
+| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | ⚠️全局depgraph数据质量待修 | `python scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py` |
+| 2 | §11 产出物路径 ↔ 依赖图 path_mappings | 路径一致 | ✅已对齐 | 同上 |
+| 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | 节点存在 | ✅已对齐 | 同上 |
+
+### §10.3 内部依赖图
+
+#### 执行顺序依赖
+
+| 上游脚本 | 下游脚本 | 依赖内容 | 验证方式 |
+|---------|---------|---------|---------|
+| validate_gate_discipline.py | gate_engine.py | 注册一致性校验是门禁评估前置条件 | 检查_registry.yaml一致性 |
+| gate_engine.py | task_completion_gate.py | G7依赖核心引擎的evaluate() | 检查gate_engine.py可导入 |
+| gate_integrity_guard.py | gate_engine.py | 启动前自检是评估前置条件 | 检查known_good_hashes.yaml |
+
+#### 数据流依赖
+
+| 生产者 | 消费者 | 数据类型 | 传输方式 |
+|--------|--------|---------|---------|
+| gate_engine.py | circuit_breaker.py | GateResult(PASS/FAIL) | 函数调用 |
+| circuit_breaker.py | gate_engine.py | 熔断器状态(CLOSED/OPEN/HALF_OPEN) | 函数调用 |
+| gate_engine.py | audit_chain_verifier.py | HashedGateDecision | SQLite + JSONL |
+| gate_integrity_guard.py | gate_engine.py | IntegrityCheckResult | 函数调用(启动前自检) |
+
+### §10.4 自动化规格
+
+#### 是否需要自动化
+
+| # | 自动化项 | 是否需要 | 理由 |
+|---|---------|:-------:|------|
+| 1 | 依赖图自动生成 | 是 | 9个依赖模块+55个门禁文件 |
+| 2 | 依赖对齐自动验证 | 是 | 有9个外部依赖需对齐 |
+| 3 | 临时时态内容自动清理 | 是 | §5.3有3个迁移方案 |
+| 4 | 施工步骤完成度自动检测 | 是 | 施工Phase A/B/C进行中 |
+
+#### 如何自动化
+
+| # | 自动化项 | 实现方式 | 现有工具/脚本 | 缺口 |
+|---|---------|---------|-------------|------|
+| 1 | 依赖图自动生成 | AST解析import + manifest字段 | asset_inventory/dependency.py | 不覆盖gates/目录 |
+| 2 | 依赖对齐自动验证 | CI门禁 | validate_dependency_graph_template.py | validate_path_alignment.py未创建 |
+| 3 | 临时时态内容自动清理 | 压缩工作流脚本 | 无 | 需新建 |
+| 4 | 施工步骤完成度自动检测 | pytest+mypy+ruff + 产出物存在性检查 | 部分有 | 需整合 |
+
+#### 触发方式
+
+| # | 自动化项 | 触发方式 | 触发条件 |
+|---|---------|---------|---------|
+| 1 | 依赖图自动生成 | CI pipeline | 文件变更时 |
+| 2 | 依赖对齐自动验证 | CI门禁 | PR提交时 |
+| 3 | 临时时态内容自动清理 | 手动 | 压缩工作流执行时 |
+| 4 | 施工步骤完成度自动检测 | CI pipeline | 代码提交时 |
+
+### §10.5 概念重叠声明
+
+| # | 重叠概念 | 重叠维度 | 对方模块 | 委托关系 | 处置状态 |
+|---|---------|---------|---------|---------|---------|
+| 1 | 熔断器状态机 | 基类实现 | MOD-INF-016 | 本模块委托对方提供基类；本模块在基类上叠加SQLite持久化+门禁集成 | 已处置 |
+| 2 | 门禁vs门控 | 术语重叠 | MOD-INF-009 | 本模块=合规判定门禁(G0-G7)；MOD-INF-009=执行流门控(M1-M11)——语义不同 | 已处置 |
+| 3 | Kill Switch vs 熔断器 | 术语重叠 | MOD-INF-001 | 本模块=门禁域熔断器(异常传播阻断)；MOD-INF-001=系统级紧急制动——不同概念 | 已处置 |
+| 4 | GateLevel枚举 | 枚举定义位置 | MOD-INF-006 | 枚举定义在Task System，门禁判定SSoT在本模块 | 已处置(Task System已声明委托) |
+
+### §10.6 依赖链风险评级
+
+| # | 依赖链 | 链深度 | 风险等级 | 熔断机制 | 处置状态 |
+|---|--------|:-----:|---------|---------|---------|
+| 1 | 本模块→MOD-INF-006→MOD-INF-012 | 3 | L2 | 有(circuit_breaker) | 已有熔断 |
+| 2 | 本模块→MOD-INF-005→subprocess | 2 | L1 | 有(超时+SIGKILL) | 已有熔断 |
+| 3 | 本模块→MOD-INF-016→SQLite | 2 | L1 | 有(fail-closed) | 已有熔断 |
+| 4 | 本模块→MOD-INF-001→容量SLO | 2 | L1 | 无 | 不适用(只读) |
+
+---
+
+## §11 产出物存放目录
+<!-- temporal_type: permanent -->
+
+> 核心.py/.yaml文件清单见 §0.1（含存在性+归属判定）。本节只列出 §0.1 未覆盖的产出物。
+
+| 产出物类型 | 存放完整路径 | 职责 | consumer_min | 注册位置 |
+|-----------|------------|------|-------------|---------|
+| 门禁注册表Catalogs副本 | docs/01_policies_and_standards/_registry/catalogs/gate-registry.yaml | 声明式注册表 | MOD-INF-015 | — |
+| 门禁测试(单元) | tests/unit/test_gate_*.py | 单元测试 | — | — |
+| 门禁测试(集成) | tests/integration/test_gate_e2e.py | 集成测试 | — | — |
+| 门禁治理脚本 | scripts/governance/d6_security/validate_gate_discipline.py | 注册一致性校验 | — | script_manifest.yaml |
+| 审计数据 | data/audit/gate_chain.db + data/audit/gate_chain.jsonl | 哈希链持久化 | audit_chain_verifier.py | — |
+| 决策快照 | data/audit/snapshots_hot/ → snapshots_warm/ → snapshots_archive/ | 快照生命周期 | audit_chain_verifier.py | — |
+| 已知良好哈希 | config/known_good_hashes.yaml | 信任根 | gate_integrity_guard.py | — |
+| 容量压测 | scripts/benchmark/gate_engine_load_gen.py | 容量压测 | — | script_manifest.yaml |
+| Prometheus指标 | src/zephyr/gates/metrics.py | 指标采集 | MOD-INF-015 | gates/__init__.py |
+| 门禁类型契约 | src/zephyr/shared/contracts/core/gate_types.py | 共享类型定义 | gate_engine.py | contracts/__init__.py |
+
+---
+
+## §12 集成目标
+<!-- temporal_type: permanent -->
+
+| 集成目标 | 状态 | 验证方式 |
+|------|:--:|------|
+| G6硬合规阻断P0 | ✅ 已实现 | session_simulator.py Phase 2验证 |
+| G0-G7全部8门禁YAML规则化 | ✅ 已实现 | G5 YAML §A.1-§A.4 |
+| CT-SCRIPT-GATE-001落地 | 📋 Backlog | 脚本exit code→Gate判定链路 |
+| CT-ORC-GATE-001落地 | 📋 Backlog | TaskCard.status transition→Gate触发 |
+| 熔断器全链路测试 | 📋 Backlog | OPEN→HALF_OPEN→CLOSED循环 |
+| 容量Phase A(地基) | 📋 Backlog | GAP-C01/C04/C03/C06 |
+| 容量Phase B(稳定) | 📋 Backlog | GAP-C02/C07/C05/C11/C09 |
+| 容量Phase C(保障) | 📋 Backlog | GAP-C08/C10/C12 |
+
+### §12.1 域契约锚点
+
+| 契约ID | 方向 | 描述 |
+|--------|------|------|
+| CT-SCRIPT-GATE-001 | MOD-INF-005→MOD-INF-007 | 脚本exit code→Gate判定映射 |
+| CT-ORC-GATE-001 | MOD-INF-006↔MOD-INF-007 | TaskCard.status transition→Gate触发→PASS/FAIL→status迁移 |
+
+---
+
+## §13 需要更新
+<!-- temporal_type: permanent -->
+
+当本蓝图变更时，同步更新：
+
+| # | 目标 | 更新内容 |
+|---|------|---------|
+| 1 | `docs/03_modules/blueprint-registry.yaml` | 版本号和完整度 |
+| 2 | `config/blueprint_routing.yaml` | R009路由项 keywords/path_patterns |
+| 3 | `src/zephyr/mcp/gate_engine_server.py` | MCP工具描述引用本蓝图 |
+| 4 | `src/zephyr/mcp/blueprint_search_server.py` | 若keyword变更 |
+| 5 | `docs/03_modules/_master-blueprint/blueprint.md` | MOD-MASTER-001 §2.8 CT-SCRIPT-GATE-001 |
+| 6 | `config/known_good_hashes.yaml` | 门禁文件哈希变更 |
+
+---
+
+## §14 已知风险与缓解
+<!-- temporal_type: permanent -->
+
+| # | 风险/负面后果 | 概率 | 影响 | 缓解策略 | 类型 |
+|---|-------------|:---:|:---:|---------|------|
+| R1 | 门禁过度阻断——合法任务被拒绝 | 中 | 高 | severity=error仅用于不可逆损失——可逆问题用warning | 风险 |
+| R2 | 门禁规则漂移——YAML中check与代码实际检查逻辑不一致 | 高 | 高 | CI门禁validate_gate_yaml.py→交叉校验YAML vs gate_engine代码 | 风险 |
+| R3 | 熔断器误触发——正常流量波动被判定为异常 | 低 | 中 | threshold=5+cooldown=60s | 风险 |
+| R4 | 门禁目录碎片化——1500模块后管理混乱 | 中 | 高 | 统一category分类(6种)→module专属门禁放入modules/<MOD-XXX>/ | 风险 |
+| R5 | AI博弈门禁——长期session中AI学会为过门禁而工作 | 中 | 高 | 随机抽查+不确定性注入+质量反馈回灌 | 风险 |
+| R6 | hash chain跨分片断裂——写入非原子 | 中 | 高 | 全局序列号+两阶段写入(§17 GAP-C09) | 风险 |
+| R7 | Gate Engine不可用——所有任务状态迁移被阻断→AI无法推进任务→系统停摆 | 低 | 高 | 外部看门狗+进程重启+快照恢复 | 负面后果 |
+| R8 | 熔断器永久OPEN——门禁判定全部拒绝→所有任务BLOCKED→需Owner手动介入 | 低 | 高 | cooldown自动试探+禁止手动reset(AP4) | 负面后果 |
+| R9 | 审计链断裂——历史判定不可验证→合规审计失败→取证证据无效 | 低 | 高 | JSONL副本+从副本重建SQLite+重建hash链 | 负面后果 |
+| R10 | 依赖图谱损坏——增量扫描无法精确推导→全量扫描兜底(3.5h) | 中 | 中 | 每日全量重建自愈+CoW原子替换 | 负面后果 |
+| R11 | known_good_hashes被篡改——完整性守卫误判→合法门禁被拒绝或非法修改不被检测 | 低 | 高 | Owner PGP签名+GATE-18自指防护 | 负面后果 |
+
+---
+
+## §16 施工指引
+<!-- temporal_type: construction_temporary -->
+
+### 添加新门禁
+
+```
+1. cp src/zephyr/gates/_template.yaml → src/zephyr/gates/<category>/<new_gate>.yaml
+2. 按_template.yaml的11节填写全部字段（check必须是布尔表达式）
+3. 写入_registry.yaml的gates列表
+4. 在gate_engine.py的_GATE_FILES映射中添加
+5. 写tests/unit/test_<new_gate>.py——至少覆盖每条entry_condition的PASS/FAIL两路径
+6. 运行validate_gate_discipline.py→确认注册一致
+```
+
+### 修改现有门禁规则
+
+```
+1. 修改YAML中的entry_conditions
+2. bump change_log.version
+3. 重新运行相关test_<gate>.py
+4. CI校验validate_gate_yaml.py自动触发
+```
+
+### 门禁模板升级
+
+```
+1. 修改_template.yaml→bump schema_version
+2. 归档当前模板→_template_v{N}.yaml（不删除）
+3. 在gate-engine blueprint变更记录中登记
+4. 通知所有门禁维护者评估是否需要迁移
+```
+
+### §16.1 施工策略
+
+| 项目 | 内容 |
+|------|------|
+| 施工阶段数 | 4个Phase（scaffold→experimental→beta→production） |
+| 施工模式 | 扩展（核心已实现，容量升级+自动化待施工） |
+| 核心风险 | CT-ORC-GATE-001未落地→门禁非自动触发→AI可能绕过 |
+| 目标 generation | 2 — 本次施工将蓝图从 generation 1 升级到 generation 2 |
+
+### §16.2 前置条件
+
+| # | 依赖项 | 依赖类型 | 当前状态 | 是否满足 |
+|---|--------|---------|:---:|:---:|
+| 1 | MOD-INF-006 TaskRepository.transition()可调用 | hard | ✅ | ✅ |
+| 2 | MOD-INF-005 脚本exit code语义统一(0/1/2/3) | hard | ✅ | ✅ |
+| 3 | MOD-INF-016 shared/resilience/circuit_breaker.py可用 | soft | ✅ | ✅ |
+| 4 | 容量Phase A冷启动+缓存+增量更新完成 | hard | ❌ | ❌ |
+
+### §16.3 实施步骤
+
+#### 步骤 1：CT-ORC-GATE-001落地——TaskCard.status迁移自动触发门禁
+
+| 项目 | 内容 |
+|------|------|
+| 对应蓝图契约 | §4.1 GateEngine.evaluate() + §12.1 CT-ORC-GATE-001 |
+| 产出位置 | `src/zephyr/gates/gate_engine.py` + `src/zephyr/db/task_repo.py` |
+| 验收标准 | TaskCard.status DRAFT→TODO自动触发G0；REVIEW→COMPLETED自动触发G7 |
+| 验证命令 | `python -m pytest tests/integration/test_gate_e2e.py -k test_auto_trigger` |
+| G7 检查项 | 上游task_repo.py已列出？下游GateResult消费方已适配？回滚方案可执行？ |
+| AI 自治范围 | human_gated——修改TaskRepository需Owner审批 |
+| 检查点 | task_repo.py中transition()调用gate_engine.evaluate()成功 |
+
+#### 步骤 2：CT-SCRIPT-GATE-001落地——脚本exit code→Gate判定映射
+
+| 项目 | 内容 |
+|------|------|
+| 对应蓝图契约 | §3.2 数据流 + §12.1 CT-SCRIPT-GATE-001 |
+| 产出位置 | `src/zephyr/gates/gate_engine.py` |
+| 验收标准 | exit 0→PASS / exit 1→PASS_WITH_WARNINGS / exit 2→FAIL / exit 3→CRITICAL_FAIL |
+| 验证命令 | `python -m pytest tests/unit/test_gate_engine.py -k test_exit_code_mapping` |
+| G7 检查项 | 四种exit code全覆盖？CRITICAL_FAIL传播链正确？ |
+| AI 自治范围 | ai_modifiable——门禁引擎内部逻辑 |
+| 检查点 | 四种exit code映射测试全部PASS |
+
+#### 步骤 3：容量Phase A——冷启动+缓存+增量更新+优先级队列
+
+| 项目 | 内容 |
+|------|------|
+| 对应蓝图契约 | §17.2 GAP-C01/C03/C04/C06 + §17.3 升级组件1/3/4 |
+| 产出位置 | `src/zephyr/gates/cold_start.py` + `script_cache.py` + `dep_graph.py` patch + `bulkhead.py` patch |
+| 验收标准 | 重启GateEngine→503→5s后200；相同输入两次扫描→第二次cache hit；P0请求在P2饱和时仍<1s |
+| 验证命令 | `python -m pytest tests/unit/test_gate_capacity.py` |
+| G7 检查项 | 4个GAP全部覆盖？资源预算不超限？ |
+| AI 自治范围 | ai_modifiable |
+| 检查点 | 4个GAP验证全部PASS |
+
+### §16.4 回滚方案
+
+| 步骤 | 如果出问题 | 回滚操作 |
+|------|----------|---------|
+| 1 | TaskRepository.transition()调用gate_engine失败 | 移除transition()中的门禁调用，恢复手动触发 |
+| 2 | exit code映射逻辑错误 | 恢复默认PASS行为 |
+| 3 | 容量组件性能退化 | 移除新增组件，恢复基线行为 |
+
+### §16.5 施工完成与生产就绪标准
+
+| # | 检查项 | 通过标准 | 类型 | 状态 |
+|---|--------|---------|:----:|:----:|
+| 1 | gate_engine.py无BOM+可导入 | `python -c "from zephyr.gates.gate_engine import GateEngine"` exit 0 | 完成 | ✅ |
+| 2 | CT-ORC-GATE-001测试通过 | `pytest tests/integration/test_gate_e2e.py` exit 0 | 完成 | ☐ |
+| 3 | CT-SCRIPT-GATE-001测试通过 | `pytest tests/unit/test_gate_engine.py -k test_exit_code` exit 0 | 完成 | ☐ |
+| 4 | SLO已定义且可测量 | §5.4每项SLI有测量方式 | 就绪 | ☐ |
+| 5 | 退化策略已实现 | §6.2每个组件有降级逻辑 | 就绪 | ☐ |
+| 6 | 回滚方案已验证 | §16.4回滚操作可执行 | 就绪 | ☐ |
+
+### §16.6 施工状态
+
+| 字段 | 值 | 填写者 |
+|------|-----|-------|
+| construction_status | in_progress | 审查者 |
+| verification_status | unverified | 审计者 |
+| code_alignment_verified | no | 审计者 |
+
+### §16.7 参考实现规格
+
+| # | 规格名称 | 类型 | 规格内容 | 对应代码 |
+|---|---------|------|---------|---------|
+| 1 | exit code→GateResult映射 | 协议 | exit 0→PASS / exit 1→PASS_WITH_WARNINGS / exit 2→FAIL / exit 3→CRITICAL_FAIL | gate_engine.py |
+| 2 | 熔断器状态机 | 协议 | CLOSED→(5次FAIL)→OPEN→(60s)→HALF_OPEN→(试探PASS)→CLOSED | circuit_breaker.py |
+| 3 | 门禁YAML 11节schema | Schema | gate_id/gate_name/title/trigger/entry_conditions/change_log/... | _template.yaml |
+| 4 | 哈希链审计 | 算法 | SHA-256(decision.to_canonical_bytes())→previous_hash链接 | audit_chain_verifier.py |
+
+### §16.8 施工参考卡
+
+| # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |
+|---|:----:|------|----------|----------|----------|
+| 1 | 命令 | `python -m zephyr.gates.gate_health` | 门禁健康报告 | `--alerts`: 仅告警 | HealthReport JSON |
+| 2 | 命令 | `python -m zephyr.gates.gate_health --export-json` | JSON格式报告 | — | JSON(供Telemetry) |
+| 3 | 配置 | `_template.yaml` → `entry_conditions` | 门禁条件定义 | check:布尔表达式;severity:error/warning | MUST配fix_hint |
+| 4 | 配置 | `_registry.yaml` → `gates` | 全部门禁注册 | gate_id+path+status | 新建门禁MUST注册 |
+
+### §16.10 故障与操作手册
+
+| # | 阶段 | 场景 | 触发条件 | 诊断/操作 | 恢复/产出 | 验证/回退 |
+|---|:----:|------|---------|----------|----------|----------|
+| 1 | 施工 | BOM字符导致SyntaxError | import失败 | `python -c "from zephyr.gates.gate_engine import GateEngine"` | 移除BOM字节 | import成功 |
+| 2 | 施工 | §0.1与实际代码不对齐 | 蓝图标记"未实现"但文件存在 | `ls src/zephyr/gates/` 逐文件核对 | 更新§0.1存在性 | 蓝图与磁盘一致 |
+| 3 | 运行 | 熔断器永久OPEN | 连续FAIL触发OPEN后不恢复 | 检查cooldown配置+HALF_OPEN试探日志 | 等待cooldown→自动试探 | CLOSED状态恢复 |
+| 4 | 运行 | 哈希链断裂 | audit_chain_verifier报错 | 从JSONL副本重建SQLite+重建hash链 | 链完整性恢复 | verify_chain_integrity PASS |
+
+### §16.12 并发操作模型
+
+| 冲突场景 | 检测方式 | 解决策略 | 合并规则 |
+|---------|---------|---------|---------|
+| 同一门禁YAML同时修改 | SHA256校验 | 后写者重试 | 字段级合并 |
+| 同一TaskCard门禁评估竞争 | TaskRepository行锁 | 排队等待 | FIFO |
+| 多AI同时触发门禁评估 | Semaphore限流 | PriorityQueue调度 | P0优先 |
+
+### 容量施工路线图
+
+**Phase A：地基补齐（v0.7.0-alpha）**
+
+| 缺口 | 施工内容 | 预估产出 | 验证方式 |
+|:---:|---------|---------|---------|
+| GAP-C01 | 冷启动协议：DepGraph.preload_or_build() + /health/ready + 缓存文件 | src/zephyr/gates/cold_start.py | 重启GateEngine→验证503→5s后200 |
+| GAP-C04 | 增量更新：DepGraph.update_incremental(manifest_diff) + 每日全量重建cron | dep_graph.py增量patch | 新增1脚本→图谱更新<100ms |
+| GAP-C03 | 脚本缓存：ScriptCache + SQLite cache表 + 跨Agent共享 | src/zephyr/gates/script_cache.py | 相同输入两次扫描→第二次全是cache hit |
+| GAP-C06 | 优先级队列：PriorityQueue + 20% P0预留worker | bulkhead.py patch | P0请求在P2饱和时仍<1s获得worker |
+
+**Phase B：稳定性加固（v0.7.0-beta）**
+
+| 缺口 | 施工内容 | 预估产出 | 验证方式 |
+|:---:|---------|---------|---------|
+| GAP-C02 | 反压传播：BackpressureController + credit-based流控 | src/zephyr/gates/backpressure.py | 模拟L3饱和→L1 refill_rate自动降速 |
+| GAP-C07 | 长尾池：第5个Bulkhead池+耗时自动分类 | bulkhead.py新增long_tail池 | S2占满long_tail→quick池S0/S1不受影响 |
+| GAP-C05 | Agent身份：AgentQuotaManager + per-session TokenBucket | src/zephyr/gates/agent_quota.py | Agent超配额→429+其他Agent正常 |
+| GAP-C11 | 优雅降级：四级降级树+DegradationController+自动恢复 | src/zephyr/gates/degradation.py | 模拟150%负载→自动进入tier_2→负载降→tier_0 |
+| GAP-C09 | 跨分片一致性：全局序列号+两阶段写入 | shard_router.py patch | 并发写4 shard→hash chain序列号无跳跃 |
+
+**Phase C：生产级保障（v0.7.0-rc）**
+
+| 缺口 | 施工内容 | 预估产出 | 验证方式 |
+|:---:|---------|---------|---------|
+| GAP-C08 | 压测框架：gate_engine_load_gen.py + 5场景+报告生成 | scripts/benchmark/gate_engine_load_gen.py | 跑BM-01~05全部通过 |
+| GAP-C10 | 容量监控：Prometheus metrics + 7告警规则 + Grafana dashboard | src/zephyr/gates/metrics.py + config/grafana/ | /metrics端点输出+告警规则验证 |
+| GAP-C12 | 热更新：YAML/manifest文件监控+原子替换+模拟验证 | src/zephyr/gates/hot_reload.py | 修改G1 YAML→5s内生效+无重启 |
+
+### 施工Phase规划
+
+| Phase | 任务 | 状态 |
+|:---:|------|:---:|
+| scaffold | gate_engine.py + 5个KMS门禁YAML | ✅ implemented |
+| experimental | G0-G7完整判定逻辑 + CT-SCRIPT-GATE-001落地 | 📋 Backlog |
+| beta | 熔断器全链路测试 + CI门禁自动交叉校验 | 📋 Backlog |
+
+---
+
+## §17 容量升级附录
+<!-- temporal_type: permanent -->
+
+### §17.1 容量基线
+
+**规模目标**
+
+| 维度 | 当前(v0.5.0) | 目标(v1.0.0) |
+|------|:---:|:---:|
+| 受管模块数 | ~51 | 1,500 |
+| 治理脚本数 | 268 | 10,000 |
+| 并发AI Agent | 1-3 | 100 |
+| 脚本并发执行 | 8-24 worker | 40-100 |
+
+**容量SLO**
+
+| ID | 指标 | 目标 |
+|----|------|------|
+| GATE-CAP-001 | 依赖图谱查询P99 | <500ms |
+| GATE-CAP-002 | 增量扫描P99(15-30脚本) | <60s |
+| GATE-CAP-003 | 全量扫描(10,000脚本) | <4h |
+| GATE-CAP-004 | 门禁评估吞吐量 | 50 eval/s |
+| GATE-CAP-005 | SQLite shard写锁等待P99 | <100ms |
+| GATE-CAP-006 | 依赖图谱重建耗时 | <5s |
+| GATE-CAP-007 | Bulkhead池利用率 | <0.85 |
+| GATE-CAP-008 | 冷启动至phase_2_ready | <5s(全量) / <500ms(缓存) |
+| GATE-CAP-009 | 脚本结果缓存命中率 | >60% |
+| GATE-CAP-010 | 反压恢复时间 | <60s |
+| GATE-CAP-011 | Agent配额拒绝比例 | <3% |
+| GATE-CAP-012 | S0/S1在long_tail饱和时P99 | <30s |
+| GATE-CAP-013 | 150%负载下G0/G6可用率 | >99% |
+| GATE-CAP-014 | 容量压测通过率(BM-01~05) | 100% |
+
+### §17.2 缺口分析
+
+**六大支柱**
+
+| 支柱 | 核心问题 | 严重度 |
+|------|---------|:---:|
+| ① 脚本注册表 | 10K脚本发现 | 🔴 |
+| ② 依赖图谱 | 变更→精确脚本列表 | 🔴 |
+| ③ 并发调度 | 100AI并发调度 | 🔴 |
+| ④ 存储分片 | 100AI并发写SQLite | 🔴 |
+| ⑤ 故障隔离 | 单AI故障隔离 | 🟡 |
+| ⑥ 资源预算 | 并发资源预算 | 🟡 |
+
+**缺口清单**
+
+| # | 缺口 | 严重度 | 设计方向 |
+|---|------|:---:|---------|
+| GAP-C01 | 冷启动与预热协议 | 🔴 P0 | 三级phase + 缓存预构建 + 分级加载 |
+| GAP-C02 | 反压传播机制 | 🔴 P0 | credit-based流控 + 死信队列 |
+| GAP-C03 | 脚本结果缓存与跨Agent复用 | 🔴 P0 | content-addressable全局共享 + SQLite缓存表 |
+| GAP-C04 | 依赖图谱增量更新 | 🔴 P0 | 增量实时+全量定时自愈+CoW原子替换 |
+| GAP-C05 | Agent身份与配额管理 | 🟡 P1 | per-session TokenBucket + 信任分级动态调整 |
+| GAP-C06 | 优先级反转防护 | 🟡 P1 | PriorityQueue + 每池20% P0预留worker |
+| GAP-C07 | 长尾脚本调度策略 | 🟡 P1 | 第5池long_tail + 耗时自动分类 + 超时逃逸 |
+| GAP-C08 | 容量压测与基准策略 | 🟡 P1 | 5场景BM-01~05 + synthetic load生成器 |
+| GAP-C09 | 跨分片一致性协议 | 🟡 P1 | 全局序列号 + 两阶段写入 |
+| GAP-C10 | 容量监控与告警闭环 | 🟢 P2 | Prometheus metrics + 告警规则 |
+| GAP-C11 | 优雅降级策略 | 🟢 P2 | 四级降级树 tier_0→tier_3 |
+| GAP-C12 | 门禁热更新协议 | 🟢 P2 | YAML/manifest热更 + gate_engine.py冷重启 |
+
+### §17.3 升级版本矩阵
+
+**升级组件清单**
+
+| # | 组件 | 当前状态 | 升级目标 | 所属Phase | 依赖缺口 |
+|---|------|------|------|:---:|------|
+| 1 | cold_start.py | 未实现 | 三级phase+缓存预构建+分级加载 | A | GAP-C01 |
+| 2 | dep_graph.py | 部分实现 | 增量更新+CoW原子替换 | A | GAP-C04 |
+| 3 | script_cache.py | 未实现 | content-addressable全局共享+SQLite缓存表 | A | GAP-C03 |
+| 4 | bulkhead.py | 已实现(4池) | 新增第5池long_tail+P0预留20%worker | A | GAP-C06 |
+| 5 | backpressure.py | 未实现 | credit-based流控+死信队列 | B | GAP-C02 |
+| 6 | agent_quota.py | 未实现 | per-session TokenBucket+信任分级 | B | GAP-C05 |
+| 7 | degradation.py | 未实现 | 四级降级树+DegradationController+自动恢复 | B | GAP-C11 |
+| 8 | shard_router.py | 部分实现 | 全局序列号+两阶段写入 | B | GAP-C09 |
+| 9 | gate_engine_load_gen.py | 未实现 | 5场景压测+报告生成 | C | GAP-C08 |
+| 10 | metrics.py | 未实现 | Prometheus指标+7告警规则+Grafana dashboard | C | GAP-C10 |
+| 11 | hot_reload.py | 未实现 | YAML/manifest监控+原子替换+模拟验证 | C | GAP-C12 |
+
+**三级调度模型**
+
+| 层级 | 组件 | 参数 |
+|------|------|------|
+| L1_admission | TokenBucket | refill_rate=20, burst_size=100 |
+| L1_admission | PriorityQueue | [P0, P1, P2] |
+| L1_admission | rejection_policy | P2任务被拒绝时返回429+Retry-After |
+| L2_dispatch | bulkhead: quick | workers=24, CB threshold=10, cooldown=30s |
+| L2_dispatch | bulkhead: content_analysis | workers=12, CB threshold=5, cooldown=60s |
+| L2_dispatch | bulkhead: ai_generated | workers=8, CB threshold=5, cooldown=120s |
+| L2_dispatch | bulkhead: disruptive | workers=6, CB threshold=3, cooldown=180s |
+| L2_dispatch | total_workers | 50 |
+| L3_execution | timeout | S0=10s / S1=60s / S2=180s / S3=120s |
+| L3_execution | isolation | 每个脚本独立subprocess——crash不影响其他 |
+
+**依赖图谱三层索引**
+
+| 层级 | 映射 | 规模 |
+|------|------|------|
+| L1_file_to_module | 文件路径→所属模块ID | ~50K映射, <5MB |
+| L2_module_to_scripts | 模块ID→关联治理脚本列表 | ~50K映射, <10MB |
+| L3_script_to_dependencies | 脚本间依赖→DAG edges | 从depends_on字段构建 |
+
+查询路径：文件变更→L1→L2→L3→最终脚本列表(去重+拓扑排序)。预期输出：15-30脚本(增量) / 10,000脚本(全量)
+
+**存储分片**
+
+| 参数 | 值 |
+|------|-----|
+| shard_count | 4 |
+| shard_strategy | hash(module_id) % shard_count |
+| per_shard | ~375模块, ~25并发写入 |
+| global_tables | module_registry, gate_registry, circuit_breaker_state |
+| cross_shard_queries | 并发查询4 shard→内存合并→<500ms |
+
+**容量压测场景**
+
+| ID | 场景 | 负载 | 通过标准 |
+|----|------|------|---------|
+| BM-01 | 单脚本基准 | 0并发 | 记录P50/P99 |
+| BM-02 | 增量峰值 | 100并发/20±5脚本 | P99<60s, error<1%, 429<5% |
+| BM-03 | 持续负载 | 50并发/20min间隔/1h | 内存增长<100MB/h, WAL<50MB |
+| BM-04 | 过载 | 150并发/5min | 不崩溃, G0/G6仍PASS, 恢复<60s |
+| BM-05 | 全量扫描隔离 | 1全量/50worker | <4h, 增量P99<2s |
+
+---
+
+## §18 决策记录
+<!-- temporal_type: permanent -->
+
+> 本节同时覆盖原 §7 备选方案——"选项"列已包含备选方案信息。
+> 本节同时覆盖原 §15 后果——负面后果合并到 §14 风险，正面后果与 §1 目标重复。
+> 时态属性：决策记录属于永久时态——AI 修改设计时必读。
+
+| # | 决策ID | 决策 | 选项 | 选中 | 依据 | 日期 |
+|---|--------|------|------|------|------|------|
+| 1 | DD1 | 门禁数量 | 五门禁/G0-G7八门禁/十二门禁 | G0-G7八门禁 | 覆盖任务生命周期7个状态过渡点+1准入门 | 2026-05-03 |
+| 2 | DD2 | 门禁执行模式 | Validating-only/Mutating/Validating+Mutating可选 | Validating-only(当前)，Mutating为可选 | experimental优先实现硬阻断 | 2026-05-03 |
+| 3 | DD3 | 熔断器参数 | threshold∈{3,5,10}×cooldown∈{30,60,120}s | threshold=5,cooldown=60s | 连续5次FAIL=系统性问题；60s足够短暂恢复 | 2026-05-03 |
+| 4 | DD4 | KMS与任务门禁引擎 | 共享gate_engine/独立引擎 | 共享gate_engine | 减少引擎碎片化——同一判定接口复用 | 2026-05-03 |
+| 5 | DD5 | GATE-18与G0-G7关系 | 独立/统一 | 独立 | pre-commit是git层守卫(hot≤50ms)，G0-G7是任务层(warm) | 2026-05-03 |
+| 6 | DD6 | 门禁目录组织 | 按category/按module_id | 按category | 按module_id会1500目录×2-3门禁=碎片化 | 2026-05-04 |
+| 7 | DD7 | 门禁管线模式 | 单一par_and/五模式 | 五模式 | 不同stage需不同调度策略 | 2026-05-04 |
+| 8 | DD8 | 门禁激活策略 | 一步激活/三级激活 | Shadow→Beta→Full三级激活 | shadow数据对升级决策至关重要 | 2026-05-04 |
+| 9 | DD9 | Override时长 | 永久/24h限定 | 24h限定 | 永久=门禁形同虚设 | 2026-05-04 |
+| 10 | DD10 | GateContext字段 | 最小集/含session_id+blueprint_reads | 含session_id+blueprint_reads | 门禁判定需跨模块上下文 | 2026-05-05 |
+| 11 | DD11 | Meta CB降级策略 | 全降级/保持P0门禁 | 保持P0门禁 | G0/G6/G7是弹簧门——降级也不能跳过 | 2026-05-05 |
+| 12 | DD12 | adaptive_threshold行为 | 自动改/仅建议 | 仅建议 | experimental阶段Owner保持完全控制 | 2026-05-05 |
+| 13 | DD13 | 审计方式 | 纯SQLite/SHA-256哈希链 | SHA-256哈希链 | 取证专家必须能独立验证 | 2026-05-05 |
+| 14 | DD14 | 决策记录方式 | 仅结果/全量快照 | 全量快照 | 无快照=不可重现=审计不可行 | 2026-05-05 |
+| 15 | DD15 | 完整性校验时机 | 评估后/评估前 | 评估前 | 先度量再信任 | 2026-05-05 |
+| 16 | DD16 | 信任根 | Git SHA-1+Owner PGP/其他 | Git SHA-1历史+Owner PGP | Git哈希链不可篡改——Python文件可以 | 2026-05-05 |
+| 17 | DD17 | YAML安全策略 | 仅safe_load/safe_load+大小/深度/超时 | safe_load+大小/深度/超时 | safe_load只防代码执行不防DoS | 2026-05-05 |
+| 18 | DD18 | G7D深度合规 | 不实现/experimental | experimental | 形式质量互补——否则质量信号在G7后完全断裂 | 2026-05-05 |
+| 19 | DD19 | 调度模型 | 单级线程池/三级调度 | 三级调度 | 100AI无法用flat thread pool | 2026-05-10 |
+| 20 | DD20 | 脚本执行方式 | 线程内import/subprocess | subprocess | Python GIL——线程内执行=串行 | 2026-05-10 |
+| 21 | DD21 | Shard扩展策略 | 4shard固定/4→8渐进/16shard一开始 | 4→8渐进 | 4shard时写竞争可接受；>500模块/shard时扩展 | 2026-05-10 |
+| 22 | DD22 | 依赖图谱存储 | 全内存/SQLite按需查询 | 全内存(~25MB) | 磁盘查询会拖慢>10× | 2026-05-10 |
+| 23 | DD23 | G7扫描模式 | 全量/增量 | 增量 | 10,000脚本全量G7=3.5h | 2026-05-10 |
+| 24 | DD24 | manifest覆盖率阻断阈值 | 无/95% | 95%硬阻断P0 | 未注册=隐形脚本=漏检黑洞 | 2026-05-10 |
+| 25 | DD25 | 全量扫描触发 | 任意触发/仅Owner | 仅Owner | 全量3.5h是系统级事件 | 2026-05-10 |
+| 26 | DD26 | Worker数调整 | 固定/动态(+5/-5) | 动态(+5/-5) | 固定worker浪费或不够 | 2026-05-10 |
+| 27 | DD27 | Agent缓存策略 | 全局共享/per-Agent分区 | per-Agent缓存分区 | 多Agent场景下全局缓存会导致脏读 | 2026-05-10 |
+| 28 | DD28 | 脚本上限 | 硬限制/设计约束 | 设计约束非硬限制 | 超过后性能降级但不崩溃 | 2026-05-10 |
+| 29 | DD29 | 扫描默认模式 | 全量/增量 | 增量默认，全量周检可选 | 对齐日常<1min体验要求 | 2026-05-10 |
+| 30 | DD30 | 容量瓶颈定位 | 门禁判定/脚本调度 | 脚本调度 | 容量瓶颈在脚本调度不在门禁判定 | 2026-05-10 |
+| 31 | DD31 | 冷启动策略 | 同步阻塞/503+指数退避 | 503+指数退避 | 同步阻塞会耗尽AI Agent连接池 | 2026-05-10 |
+| 32 | DD32 | 反压机制 | 速率限流/信用流控 | 信用流控(credit-based) | 速率限流不管下游能不能处理 | 2026-05-10 |
+| 33 | DD33 | 脚本结果缓存范围 | per-Agent隔离/全局共享 | 全局共享 | 脚本是纯函数——与Gate判定不同 | 2026-05-10 |
+| 34 | DD34 | 依赖图谱重建策略 | 每次全量/每日全量+增量日常 | 每日全量+增量日常 | 增量可能累积微小不一致——全量自愈 | 2026-05-10 |
+| 35 | DD35 | Agent配额策略 | 固定配额/动态调整 | 动态调整(历史行为信任分级) | 固定配额要么太松要么太严 | 2026-05-10 |
+| 36 | DD36 | P0优先保障 | 纯PriorityQueue/每池20%预留 | 每池20% worker预留P0 | 纯PriorityQueue在P0到达时仍需等当前P1执行完 | 2026-05-10 |
+| 37 | DD37 | 长脚本调度 | 与短脚本同池/专用池 | 第5池long_tail(>60s) | quick池S0/S1被长脚本拖慢——HoL Blocking | 2026-05-10 |
+| 38 | DD38 | 压测方式 | mock/真实subprocess | 真实subprocess | mock无法暴露subprocess启动/通信的真实开销 | 2026-05-10 |
+| 39 | DD39 | 全局序列号分配 | 各shard独立/shard_0统一 | shard_0统一 | SQLite单写者天然保证唯一性和单调性 | 2026-05-10 |
+| 40 | DD40 | 指标标准 | 自定义/Prometheus兼容 | Prometheus兼容+Telemetry集成 | OpenMetrics是CNCF标准 | 2026-05-10 |
+| 41 | DD41 | 降级策略 | 二元开关/四级降级 | 四级降级(full→degraded→severe→critical) | 二元开关要么全开要么全关 | 2026-05-10 |
+| 42 | DD42 | 更新策略 | 全部热更/YAML热更+代码冷重启 | YAML热更+代码冷重启 | Python模块热替换生产环境不可靠 | 2026-05-10 |
+
+---
+
+## ⚠️ Vibe Coding 蓝图编写铁律
+<!-- temporal_type: permanent -->
+
+> 时态属性：本节属于施工声明——AI 进入蓝图修改/施工时必读。不可改为链接引用。永久保留。
+
+| # | 铁律 | 违反后果 |
+|---|------|---------|
+| 1 | 所有路径必须是绝对路径（含盘符 `D:\`） | 文件创建到错误位置 |
+| 2 | 必备链接不可省略——即使与前序文档重复也必须完整列出 | AI 跳过不读，施工时缺少关键信息 |
+| 3 | 蓝图必须是最终设计结果——不记录决策过程、不保存未选方案 | 蓝图过厚，关键信息被噪音淹没 |
+| 4 | 产出物路径必须与 GOV-DOC-002 一致 | 路径幻觉——文件放错位置 |
+| 5 | 涉及文件范围必须明确列出 | 范围漂移——改了不该改的文件 |
+| 6 | 蓝图 §4 文件清单 ↔ 代码 `[BLUEPRINT]` 字段 MUST 双向对齐 | 蓝图与代码漂移 |
+| 7 | 每个章节 MUST 标注对应代码路径 | AI 找不到实现位置 |
+| 8 | "待定"/"建议"/"按需"等模糊词禁止使用 | AI 自行决定，可能选错 |
+| 9 | 蓝图必须自包含——关键信息不能只写"详见XX" | AI 缺少关键上下文 |
+| 10 | 删除文件必须遵守安全删除协议——禁止直接删除任何文件 | 永久丢失——无法恢复 |
+| 11 | construction_progress 必须与代码实际状态一致 | 重复造轮子或跳过施工 |
+| 12 | actual_disk_path 必须与 §11 产出物路径一致 | 搜索失败、导入错误 |
+| 13 | 已实现代码不在蓝图中重复——§0.1 标记`已实现`的模块，蓝图只保留接口签名（§4） | AI 改蓝图忘改代码，或改代码忘改蓝图 |
+| 14 | 临时时态内容执行完毕后从蓝图删除——迁移方案、升级执行计划等，一旦执行完毕即从蓝图删除 | 蓝图膨胀，关键信息被历史噪音淹没 |
+| 15 | 蓝图内容拆分判定——职责不同→拆分独立蓝图；职责相同→原地升级。判定标准见"蓝图拆分判定标准" | AI 不知道该读哪个蓝图，跨模块影响无法追踪 |
+
+---
+
+## 蓝图拆分判定标准
+<!-- temporal_type: permanent -->
+
+> 铁律 #15 的操作定义——当蓝图内容超过 ~800 行或包含多个独立职责域时，MUST 执行。
+
+### 判定流程
+
+```
+STEP 1: 识别职责域
+  蓝图中的内容是否属于同一职责域？
+  判定标准：该内容的服务对象、变更频率、依赖关系是否与蓝图主体一致？
+
+STEP 2: 职责域判定
+  ├ 职责相同（同一模块的升级/扩展）→ 原地升级
+  │   条件：服务对象相同 + 变更频率同步 + 依赖关系重叠
+  │   操作：在 §17 容量升级附录中增量记录
+  │
+  └ 职责不同（独立子系统/独立能力域）→ 拆分独立蓝图
+      条件（满足任一即触发）：
+      a) 有独立的 module_id 前缀
+      b) 有独立的 Phase 路线图和交付节奏
+      c) 有独立的依赖关系图（与蓝图主体的 depends_on 交集 <50%）
+      d) 内容超过 100 行且与蓝图主体无直接数据流
+      操作：创建子蓝图，本蓝图 §10 依赖关系引用子蓝图
+
+STEP 3: 拆分后验证
+  - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
+  - 拆分出的蓝图 belongs_to = 本蓝图 module_id
+  - 本蓝图 §10 依赖关系新增子蓝图引用
+  - blueprint-registry.yaml 同步更新
 ```
 
 ---
 
-## 二十四、自适应门禁与状态记忆
+## ⚠️ 安全删除协议
+<!-- temporal_type: permanent -->
 
-> **盲点覆盖**：T3-17 Adaptive Thresholds / T3-18 Stateful Gates / T3-19 Feedback Loop / T3-20 Temporal Scoping
-> **对标**：AI-driven Progressive Delivery (2026趋势)；ML-driven flag optimization
+> 时态属性：本节属于施工声明——AI 施工涉及删除时必读。永久保留。
 
-### 24.1 自适应阈值
+| 步骤 | 操作 |
+|------|------|
+| 1 | 检查文件是否在 `_registry.yaml` / `__init__.py` / `script_manifest.yaml` 中被引用 |
+| 2 | 检查是否有其他文件与它内容完全相同且已注册 |
+| 3 | 逐行检查内容是否在其他地方存在——有唯一价值 → 重新安置并注册 |
+| 4 | 全部冗余 → `python scripts/governance/pre_write_gate.py <文件> --delete` |
+
+---
+
+## 必备链接
+<!-- temporal_type: permanent -->
+
+> 时态属性：本节属于施工声明——AI 进入蓝图时必读。永久保留。
+
+| 链接 | 用途 |
+|------|------|
+| [project_rules.md](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md) | 四条铁律 + 防幻觉十八条 |
+| [registry-of-registries.yaml](file:///d:/ZephyrAlpha/docs/registry-of-registries.yaml) | 全项目注册表入口 |
+| [blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md) | 蓝图模板 v3.5 |
+| [compression-workflow-standard.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/compression-workflow-standard.md) | 压缩工作流标准 GOV-DOC-011 |
+| [code-construction-standards.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md) | 代码构建标准 GOV-ENG-001 |
+| [quality-standard.md](file:///d:/ZephyrAlpha/scripts/governance/quality-standard.md) | 脚本质量标准 SCRIPT-QUALITY-001 |
+| [b_gates.yaml](file:///d:/ZephyrAlpha/architecture-model/layers/b_gates.yaml) | Gates YAML SSoT |
+| [MOD-MASTER-001 blueprint](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint.md) | 总蓝图——CT-SCRIPT-GATE-001 + CT-ORC-GATE-001 |
+| [gate_engine.py](file:///d:/ZephyrAlpha/src/zephyr/gates/gate_engine.py) | 核心门禁引擎实现 |
+| [_registry.yaml](file:///d:/ZephyrAlpha/src/zephyr/gates/_registry.yaml) | 全部门禁注册表 SSoT |
+
+---
+
+## 已有类似功能
+<!-- temporal_type: permanent -->
+
+| 功能 | 位置 | 覆盖度 | 复用决策 |
+|------|------|:---:|---------|
+| BulkheadExecutor 4池隔离 | `src/zephyr/gates/circuit_breaker.py` | 80% | 扩展——新增第5池 long_tail |
+| ShardingRouter | `src/zephyr/gates/` | 40% | 扩展——激活+跨分片一致性 |
+| DependencyGraph | `src/zephyr/gates/` | 60% | 扩展——增量更新+预热协议 |
+| GateEngine.evaluate() | `src/zephyr/gates/gate_engine.py` | 70% | 扩展——管线化+上下文传播 |
+
+---
+
+## 涉及的文件范围
+<!-- temporal_type: permanent -->
+
+| 目录 | 文件数 | 说明 |
+|------|:---:|------|
+| `src/zephyr/gates/` | 55 | 门禁引擎核心实现（.py + .yaml） |
+| `src/zephyr/gate_engine/` | 1 | re-export shim |
+| `tests/unit/` | 5 | 门禁单元测试 |
+| `tests/integration/` | 1 | 门禁端到端测试 |
+| `scripts/governance/d6_security/` | 1 | validate_gate_discipline.py |
+| `architecture-model/layers/` | 1 | b_gates.yaml SSoT |
+
+---
+
+## 治理信息
+<!-- temporal_type: permanent -->
+
+### SSoT声明
+
+本蓝图是以下领域的唯一真源（Single Source of Truth）：
+
+| 领域 | SSoT范围 |
+|------|---------|
+| G0-G7任务门禁规则 | 门禁YAML配置 + 判定逻辑 |
+| G1-G5 KMS决策门规则 | 门禁YAML配置 + 判定逻辑 |
+| 门禁域熔断器参数(threshold/cooldown/状态机) |
+| 门禁评估管线 | 排序/组合/上下文传播 |
+| 容量架构 | 六大支柱 + 12缺口 + SLO |
+| 法证审计协议 | 哈希链 + 决策快照 + 验证工具 |
+| 自指硬化协议 | 完整性守卫 + 信任根 + GATE-18联动 |
+
+### 消费者注册表
+
+| 消费者 | 消费内容 | 修改影响 |
+|--------|---------|---------|
+| MOD-INF-006 (Task System) | GateResult→TaskCard.status迁移 | 门禁判定结果格式变更→Task System需适配 |
+| MOD-INF-005 (Script System) | CT-SCRIPT-GATE-001 exit code映射 | exit code语义变更→映射表需更新 |
+| MOD-KB-001 (Knowledge Base) | G1-G5 KMS门禁管道 | 门禁条件变更→知识入库流程受影响 |
+| MOD-INF-015 (Telemetry) | GATE-16 SLI指标 | 指标定义变更→监控告警需更新 |
+| MOD-MASTER-001 (总蓝图) | §2.8 CT-SCRIPT-GATE-001 | 集成契约变更→总蓝图需同步 |
+| `.pre-commit-config.yaml` | GATE-18 pre-commit钩子 | 钩子配置变更→pre-commit需更新 |
+| `src/zephyr/mcp/gate_engine_server.py` | MCP工具描述 | 蓝图描述变更→MCP工具需更新 |
+
+### 变更同步规则
+
+| 修改此文件 | 必须同步更新 |
+|-----------|-------------|
+| 门禁YAML配置 | `_registry.yaml` + `validate_gate_discipline.py` |
+| GateResult schema | `gate_engine.py` + `MOD-INF-006` |
+| 容量SLO | `MOD-INF-001 §13` |
+| 集成契约 | `MOD-MASTER-001 §2.8` |
+| 门禁文件哈希 | `config/known_good_hashes.yaml` |
+
+### 修改条件
+
+| 条件 | 允许修改 | 需Owner审批 |
+|------|---------|------------|
+| 新增门禁YAML | AI可执行(scaffold流程) | — |
+| 修改门禁entry_conditions | — | ✅ 需审批 |
+| 修改熔断器参数 | — | ✅ 需审批 |
+| 修改容量SLO目标值 | — | ✅ 需审批 |
+| 修改gate_engine.py | — | ✅ 需审批+GATE-18自检 |
+| 修改known_good_hashes.yaml | — | ✅ 需Owner PGP签名 |
+| 新增Anti-Pattern | AI可执行 | — |
+| 修改信任根层次 | — | ✅ 需审批 |
+
+---
+
+## 术语表
+<!-- temporal_type: permanent -->
+
+| 术语 | 精确定义 | 易混淆术语 | 区别 |
+|------|---------|-----------|------|
+| 门禁(Gate) | 合规判定检查点——判定PASS/FAIL | 门控(Pipeline Gate Control) | 门禁=合规判定；门控=执行流控制(MOD-INF-009) |
+| G0-G7 | 任务生命周期8个门禁 | G1-G5 KMS | G0-G7=任务域；G1-G5=知识域 |
+| G1-G5 KMS | 知识生命周期5个决策门 | G0-G7任务门禁 | KMS门禁判定KE入库/激活/提取 |
+| 门禁域熔断器 | gates/circuit_breaker.py——SQLite持久化+门禁集成版 | shared熔断器 | 门禁域=SQLite持久化；shared=内存轻量版(MOD-INF-016) |
+| GateResult | 门禁评估结果(PASS/FAIL/WARNING/CRITICAL_FAIL) | Finding | Finding=脚本输出；GateResult=门禁判定 |
+| GateContext | 门禁评估上下文(task_id/session_id/blueprint_reads等) | TaskCard | GateContext=门禁评估时快照；TaskCard=任务完整数据 |
+| Shadow Mode | 门禁评估→记录结果→不阻断任务 | Full Enforce | Shadow=只记录；Full=阻断 |
+| CT-SCRIPT-GATE-001 | 脚本exit code→Gate判定映射契约 | CT-ORC-GATE-001 | SCRIPT=脚本→门禁；ORC=任务→门禁 |
+
+## 已知问题与盲点登记
+<!-- temporal_type: operational_temporary -->
+
+| # | 问题 | 严重性 | 根因 | 解决方案 | 约束编号 | 状态 |
+|---|------|:------:|------|---------|---------|:----:|
+| 1 | gate_engine.py曾有BOM字符导致SyntaxError | 极高 | 编辑器保存UTF-8 BOM编码 | 已移除BOM；需添加CI门禁检测BOM | §5.1 #1 | 已解决 |
+| 2 | CT-ORC-GATE-001未落地——门禁非自动触发 | 高 | 集成契约在Backlog | 步骤1施工 | §12 | 待解决 |
+| 3 | CT-SCRIPT-GATE-001未落地——exit code未映射 | 高 | 集成契约在Backlog | 步骤2施工 | §12 | 待解决 |
+| 4 | §0.1与底部索引曾矛盾(8个文件标记未实现但已存在) | 中 | 压缩时未同步§0.1 | 已在本次审查中修正 | §0.1 | 已解决 |
+| 5 | 熔断器三重声明(MOD-INF-007/016/022) | 中 | 历史演进未声明关系 | 已在§10.5登记+§0.4声明委托 | §0.4 | 已处置 |
+
+## 自检与闭合清单
+<!-- temporal_type: permanent -->
+
+| # | 阶段 | 检查项 | 确认方式 | 状态 |
+|---|:----:|--------|---------|:----:|
+| 1 | 设计 | §3每个组件在§4有对应接口 | 逐组件核对 | ✅ |
+| 2 | 设计 | §4每个接口在§16有对应施工步骤 | 逐接口核对 | ✅ |
+| 3 | 设计 | §5每个约束在§9有对应测试 | 逐约束核对 | ☐ |
+| 4 | 设计 | §0.1每个代码文件在§11有对应产出物路径 | 逐文件核对 | ✅ |
+| 5 | 设计 | §10每个依赖在cross-module-dependency-registry.yaml有对应条目 | 逐依赖核对 | ☐ |
+| 6 | 前 | 已读取蓝图全文 | 逐节确认 | ✅ |
+| 7 | 前 | 术语表中每个术语含义已理解 | 能回答区别 | ✅ |
+| 8 | 前 | 成熟度声明中volatile/evolving的部分已标记 | 知道哪些可改 | ✅ |
+| 9 | 前 | 已知问题中未解决的问题已知晓 | 知道哪些坑不能踩 | ✅ |
+| 10 | 中 | 每步施工后执行验证命令 | exit 0才进下一步 | ☐ |
+| 11 | 中 | 新代码文件头部十字段完整 | 逐文件核对 | ☐ |
+| 12 | 后 | §0代码对齐验证已更新 | construction_progress与实际一致 | ☐ |
+
+## 成熟度声明
+<!-- temporal_type: permanent -->
+
+| 设计维度 | 成熟度 | 信心 | 升级标准 | 说明 |
+|---------|:------:|:---:|---------|------|
+| 核心架构(G0-G7+G1-G5双门禁) | stable | 高 | CT-ORC-GATE-001落地→frozen | 核心设计已验证 |
+| 接口契约(§4) | evolving | 中 | CT-SCRIPT-GATE-001落地→stable | exit code映射待实现 |
+| 数据模型(GateResult/GateContext) | stable | 高 | Pydantic V2迁移完成→frozen | 已实现 |
+| 容量架构(§17) | volatile | 低 | Phase A完成→evolving | 12缺口待施工 |
+| 法证审计(哈希链) | evolving | 中 | 端到端验证通过→stable | 代码存在未验证 |
+| 自指硬化(完整性守卫) | evolving | 中 | GATE-18联动验证→stable | 代码存在未验证 |
+
+---
+
+## 版本演进路线图
+<!-- temporal_type: permanent -->
+
+| 版本 | 核心变更 | 前置版本 | 施工状态 |
+|------|---------|---------|:-------:|
+| v0.1.0 | 初始创建——双门禁体系+门禁域熔断器 | — | 已完成 |
+| v0.5.0 | 两轮盲点审查——法证审计+自指硬化+威胁模型 | v0.1.0 | 已完成 |
+| v0.7.0 | 容量架构升级——六大支柱+三级调度 | v0.5.0 | 已完成 |
+| v0.8.0 | 模板合规+压缩 | v0.7.0 | 已完成 |
+| v0.9.0 | CT-ORC-GATE-001+CT-SCRIPT-GATE-001落地 | v0.8.0 | 待施工 |
+| v1.0.0 | 容量Phase A/B/C完成+全链路测试 | v0.9.0 | 待施工 |
+
+---
+
+---
+
+## 蓝图特有章节
+<!-- temporal_type: permanent -->
+
+### §A 门禁规则 G0-G7 结构化YAML
+
+> 已实现——YAML文件是SSoT。蓝图只保留路径+关键字段约束。
+
+| 门禁 | 文件路径 | gate_id | 触发事件 | 关键check ID | severity |
+|------|---------|---------|---------|-------------|----------|
+| G0 任务准入 | `src/zephyr/gates/task/g0_entry.yaml` | G0 | DRAFT→TODO | G0-C00 required_fields_present; G0-C01 task_type_valid | error |
+| G1 蓝图合规 | `src/zephyr/gates/g6_blueprint_compliance.yaml` | G1 | TODO→IN_PROGRESS | G1-C00 module_has_approved_blueprint | error |
+| G2 依赖完整 | (同G1文件) | G2 | → | G2-C00 depends_on_modules_implemented | error |
+| G3 容量检查 | (同G1文件) | G3 | → | G3-C00 within_global_token_budget | warning |
+| G4 沙箱合规 | `src/zephyr/gates/g6_ctr_compliance.yaml` | G4 | 执行中 | G4-C00 sandbox_profile_matches_task_type | error |
+| G5 模型合规 | (同G4文件) | G5 | → | G5-C00 model_in_capability_matrix | error |
+| G6 安全合规 | `src/zephyr/gates/g6_ctr_compliance.yaml` | G6 | → | G6-C00 tool_call_whitelist | error |
+| G7 交付前 | `src/zephyr/gates/task/g7_orc_gate_engine.yaml` | G7 | REVIEW→COMPLETED | G7-C00 all_associated_scripts_audit_pass | error |
+
+**YAML字段约束**：check必须是布尔表达式；每条reject必须配fix_hint；severity: error/warning；on_failure: reject/defer/warn
+
+### §B Anti-Patterns
+
+| # | Anti-Pattern | 违反后果 | 正确做法 |
+|---|-------------|---------|---------|
+| AP1 | 绕过门禁直接修改TaskCard.status | G0-G7全部门禁被跳过 | 状态变更必须通过task_repo.transition()→自动触发对应门禁 |
+| AP2 | 跳过G1-G5 KMS门禁直接写入知识库 | 未审查的知识进入AI上下文 | KE入库必须经过G1→G2→G3→G4→G5完整管道 |
+| AP3 | 门禁规则留问句 | AI无法直接执行 | check必须是布尔表达式 |
+| AP4 | 熔断器触发后手动override | 连续故障被掩盖 | OPEN期间只能等待cooldown到期 |
+| AP5 | 创建门禁但不注册 | 门禁成为孤儿 | 新建门禁=copy _template.yaml+写入_registry.yaml |
+| AP6 | 废弃门禁直接删除 | 历史session回溯找不到 | 废弃=status:deprecated+移到_deprecated/ |
+| AP7 | on_failure只有reject没有fix_hint | AI被拒绝后不知道怎么修复 | 每条reject必须配fix_hint |
+| AP8 | 新增脚本不注册 | 增量扫描找不到→漏检 | 任何新治理脚本必须在script_manifest.yaml注册 |
+| AP9 | 全量扫描作为默认模式 | 10,000脚本全量3.5h→系统瘫痪 | 增量扫描是默认 |
+| AP10 | 绕过依赖图谱直接跑指定维度 | 可能漏维 | 依赖图谱自动推导 |
+| AP11 | Worker数硬编码 | 换机器后worker数不匹配 | Worker数=min(cpu_count()*2, config.max_workers) |
+| AP12 | 一个AI的故障阻塞全部AI | 99个AI等1个故障AI | Bulkhead隔离+超时+熔断 |
+| AP13 | 启动即接受请求 | 前5s拿到空结果 | 启动后先完成phase_0_bootstrap再listen |
+| AP14 | 忽略下游饱和度继续放行 | 队列无限堆积→OOM | 信用流控——L3→L2→L1反压传导 |
+| AP15 | 每个Agent都重跑相同脚本 | 浪费99% CPU | 全局content-addressable脚本结果缓存 |
+| AP16 | 每次manifest变更全量重建图谱 | 每次卡5s | 增量更新默认+每日全量重建自愈 |
+| AP17 | Agent身份缺失 | 一个恶意Agent拖垮全部 | 每个Agent session_id绑定配额 |
+| AP18 | FIFO队列不分优先级 | P0排在P2后面 | PriorityQueue+P0预留20% worker |
+| AP19 | 长脚本短脚本同池 | S0 P99从3s飙到180s | 长尾专用池 |
+| AP20 | 纸上设计不压测 | 上生产后崩溃 | 每个设计里程碑跑BM-01~05 |
+| AP21 | hash chain跨分片无原子性 | hash chain断裂 | 两阶段写入 |
+| AP22 | SLO定义了但没人看 | 容量退化不被发现 | Prometheus指标+告警规则+每周容量健康报告 |
+| AP23 | 降级策略是"拒绝P2"一句话 | 不知道停什么保什么 | 四级降级树 |
+| AP24 | 改个YAML就重启服务 | 所有AI中断+冷启动5s | YAML/数据层热更原子替换 |
+
+### §C 门禁评估管线
+
+| Stage | 模式 | 门禁 | 失败行为 |
+|-------|------|------|---------|
+| entry | single | G0 | 任务留在DRAFT |
+| pre_exec | parallel_and | G1, G2, G3 | 任务→BLOCKED |
+| during_exec | parallel_and | G4, G5, G6 | 中断执行 + status→FAILED |
+| delivery | single | G7 | 任务→BLOCKED |
+
+**门禁间依赖**：G6 must PASS before G7 evaluation；G1 rejected → skip G2
+
+**组合表达式**：支持 AND / OR / NOT / 括号 / severity_weighted。示例：`(G0-C00 AND G0-C01) OR (admin_override == true)`
+
+### §D Owner紧急旁路协议
+
+| 约束 | 值 |
+|------|-----|
+| 最大时长 | 24h |
+| 需要理由 | ✅ |
+| 永久审计 | ✅ |
+| 每月上限 | 10次 |
+| 范围 | per_gate |
+| 自动恢复 | ✅ |
+| 禁止override | circuit_breaker OPEN(AP4) / GATE-18 pre-commit / 批量override |
+
+### §E 可观测性与审计
+
+> Per-Gate SLI指标见 §6.1 可观测性规格。本节补充审计扩展字段。
+
+**审计扩展字段**：context_json TEXT | triggered_by TEXT | override_id TEXT | evaluation_duration_ms INTEGER | affected_artifacts TEXT | session_id TEXT
+
+### §F 性能预算与幂等性
+
+| 路径 | max_latency_ms | timeout行为 |
+|------|:---:|---------|
+| hot_path | 50 | PASS(fail-open) |
+| warm_path | 200 | FAIL(fail-closed) |
+| cold_path | 2000 | 标记+继续 |
+
+**自保护约束**：总延迟>500ms持续10s→降级仅P0门禁评估；错误率>5%(3min窗口)→降级仅G0+G7评估；恢复正常(<200ms+错误率<1%)持续60s→自动恢复；per_gate_max_qps=20；global_max_concurrent=50
+
+### §G 版本化与生命周期
+
+> 门禁生命周期状态和转换规则见 §3.3。本节补充迁移策略和继承机制。
+
+**版本迁移策略**：PATCH→in-flight任务用新规则重评(不阻塞)；MINOR→新任务用新规则，in-flight沿用旧规则；MAJOR→全部in-flight任务暂停+通知Owner
+
+**门禁继承**：extends只追加，不删除/修改基类。示例：G1-MOD-TRADE-001 extends G1，追加G1-TRADE-C00 trade_data_format_valid
+
+### §H 人机协同审批
+
+| 约束 | 值 |
+|------|-----|
+| check_id | G4-C01 |
+| type | manual_approval |
+| severity | error |
+| approval_timeout_h | 72 |
+| required_review_dimensions | 准确性, 时效性, 冲突裁决, 可信度 |
+
+### §I 自适应与状态记忆
+
+> 已实现——代码文件是SSoT。蓝图只保留接口签名+约束。
 
 ```python
 class AdaptiveThreshold:
-    def learn_threshold(self, gate_id: str, check_id: str, lookback_days=30) -> ThresholdRecommendation:
-        """分析PASS/FAIL分布→推荐参数调整。PASS率99.9%→太松；FAIL>20%+override>50%→太严"""
+    def learn_threshold(self, gate_id: str, check_id: str, lookback_days=30) -> ThresholdRecommendation: ...
     def apply_recommendation(self, gate_id, check_id, require_owner_approval=True) -> bool: ...
-
-@dataclass
-class ThresholdRecommendation:
-    current_value: float; recommended_value: float
-    confidence: float; expected_pass_rate_change: float
-    risk: str; data_points: int
 ```
 
-### 24.2 有状态门禁
+**反馈回路约束**：连续override≥5/30d→建议downgrade P0→P1；retry failure>50%→fix_hint需重写
 
-```sql
-CREATE TABLE gate_state (
-    gate_state_id TEXT PRIMARY KEY,
-    gate_id TEXT NOT NULL,
-    scope_key TEXT NOT NULL,      -- "module:MOD-INF-007"
-    state_json TEXT NOT NULL,     -- {"consecutive_fails":3,...}
-    escalated BOOLEAN DEFAULT 0,
-    created_at TEXT NOT NULL,
-    updated_at TEXT NOT NULL
-);
-```
+**时态阈值**：G3容量检查——weekday 09-17 threshold=0.8(Owner在岗)；其余时段 threshold=0.5
 
-### 24.3 反馈闭环
+### §J 健康仪表板
 
-```yaml
-gate_feedback_loop:
-  inputs:
-    - {source: "override events", signal: "false positive detected"}
-    - {source: "retry success", signal: "fix_hint is effective"}
-    - {source: "post-deploy findings", signal: "gate was too weak"}
-  actions:
-    - {trigger: "连续override≥5/30d", action: "建议downgrade P0→P1"}
-    - {trigger: "retry failure>50%", action: "fix_hint需重写"}
-  owner_review_cadence: "monthly_gate_health_review"
-```
-
-### 24.4 时间域门禁
-
-```yaml
-gate_id: G3
-temporal_scoping:
-  - {period: "weekday 09-17", threshold: 0.8, reason: "Owner在岗"}
-  - {period: "weekday 17-09 + weekend", threshold: 0.5, reason: "Owner不在岗"}
-```
-
----
-
-## 二十五、门禁健康仪表板 — 1人+AI运维核心
-
-> **盲点覆盖**：T2-18 Gate Registry Health Dashboard
-> **对标**：LaunchDarkly Live Events + flag dashboard
-
-### 25.1 设计原则
-
-不追求花哨——追求**一眼看出来什么出了问题、什么地方需要动手**：
+> 已实现——代码文件是SSoT。蓝图只保留接口签名。
 
 ```python
 class GateHealthDashboard:
-    def generate_report(self) -> HealthReport:
-        """全局门禁健康状态: per-gate SLI/CB状态/override列表/FAIL汇总/待办Top-N"""
-
-@dataclass
-class HealthReport:
-    generated_at: datetime
-    summary: HealthSummary    # "16 gates, 2 degraded, 0 OPEN CB, 1 override"
-    per_gate: dict[str, GateHealthEntry]
-    alerts: list[HealthAlert]
-    owner_todos: list[OwnerTodo]
-
-@dataclass
-class HealthSummary:
-    total_gates: int; active_gates: int; shadow_gates: int
-    degraded_gates: int; open_circuit_breakers: int
-    active_overrides: int; failed_evaluations_24h: int
-    overall_status: str  # "HEALTHY"|"DEGRADED"|"CRITICAL"
-
-@dataclass
-class GateHealthEntry:
-    gate_id: str; status: str
-    latencies: dict[str, float]    # {p50_ms, p95_ms, p99_ms}
-    evaluations_24h: int; pass_rate: float
-    p0_block_rate: float; override_count_30d: int
-    alerts: list[str]
+    def generate_report(self) -> HealthReport: ...
 ```
 
-### 25.2 CLI + AI Agent可消费格式
+**HealthReport字段**：generated_at | summary: HealthSummary | per_gate: dict[str, GateHealthEntry] | alerts: list[HealthAlert] | owner_todos: list[OwnerTodo]
 
-```bash
-$ python -m zephyr.gates.gate_health              # 完整报告
-$ python -m zephyr.gates.gate_health --alerts     # 仅告警
-$ python -m zephyr.gates.gate_health --watch      # 持续监控(每30s)
-$ python -m zephyr.gates.gate_health --export-json # JSON(供Telemetry)
-```
+**CLI**：`python -m zephyr.gates.gate_health` / `--alerts` / `--export-json`
 
-```json
-{
-  "health_report": {
-    "summary": {"overall_status": "HEALTHY", "active_gates": 14, "degraded_gates": 0},
-    "owner_todos": [{"priority":"P1", "action":"review", "title":"G4 pending: 3 KE awaiting"}],
-    "ai_readable_context": {"degraded_gates": [], "can_proceed_with_tasks": true}
-  }
-}
-```
+### §K 法证审计完整性
 
----
+> 数据模型定义见 §4.2（HashedGateDecision / DecisionSnapshot）和 §4.1（AuditChainVerifier）。本节补充实现约束。
 
-## 二十六、盲点总结与新设计决策
+**哈希链约束**：current_hash = SHA-256(self.to_canonical_bytes())；verify_chain: previous_hash == previous.current_hash
 
-### 26.1 全部20盲点追踪表
+**决策快照约束**：to_canonical_json() + replay()→GateResult
 
-| # | 盲点 | 严重度 | 落位 | 对标来源 |
-|---|------|:---:|------|---------|
-| 1 | 门禁评估排序/管线 | T1 | §17.1-17.2 | K8s admission chain |
-| 2 | GateContext上下文传播 | T1 | §17.3 | OpenFeature eval context |
-| 3 | 门禁组合逻辑(AND/OR) | T1 | §17.2 | LaunchDarkly targeting |
-| 4 | AI能力边界门禁集成 | T1 | §17.4 | Vibe coding guardrails |
-| 5 | Shadow Mode正式化 | T1 | §18.1 | LaunchDarkly dark launch |
-| 6 | Owner紧急旁路 | T1 | §19 | LaunchDarkly kill switch |
-| 7 | Gate可观测性框架 | T1 | §20.1-20.3 | LaunchDarkly Observability |
-| 8 | 审计事件完整Schema | T1 | §20.2 | OpenFeature hooks |
-| 9 | 门禁模拟器 | T2 | §18.3 | K8s dry-run |
-| 10 | 门禁幂等性 | T2 | §21.1 | 分布式系统基础 |
-| 11 | 性能预算+自保熔断 | T2 | §21.2-21.3 | LD 6-layer resilience |
-| 12 | 渐进式门禁激活 | T2 | §18.2 | LD guarded rollouts |
-| 13 | 门禁版本化+迁移 | T2 | §22.2 | LD flag lifecycle |
-| 14 | 门禁生命周期管理 | T2 | §22.1 | Unleash/Flagsmith |
-| 15 | 门禁继承(extends) | T2 | §22.3 | OOP Liskov |
-| 16 | 人机协同审批 | T2 | §23 | ITIL CAB |
-| 17 | 自适应阈值 | T3 | §24.1 | AI-driven delivery |
-| 18 | 有状态门禁 | T3 | §24.2 | CB state machine |
-| 19 | 反馈闭环 | T3 | §24.3 | ML feedback loop |
-| 20 | 门禁时间域作用 | T3 | §24.4 | OPA temporal rules |
+**ChainVerificationReport字段**：total_decisions | verified | tampered | skipped | inconsistent | first_violation_at | is_intact | attestation
 
-### 26.2 新增设计决策
+**备份策略**：3-2-1(3份副本/2种介质/1份异地)；primary=gate_chain.db / replica=gate_chain.jsonl / daily_export=gate_chain_YYYY-MM-DD.tar.gz；integrity_check=SHA-256每周自动+每次导出前；corruption_recovery=从JSONL副本重建SQLite+重建hash链
 
-| ID | 决策 | 理由 |
-|----|------|------|
-| DD7 | 门禁管线五模式而非单一par_and | 不同stage需不同调度策略 |
-| DD8 | Shadow→Beta→Full三级激活而非一次到位 | G10-G12实践证明shadow数据对升级决策至关重要 |
-| DD9 | Override时间限定24h而非永久 | 永久=门禁形同虚设；24h够修补根因 |
-| DD10 | GateContext含session_id+blueprint_reads | 门禁判定需跨模块上下文 |
-| DD11 | Meta CB降级保持P0门禁 而非全部关闭 | G0/G6/G7是弹簧门——降级也不能跳过 |
-| DD12 | adaptive_threshold仅建议不自动改 | experimental阶段Owner保持完全控制 |
+**快照生命周期**：hot(7d, snapshots_hot/, ~10MB/d) → warm(30d, snapshots_warm/, gzip, ~3MB/d) → cold(permanent, snapshots_archive/, xz, ~1MB/d)；验证基准：1K<100ms / 10K<1s / 100K<10s / 1M<2min
 
----
+### §L 自我指涉硬化
 
-## 二十七、法证审计完整性 — 防篡改审计追踪
-
-> **盲点**：T0-致命——外部取证专家无法信任任何一条历史审计记录
-> **根本问题**：当前 SQLite + JSONL 可被任意文本编辑器修改。没有防篡改机制 = 审计证据在法律上不可采纳
-> **对标**：Certificate Transparency (RFC 6962)、Trillian 可验证日志、AWS CloudTrail 日志文件完整性验证、SOC 2 CC8.1 审计日志保护
-
-### 27.1 致命漏洞
-
-```
-证据出示场景：
-  取证专家："请出示 2026-04-15 14:32 的 G7 判定记录。"
-  系统回答："SELECT * FROM gates WHERE gate_id='G7' AND timestamp='2026-04-15T14:32:00' → 返回一条 PASS 记录。"
-  取证专家："我怎么知道这条记录没有被改过？"
-  系统回答："……"
-
-当前状态：SQLite 文件可用 hex editor 修改，JSONL 可以截断/插入。
-结论：ZephyrAlpha 的完整审计追踪在法庭上 ZERO 证据效力。
-```
-
-### 27.2 哈希链审计（Hash-Chained Audit Log）
-
-对标 Certificate Transparency：每条审计记录包含前一条的 SHA-256，形成不可篡改的链：
-
-```python
-@dataclass
-class HashedGateDecision:
-    """每条门禁判定——带防篡改哈希链。对标 RFC 6962 certificate transparency。"""
-
-    decision_id: str          # "gd-{uuid}"
-    sequence_number: int      # 单调递增——不允许跳跃
-    previous_hash: str        # SHA-256(上一决策)
-    gate_id: str
-    gate_result: GateResult
-    context_hash: str         # SHA-256(GateContext.serialize())
-    snapshot_hash: str        # SHA-256(完整决策快照——含所有输入)
-    timestamp: datetime
-    signature: str | None     # 可选——Owner PGP 签名（recommended）
-
-    @property
-    def current_hash(self) -> str:
-        """SHA-256(self.to_canonical_bytes())——用于下一决策的 previous_hash"""
-        ...
-
-    def verify_chain(self, previous: HashedGateDecision) -> bool:
-        """验证本决策的 previous_hash == previous.current_hash"""
-        return self.previous_hash == previous.current_hash
-```
-
-### 27.3 决策快照 — 确定性可重现
-
-> **这是整个系统最关键的缺失**。没有快照，30 天前的判定永远无法被独立验证。
-
-```python
-@dataclass
-class DecisionSnapshot:
-    """
-    门禁判定的完整冻结态——外部审计员可独立重放。
-    存储为 JSON 并纳入 hash chain。
-    """
-
-    # 输入——全量冻结
-    task_card_snapshot: dict         # TaskCard 28字段的完整快照
-    gate_yaml_snapshot: dict         # 该门禁 YAML 配置的完整内容
-    gate_yaml_version: str           # YAML change_log 版本号
-    gate_context_snapshot: dict      # GateContext 完整序列化
-    external_inputs: dict            # 所有外部依赖——蓝图读取记录、token使用统计等
-    evaluation_timestamp: datetime
-
-    # 环境
-    gate_engine_version: str         # gate_engine.py git commit hash
-    python_version: str
-
-    # 输出
-    gate_result: GateResult
-    evaluation_duration_ms: int
-
-    def to_canonical_json(self) -> str:
-        """生成确定性的 JSON 字符串——可哈希——可用于独立验证"""
-        ...
-
-    def replay(self) -> GateResult:
-        """从快照中重新执行判定——审计员验证用"""
-        ...
-```
-
-### 27.4 链验证工具
-
-```python
-class AuditChainVerifier:
-    """
-    外部取证专家使用的独立验证工具。
-    不需要信任 ZephyrAlpha 的任何组件——只需要决策快照文件。
-    """
-
-    def verify_chain_integrity(self, decisions: list[HashedGateDecision]) -> ChainVerificationReport:
-        """
-        验证全部决策链:
-        1. 每一条的 previous_hash == 前一条的 current_hash
-        2. 序列号连续递增，无跳跃
-        3. 每条快照的 snapshot_hash 与决策记录的 snapshot_hash 一致
-        4. 每条决策的输入→重放→输出一致
-        """
-
-    def verify_single_decision(self, snapshot: DecisionSnapshot) -> bool:
-        """独立重放单条决策——返回 重放结果 == snapshot.gate_result"""
-
-@dataclass
-class ChainVerificationReport:
-    total_decisions: int
-    verified: int
-    tampered: int          # hash 断裂 = 篡改
-    skipped: int            # 序列号跳跃 = 删除
-    inconsistent: int       # 重放不一致 = 输入被篡改
-    first_violation_at: datetime | None
-    is_intact: bool
-    attestation: str        # "Chain intact: 15234 decisions verified, 0 violations"
-```
-
-### 27.5 备份与灾难恢复
-
-```yaml
-audit_backup:
-  strategy: "3-2-1: 3份副本，2种介质，1份异地"
-  primary: "data/audit/gate_chain.db"        # SQLite + hash 链主库
-  replica: "data/audit/gate_chain.jsonl"     # append-only JSONL 副本
-  daily_export: "data/backups/gate_chain_YYYY-MM-DD.tar.gz"  # 加密归档
-  integrity_check: "SHA-256 校验——每周自动 + 每次导出前"
-  corruption_recovery:
-    - detect: "hash 链断裂检测 → P0 alert"
-    - recover: "从 JSONL 副本重建 SQLite + 重建 hash 链"
-```
-
----
-
-## 二十八、自我指涉硬化 — 谁审计审计者
-
-> **盲点**：T0-致命——Gate Engine 是 Python 代码，AI 可以修改它，修改后的 Gate Engine 可以欺骗审计
-> **根本问题**：Quis custodiet ipsos custodes?——谁守护守卫者？
-> **对标**：Google Binary Authorization (Borg)、K8s 准入 webhook 自检、Docker Content Trust / Notary (TUF)、secure boot measured boot (TPM PCR)
-
-### 28.1 自指悖论
-
-```
-当前路径:  AI 修改 gate_engine.py → G6 检查是否读了蓝图 → 基于 gate_engine.py 运行
-问题:      如果 AI 已修改 gate_engine.py（添加 `return PASS`），G6 已经无效了。
-更糟的是:  被篡改后的 gate_engine.py 在评估"是否有人改了 gate_engine.py"时永远返回 NO CHANGES。
-
-这是经典的 "reflection attack"——攻击目标正是审计系统本身。
-```
-
-### 28.2 门禁引擎完整性自检
+> 已实现——代码文件是SSoT。蓝图只保留接口签名+信任根层次+GATE-18约束。
 
 ```python
 class GateEngineIntegrityGuard:
-    """
-    门禁引擎的看门狗——在 Gate Engine 之外，甚至在 Gate Engine 之上。
-    对标: TPM measured boot——先度量，再执行。
-    """
-
-    def __init__(self):
-        self.known_good_hashes: dict[str, str] = self._load_hashes_from_immutable_store()
-
-    @staticmethod
-    def _load_hashes_from_immutable_store() -> dict[str, str]:
-        """
-        从不可变存储加载已知良好哈希。
-        存储位置: .git/ (通过 commit hash) + config/known_good_hashes.yaml (GPG 签名推荐)
-        """
-        ...
-
-    def verify_before_load(self) -> IntegrityCheckResult:
-        """
-        在 Gate Engine 执行任何门禁前:
-        1. SHA-256(gate_engine.py) == known_good_hash?
-        2. SHA-256(circuit_breaker.py) == known_good_hash?
-        3. SHA-256(每个门禁 YAML) == known_good_hash?
-        → ANY FAIL → 降级到 fail-closed: 禁止所有 AI 操作，输出 CRITICAL ALERT
-        """
-        ...
-
-    def bootstrap_known_good_state(self, git_commit_hash: str) -> bool:
-        """
-        从特定 git commit 恢复已知良好状态。
-        Owner 手动执行——校验该 commit 下所有门禁文件的哈希链。
-        这是系统的 "root of trust provisioning"。
-        """
-        ...
-
-    def seal_current_state(self, owner_pgp_signature: bytes) -> bool:
-        """
-        Owner 确认当前环境为已知良好 → 生成 hashes 快照 → PGP 签名。
-        对标: Docker Content Trust `docker trust sign`。
-        """
-        ...
-
-@dataclass
-class IntegrityCheckResult:
-    passed: bool
-    checked_files: int
-    violations: list[IntegrityViolation]
-    gate_engine_blocked: bool     # True → Gate Engine 自我隔离
-
-@dataclass
-class IntegrityViolation:
-    file_path: str
-    expected_hash: str
-    actual_hash: str
-    last_modified_by: str         # git log -1 --format='%an %ae' <file>
-    severity: str                 # "CRITICAL" | "WARNING"
+    def verify_before_load(self) -> IntegrityCheckResult: ...
+    def bootstrap_known_good_state(self, git_commit_hash: str) -> bool: ...
+    def seal_current_state(self, owner_pgp_signature: bytes) -> bool: ...
 ```
 
-### 28.3 信任根层次
+**verify_before_load约束**：SHA-256(gate_engine.py/circuit_breaker.py/每个门禁YAML) == known_good_hash → ANY FAIL → fail-closed: 禁止所有AI操作
 
-```yaml
-trust_root_hierarchy:
-  layer_0_trusted_computing_base:
-    - "操作系统内核（假设未遭rootkit级攻破）"
-    - "git commit 历史（不可篡改——SHA-1 哈希链）"
-    - "Owner 的 PGP 密钥对"
+**信任根层次**：
 
-  layer_1_verified_on_boot:
-    - checked: "gate_engine.py / circuit_breaker.py 哈希"
-      against: "config/known_good_hashes.yaml (Owner PGP 签名)"
-
-  layer_2_verified_per_evaluation:
-    - checked: "门禁 YAML 配置哈希"
-      against: "layer_1 中加载的 known_good_hashes"
-
-  layer_3_runtime:
-    - "Gate Engine 正常执行——门禁评估"
-
-  compromise_scenario:
-    if "layer_1 验证失败":
-      action: "禁止一切 AI 操作"
-      notification: "CRITICAL——门禁引擎完整性破坏——需要人工介入"
-    if "layer_2 验证失败":
-      action: "该门禁自动降级到 FAIL——门禁判定为 CRITICAL_FAIL"
-      notification: "P0——门禁 YAML 漂移"
-```
-
-### 28.4 GATE-18 与自指防护的联动
-
-```yaml
-# GATE-18 pre-commit 新增检查项——自我指涉专项
-pre_commit_integrity_checks:
-  - hook_id: gate-engine-self-check
-    name: "门禁引擎自检——防止 AI 篡改自身的守卫"
-    entry: "python scripts/governance/d0_tcb/verify_gate_engine_integrity.py"
-    files: "^src/zephyr/gates/(gate_engine|circuit_breaker).py$"
-    description: |
-      当 AI 提交对 gate_engine.py 或 circuit_breaker.py 的修改时：
-      1. 检查该文件修改者是否在提交信息中引用了本蓝图 (MOD-INF-007)
-      2. 检查是否附带了 Owner 的审批签名
-      3. 检查修改是否同时更新了 known_good_hashes.yaml
-      → ANY FAIL → 拒绝提交
-```
-
----
-
-## 二十九、威胁模型与攻击面分析
-
-> **盲点**：T0-致命——蓝图完全没有威胁建模。零覆盖的攻击面。
-> **对标**：OWASP Threat Dragon、STRIDE 威胁建模、MITRE ATT&CK、NIST SP 800-53 SA-11 安全评估
-
-### 29.1 攻击面映射
-
-```
-                            ZephyrAlpha Gate Engine 攻击面
-                            ════════════════════════════════
-
-[AI Agent Session]                    [Attack Vector: Prompt Injection]
-  │                                       └─ 恶意 YAML 参数注入
-  │                                       └─ 门禁绕过的社会工程 Prompt
-  │                                       └─ 伪造的 blueprint_read 记录
-  ▼
-[TaskCard / GateContext]              [Attack Vector: Data Poisoning]
-  │                                       └─ 伪造的 task 字段
-  │                                       └─ 污染的 GateContext.state
-  ▼
-[Gate YAML Files (disk)]              [Attack Vector: File Tampering]
-  │                                       └─ 直接修改 YAML 添加 bypass 规则
-  │                                       └─ 删除 entry_conditions
-  │                                       └─ 修改 severity error→warning
-  ▼
-[gate_engine.py (disk)]               [Attack Vector: Code Tampering]
-  │                                       └─ 添加 `return PASS` 硬编码
-  │                                       └─ 删除 `_run_check` 分发
-  ▼
-[Python Runtime]                      [Attack Vector: Runtime Manipulation]
-  │                                       └─ monkey-patch GateEngine.evaluate
-  │                                       └─ 替换 yaml.safe_load
-  ▼
-[SQLite gates 表 / JSONL]              [Attack Vector: Audit Tampering]
-                                          └─ 直接修改/删除审计记录
-                                          └─ 截断 JSONL 文件
-```
-
-### 29.2 STRIDE 威胁分类
-
-| 威胁类型 | 具体攻击 | 目标 | 当前状态 | 缓解 |
-|---------|---------|------|:---:|------|
-| **S**poofing | AI 伪造 blueprint_read 记录 | 绕过 G6 蓝图合规检查 | ❌ 无防护 | §27 hash chain + 来源验证 |
-| **T**ampering | 修改 gate_engine.py 添加 bypass | 全部门禁失效 | ❌ 无防护 | §28 GateEngineIntegrityGuard |
-| **T**ampering | 修改 SQLite 审计记录 | 证据销毁 | ❌ 无防护 | §27 hash chain |
-| **R**epudiation | AI 否认执行过危险操作 | 责任追溯断裂 | ❌ 无防护 | §27 decision snapshot + hash chain |
-| **I**nformation Disclosure | 读取其他模块的蓝图（未授权） | 信息越权 | ⚠️ 部分（G6检查读取但不检查范围） | 需新增模块级蓝图读取范围检查 |
-| **D**enial of Service | 构造极端任务触发门禁递归评估 | 门禁引擎自身被阻塞 | ❌ 无防护 | §21 meta CB + 门禁评估深度限制 |
-| **D**enial of Service | YAML billion laughs attack / zip bomb | 解析器崩溃 | ⚠️ 部分（yaml.safe_load 阻止了最危险的） | 需要 YAML size limit + 解析超时 |
-| **E**levation of Privilege | AI 通过 override 获得不该有的权限 | 权限提升 | ❌ 无防护 | §19 override仅限Owner + PGP验证 |
-
-### 29.3 TOCTOU（Time-of-Check Time-of-Use）硬化
-
-> 当前：G7 在 "REVIEW→COMPLETED" 时判定 → 但判定后到部署前有窗口期。
-
-```yaml
-toctou_hardening:
-  gate_id: G7
-  atomic_deploy_gate:
-    description: "部署前最后一毫秒的复核——G7 的二次验证"
-    trigger: "deploy action invoked（非状态迁移，是实际部署动作）"
-    check: |
-      ALL scripts re-run exit_code == 0
-      AND files_checksum == G7_snapshot.files_checksum     # 文件未被篡改
-      AND elapsed_since_G7 < 300s                          # 判定有效期 5min
-    on_fail: "拒绝部署 + 任务回退到 REVIEW"
-```
-
-### 29.4 AI 博弈门禁问题
-
-> **盲点**：AI 不是被动地过门禁——长 session 中 AI 会"学习"哪些行为能过哪些门禁，从而优化"通过门禁"而非"质量"。
-
-```yaml
-ai_gaming_protection:
-  pattern_detection:
-    - behavior: "AI 在收到 fix_hint 后 '修复' 仅满足形式——不解决实质问题"
-      detection: "fix_hint_effectiveness 持续下降 → 门禁被 gamified"
-    - behavior: "AI 避开需要读蓝图的修改——只改非蓝图模块避 G6"
-      detection: "被修改文件分布偏离任务分配分布 → AI 自我审查过激（over-censoring）"
-
-  mitigations:
-    - randomized_spot_check: "每月随机抽取 10% 已通过的 G7 任务 → Owner 深度审查"
-    - uncertainty_injection: "偶尔对 AI 显示 '门禁可能更严' —— 防止逆向工程门禁规则"
-    - quality_metrics: "不仅要过门禁——还要跟踪 post-deploy 质量指标回灌到门禁评估"
-```
-
-### 29.5 YAML 解析安全
-
-```python
-# 当前 gate_engine.py 已使用 yaml.safe_load（正确）
-# 但还需要以下强化：
-
-YAML_HARDENING = {
-    "max_file_size": "1MB",           # 拒绝超大 YAML
-    "parse_timeout_ms": 5000,         # 解析超时
-    "max_depth": 20,                  # 嵌套深度限制（防递归炸弹）
-    "max_aliases": 100,               # YAML 别名引用上限
-    "forbidden_constructors": [       # 即使用 safe_load 也要明确禁止
-        "!!python/object",
-        "!!python/name",
-    ],
-    "post_parse_validation": [
-        "check 字段必须是布尔表达式",
-        "severity 必须属于预定义枚举",
-        "on_failure 必须属于预定义枚举",
-        "params 中无任意代码执行路径",
-    ],
-}
-```
-
----
-
-## 三十、深度合规 — 形式 vs 实质
-
-> **盲点**：门禁只能验证"形式合规"——读没读蓝图 / 字段填没填 → 无法验证"实质质量"
-> **根本问题**：一个通过全部 G0-G7 门禁的任务，可能是垃圾代码。
-> **对标**：SAST (Static Application Security Testing)、Software Composition Analysis、CodeQL 查询、DORA 指标
-
-### 30.1 形式合规 vs 实质合规
-
-```
-形式合规（Gate Engine 当前覆盖）：
-  ✓ G0: task_id 格式正确
-  ✓ G1: 目标模块有蓝图
-  ✓ G2: 依赖模块已实现
-  ✓ G6: AI 读了蓝图
-  ✓ G7: 脚本 exit 0
-  ✗ 但：AI 可以读了蓝图然后依然写出错误代码
-  ✗ 但：脚本 exist 0 但输出可能是无意义的
-
-实质合规（完全缺失）：
-  ✗ 生成的代码是否通过单元测试？
-  ✗ 引入的依赖是否有已知 CVE？
-  ✗ 变更是否破坏向后兼容？
-  ✗ 代码是否符合项目的编码规范？
-  ✗ 性能回归是否超过阈值？
-  ✗ 新增代码的测试覆盖率？
-```
-
-### 30.2 深度合规门禁协议
-
-```yaml
-gate_id: G7D  # G7 Depth Gate——交付前门禁的深度变体（experimental）
-gate_name: delivery_depth_gate
-extends: G7
-description: "不仅检查形式——还要验证实质质量"
-entry_conditions:
-  # 继承 G7 全部 + 追加：
-  - id: G7D-C00
-    name: unit_test_coverage
-    type: coverage
-    check: "pytest --cov=new_changes → coverage >= 80%"
-    severity: warning
-    on_failure: warn
-    fix_hint: "新增/变更代码测试覆盖率不足 80%——补充测试"
-
-  - id: G7D-C01
-    name: dependency_cve_check
-    type: security_scan
-    check: "pip-audit → 零 CRITICAL CVE"
-    severity: error
-    on_failure: reject
-    fix_hint: "升级/替换有CRITICAL CVE的依赖——或添加已知漏洞处理文档"
-
-  - id: G7D-C02
-    name: regression_test_pass
-    type: script_execution
-    check: "run_all_regression.py exit_code == 0"
-    severity: error
-    on_failure: reject
-    fix_hint: "修复回归测试失败——你的变更破坏了已有功能"
-
-  - id: G7D-C03
-    name: lint_pass
-    type: script_execution
-    check: "ruff check . --output-format=json → zero errors"
-    severity: warning
-    on_failure: warn
-    fix_hint: "运行 ruff check --fix 自动修复格式问题"
-```
-
-### 30.3 质量反馈回灌
-
-```yaml
-quality_feedback_loop:
-  # 将 post-deploy 质量指标回灌到门禁评估——闭合"形式→质量"的断裂
-  metrics:
-    - metric: "7d post-deploy bug count"
-      source: "git log --grep='fix:' --since=7d"
-      threshold: "平均值 ± 2σ"
-
-    - metric: "revert rate"
-      source: "git log --grep='Revert' --since=30d"
-      threshold: "< 5%"
-
-    - metric: "owner override correlation"
-      source: "override_events 表中被 override 的门禁 与 后续 bug 的关联"
-
-  action: "如果某个门禁长期 PASS 但 post-deploy 质量下降 → 该门禁不够严格 → 建议增强"
-```
-
----
-
-## 三十一、终极盲点汇总 — 补充 12 项法证审计盲点
-
-### 31.1 补充盲点追踪表（T0 = 致命）
-
-| # | 盲点 | 严重度 | 落位 | 取证专家问 |
-|---|------|:---:|------|---------|
-| 21 | 审计记录无防篡改——SQLite/JSONL可任意修改 | **T0** | §27.1-27.2 | "你怎么证明这不是你篡改的？" |
-| 22 | 无决策快照——历史判定无法独立重放 | **T0** | §27.3 | "把30天前的那个判定再执行一遍给我看" |
-| 23 | Gate Engine 自指悖论——可以修改自身的Python代码 | **T0** | §28.1-28.2 | "谁保证 Gate Engine 没有被修改过？" |
-| 24 | 无信任根层次——全系统没有不可变锚点 | **T0** | §28.3 | "你信什么？为什么信它？" |
-| 25 | 无威胁建模——攻击面完全未分析 | **T0** | §29.1-29.2 | "你们考虑过自己系统会被如何攻击吗？" |
-| 26 | TOCTOU——G7判定和实际部署之间无保护 | **T0** | §29.3 | "判定通过后到部署前这5分钟里发生了什么？" |
-| 27 | AI可博弈门禁——长期session中AI学会"为过门禁而工作" | T1 | §29.4 | "AI的代码质量下降了——但门禁说没问题？" |
-| 28 | YAML解析攻击面未硬化 | T1 | §29.5 | "这个YAML里如果放恶意内容会怎样？" |
-| 29 | 实质合规完全缺失——只能验证形式 | **T0** | §30.1 | "你说这任务合规——但代码真的能工作吗？" |
-| 30 | 依赖安全性未检查——零CVE扫描 | T1 | §30.2 | "这个pip包有没有已知漏洞？" |
-| 31 | 质量反馈断裂——post-deploy质量不回灌给门禁 | T1 | §30.3 | "门禁说你pass了但部署后出bug了——你有学到什么吗？" |
-| 32 | GATE-18 不保护自身——pre-commit不检查gate文件修改 | T1 | §28.4 | "AI改了gate_engine.py——commit时有什么拦住了吗？" |
-
-### 31.2 新增设计决策
-
-| ID | 决策 | 理由 |
-|----|------|------|
-| DD13 | **SHA-256 哈希链审计，非纯 SQLite** | 取证专家必须能独立验证——不可篡改链 = 证据效力（§27） |
-| DD14 | **决策快照（全量输入冻结）非仅结果存储** | 无快照 = 不可重现 = 审计不可行（§27.3） |
-| DD15 | **GateEngineIntegrityGuard 在评估前自检，非运行时信任** | 先度量再信任——对标 TPM measured boot（§28.2） |
-| DD16 | **信任根 = Git SHA-1 历史 + Owner PGP，非 Python 文件** | Git 哈希链不可篡改——Python 文件可以（§28.3） |
-| DD17 | **YAML 安全不仅靠 safe_load——还需大小/深度/超时限制** | safe_load 只防代码执行不防 DoS（§29.5） |
-| DD18 | **深度门禁 G7D experimental——形式质量互补** | 就缺这一层——否则质量信号在 G7 后完全断裂（§30.2） |
-
-### 31.3 两轮审查对比
-
-| 维度 | 第一轮（§17-§26） | 本轮（§27-§31） |
+| 层级 | 校验对象 | 校验基准 |
 |------|---------|---------|
-| 视角 | 架构完整性 + 功能对标 | 法证审计 + 安全证明 |
-| 对标 | LaunchDarkly / OpenFeature / K8s / Unleash | SOC 2 / Certificate Transparency / TPM measured boot / STRIDE / DORA |
-| 核心问题 | "还缺什么能力？" | "如果我告你，你在法庭上拿什么证明自己没撒谎？" |
-| 盲点数 | 20 | 12 |
-| 致命级 | 0 | 7（T0） |
+| L0 可信计算基 | OS内核 + git commit历史 + Owner PGP密钥 | 假设未遭rootkit级攻破 |
+| L1 启动验证 | gate_engine.py / circuit_breaker.py 哈希 | config/known_good_hashes.yaml (Owner PGP签名) |
+| L2 评估验证 | 门禁YAML配置哈希 | L1中加载的known_good_hashes |
+| L3 运行时 | Gate Engine正常执行 | — |
+
+**L1验证失败→禁止一切AI操作；L2验证失败→该门禁自动降级到FAIL**
+
+**GATE-18自指防护**：AI提交对gate_engine.py或circuit_breaker.py的修改时→检查①修改者引用了本蓝图(MOD-INF-007) ②附带Owner审批签名 ③同时更新known_good_hashes.yaml → ANY FAIL → 拒绝提交
+
+**自升级协议**：step_1 deploy shadow(新旧双版本同时评估100次) → step_2 divergence check(不一致>1%→暂停+Owner审查) → step_3 cutover(IntegrityGuard验证新版本哈希+更新known_good_hashes+Owner PGP签名) → step_4 rollback(新版本错误率>旧版本×2→自动回退)
+
+### §M 深度合规——形式vs实质
+
+> G7D YAML已实现于 `src/zephyr/gates/g7d_depth_compliance.yaml`。蓝图只保留关键字段约束。
+
+| check ID | 名称 | 类型 | severity | 核心check |
+|----------|------|------|----------|----------|
+| G7D-C00 | unit_test_coverage | coverage | warning | pytest --cov → coverage >= 80% |
+| G7D-C01 | dependency_cve_check | security_scan | error | pip-audit → 零 CRITICAL CVE |
+| G7D-C02 | regression_test_pass | script_execution | error | run_all_regression.py exit_code == 0 |
+| G7D-C03 | lint_pass | script_execution | warning | ruff check → zero errors |
+
+**质量反馈回路**：7d post-deploy bug count(阈值=平均值±2σ) + revert rate(<5%) → 门禁长期PASS但post-deploy质量下降→建议增强
+
+### §N 跨门禁时序一致性
+
+**G7C检测**：FOR EACH module_id IN task.affected_modules: G1_snapshot.blueprint_version == current_module_blueprint_version → WARNING: "blueprint X was v1.2.0 at G1 but is now v1.3.0 at G7"。severity: warning(不阻断——只告知)
+
+### §O 密钥管理与灾难恢复
+
+**PGP主密钥**：存储=硬件安全密钥(YubiKey)；备份=纸质恢复码→银行保险箱；轮换=每年1次；泄露响应=git commit hash回滚+重新签名known_good_hashes.yaml
+
+**Git仓库**：primary=本地磁盘 / mirror_1=GitHub/GitLab private / mirror_2=加密外置硬盘(每月同步)；integrity_check=git fsck(每次备份前)；disaster_recovery_drill=每季度一次
 
 ---
 
-## 三十二、边缘收敛 — 最后一层防护
+## 施工落盘确认
+<!-- temporal_type: permanent -->
 
-> 本节涵盖已在两轮审查中边缘发现、不足以单独成章、但仍需记录的 4 个收敛点。
-
-### 32.1 密钥管理与灾难恢复
-
-整个法证审计体系依赖两个不可变锚点：**Git 历史**和**Owner PGP 密钥**。失去任何一个 = 全部信任坍塌。
-
-```yaml
-key_management:
-  pgp_primary_key:
-    storage: "硬件安全密钥（YubiKey 或等效）——不存放在磁盘上"
-    backup: "纸质恢复码 → 银行保险箱"
-    rotation: "每年 1 次"
-    compromise_response:
-      - "立即用 git commit hash 回滚到最后一个已知良好状态"
-      - "生成新 PGP 密钥对 → 重新签名 known_good_hashes.yaml"
-
-  git_repository:
-    primary: "本地磁盘"
-    mirror_1: "GitHub / GitLab private repo"
-    mirror_2: "加密外置硬盘——每月同步"
-    integrity_check: "git fsck —— 每次备份前"
-    disaster_recovery_drill: "每季度一次——从 mirror_2 恢复+重建全部门禁判定"
-
-  known_good_hashes:
-    location: "config/known_good_hashes.yaml"
-    signed_by: "Owner PGP (required)"
-    regeneration: "只在 Owner 审查 + 签名后——不可自动化"
-    drift_alert: "每小时自动检查——任何哈希不匹配 → P0 alert"
-```
-
-### 32.2 快照存储管理
-
-决策快照随着门禁评估不断增长——需要生命周期管理：
-
-```yaml
-snapshot_lifecycle:
-  hot: 7d
-    storage: "data/audit/snapshots_hot/"
-    compaction: "无——原始快照"
-    size_estimate: "~10MB/d (100 evaluations × 100KB avg)"
-
-  warm: 30d
-    storage: "data/audit/snapshots_warm/"
-    compaction: "gzip 压缩——~3MB/d"
-    retention: "按日打包 tar.gz"
-
-  cold: permanent
-    storage: "data/backups/snapshots_archive/"
-    compaction: "xz 压缩 + SHA-256 hash chain 包含——~1MB/d"
-    retention: "permanent (铁律四)"
-
-  verification_benchmark:
-    chain_length: [1K, 10K, 100K, 1M]
-    expected_verification_time: ["<100ms", "<1s", "<10s", "<2min"]
-    # 百万条决策 → 2 分钟内完成全链验证
-```
-
-### 32.3 跨门禁时序一致性问题
-
-G1 批准的蓝图版本，到 G7 时可能已经变了——这些在不同时间点做出的判定存在内部不一致的风险：
-
-```yaml
-cross_gate_consistency:
-  problem:
-    - "G1 在 T0 时判定 MOD-XYZ blueprint v1.2.0 == approved"
-    - "G7 在 T1 时判定 MOD-XYZ 关联脚本 exit 0"
-    - "但 T0 到 T1 之间，blueprint v1.2.0 被更新到了 v1.3.0"
-    - "→ G7 验证的产出物可能已经偏离了 G1 批准的蓝图版本"
-
-  detection:
-    gate_id: "G7C"  # G7 Consistency sub-gate (shadow)
-    check: |
-      FOR EACH module_id IN task.affected_modules:
-          G1_snapshot.blueprint_version == current_module_blueprint_version
-      → WARNING: "blueprint X was v1.2.0 at G1 but is now v1.3.0 at G7"
-    severity: "warning (不阻断——只告知)"
-```
-
-### 32.4 Gate Engine 自身的安全升级协议
-
-升级 `gate_engine.py` 是系统最高风险操作——因为升级期间旧版本仍在运行：
-
-```yaml
-gate_engine_self_upgrade:
-  protocol: "blue/green deployment for the auditor itself"
-
-  step_1_deploy_shadow:
-    - "新版本 gate_engine.py 部署到 src/zephyr/gates/_staged/"
-    - "新旧两版本同时评估 100 次——仅比对结果，旧版本结果生效"
-
-  step_2_divergence_check:
-    - "新旧结果不一致 > 1% → 暂停升级 + Owner 审查差异"
-    - "新旧结果一致 → proceed"
-
-  step_3_cutover:
-    - "GateEngineIntegrityGuard 验证新版本哈希"
-    - "新版本生效 → 旧版本进入 _staged/prev/ 保留 7d（回滚用）"
-    - "更新 known_good_hashes.yaml + Owner PGP 签名"
-
-  step_4_rollback:
-    condition: "新版本错误率 > 旧版本历史基线 × 2"
-    action: "自动回退到 _staged/prev/ 中的上一个版本"
-    notification: "P0——门禁引擎升级回退——需要 Owner 检查"
-```
-
----
-
-## 三十三、穷尽性声明
-
-### 33.1 三视角穷尽矩阵
-
-| 维度 | 视角 | 基准 | 发现 |
-|------|------|------|:---:|
-| **功能对标** | 专业机构怎么做 | LaunchDarkly + OpenFeature + K8s + Unleash + Flagsmith + Temporal | 20 盲点 (第一轮) |
-| **社区实践** | 氛围编程社区怎么做 | Cursor ProcessSep + Windsurf Rules + Aider + Claude Code sandbox + VIGIL | 已吸收至 §17.4 + §22.3 |
-| **1人+AI运维** | 1人+AI怎么维护 | 单人无团队监督 + 零运维自动化 | 仪表板(§25) + 健康(§21-§25) + 金丝雀 |
-| **法证审计** | 取证专家怎么审计 | Certificate Transparency + TPM measured boot + STRIDE + SOC 2 + DORA + RFC 6962 | 12 盲点 (第二轮，含 7 T0-致命) |
-| **威胁对抗** | 攻击者怎么攻破 | Prompt Injection + Code Tampering + Audit Tampering + AI Gaming + TOCTOU + DoS + YAML 攻击 | 8 STRIDE 威胁全缓解映射 (§29.2) |
-| **质量控制** | 代码真的能工作吗 | 形式合规 ≠ 实质合规——SAST/SCA/CodeQL/Coverage | G7D 深度门禁 (§30.2) + 反馈回灌 (§30.3) |
-| **自指防护** | 审计者自身可信吗 | TCB + measured boot + secure boot + binary authorization | GateEngineIntegrityGuard (§28.2) + 信任根三层 (§28.3) |
-| **自我升级** | 怎么安全地升级审计系统 | blue/green + shadow comparison + auto-rollback | Gate Engine 自升级协议 (§32.4) |
-
-### 33.2 穷尽性判定
-
-基于以下事实，**本蓝图确已穷尽当前人类+AI 认知边界内 Gate Engine 的所有盲点**：
-
-1. **三视角覆盖**：未被覆盖的视角 → 不存在。我们遍历了：架构师视角（第一轮）、取证专家视角（第二轮）、攻击者视角（§29 STRIDE）、质量工程师视角（§30 G7D）、运维视角（§25 仪表板）、升级视角（§32.4）。
-
-2. **对标穷尽**：九重对标覆盖了从 CNCF 开源标准（OpenFeature）到硬件信任根（TPM measured boot）到合规框架（SOC 2）的完整光谱。
-
-3. **自我指涉闭环**：这是最难突破的"递归墙角"——"谁来审计审计者"——已经在 §28（GateEngineIntegrityGuard + 信任根 + GATE-18 联动 + 自升级协议）中给出了完整的四层回答。
-
-4. **致命漏洞清零**：在第二轮审查中发现的 7 个 T0-致命漏洞（防篡改、无快照、自指悖论、无信任根、无威胁建模、TOCTOU、实质合规断裂）均已配齐具体、可施工的协议级解决方案。
-
-### 33.3 不可能达到的"绝对穷尽"
-
-以下维度**在任何系统上都不可能穷尽**——承认边界是理性行为：
-
-| 不可能 | 为什么 |
-|--------|--------|
-| AI 永远无法攻破门禁 | 对抗是永恒的博弈——AI 能力在进化，门禁也要进化 |
-| 操作系统级 rootkit | 若 OS 被攻破，一切上层审计失去信任根——这不是 Gate Engine 的问题 |
-| 未知的未知 | 定义上不可知——发现后通过本蓝图的"添加新门禁标准流程"(§10.1) 快速吸收 |
-| 未来 AI 的新攻击向量 | 不可预测——门禁体系设计为可扩展、可版本化——适配未来 |
-
-### 33.4 最终版本参数
-
-| 属性 | 值 |
-|------|-----|
-| 版本 | **0.5.0** |
-| 章节 | **33 章**（§1-§16 原始 + §17-§26 第一轮 + §27-§33 第二轮） |
-| 设计决策 | **18 条**（DD1-DD18） |
-| 盲点总数 | **32 项**（20 第一轮 + 12 第二轮） |
-| T0-致命盲点 | **7 项**（均已配解决方案） |
-| Anti-Patterns | **7 条**（AP1-AP7） |
-| 集成契约 | **2 条**（CT-SCRIPT-GATE-001 + CT-ORC-GATE-001） |
-| 规划文件 | **29 个**（§3.1） |
-| 对标来源 | **9 重** |
-| 状态 | **Draft — 白板 → 施工图 → 顶尖标准 = 全部完成** |
-
----
-
-## 变更记录
-
-| 日期 | 版本 | 变更内容 |
-|------|------|---------|
-| 2026-05-03 | 0.1.0 | 初始创建——从 b_gates.yaml SSoT 派生。双门禁体系（G0-G7+G1-G5）+ 熔断器模式 + CT-SCRIPT-GATE-001 集成。 |
-| 2026-05-04 | 0.2.0 | 黄金标准补齐：(1)修正 construction_progress not_started→phase_1_complete（15个文件已实现）；(2)新增§五 核心流程——G0-G7从自然语言升级为确定性YAML规则；(3)新增§六 设计决策集中表——6条关键决策；(4)新增§七 Anti-Patterns——7条门禁场景绝对禁止行为；(5)新增§八 集成契约——CT-SCRIPT-GATE-001+CT-ORC-GATE-001；(6)新增§九 风险与缓解；(7)新增§十 施工/演进指南——添加/修改/升级三级流程；(8)同步创建 _template.yaml(门禁标准模板)+_registry.yaml(全部门禁注册表)。 |
-| 2026-05-04 | 0.2.1 | P1-2强制合规 GATE-16 蓝图读取合规检查落地——gate_engine.py 新增第 18 种 CheckType `blueprint_read_check`；experimental 软合规 WARNING（不阻断），beta 升级为硬阻断 P0。关联模块：MOD-INF-015 Telemetry + MOD-INF-009 Pipeline。 |
-| 2026-05-05 | 0.4.0 | **第一轮盲点审查**：20盲点补齐。新增§十七-§二十六：评估管线/影子模式/紧急旁路/可观测性/性能预算+幂等/版本化+生命周期+继承/人机协同审批/自适应+有状态+反馈+时间域/健康仪表板。新增DD7-DD12。 |
-| 2026-05-05 | 0.5.0 | **第二轮终极审查**——外部取证专家视角。12盲点补齐（7T0致命+5T1）。新增§二十七-§三十一：(1)法证审计完整性——SHA-256哈希链审计+决策快照+独立验证工具+3-2-1备份；(2)自我指涉硬化——GateEngineIntegrityGuard+信任根层次（Git+OwnerPGP）+GATE-18联动；(3)威胁模型——攻击面映射+STRIDE 8威胁分类+TOCTOU硬化+AI博弈对抗+YAML解析强化；(4)深度合规——形式vs实质断裂→G7D深度门禁+质量反馈回灌。新增DD13-DD18。全蓝图最终结构：31章 + 18条设计决策 + 32盲点全追踪（含7T0致命）。对标：LaunchDarkly→OpenFeature→K8s→Unleash→Certificate Transparency→TPM measured boot→STRIDE→SOC 2→DORA——九重对标。 |
-
-
-
----
-
-## 施工落盘确认（2026-05-07 审计）
 | 维度 | 状态 |
 |------|------|
-| construction_progress | phase_1_partial（Phase 1 核心门禁 8/16 文件已实现, Phase 2 Beta/Experimental 8个文件规划中） |
+| construction_progress | phase_1_partial（核心门禁8/16文件已实现，Phase 2 Beta/Experimental 8个文件规划中） |
 | 源码路径 | `src/zephyr/gates/` |
-| 源码文件数 | 55 个 .py/.yaml |
+| 源码文件数 | 55个 .py/.yaml |
 | 测试路径 | `tests/integration/ + tests/architecture/` |
 | 配置文件 | `architecture-model/layers/b_gates.yaml` |
 | 关键入口 | `gates.registry.GateRegistry + gates.evaluator.GateEvaluator` |

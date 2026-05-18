@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0223
 task_title: "版本管理与变更记录完整追踪——v0.1.0→v0.17.0全16轮审计变更 + 集成契约CT-001~011落地"
 parent_ticket: TASK-INF-0219
@@ -37,7 +38,9 @@ rollback_instructions: "删除 CHANGELOG.md 和 contract_tracker.yaml"
 context_assembly_manifest:
   blueprint_content: "变更记录——v0.1.0→v0.17.0 16轮审计每轮变更细节 + 集成契约CT-001~011"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0223: 版本管理 + 契约追踪
 

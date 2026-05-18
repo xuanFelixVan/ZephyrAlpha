@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0213
 task_title: "§12-§13第七八轮审计-Model Evolution+Silent Failure+XAI+Calibration+Consensus+Workflow+Cache+KB+DI+Guardrails + D-019-23~37"
 parent_ticket: TASK-INF-0212
@@ -69,7 +70,9 @@ rollback_instructions: "批量回退上述17个模块文件"
 context_assembly_manifest:
   blueprint_content: "§12(8小节: Model Evolution/Silent Failure/XAI/Calibration/Context Isolation/Consensus/Cognitive Preservation/Temperature) + §13(7小节: Workflow/Cache/KB/DI/Guardrails/Team Comp/Discovery)"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0213: 第七八轮审计盲点关闭
 

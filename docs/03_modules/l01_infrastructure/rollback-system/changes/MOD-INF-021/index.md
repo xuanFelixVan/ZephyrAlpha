@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # MOD-INF-021 任务卡索引
 
 > rollback-system 蓝图分解任务卡清单

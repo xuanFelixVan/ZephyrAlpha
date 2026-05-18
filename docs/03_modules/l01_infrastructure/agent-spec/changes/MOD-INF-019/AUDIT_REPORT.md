@@ -1,4 +1,5 @@
 ---
+
 document_type: audit_report
 audit_date: 2026-05-06
 blueprint_path: "D:\\ZephyrAlpha\\docs\\03_modules\\l01_infrastructure\\agent-spec\\blueprint.md"
@@ -6,7 +7,9 @@ blueprint_version: "v0.17.0"
 blueprint_lines: 6444
 blueprint_module: MOD-INF-019
 task_card_output_dir: "D:\\ZephyrAlpha\\docs\\03_modules\\l01_infrastructure\\agent-spec\\changes\\MOD-INF-019\\"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # === 蓝图分解完整性报告 ===
 

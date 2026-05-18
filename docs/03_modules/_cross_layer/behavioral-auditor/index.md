@@ -1,27 +1,52 @@
 ---
+
 doc_type: index
 status: active
 title: "behavioral-auditor — 目录索引"
-version: "2.0.0"
+version: "3.0.0"
 created: "2026-05-08"
-updated: "2026-05-08"
+updated: "2026-05-10"
 belongs_to: "MOD-INF-027"
 maturity: "100%"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # behavioral-auditor
 
-> AI Behavior Boundary Audit Engine v2.0.0 — MOD-INF-033
-> 成熟度：100% | 状态：Draft（蓝图全维度补齐完成，施工待启动）
+> AI Behavior Boundary Audit Engine v3.0.0 — MOD-INF-033
+> 成熟度：100% | 状态：Draft（v3.0.0 容量升级蓝图层已补齐，施工待启动）
 
 ## 目录内容
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [blueprint.md](blueprint.md) | Markdown | BehavioralAuditor v2.0.0 全维度蓝图（§0~§29 + 附录） |
+| [blueprint.md](blueprint.md) | Markdown | BehavioralAuditor v3.0.0 全维度蓝图（§0~§44 + 附录 + 容量升级方案） |
 | [index.md](index.md) | Index | 本目录索引 |
 
-## 蓝图结构（v2.0.0）
+## 蓝图结构（v3.0.0）
+
+> ═══════════ v3.0.0 容量升级蓝图层 ═══════════
+
+| 章节 | 内容 |
+|------|------|
+| §30 | PartitionedEventConsumer — 事件流 8 分片并行消费 |
+| §31 | PerSessionBaseline — 100 个 AI 独立行为基线 |
+| §32 | ShardedSessionStore — 跨 Session 状态 SQLite 分片存储 |
+| §33 | TieredEvidenceStore — Evidence Chain Hot→Warm→Cold 三级存储 |
+| §34 | TokenBudgetRecalibration — Per-Session 日预算 + 全局月预算 + 风险降级 |
+| §35 | SampledMetaAudit — L0 快速 + L1 采样(10%) 分层自审计 |
+| §36 | AggregatedMetrics — Prometheus 指标聚合防标签爆炸 |
+| §37 | TieredCircuitBreaker — Session 级 + 依赖级双层熔断 |
+| §38 | SessionCostLedger — 每 AI 独立 Token 成本账本 |
+| §39 | TrustTieredAudit — HIGH/MEDIUM/LOW 三级信任分级审计 |
+| §40 | DualModeEngine — REALTIME + MICROBATCH + DEFER 三通道 |
+| §41 | LocalPermissionCache — 许可矩阵 TTL 5s 本地缓存 |
+| §42 | SharedBlueprintCache — 100 Session 共享只读蓝图缓存 |
+| §43 | AnchorAccessBroadcastBus — 锚点文件 <100ms 实时广播 |
+| §44 | RateLimitedRedTeam — 红队限速 + 语义去重 + 批量生成 |
+
+> ═══════════ v2.0.0 功能设计层（保留不变） ═══════════
 
 | 章节 | 内容 |
 |------|------|
@@ -62,12 +87,14 @@ maturity: "100%"
 
 | 对端模块 | 关系 |
 |---------|------|
-| MOD-INF-027 AuditOrchestrator | 所属调度者（Phase 2 TRIAGE dispatch） |
+| MOD-INF-027 AuditOrchestrator v5.0.0 | 所属调度者（Phase 2 TRIAGE dispatch）+ v5.0.0 ModuleGraph/Coalescer/HashStore 复用 |
 | MOD-INF-028 SemanticAuditor | 平级审计子系统 |
-| MOD-INF-020 AuditTrail | 数据源（事件流） |
-| MOD-INF-007 Gate Engine | 判定依据（许可矩阵） |
+| MOD-INF-020 AuditTrail | 数据源（事件流，v3.0.0 需支持分片消费） |
+| MOD-INF-007 Gate Engine | 判定依据（许可矩阵）+ AnchorAccessBroadcastBus 实时推送 |
 | MOD-INF-021 Rollback | 执行器（回滚） |
-| 其余 13 模块 | 见 §17 全系统集成矩阵 |
+| MOD-INF-012 Database System | **新增**：Evidence Chain / Baseline / Session State SQLite 存储 |
+| SYS-MASTER-001 §〇 | **新增**：容量升级 Worker Pool / 硬件感知调度 |
+| 其余模块 | 见 §17 全系统集成矩阵 + §4 契约变更 |
 
 ## 导航
 

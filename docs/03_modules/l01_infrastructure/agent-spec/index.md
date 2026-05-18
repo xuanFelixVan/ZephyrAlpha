@@ -1,4 +1,5 @@
 ---
+
 doc_type: index
 status: active
 title: "agent-spec — 目录索引"
@@ -7,7 +8,9 @@ last_updated: "2026-05-05"
 description: "MOD-INF-019 Agent Spec 蓝图 v0.17.0——十六轮审计覆盖156盲点+84决策+~6540行。最新§21：Skill安全审查(ZJU 26.1%漏洞)+代码库智能层(repowise 27× Token)+最小可行系统(4-folder Micro-Agent)。盲点分Must/Should/Nice三级。0%施工。"
 created: "2026-05-05"
 updated: "2026-05-05"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # agent-spec
 

@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0028"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§41 订单执行与风控(OMS) + §88 状态机形式化与正确性验证 + §93 会话并发与文件完整性防御"
@@ -88,4 +89,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

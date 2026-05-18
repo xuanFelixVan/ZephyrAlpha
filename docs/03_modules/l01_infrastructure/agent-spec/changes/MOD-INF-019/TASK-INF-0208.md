@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0208
 task_title: "§6风险矩阵全量缓解实现——R1-R65+风险项对应缓解措施落地"
 parent_ticket: TASK-INF-0205
@@ -53,7 +54,9 @@ rollback_instructions: "回退 skill_risk_mitigator.py 和 risk_tracker.yaml"
 context_assembly_manifest:
   blueprint_content: "§6 风险与缓解——R1-R65 风险矩阵，含概率/影响/缓解措施"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0208: 风险矩阵全量缓解
 

@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0035"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§69 Secrets生命周期与环境可重建性 + §70 离线分级应急与全生命周期预算"
@@ -74,4 +75,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

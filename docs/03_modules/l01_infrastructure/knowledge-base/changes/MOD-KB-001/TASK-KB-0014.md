@@ -1,11 +1,15 @@
 ---
+
 task_id: "TASK-KB-0014"
 source_blueprint: "MOD-KB-001"
 source_section: "§5.10 知识切片机制"
 
 title: "知识切片机制实现——五级边界信号切片器 + KE body长度约束"
 description: |
-  实现蓝图 §5.10 定义的五级知识切片器(knowledge_slicer)：(1)五级边界信号按优先级实现——①Markdown标题 H1/H2/H3 正则 ^#{1,3}\\s+.+$；②显式分隔符 ---/***/___；③话题转换——相邻段向量cosine<0.3→新KE；④时间跳变>30min（仅Session Log）；⑤字符硬上限>2000字符；(2)KE body长度约束——最小200字符（不足合并）、最大2000字符（超长切分）、理想500-800字符（~200-300 tokens）；(3)Session Log→KE提取比 2000行→~15-25 KE（去噪）；(4)每个切片附带 source_path+章节上下文(对标Anthropic Contextual Retrieval)。
+  实现蓝图 §5.10 定义的五级知识切片器(knowledge_slicer)：(1)五级边界信号按优先级实现——①Markdown标题 H1/H2/H3 正则 ^#{1,3}\\s+.+$；②显式分隔符
+blueprint_id: DOM-GOV-001
+---
+/***/___；③话题转换——相邻段向量cosine<0.3→新KE；④时间跳变>30min（仅Session Log）；⑤字符硬上限>2000字符；(2)KE body长度约束——最小200字符（不足合并）、最大2000字符（超长切分）、理想500-800字符（~200-300 tokens）；(3)Session Log→KE提取比 2000行→~15-25 KE（去噪）；(4)每个切片附带 source_path+章节上下文(对标Anthropic Contextual Retrieval)。
 priority: "P1"
 
 upstream_files:

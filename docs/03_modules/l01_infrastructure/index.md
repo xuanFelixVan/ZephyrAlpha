@@ -1,9 +1,12 @@
 ---
+
 date: '2026-05-02'
 doc_type: index
 generated: '2026-05-02'
 status: active
+blueprint_id: DOM-GOV-001
 ---
+
 
 # L01 鈥?鍩虹璁炬柦灞傦紙Infrastructure锛?
 

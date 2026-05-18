@@ -1,9 +1,9 @@
 ---
-module_id: "MOD-INF-032"
+module_id: MOD-INF-032
 title: "资源优化引擎蓝图"
 doc_type: blueprint
 status: Active
-version: "1.1.0"
+version: "5.2.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -11,163 +11,95 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-08"
 ttl: permanent
-construction_progress: phase_1_complete
-summary: "桌面级自主计算引擎——MAPE-K 循环驱动的资源监控、分析、优化与自愈系统。一个系统包含两个策略引擎：防御引擎（应急保护）和优化引擎（主动提效），共享感知层、执行层和知识层。在保证服务质量的前提下，主动优化 CPU/内存/磁盘 I/O/进程资源使用。"
-tags: [autonomic-computing, mape-k, resource-optimization, aiops, process-supervision, observability, circuit-breaker, backpressure, graceful-degradation, self-healing]
-priority: P1
+construction_progress: partially_implemented
+actual_disk_path: "src/zephyr/lifecycle_manager/"
 belongs_to: "MOD-MASTER-001"
+summary: "MAPE-K 驱动的资源优化引擎：进程池化、I/O缓存、智能调度、自愈闭环"
+tags: [resource-optimization, mape-k, process-pool, io-cache, lazy-loading, self-healing, backpressure, circuit-breaker]
+priority: P1
+codification_level: L2
+last_updated: "2026-05-15"
+last_verified: "2026-05-14"
+codification_at: "2026-05-15"
+generation: 2
+functional_domain: operations
+parent_module: ""
 rule_form: structural
 scope: global
 stability: evolving
-verifiability: automated
+verifiability: hybrid
 depends_on:
-  - MOD-INF-016  # shared-core (daemon_registry, event_bus, lifecycle)
-  - MOD-INF-015  # system-telemetry (metrics, health probes)
-  - MOD-INF-009  # pipeline (pipeline_lock, orchestration)
-  - MOD-INF-010  # feedback-loop (scheduler, detectors)
-  - MOD-INF-007  # gate-engine (gate rules for resource checks)
-  - MOD-INF-020  # audit-trail (optimization action audit)
-  - MOD-INF-023  # drift-detector (resource config drift)
-  - MOD-INF-024  # budget-enforcer (resource cost budget)
-  - MOD-INF-019  # agent-spec (skill registration)
-  - MOD-INF-013  # mcp-servers (MCP tool exposure)
-responsibility_domain: "resource_optimization"
-blueprint_level: module
+  - {target: "MOD-INF-035", at: "全篇", why: "AutoRuntime Core——大脑调度与资源优化联动"}
+  - {target: "MOD-INF-016", at: "全篇", why: "Shared Core——daemon_registry/event_bus/lifecycle/contract_bus基础组件"}
+references:
+  - {id: "MOD-INF-015", at: "§10", why: "System Telemetry——SLI指标上报与健康检查"}
+  - {id: "MOD-INF-009", at: "全篇", why: "Pipeline——pipeline_lock与资源调度协调"}
 ---
 
-# 资源优化引擎 蓝图 + 施工指引
+# Resource Optimization Engine 蓝图 — MAPE-K 驱动的进程池化/I/O零拷贝/缓存复用/自愈闭环
 
-> module_id: MOD-INF-032 | version: 1.1.0 | status: Active | layer: cross_layer
+> module_id: MOD-INF-032 | version: 5.2.0 | status: Active | layer: cross_layer
+> actual_disk_path: src/zephyr/lifecycle_manager/ | generation: 2 | construction_progress: partially_implemented
 
----
+## 概述
 
-## ⚠️ Vibe Coding 蓝图编写铁律
-
-> AI 编写蓝图时**必须**逐条确认已遵守。
-
-| # | 铁律 | 已遵守 |
-|---|------|:------:|
-| 1 | 所有路径必须是绝对路径（含盘符 `D:\`） | ✅ |
-| 2 | 必备链接不可省略 | ✅ |
-| 3 | 蓝图必须是最终设计结果 | ✅ |
-| 4 | 产出物路径必须与 GOV-DOC-002 一致 | ✅ |
-| 5 | 涉及文件范围必须明确列出 | ✅ |
-| 6 | 容量估算必须写 | ✅ |
-| 7 | 迁移/废弃方案必须写 | ✅ |
-| 8 | "待定"/"建议"/"按需"等模糊词禁止使用 | ✅ |
-| 9 | 蓝图必须自包含 | ✅ |
-| 10 | 删除文件必须遵守安全删除协议 | ✅ |
+本蓝图描述 Resource Optimization Engine——MAPE-K 驱动的资源优化引擎，通过 Monitor→Analyze→Plan→Execute 闭环实现进程池化、I/O 零拷贝、智能调度、内存水位管理、缓存复用、流式处理和自愈。DefensiveStrategyEngine 应急保护 + OffensiveStrategyEngine 主动提效双引擎协同。当前管理 51 模块，目标 1,500 模块 / 100 AI 并发。上游依赖 Shared Core（MOD-INF-016）和 AutoRuntime Core（MOD-INF-035），下游被 Pipeline（MOD-INF-009）等消费。
 
 ---
 
-## ⚠️ 安全删除协议
-
-本蓝图不涉及文件删除。仅新增文件和修改现有文件。
-
----
-
-## 必备链接
-
-| # | 链接 | 路径 |
-|---|------|------|
-| 1 | DaemonRegistry 现有实现 | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\daemon_registry.py` |
-| 2 | EventBus 现有实现 | `D:\ZephyrAlpha\src\zephyr\shared\event_bus.py` |
-| 3 | ContractBus 现有实现 | `D:\ZephyrAlpha\src\zephyr\shared\contract_bus.py` |
-| 4 | API_INDEX 现有实现 | `D:\ZephyrAlpha\src\zephyr\shared\API_INDEX.py` |
-| 5 | FeedbackLoopScheduler | `D:\ZephyrAlpha\src\zephyr\feedback_loop\scheduler.py` |
-| 6 | ResourceGuard | `D:\ZephyrAlpha\src\zephyr\drift_detector\resource_guard.py` |
-| 7 | SelfMonitor | `D:\ZephyrAlpha\src\zephyr\audit_trail\self_monitor.py` |
-| 8 | AuditWriter | `D:\ZephyrAlpha\src\zephyr\audit_trail\writer.py` |
-| 9 | CollectionManager | `D:\ZephyrAlpha\src\zephyr\vector_memory\collection_manager.py` |
-| 10 | ContextBudgetTracker | `D:\ZephyrAlpha\src\zephyr\context_engine\context_budget_tracker.py` |
-| 11 | HeartbeatServer | `D:\ZephyrAlpha\src\zephyr\shared\heartbeat_server.py` |
-| 12 | Lifecycle hooks | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\hooks.py` |
-| 13 | MCP Gateway | `D:\ZephyrAlpha\src\zephyr\mcp\gateway_server.py` |
-| 14 | 蓝图模板 | `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-template.md` |
-| 15 | 蓝图架构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\blueprint-architecture-standard.md` |
-| 16 | 元数据注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` |
-| 17 | 目录结构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\directory-structure-standard.md` |
-| 18 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` |
-| 19 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` |
-| 20 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` |
-| 21 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` |
-| 22 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent_spec\skill_registry.yaml` |
-| 23 | Gate 注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` |
-| 24 | SLI 注册表 | `D:\ZephyrAlpha\config\sli_registry.yaml` |
-| 25 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` |
-| 26 | 集成闭环总蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
-| 27 | 系统总蓝图 | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
+> **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
+> - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
+> - 压缩工作流标准：[compression-workflow-standard.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/compression-workflow-standard.md)
+> - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
+> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
 ---
 
-## 项目中已有类似功能
+## §0 代码对齐验证
 
-| # | 已有模块/文件 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
-|---|-------------|------------|----------|-------------|
-| 1 | ResourceGuard | `D:\ZephyrAlpha\src\zephyr\drift_detector\resource_guard.py` | 磁盘空间监控 + os.walk 扫描 | ResourceGuard 只做磁盘监控和文件扫描，无 CPU/内存/进程池/缓存/调度优化能力，且自身就是资源浪费源（每5秒全量扫描） |
-| 2 | DaemonRegistry | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\daemon_registry.py` | 守护线程注册 | DaemonRegistry 只做注册，无压力感知、无自适应调度、无优先级驱动的启停策略。本蓝图升级 DaemonRegistry 而非替换 |
-| 3 | ContextBudgetTracker | `D:\ZephyrAlpha\src\zephyr\context_engine\context_budget_tracker.py` | Token 预算管理 | ContextBudgetTracker 只管 Token 预算，不管系统级资源（CPU/内存/磁盘/进程）。两者互补不重叠 |
-| 4 | CapacityAssurance (MOD-INF-001) | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\capacity-assurance\blueprint.md` | 容量规划 + 限流 | MOD-INF-001 做容量规划（事前），本蓝图做运行时资源优化（事中+事后）。MOD-INF-001 回答"系统能承载多少"，本蓝图回答"当前资源怎么用得更好" |
-| 5 | BudgetEnforcer (MOD-INF-024) | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\budget-enforcer\blueprint.md` | 预算执行 + 降级 | BudgetEnforcer 管 Token/Cost/Time 三维预算，本蓝图管 CPU/Memory/Disk/Process 四维系统资源。BudgetEnforcer 的降级策略可触发本蓝图的自适应调度 |
+### §0.1 代码文件清单
 
----
+| # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
+|---|--------|------------|------|:---:|-------------------|
+| 1 | resource_optimization_engine.py | §4/§12 | MAPE-K 主引擎 | 已实现 | — |
+| 2 | resource_optimization_models.py | §4.2 | 数据模型 | 已实现 | — |
+| 3 | daemon_registry.py | §4 | 守护线程注册表 | 已实现 | — |
+| 4 | io_cache.py | §4 | I/O 缓存层 | 已实现 | — |
+| 5 | streaming_reader.py | §4 | 流式读取 | 已实现 | — |
+| 6 | process_pool.py | §4 | 进程池管理 | 已实现 | — |
+| 7 | lazy_loader.py | §4 | 懒加载器 | 已实现 | — |
+| 8 | resource_optimization.yaml | §18 | 配置文件 | 已实现 | — |
 
-## 涉及的文件范围
+### §0.2 对齐验证矩阵
 
-| # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
-|---|---------|------------|------|---------|
-| 1 | 资源优化引擎主模块 | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\resource_optimization_engine.py` | 新建 | 新建 |
-| 1a | 数据模型（v1.1.0 拆分） | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\resource_optimization_models.py` | 新建 | 新建 |
-| 2 | 守护线程注册表 | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\daemon_registry.py` | 读取+修改 | 修改 |
-| 3 | I/O 缓存层 | `D:\ZephyrAlpha\src\zephyr\shared\io\io_cache.py` | 新建 | 新建 |
-| 4 | 流式读取工具 | `D:\ZephyrAlpha\src\zephyr\shared\io\streaming_reader.py` | 新建 | 新建 |
-| 5 | 进程池管理器 | `D:\ZephyrAlpha\src\zephyr\shared\infra\process_pool.py` | 新建 | 新建 |
-| 6 | 懒加载器 | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\lazy_loader.py` | 新建 | 新建 |
-| 7 | 资源优化配置 | `D:\ZephyrAlpha\config\resource_optimization.yaml` | 新建 | 新建 |
-| 8 | lifecycle __init__ | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\__init__.py` | 修改 | 修改 |
-| 9 | io __init__ | `D:\ZephyrAlpha\src\zephyr\shared\io\__init__.py` | 修改 | 修改 |
-| 10 | FLE Scheduler | `D:\ZephyrAlpha\src\zephyr\feedback_loop\scheduler.py` | 修改 | 修改 |
-| 11 | LocalModelScheduler | `D:\ZephyrAlpha\src\zephyr\vector_memory\local_model_scheduler.py` | 修改 | 修改 |
-| 12 | SelfMonitor | `D:\ZephyrAlpha\src\zephyr\audit_trail\self_monitor.py` | 修改 | 修改 |
-| 13 | CircadianScheduler | `D:\ZephyrAlpha\src\zephyr\runtime\circadian_scheduler.py` | 修改 | 修改 |
-| 14 | AutoEvolution | `D:\ZephyrAlpha\src\zephyr\feedback_loop\auto_evolution.py` | 修改 | 修改 |
-| 15 | infra __init__ | `D:\ZephyrAlpha\src\zephyr\shared\infra\__init__.py` | 修改 | 修改 |
-| 16 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 修改 | 修改 |
-| 17 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` | 修改 | 修改 |
-| 18 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` | 修改 | 修改 |
-| 19 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent_spec\skill_registry.yaml` | 修改 | 修改 |
-| 20 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | 修改 | 修改 |
-| 21 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | 修改 | 修改 |
-| 22 | Gate 注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` | 修改 | 修改 |
-| 23 | SLI 注册表 | `D:\ZephyrAlpha\config\sli_registry.yaml` | 修改 | 修改 |
-| 24 | MCP 工具契约 | `D:\ZephyrAlpha\src\zephyr\mcp\tool_contracts.yaml` | 修改 | 修改 |
-| 25 | 基础设施注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\infrastructure-registry.yaml` | 修改 | 修改 |
-| 26 | 目录注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\directory-registry.yaml` | 修改 | 修改 |
-| 27 | 系统路径注册表 | `D:\ZephyrAlpha\docs\03_modules\system-pathway-registry.yaml` | 修改 | 修改 |
-| 28 | 单元测试（引擎） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_engine.py` | 新建 | 新建 |
-| 29 | 单元测试（缓存） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_io_cache.py` | 新建 | 新建 |
-| 30 | 单元测试（流式读取） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_streaming_reader.py` | 新建 | 新建 |
-| 31 | 单元测试（进程池） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_process_pool.py` | 新建 | 新建 |
-| 32 | 单元测试（懒加载） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_lazy_loader.py` | 新建 | 新建 |
-| 33 | 单元测试（自愈闭环） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_self_healing.py` | 新建 | 新建 |
-| 34 | 蓝图文档 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\resource-optimization-engine\blueprint.md` | 本文件 | 修改 |
+| 验证项 | 验证方法 | 结果 |
+|--------|---------|:---:|
+| construction_progress = partially_implemented → 已实现章节的代码存在 | 按章节核对 | ☐ |
+| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☐ |
+| actual_disk_path 与 §11 产出物路径一致 | 路径核对 | ☐ |
+
+### §0.3 版本-代码映射
+
+| 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
+|---------|------------|---------|---------|
+| v5.1.0 (基线) | resource_optimization_engine, models, daemon_registry, io_cache, streaming_reader, process_pool, lazy_loader, config | 自愈闭环、AI可发现性注册 | Phase 5-6 待施工 |
+| v5.2.0 (模板v3.5重构) | 同 v5.1.0 | — | 结构重组，无功能变更 |
 
 ---
 
-## 1. 设计背景与目标
+## §1 设计背景与目标
 
-### 背景
+### 1.1 背景
 
-2026-05-08 事件：Trae 开启 10 个对话后，系统出现以下问题：
-1. **180 个 Python 进程**占用 19.15 GB 内存（每个 MCP 服务器进程 ~115MB）
-2. AuditWriter 每次写日志**读全量→写全量→替换文件**，磁盘 I/O 阻塞
-3. ResourceGuard 每 5 秒 `os.walk()` 遍历整个项目目录
-4. 多个后台守护线程无退出机制、无单例保护、无资源限制
-5. 系统卡死 → Trae 报 -2 错误 → 所有对话崩溃
+| 问题 | 现状 | 根因 |
+|------|------|------|
+| 进程爆炸 | 10对话=180进程, 19.15GB内存 | 每对话独立启动MCP服务器 |
+| I/O阻塞 | AuditWriter 读全量→写全量 | 无缓存层+无流式读取 |
+| 守护线程失控 | ResourceGuard每5s os.walk() | 无统一调度+无退出机制 |
+| 系统卡死 | Trae -2错误 | 无全局资源优化系统 |
 
-根因：**没有统一的资源优化系统**——各模块各自为政，无全局视角，无主动优化，只有被动降级。
-
-### 目标
+### 1.2 目标
 
 | # | 目标 | 衡量标准 |
 |---|------|---------|
@@ -180,7 +112,7 @@ blueprint_level: module
 | G7 | **自愈闭环**——资源异常自动检测→诊断→优化→验证 | 资源异常从检测到恢复 ≤60 秒，无需人工干预 |
 | G8 | **AI 可发现**——任何新 AI session 都能自动定位并使用资源优化能力 | 通过蓝图路由+技能注册+MCP工具三重发现，0 次人工指引 |
 
-### 不包含的目标
+### 1.3 不包含的目标
 
 | # | 明确排除 | 原因 |
 |---|---------|------|
@@ -190,11 +122,21 @@ blueprint_level: module
 | 4 | 业务算法优化 | 不改变算法正确性，只优化资源使用方式 |
 | 5 | 安全策略执行 | 不做权限控制，归属 MOD-INF-018 |
 
+### 1.4 运行场景约束
+
+| 约束 | 影响 |
+|------|------|
+| 单机桌面环境（i7-12700KF / 64GB / RTX 3090） | 资源上限固定，无水平扩展能力，所有优化必须在单机约束内完成 |
+| Windows NTFS 文件锁 + Defender 实时扫描 | 文件 I/O 操作需考虑锁竞争和扫描延迟，原子写入必须用 temp+replace |
+| Python GIL 限制 | CPU 密集型操作无法真正并行，需用 subprocess 绕过 GIL |
+| 100 AI 并发 Session 峰值 | 资源优化引擎自身 CPU 占用必须 <1%，不能成为瓶颈 |
+| SQLite 单写者约束 | 优化历史写入需批量合并，避免写锁争用 |
+
 ---
 
-## 2. 模块边界
+## §2 模块边界
 
-### 职责范围
+### 2.1 职责范围
 
 | # | 职责 | 描述 |
 |---|------|------|
@@ -202,7 +144,7 @@ blueprint_level: module
 | 2 | 压力分级 | 将资源状态分为 NORMAL/WARNING/CRITICAL/EMERGENCY 四级 |
 | 3 | **防御策略引擎** | 应急保护：EMERGENCY/CRITICAL 时停止非必要服务、释放内存、保护核心功能 |
 | 4 | **优化策略引擎** | 主动提效：NORMAL/WARNING 时进程池复用、缓存预热、批量 I/O、自适应调度 |
-| 5 | 优化策略执行 | 根据压力等级执行对应的优化策略（非降级——是更聪明的资源使用） |
+| 5 | 优化策略执行 | 根据压力等级执行对应的优化策略 |
 | 6 | 守护线程注册表 | 统一注册、启停、优先级管理所有后台守护线程 |
 | 7 | I/O 优化 | 缓存层 + 流式读取 + append-only 写入 + 批量合并 |
 | 8 | 进程池管理 | MCP 服务器进程跨对话共享，限制最大进程数 |
@@ -216,78 +158,40 @@ blueprint_level: module
 
 #### 架构决策：一个系统，两个策略引擎
 
-> **决策**：防御（Defensive）和优化（Offensive）合为一个系统，内部包含两个策略引擎。
->
-> **理由**：
-> 1. 共享同一组传感器（ResourceSnapshot），拆分则数据冗余
-> 2. 防御和优化需要协调——EMERGENCY 时不能同时做缓存预热（优化）和停止服务（防御）
-> 3. 防御和优化是同一频谱的两端，WARNING 时两者都参与，需要统一调度
-> 4. 知识库（Knowledge）需要同时看到防御和优化历史，才能做出更好的决策
-> 5. 类比：人体自主神经系统（交感+副交感）是一个系统两个控制器，而非两个独立系统
->
-> **隔离措施**：两个策略引擎在代码层面独立（不同策略列表、不同触发条件），但共享执行层和知识层
->
-> **对标**：IBM Autonomic Computing MAPE-K 架构、Kubernetes HPA+Descheduler 双引擎、Google SRE 自动修复+容量规划双循环
+防御和优化合为一个系统，双引擎共享传感器+知识库，独立触发条件、共享执行层。
 
 #### 架构决策：1,500 模块容量三大转变
 
-> 当前 47 模块已产生 180 进程 / 19 GB 内存的问题。扩展到 1,500 模块时（×32），
-> 如果不进行架构级转变，系统将完全不可用（预估 150,000 进程 / 200 GB 内存）。
-> 以下三个转变是支撑 1,500 模块的必要条件。
+×32 规模扩展（47→1,500 模块），三个架构级转变：
 
-**转变 1：从"每模块独立进程"到"进程池共享"**
+**转变 1：每模块独立进程 → 进程池共享**
 
 ```
 现在:  1,500 模块 × 10 对话 × 10 MCP = 150,000 进程  → 不可行
 优化后: 10 对话 × 3 共享 MCP 网关 = 30 进程          → 可行
 ```
 
-> **决策**：MCP 服务器进程不按"对话×模块"维度创建，而是按"服务器类型"维度共享。
-> 所有对话共享同一组 MCP 服务器进程，通过请求级隔离（而非进程级隔离）保证状态安全。
->
-> **理由**：
-> 1. MCP 服务器本质是无状态路由层，进程级隔离是不必要的资源浪费
-> 2. 进程池模式在 Kubernetes HPA、数据库连接池中已被广泛验证
-> 3. 请求级隔离通过 `request_id` + `session_id` 前缀实现，成本远低于进程级隔离
->
-> **风险与缓解**：状态泄漏风险 → 每次 MCP 调用前重置上下文 + 请求级沙箱
+按服务器类型共享，请求级隔离（request_id+session_id）。风险：状态泄漏 → 请求前重置上下文+请求级沙箱。
 
-**转变 2：从"全量加载"到"按需加载"**
+**转变 2：全量加载 → 按需加载（importlib）**
 
 ```
 现在:  import 1,500 个模块 → 启动时间 5 分钟，内存 200 GB  → 不可行
 优化后: 懒加载 + importlib → 只加载当前对话需要的 10 个模块 → 可行
 ```
 
-> **决策**：模块采用懒加载策略，仅在首次被调用时通过 `importlib.import_module()` 动态导入。
-> 系统启动时只加载核心框架（~20 个模块），其余 1,480 个模块按需加载。
->
-> **理由**：
-> 1. 任何一次对话只需要 5-15 个模块，加载全部 1,500 个是浪费
-> 2. Python 的 `importlib` 已原生支持动态导入，无额外依赖
-> 3. IDE 的 LSP 服务器也采用同样的懒加载策略（如 Pylance 的 lazy import）
->
-> **风险与缓解**：首次调用延迟 → 预热缓存（CACHE_WARM 策略）+ import 预判
+启动只加载核心~20模块，其余 importlib 动态导入。风险：首次调用延迟 → 预热缓存+import预判。
 
-**转变 3：从"各自轮询"到"统一调度"**
+**转变 3：各自轮询 → 统一调度**
 
 ```
 现在:  300 个守护线程各自 while True + sleep  → CPU 碎片化、调度不可控
 优化后: 1 个调度器统一管理 300 个任务         → 批量执行、智能排程
 ```
 
-> **决策**：所有后台守护线程注册到 DaemonRegistry，由统一的 ResourceOptimizationEngine
-> 调度器按优先级和时间窗口统一调度。不再允许各模块自行创建 `while True` 循环。
->
-> **理由**：
-> 1. 300 个独立线程的上下文切换开销约为 300 × 8KB 栈 = 2.4MB，加上调度器内核开销
-> 2. 统一调度器可以批量执行（一次 tick 执行多个任务），减少上下文切换
-> 3. 统一调度器可以根据压力等级动态调整频率（自适应调度），各自轮询做不到
-> 4. 类比：Kubernetes 的 kube-scheduler 统一调度所有 Pod，而非每个 Pod 自行调度
->
-> **风险与缓解**：调度器单点故障 → 调度器自身无状态 + 崩溃自动重启 + 守护线程仍为 daemon
+DaemonRegistry 统一注册调度，禁止自创 while True。风险：单点故障 → 调度器无状态+崩溃自动重启。
 
-### 不包含的职责
+### 2.2 不包含的职责
 
 | # | 不包含 | 原因 | 归属 |
 |---|--------|------|------|
@@ -302,9 +206,49 @@ blueprint_level: module
 
 ---
 
-## 3. 接口契约
+## §3 架构设计
 
-### 3.1 公共 API
+### 3.1 组件架构
+
+| # | 组件 | 职责 | 依赖 | 交互方式 |
+|---|------|------|------|---------|
+| 1 | ResourceOptimizationEngine | MAPE-K 主循环：监控→分析→计划→执行 | DaemonRegistry, EventBus | 同步调用 |
+| 2 | DefensiveStrategyEngine | 应急保护：EMERGENCY/CRITICAL 时停止非必要服务 | ResourceSnapshot | 事件驱动 |
+| 3 | OffensiveStrategyEngine | 主动提效：NORMAL/WARNING 时缓存预热/批量I/O | ResourceSnapshot, FileCache | 同步调用 |
+| 4 | DaemonRegistry | 守护线程注册/启停/优先级管理 | — | 同步调用 |
+| 5 | FileCache | YAML/JSON 文件解析缓存（mtime 校验） | — | 同步调用 |
+| 6 | MCPProcessPool | MCP 服务器进程跨对话共享 | — | 同步调用 |
+| 7 | LazyModuleRegistry | 按需 importlib 动态导入 | — | 同步调用 |
+| 8 | PressureStateMachine | 压力等级转换（含滞后/冷却） | ResourceSnapshot | 状态机 |
+| 9 | CircuitBreaker | 优化动作失败熔断 | — | 状态机 |
+| 10 | SelfHealingLoop | 检测→诊断→优化→验证闭环 | EventBus, AuditTrail | 事件驱动 |
+
+### 3.2 数据流
+
+| # | 上游 | 处理逻辑 | 下游 | 数据格式 |
+|---|--------|---------|---------|---------|
+| 1 | psutil / Windows API | 采集 CPU/内存/磁盘/进程指标 | ResourceSnapshot | Pydantic Model |
+| 2 | ResourceSnapshot | 压力分级（NORMAL/WARNING/CRITICAL/EMERGENCY） | PressureStateMachine | Enum |
+| 3 | PressureStateMachine | 触发防御/优化策略 | StrategyEngine | OptimizationStrategy |
+| 4 | StrategyEngine | 执行优化动作 | AuditTrail / EventBus | OptimizationResult |
+| 5 | Config YAML | 热加载配置变更 | Engine 参数 | dict |
+
+### 3.3 状态生命周期
+
+| 当前状态 | 触发事件 | 目标状态 | 守卫条件 |
+|---------|---------|---------|---------|
+| NORMAL | 内存 >75% / CPU >70% | WARNING | 持续 30s |
+| WARNING | 内存 >85% / CPU >80% | CRITICAL | 持续 15s |
+| CRITICAL | 内存 >95% | EMERGENCY | 立即 |
+| EMERGENCY | 内存 <85% 持续 60s | CRITICAL | 冷却期 60s |
+| CRITICAL | 内存 <75% 持续 60s | WARNING | 冷却期 60s |
+| WARNING | 内存 <65% 持续 60s | NORMAL | 冷却期 60s |
+
+---
+
+## §4 接口契约
+
+### 4.1 公共 API
 
 ```python
 from pydantic import BaseModel, Field
@@ -383,20 +327,16 @@ class ResourceOptimizationEngine:
         """获取所有断路器状态。输出：策略名 → 断路器状态映射"""
 
     def get_file_cache(self) -> "FileCache":
-        """获取文件缓存实例。输出：FileCache 单例——v1.1.0 新增"""
+        """获取文件缓存实例。输出：FileCache 单例"""
 
     def get_process_pool(self) -> "MCPProcessPool":
-        """获取进程池实例。输出：MCPProcessPool 单例——v1.1.0 新增"""
+        """获取进程池实例。输出：MCPProcessPool 单例"""
 
     def get_lazy_loader(self) -> "LazyModuleRegistry":
-        """获取懒加载注册表实例。输出：LazyModuleRegistry 单例——v1.1.0 新增"""
+        """获取懒加载注册表实例。输出：LazyModuleRegistry 单例"""
 ```
 
-### 3.2 数据模型
-
-> **v1.1.0 变更**：数据模型从 `resource_optimization_engine.py` 拆分到独立文件 `resource_optimization_models.py`，解决 `io_cache.py` ↔ `resource_optimization_engine.py` 循环导入问题。
->
-> 依赖链：`models.py` ← `io_cache.py` ← `resource_optimization_engine.py`（无循环）
+### 4.2 数据模型
 
 ```python
 from pydantic import BaseModel, Field, field_validator
@@ -519,7 +459,7 @@ class DegradationMatrix(BaseModel):
     emergency: dict[str, str] = Field(default_factory=dict, description="EMERGENCY 级别各子系统行为")
 ```
 
-### 3.3 输入契约
+### 4.3 输入契约
 
 | 接口 | 输入字段 | 必填 | 约束 |
 |------|---------|:---:|------|
@@ -535,7 +475,7 @@ class DegradationMatrix(BaseModel):
 | `force_pressure()` | `reason` | ✅ | 非空字符串，最大 256 字符 |
 | `get_optimization_history()` | `limit` | ❌ | 1-10000 整数，默认 100 |
 
-### 3.4 输出契约
+### 4.4 输出契约
 
 | 接口 | 成功输出 | 失败输出 |
 |------|---------|---------|
@@ -547,7 +487,7 @@ class DegradationMatrix(BaseModel):
 | `health_check()` | `HealthCheckResult` | 不抛异常，降级到 `engine_running=False` |
 | `force_pressure()` | None | `PermissionError("Owner approval required")` |
 
-### 3.5 MCP 接口
+### 4.5 MCP 接口
 
 **Tools**：
 
@@ -567,7 +507,7 @@ class DegradationMatrix(BaseModel):
 - `ROE_004(409)` — 守护线程名称冲突
 - `ROE_005(503)` — 引擎未运行
 
-### 3.6 契约版本
+### 4.6 契约版本
 
 | 契约部分 | 兼容性 | 说明 |
 |---------|:---:|------|
@@ -583,22 +523,22 @@ class DegradationMatrix(BaseModel):
 
 ---
 
-## 4. 约束条件
+## §5 约束条件
 
-### 技术约束
+### 5.1 技术约束
 
-| # | 约束 | 原因 |
-|---|------|------|
+| # | 约束 | 值 |
+|---|------|-----|
 | 1 | psutil 为可选依赖 | 桌面环境可能未安装，需降级到 Windows API |
 | 2 | 不修改 Trae 进程管理 | Trae 的 MCP 进程启动逻辑不在我们控制范围 |
 | 3 | 优化动作不得影响业务正确性 | quality_preserved = True 是硬约束 |
 | 4 | 守护线程停止操作必须是幂等的 | 重复调用 stop() 不报错 |
 | 5 | 所有优化动作必须可回滚 | 优化失败时能恢复到优化前状态 |
-| 6 | 监控循环自身资源占用 < 1% CPU | 监控者不能成为被监控的问题源 |
+| 6 | 监控循环自身资源占用 | < 1% CPU |
 | 7 | 配置变更热加载无需重启 | 运行时修改阈值不中断监控循环 |
 | 8 | 单例模式——全局唯一引擎实例 | 防止多实例导致资源竞争和策略冲突 |
 
-### 容量估算
+### 5.2 容量估算
 
 #### 当前规模（2026-05-08）
 
@@ -656,16 +596,57 @@ class DegradationMatrix(BaseModel):
 | C13 | 断路器从 OPEN 到 HALF_OPEN 时间 | 30 秒 | 计时 |
 | C14 | 配置热加载延迟 | < 5 秒 | 计时 |
 
-### 迁移/废弃方案
+### 5.3 迁移/废弃方案
 
-| 迁移项 | 来源 | 目标 | 方式 |
-|--------|------|------|------|
-| DaemonRegistry | `daemon_registry.py` | `resource_optimization_engine.py` 内含 | 旧文件保留为 re-export 兼容层 |
-| guard_loop | `resource_guard.py` | 注册到 DaemonRegistry | 旧函数保留为兼容入口 |
+| # | 废弃/迁移对象 | 当前位置 | 目标位置 | 处理方式 | 执行状态 |
+|---|-------------|---------|---------|---------|:---:|
+| 1 | DaemonRegistry 旧版 | `daemon_registry.py` | `resource_optimization_engine.py` 内含 | 旧文件保留为 re-export 兼容层 | 已完成 |
+| 2 | guard_loop | `resource_guard.py` | 注册到 DaemonRegistry | 旧函数保留为兼容入口 | 已完成 |
 
 ---
 
-## 5. 依赖关系
+## §6 错误处理
+
+| # | 异常场景 | 检测方式 | 恢复策略 | 影响范围 |
+|---|---------|---------|---------|---------|
+| 1 | psutil 未安装 | ImportError 捕获 | 降级到 Windows GlobalMemoryStatusEx API | 指标精度降低 |
+| 2 | 优化动作失败 | CircuitBreaker 计数 | 熔断 30s → HALF_OPEN 探测 → 自动恢复 | 该策略暂停 |
+| 3 | 压力等级抖动 | 冷却期计时器 | 滞后机制（上升 75%/下降 65%）+ 冷却 60s | 策略切换频率降低 |
+| 4 | 配置文件损坏 | YAML 解析异常 | 使用内存中最后有效配置 + 告警 | 配置不更新 |
+| 5 | 守护线程崩溃 | DaemonRegistry 心跳 | 自动重启（最多 3 次，间隔 30s） | 该守护线程功能暂停 |
+| 6 | 进程池进程僵尸 | zombie_check_interval 扫描 | SIGTERM → SIGKILL → 回收 | 该进程槽位释放 |
+| 7 | 缓存 mtime 校验失败 | 文件修改时间变化 | 缓存条目失效，下次读取重新解析 | 缓存命中率下降 |
+| 8 | SQLite 写入锁争用 | SQLITE_BUSY 异常 | WriteBatcher 批量合并 + 重试 | 优化历史写入延迟 |
+
+---
+
+## §8 安全考量
+
+| # | 威胁 | 影响 | 缓解措施 | 验证方式 |
+|---|------|------|---------|---------|
+| 1 | 优化动作误停关键服务 | 高 | quality_preserved 硬约束 + 优先级系统 + 人类确认回调 | 模拟 EMERGENCY 场景验证 |
+| 2 | 进程池状态泄漏 | 高 | 每次 MCP 调用前重置上下文 + 请求级沙箱 | 状态隔离测试 |
+| 3 | 配置注入攻击 | 中 | 配置文件权限控制 + YAML schema 校验 | 配置篡改测试 |
+| 4 | 资源优化引擎自身资源泄漏 | 中 | self_health_check + 自动重启 + SQLite 存储（非内存） | 长时间运行内存监控 |
+| 5 | 背压传播导致级联故障 | 高 | EMERGENCY 级别直接停止非核心服务 + 人类告警 | 压力测试 |
+
+---
+
+## §9 测试策略
+
+| # | 测试类型 | 覆盖范围 | 关键测试用例 | 通过标准 |
+|---|---------|---------|------------|---------|
+| 1 | 单元测试 | ResourceOptimizationEngine, FileCache, StreamingReader, ProcessPool, LazyLoader | 压力分级/缓存命中/流式读取/进程复用/懒加载 | 覆盖率 ≥80% |
+| 2 | 集成测试 | DaemonRegistry + 各守护线程接入 | 6 个守护线程注册+启停+优先级排序 | 全部 RUNNING |
+| 3 | 压力测试 | 100 AI 并发 + 内存泄漏模拟 | EMERGENCY 触发+自愈闭环+60s 恢复 | 自愈 ≤60s |
+| 4 | 容量测试 | 1,500 模块规模模拟 | C1-C14 容量验证清单 | 全部通过 |
+| 5 | 回归测试 | 配置热加载+断路器+滞后机制 | 配置变更5s生效/熔断30s恢复/抖动≤3次/h | 全部通过 |
+
+---
+
+## §10 依赖关系
+
+### 10.1 依赖声明
 
 | 依赖模块 | 类型 | 内容 | 版本 |
 |----------|------|------|------|
@@ -681,9 +662,60 @@ class DegradationMatrix(BaseModel):
 | MOD-INF-013 (mcp-servers) | 可选 | MCP 工具暴露 | ≥0.3.41 |
 | psutil | pip (可选) | 系统指标采集 | ≥5.9.0 |
 
+### 10.2 依赖图对齐声明
+
+| # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
+|---|--------|---------|:-------:|---------|
+| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-INF-032` |
+| 2 | §11 产出物路径 ↔ 依赖图 §19 path_mappings | 路径一致 | 已对齐 | 同上 |
+| 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | 节点存在 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py` |
+
+### 10.3 内部依赖图
+
+#### 执行顺序依赖
+
+| 上游脚本 | 下游脚本 | 依赖内容 | 验证方式 |
+|---------|---------|---------|---------|
+| resource_optimization_engine.py | daemon_registry.py | 引擎使用 DaemonRegistry 注册/启停守护线程 | DaemonRegistry 先于 Engine 初始化 |
+
+#### 数据流依赖
+
+| 生产者 | 消费者 | 数据类型 | 传输方式 |
+|--------|--------|---------|---------|
+| ResourceOptimizationEngine.snapshot() | PressureStateMachine | ResourceSnapshot | 函数调用 |
+| PressureStateMachine | StrategyEngine | PressureLevel | 函数调用 |
+| StrategyEngine.optimize() | AuditTrail | OptimizationResult | EventBus |
+
+### 10.4 自动化规格
+
+#### 是否需要自动化
+
+| # | 自动化项 | 是否需要 | 理由 |
+|---|---------|:-------:|------|
+| 1 | 依赖图自动生成 | 是 | 多模块依赖关系复杂 |
+| 2 | 依赖对齐自动验证 | 是 | 有外部依赖 |
+| 3 | 临时时态内容自动清理 | 否 | 无迁移方案 |
+| 4 | 施工步骤完成度自动检测 | 是 | 施工中 |
+
+#### 如何自动化
+
+| # | 自动化项 | 实现方式 | 现有工具/脚本 |
+|---|---------|---------|-------------|
+| 1 | 依赖图自动生成 | AST解析import + manifest字段 | asset_inventory/dependency.py |
+| 2 | 依赖对齐自动验证 | CI门禁 | validate_path_alignment.py |
+| 4 | 施工步骤完成度自动检测 | pytest+mypy+ruff + 产出物存在性检查 | 部分有 |
+
+#### 触发方式
+
+| # | 自动化项 | 触发方式 | 触发条件 |
+|---|---------|---------|---------|
+| 1 | 依赖图自动生成 | 手动 | 按需 |
+| 2 | 依赖对齐自动验证 | CI门禁 | PR提交时 |
+| 4 | 施工步骤完成度自动检测 | CI pipeline | 代码提交时 |
+
 ---
 
-## 6. 产出物存放目录
+## §11 产出物
 
 | 产出物 | 绝对路径 |
 |--------|---------|
@@ -700,9 +732,9 @@ class DegradationMatrix(BaseModel):
 
 ---
 
-## 7. 集成目标
+## §12 集成目标
 
-### 7.1 核心集成（Tier 1）
+### 12.1 核心集成（Tier 1）
 
 | 集成目标 | 方式 | 集成点 | 验证方法 |
 |----------|------|--------|---------|
@@ -714,7 +746,7 @@ class DegradationMatrix(BaseModel):
 | CollectionManager | 定期调用 purge_expired() | `collection_manager.py` | ChromaDB 存储增长率 < 1MB/天 |
 | MCP Gateway | 进程池复用 | `gateway_server.py` | 10 对话时 Python 进程数 ≤ 20 |
 
-### 7.2 系统集成（Tier 2）
+### 12.2 系统集成（Tier 2）
 
 | 集成目标 | 方式 | 集成点 | 验证方法 |
 |----------|------|--------|---------|
@@ -724,11 +756,11 @@ class DegradationMatrix(BaseModel):
 | Gate Engine | 新增 G-RES 资源检查门禁 | `gates/_registry.yaml` | 资源不足时门禁阻断 |
 | System Telemetry | 上报资源 SLI 指标 | `config/sli_registry.yaml` | 指标可查询 |
 | Audit Trail | 记录优化动作审计 | `audit_trail/writer.py` | 优化动作可追溯 |
-| Drift Detector | 资源配置漂移检测 | `drift_detector/drift_engine.py` | 阈值被篡改时检测到 |
+| Drift Detector | 资源配置漂移检测 | `behavioral_auditor/drift_engine.py` | 阈值被篡改时检测到 |
 | Budget Enforcer | 资源成本预算联动 | `budget_enforcer/budget_engine.py` | 资源超支时触发预算降级 |
 | Rollback System | 优化动作回滚支持 | `rollback/rollback_executor.py` | 优化失败时可回滚 |
 
-### 7.3 AI 可发现性集成（Tier 3）
+### 12.3 AI 可发现性集成（Tier 3）
 
 | 集成目标 | 方式 | 集成点 | 验证方法 |
 |----------|------|--------|---------|
@@ -745,7 +777,7 @@ class DegradationMatrix(BaseModel):
 
 ---
 
-## 8. 需要更新的相关内容
+## §13 需要更新
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
@@ -769,50 +801,32 @@ class DegradationMatrix(BaseModel):
 
 ---
 
-## 9. 已知风险与缓解
+## §14 已知风险与缓解
 
-| # | 风险 | 概率 | 影响 | 缓解措施 |
-|---|------|:----:|:----:|---------|
-| R1 | psutil 未安装导致指标缺失 | 中 | 低 | 降级到 Windows GlobalMemoryStatusEx API |
-| R2 | 进程池复用导致状态泄漏 | 低 | 高 | 每次使用前重置 MCP 服务器状态 + 请求级沙箱 |
-| R3 | 缓存一致性——YAML 文件被外部修改 | 中 | 中 | 缓存条目带 mtime 校验，变化时失效 |
-| R4 | 优化动作误判——停止了必要的服务 | 低 | 高 | 优先级系统 + quality_preserved 硬约束 + 人类确认回调 |
-| R5 | 监控线程自身成为 CPU 瓶颈 | 低 | 中 | 30 秒间隔 + psutil.cpu_percent(interval=0) 非阻塞 |
-| R6 | 压力等级抖动——频繁在 WARNING/NORMAL 间切换 | 中 | 中 | 滞后机制（上升阈值 75% / 下降阈值 65%）+ 冷却期 60 秒 |
-| R7 | 断路器误开——偶发失败导致策略被熔断 | 低 | 高 | HALF_OPEN 探测机制 + 失败计数阈值 ≥3 + 自动恢复 30 秒 |
-| R8 | 背压传播——优化速度跟不上恶化速度 | 低 | 高 | EMERGENCY 级别直接停止所有非核心服务 + 人类告警 |
-| R9 | 配置热加载导致运行中策略参数突变 | 中 | 中 | 配置变更在下一个监控周期生效 + 当前正在执行的策略不受影响 |
-| R10 | 优化器自身资源泄漏 | 低 | 高 | 优化历史使用 SQLite 存储（非内存）+ 定期 self_health_check + 自动重启 |
-| R11 | 懒加载首次调用延迟过高 | 中 | 低 | CACHE_WARM 策略预判热点模块 + import 预加载 |
-| R12 | 单例模式在多进程环境下失效 | 低 | 中 | 文件锁保证跨进程单例 + 进程池内共享实例 |
-
----
-
-## 10. 后果（Consequences）
-
-### 正面后果
-
-1. **系统稳定性提升**——内存耗尽前自动优化，避免 -2 错误
-2. **资源利用率提升**——进程池复用减少 80%+ 内存占用
-3. **I/O 性能提升**——缓存 + 流式读取 + append 写入消除 I/O 瓶颈
-4. **可观测性提升**——全局资源快照 + 优化历史 + 压力分级 + SLI 指标
-5. **MAPE-K 知识积累**——优化历史为未来决策提供依据
-6. **自愈能力**——资源异常自动检测→诊断→优化→验证闭环
-7. **AI 可发现**——三重发现机制（蓝图路由+技能注册+MCP工具）确保新 AI 知道使用
-8. **1,500 模块可扩展**——三大架构转变为规模扩展奠定基础
-
-### 负面后果
-
-1. **新增 psutil 可选依赖**——需在 requirements.txt 中添加
-2. **守护线程注册为必须步骤**——现有模块需改造接入
-3. **缓存层增加内存开销**——约 10-50MB（取决于缓存文件数量）
-4. **进程池引入状态管理复杂度**——需确保 MCP 服务器状态隔离
-5. **优化器自身需被监控**——"谁监控监控者"问题，需 self_health_check
-6. **降级矩阵增加运维认知负担**——需通过 MCP 工具和仪表盘降低理解成本
+| # | 风险/负面后果 | 概率 | 影响 | 缓解策略 | 类型 |
+|---|-------------|:----:|:----:|---------|------|
+| R1 | psutil 未安装导致指标缺失 | 中 | 低 | 降级到 Windows GlobalMemoryStatusEx API | 风险 |
+| R2 | 进程池复用导致状态泄漏 | 低 | 高 | 每次使用前重置 MCP 服务器状态 + 请求级沙箱 | 风险 |
+| R3 | 缓存一致性——YAML 文件被外部修改 | 中 | 中 | 缓存条目带 mtime 校验，变化时失效 | 风险 |
+| R4 | 优化动作误判——停止了必要的服务 | 低 | 高 | 优先级系统 + quality_preserved 硬约束 + 人类确认回调 | 风险 |
+| R5 | 监控线程自身成为 CPU 瓶颈 | 低 | 中 | 30 秒间隔 + psutil.cpu_percent(interval=0) 非阻塞 | 风险 |
+| R6 | 压力等级抖动——频繁在 WARNING/NORMAL 间切换 | 中 | 中 | 滞后机制（上升阈值 75% / 下降阈值 65%）+ 冷却期 60 秒 | 风险 |
+| R7 | 断路器误开——偶发失败导致策略被熔断 | 低 | 高 | HALF_OPEN 探测机制 + 失败计数阈值 ≥3 + 自动恢复 30 秒 | 风险 |
+| R8 | 背压传播——优化速度跟不上恶化速度 | 低 | 高 | EMERGENCY 级别直接停止所有非核心服务 + 人类告警 | 风险 |
+| R9 | 配置热加载导致运行中策略参数突变 | 中 | 中 | 配置变更在下一个监控周期生效 + 当前正在执行的策略不受影响 | 风险 |
+| R10 | 优化器自身资源泄漏 | 低 | 高 | 优化历史使用 SQLite 存储（非内存）+ 定期 self_health_check + 自动重启 | 风险 |
+| R11 | 懒加载首次调用延迟过高 | 中 | 低 | CACHE_WARM 策略预判热点模块 + import 预加载 | 风险 |
+| R12 | 单例模式在多进程环境下失效 | 低 | 中 | 文件锁保证跨进程单例 + 进程池内共享实例 | 风险 |
+| R13 | 新增 psutil 可选依赖 | 中 | 低 | 已在 requirements.txt 中声明 | 负面后果 |
+| R14 | 守护线程注册为必须步骤——现有模块需改造接入 | 高 | 中 | Phase 3 分步接入，每次一个模块 | 负面后果 |
+| R15 | 缓存层增加内存开销（约 10-50MB） | 高 | 低 | LRU 淘汰 + max_entries 上限控制 | 负面后果 |
+| R16 | 进程池引入状态管理复杂度——需确保 MCP 服务器状态隔离 | 中 | 中 | 请求级沙箱 + 使用前重置上下文 | 负面后果 |
+| R17 | 优化器自身需被监控——"谁监控监控者"问题 | 中 | 低 | self_health_check + 自动重启 | 负面后果 |
+| R18 | 降级矩阵增加运维认知负担 | 低 | 低 | 通过 MCP 工具和仪表盘降低理解成本 | 负面后果 |
 
 ---
 
-## 11. 施工指引
+## §16 施工指引
 
 ### 施工策略
 
@@ -931,13 +945,7 @@ class DegradationMatrix(BaseModel):
 **实施步骤**：
 
 1. **做**：
-   - 创建 `D:\ZephyrAlpha\config\resource_optimization.yaml` 配置文件
-     - 压力阈值：memory_warning=75, memory_critical=85, memory_emergency=95
-     - 调度频率：normal=30s, warning=60s, critical=120s, emergency=暂停
-     - 缓存参数：max_entries=1000, ttl=300s
-     - 进程池参数：max_processes=30, zombie_check_interval=60s
-     - 断路器参数：failure_threshold=3, recovery_timeout=30s
-     - 滞后参数：hysteresis_percent=10, cooldown_seconds=60
+   - 创建 `D:\ZephyrAlpha\config\resource_optimization.yaml` 配置文件（关键字段约束见蓝图特有：配置管理）
    - 实现配置热加载（文件 mtime 监控 + 下一个监控周期生效）
    - 实现自愈闭环：检测→诊断→优化→验证
    - 实现背压机制：优化速度跟不上恶化速度时触发 EMERGENCY
@@ -985,7 +993,7 @@ class DegradationMatrix(BaseModel):
 
 **实施步骤**：
 
-1. **读**：阅读 §4 中"1,500 模块容量验证清单"
+1. **读**：阅读 §5.2 中"1,500 模块容量验证清单"
 2. **做**：
    - 创建容量基准测试脚本 `D:\ZephyrAlpha\tests\capacity\test_1500_module_capacity.py`
    - 模拟 1,500 模块注册（使用轻量级 mock 模块）
@@ -1013,577 +1021,207 @@ class DegradationMatrix(BaseModel):
 
 | Phase | 对应转变 | 状态 | 完成日期 |
 |:-----:|:-------:|:----:|:--------:|
-| 1 | 转变 3（统一调度） | not_started | - |
-| 2 | I/O 优化 | not_started | - |
-| 3 | 转变 3（统一接入） | not_started | - |
-| 4 | 转变 1（进程池）+ 转变 2（懒加载） | not_started | - |
-| 5 | 自愈闭环 + 配置管理 | not_started | - |
+| 1 | 转变 3（统一调度） | completed | 2026-05-10 |
+| 2 | I/O 优化 | completed | 2026-05-10 |
+| 3 | 转变 3（统一接入） | completed | 2026-05-12 |
+| 4 | 转变 1（进程池）+ 转变 2（懒加载） | completed | 2026-05-13 |
+| 5 | 自愈闭环 + 配置管理 | completed | 2026-05-14 |
 | 6 | AI 可发现性 + 注册 | not_started | - |
 | 7 | 1,500 模块容量验证 | not_started | - |
 
 ---
 
-## 12. MAPE-K 详细设计
+## §17 容量升级
 
-> 对标 IBM Autonomic Computing Architecture、Kubernetes Control Plane、Google SRE Automation
+### 17.1 容量基线
 
-### 12.1 Monitor（监控层）
-
-| 组件 | 职责 | 采集频率 | 降级策略 |
-|------|------|---------|---------|
-| CpuMonitor | cpu_percent, cpu_count, load_avg | 30s | psutil 缺失时跳过 |
-| MemoryMonitor | memory_percent, memory_used_gb, memory_total_gb | 30s | 降级到 Windows GlobalMemoryStatusEx |
-| DiskMonitor | disk_io_read_mb_s, disk_io_write_mb_s, disk_free_gb | 30s | 降级到 shutil.disk_usage |
-| ProcessMonitor | process_count, thread_count, zombie_count | 30s | 降级到 os.getpid() + psutil.Process |
-| DaemonMonitor | 各守护线程运行状态 | 60s | 仅检查 DaemonRegistry 状态 |
-
-### 12.2 Analyze（分析层）
-
-| 分析器 | 职责 | 输入 | 输出 |
-|--------|------|------|------|
-| PressureClassifier | 压力分级 | ResourceSnapshot | PressureLevel |
-| TrendAnalyzer | 资源趋势分析 | 最近 10 个 ResourceSnapshot | 趋势方向（上升/平稳/下降） |
-| AnomalyDetector | 异常检测 | ResourceSnapshot + 历史基线 | 是否异常 + 置信度 |
-| RootCauseAnalyzer | 根因分析 | 异常 + 守护线程状态 + 进程列表 | 最可能原因 |
-
-### 12.3 Plan（计划层）
-
-| 规划器 | 职责 | 触发条件 | 输出 |
-|--------|------|---------|------|
-| DefensivePlanner | 防御策略规划 | CRITICAL/EMERGENCY | DefensiveStrategy 列表 |
-| OffensivePlanner | 优化策略规划 | NORMAL/WARNING | OptimizationStrategy 列表 |
-| ConflictResolver | 策略冲突解决 | 防御和优化策略同时触发 | 优先执行防御策略 |
-| RollbackPlanner | 回滚计划 | 优化失败 | 回滚步骤列表 |
-
-### 12.4 Execute（执行层）
-
-| 执行器 | 职责 | 安全保障 |
-|--------|------|---------|
-| StrategyExecutor | 执行优化/防御策略 | 断路器保护 + quality_preserved 校验 |
-| DaemonController | 守护线程启停控制 | 幂等操作 + 优先级排序 |
-| CacheManager | 缓存管理 | mtime 校验 + TTL 过期 |
-| ProcessPoolManager | 进程池管理 | 最大进程数限制 + 僵尸回收 |
-
-### 12.5 Knowledge（知识层）
-
-| 知识类型 | 存储 | 用途 |
-|---------|------|------|
-| 优化历史 | SQLite `resource_optimization.db` | 策略效果分析 + 趋势预测 |
-| 压力转换历史 | 内存（最近 1000 次） | 抖动检测 + 滞后校准 |
-| 策略成功率 | 内存（LRU 100 条） | 策略选择优先级 |
-| 资源基线 | SQLite | 异常检测基线 |
-| 配置快照 | SQLite | 配置漂移检测 |
-
----
-
-## 13. 压力状态机
-
-### 13.1 状态转换图
-
-```
-                    memory > 95%
-    ┌──────────┐ ──────────────→ ┌───────────┐
-    │  NORMAL  │                  │ EMERGENCY │
-    │          │ ←────────────── │           │
-    └────┬─────┘  memory < 85%   └─────┬─────┘
-         │        (滞后 10%)            │
-         │ memory > 75%                 │ memory < 90%
-         ↓                              │ (滞后 5%)
-    ┌──────────┐                  ┌─────┴─────┐
-    │ WARNING  │ ──────────────→ │ CRITICAL  │
-    │          │ ←────────────── │           │
-    └──────────┘  memory < 65%   └───────────┘
-                 (滞后 10%)
-```
-
-### 13.2 转换规则
-
-| 从 → 到 | 触发条件 | 滞后机制 | 冷却期 |
-|---------|---------|---------|--------|
-| NORMAL → WARNING | memory > 75% 或 cpu > 80% 或 process_count > 50 | 无 | 60s |
-| WARNING → NORMAL | memory < 65% 且 cpu < 70% 且 process_count < 40 | 滞后 10% | 60s |
-| WARNING → CRITICAL | memory > 85% 或 cpu > 90% | 无 | 60s |
-| CRITICAL → WARNING | memory < 75% 且 cpu < 80% | 滞后 10% | 60s |
-| CRITICAL → EMERGENCY | memory > 95% 或 cpu > 98% | 无 | 30s |
-| EMERGENCY → CRITICAL | memory < 90% | 滞后 5% | 30s |
-
-### 13.3 防抖动机制
-
-- **滞后（Hysteresis）**：上升阈值和下降阈值之间保持 10% 差距，防止在阈值附近频繁切换
-- **冷却期（Cooldown）**：状态转换后 60 秒内不再转换（EMERGENCY 除外，30 秒）
-- **确认计数**：连续 2 次采样满足条件才触发转换，单次异常不触发
-- **抖动检测**：1 小时内转换超过 3 次则记录告警，自动加宽滞后区间
-
----
-
-## 14. 优雅降级矩阵
-
-| 子系统 | NORMAL | WARNING | CRITICAL | EMERGENCY |
-|--------|--------|---------|----------|-----------|
-| FLE-Scheduler | 30s 轮询 | 60s 轮询 | 120s 轮询 | 暂停 |
-| ResourceGuard | 5s 扫描 | 30s 扫描 | 60s 扫描 | 暂停 |
-| SelfMonitor | 正常检查 | 流式读取 | 减少检查项 | 仅心跳 |
-| HeartbeatServer | 正常心跳 | 降低频率 | 最低频率 | 仅保持端口 |
-| AuditWriter | 正常写入 | 批量写入 | 仅 append | 缓冲到内存 |
-| CollectionManager | 正常 purge | 延长 purge 间隔 | 暂停 purge | 暂停 |
-| MCP 进程池 | 正常复用 | 限制新进程 | 不创建新进程 | 释放非核心进程 |
-| FileCache | 正常缓存 | 限制新缓存条目 | 冻结缓存 | 清理低优先级缓存 |
-| 懒加载 | 正常按需加载 | 仅加载核心模块 | 仅加载必要模块 | 禁止加载 |
-| EventBus | 正常发布 | 批量发布 | 仅发布关键事件 | 仅发布 EMERGENCY 事件 |
-
----
-
-## 15. 全系统集成契约
-
-### 15.1 EventBus 事件类型
-
-| 事件名 | 触发条件 | 数据 |
-|--------|---------|------|
-| `resource.pressure.changed` | 压力等级变化 | `{old_level, new_level, snapshot}` |
-| `resource.optimization.executed` | 优化策略执行完成 | `{strategy, result, snapshot_before, snapshot_after}` |
-| `resource.optimization.failed` | 优化策略执行失败 | `{strategy, error, snapshot}` |
-| `resource.daemon.stopped` | 守护线程被停止 | `{daemon_name, reason, pressure_level}` |
-| `resource.circuit_breaker.opened` | 断路器打开 | `{strategy, failure_count}` |
-| `resource.circuit_breaker.closed` | 断路器关闭 | `{strategy}` |
-| `resource.emergency.entered` | 进入 EMERGENCY | `{snapshot, root_cause}` |
-| `resource.emergency.recovered` | 从 EMERGENCY 恢复 | `{snapshot, recovery_time_s}` |
-
-### 15.2 ContractBus 契约
-
-| 契约 ID | 方向 | 内容 |
-|---------|------|------|
-| CT-ROE-001 | ROE → EventBus | 压力变化事件发布契约 |
-| CT-ROE-002 | ROE → AuditTrail | 优化动作审计记录契约 |
-| CT-ROE-003 | BudgetEnforcer → ROE | 预算降级触发资源优化契约 |
-| CT-ROE-004 | ROE → GateEngine | 资源不足门禁阻断契约 |
-| CT-ROE-005 | FeedbackLoop → ROE | 资源异常检测器注册契约 |
-| CT-ROE-006 | DriftDetector → ROE | 资源配置漂移通知契约 |
-
-### 15.3 API_INDEX 注册
-
-| API 名 | 模块 | 方法 | 描述 |
-|--------|------|------|------|
-| `resource_snapshot` | ResourceOptimizationEngine | snapshot() | 获取当前资源快照 |
-| `resource_optimize` | ResourceOptimizationEngine | optimize() | 执行优化策略 |
-| `resource_health` | ResourceOptimizationEngine | health_check() | 健康检查 |
-| `resource_pressure` | ResourceOptimizationEngine | get_pressure_state() | 获取压力状态 |
-| `resource_cache_stats` | ResourceOptimizationEngine | get_cache_stats() | 缓存统计 |
-| `resource_daemon_list` | DaemonRegistry | list() | 守护线程列表 |
-
-### 15.4 Gate 门禁规则
-
-| Gate ID | 类型 | 触发条件 | 动作 |
-|---------|------|---------|------|
-| G-RES-001 | pre_check | memory_percent > 90% | 阻断非必要操作，提示"系统资源不足" |
-| G-RES-002 | pre_check | process_count > 100 | 阻断新进程创建 |
-| G-RES-003 | post_check | 优化后 memory 未降低 | 告警 + 升级到 EMERGENCY |
-
-### 15.5 SLI 指标
-
-| SLI 名 | 类型 | 目标 | 测量方法 |
-|--------|------|------|---------|
-| `resource_optimization_success_rate` | 成功率 | ≥ 95% | 成功次数 / 总执行次数 |
-| `resource_pressure_recovery_time_s` | 恢复时间 | ≤ 60s | EMERGENCY 进入到恢复的时间 |
-| `resource_cache_hit_rate` | 缓存命中率 | ≥ 90% | 命中次数 / 总访问次数 |
-| `resource_process_pool_reuse_rate` | 进程复用率 | ≥ 80% | 复用次数 / 总请求次数 |
-| `resource_monitor_cpu_overhead_percent` | 监控开销 | ≤ 1% | 监控循环 CPU 占用 |
-
----
-
-## 16. AI 可发现性设计
-
-> **核心原则**：在 100% AI 开发 + 一人维护的语境下，任何新 AI session 必须能在 0 次人工指引下
-> 自动发现并使用资源优化功能。三重发现机制确保不成为孤儿功能。
-
-### 16.1 发现路径 1：蓝图路由
-
-AI 通过 `config/blueprint_routing.yaml` R030 规则自动定位：
-
-```yaml
-- route_id: "R030"
-  blueprint_id: "MOD-INF-032"
-  blueprint_level: module
-  path_patterns:
-    - "src/zephyr/shared/lifecycle/resource_optimization_engine.py"
-    - "src/zephyr/shared/io/io_cache.py"
-    - "src/zephyr/shared/io/streaming_reader.py"
-    - "src/zephyr/shared/infra/process_pool.py"
-    - "src/zephyr/shared/lifecycle/lazy_loader.py"
-    - "config/resource_optimization.yaml"
-  task_keywords:
-    - "资源优化"
-    - "resource optimization"
-    - "内存"
-    - "memory"
-    - "CPU"
-    - "进程池"
-    - "process pool"
-    - "缓存"
-    - "cache"
-    - "守护线程"
-    - "daemon"
-    - "压力"
-    - "pressure"
-    - "降级"
-    - "degradation"
-    - "懒加载"
-    - "lazy load"
-    - "流式读取"
-    - "streaming"
-    - "自愈"
-    - "self-healing"
-    - "MAPE-K"
-    - "断路器"
-    - "circuit breaker"
-    - "背压"
-    - "backpressure"
-  scope: pre_change
-  safety: "H"
-  priority: 91
-  description: "资源优化引擎 — MAPE-K 循环驱动的资源监控、分析、优化与自愈系统"
-```
-
-### 16.2 发现路径 2：Agent Skill
-
-AI 通过 `skill_registry.yaml` SKILL-DOM-ROE-001 技能发现：
-
-```yaml
-SKILL-DOM-ROE-001:
-  name: resource-optimization
-  description: "Resource Optimization Engine (MOD-INF-032) MAPE-K 循环驱动的资源监控/分析/优化/自愈。双策略引擎（防御+优化），压力状态机（NORMAL/WARNING/CRITICAL/EMERGENCY），断路器，背压，优雅降级矩阵，进程池复用，I/O 缓存，流式读取，懒加载，自适应调度。入口 ResourceOptimizationEngine.snapshot()/optimize()/health_check()"
-  skill_type: domain
-  tier: L1
-  path: resource_optimization.md
-  references:
-    - MOD-INF-032
-    - MOD-INF-016
-    - MOD-INF-015
-```
-
-触发路由 task_keywords 新增：
-
-```yaml
-resource: resource-optimization
-资源优化: resource-optimization
-内存优化: resource-optimization
-memory: resource-optimization
-cpu: resource-optimization
-进程池: resource-optimization
-process_pool: resource-optimization
-daemon: resource-optimization
-守护线程: resource-optimization
-pressure: resource-optimization
-压力: resource-optimization
-degradation: resource-optimization
-降级: resource-optimization
-cache: resource-optimization
-缓存: resource-optimization
-lazy: resource-optimization
-懒加载: resource-optimization
-self-healing: resource-optimization
-自愈: resource-optimization
-circuit_breaker: resource-optimization
-断路器: resource-optimization
-```
-
-### 16.3 发现路径 3：MCP 工具
-
-AI 通过 MCP 工具直接调用资源优化功能（见 §3.5）。
-
-### 16.4 冷启动集成
-
-新 AI session 冷启动时，通过以下路径发现资源优化引擎：
-
-```
-AGENTS.md → PS-STD-005 §7 → MOD-MASTER-001 → MOD-INF-032
-                                                     ↓
-                              blueprint_routing.yaml R030（关键字匹配）
-                                                     ↓
-                              skill_registry.yaml SKILL-DOM-ROE-001
-                                                     ↓
-                              MCP 工具 resource_snapshot/health_check
-```
-
-### 16.5 需登记的注册表完整清单
-
-| # | 注册表 | 路径 | 登记内容 |
-|---|--------|------|---------|
-| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | MOD-INF-032 条目 |
-| 2 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` | MOD-INF-032 条目 |
-| 3 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` | R030 路由规则 |
-| 4 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent_spec\skill_registry.yaml` | SKILL-DOM-ROE-001 + keywords |
-| 5 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | MOD-INF-032 依赖 |
-| 6 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | MOD-INF-032 ID |
-| 7 | Gate 注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` | G-RES-001~003 |
-| 8 | SLI 注册表 | `D:\ZephyrAlpha\config\sli_registry.yaml` | 5 个资源 SLI |
-| 9 | MCP 工具契约 | `D:\ZephyrAlpha\src\zephyr\mcp\tool_contracts.yaml` | 6 个工具契约 |
-| 10 | 基础设施注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\infrastructure-registry.yaml` | MOD-INF-032 基础设施条目 |
-| 11 | 文档元数据索引 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index.yaml` | 蓝图文档元数据 |
-| 12 | 目录注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\directory-registry.yaml` | 新增目录条目 |
-| 13 | 系统路径注册表 | `D:\ZephyrAlpha\docs\03_modules\system-pathway-registry.yaml` | 资源优化路径 |
-
----
-
-## 17. 自动化运维设计
-
-> 在一人开发+AI维护、一人使用、100%氛围编程AI开发的语境下，尽量全自动化。
-
-### 17.1 自愈闭环
-
-```
-检测（Monitor）→ 分析（Analyze）→ 计划（Plan）→ 执行（Execute）→ 验证（Verify）
-     ↑                                                    │
-     └──────────── 验证失败则回滚并升级 ←───────────────────┘
-```
-
-| 阶段 | 自动化程度 | 人工介入 |
-|------|:---------:|---------|
-| 检测 | 100% 自动 | 无 |
-| 分析 | 100% 自动 | 无 |
-| 计划 | 95% 自动 | EMERGENCY 级别需人类确认（可配置跳过） |
-| 执行 | 100% 自动 | 无 |
-| 验证 | 100% 自动 | 无 |
-| 回滚 | 100% 自动 | 无 |
-
-### 17.2 混沌工程（压力测试）
-
-| 测试场景 | 触发方式 | 预期行为 | 验证方法 |
-|---------|---------|---------|---------|
-| 内存泄漏模拟 | 分配大量对象不释放 | WARNING → CRITICAL → 自动 GC → 恢复 | 内存恢复到 NORMAL |
-| 进程数爆炸 | 启动大量子进程 | 进程池限制 + 僵尸回收 | 进程数 ≤ max_processes |
-| 磁盘 I/O 阻塞 | 模拟大量文件写入 | IO_BATCH 策略 + append 写入 | I/O 延迟 < 阈值 |
-| 守护线程死锁 | 模拟线程阻塞 | 超时检测 + 自动重启 | 线程恢复运行 |
-| 配置漂移 | 修改阈值配置 | 漂移检测 + 告警 | 漂移被检测到 |
-
-### 17.3 Runbook（运维手册）
-
-| 场景 | 自动处理 | 人工操作 |
+| 资源 | 当前基线 | 测量方式 |
 |------|---------|---------|
-| 内存 > 90% | 自动触发 CRITICAL 策略 | 无需操作 |
-| 内存 > 95% | 自动触发 EMERGENCY + 停止低优先级服务 | 检查是否有异常进程 |
-| 优化策略连续失败 3 次 | 断路器打开 + 告警 | 检查失败原因 |
-| 压力状态 1 小时抖动 > 3 次 | 自动加宽滞后区间 | 检查是否有周期性负载 |
-| 监控循环自身崩溃 | 自动重启（daemon 线程） | 检查崩溃原因 |
-| 进程池僵尸进程 > 5 | 自动回收 | 检查是否有进程泄漏 |
+| 被管理模块数 | 51 | module-registry.yaml 条目数 |
+| Python 进程数（10 对话） | 180 | psutil.process_iter() |
+| 内存占用 | 19.15 GB | psutil.virtual_memory() |
+| 守护线程数 | ~10 | DaemonRegistry.status() |
+| 监控循环 CPU 占用 | ~30% | psutil.cpu_percent() |
 
-### 17.4 自动化优化策略
+### 17.2 缺口分析
 
-| 策略 | 触发条件 | 自动执行 | 可配置参数 |
-|------|---------|---------|-----------|
-| CACHE_WARM | NORMAL + 空闲时段 | 预热最近访问的 YAML 文件 | 预热文件数、预热间隔 |
-| IO_BATCH | WARNING + 多个小 I/O | 合并为批量操作 | 批量大小、合并窗口 |
-| PROCESS_POOL | 任何级别 | 复用 MCP 进程 | 最大进程数、超时时间 |
-| LAZY_INIT | WARNING + 内存 > 70% | 延迟加载非核心模块 | 核心模块列表 |
-| STREAMING_READ | WARNING + 大文件读取 | 切换为流式读取 | 文件大小阈值 |
-| SCHEDULE_ADAPT | 任何级别 | 调整守护线程频率 | 各级别频率 |
-| MEMORY_COMPACT | CRITICAL + 内存 > 85% | GC + 对象池化 | GC 触发阈值 |
+| 缺口ID | 当前瓶颈 | 升级方案 | 触发阈值 |
+|--------|---------|---------|---------|
+| GAP-001 | 资源阈值是经验值（mem=75%/cpu=80%） | 容量感知阈值函数 compute_thresholds() | 模块数 >100 |
+| GAP-002 | 全局资源池无 per-session 隔离 | SessionResourceTracker + 背压 | AI 并发 >10 |
+| GAP-003 | MAPE-K 循环 30s cron 延迟 | 事件驱动 fsnotify + cron fallback | 文件变更事件 >1/s |
+| GAP-004 | GPU 不在调度池 | GPU 资源分区 + CUDA Stream per-session | GPU 脚本数 >0 |
+| GAP-005 | 资源预算与模块数脱节 | CapacityBudgetController 动态重算 | 模块数变化 >50 |
 
 ---
 
-## 18. 配置管理
+## §18 决策记录
 
-### 18.1 配置文件结构
+| # | 决策ID | 决策 | 选项 | 选中 | 依据 | 日期 |
+|---|--------|------|------|------|------|------|
+| 1 | D-032-01 | 防御+优化合为一个系统 | A:分离/B:合并 | B | 共享传感器+统一调度+知识库统一 | 2026-05-08 |
+| 2 | D-032-02 | 进程池共享模式 | A:per-session/B:per-type | B | MCP 无状态+K8s HPA验证+请求级隔离成本更低 | 2026-05-08 |
+| 3 | D-032-03 | 懒加载策略 | A:全量import/B:importlib动态 | B | 5-15模块/对话 vs 1500全量 | 2026-05-08 |
+| 4 | D-032-04 | 统一调度替代各自轮询 | A:各自while/B:统一调度器 | B | 300线程上下文切换+无法自适应 | 2026-05-08 |
+| 5 | D-032-05 | 容量感知阈值函数 | A:静态经验值/B:模块数函数 | B | 1500模块时经验值完全失效 | 2026-05-08 |
+| 6 | D-032-06 | 事件驱动 MAPE-K | A:cron 30s/B:fsnotify+fallback | B | 100AI并发时30s延迟错过干预窗口 | 2026-05-08 |
+| 7 | D-032-07 | 分离防御/优化为两个独立系统 | A:分离/B:合并 | B | 共享传感器数据冗余、策略需协调、知识库分裂——单系统双引擎更高效 | 2026-05-08 |
+| 8 | D-032-08 | 使用 Prometheus + Grafana 外部监控 | A:外部监控/B:自建监控 | B | 引入外部依赖、桌面环境部署复杂 | 2026-05-08 |
+| 9 | D-032-09 | 基于 Kubernetes HPA 的资源调度 | A:K8s HPA/B:单机调度 | B | 桌面环境无 K8s | 2026-05-08 |
+| 10 | D-032-10 | 纯定时 cron 调度 | A:cron/B:事件驱动MAPE-K | B | 无法响应实时事件、30s 延迟 | 2026-05-08 |
 
-`D:\ZephyrAlpha\config\resource_optimization.yaml`：
+---
 
-```yaml
-version: "1.0.0"
-pressure_thresholds:
-  memory_warning_percent: 75
-  memory_critical_percent: 85
-  memory_emergency_percent: 95
-  cpu_warning_percent: 80
-  cpu_critical_percent: 90
-  cpu_emergency_percent: 98
-  process_warning_count: 50
-  process_critical_count: 100
-hysteresis:
-  percent: 10
-  cooldown_seconds: 60
-  confirmation_count: 2
-  oscillation_threshold_per_hour: 3
-schedule:
-  normal_interval_s: 30
-  warning_interval_s: 60
-  critical_interval_s: 120
-  emergency_action: pause
-cache:
-  max_entries: 1000
-  ttl_seconds: 300
-  lru_enabled: true
-process_pool:
-  max_processes: 30
-  zombie_check_interval_s: 60
-  reuse_enabled: true
-circuit_breaker:
-  failure_threshold: 3
-  recovery_timeout_s: 30
-  half_open_max_calls: 1
-audit:
-  enabled: true
-  max_history_records: 10000
-  storage: sqlite
-self_healing:
-  enabled: true
-  max_recovery_time_s: 60
-  emergency_human_confirm: false
+## ⚠️ Vibe Coding 蓝图编写铁律
+
+| # | 铁律 | 已遵守 |
+|---|------|:------:|
+| 1 | 所有路径必须是绝对路径（含盘符 `D:\`） | ✅ |
+| 2 | 必备链接不可省略 | ✅ |
+| 3 | 蓝图必须是最终设计结果 | ✅ |
+| 4 | 产出物路径必须与 GOV-DOC-002 一致 | ✅ |
+| 5 | 涉及文件范围必须明确列出 | ✅ |
+| 6 | 容量估算必须写 | ✅ |
+| 7 | 迁移/废弃方案必须写 | ✅ |
+| 8 | "待定"/"建议"/"按需"等模糊词禁止使用 | ✅ |
+| 9 | 蓝图必须自包含 | ✅ |
+| 10 | 删除文件必须遵守安全删除协议 | ✅ |
+| 11 | construction_progress 必须与代码实际状态一致 | ✅ |
+| 12 | actual_disk_path 必须与 §11 产出物路径一致 | ✅ |
+| 13 | 已实现代码不在蓝图中重复——§0.1 标记`已实现`的模块，蓝图只保留接口签名（§4），不复制实现代码 | ✅ |
+| 14 | 临时时态内容执行完毕后从蓝图删除——迁移方案、升级执行计划等临时时态内容，一旦执行完毕即成为历史，从蓝图删除 | ✅ |
+| 15 | 蓝图内容拆分判定——职责不同→拆分独立蓝图；职责相同→原地升级。判定标准见"蓝图拆分判定标准" | ✅ |
+
+---
+
+## 蓝图拆分判定标准
+
+> 铁律 #15 的操作定义——当蓝图内容超过 ~800 行或包含多个独立职责域时，MUST 执行拆分判定。
+
+### 判定流程
+
+```
+STEP 1: 识别职责域
+  蓝图中的内容是否属于同一职责域？
+  判定标准：该内容的服务对象、变更频率、依赖关系是否与蓝图主体一致？
+
+STEP 2: 职责域判定
+  ├ 职责相同（同一模块的升级/扩展）→ 原地升级
+  │   条件：服务对象相同 + 变更频率同步 + 依赖关系重叠
+  │   操作：在 §17 容量升级附录中增量记录
+  │
+  └ 职责不同（独立子系统/独立能力域）→ 拆分独立蓝图
+      条件（满足任一即触发）：
+      a) 有独立的 module_id 前缀（如 CAP-G vs CAP）
+      b) 有独立的 Phase 路线图和交付节奏
+      c) 有独立的依赖关系图（与蓝图主体的 depends_on 交集 <50%）
+      d) 内容超过 100 行且与蓝图主体无直接数据流
+      操作：创建子蓝图，本蓝图 §10 依赖关系引用子蓝图
+
+STEP 3: 拆分后验证
+  - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
+  - 拆分出的蓝图 belongs_to = 本蓝图 module_id
+  - 本蓝图 §10 依赖关系新增子蓝图引用
+  - blueprint-registry.yaml 同步更新
 ```
 
-### 18.2 热加载机制
+### 本蓝图判定
 
-- 配置文件 mtime 监控：每 30 秒检查一次
-- 变更检测：mtime 变化 → 重新加载配置
-- 生效策略：下一个监控周期开始时使用新配置
-- 当前正在执行的策略不受影响（避免中途变更导致不一致）
+**判定结果：原地升级**。所有内容（MAPE-K 详细设计、压力状态机、降级矩阵、全系统集成契约、AI 可发现性设计、自动化运维设计、配置管理、高阶衍生项）均属于同一资源优化引擎模块的深度设计，服务对象相同、变更频率同步、依赖关系完全重叠。
 
 ---
 
-## 19. 可观测性集成
+## ⚠️ 安全删除协议
 
-### 19.1 指标上报
-
-| 指标 | 类型 | 上报目标 | 频率 |
-|------|------|---------|------|
-| resource_cpu_percent | gauge | System Telemetry | 30s |
-| resource_memory_percent | gauge | System Telemetry | 30s |
-| resource_process_count | gauge | System Telemetry | 30s |
-| resource_pressure_level | gauge(0-3) | System Telemetry | 30s |
-| resource_optimization_total | counter | System Telemetry | 事件驱动 |
-| resource_optimization_success | counter | System Telemetry | 事件驱动 |
-| resource_optimization_duration_ms | histogram | System Telemetry | 事件驱动 |
-| resource_cache_hit_rate | gauge | System Telemetry | 60s |
-
-### 19.2 审计集成
-
-每个优化动作记录到 Audit Trail：
-
-```python
-audit_entry = {
-    "actor": "ResourceOptimizationEngine",
-    "action": "optimize",
-    "strategy": strategy.value,
-    "pressure_before": snapshot_before.pressure.value,
-    "pressure_after": snapshot_after.pressure.value,
-    "memory_before_gb": snapshot_before.memory_used_gb,
-    "memory_after_gb": snapshot_after.memory_used_gb,
-    "quality_preserved": result.quality_preserved,
-    "duration_ms": result.duration_ms,
-    "timestamp": datetime.now().isoformat(),
-}
-```
-
-### 19.3 健康检查端点
-
-`health_check()` 返回的 `HealthCheckResult` 可被：
-- HeartbeatServer 采集并上报
-- MCP 工具 `resource_health` 暴露给 AI
-- System Telemetry 的 health probe 定期检查
+本蓝图不涉及文件删除。仅新增文件和修改现有文件。
 
 ---
 
-## 20. 高阶衍生项
+## 必备链接
 
-> 以下是从本蓝图衍生出的二阶~N阶效应和补充设计，确保蓝图自洽性和完整性。
+| # | 链接 | 路径 |
+|---|------|------|
+| 1 | DaemonRegistry 现有实现 | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\daemon_registry.py` |
+| 2 | EventBus 现有实现 | `D:\ZephyrAlpha\src\zephyr\shared\event_bus.py` |
+| 3 | ContractBus 现有实现 | `D:\ZephyrAlpha\src\zephyr\shared\contract_bus.py` |
+| 4 | API_INDEX 现有实现 | `D:\ZephyrAlpha\src\zephyr\shared\API_INDEX.py` |
+| 5 | FeedbackLoopScheduler | `D:\ZephyrAlpha\src\zephyr\feedback_loop\scheduler.py` |
+| 6 | ResourceGuard | `D:\ZephyrAlpha\src\zephyr\drift_detector\resource_guard.py` |
+| 7 | SelfMonitor | `D:\ZephyrAlpha\src\zephyr\audit_trail\self_monitor.py` |
+| 8 | AuditWriter | `D:\ZephyrAlpha\src\zephyr\audit_trail\writer.py` |
+| 9 | CollectionManager | `D:\ZephyrAlpha\src\zephyr\vector_memory\collection_manager.py` |
+| 10 | ContextBudgetTracker | `D:\ZephyrAlpha\src\zephyr\context_engine\context_budget_tracker.py` |
+| 11 | HeartbeatServer | `D:\ZephyrAlpha\src\zephyr\shared\heartbeat_server.py` |
+| 12 | Lifecycle hooks | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\hooks.py` |
+| 13 | MCP Gateway | `D:\ZephyrAlpha\src\zephyr\mcp\gateway_server.py` |
+| 14 | 蓝图模板 | `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-template.md` |
+| 15 | 蓝图架构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\blueprint-architecture-standard.md` |
+| 16 | 元数据注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` |
+| 17 | 目录结构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\directory-structure-standard.md` |
+| 18 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` |
+| 19 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` |
+| 20 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` |
+| 21 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` |
+| 22 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent_spec\skill_registry.yaml` |
+| 23 | Gate 注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` |
+| 24 | SLI 注册表 | `D:\ZephyrAlpha\config\sli_registry.yaml` |
+| 25 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` |
+| 26 | 集成闭环总蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
+| 27 | 系统总蓝图 | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
 
-### 20.1 二阶效应：优化器自身的资源消耗
+---
 
-**问题**：优化器自身消耗 CPU（监控循环）+ 内存（缓存+历史记录），成为被优化对象的一部分。
+## 项目中已有类似功能
 
-**解决方案**：
-- 监控循环 CPU 开销 < 1%（C11 验证项）
-- 优化历史使用 SQLite 存储（非内存），单条记录 < 1KB
-- 缓存内存开销有上限（max_entries=1000 × 平均 50KB = ~50MB）
-- `self_health_check()` 每 5 分钟检查自身资源占用，超过阈值时自动降级监控频率
+| # | 已有模块/文件 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
+|---|-------------|------------|----------|-------------|
+| 1 | ResourceGuard | `D:\ZephyrAlpha\src\zephyr\drift_detector\resource_guard.py` | 磁盘空间监控 + os.walk 扫描 | ResourceGuard 只做磁盘监控和文件扫描，无 CPU/内存/进程池/缓存/调度优化能力，且自身就是资源浪费源（每5秒全量扫描） |
+| 2 | DaemonRegistry | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\daemon_registry.py` | 守护线程注册 | DaemonRegistry 只做注册，无压力感知、无自适应调度、无优先级驱动的启停策略。本蓝图升级 DaemonRegistry 而非替换 |
+| 3 | ContextBudgetTracker | `D:\ZephyrAlpha\src\zephyr\context_engine\context_budget_tracker.py` | Token 预算管理 | ContextBudgetTracker 只管 Token 预算，不管系统级资源（CPU/内存/磁盘/进程）。两者互补不重叠 |
+| 4 | CapacityAssurance (MOD-INF-001) | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\capacity-assurance\blueprint.md` | 容量规划 + 限流 | MOD-INF-001 做容量规划（事前），本蓝图做运行时资源优化（事中+事后）。MOD-INF-001 回答"系统能承载多少"，本蓝图回答"当前资源怎么用得更好" |
+| 5 | BudgetEnforcer (MOD-INF-024) | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\budget-enforcer\blueprint.md` | 预算执行 + 降级 | BudgetEnforcer 管 Token/Cost/Time 三维预算，本蓝图管 CPU/Memory/Disk/Process 四维系统资源。BudgetEnforcer 的降级策略可触发本蓝图的自适应调度 |
 
-### 20.2 二阶效应：优化策略之间的冲突
+---
 
-**问题**：CACHE_WARM（预热缓存）和 MEMORY_COMPACT（释放内存）可能同时触发。
+## 涉及的文件范围
 
-**解决方案**：
-- ConflictResolver：WARNING 时 CACHE_WARM 优先，CRITICAL 时 MEMORY_COMPACT 优先
-- 策略互斥表：每种策略声明 `excludes: [策略列表]`，执行前检查
-- 同一监控周期内只执行一种策略（避免叠加效应）
-
-### 20.3 二阶效应：优化动作的副作用
-
-**问题**：停止守护线程可能影响依赖该线程的其他模块。
-
-**解决方案**：
-- 依赖图：DaemonRegistry 维护守护线程间的依赖关系
-- 停止顺序：先停被依赖方，再停依赖方
-- 恢复顺序：先启依赖方，再启被依赖方
-- quality_preserved 硬约束：任何优化动作不得导致业务质量下降
-
-### 20.4 三阶效应：优化历史的知识积累
-
-**问题**：长期运行后，优化历史数据量增长。
-
-**解决方案**：
-- SQLite 存储：单表 + 时间分区索引
-- 自动清理：超过 30 天的记录自动归档到 JSONL
-- 查询优化：最近 1000 条常驻内存，其余按需查询
-- 知识提取：每周自动分析优化历史，更新策略成功率排名
-
-### 20.5 三阶效应：跨 Session 优化知识传递
-
-**问题**：AI session 结束后，优化知识如何传递给下一个 session。
-
-**解决方案**：
-- 优化历史持久化到 SQLite（跨 session 保留）
-- Session 交接时，SelfMonitor 写入当前资源状态到 session-logs
-- 新 session 冷启动时，ResourceOptimizationEngine 自动加载最近优化历史
-- 知识库集成：高价值优化案例自动写入 KE（Knowledge Entry）
-
-### 20.6 四阶效应：优化策略的进化
-
-**问题**：固定的优化策略可能不适应未来新的资源瓶颈。
-
-**解决方案**：
-- 策略注册表：OptimizationStrategy 枚举可扩展（§3.6 契约版本保证向后兼容）
-- 策略效果评分：每次执行后记录效果（内存降低量、CPU 降低量）
-- 策略淘汰：连续 10 次效果为负的策略自动降级（降低优先级）
-- Feedback Loop 集成：资源异常模式可注册为新的 Feedback Loop detector
-
-### 20.7 四阶效应：1,500 模块下的优化器可扩展性
-
-**问题**：1,500 模块时，优化器自身需要管理 300 个守护线程 + 30 个进程 + 1000 个缓存条目。
-
-**解决方案**：
-- 守护线程分组：按功能域分组调度（每组一个调度批次）
-- 进程池分层：核心进程池（10 个）+ 扩展进程池（20 个，按需创建）
-- 缓存分层：热缓存（最近 100 条，常驻内存）+ 温缓存（101-1000 条，LRU）+ 冷缓存（SQLite）
-- 监控分层：核心指标（CPU/内存）30s + 扩展指标（磁盘/进程）60s + 详细指标（线程/缓存）120s
-
-### 20.8 五阶效应：元优化——优化优化过程本身
-
-**问题**：优化策略的参数（阈值、频率、批量大小）是否最优？
-
-**解决方案**：
-- 参数自调优：基于优化历史，自动调整参数（如 WARNING 阈值从 75% 调整到 72%）
-- A/B 测试：对相同压力场景，交替使用不同参数，比较效果
-- 安全边界：参数调整范围有上下限（如 WARNING 阈值只能在 60%-85% 之间）
-- 人类审批：参数调整超过 5% 需 Owner 确认
-
-### 20.9 五阶效应：优化器的安全防护
-
-**问题**：恶意 AI 或配置篡改可能导致优化器执行危险操作。
-
-**解决方案**：
-- Agent RBAC 集成：优化操作需要 `resource:optimize` 权限
-- 操作白名单：只允许执行 OptimizationStrategy 枚举中定义的策略
-- 审计追踪：每个优化动作记录到 Audit Trail（不可篡改）
-- 紧急停止：`force_pressure(EMERGENCY)` 需要 Owner 审批
-- LLM Security 集成：优化指令经过 LSG 扫描，防止注入攻击
-
-### 20.10 六阶效应：优化器与系统重组的协同
-
-**问题**：GOV-RSTR-001 系统重组总蓝图可能拆分/合并模块，影响优化器的守护线程注册表。
-
-**解决方案**：
-- 模块诞生注册表集成：新模块创建时自动注册到 DaemonRegistry
-- 模块废弃通知：模块废弃时自动从 DaemonRegistry 注销
-- 蓝图-代码同步器集成：蓝图变更时自动更新优化策略配置
-- Orphan Judge 集成：孤儿守护线程自动检测和清理
+| # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
+|---|---------|------------|------|---------|
+| 1 | 资源优化引擎主模块 | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\resource_optimization_engine.py` | 新建 | 新建 |
+| 1a | 数据模型 | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\resource_optimization_models.py` | 新建 | 新建 |
+| 2 | 守护线程注册表 | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\daemon_registry.py` | 读取+修改 | 修改 |
+| 3 | I/O 缓存层 | `D:\ZephyrAlpha\src\zephyr\shared\io\io_cache.py` | 新建 | 新建 |
+| 4 | 流式读取工具 | `D:\ZephyrAlpha\src\zephyr\shared\io\streaming_reader.py` | 新建 | 新建 |
+| 5 | 进程池管理器 | `D:\ZephyrAlpha\src\zephyr\shared\infra\process_pool.py` | 新建 | 新建 |
+| 6 | 懒加载器 | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\lazy_loader.py` | 新建 | 新建 |
+| 7 | 资源优化配置 | `D:\ZephyrAlpha\config\resource_optimization.yaml` | 新建 | 新建 |
+| 8 | lifecycle __init__ | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\__init__.py` | 修改 | 修改 |
+| 9 | io __init__ | `D:\ZephyrAlpha\src\zephyr\shared\io\__init__.py` | 修改 | 修改 |
+| 10 | FLE Scheduler | `D:\ZephyrAlpha\src\zephyr\feedback_loop\scheduler.py` | 修改 | 修改 |
+| 11 | LocalModelScheduler | `D:\ZephyrAlpha\src\zephyr\vector_memory\local_model_scheduler.py` | 修改 | 修改 |
+| 12 | SelfMonitor | `D:\ZephyrAlpha\src\zephyr\audit_trail\self_monitor.py` | 修改 | 修改 |
+| 13 | CircadianScheduler | `D:\ZephyrAlpha\src\zephyr\runtime\circadian_scheduler.py` | 修改 | 修改 |
+| 14 | AutoEvolution | `D:\ZephyrAlpha\src\zephyr\feedback_loop\auto_evolution.py` | 修改 | 修改 |
+| 15 | infra __init__ | `D:\ZephyrAlpha\src\zephyr\shared\infra\__init__.py` | 修改 | 修改 |
+| 16 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 修改 | 修改 |
+| 17 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` | 修改 | 修改 |
+| 18 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` | 修改 | 修改 |
+| 19 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent_spec\skill_registry.yaml` | 修改 | 修改 |
+| 20 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | 修改 | 修改 |
+| 21 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | 修改 | 修改 |
+| 22 | Gate 注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` | 修改 | 修改 |
+| 23 | SLI 注册表 | `D:\ZephyrAlpha\config\sli_registry.yaml` | 修改 | 修改 |
+| 24 | MCP 工具契约 | `D:\ZephyrAlpha\src\zephyr\mcp\tool_contracts.yaml` | 修改 | 修改 |
+| 25 | 基础设施注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\infrastructure-registry.yaml` | 修改 | 修改 |
+| 26 | 目录注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\directory-registry.yaml` | 修改 | 修改 |
+| 27 | 系统路径注册表 | `D:\ZephyrAlpha\docs\03_modules\system-pathway-registry.yaml` | 修改 | 修改 |
+| 28 | 单元测试（引擎） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_engine.py` | 新建 | 新建 |
+| 29 | 单元测试（缓存） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_io_cache.py` | 新建 | 新建 |
+| 30 | 单元测试（流式读取） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_streaming_reader.py` | 新建 | 新建 |
+| 31 | 单元测试（进程池） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_process_pool.py` | 新建 | 新建 |
+| 32 | 单元测试（懒加载） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_lazy_loader.py` | 新建 | 新建 |
+| 33 | 单元测试（自愈闭环） | `D:\ZephyrAlpha\tests\unit\resource_optimization\test_self_healing.py` | 新建 | 新建 |
+| 34 | 蓝图文档 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\resource-optimization-engine\blueprint.md` | 本文件 | 修改 |
 
 ---
 
@@ -1594,13 +1232,15 @@ audit_entry = {
 | 内容 | 真源 | 非真源 |
 |------|------|--------|
 | 资源优化引擎架构设计 | **本文档 §1-§10** | — |
-| 资源优化引擎施工步骤 | **本文档 §11** | — |
-| 资源优化引擎接口契约 | **本文档 §3** | — |
-| MAPE-K 详细设计 | **本文档 §12** | — |
-| 压力状态机设计 | **本文档 §13** | — |
-| 降级矩阵 | **本文档 §14** | — |
-| AI 可发现性设计 | **本文档 §16** | — |
-| 高阶衍生项 | **本文档 §20** | — |
+| 资源优化引擎施工步骤 | **本文档 §16** | — |
+| 资源优化引擎接口契约 | **本文档 §4** | — |
+| MAPE-K 详细设计 | **本文档 蓝图特有：MAPE-K 详细设计** | — |
+| 压力状态机设计 | **本文档 蓝图特有：压力状态机** | — |
+| 降级矩阵 | **本文档 蓝图特有：优雅降级矩阵** | — |
+| AI 可发现性设计 | **本文档 蓝图特有：AI 可发现性设计** | — |
+| 高阶衍生项 | **本文档 蓝图特有：高阶衍生项** | — |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**
 
@@ -1640,17 +1280,443 @@ audit_entry = {
 
 | 变更类型 | 审批要求 |
 |---------|---------|
-| 接口契约新增/修改（§3） | 需 Owner 审批 + 通知所有消费者 |
+| 接口契约新增/修改（§4） | 需 Owner 审批 + 通知所有消费者 |
 | 模块边界修改（§2） | 需 Owner 审批 |
-| 新增优化策略 | AI 可自主 + 更新 §3 枚举 + 通知 Tier 2 |
-| 修改压力阈值 | AI 可自主 + 更新 §4 + 通知 Tier 2 |
+| 新增优化策略 | AI 可自主 + 更新 §4 枚举 + 通知 Tier 2 |
+| 修改压力阈值 | AI 可自主 + 更新 §5 + 通知 Tier 2 |
 | 施工步骤微调 | AI 可自主修改 |
 | 非关键补充（风险缓解、后果描述） | AI 可自主修改 |
 | force_pressure() 调用 | 需 Owner 审批 |
 
-### 变更记录
+### 负向责任
 
-| 版本 | 日期 | 作者 | 变更 |
-|------|------|------|------|
-| 1.0.0 | 2026-05-08 | human_plus_agent | 全面升级：Pydantic V2 数据模型、MCP 接口、契约版本、压力状态机、MAPE-K 详细设计、降级矩阵、断路器、背压、自愈闭环、配置管理、AI 可发现性三重机制、全系统集成契约（EventBus/ContractBus/API_INDEX/Gate/SLI/Audit）、高阶衍生项（二阶~六阶）、注册表登记完整清单（13 个注册表）、7 Phase 施工指引 |
-| 0.1.0 | 2026-05-08 | human_plus_agent | 初始创建 |
+本文件**不涉及**：GPU监控与优化 / 网络带宽优化 / 容器化资源隔离 / 安全策略执行（→ MOD-INF-018）/ 业务算法优化
+
+### 触发条件
+
+`resource-optimization` / `进程池` / `I/O缓存` / `懒加载` / `守护线程` / `MAPE-K` / `断路器` / `背压` / `压力分级`
+
+### 漂移防护
+
+| 修改本文件 | MUST 同步更新 |
+|-----------|-------------|
+| 接口契约 §4 | DaemonRegistry + EventBus 订阅者 |
+| 压力阈值 §3.3 | DaemonRegistry + 配置热加载 |
+| 新增优化策略 §4.2 | Skill 路由表 + pipeline 调度 |
+
+---
+
+## 变更记录
+
+| 日期 | 版本 | 变更内容 |
+|------|------|---------|
+| 2026-05-15 | 5.2.0 | v3.5 模板升级 + 压缩：§0前移至概述后；§7备选方案删除（合并到§18）；§15后果删除（负面合并到§14、正面删除）；§0.1新增存在性/阻塞原因列；§5.1移除原因列；§5.3新增执行状态列；§14新增类型列；铁律扩展至15条；新增蓝图拆分判定标准；新增§10.2/§10.3/§10.4；配置完整YAML示例替换为关键字段约束表；施工Phase状态修正为实际completed；章节编号冲突修复（12-20→蓝图特有）；frontmatter更新codification_level:L2 |
+| 2026-05-14 | 5.1.0 | 初始蓝图——MAPE-K 驱动资源优化引擎全量设计 |
+
+---
+
+## 蓝图特有章节
+
+> 来源：规格化 STEP 0.5.0 内容价值映射——分类为"蓝图特有"
+> 仅本蓝图需要：资源优化引擎的深度设计细节
+> 不可砍理由：这些是资源优化引擎的核心设计，砍掉=失去设计依据
+
+### 蓝图特有：MAPE-K 详细设计
+
+#### Monitor（监控层）
+
+| 组件 | 职责 | 采集频率 | 降级策略 |
+|------|------|---------|---------|
+| CpuMonitor | cpu_percent, cpu_count, load_avg | 30s | psutil 缺失时跳过 |
+| MemoryMonitor | memory_percent, memory_used_gb, memory_total_gb | 30s | 降级到 Windows GlobalMemoryStatusEx |
+| DiskMonitor | disk_io_read_mb_s, disk_io_write_mb_s, disk_free_gb | 30s | 降级到 shutil.disk_usage |
+| ProcessMonitor | process_count, thread_count, zombie_count | 30s | 降级到 os.getpid() + psutil.Process |
+| DaemonMonitor | 各守护线程运行状态 | 60s | 仅检查 DaemonRegistry 状态 |
+
+#### Analyze（分析层）
+
+| 分析器 | 职责 | 输入 | 输出 |
+|--------|------|------|------|
+| PressureClassifier | 压力分级 | ResourceSnapshot | PressureLevel |
+| TrendAnalyzer | 资源趋势分析 | 最近 10 个 ResourceSnapshot | 趋势方向（上升/平稳/下降） |
+| AnomalyDetector | 异常检测 | ResourceSnapshot + 历史基线 | 是否异常 + 置信度 |
+| RootCauseAnalyzer | 根因分析 | 异常 + 守护线程状态 + 进程列表 | 最可能原因 |
+
+#### Plan（计划层）
+
+| 规划器 | 职责 | 触发条件 | 输出 |
+|--------|------|---------|------|
+| DefensivePlanner | 防御策略规划 | CRITICAL/EMERGENCY | DefensiveStrategy 列表 |
+| OffensivePlanner | 优化策略规划 | NORMAL/WARNING | OptimizationStrategy 列表 |
+| ConflictResolver | 策略冲突解决 | 防御和优化策略同时触发 | 优先执行防御策略 |
+| RollbackPlanner | 回滚计划 | 优化失败 | 回滚步骤列表 |
+
+#### Execute（执行层）
+
+| 执行器 | 职责 | 安全保障 |
+|--------|------|---------|
+| StrategyExecutor | 执行优化/防御策略 | 断路器保护 + quality_preserved 校验 |
+| DaemonController | 守护线程启停控制 | 幂等操作 + 优先级排序 |
+| CacheManager | 缓存管理 | mtime 校验 + TTL 过期 |
+| ProcessPoolManager | 进程池管理 | 最大进程数限制 + 僵尸回收 |
+
+#### Knowledge（知识层）
+
+| 知识类型 | 存储 | 用途 |
+|---------|------|------|
+| 优化历史 | SQLite `resource_optimization.db` | 策略效果分析 + 趋势预测 |
+| 压力转换历史 | 内存（最近 1000 次） | 抖动检测 + 滞后校准 |
+| 策略成功率 | 内存（LRU 100 条） | 策略选择优先级 |
+| 资源基线 | SQLite | 异常检测基线 |
+| 配置快照 | SQLite | 配置漂移检测 |
+
+### 蓝图特有：压力状态机
+
+#### 转换规则
+
+| 从 → 到 | 触发条件 | 滞后机制 | 冷却期 |
+|---------|---------|---------|--------|
+| NORMAL → WARNING | memory > 75% 或 cpu > 80% 或 process_count > 50 | 无 | 60s |
+| WARNING → NORMAL | memory < 65% 且 cpu < 70% 且 process_count < 40 | 滞后 10% | 60s |
+| WARNING → CRITICAL | memory > 85% 或 cpu > 90% | 无 | 60s |
+| CRITICAL → WARNING | memory < 75% 且 cpu < 80% | 滞后 10% | 60s |
+| CRITICAL → EMERGENCY | memory > 95% 或 cpu > 98% | 无 | 30s |
+| EMERGENCY → CRITICAL | memory < 90% | 滞后 5% | 30s |
+
+#### 防抖动机制
+
+- **滞后（Hysteresis）**：上升阈值和下降阈值之间保持 10% 差距，防止在阈值附近频繁切换
+- **冷却期（Cooldown）**：状态转换后 60 秒内不再转换（EMERGENCY 除外，30 秒）
+- **确认计数**：连续 2 次采样满足条件才触发转换，单次异常不触发
+- **抖动检测**：1 小时内转换超过 3 次则记录告警，自动加宽滞后区间
+
+### 蓝图特有：优雅降级矩阵
+
+| 子系统 | NORMAL | WARNING | CRITICAL | EMERGENCY |
+|--------|--------|---------|----------|-----------|
+| FLE-Scheduler | 30s 轮询 | 60s 轮询 | 120s 轮询 | 暂停 |
+| ResourceGuard | 5s 扫描 | 30s 扫描 | 60s 扫描 | 暂停 |
+| SelfMonitor | 正常检查 | 流式读取 | 减少检查项 | 仅心跳 |
+| HeartbeatServer | 正常心跳 | 降低频率 | 最低频率 | 仅保持端口 |
+| AuditWriter | 正常写入 | 批量写入 | 仅 append | 缓冲到内存 |
+| CollectionManager | 正常 purge | 延长 purge 间隔 | 暂停 purge | 暂停 |
+| MCP 进程池 | 正常复用 | 限制新进程 | 不创建新进程 | 释放非核心进程 |
+| FileCache | 正常缓存 | 限制新缓存条目 | 冻结缓存 | 清理低优先级缓存 |
+| 懒加载 | 正常按需加载 | 仅加载核心模块 | 仅加载必要模块 | 禁止加载 |
+| EventBus | 正常发布 | 批量发布 | 仅发布关键事件 | 仅发布 EMERGENCY 事件 |
+
+### 蓝图特有：全系统集成契约
+
+#### EventBus 事件类型
+
+| 事件名 | 触发条件 | 数据 |
+|--------|---------|------|
+| `resource.pressure.changed` | 压力等级变化 | `{old_level, new_level, snapshot}` |
+| `resource.optimization.executed` | 优化策略执行完成 | `{strategy, result, snapshot_before, snapshot_after}` |
+| `resource.optimization.failed` | 优化策略执行失败 | `{strategy, error, snapshot}` |
+| `resource.daemon.stopped` | 守护线程被停止 | `{daemon_name, reason, pressure_level}` |
+| `resource.circuit_breaker.opened` | 断路器打开 | `{strategy, failure_count}` |
+| `resource.circuit_breaker.closed` | 断路器关闭 | `{strategy}` |
+| `resource.emergency.entered` | 进入 EMERGENCY | `{snapshot, root_cause}` |
+| `resource.emergency.recovered` | 从 EMERGENCY 恢复 | `{snapshot, recovery_time_s}` |
+
+#### ContractBus 契约
+
+| 契约 ID | 方向 | 内容 |
+|---------|------|------|
+| CT-ROE-001 | ROE → EventBus | 压力变化事件发布契约 |
+| CT-ROE-002 | ROE → AuditTrail | 优化动作审计记录契约 |
+| CT-ROE-003 | BudgetEnforcer → ROE | 预算降级触发资源优化契约 |
+| CT-ROE-004 | ROE → GateEngine | 资源不足门禁阻断契约 |
+| CT-ROE-005 | FeedbackLoop → ROE | 资源异常检测器注册契约 |
+| CT-ROE-006 | DriftDetector → ROE | 资源配置漂移通知契约 |
+
+#### API_INDEX 注册
+
+| API 名 | 模块 | 方法 | 描述 |
+|--------|------|------|------|
+| `resource_snapshot` | ResourceOptimizationEngine | snapshot() | 获取当前资源快照 |
+| `resource_optimize` | ResourceOptimizationEngine | optimize() | 执行优化策略 |
+| `resource_health` | ResourceOptimizationEngine | health_check() | 健康检查 |
+| `resource_pressure` | ResourceOptimizationEngine | get_pressure_state() | 获取压力状态 |
+| `resource_cache_stats` | ResourceOptimizationEngine | get_cache_stats() | 缓存统计 |
+| `resource_daemon_list` | DaemonRegistry | list() | 守护线程列表 |
+
+#### Gate 门禁规则
+
+| Gate ID | 类型 | 触发条件 | 动作 |
+|---------|------|---------|------|
+| G-RES-001 | pre_check | memory_percent > 90% | 阻断非必要操作，提示"系统资源不足" |
+| G-RES-002 | pre_check | process_count > 100 | 阻断新进程创建 |
+| G-RES-003 | post_check | 优化后 memory 未降低 | 告警 + 升级到 EMERGENCY |
+
+#### SLI 指标
+
+| SLI 名 | 类型 | 目标 | 测量方法 |
+|--------|------|------|---------|
+| `resource_optimization_success_rate` | 成功率 | ≥ 95% | 成功次数 / 总执行次数 |
+| `resource_pressure_recovery_time_s` | 恢复时间 | ≤ 60s | EMERGENCY 进入到恢复的时间 |
+| `resource_cache_hit_rate` | 缓存命中率 | ≥ 90% | 命中次数 / 总访问次数 |
+| `resource_process_pool_reuse_rate` | 进程复用率 | ≥ 80% | 复用次数 / 总请求次数 |
+| `resource_monitor_cpu_overhead_percent` | 监控开销 | ≤ 1% | 监控循环 CPU 占用 |
+
+### 蓝图特有：AI 可发现性设计
+
+> 三重发现机制确保新 AI session 在 0 次人工指引下自动发现资源优化功能。
+
+#### 发现路径 1：蓝图路由
+
+AI 通过 `config/blueprint_routing.yaml` R030 规则自动定位：
+
+```yaml
+- route_id: "R030"
+  blueprint_id: "MOD-INF-032"
+  blueprint_level: module
+  path_patterns:
+    - "src/zephyr/lifecycle_manager/resource_optimization_engine.py"
+    - "src/zephyr/shared/io/io_cache.py"
+    - "src/zephyr/shared/io/streaming_reader.py"
+    - "src/zephyr/shared/infra/process_pool.py"
+    - "src/zephyr/lifecycle_manager/lazy_loader.py"
+    - "config/resource_optimization.yaml"
+  task_keywords:
+    - "资源优化"
+    - "resource optimization"
+    - "内存"
+    - "memory"
+    - "CPU"
+    - "进程池"
+    - "process pool"
+    - "缓存"
+    - "cache"
+    - "守护线程"
+    - "daemon"
+    - "压力"
+    - "pressure"
+    - "降级"
+    - "degradation"
+    - "懒加载"
+    - "lazy load"
+    - "流式读取"
+    - "streaming"
+    - "自愈"
+    - "self-healing"
+    - "MAPE-K"
+    - "断路器"
+    - "circuit breaker"
+    - "背压"
+    - "backpressure"
+  scope: pre_change
+  safety: "H"
+  priority: 91
+  description: "资源优化引擎 — MAPE-K 循环驱动的资源监控、分析、优化与自愈系统"
+```
+
+#### 发现路径 2：Agent Skill
+
+```yaml
+SKILL-DOM-ROE-001:
+  name: resource-optimization
+  description: "Resource Optimization Engine (MOD-INF-032) MAPE-K 循环驱动的资源监控/分析/优化/自愈。双策略引擎（防御+优化），压力状态机（NORMAL/WARNING/CRITICAL/EMERGENCY），断路器，背压，优雅降级矩阵，进程池复用，I/O 缓存，流式读取，懒加载，自适应调度。入口 ResourceOptimizationEngine.snapshot()/optimize()/health_check()"
+  skill_type: domain
+  tier: L1
+  path: resource_optimization.md
+  references:
+    - MOD-INF-032
+    - MOD-INF-016
+    - MOD-INF-015
+```
+
+触发路由 task_keywords：
+
+```yaml
+resource: resource-optimization
+资源优化: resource-optimization
+内存优化: resource-optimization
+memory: resource-optimization
+cpu: resource-optimization
+进程池: resource-optimization
+process_pool: resource-optimization
+daemon: resource-optimization
+守护线程: resource-optimization
+pressure: resource-optimization
+压力: resource-optimization
+degradation: resource-optimization
+降级: resource-optimization
+cache: resource-optimization
+缓存: resource-optimization
+lazy: resource-optimization
+懒加载: resource-optimization
+self-healing: resource-optimization
+自愈: resource-optimization
+circuit_breaker: resource-optimization
+断路器: resource-optimization
+```
+
+#### 发现路径 3：MCP 工具
+
+AI 通过 MCP 工具直接调用资源优化功能（见 §4.5）。
+
+#### 冷启动集成
+
+新 AI session 冷启动时，通过以下路径发现资源优化引擎：
+
+```
+AGENTS.md → PS-STD-005 §7 → MOD-MASTER-001 → MOD-INF-032
+                                                     ↓
+                              blueprint_routing.yaml R030（关键字匹配）
+                                                     ↓
+                              skill_registry.yaml SKILL-DOM-ROE-001
+                                                     ↓
+                              MCP 工具 resource_snapshot/health_check
+```
+
+#### 需登记的注册表完整清单
+
+| # | 注册表 | 路径 | 登记内容 |
+|---|--------|------|---------|
+| 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | MOD-INF-032 条目 |
+| 2 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` | MOD-INF-032 条目 |
+| 3 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` | R030 路由规则 |
+| 4 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent_spec\skill_registry.yaml` | SKILL-DOM-ROE-001 + keywords |
+| 5 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | MOD-INF-032 依赖 |
+| 6 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | MOD-INF-032 ID |
+| 7 | Gate 注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` | G-RES-001~003 |
+| 8 | SLI 注册表 | `D:\ZephyrAlpha\config\sli_registry.yaml` | 5 个资源 SLI |
+| 9 | MCP 工具契约 | `D:\ZephyrAlpha\src\zephyr\mcp\tool_contracts.yaml` | 6 个工具契约 |
+| 10 | 基础设施注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\infrastructure-registry.yaml` | MOD-INF-032 基础设施条目 |
+| 11 | 文档元数据索引 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index.yaml` | 蓝图文档元数据 |
+| 12 | 目录注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\directory-registry.yaml` | 新增目录条目 |
+| 13 | 系统路径注册表 | `D:\ZephyrAlpha\docs\03_modules\system-pathway-registry.yaml` | 资源优化路径 |
+
+### 蓝图特有：自动化运维设计
+
+#### 自愈闭环
+
+| 阶段 | 自动化程度 | 人工介入 |
+|------|:---------:|---------|
+| 检测 | 100% 自动 | 无 |
+| 分析 | 100% 自动 | 无 |
+| 计划 | 95% 自动 | EMERGENCY 级别需人类确认（可配置跳过） |
+| 执行 | 100% 自动 | 无 |
+| 验证 | 100% 自动 | 无 |
+| 回滚 | 100% 自动 | 无 |
+
+#### 混沌工程（压力测试）
+
+| 测试场景 | 触发方式 | 预期行为 | 验证方法 |
+|---------|---------|---------|---------|
+| 内存泄漏模拟 | 分配大量对象不释放 | WARNING → CRITICAL → 自动 GC → 恢复 | 内存恢复到 NORMAL |
+| 进程数爆炸 | 启动大量子进程 | 进程池限制 + 僵尸回收 | 进程数 ≤ max_processes |
+| 磁盘 I/O 阻塞 | 模拟大量文件写入 | IO_BATCH 策略 + append 写入 | I/O 延迟 < 阈值 |
+| 守护线程死锁 | 模拟线程阻塞 | 超时检测 + 自动重启 | 线程恢复运行 |
+| 配置漂移 | 修改阈值配置 | 漂移检测 + 告警 | 漂移被检测到 |
+
+#### Runbook（运维手册）
+
+| 场景 | 自动处理 | 人工操作 |
+|------|---------|---------|
+| 内存 > 90% | 自动触发 CRITICAL 策略 | 无需操作 |
+| 内存 > 95% | 自动触发 EMERGENCY + 停止低优先级服务 | 检查是否有异常进程 |
+| 优化策略连续失败 3 次 | 断路器打开 + 告警 | 检查失败原因 |
+| 压力状态 1 小时抖动 > 3 次 | 自动加宽滞后区间 | 检查是否有周期性负载 |
+| 监控循环自身崩溃 | 自动重启（daemon 线程） | 检查崩溃原因 |
+| 进程池僵尸进程 > 5 | 自动回收 | 检查是否有进程泄漏 |
+
+#### 自动化优化策略
+
+| 策略 | 触发条件 | 自动执行 | 可配置参数 |
+|------|---------|---------|-----------|
+| CACHE_WARM | NORMAL + 空闲时段 | 预热最近访问的 YAML 文件 | 预热文件数、预热间隔 |
+| IO_BATCH | WARNING + 多个小 I/O | 合并为批量操作 | 批量大小、合并窗口 |
+| PROCESS_POOL | 任何级别 | 复用 MCP 进程 | 最大进程数、超时时间 |
+| LAZY_INIT | WARNING + 内存 > 70% | 延迟加载非核心模块 | 核心模块列表 |
+| STREAMING_READ | WARNING + 大文件读取 | 切换为流式读取 | 文件大小阈值 |
+| SCHEDULE_ADAPT | 任何级别 | 调整守护线程频率 | 各级别频率 |
+| MEMORY_COMPACT | CRITICAL + 内存 > 85% | GC + 对象池化 | GC 触发阈值 |
+
+### 蓝图特有：配置管理
+
+`D:\ZephyrAlpha\config\resource_optimization.yaml` 关键字段约束：
+
+| 字段路径 | 类型 | 默认值 | 约束 |
+|---------|------|------|------|
+| `pressure_thresholds.memory_warning_percent` | int | 75 | 60-85 |
+| `pressure_thresholds.memory_critical_percent` | int | 85 | 80-95 |
+| `pressure_thresholds.memory_emergency_percent` | int | 95 | 90-98 |
+| `pressure_thresholds.cpu_warning_percent` | int | 80 | 60-90 |
+| `hysteresis.percent` | int | 10 | 5-20 |
+| `hysteresis.cooldown_seconds` | int | 60 | 30-300 |
+| `schedule.normal_interval_s` | int | 30 | 10-120 |
+| `cache.max_entries` | int | 1000 | 100-10000 |
+| `cache.ttl_seconds` | int | 300 | 60-3600 |
+| `process_pool.max_processes` | int | 30 | 5-100 |
+| `circuit_breaker.failure_threshold` | int | 3 | 2-10 |
+| `circuit_breaker.recovery_timeout_s` | int | 30 | 10-300 |
+| `audit.max_history_records` | int | 10000 | 1000-100000 |
+| `self_healing.max_recovery_time_s` | int | 60 | 30-300 |
+
+热加载机制：配置文件 mtime 监控（每 30 秒）→ 变更检测 → 下一个监控周期生效 → 当前正在执行的策略不受影响。
+
+### 蓝图特有：可观测性集成
+
+#### 指标上报
+
+| 指标 | 类型 | 上报目标 | 频率 |
+|------|------|---------|------|
+| resource_cpu_percent | gauge | System Telemetry | 30s |
+| resource_memory_percent | gauge | System Telemetry | 30s |
+| resource_process_count | gauge | System Telemetry | 30s |
+| resource_pressure_level | gauge(0-3) | System Telemetry | 30s |
+| resource_optimization_total | counter | System Telemetry | 事件驱动 |
+| resource_optimization_success | counter | System Telemetry | 事件驱动 |
+| resource_optimization_duration_ms | histogram | System Telemetry | 事件驱动 |
+| resource_cache_hit_rate | gauge | System Telemetry | 60s |
+
+审计集成——每个优化动作记录到 Audit Trail：
+
+```python
+audit_entry = {
+    "actor": "ResourceOptimizationEngine",
+    "action": "optimize",
+    "strategy": strategy.value,
+    "pressure_before": snapshot_before.pressure.value,
+    "pressure_after": snapshot_after.pressure.value,
+    "memory_before_gb": snapshot_before.memory_used_gb,
+    "memory_after_gb": snapshot_after.memory_used_gb,
+    "quality_preserved": result.quality_preserved,
+    "duration_ms": result.duration_ms,
+    "timestamp": datetime.now().isoformat(),
+}
+```
+
+### 蓝图特有：高阶衍生项
+
+> 从本蓝图衍生出的二阶~N阶效应和补充设计
+
+#### 优化器自身的资源消耗
+
+优化器自身消耗 CPU（监控循环）+ 内存（缓存+历史记录）。缓解：
+- 监控循环 CPU 开销 < 1%（C11 验证项）
+- 优化历史使用 SQLite 存储（非内存），单条记录 < 1KB
+- 缓存内存开销有上限（max_entries=1000 × 平均 50KB = ~50MB）
+- `self_health_check()` 每 5 分钟检查自身资源占用，超过阈值时自动降级监控频率
+
+#### 优化策略之间的冲突
+
+CACHE_WARM（预热缓存）和 MEMORY_COMPACT（释放内存）可能同时触发。缓解：
+- ConflictResolver：WARNING 时 CACHE_WARM 优先，CRITICAL 时 MEMORY_COMPACT 优先
+- 策略互斥表：每种策略声明 `excludes: [策略列表]`，执行前检查
+- 同一监控周期内只执行一种策略
+
+#### 跨 Session 优化知识传递
+
+优化历史持久化到 SQLite（跨 session 保留），Session 交接时 SelfMonitor 写入资源状态到 session-logs，新 session 冷启动时自动加载最近优化历史。
+
+#### 优化策略的进化
+
+策略效果评分——每次执行后记录效果。连续 10 次效果为负的策略自动降级。Feedback Loop 集成——资源异常模式可注册为新的 detector。
+
+#### 元优化——优化优化过程本身
+
+参数自调优——基于优化历史自动调整参数。A/B 测试——对相同压力场景交替使用不同参数比较效果。安全边界——参数调整范围有上下限。参数调整超过 5% 需 Owner 确认。

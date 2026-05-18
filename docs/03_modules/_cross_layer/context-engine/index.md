@@ -1,11 +1,14 @@
 ---
+
 doc_type: index
 status: Draft
 title: "context-engine — 目录索引"
 version: "1.0.0"
 created: "2026-05-03"
 updated: "2026-05-03"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # context-engine
 

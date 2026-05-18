@@ -1,4 +1,4 @@
----
+﻿---
 task_id: "TASK-DS-0004"
 source_blueprint: "MOD-L00-001"
 source_section: "蓝图全文（占位性质 + §1 概述）"
@@ -16,7 +16,7 @@ priority: "P3"
 # ===== 上游：执行前必须读取的文件 =====
 upstream_files:
   - "D:\\ZephyrAlpha\\docs\\03_modules\\l00_data_source\\datasource-core\\blueprint.md"
-  - "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint-template.md"
+  - "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint-construction-template.md"
   - "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\target-architecture\\architecture-model\\layers\\l00-data-source.yaml"
 
 # ===== 下游：执行后必须产出的文件 =====
@@ -50,7 +50,7 @@ applicable_rules:
 context_assembly_manifest:
   - file_path: "D:\\ZephyrAlpha\\docs\\03_modules\\l00_data_source\\datasource-core\\blueprint.md"
     reason: "本蓝图——当前占位内容作为扩展起点"
-  - file_path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint-template.md"
+  - file_path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint-construction-template.md"
     reason: "蓝图模板——PS-STD 标准格式的 §1-§13 结构定义"
   - file_path: "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\target-architecture\\architecture-model\\layers\\l00-data-source.yaml"
     reason: "L00 层架构模型——数据源层的子模块与契约 SSoT"
@@ -65,7 +65,7 @@ timeout_minutes: 35
 
 # ===== 验收标准 =====
 acceptance_criteria:
-  - "蓝图扩展为 §1-§13 全节结构（对齐 blueprint-template.md）"
+  - "蓝图扩展为 §1-§13 全节结构（对齐 blueprint-construction-template.md）"
   - "§1 概述与模块定位——从占位描述扩展为完整设计背景与目标"
   - "§2 核心概念/术语定义——数据接入层核心术语落地"
   - "§3 架构决策——每条架构决策含 DD-* 编号 + 选项对比 + 结论"
@@ -145,12 +145,12 @@ autonomy_checklist: []
 
 ### 读
 - `D:\ZephyrAlpha\docs\03_modules\l00_data_source\datasource-core\blueprint.md`（当前占位内容）
-- `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-template.md`（PS-STD 蓝图 §1-§13 模板）
+- `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-construction-template.md`（PS-STD 蓝图 §1-§13 模板）
 - `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\layers\l00-data-source.yaml`（L00 层架构模型真源）
 
 ### 做
 1. 保留 frontmatter 中 module_id / layer / owner / date — 仅更新 version 和 status
-2. 逐节按 blueprint-template.md 格式扩展 §1-§13
+2. 逐节按 blueprint-construction-template.md 格式扩展 §1-§13
 3. §2 术语定义——数据接入层核心概念（DataSource / Adapter / Connector / IngestionPipeline）
 4. §3 架构决策——DD-001 至 DD-NNN（一条决策一个 DD-* 编号）
 5. §4 接口契约——CT-001 至 CT-NNN（Python type hints + Pydantic V2 BaseModel）

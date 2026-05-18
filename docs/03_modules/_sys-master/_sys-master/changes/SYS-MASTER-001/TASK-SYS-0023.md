@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0023"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§31 迁移策略 + §32 术语表 + §33 Anti-Patterns"
@@ -74,4 +75,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

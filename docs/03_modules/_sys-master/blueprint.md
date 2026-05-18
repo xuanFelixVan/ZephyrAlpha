@@ -1,146 +1,476 @@
 ---
 module_id: "SYS-MASTER-001"
-title: "ZephyrAlpha 系统总蓝图 — 三级金字塔架构与全部子系统拓扑"
+title: "System Master 蓝图 — 三级金字塔架构·全部子系统拓扑"
 doc_type: blueprint
 status: Active
-version: "0.13.0"
-layer: cross_layer
+version: "0.17.0"
+layer: meta
+layer_name: system
+blueprint_level: system
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 created_by: human_plus_agent
 date: "2026-05-04"
-valid_from: "2026-05-04"
 ttl: permanent
-last_updated: "2026-05-08"
-blueprint_level: system
-summary: "ZephyrAlpha 系统级总蓝图（Level 0 System Master）——三级金字塔顶点：102章全覆盖。经过七轮深度诊断(64→84→102→122→142→160盲点全覆盖), 覆盖 §0.0 四黄金信号(11 SLI+SLO目标值) + §十二 成本架构(7模型路由+TCO) + §4 跨模块数据流与关键集成点 + §十六 FMEA(8项) + §十三 数据分类L1~L4 + §十四 启停6Phase + §十五 氛围编程施工方法论 + §十七 测试策略 + §十八 灾难恢复 + §十九 模型风险 + §二十 事故响应 + §二十一 部署策略 + §二十二 合规映射 + §二十三 安全纵深 + §二十四~§三十五(Session/环境/仪表板/性能/供应链/数据质量/知识/迁移/术语/反模式/离线自治/第三方) + §三十六~§三十九(人机带宽/模型漂移/SPOF消除/质量保障) + §四十~§四十七(市场数据管线+回测/订单执行+风控/量化ML工程/运维深化/氛围编程深层/架构契约/1人保障/合规法律) + §四十八~§六十(策略验证/执行算法/多策略/经纪商/可重现/实盘验证/审查深度/组合压力/波动目标/因子择时/交易日历/运维基础/AI质量SPC) + §六十一~§七十(PnL归因+TCA/日运营节奏+交易会话协议/容错模式深度/微结构防御+模拟保真度/因子治理/功能开关+部署安全网/AI自诊断修复+知识自动化/氛围编程确定性保障/Secrets生命周期+环境可重建/离线分级应急+全生命周期预算) + §七十一~§九十(Prompt全生命周期管理+回归测试/AI上下文窗口策略+幻觉防御体系/多模型共识+辩论协议/AI代码生成标准+脚手架+禁止模式/实盘五级Kill Switch+安全保障矩阵/模拟→实盘五阶段过渡+回退/订单执行质量监控+异常检测/知识连续性+断供因子/本地优先+离线自主/决策疲劳+优先级分流/What-If仿真+灵敏度+MonteCarlo/代码考古+文档自动化/数据源可靠性+智能切换/混沌工程+故障演练/经济体制+宏观因子/AI可解释性+模型卡/SBOM+依赖情报/状态机形式化/DORA指标/A/B实验框架) + 🆕 §九十一~§一百〇二(企业行为与参考数据管线:七类CA+盘前5项检查+回溯修复/热重启与盘中恢复:6步协议+健康检查/会话并发与文件完整性:文件锁ZephyrLock+冲突检测+预分配/硬件容灾与基础设施:SSD-RAM-电源-散热-磁盘五维+SMART面板/API生命周期与弃用治理:三阶段Active→Deprecated→Removed+第三方变更监控/数据全生命周期与自动清理:Hot→Warm→Cool→Cold→Purge五阶段+AutoHousekeep/时间同步与时钟纪律:NTP三源+偏差监控+ISO8601规范/实时流式数据架构:Stream vs Batch双轨+背压防御+乱序重组/静默故障聚合与级联风险:AFS聚合评分+五类静默故障+级联路径建模/增量审查与部分接受:Chunk级ACCEPT/REJECT/MODIFY+审查时间预算/基准完整性与生存偏差防御:PIT Universe+四维完整性+基准漂移检测/跨环境一致性与平台风险:Windows 11风险矩阵+WSL/Native差异+幂等setup脚本)。七轮累计: 33+31+20+18+20+20+18=160盲点全覆盖。AI agent 冷启动第一站。"
+last_updated: "2026-05-15"
+last_verified: "2026-05-14"
 construction_progress: completed
+actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_sys-master\\blueprint.md"
+template_for: blueprint
+generation: 2
+functional_domain: system
+parent_module: ""
 belongs_to: "ROOT"
-ai_role_instruction: >
-  你是 ZephyrAlpha 系统总蓝图（SYS-MASTER-001），是整个蓝图三级金字塔的顶点。
-  新 AI session 第一站——所有 agent 在开始任何任务前 MUST 读 §0 分派表定位自己负责的子系统，
-  然后导航到对应的 Level 1/Level 2 蓝图。
-  核心规则：(1)本项目采用三层蓝图体系——你定义"全局怎么排"，
-  MOD-MASTER-001 定义"系统间怎么连"，模块蓝图定义"模块内怎么干"；
-  (2)蓝图冲突裁决链：PS-STD-005 > SYS-MASTER-001 > MOD-MASTER-001 > 模块蓝图；
-  (3)你不会生成代码——你定义系统边界和架构原则，实现由模块蓝图指引；
-  (4)新 AI session 冷启动默认读 §0 即可（~400 tokens），按任务域升级到 §1-§4；
-  (5)所有施工 MUST 通过G0-G7门禁(§2)——跳过门禁=拒绝合并；
-  (6)跨模块变更 MUST 先读MOD-MASTER-001 集成契约(§45)；
-  (7)新增模块 MUST 登记到blueprint-registry.yaml + 继承模板；
-  (8)系统健康面板 MUST 在每个session开始前自检(§0.0)；
-  (9)成本感知(MUST)——选择模型前评估Token预算(§十二)，拒绝无预算的任务请求；
-  (10)每次施工后 MUST 运行WQA七维自检(§三十九)：测试增量/蓝图对齐/ruff 0 warning/Gate不新增失败/Owner不回退/Session完成率/Token效率；
-  (11)MUST 遵守§4.1.1编排时序约束——超时/乱序=立即告警；
-  (12)L1~L4数据 MUST 按§十三控制访问——无例外；
-  (13)系统启动/停止 MUST 按§十四 6Phase拓扑执行；
-  (14)氛围编程MUST 遵守§十五的MUST/SHOULD/MAY三级指令——所有施工执行前验证规则；
-  (15)所有变更MUST 通过§十七测试金字塔(单元→集成→E2E)；
-  (16)灾难恢复MUST 按§18.4演练日历执行——未演练的DR计划=无效；
-  (17)任何模型上线前MUST 通过§十九模型风险清单(MR101-MR113)；
-  (18)事故响应MUST 按§二十 L1-L5流程+Telemetry告警联动+Gate升级矩阵执行；
-  (19)部署MUST 通过§二十一 Canary→G0-G7门禁→渐进式推广→自动回滚窗口(§21.2 1h)；
-  (20)所有交易相关模块MUST 遵守§二十二合规矩阵——实时、强制、不可跳过；
-  (21)MUST 遵守§二十三 L1-L6纵深防御——任何环节失败=阻断施工；
-  (22)每次Session开始MUST 读取§二十四 Session生命周期 + 执行 SessionContinuity 冷启动序列(project_rules.md STEP 3)；
-  (23)环境管理MUST 遵守§二十五——Supervisor-only指令/IDE间隔离/全局快捷键；
-  (24)§0.0面板中的任一SLI突破SLO MUST 记录为事故+通知Owner(§0.0.4)；
-  (25)AI 代码MUST 记录AI provenance(§四十四)——模型版本/Prompt hash/Session ID/Owner审查决定；
-  (26)架构变更MUST 记录ADR(L1全球3份+L2本地10份)——无ADR"MERGE决策"拒绝合并；
-  (27)跨模块假设MUST 由MOD-MASTER-001集成测试验证——"我觉得能连"≠真的能连；
-  (28)Owner离线时系统MUST 有自主冻结能力(§三十四)——不能赌Owner"刚好在线"；
-  (29)所有组合级策略MUST 定期接受压力测试(§五十五)——5压力场景全部通过才合格；
-  (30)所有杠杆使用MUST 经过波动率目标控制器(§五十六)——Vol Target=15%为系统默认；
-  (31)跨资产/因子配置MUST 考虑相关性矩阵和当前市场状态(§五十七)——不能只按回测权重；
-  (32)所有定时操作(数据拉取/合约换月/结算) MUST 基于交易日历(§五十八)——不能依赖系统时钟的"每个周一"；
-  (33)备份 MUST 定期验证可恢复性(§五十九)——未验证的备份=没有备份；
-  (34)AI 施工质量 MUST 运行统计过程控制(§六十)——质量退化需早于Owner感知前检测到；
-  (35)交易日 MUST 按日运营节奏执行(§六十二)——开盘前检查→盘中监控→收盘对账,不跳步骤；
-  (36)每个策略的PnL MUST 按因子/行业/风格/TCA四维归因(§六十一)——不接受"今天赚了3%"的笼统报告；
-  (37)系统容错 MUST 实现Bulkhead+Retry+Backoff+Jitter(§六十三)——不满足于只有断路器；
-  (38)新因子进入前 MUST 通过因子治理流程(§六十五)——准入/正交化/去重/退役四阶段；
-  (39)新功能上线 MUST 通过Feature Flag暗启动(§六十六)——部署≠启用,灰度≠全量；
-  (40)Secrets(L4) MUST 有轮替计划(§六十九)——密钥不过期=定时炸弹；
-  (41)开发环境 MUST 每日自动验证可重建性(§六十九)——换电脑clone→全量测试全绿,不等到DR演练；
-  (42)AI MUST 对每次产出执行自诊断(§六十七)——检测问题→建议修复→Owner确认→可选自动修复；
-  (43)跨Session Prompt一致性 MUST 定期验证(§六十八)——同一Prompt+同一任务,不同AI产出同一结果?；
-  (44)Owner离线时 MUST 按分级决策树执行(§七十)——不同事故等级×不同离线时长=不同响应,不只是"冻结"。
-  (45)Prompt MUST 有版本控制+回归测试(§七十一)——Prompt变更 MUST 经历史任务重放验证,3个以上任务退化→回滚；
-  (46)AI 施工 MUST 遵守上下文预算分层(§七十二)——超大型任务(>300K)MUST 拆分;Token>70%时开始裁剪；
-  (47)AI 产物 MUST 通过幻觉三级检测(§七十二)——API/库/函数存在性检查🔴阻断,参数签名🟡警告；
-  (48)交易相关变更 MUST 经多模型统一共识(§七十三)——2/2同意才通过,分歧达关键级→🛑AI冻结；
-  (49)AI 代码 MUST 通过脚手架模板+禁止模式检测(§七十四)——违反 import */裸except/可变默认参数→🔴阻断；
-  (50)实盘交易 MUST 过五级Kill Switch+盘前8项检查(§七十五)——8/8☐→GO,<8→🛑NO-GO；
-  (51)每交易日 MUST 执行收盘五步自动对账(§七十五)——持仓/成交/费用/PnL归因/审计日志；
-  (52)新策略上线 MUST 过五阶段过渡协议(§七十六)——同一时间最多1个策略在过渡中；
-  (53)订单执行 MUST 持续监控四维异常+经纪商质量评分(§七十七)——QualityScore<0.6→考虑切换；
-  (54)断供因子 MUST 维持在≥2(§七十八)——每次架构变更后自动生成QUICKSTART.md；
-  (55)系统 MUST 实现本地优先架构(§七十九)——L1-L2功能全离线可用,恢复后自动同步；
-  (56)Owner决策 MUST 按四级分流(§八十)——D3重大决策≤3/天,交易时段零决策窗口；
-  (57)上线策略 MUST 过参数灵敏度扫描+MonteCarlo破产概率检查(§八十一)——破产概率>0.01→调整；
-  (58)MUST 定期故障注入演练(§八十四)——每周日非交易时段,MTTR恶化>20%→Owner审查；
-  (59)宏观体制切换预警 MUST 触发策略权重重校准(§八十五)——3/4信号触发→减仓敏感资产；
-  (60)每笔AI交易决策 MUST 附带完整解释链(§八十六)——无解释=无执行；
-  (61)新依赖引入前 MUST 检查SBOM+许可证+已知漏洞(§八十七)——重复依赖/高危CVE→拒绝；
-  (62)所有状态机 MUST 用统一YAML描述(§八十八)——自动生成转换测试+崩溃后状态协调；
-  (63)MUST 追踪DORA四指标+AI接受率(§八十九)——月度速率报告自动生成；
-  (64)策略变更 MUST 过A/B实验(§九十)——达统计显著前不能停止,所有实验归档不可删除。
-  (65)企业行为 MUST 有独立管线(§九十一)——分红/拆分/并购/退市/代码变更七类不可跳过,无CA Pipeline→回测=不可信；
-  (66)盘中故障后 MUST 按热重启六步协议(§九十二)恢复——≤30s;WAL≠经纪商状态→以经纪商为准；
-  (67)AI Session 写入文件前 MUST acquire ZephyrLock(§九十三)——TTL 30min,超时自动释放;
-  (68)硬件健康 MUST 每日SMART检+温度检+UPS检(§九十四)——任何FAIL→Owner即时通知;
-  (69)API废除 MUST 有三阶段生命周期(§九十五)——Active→Deprecated≥90天→Removed,第三方API变更每周检测;
-  (70)数据 MUST 自动化Hot→Warm→Cool→Cold→Purge五阶段生命周期(§九十六)——每日03:00 AutoHousekeep;
-  (71)系统时钟 MUST 三源NTP偏差监控(§九十七)——delta>1s暂停交易;所有时间戳用ISO8601+时区;
-  (72)实时行情 MUST 用Stream轨(§九十八)——WebSocket优先,REST fallback;断流>60s→暂停自动交易;
-  (73)静默故障 MUST 聚合评分AFS(§九十九)——AFS≥5减仓+暂停,AFS≥10全冻结;
-  (74)AI超50行产出 MUST Chunk级增量审查(§一百)——ACCEPT/REJECT/MODIFY三元态,审查后记录度量;
-  (75)回测 Pool MUST Point-in-Time(§一百〇一)——每日成分股快照;退市≠删除;IPO date过滤;
-  (76)环境 MUST 幂等可重建(§一百〇二)——setup_windows.ps1可重复运行;Windows Defender排除+自动更新禁止。
-tags: [system-master, blueprint, three-tier-pyramid, architecture-topology, level0, ssoT, system-health, cost-architecture, token-budget, data-classification, fault-propagation, startup-shutdown-order, vibe-coding-methodology, fmea, sli-definition, golden-signals, slo-targets, testing-strategy, disaster-recovery, model-risk-management, incident-response, deployment-strategy, compliance-matrix, security-defense-in-depth, session-lifecycle, environment-management, observability-dashboard, performance-baseline, supply-chain-security, data-quality-governance, knowledge-management, migration-strategy, glossary, anti-patterns, offline-autonomy, third-party-dependencies, human-ai-bandwidth, model-drift-monitoring, spof-elimination, vibe-quality-assurance, prompt-library, emergency-runbook, market-data-pipeline, backtesting-framework, order-management-system, risk-controls, quant-ml-engineering, feature-store, regime-change-detection, operational-maturity, alert-fatigue, runbook-automation, ai-code-provenance, agent-debate-protocol, context-recycling, prompt-ab-testing, git-workflow-ai, inter-module-communication, idempotency, circuit-breaker, solo-dev-wellness, burnout-prevention, trade-reconstruction, best-execution, ai-legal-liability, strategy-validation, walk-forward, deflated-sharpe, multiple-testing-correction, execution-algorithms, market-microstructure, portfolio-construction, capacity-management, broker-resilience, emergency-liquidation, reproducibility, deterministic-builds, post-deployment-validation, code-review-depth-model, prompt-lifecycle-management, prompt-regression-testing, context-window-optimization, ai-hallucination-detection, multi-model-consensus, code-generation-standards, project-scaffolding, kill-switch-hierarchy, paper-to-live-transition, order-execution-quality, venue-analysis, knowledge-continuity, bus-factor, local-first-architecture, offline-resilience, decision-fatigue-management, priority-triage, what-if-simulation, sensitivity-analysis, monte-carlo, counterfactual-backtesting, ai-code-archaeology, dead-code-retirement, auto-documentation, sbom-generation, dependency-health, dependency-intelligence, state-machine-formalization, correctness-verification, chaos-engineering, fault-injection, automated-drill, dora-metrics, development-velocity, economic-regime-detection, macro-factor-overlay, ai-explainability, model-card, regulatory-audit, ab-experimentation-framework, statistical-rigor, corporate-actions-pipeline, reference-data-management, warm-restart-protocol, mid-session-recovery, session-concurrency, file-locking, hardware-resilience, infrastructure-failure-modes, api-lifecycle-governance, deprecation-management, data-lifecycle, automated-Housekeeping, time-synchronization, clock-discipline, real-time-streaming, event-driven-architecture, silent-failure-aggregation, cascading-risk-defense, incremental-review, partial-acceptance-protocol, benchmark-integrity, survivorship-bias-defense, cross-environment-consistency, windows-risk-matrix]
+rule_form: structural
+scope: global
+stability: stable
+verifiability: manual
 priority: P0
+summary: "系统级总蓝图（Level 0 System Master）——三级金字塔顶点：102章全覆盖+§〇容量升级方案。AI agent冷启动第一站。"
+codification_level: L1
+codification_at: "2026-05-14"
 depends_on:
-  - {target: "PS-STD-005", at: "全篇", why: "蓝图架构标准——定义三级金字塔规范与本蓝图的合法位置"}
-  - {target: "MOD-MASTER-001", at: "§一-§十二", why: "12基础设施系统集成蓝图——本蓝图的 Level 1 子蓝图"}
-  - {target: "architecture-model/_index.yaml", at: "全篇", why: "架构模型拓扑——C-track 14层 + B-track 12系统"}
+  - target: "PS-STD-005"
+    at: "全篇"
+    why: "蓝图架构标准——定义三级金字塔规范与本蓝图的合法位置"
+  - target: "MOD-MASTER-001"
+    at: "§一-§十二"
+    why: "12基础设施系统集成蓝图——本蓝图的 Level 1 子蓝图"
+  - target: "architecture-model/_index.yaml"
+    at: "全篇"
+    why: "架构模型拓扑——C-track 14层 + B-track 12系统"
+references:
+  - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_master-blueprint\\blueprint.md"
+    section: "全篇"
+    why: "集成闭环总蓝图索引"
+  - path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint-template.md"
+    section: "全篇"
+    why: "蓝图模板v3.5/v3.6"
+  - path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\governance\\document\\compression-workflow-standard.md"
+    section: "全篇"
+    why: "压缩工作流标准"
+tags: [system-master, blueprint, architecture, topology, cold-start, capacity-upgrade, level-0, meta, ai-entry-point, 102-chapters, system-blueprint, three-tier-pyramid]
 ---
 
-# ZephyrAlpha 系统总蓝图
+# System Master 蓝图 — 三级金字塔架构·全部子系统拓扑
 
-> **module_id**: SYS-MASTER-001 | **version**: 0.13.0 | **level**: SYSTEM | **layer**: cross_layer
+> module_id: SYS-MASTER-001 | version: 0.17.0 | status: active | layer: meta | blueprint_level: system
+> actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md | generation: 2 | construction_progress: completed
 
-> **位置**: 三级金字塔 **Level 0 顶点**——定义系统全景拓扑、架构原则与蓝图导航。
-> **对标**: TOGAF Architecture Vision Document + K8s Cluster API + C4 System Context Diagram。
+## 概述
+
+本蓝图是 ZephyrAlpha 系统级总蓝图（Level 0 System Master）——三级金字塔架构的顶点。核心职责：102 章全覆盖的系统拓扑定义、12 个基础设施系统的集成架构、46 个门控检查的全局管控、C-track 14 层 + B-track 12 系统的完整拓扑。AI agent 冷启动第一站——进入项目后必须先读本蓝图 §零（分派表）定位任务域。上游无依赖（ROOT 级），下游被 MOD-MASTER-001（集成闭环总蓝图）和全部 L1 子系统蓝图消费。
+
+>
+> **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
+> - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
+> - 压缩工作流标准：[compression-workflow-standard.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/compression-workflow-standard.md)
+> - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
+> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
+> - 集成总蓝图：[blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint.md)
+
+---
+
+## 模板章节映射表
+
+> 本文件为系统级总蓝图，内容按系统架构逻辑组织（§〇~§一百〇二）。
+> 以下映射表说明现有章节与蓝图模板 v3.5/v3.6 必需章节的对应关系。
+
+| 模板必需章节 | 本文件对应章节 | 状态 |
+|------------|-------------|:---:|
+| §0 代码对齐验证 | §零 分派表 + §0.0 系统健康面板 | ✅ |
+| §1 设计背景与目标 | §一 系统全景拓扑 | ✅ |
+| §2 模块边界 | §一 系统拓扑 + §二 门禁 | ✅ |
+| §3 架构设计 | §一 系统全景拓扑 + §四 跨模块数据流 | ✅ |
+| §4 接口契约 | §四 跨模块数据流与关键集成点 | ✅ |
+| §5 约束条件 | §四 架构原则 | ✅ |
+| §6 错误处理 | §十六 FMEA | ✅ |
+| §8 安全考量 | §二十三 安全纵深防御 | ✅ |
+| §9 测试策略 | §十七 测试策略 | ✅ |
+| §10 依赖关系 | §五 依赖关系 | ✅ |
+| §11 产出物 | §六 产出物存放目录 | ✅ |
+| §12 集成目标 | §七 集成目标 | ✅ |
+| §13 需要更新 | §八 需要更新的相关内容 | ✅ |
+| §14 风险 | §九 已知风险与缓解 | ✅ |
+| §16 施工指引 | §十一 施工指引 | ✅ |
+| §17 容量升级 | §〇 容量升级方案 | ✅ |
+| §18 决策记录 | §三 关键架构决策索引 | ✅ |
+| 治理信息 | 见文件末尾 | ✅ |
+| §7 备选方案 | 已删除→§18决策记录覆盖 | v3.6删除 |
+| §15 后果 | 已删除→正面在§1，负面在§14 | v3.6删除 |
+
+---
+
+# 〇、容量升级方案 — v0.13.0→v1.0.0 规模跃迁蓝图层
+
+> **定位**: SYS-MASTER-001 蓝图层设计补全：当前(~51模块/~268脚本/单Session)→目标(1500模块/10000脚本/100 AI并发)。先定设计再施工，不涉及代码。
+
+> **原则**: 蓝图冲突裁决链仍然生效——PS-STD-005 > SYS-MASTER-001 > MOD-MASTER-001 > 模块蓝图。本方案是 SYS-MASTER-001 的内部扩展，优先级与 §一~§一百〇二 相同。
+
+
+---
+
+## 〇-A、规模基线重定义
+
+| 指标 | v0.13 当前 | v1.0 目标 | 倍数 |
+|------|:--:|:--:|:--:|
+| 模块数 | ~51 | 1,500 | **×30** |
+| 治理脚本 | ~268 | 10,000 | **×37** |
+| AI 并发 Session | 1 | 100 | **×100** |
+| 脚本并发执行 | 6（硬编码） | 40–100 | **×7–×17** |
+| 默认扫描模式 | 全量（run_all.py） | 增量（per-change DAG） | 新能力 |
+| 全量扫描耗时（预估） | 未知 | <3.5h（周检） | 新基线 |
+| 增量扫描耗时（日常） | — | <60s（15–30 脚本） | 新能力 |
+| 硬件 | i7-12700KF / 64GB / RTX 3090 24GB | 同（单机） | 不变 |
+
+---
+
+## 〇-B、蓝图设计层缺失项全景（12项）
+
+### 缺失 #1：多进程/分布式架构设计
+
+**当前状态**: MOD-INF-001 容量保障写道"单进程极限 500 模块，超过则启用多进程/分布式扩展"——但**没有定义多进程架构长什么样**。没有进程模型、没有 IPC 协议、没有 Worker 生命周期、没有 Leader 选举。
+
+**设计决策待定**:
+- 进程模型: `1 Controller : N Workers` 还是 `N Peer Workers + 共享队列`？
+- IPC 通道: `multiprocessing.Queue` 还是 ZeroMQ / 文件队列 / SQLite WAL？
+- Worker 粒度: 每个 Worker 跑一个脚本？还是一组脚本？还是按模块分区？
+- Controller 是否 SPOF？是的话容灾策略是什么？
+
+---
+
+### 缺失 #2：脚本并发调度架构
+
+**当前状态**: WorkOrchestrator 的 `max_parallel_l1/l2/l3=1/3/2` 是 3 个硬编码整数，TaskQueue 的 `max_concurrent=1`。没有"40–100 槽位"的调度架构设计——队列优先级、公平调度、饥饿防护、任务抢占，全没设计。
+
+**设计决策待定**:
+- 调度层级: 单层 FIFO + 优先级 还是 入口队列→per-layer 队列→Worker 池？
+- 槽位分配策略: 固定分配（trae:40 / local:30 / api:30）还是动态弹性？
+- 抢占策略: 非抢占（等跑完）还是抢占-保存（checkpoint→suspend→resume）？
+- 饥饿上限: P2 最大等待时间？超过后自动升级到 P1？
+
+---
+
+### 缺失 #3：增量扫描依赖图架构
+
+**当前状态**: `run_incremental.py` 按"文件→维度→该维度全部脚本"映射。脚本系统 B72 盲点自认"增量扫描不够智能"。当脚本从 268 增长到 10,000，维度映射的粒度太粗——一个文件改动可能触发数百个脚本，失去"增量"的意义。
+
+**设计决策待定**:
+- 依赖声明方式: 脚本 `__manifest__` 字段声明 `depends_on_files` + `depends_on_scripts`？
+- 依赖图构建: 静态 AST 分析（准确但慢）还是 manifest 声明（快但人工维护）？
+- 缓存策略: 每次构建全量依赖图？还是增量更新（哪个脚本改了只重建受影响的部分）？
+- 跨脚本输出依赖: 脚本 A 的输出作为脚本 B 的输入——这种情况怎么建模？
+
+---
+
+### 缺失 #4：100-AI Session 并发生命周期管理
+
+**当前状态**: §二十四 定义了单 Session 生命周期（启动→施工→关闭），§九十三 定义了文件锁机制（但代码是桩）。但**100 个 Session 并行时的新问题完全没有设计**：Session 分组（哪些 Session 可以并行操作同一模块？）、Session 启动时的资源声明（"我需要改 L02 的文件"）、Session 调度（同一模块同时最多几个 Session 施工？）。
+
+**设计决策待定**:
+- Session 分组: 按模块/层/功能域分组？同一模块同时最多 N 个 Session？
+- 资源声明协议: Session 启动时声明"我将修改 [文件列表]" → 调度器分配子集 → 冲突的排队
+- 上下文复用: 同组 Session 共享蓝图/ADR 上下文？还是每次独立注入？
+- Session 优先级: 交易时段 Session > 研发 Session？Owner Session > AI Session？
+
+---
+
+### 缺失 #5：硬件感知资源调度器
+
+**当前状态**: i7-12700KF（12C/20T）+ RTX 3090（24GB）的硬件能力完全没有纳入调度设计。WorkOrchestrator 不区分 P-core 和 E-core，不感知 GPU 显存，不监控内存水位。
+
+**设计决策待定**:
+- P-core（8个）分配给 CPU 密集型脚本，E-core（4个）留给系统服务？
+- GPU 显存水位线: 24GB 中 Ollama 最多占多少？embedding 请求排队还是抢占？
+- 内存预留: 每个 Worker 进程预估内存上限？超限是否 OOM Killer？
+- 超分配策略: CPU 是否允许 150% 过载？GPU 是否允许排队？
+
+---
+
+### 缺失 #6：拥塞控制与背压机制
+
+**当前状态**: 没有拥塞控制。100 个 AI 同时 `git commit` → 100 个 pre-commit hook 同时触发扫描 → 100 个 `run_all.py` 进程 → 进程爆炸。
+
+**设计决策待定**:
+- 触发合并窗口: N 秒内的多次 commit 合并为一次扫描？
+- 队列深度上限: 超过 X 个待处理扫描 → 新请求被拒绝还是排队？
+- 降级链: 队列满 → 跳过 V3/V4 只跑 V1/V2 → 更满 → 只跑 pre-commit 钩子 → 全满 → 拒绝
+- 反压传播: 扫描队列满 → 通知 AI session "请稍后再试"？还是静默排队？
+
+---
+
+### 缺失 #7：10,000 脚本的 Manifest 分层索引
+
+**当前状态**: `script_manifest.yaml` 是一个单文件 YAML，每次 `run_all.py` 或 `run_incremental.py` 全量解析。268 个脚本时加载还能接受，10,000 个脚本时单文件将膨胀到几 MB，每次解析耗时和内存占用呈 O(n)。
+
+**设计决策待定**:
+- 索引格式: 把 `script_manifest.yaml` 拆成 `manifest/hot.pkl` + `manifest/warm.json` + `manifest/cold/*.yaml`？
+- 更新策略: 每次脚本入库重建索引？还是增量更新？
+- 一致性保证: 索引和实际脚本文件之间怎么保证一致？
+
+---
+
+### 缺失 #8：容量 SLI/SLO 体系对 100-AI 场景的重校准
+
+**当前状态**: §0.0 定义了 11 个 SLI，但其 SLO 目标值是为单开发者场景设定的。例如 SLI#4 "AI Session 启动数/天 ≤20" 在 100 AI 并发场景下毫无意义。SLI#5 "Script 执行吞吐量/min ≥5" 同样。
+
+**设计决策待定**:
+- 新增哪些容量 SLI？至少需要: Worker 利用率 / 队列深度 P99 / 扫描触发间隔 / Session 启动耗时 P95
+- 旧 SLI 的新目标值？SLI#4 从 ≤20/天 → ≤100/天（但峰值/均值分离）？SLI#5 从 ≥5/min → ≥40/min？
+- 新增 Saturation 信号？GPU 显存利用率 / CPU P-core 利用率 / 内存使用率？
+
+---
+
+### 缺失 #9：系统级降级架构（非业务降级）
+
+**当前状态**: MOD-INF-001 的 Graceful Degradation 是**模型降级**（DeepSeek → GLM → Claude），§二十 事故响应是**业务事故**。但缺少**系统基础设施自身的降级**设计——当 CPU 满负荷 / 内存不足 / 脚本队列堆积时，系统本身怎么降级而不是崩溃。
+
+**设计决策待定**:
+- 降级触发器: CPU >80%? 内存 >85%? 队列深度 >X? GPU 显存 >90%?
+- 降级动作链: Level 1 降级（减少 Worker）→ Level 2（暂停 V3/V4 审计）→ Level 3（仅保留 pre-commit）→ Level 4（拒绝新 session）
+- 自动回升: 资源低于 60% 持续 N 秒 → 逐步恢复？
+- 降级通知: 降级发生时通知哪些 AI Session？Owner 是否紧急通知？
+
+---
+
+### 缺失 #10：SQLite 在 100-AI 场景下的写入架构
+
+**当前状态**: MOD-INF-012 数据库系统用 SQLite+DuckDB 双引擎。蓝图 §0.0 SLI#10 监控 "SQLite WAL 深度 <1000 页"。但在 100 AI 并发、40–100 脚本并发、每个脚本都写 Finding 的场景下，SQLite 的单写者模型是天然瓶颈。
+
+**设计决策待定**:
+- 批量写入: Finding 先写内存 Buffer → 每 N 条/每秒 flush 到 SQLite？
+- 写入分区: 按模块/session 分区到多个 SQLite 文件？
+- 切换时机: SQLite WAL 深度持续 >X 时自动切换某些表的写入到 DuckDB？
+- 锁升级: 现在的 `threading.Lock` 在单进程内工作，多进程后需要文件锁或 WAL 锁？
+
+---
+
+### 缺失 #11：多进程下的 ZephyrLock 架构
+
+**当前状态**: §九十三 的设计是完整的（TTL 30min / EXCLUSIVE & READ_ONLY / 冲突检测 / 预分配），但前提是**单进程内存锁**。实际代码也是内存 dict。多进程架构下，内存锁完全失效。
+
+**设计决策待定**:
+- 锁实现: `portalocker`（跨平台）还是 `msvcrt`（Windows 原生）还是自定义 lock file + pid 检查？
+- 锁持久化路径: `.zeph/locks/{file_hash}.lock` 还是 `.zeph/locks/{module_id}/{filename}.lock`？
+- 僵死锁回收: TTL 30min 超时自动释放，还是检查持有者进程是否存活？
+- 锁监测: Controller 是否需要定期扫描所有锁的健康状态？
+
+---
+
+### 缺失 #12：全量扫描的独立调度通道
+
+**当前状态**: 全量扫描（run_all.py 全维度）和增量扫描走同一个调度器、同一个队列。但全量扫描要跑 10,000 个脚本、耗时约 3.5 小时。如果全量扫描占满 Worker 池，增量扫描会被堵住。
+
+**设计决策待定**:
+- 双通道模型: 两个独立 Worker 池（Fast Pool + Batch Pool）？还是共享池 + 优先级抢占？
+- 全量扫描中断策略: 收到增量扫描请求 → 当前运行的脚本包跑完就暂停 → 全量扫描释放 Worker？
+- 全量扫描 checkpoint: 跑完一个维度标记一次？中断后从上次 checkpoint 继续？
+- 全量扫描时间窗口: 限制在非活跃时段（如周末凌晨）？还是随时可触发？
+
+---
+
+## 〇-C、新增架构设计 — Worker Pool 模型
+
+```
+┌─────────────────────────────────────────────────┐
+│              Session Controller                   │
+│  ┌─────────────────────────────────────────────┐ │
+│  │ Scan Trigger Coalescer                       │ │
+│  │  100 AI commits → 合并窗口(2s) → 1次扫描触发 │ │
+│  └──────────────┬──────────────────────────────┘ │
+│                 ▼                                 │
+│  ┌─────────────────────────────────────────────┐ │
+│  │ Dependency Graph Builder                      │ │
+│  │  变更文件 → 依赖图 → 最小脚本集(15~30个)      │ │
+│  └──────────────┬──────────────────────────────┘ │
+│                 ▼                                 │
+│  ┌─────────────────────────────────────────────┐ │
+│  │ Dual-Channel Scheduler                        │ │
+│  │  ┌──────────────┐  ┌──────────────────────┐ │ │
+│  │  │ Fast Channel  │  │ Batch Channel        │ │ │
+│  │  │ (增量扫描)    │  │ (全量扫描, 周检)    │ │ │
+│  │  │ priority=P0   │  │ priority=P2          │ │ │
+│  │  │ max_wait=5s   │  │ interruptible=true   │ │ │
+│  │  └──────┬───────┘  └─────────┬────────────┘ │ │
+│  └─────────┼────────────────────┼──────────────┘ │
+│            ▼                    ▼                  │
+│  ┌─────────────────────────────────────────────┐ │
+│  │ Hardware-Aware Worker Pool                    │ │
+│  │  ┌─────────────────────────────────────────┐ │ │
+│  │  │ P-core Workers (×8)                      │ │ │
+│  │  │  CPU密集型: ruff/pytest/static analysis  │ │ │
+│  │  ├─────────────────────────────────────────┤ │ │
+│  │  │ E-core Workers (×4)                      │ │ │
+│  │  │  系统服务: 日志/监控/状态同步             │ │ │
+│  │  ├─────────────────────────────────────────┤ │ │
+│  │  │ GPU Worker (×1, serialized)              │ │ │
+│  │  │  embedding/rerank/ollama inference       │ │ │
+│  │  │  VRAM 水位线: 80% 告警, 90% 拒绝新请求  │ │ │
+│  │  └─────────────────────────────────────────┘ │ │
+│  └─────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────┘
+```
+
+### 进程拓扑
+
+| 组件 | 进程数 | CPU 绑定 | 职责 |
+|------|:--:|------|------|
+| Controller | 1 | E-core | 触发合并 + 依赖图构建 + 调度 + 健康监控 |
+| P-Core Worker | 1–8 | P-core (0–7) | ruff / pytest / static analysis / yaml validation |
+| E-Core Service | 1–2 | E-core (8–11) | 日志写入 / telemetry / 状态持久化 |
+| GPU Worker | 1 | 任意 + GPU | embedding / reranking / ollama inference |
+| Total Max | 12 | — | 理论最大并发脚本数 ~40（考虑GIL释放和I/O等待可超分配至100） |
+
+### IPC 协议
+
+```
+Controller ↔ Worker: multiprocessing.Queue (priority queue)
+Worker → Controller: status update (COMPLETED/FAILED/HEARTBEAT)
+Controller → Worker: KILL (preemption) / PAUSE (降级)
+Worker → GPU Worker: 独立队列 (串行化 GPU 访问)
+```
+
+---
+
+## 〇-D、新增 ADR 索引（架构决策记录）
+
+| ADR | 决策 | 关联缺失 |
+|------|------|:--:|
+| ADR-0031 | 多进程 Worker Pool 架构: 1 Controller : N Workers，IPC 用 multiprocessing.Queue | #1 |
+| ADR-0032 | 双通道调度: Fast（增量 P0）和 Batch（全量 P2 可中断）隔离 | #12 |
+| ADR-0033 | 增量扫描依赖图: manifest 声明 `depends_on_files` + `depends_on_scripts`，构建时 AST 验证 | #3 |
+| ADR-0034 | 硬件感知调度: P-core→CPU密集型, E-core→系统服务, GPU→串行化队列 | #5 |
+| ADR-0035 | 拥塞控制: 2s 合并窗口 + 队列深度上限 500 + 三级降级 | #6 |
+| ADR-0036 | Manifest 分层索引: Hot(pickle/内存) + Warm(json/磁盘) + Cold(yaml/按需) | #7 |
+| ADR-0037 | ZephyrLock 跨进程升级: portalocker + TTL 30min + 僵死锁 pid 检查 | #11 |
+| ADR-0038 | SQLite 写入缓冲: per-session buffer → 1s flush interval → WAL checkpoint 阈值 | #10 |
+| ADR-0039 | Session 资源声明协议: 启动时声明文件域 → 同域最多 N 个并行 Session | #4 |
+| ADR-0040 | 容量 SLI 重校准: 新增 8 项容量 SLI（Worker利用率/队列深度/GPU显存/触发间隔等） | #8 |
+| ADR-0041 | 系统降级链: CPU>80%→减Worker / 内存>85%→停V3V4 / 队列深度>X→拒绝新Session | #9 |
+
+---
+
+## 〇-E、升级阶段规划（3 Phase）
+
+### Phase 1: 多进程基础（v0.14）
+
+| 目标 | 措施 | 设计依赖 |
+|------|------|:--:|
+| 突破单进程 500 模块限制 | 实现 1 Controller : N Workers 进程拓扑 | ADR-0031 |
+| 并发槽位 6→20 | Worker Pool 8 P-core + 2 E-core + 1 GPU | ADR-0034 |
+| ZephyrLock 跨进程可用 | portalocker + TTL + 僵死锁清理 | ADR-0037 |
+| 拥塞控制上线 | 2s 触发合并 + 队列深度上限 500 | ADR-0035 |
+| 增量扫描默认模式 | run_incremental.py 作为 pre-commit 默认 | — |
+| 容量 SLI 面板新增 8 项 | 新 SLI 面板挂到 §0.0 旁 | ADR-0040 |
+
+**Phase 1 验收标准**: 20 个脚本并发执行稳定运行 24h；CPU 利用率 <80%；内存 <85%；ZephyrLock 无僵死锁。
+
+### Phase 2: 智能调度（v0.15）
+
+| 目标 | 措施 | 设计依赖 |
+|------|------|:--:|
+| 脚本依赖图构建 | `depends_on_files` + `depends_on_scripts` manifest 字段 | ADR-0033 |
+| 精确增量扫描 | 变更文件 → 依赖图 → 最小脚本集 | ADR-0033 |
+| 双通道调度 | Fast/Batch 通道隔离 | ADR-0032 |
+| 全量扫描 checkpoint | 按维度 checkpoint → 中断可恢复 | ADR-0032 |
+| Manifest 分层索引 | Hot/Warm/Cold 三级索引 | ADR-0036 |
+| SQLite 写入缓冲 | per-session buffer + 批量 flush | ADR-0038 |
+
+**Phase 2 验收标准**: 增量扫描 <60s（15–30 脚本）；全量扫描 10,000 脚本可中断+恢复；manifest 加载 <100ms。
+
+### Phase 3: 满负荷优化（v1.0）
+
+| 目标 | 措施 | 设计依赖 |
+|------|------|:--:|
+| 并发槽位 20→40–100 | 超分配 + 异步 I/O 脚本用协程替代子进程 | ADR-0031 |
+| Session 资源声明 | 启动声明→调度→同域并发上限 | ADR-0039 |
+| 降级链完整上线 | 三级降级 + 自动回升 | ADR-0041 |
+| 全量扫描优化 | 预编译检查 + 并行化 + 预期 ≤3h | ADR-0032 |
+| 100 AI 满负荷压测 | 模拟 100 AI 同时工作 72h | — |
+
+**Phase 3 验收标准**: 100 模拟 AI 72h 压测通过；CPU 均值 <75%；无 OOM；无锁死；增量扫描 P99 <90s。
+
+---
+
+## 〇-F、与现有蓝图的对齐表
+
+| 现有蓝图章节 | 升级影响 | 动作 |
+|------|------|------|
+| §0.0 系统健康面板 | 11 SLI → 19 SLI（+8 容量 SLI） | Phase 1 新增面板 |
+| §0.2 AI Agent 分派表（81域） | 新增 "容量升级施工" 域 | Phase 1 新增条目 |
+| §1.3 B-Track 基础设施层 | MOD-INF-001 能力描述需更新 | Phase 1 |
+| §1.4 运行时平面 | "任务执行平面"需扩展为多进程模型 | Phase 1 |
+| §四 跨模块数据流 | 新增 Controller→Worker→GPU Worker 数据流 | Phase 1 |
+| §九十三 会话并发与文件完整性 | ZephyrLock 跨进程升级 | Phase 1 |
+| §五十 多策略与容量管理 | 新增 §五十-A "系统容量管理"（非交易容量） | Phase 2 |
+| MOD-INF-001 容量保障蓝图 | 500→1500 单进程上限移除，新增 Worker Pool 设计 | Phase 1 |
+| MOD-INF-005 脚本系统蓝图 | 新增依赖图架构 + 分层索引 | Phase 2 |
+| MOD-INF-006 任务系统蓝图 | TaskQueue 从单线程→多 Worker Pool | Phase 1 |
+| MOD-INF-012 数据库蓝图 | SQLite 写入缓冲层设计 | Phase 2 |
+
+---
+
+## 〇-G、风险与缓解
+
+| 风险 | 等级 | 缓解 |
+|------|:--:|------|
+| Python GIL 限制多进程 CPU 利用率 | 🟡中 | 脚本执行为独立子进程（`subprocess`），Worker 负责调度不执行；I/O 密集型用 `asyncio` |
+| multiprocessing.Queue 在大数据量下性能下降 | 🟡中 | 传递脚本 ID 而非脚本内容；大文件走文件系统路径 |
+| 单机 12C/20T 可能不够 100 并发 | 🟡中 | Phase 3 压测验证；必要时 E-core 也分配给 Worker |
+| 多进程调试复杂度 | 🟡中 | Controller 统一日志 + per-Worker 日志文件 + 结构化输出 |
+| 向后兼容：现有 run_all.py 不能 break | 🟢低 | 双轨运行：单进程模式（<500 模块）和多进程模式（≥500 模块）可切换 |
+
+---
+
+## 〇-H、不在此次升级范围内的内容
+
+> 明确排除，防止范围蔓延。
+
+| 排除项 | 原因 | 替代 |
+|------|------|------|
+| 多机分布式（跨机器） | 硬件只有一台开发机 | Phase 3 后评估 |
+| Redis/RabbitMQ 消息队列 | 零依赖优先，Python stdlib 完成 | multiprocessing.Queue |
+| gRPC / REST API 进程间通信 | 同机多进程不需要网络协议 | multiprocessing.Queue |
+| 数据库分片 | 1,500 模块时 SQLite 仍可承载 | Phase 3 后评估 |
+| 容器化（Docker/K8s） | Windows 环境，本地开发机 | 不需要 |
 
 ---
 
 ## 零、AI Agent 冷启动分派
 
-### 0.0 系统健康面板——四黄金信号（11 SLI + SLO 目标值）
+### 0.0 系统健康面板——四黄金信号（19 SLI + SLO 目标值）
 
 > **定位**：每个 AI session 开工前的强制自检视图。任一 SLI 突破 SLO → 记录事故 + 通知 Owner（§0.0.4）。
-> **对标**：Google SRE 四黄金信号（Latency / Traffic / Errors / Saturation）+ Grafana Health Dashboard。
 
 | # | 黄金信号 | SLI 指标 | SLO 目标 | 数据源 |
 |:--:|------|------|:--:|------|
 | 1 | **延迟** | E2E AI 请求延迟 (P50) | <3s | Telemetry (MOD-INF-015) |
 | 2 | **延迟** | 蓝图读取耗时 (P95) | <500ms | Context Engine (MOD-INF-008) |
 | 3 | **延迟** | 门禁执行总延迟 (P99) | <2s | Gate Engine (MOD-INF-007) |
-| 4 | **流量** | AI Session 启动数/天 | ≤20 | SessionContinuity (§二十四) |
-| 5 | **流量** | Script 执行吞吐量/min | ≥5 | Script System (MOD-INF-005) |
+| 4 | **流量** | AI Session 启动数/天 | ≤100 | SessionContinuity (§二十四) |
+| 5 | **流量** | Script 执行吞吐量/min | ≥40 | Script System (MOD-INF-005) |
 | 6 | **错误** | Gate 失败率 (G0-G7) | <10% | Gate Engine (MOD-INF-007) |
 | 7 | **错误** | Script 执行错误率 | <5% | Script System (MOD-INF-005) |
 | 8 | **错误** | 契约漂移检出率 | >95% | Drift Detector (MOD-INF-023) |
 | 9 | **饱和度** | Token 预算利用率 | <80% | Budget Enforcer (MOD-INF-024) |
 | 10 | **饱和度** | SQLite WAL 深度 | <1000 页 | Database (MOD-INF-012) |
 | 11 | **饱和度** | Session 锁争用率 | <5% | Lock Files 协议 (RULE-ZERO) |
+| 12 | **饱和度** | Worker Pool 利用率 | <80% | Worker Pool Controller (§〇-C) |
+| 13 | **延迟** | 增量扫描完成耗时 (P99) | <90s | Script System (MOD-INF-005) |
+| 14 | **饱和度** | 扫描队列深度 | <500 | Scheduler (§〇-C) |
+| 15 | **饱和度** | GPU 显存利用率 | <80% | GPU Worker (§〇-C) |
+| 16 | **饱和度** | 系统内存使用率 | <85% | System Telemetry (MOD-INF-015) |
+| 17 | **延迟** | Session 上下文加载耗时 (P95) | <2s | Context Engine (MOD-INF-008) |
+| 18 | **错误** | ZephyrLock 僵死锁数 | 0 | Lock Health Monitor (§九十三) |
+| 19 | **流量** | 全量扫描队列深度 | <200 | Batch Channel (§〇-C) |
 
 ### 0.0.4 SLI 突破 SLO 处置流程
 
 ```
 任一 SLI 突破 SLO (面板红)
-  → ① 判断级别: 1 SLI 红=🟡告警 / 3+ SLI 红=🟠降级 / 5+ SLI 红=🔴事故
+  → ① 判断级别: 1-2 SLI 红=🟡告警 / 3-5 SLI 红=🟠降级 / 6+ SLI 红=🔴事故
   → ② 🔴级: 立即通知 Owner + 暂停施工 / 🟠级: 限制施工范围 / 🟡级: 记录日志
   → ③ 写入事故记录 → §二十 事故响应联动
   → ④ 恢复后验证 SLI 全绿 → 继续施工
@@ -151,7 +481,7 @@ depends_on:
 ```
 SYS-MASTER-001 (本蓝图, Level 0)
   ├── DOM-GOV-001 (Agent治理八件套集成蓝图, Level 1 域蓝图)
-  │     ├── MOD-INF-018~025 (8个治理模块——agent_rbac/agent_spec/audit_trail/rollback/escalation/drift_detector/budget_enforcer/a2a)
+  │     ├── MOD-INF-018~025 (8个治理模块——agent_rbac/agent_spec/audit_trail/rollback/escalation_engine/behavioral_auditor/budget_enforcer/a2a)
   │     ├── G-CT-001~008 (8条跨模块集成契约)
   │     └── governance_server.py (MCP统一入口——8工具)
   ├── MOD-MASTER-001 (12基础设施集成, Level 1)
@@ -161,7 +491,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
   └── L00-L13 业务层 (14层, 12蓝图已创建+4实现+12blocked)
 ```
 
-### 0.2 AI Agent 分派表 (81域)
+### 0.2 AI Agent 分派表 (88域)
 
 | 任务域 | 先读 | 再读 | Token预算 |
 |--------|------|------|:--:|
@@ -267,6 +597,13 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | 跨环境一致性/Windows风险 | 本蓝图 §一百〇二 | §二十五 + §六十九 + §五十二 | ~400 |
 | MCP协议服务端/外部系统暴露 | MOD-INF-013 blueprint §1-§4 | tool_contracts.yaml + mcp-specialist skill | ~600 |
 | 红白对抗验证/安全纵深 | MOD-INF-030 blueprint §1-§7 | _scenario_registry.yaml + _constitution_registry.yaml + red-blue-adversarial skill | ~800 |
+| 孤儿判定/资产生死审判 | MOD-INF-029 blueprint §1-§4 | orphan_judge/orphan_scanner.py + runtime/orphan_detector.py | ~600 |
+| 全链路自愈/自动修复 | MOD-INF-031 blueprint §1-§5 | code_dedup_engine/auto_fixer.py + auto_fix_engine skill | ~600 |
+| 资源优化/生命周期管理 | MOD-INF-032 blueprint §1-§4 | lifecycle_manager/resource_optimization_engine.py | ~500 |
+| 行为审计/AI边界检测 | MOD-INF-033 blueprint §1-§4 | behavioral-auditor skill + code_dedup_engine/behavioral_*.py | ~600 |
+| 模型评测/任务路由 | MOD-INF-034 blueprint §1-§5 | model_profiler/ + profiler.py | ~600 |
+| AutoRuntime/系统大脑 | MOD-INF-035 blueprint §1-§8 | runtime/ + auto_runtime_core.py + capability_registry.py | ~800 |
+| 模型入职考试/能力验证 | MOD-INF-036 blueprint §1-§4 | model_profiler/exam_orchestrator.py + capability_passport.py | ~500 |
 
 ### 0.3 令牌预算层级
 
@@ -308,41 +645,50 @@ SYS-MASTER-001 (本蓝图, Level 0)
 
 ### 1.3 B-Track 基础设施层
 
-| 系统 | 蓝图ID | 蓝图完整度 | 核心职责 |
-|------|------|:--:|------|
-| Capacity Assurance | MOD-INF-001 | 95% | 容量监控/SLI/SLO目标 |
-| Runtime Integration | MOD-INF-002 | 95% | 跨层集成与缺口填补 |
-| Script System | MOD-INF-005 | 95% | 脚本发现/执行/验证 |
-| Task System | MOD-INF-006 | 95% | 任务卡全生命周期 |
-| Gate Engine | MOD-INF-007 | 35% | G0-G7门禁+断路器 |
-| Context Engine | MOD-INF-008 | 95% | 上下文四阶段流水线 |
-| Pipeline | MOD-INF-009 | 95% | M1-M11双管线 |
-| Feedback Loop | MOD-INF-010 | 95% | 系统自调节闭环 |
-| Vector Memory | MOD-INF-011 | 95% | 向量化存储检索 |
-| Database | MOD-INF-012 | 95% | SQLite+DuckDB双引擎元数据 |
-| MCP Servers | MOD-INF-013 | 95% | MCP协议服务端 |
-| LLM Security | MOD-INF-014 | 95% | L0-L8九层纵深防御 |
-| System Telemetry | MOD-INF-015 | 95% | 全系统遥测采集 |
-| Shared Core | MOD-INF-016 | **100%** | 跨层共享基础设施 |
-| Code Dedup Engine | MOD-INF-017 | 95% | Monoculture免疫+全生命周期去重 |
-| Agent RBAC | MOD-INF-018 | 95% | 七层纵深RBAC |
-| Agent Spec | MOD-INF-019 | 95% | 蓝图→Skill升级引擎 |
-| Audit Trail | MOD-INF-020 | 95% | 不可变动作审计+Provenance链 |
-| Rollback System | MOD-INF-021 | **100%** | Git-native回滚/撤销 |
-| Escalation Protocol | MOD-INF-022 | 35% | 规则驱动升级+自动委托 |
-| Drift Detector | MOD-INF-023 | **100%** | Git-native漂移检测+对账 |
-| Budget Enforcer | MOD-INF-024 | 35% | Token/Cost/Time三维预算执行 |
-| A2A Protocol | MOD-INF-025 | 35% | Agent间通信+冲突解决 |
-| Asset Inventory | MOD-INF-026 | 5% | 全量资产发现+统一登记 |
-| Knowledge Base | MOD-KB-001 | 95% | 知识生命周期管理 |
-| Audit Orchestrator | MOD-INF-027 | 0% | 全域审计调度编排 |
-| Semantic Auditor | MOD-INF-028 | 0% | 语义级审计校验 |
+| 系统 | 蓝图ID | 蓝图完整度 | 核心职责 | actual_disk_path | 施工程度 |
+|------|------|:--:|------|------|:------:|
+| Capacity Assurance | MOD-INF-001 | 95% | 容量监控/SLI/SLO目标 | `src/zephyr/capacity_assurance/` | 已实现 |
+| Runtime Integration | MOD-INF-002 | 95% | 跨层集成与缺口填补 | `src/zephyr/runtime/` | 已实现 |
+| Script System | MOD-INF-005 | 95% | 脚本发现/执行/验证 | `src/zephyr/script_system/` | 已实现 |
+| Task System | MOD-INF-006 | 95% | 任务卡全生命周期 | `src/zephyr/db/` | 已实现 |
+| Gate Engine | MOD-INF-007 | 35% | G0-G7门禁+断路器 | `src/zephyr/gates/` | 部分实现 |
+| Context Engine | MOD-INF-008 | 95% | 上下文四阶段流水线 | `src/zephyr/context_engine/` | 已实现 |
+| Pipeline | MOD-INF-009 | 95% | M1-M11双管线 | `src/zephyr/pipeline/` | 已实现 |
+| Feedback Loop | MOD-INF-010 | 95% | 系统自调节闭环 | `src/zephyr/feedback_loop/` | 已实现 |
+| Vector Memory | MOD-INF-011 | 95% | 向量化存储检索 | `src/zephyr/vector_memory/` | 已实现 |
+| Database | MOD-INF-012 | 95% | SQLite+DuckDB双引擎元数据 | `src/zephyr/db/` | 已实现 |
+| MCP Servers | MOD-INF-013 | 95% | MCP协议服务端 | `src/zephyr/mcp/` | 已实现 |
+| LLM Security | MOD-INF-014 | 95% | L0-L8九层纵深防御 | `src/zephyr/llm_security/` | 部分实现 |
+| System Telemetry | MOD-INF-015 | 95% | 全系统遥测采集 | `src/zephyr/system_telemetry/` | 已实现 |
+| Shared Core | MOD-INF-016 | **100%** | 跨层共享基础设施 | `src/zephyr/shared/` | 已实现 |
+| Code Dedup Engine | MOD-INF-017 | 95% | 爆炸半径防护+全生命周期去重 | `src/zephyr/l01_infrastructure/code_dedup_engine/` | 已实现 |
+| Agent RBAC | MOD-INF-018 | 95% | 七层纵深RBAC | `src/zephyr/agent_rbac/` | 已实现 |
+| Agent Spec | MOD-INF-019 | 95% | 蓝图→Skill升级引擎 | `src/zephyr/agent_spec/` | 已实现 |
+| Audit Trail | MOD-INF-020 | 95% | 不可变动作审计+Provenance链 | `src/zephyr/audit_trail/` | 部分实现 |
+| Rollback System | MOD-INF-021 | **100%** | Git-native回滚/撤销 | `src/zephyr/rollback/` | 已实现 |
+| Escalation Protocol | MOD-INF-022 | 35% | 规则驱动升级+自动委托 | `src/zephyr/escalation_engine/` | 已实现 |
+| Drift Detector | MOD-INF-023 | **100%** | Git-native漂移检测+对账 | `src/zephyr/behavioral_auditor/` | 已实现 |
+| Budget Enforcer | MOD-INF-024 | 35% | Token/Cost/Time三维预算执行 | `src/zephyr/budget_enforcer/` | 部分实现 |
+| A2A Protocol | MOD-INF-025 | 35% | Agent间通信+冲突解决 | `src/zephyr/l01_infrastructure/a2a_protocol/` | 部分实现 |
+| Asset Inventory | MOD-INF-026 | 5% | 全量资产发现+统一登记 | `src/zephyr/asset_inventory/` | 部分实现 |
+| Knowledge Base | MOD-KB-001 | 95% | 知识生命周期管理 | `src/zephyr/kb/` | 已实现 |
+| Audit Orchestrator | MOD-INF-027 | 0% | 全域审计调度编排 | — | 空壳 |
+| Semantic Auditor | MOD-INF-028 | 0% | 语义级审计校验 | — | 空壳 |
+| Orphan Judge | MOD-INF-029 | 50% | 资产生死判定引擎 | `src/zephyr/orphan_judge/` | 部分实现 |
+| Red-Blue Validator | MOD-INF-030 | 0% | 治理规则混沌工程引擎 | `src/zephyr/red_blue_validator/` | 空壳 |
+| Auto Fix Engine | MOD-INF-031 | 0% | 全链路自愈执行系统 | —（代码在code_dedup_engine/） | 空壳 |
+| Resource Optimization Engine | MOD-INF-032 | 50% | 资源优化引擎 | `src/zephyr/lifecycle_manager/` | 部分实现 |
+| Behavioral Auditor | MOD-INF-033 | 0% | AI行为边界审计引擎 | — | 空壳 |
+| Model Profiler | MOD-INF-034 | 50% | 7维评测+任务×模型路由 | `src/zephyr/model_profiler/` | 部分实现 |
+| AutoRuntime Core | MOD-INF-035 | 95% | 系统大脑·三层运行时运营中心 | `src/zephyr/runtime/` | 已实现 |
+| Model Capability Exam | MOD-INF-036 | 0% | AI模型入职考试系统 | —（代码在model_profiler/） | 设计中 |
 
 ### 1.4 运行时平面（正交视图）
 
 | 平面 | 覆盖系统 | 职责 |
 |------|------|------|
 | 任务执行平面 | Orc + Pipeline + Script System | 任务调度执行 |
+| 执行平面 | Worker Pool Controller + P-core/E-core/GPU Workers (§〇-C) | 多进程脚本并发执行 + 硬件感知调度 |
 | 知识平面 | KB + VMS + Context Engine | 记忆检索注入 |
 | 安全平面 | Gate Engine + LSG + Sandbox | 门禁校验沙箱 |
 | 反馈平面 | Feedback Loop + Telemetry | 自调节监控 |
@@ -376,6 +722,9 @@ SYS-MASTER-001 (本蓝图, Level 0)
 
 ## 三、关键架构决策索引
 
+> **时态属性**：决策记录属于**永久时态**——AI修改设计时必读。没有它，AI会重复犯已排除的错误。
+> 本节同时覆盖原 §7 备选方案——决策的"选项"列已包含备选方案信息，无需独立章节。
+
 | ADR | 标题 | 决策 |
 |------|------|------|
 | ADR-0001 | Canonical SSoT | YAML=真源, MD=衍生视图 |
@@ -389,6 +738,17 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | ADR-0019 | Feedback Loop | 三阶段闭环 |
 | ADR-0020 | LLM Security | 四层防御 |
 | R90 | 三级金字塔 | 本蓝图的架构基础 |
+| ADR-0031 | 多进程 Worker Pool | 1 Controller : N Workers + multiprocessing.Queue IPC |
+| ADR-0032 | 双通道扫描调度 | Fast通道(P0增量) + Batch通道(P2全量可中断) |
+| ADR-0033 | 增量扫描依赖图 | manifest声明 `depends_on_files` + `depends_on_scripts` |
+| ADR-0034 | 硬件感知调度 | P-core→CPU密集型 / E-core→系统服务 / GPU→串行化 |
+| ADR-0035 | 拥塞控制 | 2s合并窗口 + 队列深度上限500 + 三级降级 |
+| ADR-0036 | Manifest分层索引 | Hot(pickle/内存) + Warm(json/磁盘) + Cold(yaml/按需) |
+| ADR-0037 | 跨进程 ZephyrLock | portalocker + TTL 30min + 僵死锁pid检查 |
+| ADR-0038 | SQLite 写入缓冲 | per-session buffer + 1s flush interval |
+| ADR-0039 | Session 资源声明 | 启动时声明文件域 → 同域并行上限 |
+| ADR-0040 | 容量 SLI 重校准 | 新增8项容量SLI + 旧SLI SLO目标值修正 |
+| ADR-0041 | 系统降级链 | CPU>80%→减Worker / 内存>85%→停V3V4 / 自动回升 |
 
 ---
 
@@ -411,12 +771,61 @@ SYS-MASTER-001 (本蓝图, Level 0)
 
 ## 五、依赖关系
 
-| 本蓝图依赖 | 关系 | 为什么 |
-|------|:--:|------|
-| PS-STD-005 | governs | 定义本蓝图的合法位置 |
-| MOD-MASTER-001 | delegates_to | 12系统集成契约 |
-| architecture-model/_index.yaml | reads_from | 拓扑数据 |
-| blueprint-registry.yaml | monitors | 蓝图健康度 |
+### 5.1 依赖声明
+
+| 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
+|---------|---------|---------|---------|---------|
+| PS-STD-005 | 必须 | 定义本蓝图的合法位置 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\blueprint-architecture-standard.md` |
+| MOD-MASTER-001 | 必须 | 12系统集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
+| architecture-model/_index.yaml | 可选 | 拓扑数据 | — | `D:\ZephyrAlpha\architecture-model\_index.yaml` |
+| blueprint-registry.yaml | 可选 | 蓝图健康度 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` |
+
+### 5.2 依赖图对齐声明
+
+| # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
+|---|--------|---------|:-------:|---------|
+| 1 | §5.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint SYS-MASTER-001` |
+| 2 | §六 产出物路径 ↔ 依赖图 path_mappings | 路径一致 | 已对齐 | 同上 |
+
+### 5.3 内部依赖图
+
+> 全局依赖图只覆盖模块级，不覆盖脚本级。本节补充蓝图内部脚本/模块间的执行顺序和数据流依赖。
+
+#### 执行顺序依赖
+
+| 上游脚本 | 下游脚本 | 依赖内容 | 验证方式 |
+|---------|---------|---------|---------|
+| blueprint-registry.yaml | blueprint_compliance_checker.py | 注册表是检查器的输入 | 检查注册表文件存在 |
+
+#### 数据流依赖
+
+| 生产者 | 消费者 | 数据类型 | 传输方式 |
+|--------|--------|---------|---------|
+| architecture-model/_index.yaml | 本蓝图 §一 | 拓扑数据 | YAML文件读取 |
+| blueprint-registry.yaml | 本蓝图 §七 | 蓝图健康度 | YAML文件读取 |
+
+### 5.4 自动化规格
+
+#### 是否需要自动化
+
+| # | 自动化项 | 是否需要 | 理由 |
+|---|---------|:-------:|------|
+| 1 | 依赖图自动生成 | 否 | 系统级蓝图依赖少，手动维护即可 |
+| 2 | 依赖对齐自动验证 | 是 | 有外部依赖需验证 |
+| 3 | 临时时态内容自动清理 | 否 | 无迁移方案 |
+| 4 | 施工步骤完成度自动检测 | 否 | construction_progress=completed |
+
+#### 如何自动化
+
+| # | 自动化项 | 实现方式 | 现有工具/脚本 | 缺口 |
+|---|---------|---------|-------------|------|
+| 1 | 依赖对齐自动验证 | CI门禁 | validate_path_alignment.py | 无 |
+
+#### 触发方式
+
+| # | 自动化项 | 触发方式 | 触发条件 |
+|---|---------|---------|---------|
+| 1 | 依赖对齐自动验证 | CI门禁 | PR提交时 |
 
 ---
 
@@ -424,14 +833,14 @@ SYS-MASTER-001 (本蓝图, Level 0)
 
 | 产出物 | 路径 |
 |------|------|
-| 本蓝图 | `docs/03_modules/_sys-master/blueprint.md` |
-| 集成蓝图 | `docs/03_modules/_master-blueprint/blueprint.md` |
-| 全部模块蓝图 | `docs/03_modules/l01_infrastructure/*/blueprint.md` + `_cross_layer/*/blueprint.md` |
-| 架构标准 | `docs/01_policies_and_standards/meta/blueprint-architecture-standard.md` |
-| 架构模型 | `architecture-model/layers/*.yaml` |
-| 业务层代码 | `src/zephyr/l00_data_source/` ~ `l13_experimentation/` |
-| 基础设施代码 | `src/zephyr/gates/`, `src/zephyr/context_engine/`, ... |
-| 门禁定义 | `src/zephyr/gates/*.yaml` |
+| 本蓝图 | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` |
+| 集成蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
+| 全部模块蓝图 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\*\blueprint.md` + `D:\ZephyrAlpha\docs\03_modules\_cross_layer\*\blueprint.md` |
+| 架构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\blueprint-architecture-standard.md` |
+| 架构模型 | `D:\ZephyrAlpha\architecture-model\layers\*.yaml` |
+| 业务层代码 | `D:\ZephyrAlpha\src\zephyr\l00_data_source\` ~ `D:\ZephyrAlpha\src\zephyr\l13_experimentation\` |
+| 基础设施代码 | `D:\ZephyrAlpha\src\zephyr\gates\`, `D:\ZephyrAlpha\src\zephyr\context_engine\`, ... |
+| 门禁定义 | `D:\ZephyrAlpha\src\zephyr\gates\*.yaml` |
 
 ---
 
@@ -458,25 +867,22 @@ SYS-MASTER-001 (本蓝图, Level 0)
 
 ## 九、已知风险与缓解
 
-| 风险 | 影响 | 缓解 |
-|------|------|------|
-| SYS-MASTER → MOD-MASTER → 模块蓝图 三层不一致 | AI 读错蓝图 | GATE-A + GATE-B 对齐检查 |
-| 本蓝图过长导致 AI 不读 | 冷启动失败 | §0 分派表 + 按需阅读设计 |
-| C-Track 业务蓝图缺失 | 业务开发缺指引 | stable 创建 L02/L04/L08/L12 |
-| SYS-MASTER 与 MOD-MASTER 边界模糊 | 契约重复定义 | 铁律：SYS-MASTER 定义"谁有什么"，MOD-MASTER 定义"之间怎么连" |
+> 本节同时承接原 §十 后果中的负面后果——正面后果与 §一 目标重复，不在此记录。
 
----
-
-## 十、后果
-
-- AI agent 现在有明确的 Level 0 入口——冷启动不再迷茫
-- 蓝图冲突有明确裁决链——不再需要猜测谁的优先级更高
-- C-Track 业务蓝图缺失被显式记录——可追踪的技术债务
-- 三级金字塔从"只有概念"变成"有代码/文档载体"——PS-STD-005 的设计得到完整实现
+| # | 风险/负面后果 | 概率 | 影响 | 缓解策略 | 类型 |
+|---|-------------|------|------|---------|------|
+| 1 | SYS-MASTER → MOD-MASTER → 模块蓝图 三层不一致 | 中 | 高 | GATE-A + GATE-B 对齐检查 | 风险 |
+| 2 | 本蓝图过长导致 AI 不读 | 中 | 高 | §0 分派表 + 按需阅读设计 | 风险 |
+| 3 | C-Track 业务蓝图缺失 | 高 | 中 | stable 创建 L02/L04/L08/L12 | 风险 |
+| 4 | SYS-MASTER 与 MOD-MASTER 边界模糊 | 中 | 中 | 铁律：SYS-MASTER 定义"谁有什么"，MOD-MASTER 定义"之间怎么连" | 风险 |
+| 5 | C-Track 业务蓝图缺失被显式记录为技术债务——缺失本身是负面后果 | 高 | 中 | stable 阶段逐步补齐 | 负面后果 |
 
 ---
 
 ## 十一、施工指引
+
+> **时态属性**：施工步骤属于**临时时态**——执行完毕后可删除，但MUST先通过运行验证。
+> **删除前置条件**（缺一不可）：1.代码文件存在且非空 2.`python -m pytest tests/`对应测试exit 0 3.`mypy`类型检查通过 4.`ruff`lint通过 5.以上4项全部通过后，该步骤的详细内容可从蓝图删除，只保留"步骤N: 已完成"
 
 | 步骤 | 说明 | Phase |
 |------|------|:--:|
@@ -491,8 +897,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 
 ## 十二、成本架构与Token预算
 
-> **定位**：AI 大规模施工的核心约束不是代码质量——是 Token 成本。无预算 = 无法施工。本节定义 7 模型价格基准 + Session 成本估算 + 成本-质量路由矩阵 + TCO 模型。
-> **对标**：K8s ResourceQuota + AWS Cost Explorer + FinOps。
+> **定位**：7模型价格基准+Session成本估算+成本-质量路由矩阵+TCO模型。
 
 ### 12.1 模型价格基准 (per 1M token)
 
@@ -537,8 +942,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 
 ## 十三、数据分类分级
 
-> **定位**：系统处理多种数据——从公开行情到密钥。必须分级控制访问和泄露响应。
-> **对标**：NIST SP 800-60 + AWS Data Classification + ISO 27001 A.8.2。
+> **定位**：数据分级控制+泄露响应。
 
 | 级别 | 描述 | 示例 | 访问控制 | 泄露响应 |
 |:--:|------|------|------|------|
@@ -552,7 +956,6 @@ SYS-MASTER-001 (本蓝图, Level 0)
 ## 十四、系统启动/停止顺序
 
 > **定位**：跨 12+进程的启动顺序和故障时的安全关机。乱序启动=数据竞争/死锁/不一致。
-> **对标**：K8s Init Containers + systemd unit ordering。
 
 ### 14.1 启动拓扑 (6 Phase)
 
@@ -577,7 +980,6 @@ stop信号:  P6→P5→P4→P3→P2→P1 (每步10s grace, 总≤60s)
 ## 十五、氛围编程施工方法论
 
 > **定位**：100% AI 施工的核心方法——MUST/SHOULD/MAY 三级指令体系 + 词汇对齐 + Prompt Library。
-> **对标**：Cursor Rules + Claude Code Instructions + Continue.dev Config。
 
 ### 15.1 三级指令体系
 
@@ -621,7 +1023,6 @@ stop信号:  P6→P5→P4→P3→P2→P1 (每步10s grace, 总≤60s)
 ## 十六、FMEA 故障模式分析
 
 > **定位**：预判系统"哪里最可能出错"→优先加固。
-> **对标**：NASA FMEA + Google SRE Risk Analysis。
 
 | ID | 故障模式 | 影响 | 检测方法 |
 |------|------|------|------|
@@ -651,7 +1052,6 @@ stop信号:  P6→P5→P4→P3→P2→P1 (每步10s grace, 总≤60s)
 ## 十八、灾难恢复
 
 > **定位**：系统故障→恢复能力。季度 DR 演练 + 每日可重建性验证。
-> **对标**：AWS Well-Architected Reliability Pillar + Google SRE Ch.8。
 
 | RPO/RTO | 目标 | 实现 |
 |------|:--:|------|
@@ -663,7 +1063,6 @@ stop信号:  P6→P5→P4→P3→P2→P1 (每步10s grace, 总≤60s)
 ## 十九、模型风险管理
 
 > **定位**：策略上线前的风险清单 (MR101-MR113)——OWASP LLM Top 10 + SR 11-7。
-> **对标**：Fed SR 11-7 + OCC Model Risk Management。
 
 关键检查项：数据泄漏、过拟合、市场状态偏差、幸存者偏差、样本外衰减、滑点模型准确度。
 
@@ -738,7 +1137,6 @@ stop信号:  P6→P5→P4→P3→P2→P1 (每步10s grace, 总≤60s)
 ## 二十六、可观测性仪表板
 
 > **定位**：系统运行状态的单一视图——集成本蓝图的 §0.0 健康面板。
-> **对标**：Grafana + Prometheus + Google SRE Monitoring。
 
 ### 26.1 核心面板配置
 
@@ -753,8 +1151,7 @@ stop信号:  P6→P5→P4→P3→P2→P1 (每步10s grace, 总≤60s)
 
 ## 二十七、性能基线
 
-> **定位**：量化系统的性能度量——不只是快，是可靠。
-> **对标**：Hudson River Trading E2E Latency SLA + K8s Resource Requests/Limits。
+> **定位**：量化系统性能度量（可靠优先于速度）。
 
 | 指标 | 目标 | P99上限 |
 |------|:--:|:--:|
@@ -768,7 +1165,6 @@ stop信号:  P6→P5→P4→P3→P2→P1 (每步10s grace, 总≤60s)
 ## 二十八、供应链安全
 
 > **定位**：所有第三方依赖——pip, npm, 数据API——的安全审计。
-> **对标**：OWASP Top 10 + GitHub Dependabot + pip-audit。
 
 ```
 依赖安全: pip-audit 每次 deploy 前——任何已知 CVE > 阻断
@@ -779,8 +1175,7 @@ stop信号:  P6→P5→P4→P3→P2→P1 (每步10s grace, 总≤60s)
 
 ## 二十九、数据质量治理
 
-> **定位**：脏数据 = 脏信号 = 脏交易。数据质量门控在管线入口。
-> **对标**：dbt + Great Expectations + data quality SLA。
+> **定位**：数据质量门控在管线入口。
 
 | 检查 | 方法 | 频率 |
 |------|------|:--:|
@@ -793,8 +1188,7 @@ stop信号:  P6→P5→P4→P3→P2→P1 (每步10s grace, 总≤60s)
 
 ## 三十、知识管理
 
-> **定位**：从 Owner 脑内 → 结构化知识 → 自动提取。不等 Owner"有时间写"。
-> **对标**：Obsidian PKM + MOD-KB-001 + AUTO-KB(§67)。
+> **定位**：知识自动提取。
 
 ```
 知识源: Owner决策 → Session Handover → 自动提取 → KB entries
@@ -806,7 +1200,6 @@ stop信号:  P6→P5→P4→P3→P2→P1 (每步10s grace, 总≤60s)
 ## 三十一、迁移策略
 
 > **定位**：系统演化时——数据迁移、API 迁移、平台迁移。
-> **对标**：AWS Migration Hub + 12-Factor App Backing Services。
 
 ```
 迁移原则: 所有迁移有 recoverable script → no data loss
@@ -817,7 +1210,6 @@ stop信号:  P6→P5→P4→P3→P2→P1 (每步10s grace, 总≤60s)
 ## 三十二、术语表
 
 > **定位**：消除 AI 歧义——统一中文/英文术语。
-> **对标**：Ubiquitous Language (DDD)。
 
 | 中文 | 英文 | 定义 |
 |------|------|------|
@@ -830,8 +1222,7 @@ stop信号:  P6→P5→P4→P3→P2→P1 (每步10s grace, 总≤60s)
 
 ## 三十三、反模式目录
 
-> **定位**：AI 施工最容易犯的错——预录好→预防。
-> **对标**：Google SRE Anti-Patterns + Cursor Rules Best Practices。
+> **定位**：AI施工常见错误预防。
 
 | 反模式 | 问题 | 正确做法 |
 |------|------|------|
@@ -843,8 +1234,7 @@ stop信号:  P6→P5→P4→P3→P2→P1 (每步10s grace, 总≤60s)
 
 ## 三十四、Owner 离线自治
 
-> **定位**：Owner 不在时系统仍能运转——不赌"刚好在线"。
-> **对标**：Google SRE Unattended Ops + 分级决策树(§70)。
+> **定位**：Owner离线时系统自治。
 
 | 模式 | Owner在线 | Owner离线 |
 |------|:--:|------|
@@ -857,7 +1247,6 @@ stop信号:  P6→P5→P4→P3→P2→P1 (每步10s grace, 总≤60s)
 ## 三十五、第三方依赖管理
 
 > **定位**：所有外部依赖——API、库、数据源——的生命周期。
-> **对标**：12-Factor App Dependencies + Dependabot。
 
 ```
 依赖分级:
@@ -870,8 +1259,7 @@ stop信号:  P6→P5→P4→P3→P2→P1 (每步10s grace, 总≤60s)
 
 ## 三十六、人机带宽优化
 
-> **定位**：1人+AI——Owner 时间是最大瓶颈。必须优化信息密度。
-> **对标**：Pareto Principle + Slack Notification Design + Trading HCI(§62)。
+> **定位**：必须优化信息密度。
 
 ```
 Owner带宽分配目标:
@@ -883,8 +1271,7 @@ Owner带宽分配目标:
 
 ## 三十七、模型漂移监控
 
-> **定位**：量化策略的核心死亡方式——缓慢漂移到无效。需要自动检测。
-> **对标**：MLOps Model Drift Detection + Qlib Rolling IC Monitor。
+> **定位**：策略漂移自动检测。
 
 | 漂移类型 | 检测 | 响应 |
 |------|------|------|
@@ -897,7 +1284,6 @@ Owner带宽分配目标:
 ## 三十八、SPOF 消除
 
 > **定位**：任何单点故障不导致全系统崩溃。
-> **对标**：K8s HA + CockroachDB + 舱壁隔离(§63)。
 
 | 原SPOF | 消除策略 |
 |------|------|
@@ -911,7 +1297,6 @@ Owner带宽分配目标:
 ## 三十九、氛围编程质量保障
 
 > **定位**：100% AI 施工的质量度量——WQA 七维评分。
-> **对标**：Google Test Certified + SWE-bench scoring。
 
 ```
 WQA 七维加权评分 (每Session):
@@ -930,7 +1315,6 @@ WQA 七维加权评分 (每Session):
 ## 四十、市场数据管线与回测引擎
 
 > **定位**：数据从 API → 本地 DB → 因子计算 → 策略回测的完整路径。
-> **对标**：Qlib DataHandler + VectorBT + Backtrader architecture。
 
 ### 40.1 市场数据管线
 
@@ -953,7 +1337,6 @@ WQA 七维加权评分 (每Session):
 ## 四十一、订单执行与风控
 
 > **定位**：交易执行的第一个和最后一个防线——销前→定时→销后三层风控。
-> **对标**：Interactive Brokers OMS + OCC Risk Controls + FIX Protocol。
 
 ### 41.1 三层风控时间线
 
@@ -979,7 +1362,6 @@ WQA 七维加权评分 (每Session):
 ## 四十二、量化 ML 工程
 
 > **定位**：特征存储 + 数据泄漏防御 + 训练/推理管线。
-> **对标**：Uber Michelangelo + Qlib + Tecton Feature Store。
 
 ### 42.1 特征存储
 
@@ -1019,8 +1401,7 @@ Inference Pipeline: 实时数据→→→→因子计算→→→模型预测
 
 ## 四十三、运维成熟度
 
-> **定位**：从"能跑"→"跑得稳"。MTTD/MTTR, 告警疲劳, Runbook自动化。
-> **对标**：Google SRE Maturity Model + Incident Command System。
+> **定位**：MTTD/MTTR+告警疲劳防护+Runbook自动化。
 
 ### 43.1 MTTD/MTTR
 
@@ -1049,7 +1430,6 @@ Inference Pipeline: 实时数据→→→→因子计算→→→模型预测
 ## 四十四、氛围编程深层实践
 
 > **定位**：AI 大规模施工的高级技巧。
-> **对标**：Cursor Rules + Continue.dev AI Coding + Windsurf Cascade。
 
 ### 44.1 AI 代码溯源
 
@@ -1094,8 +1474,7 @@ AI Velocity:
 
 ## 四十五、架构基础契约
 
-> **定位**：模块之间的硬约定——比"约定"更强，"越界则系统崩"。
-> **对标**：K8s v1 APIs Guarantee + gRPC protocol + 2PC/XA transactions。
+> **定位**：模块间硬约定——越界则系统崩。
 
 ### 45.1 模块间通信契约
 
@@ -1144,7 +1523,6 @@ Eventual consistency:
 ## 四十六、1人运营保障
 
 > **定位**：单操作者的风险和行为健康——避免 burnout、决策疲劳、过度交易。
-> **对标**：Solo DevOps Pattern + Burnout Prevention + Trading Psychology。
 
 ### 46.1 每日负荷上限
 
@@ -1176,7 +1554,6 @@ Eventual consistency:
 ## 四十七、金融合规与法律
 
 > **定位**：个人量化交易的合规边界——注册要求、AI决策的合法性、MiFID/SEC。
-> **对标**：CFTC Rules + MiFID II Art.17 + SEC Rule 613 + SR 11-7。
 
 ### 47.1 交易重建能力
 
@@ -1201,7 +1578,6 @@ MIiFID II Art.27 Best Execution:
 ## 四十八、策略验证与统计严谨性
 
 > **定位**：Walk-Forward Optimization + Deflated Sharpe Ratio + 多重测试校正。
-> **对标**：Two Sigma Backtesting Framework + Lopez de Prado's Advances。
 
 ### 48.1 Walk-Forward 滑动验证
 
@@ -1234,7 +1610,6 @@ MIiFID II Art.27 Best Execution:
 ## 四十九、智能执行与微观结构
 
 > **定位**：TWAP/VWAP/Implementation Shortfall + Almgren-Chriss 模型 + FIX Protocol。
-> **对标**：Hudson River/KCG Execution Engines + FIX 5.0。
 
 ### 49.1 五种执行算法
 
@@ -1272,7 +1647,6 @@ Market Impact (元):  η·σ·(X/V)^γ + ε
 ## 五十、多策略组合与容量管理
 
 > **定位**：相关性矩阵 + 资金分配 + 容量估计 + 退役标准。
-> **对标**：Bridgewater All-Weather + AQR Portfolio Construction。
 
 ### 50.1 策略组合优化
 
@@ -1305,7 +1679,6 @@ C_max = min(C_liquidity, C_impact)
 ## 五十一、经纪商容灾与应急平仓
 
 > **定位**：多经纪商+故障处理+应急平仓+资金隔离。
-> **对标**：Interactive Brokers Multi-Account + Hedge Fund Prime Broker Setup。
 
 ### 51.1 三级经纪商
 
@@ -1339,7 +1712,6 @@ Emergency Liquidation:
 ## 五十二、可重现性与确定性
 
 > **定位**：6层确定性保证 + 审计重放 + 逐笔确定性。
-> **对标**：NixOS Reproducible Builds + Bitcoin Core Determinsm。
 
 ### 52.1 六层确定性
 
@@ -1369,7 +1741,6 @@ replay:
 ## 五十三、实盘后验证与持续优化
 
 > **定位**：部署验证→A/B实盘对比→滑点回归→税务优化。
-> **对标**：Jane Street Post-Deploy Validation + ITG TCA。
 
 ### 53.1 五维部署后验证
 
@@ -1398,7 +1769,6 @@ Slippage Model:
 ## 五十四、AI 代码审查深度模型
 
 > **定位**：L0-L5 五层审查深度 + 准入标准 + 铁律。
-> **对标**：Google Code Review Guidelines + SWE-bench Verified。
 
 | 层级 | 深度 | 准入条件 | 时间 |
 |:--:|------|------|:--:|
@@ -1418,7 +1788,6 @@ Slippage Model:
 ## 五十五、组合级风险管理与压力测试
 
 > **定位**：VaR/CVaR/Component VaR + 5 历史场景压力 + 危机相关性双重矩阵。
-> **对标**：RiskMetrics + Basel III Stressed VaR + Bridgewater Risk Parity。
 
 ### 55.1 组合风险度量
 
@@ -1454,7 +1823,6 @@ Crisis Correlation Matrix (5×5):
 ## 五十六、波动率目标与动态杠杆
 
 > **定位**：Vol Target=15%框架 + 杠杆约束 + 模型信任度 Warm-up Ramp。
-> **对标**：AQR/Two Sigma Vol Targeting + Risk Parity。
 
 ### 56.1 Vol Target 框架
 
@@ -1487,7 +1855,6 @@ Crisis Correlation Matrix (5×5):
 ## 五十七、因子择时与跨资产配置
 
 > **定位**：5 种市场状态→因子映射 + 6×6 跨资产相关性。
-> **对标**：Two Sigma Factor Timing + AQR Macro Allocation。
 
 ### 57.1 市场状态识别 (HMM, 3 状态)
 
@@ -1511,7 +1878,6 @@ Crisis Correlation Matrix (5×5):
 ## 五十八、交易日历与合约管理
 
 > **定位**：3 交易所日历 + 期货换月规范 + 期权到期。
-> **对标**：Bloomberg/Refinitiv Trading Calendars + CME Roll Schedules。
 
 ### 58.1 交易日历
 
@@ -1543,7 +1909,6 @@ Crisis Correlation Matrix (5×5):
 ## 五十九、运维基础保障
 
 > **定位**：备份验证 × 日志轮替 + 配置漂移 + 管线检查点 + 环境版本化。
-> **对标**：SRE Workbook + Database Reliability Engineering。
 
 ### 59.1 四层备份验证
 
@@ -1585,8 +1950,7 @@ Crisis Correlation Matrix (5×5):
 
 ## 六十、AI 施工质量 SPC
 
-> **定位**：统计过程控制(SPC)→ AI 质量指数。比 WQA 更量化。
-> **对标**：Western Electric SPC Rules + SixSigma + ML Monitoring。
+> **定位**：SPC→AI质量指数(比WQA更量化)。
 
 ### 60.1 七维加权质量评分 (与 §39互补)
 
@@ -1622,8 +1986,7 @@ WE5: 明显趋势→(5+递增) —— Rate consistent problem
 
 ## 六十一、PnL 归因与交易成本分析
 
-> **定位**：L07 Post-Trade Analytics 需要四维归因——因子/行业/风格/TCA。Two Sigma 在 PnL 归因上的投入超过信号研究本身。
-> **对标**：Two Sigma Attribution Model + Brinson Attribution + ITG TCA。
+> **定位**：四维归因——因子/行业/风格/TCA。
 
 ### 61.1 四维归因框架
 
@@ -1649,8 +2012,7 @@ WE5: 明显趋势→(5+递增) —— Rate consistent problem
 
 ## 六十二、日运营节奏与交易会话协议
 
-> **定位**：开盘前检查→盘中监控→收盘对账→批次处理的完整交易日流程。交易时段 Owner 需要短×快×无歧义指令——不是长篇 EXPLORE。
-> **对标**：Two Sigma Trading Day SOP + Jane Street Trading Floor Protocol。
+> **定位**：交易日完整流程+短快无歧义指令。
 
 ### 62.1 5 Phase 交易日流程 (ET)
 
@@ -1677,8 +2039,7 @@ WE5: 明显趋势→(5+递增) —— Rate consistent problem
 
 ## 六十三、系统容错模式深度
 
-> **定位**：Google SRE 不止 Circuit Breaker——需要 Bulkhead(舱壁隔离)+Retry+Backoff+Jitter+Timeout Propagation+Shed Load+4层优雅降级。
-> **对标**：Google SRE Ch.21-23 + Resilience4j + Armory。
+> **定位**：Bulkhead+Retry+Backoff+Jitter+Timeout Propagation+Shed Load+4层优雅降级。
 
 ### 63.1 四种核心模式
 
@@ -1703,8 +2064,7 @@ WE5: 明显趋势→(5+递增) —— Rate consistent problem
 
 ## 六十四、微结构防御与模拟盘保真度
 
-> **定位**：不是一个策略能赚钱而是怎么不被别人赚钱。量化新手99%亏损来源——被HFT抢先、被做市商吃spread、止损被扫。同时模拟盘需要量化保真度差距。
-> **对标**：Optiver/Hudson River Trading Defence Patterns + IB Paper Trading Gap。
+> **定位**：微结构防御+模拟盘保真度。
 
 ### 64.1 五大防御
 
@@ -1730,8 +2090,7 @@ WE5: 明显趋势→(5+递增) —— Rate consistent problem
 
 ## 六十五、因子治理与策略生命周期深化
 
-> **定位**：WorldQuant 的 Factor Review Board 做法——因子不是越多越好。100因子→500→失控。需要准入/去重/正交化/退役完整四阶段。
-> **对标**：WorldQuant Factor Review Board + AQR Factor Zoo。
+> **定位**：因子准入/去重/正交化/退役四阶段。
 
 ### 65.1 四阶段生命周期
 
@@ -1754,8 +2113,7 @@ WE5: 明显趋势→(5+递增) —— Rate consistent problem
 
 ## 六十六、功能开关与部署安全网
 
-> **定位**：Google Dark Launch = 部署≠启用。1人+AI最关键安全网——新代码先部署(暗)→验证→逐步灰度→Owner click ON。事故后自动验证5步。
-> **对标**：Google Dark Launch + Facebook Gatekeeper + LaunchDarkly。
+> **定位**：暗启动→灰度→Owner ON。事故后5步自动验证。
 
 ### 66.1 Feature Flag 体系
 
@@ -1788,8 +2146,7 @@ Step 4: 稳定后清理flag branching code
 
 ## 六十七、AI 自诊断-自修复与知识自动化
 
-> **定位**：SPC 检测退化+AI~全闭环自修复 + AUTO-KB从session自动提取知识。不等Owner"有时间写"OWNER_BRAIN_DUMP.md。
-> **对标**：Continue.dev Auto-Debug + Claude Code Self-Correction + Windsurf Auto-Summarize。
+> **定位**：SPC检测退化+自修复闭环+AUTO-KB知识提取。
 
 ### 67.1 三层自修复闭环
 
@@ -1811,8 +2168,7 @@ Step 4: 稳定后清理flag branching code
 
 ## 六十八、氛围编程确定性保障
 
-> **定位**：氛围编程最大的隐性问题——同一个Prompt，AI明天给你不同的答案。需整合CSCV验证+4层确定性保障+系统复杂度熵度量+复杂度超标时的强制反击。
-> **对标**：Claude Code Determinism + CSCV Protocol + Cursor Controller。
+> **定位**：CSCV验证+4层确定性保障+复杂度熵度量+超标反击。
 
 ### 68.1 跨会话一致性验证 (CSCV)
 
@@ -1859,8 +2215,7 @@ System Entropy (每次commit计算):
 
 ## 六十九、Secrets 生命周期与环境可重建性
 
-> **定位**：不只是"加密存着"——密钥有完整的创建/分发/轮替/吊销/审计生命周期。每日自动验证"换电脑clone→全量测试全绿"。
-> **对标**：HashiCorp Vault Lifecycle + AWS KMS Rotation + 12-Factor App Dev/Prod Parity。
+> **定位**：密钥创建/分发/轮替/吊销/审计生命周期+每日环境可重建验证。
 
 ### 69.1 Secrets 全生命周期
 
@@ -1892,8 +2247,7 @@ System Entropy (每次commit计算):
 
 ## 七十、离线分级应急与全生命周期预算
 
-> **定位**：不只是"冻结"——不同事故等级×不同离线时长=不同响应。同时回测完成时就预设衰减预算。E2E延迟全链路预算分配到每步。代码溯源到行级。
-> **对标**：Google SRE Unattended Ops + Two Sigma Decay Budget + Hudson River Latency Budget + Jane Street Provenance。
+> **定位**：离线分级应急+衰减预算+E2E延迟预算+代码行级溯源。
 
 ### 70.1 离线分级应急决策树
 
@@ -1954,8 +2308,7 @@ P99 > 500ms → 切粗粒度因子(1min→5min update)
 
 ## 七十一、Prompt 工程全生命周期管理
 
-> **定位**：Prompt 是氛围编程的"源代码"——比 Python 代码更需要版本控制和质量保障。专业氛围编程团队会用 `.cursor/rules` 和 `.claude/instructions` 管理 prompt，但缺少系统性生命周期。
-> **对标**：Cursor Rules + Claude Code Custom Instructions + PromptLayer + LangSmith Prompt Hub。
+> **定位**：Prompt版本控制+质量保障+生命周期管理。
 
 ### 71.1 Prompt 版本控制
 
@@ -2029,8 +2382,7 @@ contract:
 
 ## 七十二、AI 上下文窗口策略与幻觉防御
 
-> **定位**：AI 施工最核心的硬约束是上下文窗口——超出则截断/遗忘/幻觉。需要精细的上下文预算管理和幻觉检测体系。
-> **对标**：Anthropic Context Engineering Guide + Google Gemini Long-Context Best Practices + RAG 幻觉检测论文。
+> **定位**：上下文预算管理+幻觉检测体系。
 
 ### 72.1 上下文预算分层
 
@@ -2086,8 +2438,7 @@ Total: ~9000 tokens baseline, 剩余用于产出
 
 ## 七十三、多模型共识与智能体辩论协议
 
-> **定位**：§44.2 提到了 Multi-Agent 辩论，但缺乏具体协议。专业氛围编程需要量化的共识机制——不是"两个 AI 都觉得行"就行。
-> **对标**：Anthropic Constitutional AI + DeepMind Sparrow Debate Protocol + SWE-bench Multi-Agent。
+> **定位**：多模型共识协议+量化决策机制。
 
 ### 73.1 三种共识协议
 
@@ -2139,8 +2490,7 @@ Round 3: 综合裁决
 
 ## 七十四、AI 代码生成标准与项目脚手架
 
-> **定位**：AI 生成代码最大的质量问题不是 bug——是风格不一致、命名混乱、导入随意。需要强制性脚手架和约定——AI 读到规则后自动纠正。
-> **对标**：Google Style Guides + Black/Ruff Auto-format + Cookiecutter Templates。
+> **定位**：强制脚手架+代码约定+自动纠正。
 
 ### 74.1 文件级约定 (AI MUST 遵守)
 
@@ -2209,8 +2559,7 @@ Round 3: 综合裁决
 
 ## 七十五、实盘交易五级 Kill Switch 与安全保障矩阵
 
-> **定位**：§六十六 有 Feature Flag 和 Kill Switch，但部署安全 ≠ 交易安全。需要一个真正的五级 Kill Switch——从单仓位到全系统，每一级有不同的触发条件和恢复规则。
-> **对标**：Two Sigma Kill Switch Hierarchy + Interactive Brokers Risk Controls + CME GC2 Global Circuit Breakers。
+> **定位**：五级Kill Switch——单仓位到全系统+触发条件+恢复规则。
 
 ### 75.1 五级 Kill Switch
 
@@ -2261,8 +2610,7 @@ Step 5: Immutable Audit Log 写入 → 当日全部操作完整?
 
 ## 七十六、模拟盘→实盘过渡与资金渐进协议
 
-> **定位**：模拟盘到实盘不是一次开关——是分阶段逐步建立信任的过程。每一步可回退。
-> **对标**：Two Sigma Graduated Launch + D.E. Shaw Strategy Promotion + IB Paper→Live Best Practices。
+> **定位**：分阶段逐步建立信任，每步可回退。
 
 ### 76.1 五阶段过渡协议
 
@@ -2296,8 +2644,7 @@ MUST: 同一时间最多1个策略在 S3/S4 过渡中
 
 ## 七十七、订单执行质量监控与异常检测
 
-> **定位**：不只是"订单发出去了"——需要 AI 自动检测异常成交模式(价格异常/部分成交异常/延迟异常)并对执行场所进行量化评分。
-> **对标**：ITG/Abel Noser TCA + Hudson River Execution Quality + Interactive Brokers SmartRouting Analytics。
+> **定位**：异常成交检测+执行场所评分。
 
 ### 77.1 四维执行异常检测 (ML+规则混合)
 
@@ -2333,8 +2680,7 @@ T日检查:
 
 ## 七十八、知识连续性与断供因子防护
 
-> **定位**：1个人也可能会摔倒/生病/断网/遗忘。系统必须在没有 Owner 的情况下仍能被另一个人接手。断供因子(Bus Factor)应该在系统启动时就设计进去。
-> **对标**：Bus Factor Risk Assessment + GitLab TeamOps + Apache Software Foundation Governance。
+> **定位**：断供因子防护+系统可接手性。
 
 ### 78.1 断供因子度量
 
@@ -2387,8 +2733,7 @@ Bus Factor = min(关键知识仅1人掌握的组件数, 5)
 
 ## 七十九、本地优先架构与离线自主运行
 
-> **定位**：100% AI 施工可以离线；交易监控应该离线可运行。不能因为 DSL 断了就停摆。本地数据应该完整自给。
-> **对标**：Local-First Software Manifesto + CouchDB/PouchDB + Google Docs Offline Mode。
+> **定位**：离线自主运行+本地数据自给。
 
 ### 79.1 离线能力五级
 
@@ -2430,8 +2775,7 @@ FORBIDDEN:
 
 ## 八十、决策疲劳管理与 Owner 优先级分流
 
-> **定位**：1个人每天能做的优质决策有限(心理学研究: ≈3-5个重大决策/天)。AI 必须承担分流——把 Owner 从"每件事都要想"中解放出来。§四十六 覆盖了 Burnout 预防，但未覆盖决策质量本身。
-> **对标**：Daniel Kahneman Decision Fatigue + Barack Obama Decision Simplification + MakeTime Framework。
+> **定位**：决策分流+疲劳防护。§四十六覆盖Burnout但未覆盖决策质量。
 
 ### 80.1 决策四级分流
 
@@ -2485,8 +2829,7 @@ FORBIDDEN:
 
 ## 八十一、What-If 仿真与灵敏度分析引擎
 
-> **定位**：回测是"从过去看未来"——仿真引擎是"如果X变了会怎样"。Two Sigma 大量使用 Monte Carlo 和应力仿真来理解策略的边界条件。
-> **对标**：Two Sigma Scenario Engine + Bloomberg MARS + RiskMetrics Stress Testing。
+> **定位**：What-If仿真+Monte Carlo+灵敏度分析。
 
 ### 81.1 参数灵敏度扫描
 
@@ -2537,8 +2880,7 @@ Counterfactual Analysis:
 
 ## 八十二、AI 辅助代码考古与文档自动化
 
-> **定位**：随着系统增长(70章→90章, 代码行数指数级增长), 任何人(包括Owner)都无法记住所有决策。AI必须能自动回答"这段代码为什么这样写"。
-> **对标**：Google Code Search + Sourcegraph Cody + GitLens + GitHub Copilot Chat。
+> **定位**：代码考古四问+文档自动化。
 
 ### 82.1 代码考古四问
 
@@ -2574,8 +2916,7 @@ Counterfactual Analysis:
 
 ## 八十三、市场数据源可靠性评分与智能切换
 
-> **定位**：§二十九 定义了数据质量检查(完整性/及时性/有效性/一致性), 但缺少"数据源本身的信用评级"——这个源历史表现如何? 是否在衰退?
-> **对标**：Bloomberg Data Quality Scoring + Morningstar Data Reliability + Exchange Data Certification。
+> **定位**：§二十九有数据质量检查，缺数据源信用评级。
 
 ### 83.1 数据源可靠性五维评分
 
@@ -2619,8 +2960,7 @@ Counterfactual Analysis:
 
 ## 八十四、混沌工程与自动故障演练
 
-> **定位**：不等事故来测试系统——主动注入故障来验证韧性。专业量化机构会定期做"宕机演练"。
-> **对标**：Netflix Chaos Monkey/Chaos Kong + AWS Fault Injection Simulator + Gremlin。
+> **定位**：故障注入+自动演练。
 
 ### 84.1 五类故障注入
 
@@ -2661,8 +3001,7 @@ Counterfactual Analysis:
 
 ## 八十五、经济体制检测与宏观因子覆盖
 
-> **定位**：量化策略的最大杀手不是技术故障——是市场体制变化(Regime Change)。§四十二 有 HMM 状态检测但仅限3个内部状态。需要独立的外部宏观因子体系。
-> **对标**：Bridgewater Economic Regime Model + AQR Macro Factor Suite + Two Sigma Alternative Data。
+> **定位**：宏观因子框架+体制切换预警。§四十二HMM仅限3内部状态。
 
 ### 85.1 五维宏观因子框架
 
@@ -2702,8 +3041,7 @@ Pre-Regime Change Signals (提前1-4周):
 
 ## 八十六、AI 决策可解释性与监管审计深度
 
-> **定位**：当 AI 生成了一笔交易决策，Owner 和(理论上的)监管机构需要理解"为什么"。不仅是合规要求，更是信任和调试的基础。
-> **对标**：D.E. Shaw Model Documentation + MiFID II Algorithmic Trading Disclosure + EU AI Act。
+> **定位**：AI决策可解释性+监管审计就绪。
 
 ### 86.1 AI 交易决策解释链
 
@@ -2756,8 +3094,7 @@ Audit Readiness Check (每季):
 
 ## 八十七、SBOM 生成与依赖情报
 
-> **定位**：§二十八 有供应链安全但不够系统化。专业实践需要完整的 SBOM(Software Bill of Materials)、依赖健康评分和自动化升级建议。
-> **对标**：CycloneDX/SPDX SBOM Standard + Dependabot + Snyk + OpenSSF Scorecard。
+> **定位**：SBOM+依赖健康评分+自动升级。
 
 ### 87.1 SBOM 自动生成
 
@@ -2802,8 +3139,7 @@ AI MUST 在添加新依赖前:
 
 ## 八十八、状态机形式化与正确性验证
 
-> **定位**：多处提到状态机(OMS §41.3, 断路器 §45.4, FeatureFlag §66.1, KillSwitch §75.1)但缺少统一的描述标准和验证方法。
-> **对标**：UML Statecharts + TLA+ Formal Verification + AWS Step Functions + XState。
+> **定位**：统一状态机描述规范+正确性验证。
 
 ### 88.1 统一状态机描述规范
 
@@ -2857,8 +3193,7 @@ statemachine:
 
 ## 八十九、DORA 指标与开发速率度量
 
-> **定位**：不能只度量 AI(WQA §39, SPC §60)——也需要度量整个系统开发流水线的健康度。DORA 四指标是行业标准。
-> **对标**：Google DORA Metrics + Accelerate State of DevOps + LinearB + Waydev。
+> **定位**：DORA四指标+AI开发速率度量。
 
 ### 89.1 DORA 四指标 + AI 特有指标
 
@@ -2899,8 +3234,7 @@ statemachine:
 
 ## 九十、A/B 实验框架与统计严谨性
 
-> **定位**：§四十八 有策略验证的统计严谨性, L13 标记了 Experimentation 但只是骨架。需要一个完整的 A/B 实验框架——不只是回测，是"策略 A vs 策略 B"的科学比较。
-> **对标**：Google/Amazon A/B Testing Framework + Optimizely + Evidently AI。
+> **定位**：A/B实验框架+统计显著性。
 
 ### 90.1 实验设计模板
 
@@ -2953,8 +3287,7 @@ experiment:
 ---
 ## 九十一、企业行为与参考数据管线
 
-> **定位**：拆分、分红、并购、退市、更名、代码变更——企业行为是量化系统最容易被忽视、但出错后果最严重的数据域。一次未处理的分红=因子计算错误=信号失真=回测无效=实盘亏损。专业量化机构有专门的 Corporate Actions 团队。
-> **对标**：Bloomberg CAES/Corporate Actions + SEC EDGAR + JP Morgan Reference Data + S&P GICS Change Tracking。
+> **定位**：七类企业行为处理+复权因子管线。
 
 ### 91.1 七类企业行为必须处理
 
@@ -3008,8 +3341,7 @@ Pipeline:
 
 ## 九十二、热重启与盘中故障恢复协议
 
-> **定位**：§十四 定义了冷启动6Phase拓扑，但盘中故障——系统崩溃、进程僵死、强制重启——需要完全不同的恢复策略。冷启动=一切从零初始化；热重启=保留盘中状态+最小化数据丢失+快速恢复交易能力。
-> **对标**：Jane Street In-Flight Recovery + K8s CrashLoopBackOff + PostgreSQL WAL Recovery。
+> **定位**：冷启动vs热重启+盘中故障恢复。
 
 ### 92.1 冷启动 vs 热重启
 
@@ -3065,8 +3397,7 @@ Resume 前必须全部通过:
 
 ## 九十三、会话并发与文件完整性防御
 
-> **定位**：§二十五 定义了 IDE 间隔离，但这只保证 metadata 级别不冲突。两个 AI session 同时修改同一个 .py 文件→编辑器未 reload→一方的更改会覆盖另一方。需要文件级并发控制和写入冲突检测。
-> **对标**：VS Code File Locking + Git Merge Conflict Detection + SQLite WAL Concurrency + Vim Swap Files。
+> **定位**：文件级并发控制+写入冲突检测。
 
 ### 93.1 四种并发冲突场景
 
@@ -3125,8 +3456,7 @@ Session 启动时:
 
 ## 九十四、硬件容灾与基础设施故障模式
 
-> **定位**：1人+AI 的场景下，硬件故障=可能数天无法恢复。SSD 磨损、RAM 错误、电源故障、散热失效——每一个都是 SPOF。FMEA(§十六)只覆盖了软件故障模式，没有覆盖硬件层面。
-> **对标**：Backblaze Drive Stats + Google Disk Failure Study + NAS/SAN Best Practices + APC UPS Sizing。
+> **定位**：硬件故障模式+基础设施SPOF。FMEA(§十六)仅覆盖软件。
 
 ### 94.1 硬件故障五类
 
@@ -3180,8 +3510,7 @@ SSD 濒死 (SMART warning):
 
 ## 九十五、API 生命周期与弃用治理
 
-> **定位**：任何活得足够久的系统都会面临 API 演化问题。AI 生成的代码调用了 v1 的接口，但 v1 被废弃了→运行错误。需要管理向内(模块间)和向外(第三方 API)两个方向的 API 生命周期。
-> **对标**：Google API Design Guide + Kubernetes API Deprecation Policy + Stripe API Versioning。
+> **定位**：API生命周期管理+弃用协议。
 
 ### 95.1 内部 API 三阶段生命周期
 
@@ -3220,8 +3549,7 @@ SSD 濒死 (SMART warning):
 
 ## 九十六、数据全生命周期与自动化清理
 
-> **定位**：不回缩的日志、不清理的缓存、不复位的临时表——系统终将填满磁盘。§五十九·2 做了日志轮替，§八十二·3 做了死代码退役，但缺少系统性的数据生命周期管理。数据应该有出生、衰老、死亡。
-> **对标**：AWS S3 Lifecycle Policies + Postgres VACUUM + Redis Eviction Policy + Google Cloud Data Lifecycle。
+> **定位**：数据生命周期管理+自动清理。§五十九·2日志轮替+§八十二·3死代码退役。
 
 ### 96.1 数据生命周期五阶段
 
@@ -3261,8 +3589,7 @@ Any disk >85% → 立即清理+Tier迁移加速+Owner通知
 
 ## 九十七、时间同步与时钟纪律
 
-> **定位**：分布式系统最危险的不是错误——是"大家都对，但时间不一样"。行情时间戳、订单时间戳、日志时间戳必须基于同一时钟。1秒的时钟偏差能导致复盘时事件排序完全错乱。
-> **对标**：NIST Time Service + PTP (Precision Time Protocol) + Google TrueTime (Spanner)。
+> **定位**：行情/订单/日志时间戳必须基于同一时钟。1秒偏差→事件排序错乱。
 
 ### 97.1 时间源三级
 
@@ -3303,8 +3630,7 @@ Forbidden:
 
 ## 九十八、实时流式数据架构
 
-> **定位**：§四十 描述了市场数据批处理管线，但在实盘场景中，行情是持续流，不是"每5分钟拉一次"。T+0 或高频策略需要毫秒级的 WebSocket/streaming 处理，而不是 REST 轮询。
-> **对标**：Interactive Brokers TWS API (reqMktData) + Alpaca/Polygon WebSocket + Kafka Streams + Flink。
+> **定位**：流式行情架构+WebSocket处理。
 
 ### 98.1 两轨数据架构
 
@@ -3344,8 +3670,7 @@ WebSocket 连接池:
 
 ## 九十九、静默故障聚合与级联风险防御
 
-> **定位**：最危险的故障不发出告警——静默累积。10个L1故障叠加=1个L3的效果，但每个单独都低于告警阈值。需要聚合评分和级联风险建模，否则系统在"全部正常"中慢慢死去。
-> **对标**：Netflix Atlas Aggregation + AWS Composite Alarms + SLO-based Alerting。
+> **定位**：静默故障聚合+级联风险建模。
 
 ### 99.1 静默故障五类
 
@@ -3395,8 +3720,7 @@ Aggregate Failure Score:
 
 ## 一百、增量审查与部分接受协议
 
-> **定位**：氛围编程最大的实践问题——AI 产出一个500行的变更，Owner 只有2分钟时间审查。全盘接受(ACCEPT)→有风险；全盘拒绝(REVERT)→浪费AI产能。实际上AI经常80%对+20%需要改。需要一个"接受这部分，拒绝那部分"的增量审查协议。
-> **对标**：GitHub Pull Request Line Comments + Code Review Partial Approvals + Cursor Inline Edits。
+> **定位**：增量审查协议+部分接受机制。
 
 ### 100.1 芯片级审查标记
 
@@ -3445,8 +3769,7 @@ Weekly pattern:
 
 ## 一百〇一、基准完整性与样本生存偏差防御
 
-> **定位**：回测依赖于"当时能交易什么"——但在历史中，CSI300 的成分股一直在变。用今天知道的成分股去交易2018年的市场=前视偏差+生存偏差。业界称为"Survivorship Bias"，是回测虚高最大的单一来源(可虚高2-4%年化)。
-> **对标**：CRSP Survivorship Bias Free + Compustat Point-in-Time + WRDS。
+> **定位**：基准成分股历史快照+生存偏差消除。
 
 ### 101.1 基准四维完整性
 
@@ -3489,8 +3812,7 @@ Point-in-Time Universe:
 
 ## 一百〇二、跨环境一致性与平台风险矩阵
 
-> **定位**：开发环境(Windows 11 + Python 3.12)和生产环境(可能同一台机器)的隐性差异——Windows Update 重启、防病毒扫描、WSL vs Native、路径分隔符——这些是非功能性但能杀死系统的问题。1人+1台机器:环境=不可替代。
-> **对标**：12-Factor App Dev/Prod Parity + Docker Multi-Platform + Windows Subsystem for Linux。
+> **定位**：跨环境一致性+Windows风险防护。
 
 ### 102.1 跨环境四维差异
 
@@ -3530,25 +3852,160 @@ Point-in-Time Universe:
 
 ---
 
+## 必备链接
+
+> AI 蓝图编写者**必须**先读取以下所有文件，确认内容已理解后再开始编写。**禁止省略**。**禁止使用相对路径**。
+
+| # | 文件 | module_id | 版本 | 完整绝对路径 | 编写时用途 |
+|---|------|-----------|------|------------|----------|
+| 1 | 元数据注册表 | PS-STD-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则、doc_type词表、frontmatter模板 |
+| 2 | 目录结构标准 | GOV-DOC-002 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\directory-structure-standard.md` | 路径映射、边界判据 |
+| 3 | 治理方法论 | PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` | MTH-012 涌现式设计 + MTH-013 路径合规创建 |
+| 4 | 蓝图架构标准 | PS-STD-005 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\blueprint-architecture-standard.md` | 三级金字塔规范 |
+| 5 | 蓝图模板 | — | v3.5/v3.6 | `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-template.md` | 蓝图编写模板 |
+| 6 | 压缩工作流标准 | GOV-DOC-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\compression-workflow-standard.md` | 产出物规格化 |
+| 7 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | 编号注册 |
+| 8 | 集成总蓝图 | MOD-MASTER-001 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 12系统集成契约 |
+| 9 | 代码构建标准 | GOV-ENG-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 代码头部十字段标准 |
+
 ---
 
-## 一百〇三、变更记录
+## ⚠️ Vibe Coding 蓝图编写铁律
 
-| 版本 | 日期 | 变更内容 |
+> **时态属性**：本节属于**施工声明**——AI 进入蓝图修改/施工时必读。不可改为链接引用——AI 不会主动跳转链接读取，删掉 = 失去防漂移防线。本节永久保留在蓝图中。
+
+| # | 铁律 | 为什么 | 违反后果 |
+|---|------|--------|---------|
+| 1 | **所有路径必须是绝对路径**（含盘符 `D:\`） | AI 零记忆，不知道相对路径的基准在哪 | 文件创建到错误位置 |
+| 2 | **必备链接不可省略**——即使与前序文档重复也必须完整列出 | AI 每次新 session 是零记忆 | AI 跳过不读，施工时缺少关键信息 |
+| 3 | **蓝图必须是最终设计结果**——不记录决策过程、不保存未选方案 | 蓝图是施工依据，不是讨论记录 | 蓝图过厚，关键信息被噪音淹没 |
+| 4 | **产出物路径必须与 GOV-DOC-002 一致** | AI 不知道项目目录规范 | 路径幻觉——文件放错位置 |
+| 5 | **涉及文件范围必须明确列出** | AI 不知道边界在哪 | 范围漂移——改了不该改的文件 |
+| 6 | **容量估算必须写** | AI 不知道系统能容纳多少 | 容量瓶颈——上线后发现不够用 |
+| 7 | **迁移/废弃方案必须写** | AI 不知道旧东西怎么处理 | 断链或垃圾积累 |
+| 8 | **"待定"/"建议"/"按需"等模糊词禁止使用** | AI 无法处理模糊指令 | 执行漂移——AI 自行决定 |
+| 9 | **蓝图必须自包含**——关键信息不能只写"详见XX" | AI 可能不读引用的文件 | 信息缺失 |
+| 10 | **删除文件必须遵守安全删除协议** | 没有git备份，删除不可逆 | 永久丢失 |
+| 11 | **construction_progress 必须与代码实际状态一致** | 标completed但代码不存在=虚假进度 | 重复造轮子或跳过施工 |
+| 12 | **actual_disk_path 必须与 §六 产出物路径一致** | 路径不一致=AI找不到代码 | 搜索失败、导入错误 |
+| 13 | **已实现代码不在蓝图中重复**——§0.1 标记`已实现`的模块，蓝图只保留接口签名（§4），不复制实现代码 | 代码文件是SSoT，蓝图复制代码=双源漂移 | AI改蓝图忘改代码，或改代码忘改蓝图 |
+| 14 | **临时时态内容执行完毕后从蓝图删除**——迁移方案、升级执行计划等临时时态内容，一旦执行完毕即成为历史，从蓝图删除。蓝图只保留永久时态内容 | 蓝图是当前设计文档，不是历史记录 | 蓝图膨胀，关键信息被历史噪音淹没 |
+| 15 | **蓝图内容拆分判定**——职责不同→拆分独立蓝图；职责相同→原地升级 | 职责不同的内容强行塞一个蓝图=职责不清 | AI不知道该读哪个蓝图，跨模块影响无法追踪 |
+
+---
+
+## 蓝图拆分判定标准
+
+> 铁律 #15 的操作定义——当蓝图内容超过 ~800 行或包含多个独立职责域时，MUST 执行拆分判定。
+
+### 判定流程
+
+```
+STEP 1: 识别职责域
+  蓝图中的内容是否属于同一职责域？
+  判定标准：该内容的服务对象、变更频率、依赖关系是否与蓝图主体一致？
+
+STEP 2: 职责域判定
+  ├ 职责相同（同一模块的升级/扩展）→ 原地升级
+  │   条件：服务对象相同 + 变更频率同步 + 依赖关系重叠
+  │   操作：在 §〇 容量升级附录中增量记录
+  │
+  └ 职责不同（独立子系统/独立能力域）→ 拆分独立蓝图
+      条件（满足任一即触发）：
+      a) 有独立的 module_id 前缀
+      b) 有独立的 Phase 路线图和交付节奏
+      c) 有独立的依赖关系图（与蓝图主体的 depends_on 交集 <50%）
+      d) 内容超过 100 行且与蓝图主体无直接数据流
+      操作：创建子蓝图，本蓝图 §5 依赖关系引用子蓝图
+
+STEP 3: 拆分后验证
+  - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
+  - 拆分出的蓝图 belongs_to = 本蓝图 module_id
+  - 本蓝图 §5 依赖关系新增子蓝图引用
+  - blueprint-registry.yaml 同步更新
+```
+
+### 判定示例
+
+| 场景 | 判定 | 理由 |
 |------|------|------|
-| 0.13.0 | 2026-05-08 | 🔧 v0.13.0——审计修复轮（6 项内部一致性问题）。修复: ①新增 §0.0 系统健康面板(四黄金信号+11 SLI SLO目标值+§0.0.4 突破SLO处置流程)——修复6条ai_role_instruction规则+§二十六+§七十五等8处悬空引用；②§7 模块数 25→44 (module-registry.yaml实有44模块)；③B-Track §1.3 表补全 MOD-INF-027(Audit Orchestrator)+MOD-INF-028(Semantic Auditor) 两行缺失条目；④frontmatter摘要 §4 "三线数据流+时序约束"→"跨模块数据流与关键集成点"对齐实际内容+拆分§十六FMEA；⑤REG-MOD-001 entry_count 41→44；⑥导航链 B-Track 条目数 25个→29个(MOD-INF-001~026→001~028)；⑦last_updated+施工落盘日期同步至2026-05-08。蓝图102章不变。 |
-| 0.12.0 | 2026-05-06 | 🎉 v0.12.0——第七轮深度诊断18盲点全注入(实际新增12个章节+6个AI规则=18个主题)。AI规则: 64→76条(+企业行为独立管线/热重启六步协议/ZephyrLock文件锁/每日SMART+温度+UPS硬检/API三阶段生命周期Active→Deprecated→Removed/数据Hot→Warm→Cool→Cold→Purge五阶段生命周期+每日AutoHousekeep/三源NTP时钟偏差监控+ISO8601时间戳/Stream轨WebSocket优先+断流60s暂停/静默故障AFS聚合评分级联防御/Chunk级增量审查三元态/回测Pool Point-in-Time+退市≠删除/环境幂等可重建+Win11风险矩阵)；分派表: 69→81域(+企业行为/热重启/会话并发/硬件容灾/API生命周期/数据生命周期/时间同步/流式数据/静默故障/增量审查/基准完整性/跨环境一致性)。新增: §九十一 企业行为与参考数据管线(七类CA处理+除权除息日模式+每日5项检查+回溯修复协议) + §九十二 热重启与盘中故障恢复协议(冷启动vs热重启对比+六步恢复协议+健康检查) + §九十三 会话并发与文件完整性防御(四种冲突场景+ZephyrLock文件锁机制+冲突检测预分配) + §九十四 硬件容灾与基础设施故障模式(SSD/RAM/电源/散热五类故障+SMART面板+断电/电力恢复四步+硬件容灾预算) + §九十五 API生命周期与弃用治理(内部API三阶段+AI自动适配+第三方变更监控+代码适配流程) + §九十六 数据全生命周期与自动化清理(Hot→Warm→Cool→Cold→Purge五阶段+AutoHousekeep调度+数据遗忘权) + §九十七 时间同步与时钟纪律(NTP三源+偏差监控+ISO8601时间戳规范+禁止模式) + §九十八 实时流式数据架构(Batch/Stream双轨+WebSocket连接池+背压防御+乱序事件重组) + §九十九 静默故障聚合与级联风险防御(五类静默故障+AFS聚合评分+级联路径建模) + §一百 增量审查与部分接受协议(Chunk级三元态ACCEPT/REJECT/MODIFY+审查时间预算+增量质量度量) + §一百〇一 基准完整性与样本生存偏差防御(PIT Universe+四维完整性+基准健康月度检查) + §一百〇二 跨环境一致性与Windows平台风险矩阵(Win11 vs WSL2四维差异+6项Win风险缓解+幂等环境setup脚本)。蓝图: 90章→102章。七轮累计: 33+31+20+18+20+20+18=160盲点全覆盖。 |
-| 0.11.0 | 2026-05-06 | 🎉 v0.11.0——第六轮深度诊断20盲点全注入。AI规则: 44→64条(+Prompt版本控制+回归测试/上下文预算+幻觉检测/多模型共识/代码脚手架+禁止模式/KillSwitch五级+盘前检查+收盘对账/模拟→实盘五阶段过渡/订单执行质量+经纪商评分/断供因子+隐性知识提取/本地优先+离线五级/决策四级分流+时间窗口/参数灵敏度+MonteCarlo破产概率/混沌工程+故障注入演练/宏观体制切换/交易决策解释链/SBOM+依赖健康/状态机形式化/DORA四指标+AI速率/A/B实验框架)；分派表: 49→69域(+Prompt工程/上下文窗口+幻觉/多模型共识/代码生成标准/Kill Switch/模拟→实盘/订单执行质量/知识连续性/本地优先/决策疲劳/What-If仿真/代码考古/数据源可靠性/混沌工程/经济体制/AI可解释性/SBOM/状态机/DORA指标/A/B实验)。新增: §七十一 Prompt全生命周期管理(Prompt版本控制+回归测试+Output契约+PES评分) + §七十二 AI上下文窗口策略与幻觉防御(五级预算+渐进式加载+裁剪规则+三级幻觉检测+自动修复) + §七十三 多模型共识与智能体辩论协议(三种共识协议+结构化辩论格式+模型能力加权+异议升级) + §七十四 AI代码生成标准与项目脚手架(文件级约定+模块模板+代码头标准+禁止模式检测) + §七十五 实盘交易五级Kill Switch与安全保障矩阵(五级开关+盘前8项检查+盘中异常响应+收盘五步对账) + §七十六 模拟→实盘过渡与资金渐进协议(五阶段过渡+回退触发器+跨策略互斥) + §七十七 订单执行质量监控与异常检测(四维异常+经纪商评分+结算监控) + §七十八 知识连续性与断供因子防护(BusFactor度量+自动接手手册+知识资产清单+脑Dump计划) + §七十九 本地优先架构与离线自主运行(五级离线能力+恢复同步+数据本地化) + §八十 决策疲劳管理与Owner优先级分流(四级分流+决策卡片+时间窗口+决策模式检测) + §八十一 What-If仿真与灵敏度分析引擎(参数扫描+MonteCarlo+破产概率+反事实回测) + §八十二 AI辅助代码考古与文档自动化(考古四问+AUTO-DOC+死代码退役) + §八十三 市场数据源可靠性评分与智能切换(五维评分+源衰退预警+智能切换+数据补齐) + §八十四 混沌工程与自动故障演练(五类故障注入+演练日历+失败升级) + §八十五 经济体制检测与宏观因子覆盖(五维宏观因子+体制映射+切换预警) + §八十六 AI决策可解释性与监管审计深度(解释链+模型卡+审计就绪) + §八十七 SBOM生成与依赖情报(自动SBOM+依赖健康五维评分+升级自动化) + §八十八 状态机形式化与正确性验证(统一YAML规范+自动测试生成+崩溃协调) + §八十九 DORA指标与开发速率度量(四指标+AI特有+速率健康面板) + §九十 A/B实验框架与统计严谨性(实验模板+显著性计算+结果归档)。蓝图: 70章→90章, ~1600→~2600+行。六轮累计: 33+31+20+18+20+20=142盲点全覆盖。 |
-| 0.10.0 | 2026-05-05 | 🎉 v0.10.0——第五轮深度诊断20盲点全注入。AI规则: 34→44条(+日运营节奏/PnL归因/容错模式Bulkhead+Backoff+Jitter/因子治理/FeatureFlag暗启动/Secrets轮替/每日环境可重建/AI自诊断修复/跨会话Prompt一致性/离线分级决策)；分派表: 39→49域(+PnL归因/日运营节奏/系统容错模式/微结构防御+模拟保真度/因子治理/功能开关+部署安全网/AI自诊断+知识自动化/氛围编程确定性/Secrets生命周期+环境可重建/离线分级应急+全生命周期预算)。新增: §六十一 PnL归因与TCA(4维归因:因子/行业/风格/TCA+每日报告格式) + §六十二 日运营节奏与交易会话协议(5Phase交易日流程+快捷指令+禁止交易时段长EXPLORE) + §六十三 系统容错模式深度(Bulkhead+Retry+Backoff+Jitter+Timeout+ShedLoad+4层优雅降级) + §六十四 微结构防御与模拟盘保真度(5大防御+保真度因子FF模型) + §六十五 因子治理与策略生命周期深化(4阶段:准入→去重→监控→退役+正交化管线) + §六十六 功能开关与部署安全网(3类Flag+暗启动4步+事故后5步自动验证) + §六十七 AI自诊断-自修复与知识自动化(3层自修复闭环+AUTO-KB知识提取) + §六十八 氛围编程确定性保障(CSCV验证+4层确定性+复杂度熵度量+强制反击) + §六十九 Secrets生命周期与环境可重建性(5阶段密钥生命周期+90天轮替日历+每日Auto-CLEAN-BUILD) + §七十 离线分级应急与全生命周期预算(5×3决策矩阵+衰减结构预算+E2E延迟预算+行级代码溯源)。蓝图: 16章→70章, ~290→~1600+行。五轮累计: 33+31+20+18+20=122盲点全覆盖。 |
-| 0.1.0 | 2026-05-04 | beta 创建——系统总蓝图初版。三级金字塔顶点就位：系统全景拓扑（14C+12B）、架构原则（5项+5铁律）、ADR索引、跨模块数据流、蓝图导航链、令牌预算层级、运行时平面视图。 |
-
+| 本蓝图中"容量升级方案"（§〇-A~§〇-H） | **原地** | 服务对象相同 + 变更频率同步 + 依赖关系完全重叠 |
+| 本蓝图中"C-Track 业务蓝图"（§四十~§一百〇二） | **拆分** | 独立业务域 + 独立Phase + 与主体depends_on交集<30% |
 
 ---
 
-## 施工落盘确认（2026-05-08 审计）
+## 治理信息
 
-| 维度 | 状态 |
-|------|------|
-| construction_progress | completed（文档层面） |
-| 文档路径 | docs/03_modules/_sys-master/blueprint.md (本文档自身) |
-| 说明 | 架构/集成文档——定义跨模块契约与集成标准 |
+### SSoT 声明
+
+| 内容 | 真源 | 非真源 |
+|------|------|--------|
+| 系统全景拓扑 | **本文档 §一** | — |
+| 架构原则 | **本文档 §四** | — |
+| ADR 索引 | **本文档 §三** | — |
+| 集成契约 | MOD-MASTER-002 §二 | — |
+| CBAC 矩阵 | MOD-MASTER-004 §十五 | — |
+| 容量升级 | MOD-MASTER-003 §-1/§-2 | — |
+
+**任何与本蓝图冲突的系统定义，以本蓝图为准。**
+
+### 消费者注册表
+
+| Tier | 消费者 | 依赖内容 |
+|:----:|--------|---------|
+| Tier 1 | MOD-MASTER-001 | 系统拓扑+架构原则 |
+| Tier 1 | 所有模块蓝图 | §0 分派表+§一 系统拓扑 |
+| Tier 2 | PS-STD-005 | 三级金字塔规范 |
+
+### 变更同步规则
+
+| 变更类型 | Tier 1（下游蓝图） | Tier 2（集成系统） |
+|---------|------------------|------------------|
+| 系统拓扑变更 | 通知 MOD-MASTER-001 | 更新 blueprint-registry.yaml |
+| 架构原则变更 | 通知所有模块蓝图 | 更新 project_rules.md |
+| ADR 变更 | 通知相关模块蓝图 | 更新决策记录 |
+
+### 修改条件
+
+| 变更类型 | 审批要求 |
+|---------|---------|
+| 系统拓扑变更 | 需 Owner 审批 |
+| 架构原则变更 | 需 Owner 审批 + 通知所有消费者 |
+| ADR 变更 | AI 可自主记录 |
+
+### 负向责任
+
+| # | 本蓝图不涉及 | 由谁负责 |
+|---|-------------|---------|
+| 1 | 具体的 CT-* 集成契约定义 | MOD-MASTER-002 §二 负责 |
+| 2 | 具体的模块实现 | 各模块蓝图 (MOD-INF-*) 负责 |
+| 3 | 容量升级的详细设计 | MOD-MASTER-003 负责 |
+
+### 触发条件
+
+| 场景 | AI 应读取本蓝图 |
+|------|---------------|
+| 新 AI session 冷启动 | 必须读——这是进门第一站 |
+| 需要了解全系统拓扑 | 读 §一 系统全景拓扑 |
+| 需要定位子系统任务域 | 读 §零 分派表 |
+| 需要了解架构原则 | 读 §四 架构原则 |
+| 需要门控检查列表 | 读 §五 46 个门控检查 |
+
+### 导航路径
+
+| 步骤 | 操作 |
+|:---:|------|
+| 1 | 读本蓝图 §零 分派表 → 定位你的任务域 |
+| 2 | 读 §一 系统全景拓扑 → 了解全系统结构 |
+| 3 | 按分派表跳转到下级蓝图（MOD-MASTER-001 或具体模块蓝图） |
+| 4 | 如需集成契约细节 → 读 baseline §二 CT-* 契约总表 |
+| 5 | 如需具体施工步骤 → 读对应模块蓝图 §16 |
+
+### 漂移防护
+
+| 修改本文件 | 必须同步更新 |
+|-----------|------------|
+| 系统拓扑变更 | MOD-MASTER-001 (集成总蓝图) + blueprint-registry.yaml |
+| 架构原则变更 | .trae/rules/project_rules.md + 所有模块蓝图 |
+| 分派表变更 | 对应子系统蓝图 §0 分派表 |
+| 门控检查变更 | src/zephyr/gates/_registry.yaml |

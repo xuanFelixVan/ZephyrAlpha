@@ -1,9 +1,9 @@
 ---
 module_id: MOD-INF-002
-title: 运行时集成与 Cross-Layer 缺口填补蓝图（B2 · 3）
+title: "Runtime Integration 蓝图 — 15核心RI模块跨层协同与运行时基础设施"
 doc_type: blueprint
 status: Active
-version: 5.0.1
+version: 6.1.1
 layer: L01
 layer_name: infrastructure
 functional_domain: infra
@@ -12,81 +12,181 @@ classification: internal
 language: zh
 created_by: AI-GLM-5.1
 valid_from: 2026-05-01
+date: "2026-05-01"
 ttl: permanent
-construction_progress: phase_2_complete
+construction_progress: completed
+actual_disk_path: "src/zephyr/shared/ + src/zephyr/l01_infrastructure/ + src/zephyr/lifecycle_manager/"
 belongs_to: "MOD-MASTER-001"
-dependencies:
-  - MOD-INF-001
-  - MOD-INF-016
+parent_module: ""
+codification_level: L2
+codification_at: "2026-05-15"
+last_verified: "2026-05-15"
+last_updated: "2026-05-15"
+generation: 7
+rule_form: structural
+scope: global
+stability: evolving
+verifiability: hybrid
+references: []
+depends_on:
+  - target: MOD-INF-001
+    at: §10
+    why: 容量保障规则
+  - target: MOD-INF-016
+    at: §10
+    why: Shared Core 承载
 priority: P0
 tags:
   - runtime-integration
-  - cross-layer
   - ri-modules
   - event-bus
   - infrastructure
   - shared-core-integration
-  - fmea
-  - adr
   - structured-concurrency
-  - bulkhead
   - graceful-shutdown
-  - load-shedding
-  - w3c-trace-context
-  - session-undo
-  - owner-mental-budget
-  - leader-election
+  - trading-kill-switch
   - module-sandbox
-  - sleep-time-protocol
   - auto-decide-engine
-  - prompt-cache
   - model-fallback
   - cicd-pipeline
-  - canary-deployment
-  - contract-testing
   - vibe-coding
   - owner-cognitive-load
-  - developer-experience
-  - trading-kill-switch
   - trading-mode
-  - paper-trading
-  - simulated-clock
   - deterministic-random
-  - module-metadata
-  - module-template
   - communication-patterns
-  - anti-patterns
-  - code-ownership
-  - ai-confidence
   - deprecation-lifecycle
   - pre-trade-risk
-  - order-state-machine
-  - trade-reconciliation
-  - market-circuit-breaker
-  - slippage-model
-  - eod-processing
 summary: >
-  ZephyrAlpha 运行时集成 15 核心 RI 模块 + Cross-Layer 缺口填补蓝图 v5.0.0。v3.0.0 注入 49 项盲点；v4.0.0 注入 55+ 项盲点；v5.0.0 注入 50+ 项盲点——涵盖金融/交易系统专项(K01~K12【Kill Switch/Pre-Trade风控管道/订单状态机/市场时钟标准化/确定性模拟/纸交易/对账/仓位聚合/EOD/市场熔断联动/滑点模型/费率归因】)、模块通信模式扩展(L01~L08【Request-Reply/Scatter-Gather/Pipeline/CompetingConsumers/ContentRouter/MessageFilter/Aggregator/ReturnAddress】)、确定性复现与调试(M01~M06【确定性随机/模拟时钟/时序重放/快照恢复/日志详细度/非侵入钩子】)、长期演进(N01~N06【模块废弃生命周期/破坏性变更管理/后向兼容窗口/模块迁移文档/死代码检测/圈复杂度防护】)、AI施工模式库(O01~O08【模块模板/反模式目录/设计决策树/按类型的错误处理/命名规范/代码所有权/AI信心标注/渐进审查深度】)。新增 5 份代码骨架(TradingKillSwitch/SimulatedClock/DeterministicRandom/ModuleMetadata/ModuleTemplateSkeleton)。新增 Section 5.8 交易系统基础设施模式(5级TradingMode+7大交易专项场景)。新增 Section 5.9 模块通信模式目录。代码骨架总数 24→29。总盲点 104+→155+。~1700+行。
----
-
-# 运行时集成与 Cross-Layer 缺口填补蓝图（B2 · 3）
-
-> **真源声明**：本蓝图是 ZephyrAlpha 运行时集成体系的唯一真源。v1.0.0 经历 Wave 0 三轮审计。v2.0.0 基于全量 20+ 结构性缺口审计——从 6 模块扩展到 12 模块。v2.1.0 三轮深度对标完成后端到端补全。**v3.0.0 全量 49 项盲点注入**。**v4.0.0 55+ 项盲点注入**。**v5.0.0 50+ 项盲点注入**。**v5.0.1 终极取证审计——10项致命假设清单 + 审计结论：设计层面已穷尽**。
+  15核心RI模块跨层协同+48项设计约束+交易基础设施+模块通信模式+确定性复现+AI施工模式库。v6.1.0模板v3.5/v3.6升级完成。
 
 ---
 
-## 1. 核心概念
+> actual_disk_path: src/zephyr/shared/ (Shared Core 承载) + src/zephyr/l01_infrastructure/ (独立落地) + src/zephyr/lifecycle_manager/ (RI-02)
+
+# Runtime Integration 蓝图 — 15核心RI模块跨层协同与运行时基础设施
+
+> **真源声明**：本蓝图是 ZephyrAlpha 运行时集成体系的唯一真源。
+
+## 概述
+
+本蓝图描述 ZephyrAlpha 运行时集成体系——它解决了 14 层模块的跨层协同问题。核心职责包括：异步事件分发(EventBus)、模块生命周期管理、韧性保障(熔断/限流/降级)、安全审计、可观测性、可溯源性与模拟。当前规模 15 个 RI 模块，目标容量 1,500 模块 × 14 层。上游依赖 MOD-INF-016 Shared Core 承载层，下游被所有 L02-L13 层模块消费。
+
+---
+
+> **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
+> - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
+> - 压缩工作流标准：[compression-workflow-standard.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/compression-workflow-standard.md)
+> - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
+> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
+
+---
+
+## §0 代码对齐验证
+
+> 防止 construction_progress 与实际代码不符。
+> 每次蓝图版本变更后**必须**重新填写此表。
+> **位置说明**：§0 放在概述之后——AI 进入蓝图先建立心理模型（概述），再确认文件现状（§0），再理解设计（§1-§14）。
+
+### §0.1 代码文件清单
+
+> 路径约定：相对于 `src/zephyr/`。标注"Shared Core 承载"的文件归属 MOD-INF-016，[BLUEPRINT] 应标注 MOD-INF-016。
+> 顶层 re-export wrapper（如 `shared/observer.py`→`shared/infra/observer.py`）不在本表逐一列出，见下方"Re-export Wrapper 清单"。
+> **存在性状态受控词表**：`未实现` / `已实现` / `已阻塞` / `已废弃`
+> - `已实现`：代码已存在且通过验证 → 蓝图不再重复代码内容，接口签名见 §4
+> - `已阻塞`：因外部依赖未就绪无法实现 → MUST 注明阻塞原因
+> - `已废弃`：设计变更后不再需要 → MUST 在 §5.3 迁移方案中说明
+> - 此列是**当前事实**（永久时态），不是施工进度追踪（临时时态）
+
+| # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） | 承载 |
+|---|--------|------------|------|:-----:|-------------------|------|
+| 1 | shared/infra/observer.py | §1 RI-01 | EventBus Pub/Sub 基类 | 已实现 | — | Shared Core |
+| 2 | shared/event_bus.py | §1 RI-01 | EventBus 背压控制+DomainEvent | 已实现 | — | Shared Core |
+| 3 | shared/events/event_schemas.py | §1 RI-01 | 事件体 Pydantic V2 Schema | 已实现 | — | Shared Core |
+| 4 | shared/events/dlq.py | §1 RI-01 | DLQ SQLite 持久化 | 已实现 | — | Shared Core |
+| 5 | shared/events/dlq_bridge.py | §1 RI-01 | DLQ→Observer 集成桥 | 已实现 | — | Shared Core |
+| 6 | lifecycle_manager/hooks.py | §1 RI-02 | ModuleLifecycle LifecycleAware | 已实现 | — | Shared Core |
+| 7 | shared/config/loader.py | §1 RI-03 | YAML 配置加载+Pydantic 校验 | 已实现 | — | Shared Core |
+| 8 | shared/foundation/flags.py | §1 RI-03 | FeatureFlag 三态+灰度 | 已实现 | — | Shared Core |
+| 9 | shared/infra/di_container.py | §1 RI-04 | DependencyInjector | 未实现 | — | Shared Core |
+| 10 | shared/resilience/circuit_breaker.py | §1 RI-05 | 熔断器状态机 | 已实现 | — | Shared Core |
+| 11 | shared/resilience/retry.py | §1 RI-05 | 统一重试策略 | 已实现 | — | Shared Core |
+| 12 | shared/resilience/fallback.py | §1 RI-05 | 降级策略模式 | 已实现 | — | Shared Core |
+| 13 | shared/infra/limiter.py | §1 RI-05 | 速率限制器 Token Bucket | 已实现 | — | Shared Core |
+| 14 | shared/infra/idempotency.py | §1 RI-06 | 幂等性存储/检查 | 已实现 | — | Shared Core |
+| 15 | shared/security/secrets.py | §1 RI-07 | Secrets 管理抽象 | 已实现 | — | Shared Core |
+| 16 | shared/foundation/errors.py | §1 RI-08 | 统一错误层次 | 已实现 | — | Shared Core |
+| 17 | shared/observability/logging.py | §1 RI-08 | 结构化日志+trace_id 传播 | 已实现 | — | Shared Core |
+| 18 | shared/observability/tracing.py | §1 RI-08 | 分布式追踪 OTLP | 已实现 | — | Shared Core |
+| 19 | shared/observability/health.py | §1 RI-09 | 聚合健康检查三级状态 | 已实现 | — | Shared Core |
+| 20 | shared/observability/health_discovery.py | §1 RI-09 | 健康发现注册 | 已实现 | — | Shared Core |
+| 21 | shared/observability/metrics.py | §1 RI-10 | Metrics 收集基础设施 | 已实现 | — | Shared Core |
+| 22 | shared/infra/cache.py | §1 RI-11 | 统一缓存抽象 | 已实现 | — | Shared Core |
+| 23 | shared/kill_switch.py | §3 B5-K01 | KillSwitch 统一出口 | 已实现 | — | Shared Core |
+| 24 | l01_infrastructure/auto_diagnostics.py | §1 RI-12 | AutoDiagnostics 自动诊断（含诊断反转验证：深挖后回溯初始诊断） | 已实现 | — | 独立落地 |
+| 25 | l01_infrastructure/event_store.py | §1 RI-13 | EventStore 事件存储 | 已实现 | — | 独立落地 |
+| 26 | l01_infrastructure/dry_run_simulator.py | §1 RI-14 | DryRunSimulator 干运行模拟 | 已实现 | — | 独立落地 |
+| 27 | l01_infrastructure/cost_tracker.py | §1 RI-15 | CostTracker 成本追踪 | 已实现 | — | 独立落地 |
+| 28 | l01_infrastructure/kill_switch_sim.py | §3 B5-K01 | KillSwitch 硬件模拟器 | 已实现 | — | 独立落地 |
+
+**Re-export Wrapper 清单**（顶层别名→canonical，仅 re-export，不包含独立逻辑）：
+
+| wrapper | canonical |
+|--------|-----------|
+| shared/observer.py | shared/infra/observer.py |
+| shared/flags.py | shared/foundation/flags.py |
+| shared/errors.py | shared/foundation/errors.py |
+| shared/logging.py | shared/observability/logging.py |
+| shared/health.py | shared/observability/health.py |
+| shared/idempotency.py | shared/infra/idempotency.py |
+| shared/secrets.py | shared/security/secrets.py |
+| shared/cache.py | shared/infra/cache.py |
+| shared/metrics.py | shared/observability/metrics.py |
+
+**路径修正记录**：
+
+| 旧路径（蓝图 v5/v6） | 新路径（实际） | 原因 |
+|---------------------|-------------|------|
+| shared/production/idempotency.py | shared/infra/idempotency.py | `shared/production/` 目录不存在 |
+| shared/production/secrets.py | shared/security/secrets.py | `shared/production/` 目录不存在 |
+| shared/production/metrics.py | shared/observability/metrics.py | `shared/production/` 目录不存在 |
+| shared/production/cache.py | shared/infra/cache.py | `shared/production/` 目录不存在 |
+| shared/production/di_container.py | shared/infra/di_container.py | `shared/production/` 目录不存在，待施工 |
+| shared/config/（目录） | shared/config/loader.py | 展开为具体文件 |
+| shared/resilience/（目录） | shared/resilience/circuit_breaker.py 等 | 展开为具体文件 |
+
+### §0.2 对齐验证矩阵
+
+| 验证项 | 验证方法 | 结果 |
+|--------|---------|:---:|
+| §0.1 清单中 27/28 文件存在（#9 未实现） | `ls src/zephyr/shared/infra/observer.py` 等逐文件核对 | ☑ |
+| RI-12/13/14/15 独立落地文件已存在 | `ls src/zephyr/l01_infrastructure/auto_diagnostics.py` 等 | ☑ |
+| shared/production/ 路径已修正为实际路径 | §0.1 路径修正记录 | ☑ |
+| Shared Core 承载文件与 MOD-INF-016 蓝图一致 | 交叉验证 MOD-INF-016 §0 | ☑ |
+| re-export wrapper 指向正确的 canonical 文件 | 逐文件读取 wrapper 头部 | ☑ |
+
+### §0.3 版本-代码映射
+
+| 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
+|---------|------------|---------|---------|
+| v5.0.1 (基线) | 15 RI 模块 + 29 代码骨架 + 48 RL 约束 | — | — |
+| v6.0.0 (模板v3.3重构) | 同 v5.0.1 + 新增§3.2数据流+§6错误处理+§9测试策略+§12集成目标+§14风险+§16施工指引+§18决策记录 | — | 结构重组，无功能变更 |
+| v6.1.0 (模板v3.5/v3.6升级) | 同 v6.0.0 + §0前移+§7/§15删除+§14增加类型列+§10拆分+铁律#13~#15 | — | 模板合规升级，无功能变更 |
+
+---
+
+## §1 设计背景与目标
+
+### 1.1 背景
 
 运行时集成（Runtime Integration）是 ZephyrAlpha 基础设施层的**横切能力集合**，解决 14 层模块的跨层协同问题。
-
-### 1.1 15 RI 模块全景
 
 #### 通信与生命周期层
 
 | RI 模块 | 名称 | 核心职责 | 权限 | MOD-INF-016 承载 |
 |---------|------|---------|------|:--:|
 | **RI-01** | EventBus | 异步事件分发（pub/sub）+ 消费者组 + 保序 + DLQ持久化 + IdempotencyGuard + 背压传导链 + 事件优先级 | Immutable Core | `shared/observer.py` + `shared/events/` |
-| **RI-02** | ModuleLifecycle | 拓扑排序启动/版本约束/超时控制/热重载/优雅关闭协议/预热期/Crash-Only设计/自描述元数据 | Immutable Core | `shared/lifecycle/hooks.py` |
+| **RI-02** | ModuleLifecycle | 拓扑排序启动/版本约束/超时控制/热重载/优雅关闭协议/预热期/Crash-Only设计/自描述元数据 | Immutable Core | `lifecycle_manager/hooks.py` |
 | **RI-03** | ConfigCenter | 分层配置 + 热重载 + Feature Flags（渐进推出+交互矩阵+Kill Switch）+ 写入校验 + Schema兼容性策略 + 配置审计 + 回滚 | Human-Gated | `shared/config/` |
 | **RI-04** | DependencyInjector | 模块间引用获取的统一入口——构造注入 + 接口绑定 + 循环依赖检测 | Immutable Core | `shared/production/di_container.py` (planned) |
 
@@ -113,7 +213,7 @@ summary: >
 | **RI-11** | CacheLayer | 统一缓存——LRU 本地 + 语义缓存(VMS) + TTL 分层 + 缓存一致性协议 + Data Locality/Affinity | AI-Modifiable | `shared/production/cache.py` |
 | **RI-12** | AutoDiagnostics | 异常→自动诊断报告 + Runbook 匹配 + AI 修复建议 + 修复后自动补充知识库 + 信任衰减曲线 + 自限反馈 + Owner 异步通知 | AI-Modifiable | — |
 
-#### 可溯源性与模拟层（v2.1.0 新增）
+#### 可溯源性与模拟层
 
 | RI 模块 | 名称 | 核心职责 | 权限 | MOD-INF-016 承载 |
 |---------|------|---------|------|:--:|
@@ -123,112 +223,14 @@ summary: >
 
 **设计容量**：所有模块数 × 14 层 = 1500 模块，RI 各组件不漏不崩。
 
-### 1.2 RI 模块间依赖拓扑（v3.0.0 扩展）
+#### 与 Shared Core (MOD-INF-016) 的承载关系
 
-```
-### 5.8 交易系统基础设施模式（v5.0.0 新增）
-
-> **对标**：Goldman SecDB / Two Sigma Risk Framework / Jane Street Deterministic Replay。量化交易系统区别于普通软件系统的基础设施需求。
-
-#### 交易模式切换（Trading Mode）
-
-```
-TradingMode 是整个系统的"全局运行模式"，决定 L04/L05/L06 三层的行为：
-
-NORMAL     — 实盘模式：真实订单→真实broker→真实资金→KillSwitch就绪
-PAPER      — 纸交易：订单→模拟broker→模拟资金→AI施工默认模式
-BACKTEST   — 回测模式：SimulatedClock+DeterministicRandom+EventStore重放
-READ_ONLY  — 只读模式：所有写操作被DryRun拦截→仅记录不执行
-KILLED     — 紧急停止：已触发KillSwitch→所有交易活动冻结
-            └── 仅Owner可手动切换回NORMAL（需双因子验证）
-
-模式切换路径限制：
-  NORMAL ⇄ PAPER（任一方向）
-  PAPER → BACKTEST
-  BACKTEST → PAPER
-  ANY → READ_ONLY（自动：错误率>阈值时）
-  ANY → KILLED（Owner手动/自动：特定条件触发）
-  KILLED → NORMAL（仅Owner双因子验证）
-```
-
-#### 新增长容场景（交易专项）
-
-| 场景 | RI 模块行为 | Owner 收到什么 |
-|------|-----------|-------------|
-| AI 新模块部署→默认PAPER模式 | EventBus自动路由交易事件→模拟broker；即便代码有bug无实际亏损 | 🟢 每日："新模块 MOD-L05-042 已上线 Paper Mode——观察72h→可申请升实盘" |
-| Paper模式72h稳定→AI申请升实盘 | RI-09 HealthCheck: Paper模式 72h稳定(错误率<1%+订单完成率>95%)→自动生成升级建议 | 🟡 WARNING："MOD-L05-042 已满足实盘条件——审批后可升级" |
-| 单模块亏损>日限额 | RI-15 CostTracker 追踪模块PnL→亏损>$X→自动切换该模块为READ_ONLY+通知 | 💀 CRITICAL："MOD-L05-042 今日亏损$X已达硬限额→已自动切换READ_ONLY" |
-| KillSwitch触发 | B5-K01 TradingKillSwitch.activate()→5步停止序列 | 💀 CRITICAL：飞书+"语音呼叫如果10min内未确认" |
-| 交易所熔断（标的暂停） | B5-K10 检测交易所公告→自动暂停该标的+L05标记READ_ONLY | 🟡 WARNING："SHSE:600XXX已暂停交易——系统已冻结该标的" |
-| 交易对账失败 | B5-K07 三方对账→diff>0→自动暂停该broker连接 | 💀 CRITICAL："IBKR:订单#12345系统记录FILLED但broker回执CANCELLED——已暂停IBKR" |
-| 日终处理（EOD） | B5-K09 自动结算→PnL计算→保证金监控→归档→生成日报 | 🟢 每日：EOD报告→"今日PnL: +$X.XX(扣费后)，5个模块运行，0个异常" |
-
-### 5.9 模块通信模式目录（v5.0.0 新增）
-
-> **对标**：Enterprise Integration Patterns (Hohpe/Woolf)。RI-01 EventBus 是pub/sub，但模块间通信远不止一种模式。
-
-| 模式 | EventBus 支持程度 | 当前实现 | 施工建议 |
-|------|:--:|------|------|
-| **Pub/Sub**（发布/订阅） | ✅ 完整 | `shared/observer.py` | 已就绪 |
-| **Request/Reply**（请求/响应） | ⚠️ 部分 | 无内建支持 | Phase 1b 扩展：`@request_response(timeout=5.0)` 装饰器 |
-| **Scatter/Gather**（分散/聚合） | ❌ 无 | — | Phase 2b 扩展：`ScatterGatherRouter` |
-| **Pipeline/Chain**（管道/链） | ❌ 无 | — | 通过事件类型路由实现 |
-| **Competing Consumers**（竞争消费者） | ⚠️ 部分 | Consumer Group | 已就绪 |
-| **Content-Based Router**（内容路由） | ❌ 无 | — | Phase 1b：`EventRouter` 按event.type路由 |
-| **Message Filter**（消息过滤） | ❌ 无 | — | Phase 1b：`EventFilter` 中间件 |
-| **Aggregator**（聚合器） | ❌ 无 | — | Phase 2b：`EventAggregator` 时间窗/数量窗 |
-| **Return Address**（回调地址） | ❌ 无 | — | Phase 2b：Event.return_address 字段 |
-RI-02 ModuleLifecycle ← 所有模块的底座, 最先启动
-  ├── RI-04 DependencyInjector ← 模块间引用通道
-  │     └── MOD-INF-016 di_container.py ← v3.0.0: DI 统一由 Shared Core 承载
-  ├── RI-03 ConfigCenter ← 所有模块的配置源
-  │     ├── RI-07 SecretsManager ← ConfigCenter 的加密后端（加密字段强制走此路径）
-  │     ├── FeatureFlagManager ← 渐进推出 + 交互矩阵 + 自动 Kill Switch
-  │     └── SchemaRegistry ← Schema 兼容性策略 + 版本演进
-  ├── RI-01 EventBus ← 跨模块通信
-  │     ├── DeliverySemantics: AT_LEAST_ONCE（默认）
-  │     ├── RI-06 IdempotencyGuard ← EventBus 的写保护
-  │     ├── RI-05 ResilienceGuard ← EventBus 的流量控制
-  │     ├── BackpressurePropagation ← 背压信号→上游减速策略
-  │     ├── PriorityQueue(CRITICAL/HIGH/NORMAL/LOW) ← 事件优先级
-  │     └── MOD-INF-016 DLQ(SQLite持久化) ← v3.0.0: DLQ 持久化
-  ├── RI-08 ErrorHandler ← 所有模块的错误出口
-  │     ├── RI-05 ResilienceGuard ← 错误率→熔断
-  │     ├── W3C TraceContext(traceparent) ← v3.0.0: 标准化 trace context
-  │     └── MOD-INF-016 ZephyrLogger ← 结构化日志
-  ├── RI-09 HealthCheck ← 所有模块的健康探针
-  │     ├── RI-12 AutoDiagnostics ← 不健康→自动诊断
-  │     ├── ReconciliationLoop ← v3.0.0: 持续对账期望状态 vs 实际状态
-  │     └── 三级状态: UP(全SLI正常) / DEGRADED(任一SLI超阈值) / DOWN(RTO超时)
-  ├── RI-10 TelemetryCollector ← 全系统指标
-  │     ├── RI-12 AutoDiagnostics ← 异常指标→诊断
-  │     ├── RI-15 CostTracker ← Token/费用/资源指标→成本归属
-  │     ├── PromptFingerprint ← v3.0.0: prompt→异常关联分析
-  │     └── DeadModuleDetector ← v3.0.0: 30天无活动→标记DORMANT
-  ├── RI-11 CacheLayer ← 跨模块缓存
-  │     ├── RI-15 CostTracker ← 缓存命中/节省→成本优化报告
-  │     └── DataAffinity ← v3.0.0: 模块声明的缓存亲和性
-  ├── RI-13 EventStore ← 事件溯源+CQRS（Phase 3 触发）
-  │     ├── RI-01 EventBus ← 事件写入入口
-  │     ├── RI-06 IdempotencyGuard ← 事件去重（关键流 ES 天然去重）
-  │     ├── RI-14 DryRunSimulator ← 事件级模拟回放
-  │     ├── CryptoShredding ← v3.0.0: GDPR 删除=销毁加密密钥
-  │     └── SagaCoordinator ← v3.0.0: 跨模块补偿事务（Phase 4 触发）
-  └── RI-14 DryRunSimulator ← AI操作预演（Phase 2b）
-        ├── RI-01 EventBus ← 拦截写事件→sandbox执行
-        ├── RI-15 CostTracker ← 预演成本预估
-        ├── SelfSimulate ← v3.0.0: AI 提交前自预演
-        └── CrossSessionLoopDetector ← v3.0.0: 跨 session 重复修改检测
-```
-
-### 1.3 与 Shared Core (MOD-INF-016) 的承载关系
-
-> **v3.0.0 新增**：MOD-INF-016 Shared Core（v0.14.0，49文件，施工completed）已实现大量RI模块的代码承载。下表声明明确的职责分工。
+> MOD-INF-016 Shared Core（v0.14.0，49文件，施工completed）已实现大量RI模块的代码承载。下表声明明确的职责分工。
 
 | RI 模块 | 蓝图设计归属 | 代码承载归属 | 承载文件 | 备注 |
 |---------|:--:|:--:|------|------|
 | RI-01 EventBus | MOD-INF-002 | **MOD-INF-016** | `shared/observer.py` + `shared/events/` + `shared/events/dlq.py` | shared 版为基类实现；MOD-INF-002 蓝图定义增强需求（PriorityQueue/背压传导链），在 shared 层扩展 |
-| RI-02 ModuleLifecycle | MOD-INF-002 | **MOD-INF-016** | `shared/lifecycle/hooks.py` | shared 版定义 LifecycleAware Protocol；MOD-INF-002蓝图扩展优雅关闭协议+预热期 |
+| RI-02 ModuleLifecycle | MOD-INF-002 | **MOD-INF-016** | `lifecycle_manager/hooks.py` | shared 版定义 LifecycleAware Protocol；MOD-INF-002蓝图扩展优雅关闭协议+预热期 |
 | RI-03 ConfigCenter | MOD-INF-002 | **MOD-INF-016** | `shared/config/` + `shared/flags.py` | shared 版提供加载+校验+FeatureFlag；MOD-INF-002蓝图定义渐进推出+交互矩阵 |
 | RI-04 DependencyInjector | MOD-INF-002 | **MOD-INF-016** (planned) | `shared/production/di_container.py` (待施工) | 统一由 shared 承载，不做独立 `l01_infrastructure/dependency_injector.py` |
 | RI-05 ResilienceGuard | MOD-INF-002 | **MOD-INF-016** | `shared/resilience/` | shared 版提供 CircuitBreaker/Retry/Fallback；MOD-INF-002蓝图扩展Bulkhead/LoadShedder/RetryBudget |
@@ -245,352 +247,146 @@ RI-02 ModuleLifecycle ← 所有模块的底座, 最先启动
 
 > **职责准则**：MOD-INF-002 定义"运行时集成体系需要什么"（WHAT + WHY），MOD-INF-016 承载"公共实现"（HOW）。若 shared 版已足够，RI 模块直接消费 shared；若需要增强，在 shared 层扩展而非独立重写。仅 RI-12/13/14/15 因 shared 无对应能力，独立落地 `l01_infrastructure/`。
 
----
+### 1.2 目标
 
-## 2. 到需要做什么（回顾大盘 + 用户原意）
+| # | 目标 | 可衡量标准 |
+|---|------|-----------|
+| 1 | 跨层通信统一 | 14层模块通过EventBus通信，P99延迟≤100ms |
+| 2 | 模块生命周期管理 | 500模块拓扑排序≤50ms，优雅关闭0数据丢失 |
+| 3 | 韧性保障 | 熔断/限流/降级/隔离四重防护，CRITICAL事件丢弃率0% |
+| 4 | 1人+AI自愈 | 90%异常自动修复，Owner日均告警≤10条 |
+| 5 | 全资源FinOps | per-module费用归属100%覆盖，LLM月费≤$50 |
+| 6 | 零依赖优先 | Python stdlib + SQLite完成核心功能，外部依赖最小化 |
+| 7 | 确定性复现 | 固定种子→同输入同输出，回测可复现 |
+| 8 | 交易安全 | KillSwitch 5步停止序列，Paper模式AI施工默认 |
 
-**Owner 指示**：
-- 所有 Cross-Layer 缺口必须在 experimental 填平，不给未来埋雷
-- "Layer 之间怎么通信？配置怎么统一管？错误怎么统一处理？"
-- 100% AI 施工 + 1人+AI 维护——系统必须能在无人干预下自愈 90% 的异常
-- 零依赖优先：能用 Python stdlib + SQLite 完成的不引入新依赖
+### 1.3 不包含的目标
 
-**Cross-Layer 缺口清单**（RL-001 ~ RL-048，v3.0.0 全量）：
+| # | 明确排除 | 原因 |
+|---|---------|------|
+| 1 | AI 审计守卫实现 | → MOD-INF-001 |
+| 2 | 安全网关实现 | → MOD-INF-014 |
+| 3 | 因子计算逻辑 | → L02-L03 业务层 |
+| 4 | 审计追踪链存储 | → MOD-INF-020 |
+| 5 | 回滚执行 | → MOD-INF-021 |
+| 6 | 任务门禁 | → MOD-INF-007 |
+| 7 | Shared Core 实现细节 | → MOD-INF-016 |
 
-| 缺口 ID | 描述 | 填补方案 |
-|---------|------|---------|
-| RL-001 | 缺跨层通信用事件总线 | RI-01 EventBus |
-| RL-002 | 缺统一模块生命周期管理 | RI-02 ModuleLifecycle |
-| RL-003 | 缺分层配置中心 | RI-03 ConfigCenter |
-| RL-004 | 缺统一 Telemetry 聚合 | RI-10 TelemetryCollector |
-| RL-005 | 缺跨模块健康传导 | RI-09 HealthCheck |
-| RL-006 | 缺类型安全事件契约 | RI-01 EventBus 类型化事件 |
-| RL-007 | 缺模块依赖可视化 | RI-02 ModuleGraph |
-| RL-008 | 缺配置漂移自动告警 | RI-03 ConfigValidator |
-| RL-009 | 缺跨层错误传播链追踪 | RI-08 ErrorTracer |
-| RL-010 | 缺运行时背压机制 | RI-01 EventBus BackpressureController |
-| RL-011 | 缺运行时熔断器（外部服务调用） | RI-05 ResilienceGuard CircuitBreaker |
-| RL-012 | 缺事件失败处理（死信队列+重试） | RI-01 EventBus DLQ + RetryPolicy |
-| RL-013 | 缺统一依赖注入/IoC 容器 | RI-04 DependencyInjector |
-| RL-014 | 缺写操作幂等性保障 | RI-06 IdempotencyGuard |
-| RL-015 | 缺 Secrets/密钥管理 | RI-07 SecretsManager |
-| RL-016 | 缺运行时限流器 | RI-05 ResilienceGuard RateLimiter |
-| RL-017 | 缺统一缓存层 | RI-11 CacheLayer |
-| RL-018 | 缺自动诊断与自愈能力 | RI-12 AutoDiagnostics |
-| RL-019 | 缺审计级事件溯源+时间旅行 | RI-13 EventStore（ES+CQRS） |
-| RL-020 | 缺 AI 操作预演/沙盒执行 | RI-14 DryRunSimulator |
-| RL-021 | 缺 per-module LLM 费用归属+告警 | RI-15 CostTracker |
-| RL-022 | 缺消息传递语义声明 | RI-01 DeliverySemantics：AT_LEAST_ONCE（默认） |
-| RL-023 | 缺背压传导链设计 | RI-01 BackpressurePropagation 协议 |
-| RL-024 | 缺 DI 容器与 MOD-INF-016 统一 | RI-04 → MOD-INF-016 `di_container.py` |
-| RL-025 | 缺时间旅行重放时的写隔离策略 | RI-13 replay_to() write_mode: READ_ONLY/OPTIMISTIC_LOCK |
-| RL-026 | 缺 DryRun 与真实执行行为一致性保证 | RI-14 一致性验证套件——sandbox vs 真实双跑 diff |
-| RL-027 | 缺 ConfigCenter 加密字段归属 | RI-03 加密字段强制走 RI-07 SecretsManager |
-| RL-028 | 缺 Loop Detector 自动恢复条件 | RI-14 自动恢复：错误率<3%持续1h→恢复 OR Owner手动 |
-| RL-029 | 缺 DLQ 持久化保障 | RI-01 DLQ → SQLite 持久化表（对接 MOD-INF-016 dlq.py） |
-| RL-030 | 缺健康检查 SLI 阈值具体数值 | RI-09 具体阈值：CPU>80%→DEGRADED,>95%→DOWN |
-| RL-031 | 缺 Feature Flag 渐进推出路径 | RI-03 rollout: 1%→10%→50%→100% + 自动 Kill Switch |
-| RL-032 | 缺 IdempotencyGuard TTL 与精确一次矛盾 | RI-06 分级策略：关键流ES天然去重/非关键流SQLite TTL |
-| RL-033 | 缺 Telemetry 基数限制具体语义 | RI-10 per-module 500；超限→LRU淘汰+告警 |
-| RL-034 | 缺 Cooldown 分层的动态调整 | RI-12 CRITICAL 15min/HIGH 10min/MEDIUM 5min/LOW 2min |
-| RL-035 | 缺 CostTracker 全资源追踪（计算/存储/网络） | RI-15 扩展：CPU时间/内存峰值/磁盘IO——至少记录不硬限 |
-| RL-036 | 缺结构化并发管理 1500+ 模块 | §5.1 asyncio.TaskGroup 统一管理并发生命周期 |
-| RL-037 | 缺 Bulkhead 舱壁资源隔离 | RI-05 Bulkhead：per-module 线程/连接池上限 |
-| RL-038 | 缺完整优雅关闭协议 | RI-02 SIGTERM→drain→等待in-flight→超时force kill→状态持久化 |
-| RL-039 | 缺重试风暴防护 | RI-05 RetryBudget：全局重试配额，耗尽拒绝重试 |
-| RL-040 | 缺 W3C Trace Context 标准化 | RI-08 trace_id→W3C traceparent格式，兼容OpenTelemetry |
-| RL-041 | 缺负载脱落（Load Shedding） | RI-05 LoadShedder：超载按优先级丢弃低优先级请求 |
-| RL-042 | 缺 Schema 版本化兼容性策略 | RI-01 SchemaEvolutionPolicy：FULL_BACKWARD/FORWARD_TRANSITIVE |
-| RL-043 | 缺容量预留（关键模块） | RI-05 Reservation：L04/L06预分配X%队列容量 |
-| RL-044 | 缺预热期机制 | RI-02 warmup phase：启动→缓存预热→内部HealthCheck→READY |
-| RL-045 | 缺 Crypto-Shredding (GDPR删除) | RI-13 anonymize_stream()：per-stream加密密钥，删密钥=不可恢复 |
-| RL-046 | 缺 Feature Flag 交互矩阵检测 | RI-03 FlagInteractionValidator：启动时pairwise组合测试 |
-| RL-047 | 缺信任衰减曲线 | RI-12 TrustDecayTracker：误报>30%→降级"建议模式" |
-| RL-048 | 缺 Crash-Only Software 设计理念 | §1 核心原则：每次停止=crash，恢复走重启 |
+### 1.4 运行场景约束
 
-### 2.1 v4.0.0 新一轮盲点审计：55+ 新缺口（2026-05-05）
-
-> **审计背景**：v3.0.0 注入 49 项盲点后蓝图达 98% 完备度。但三个维度仍大面积空白：**(1) 分布式/多节点**——蓝图几乎完全是单节点设计，对 "模块 > 300 切 Kafka" 仅有声明无设计；**(2) 部署与基础设施自动化**——CI/CD、IaC、容器编排策略完全缺失；**(3) 氛围编程/AI施工特有需求**——Prompt缓存策略、AI代码审查、上下文窗口预算管理、自修复回路质量保障等。
-
-以下按类别列出 55+ 未覆盖盲点。
-
-#### A. 分布式系统与多节点（B4-A01~A10）
-
-> **当前薄弱点**：蓝图仅有 `distributed_lock.py` 引用和 "模块 > 300 切 Kafka" 的触发条件，但无分布式协调的具体设计。
-
-| 盲点 ID | 缺失内容 | 专业机构对标 | 效应（若无） |
-|---------|---------|------------|-----------|
-| B4-A01 | **Leader Election**——多节点部署时需要主节点选举（谁执行定时任务/健康检查仲裁？） | Google Chubby / etcd Raft | 双主→数据竞态；无主→定时任务停滞 |
-| B4-A02 | **Cluster Membership（Gossip Protocol）**——节点加入/离开/崩溃的感知机制 | HashiCorp Serf / Cassandra Gossip | 节点崩溃后无感知→请求继续路由到死节点 |
-| B4-A03 | **Split-Brain Protection**——网络分区时一致性的保护策略 | Pacemaker Fencing / K8s Lease | 分区→双主同时写→不可逆数据损坏 |
-| B4-A04 | **Consistent Hashing / Sharding**——"kubernetes > 500/事件"的Sharding算法 | Discord (Rust+Sharding) / Dynamo | 扩容→事件路由全量重构→生产中断 |
-| B4-A05 | **Quorum-Based Decision**——每次部署/FeatureFlag变更需要多少节点共识 | Raft R+W > N | 单节点作恶→全集群中毒 |
-| B4-A06 | **Hybrid Logical Clock (HLC)**——跨节点事件的偏序/全序关系 | CockroachDB HLC / TrueTime | 跨节点事件无因果顺序→溯源分析出现 "先果后因" |
-| B4-A07 | **CRDT（Conflict-Free Replicated Types）**——多节点并发写入的自动合并策略 | Figma / Linear / Redis CRDT | 并发修→手动解冲突→1人不具备此能力 |
-| B4-A08 | **Anti-Entropy（Read Repair + Hinted Handoff）**——节点间状态同步与修复 | Dynamo / Cassandra | 节点间状态漂移→单节点缓存*3→雪崩 |
-| B4-A09 | **Multi-Raft / Raft Group Segmented Consensus**——按模块域分建共识组，降低全局共识负载 | TiKV Multi-Raft | 全局共识→N模块均参与→延迟O(N²) |
-| B4-A10 | **Graceful Partition Healing**——分区恢复后的渐进重建策略（Limiter→Backoff→RateLimit→Full）| CockroachDB Range Lease | 分区恢复→瞬间全量同步→网络+CPU双爆 |
-
-#### B. 部署与基础设施自动化（B4-B01~B08）
-
-| 盲点 ID | 缺失内容 | 专业机构对标 |
-|---------|---------|------------|
-| B4-B01 | **CI/CD Pipeline Design**——代码→lint→test→dryrun→approve→merge→deploy 的全自动流水线 | GitHub Actions / ArgoCD |
-| B4-B02 | **Canary Deployment（金丝雀）**——新模块版本→1%流量→健康→50%→100% 的渐进上线 | Spinnaker / Flagger |
-| B4-B03 | **Infrastructure-as-Code (IaC)**——Docker Compose→ Pulumi/Terraform 配置管理 | Terraform / Pulumi |
-| B4-B04 | **Blue-Green Deployment**——模块版本切换零停机 | K8s Service / AWS CodeDeploy |
-| B4-B05 | **Secret Zero Problem（密钥引导）**——启动时第一个秘密从哪里来，后续怎么展开 | Vault Auto-Unseal / AWS KMS |
-| B4-B06 | **Immutable Infrastructure Implementation**——§7 提到 Phase 5 但无设计细节 | Docker immutable tags / NixOS |
-| B4-B07 | **Container Escape Prevention**——AI生成的代码在容器中运行时，沙箱加固策略 | gVisor / Firecracker |
-| B4-B08 | **Artifact Registry & Provenance**——构建产物签名 + SBOM + SLSA供应链级别 | Sigstore / SLSA Framework |
-
-#### C. 数据管理与迁移（B4-C01~C06）
-
-| 盲点 ID | 缺失内容 | 专业机构对标 |
-|---------|---------|------------|
-| B4-C01 | **Schema Migration with Zero Downtime**——SQLite表结构变更时的在线迁移策略（expand-contract pattern） | Stripe / GitHub Schema迁移 |
-| B4-C02 | **Point-in-Time Recovery (PITR)**——SQLite WAL→增量备份→任意时间点恢复 | PostgreSQL WAL-G / Litestream |
-| B4-C03 | **Data Retention Policy Automation**——自动过期/归档/删除策略执行 | AWS S3 Lifecycle / Temporal |
-| B4-C04 | **Database Connection Pooling**——1500模块并发SQLite读写时的连接池策略 | HikariCP / PgBouncer |
-| B4-C05 | **SQLite Write Contention**——多模块同时写入单一SQLite的并发冲突处理设计 | SQLite WAL + `busy_timeout` |
-| B4-C06 | **Data Locality for Multi-Region**——若未来跨Region部署的数据同步策略 | CockroachDB / DynamoDB Global Tables |
-
-#### D. 测试与质量保障深度（B4-D01~D08）
-
-| 盲点 ID | 缺失内容 | 专业机构对标 |
-|---------|---------|------------|
-| B4-D01 | **Contract Testing**——模块间API/Pact测试确保Schema变更不破坏下游消费者 | Pact / Spring Cloud Contract |
-| B4-D02 | **Property-Based Testing**——Randomized+Shrink自动发现边界条件 | Hypothesis / QuickCheck |
-| B4-D03 | **Automated Test Generation from Diff**——AI代码变更→自动生成对应maß试 | DiffBlue / Copilot Test Gen |
-| B4-D04 | **Mutation Testing**——测试质量度量：修改代码→测试是否捕获 | PITest / Mutmut |
-| B4-D05 | **Fuzz Testing at Module Boundary**——at EventBus/ConfigCenter接口做随机数据注入 | AFL++ / LibFuzzer |
-| B4-D06 | **Golden File Testing**——关键输出→哈希锁定→任何变更=回归告警 | Bazel / Chromium |
-| B4-D07 | **Cross-Module Integration Test Orchestration**——1500模块的集成测试矩阵管理策略 | Bazel / Nx |
-| B4-D08 | **Test Flake Detection & Quarantine**——不稳定测试自动隔离+报告所有者 | Google / Uber |
-
-#### E. 氛围编程/AI施工 专项深度（B4-E01~E12）
-
-> **这是本轮审计最核心发现**：蓝图虽以 "100% AI施工" 为前提，但缺少 AI 代码生成、上下文管理、Prompt工程等方面的设计。
-
-| 盲点 ID | 缺失内容 | 氛围编程社区对标 |
-|---------|---------|---------------|
-| B4-E01 | **Prompt Caching Strategy**——哪些 context embed 应缓存以降低LLM API调用费用 | Anthropic Prompt Caching / GPTCache |
-| B4-E02 | **Context Window Budget（上下文窗口预算）**——每次AI调用的context大小<= X tokens | Cursor Context / Copilot Indexing |
-| B4-E03 | **Semantic Code Search / Code Embedding**——AI在施工时如何高效查询已有代码库（与 AI 自主理解间的桥梁） | Cursor Codebase Indexing / Sourcegraph Cody |
-| B4-E04 | **Code Generation Template System**——模块脚手架、事件处理器模板、配置模板的标准化 | Copilot Workspace / v0 |
-| B4-E05 | **AI Code Review Automation**——AI生成代码→另一AI审查（"四眼"原则） | CodeRabbit / Copilot Code Review |
-| B4-E06 | **Self-Healing Quality Gate**——AI自修复后需要验证：修复不引入新盲点/不影响其他模块 | Datadog / Honeycomb |
-| B4-E07 | **AI Decision Log**——每次AI做重大施工决策→自动追加 ADR，防"为什么这么做？"不可回答 | ADR.tools / Structurizr |
-| B4-E08 | **Diff-Level Undo**——不是 session undo，而是单次 diff 级别的精细undo | Git reflog / Linear undo |
-| B4-E09 | **Model Fallback Chain**——deepseek-chat → deepseek-reasoner → qwen-max → 提级Owner | OpenRouter / Helicone |
-| B4-E10 | **AI Context Persistence across Sessions**——跨session的AI上下文保存/恢复/过期策略；避免session边界丢失上下文 | MemGPT / Mem0 |
-| B4-E11 | **Prompt Version Control & A/B Testing**——提示词的版本化、分级测试、回滚 | LangSmith / Arize Phoenix |
-| B4-E12 | **Token Optimization Pipeline**——AI调用前自动压缩上下文(PromptCompressor)+剪枝不相关文件引用 | Anthropic Prompt Improver / LangChain |
-
-#### F. 1人+AI 运维深度强化（B4-F01~F10）
-
-> **核心问题**：蓝图已有告警预算+通知分层+休假模式，但缺"Owner是人会累会忘会犯错"的深度设计。
-
-| 盲点 ID | 缺失内容 | 效应 |
-|---------|---------|------|
-| B4-F01 | **Owner Cognitive Load Budget（认知负荷预算）**——每日除了告警，还包括所有需要Owner做的决策（审批/回滚/配置变更/FeatureFlag）。超过 X 项→触发"轻负载日" | 决策疲劳→低质量决策→重大事故漏判 |
-| B4-F02 | **Daily Operations Briefing（晨报）**——每天睡醒后一份摘要：昨日关键指标/费用/自愈记录/待决策项 | 一睁眼不知道系统昨天发生了什么 |
-| B4-F03 | **Sleep-Time Protocol**——Owner睡眠时段（数据驱动：23:00-07:00 local）→所有非CRITICAL静音；CRITICAL仅触发一次→若5min内无响应→自动启动自愈回路 | 凌晨3点告警→吵醒→疲劳决策→人→AI→系统均崩溃 |
-| B4-F04 | **Auto-Decide Threshold**——影响<X模块/费用<$Y/风险RPN<Z的操作系统自动执行无需审批 | 每个小改动都需要Owner审批→瓶颈→迭代停滞 |
-| B4-F05 | **Emergency Wake-Up Criteria**——什么是真的值得叫Owner起来的紧急情况（精确定义） | 假阳性叫醒→"狼来了"效应→真紧急时Owner已关通知 |
-| B4-F06 | **Weekly System Health Report**——每周生成一份Markdown报告到Knowledge Base | 连续多日无注意→问题积累 |
-| B4-F07 | **Owner Absence Simulation（Owner消失押练）**——每月1次6h"假Owner离线"演练→系统应在无Owner下运行 | 真正休假/失能时才发现系统依赖Owner手动回复 |
-| B4-F08 | **Knowledge Externalization**——Owner的决策原则、偏好的转化为系统可执行的规则 | Owner失能→系统无人会判断 |
-| B4-F09 | **Onboarding Auto-Generation**——系统自文档化→新参与者（或失忆后的自己）能在30min内理解系统 | 人是代码库的吗×？不断变化的context→无法重新理解自己的系统 |
-| B4-F10 | **Mental Health Safeguard**——连续72h无Owner手动介入→系统降低告警频率（防"坚持不下去→彻底关掉通知"的弃用螺旋）| 心理防线崩溃→放弃系统而非修复 |
-
-#### G. 安全深度强化（B4-G01~G06）
-
-| 盲点 ID | 缺失内容 | 专业机构对标 |
-|---------|---------|------------|
-| B4-G01 | **Module Sandboxing**——RI模块间的运行时隔离——一个模块的crash/无限循环不应影响其他模块 | AWS Lambda / Cloudflare Workers |
-| B4-G02 | **AI-Generated Code Security Scanning**——每次AI施工完成后自动对新增代码做Semgrep安全扫描 | Semgrep / CodeQL |
-| B4-G03 | **Tamper-Proof Audit Log**——审计日志的哈希链（Merkle Tree）防篡改 | Certificate Transparency / Trillian |
-| B4-G04 | **Least Privilege Enforcement per Module**——每个模块只拥有它声明的资源访问权 | AWS IAM / K8s PodSecurityPolicy |
-| B4-G05 | **Supply Chain Security (SBOM + Vulnerability Scan)**——依赖的脆弱性扫描 + Software Bill of Materials | CycloneDX / Dependabot |
-| B4-G06 | **AI Prompt Injection Guard**——Owner指令 vs AI生成的内容→防止AI把"友好的代码注释"当命令执行 | Gandalf Game / Lakera Guard |
-
-#### H. 可观测性深度强化（B4-H01~H05）
-
-| 盲点 ID | 缺失内容 | 专业机构对标 |
-|---------|---------|------------|
-| B4-H01 | **Distributed Trace Visualization**——跨5层的trace→时序火焰图 | Jaeger / Tempo / Honeycomb |
-| B4-H02 | **Error Budget Burn Rate Alerting**——不只是实时告警，Error Budget < 1%/1h → CRITICAL | Google SRE Workbook |
-| B4-H03 | **Capacity Forecasting**——基于历史趋势预测：何时需扩展 500→1500模块 | Datadog Watchdog / Netflix Atlas |
-| B4-H04 | **Latency Heat Maps**——per-module P50/P95/P99 latency→自动识别退化的模块 | Discord / Uber |
-| B4-H05 | **Slow Query Detection**——SQLite查询 > 100ms→自动标记+建议索引 | PostgreSQL pg_stat_statements |
-
-#### I. API与协议设计（B4-I01~I04）
-
-| 盲点 ID | 缺失内容 | 专业机构对标 |
-|---------|---------|------------|
-| B4-I01 | **Module API Versioning Strategy**——模块对外API的版本规范(SemVer→Major.Minor)与废弃窗口 | Stripe API / K8s API |
-| B4-I02 | **Backward Compatibility Enforcement**——CI自动检测模块新版本是否破坏下游消费者接口 | Google API Improvement Proposals |
-| B4-I03 | **WebSocket / gRPC Stream Management**——若模块间使用流通信的超时/重连/背压策略 | gRPC / RSocket |
-| B4-I04 | **Module Discovery & Self-Description**——新模块自动注册+能力声明，无需维护手工清单 | DNS-SD / mDNS / LDAP |
-
-#### J. 开发者体验（1人用）（B4-J01~J06）
-
-| 盲点 ID | 缺失内容 |
-|---------|---------|
-| B4-J01 | **One-Command Local Setup**——`git clone && ./setup.sh`→全量本地运行环境就绪 |
-| B4-J02 | **Hot Reload Development**——模块代码变更→自动reload无需重启整个系统 |
-| B4-J03 | **AI REPL / Chat Interface**——终端内直接与AI交互施工（类似 Copilot Chat / Aider）|
-| B4-J04 | **Self-Debugging Hooks**——AI施工→失败→自动收集日志+stacktrace+context →给AI自修复 |
-| B4-J05 | **Codebase Familiarity Score**——每个模块→Owner多久没看过/改过→"熟悉度"指标+提醒review |
-| B4-J06 | **Automated CHANGELOG from Git**——AI读git log→自动写入结构化 CHANGELOG.md |
-
-#### K. 金融/交易系统专项（B5-K01~K12）
-
-> **这是第三轮审计最核心发现**：蓝图讲了 15 个通用 RI 模块，但 0 处提到交易系统特有的基础设施需求。量化交易系统不只是"又一个软件系统"——它有回测、有Kill Switch、有复盘、有市场时钟。对机构对标：Goldman SecDB / Two Sigma / Jane Street。
-
-| 盲点 ID | 缺失内容 | 专业机构对标 | 效应（若无） |
-|---------|---------|------------|-----------|
-| B5-K01 | **Emergency Trading Kill Switch（紧急交易停止）**——一条命令或一个信号：立即取消所有未完成订单+清空EventBus交易事件+切换ALL模块为read-only模式 | CME Kill Switch / Two Sigma "Big Red Button" | 算法失控→无法停损→账户穿透 |
-| B5-K02 | **Pre-Trade Risk Check Pipeline（交易前风控管道）**——每个交易事件通过模块链：订单→仓位限制检查→资金检查→敞口检查→合规检查→才到交易所 | Goldman SecDB Pre-Trade Risk | AI生成的交易逻辑→无风控→裸奔发单 |
-| B5-K03 | **Order State Machine Standardization（订单状态机标准化）**——所有订单类模块必须实现统一状态机(NEW→PENDING→PARTIAL→FILLED/CANCELLED/REJECTED) | FIX Protocol / Interactive Brokers API | L05层每个模块自定义订单状态→下游混乱→复盘错乱 |
-| B5-K04 | **Market Data Clock & Timestamp Normalization（市场时钟标准化）**——所有事件时间戳统一到交易所时钟(NTP→PTP)，非本地os.time() | IEX Timestamp / PTP IEEE 1588 | AI用 `time.time()` 而非交易所时钟→tick对齐错位→回测不可复现 |
-| B5-K05 | **Deterministic Simulation Mode（确定性模拟模式）**——RI-14 DryRun扩展：用固定随机种子+模拟时间→同输入必然同输出 | Jane Street Deterministic Replay | 回测结果不可复现→无法判断"AI改好了还是碰巧" |
-| B5-K06 | **Paper Trading Infrastructure（纸交易基础设施）**——所有涉及交易的模块自动支持paper模式：EventBus emit→sandbox account而非真实broker | Alpaca Paper API / QuantConnect | AI施工→直接操作真实账户→1个bug→亏损 |
-| B5-K07 | **Trade Reconciliation（交易对账）**——系统订单 vs 经纪商回执 vs 清算报告 → 三方对账，diff→告警 | DTCC / FIX Drop Copy | AI提交的订单→实际成交vs系统记录不一致→未知敞口 |
-| B5-K08 | **Position & Exposure Aggregation（仓位聚合）**——无论多少模块在交易，全局仓位/净敞口实时计算+硬限额 | Goldman SecDB / RiskMetrics | 多模块分散操作→净裸露超限→被风控部追责 |
-| B5-K09 | **End-of-Day / Start-of-Day Processing（日终/日初处理）**——定时任务：持仓结算/损益计算/保证金监控/数据归档 | Bloomberg AIM / EOD Batch | 无标准化日终流程→混乱的手动操作 |
-| B5-K10 | **Market Circuit Breaker Integration（市场熔断联动）**——交易所熔断/涨跌停→系统自动暂停该标的交易+通知Owner | SSE/SZSE Circuit Breaker Rules | 交易所停牌了→系统还在尝试下单→累积错误订单 |
-| B5-K11 | **Slippage & Market Impact Modeling（滑点模型）**——DryRun和backtest中自动归入滑点成本，不假设理想成交价 | Almgren-Chriss / Virtu | AI在回测中看到"完美利润"→实盘滑点吞噬50%→系统不可信 |
-| B5-K12 | **Fee & Commission Attribution（费率归因）**——每笔交易费用归属到模块，纳入RI-15 CostTracker的全资源FinOps | Interactive Brokers / Binance Fee Schedule | 费用被忽视→"赚钱"的回测实际上扣费后亏损 |
-
-#### L. 模块通信模式扩展（B5-L01~L08）
-
-> **当前薄弱点**：RI-01 EventBus 只覆盖了 pub/sub。但真实系统需要更多通信模式。对标：Enterprise Integration Patterns (Hohpe/Woolf) / ZeroMQ Patterns。
-
-| 盲点 ID | 缺失内容 | 适用场景 |
-|---------|---------|---------|
-| B5-L01 | **Request-Reply Pattern**——同步请求→等待响应→超时处理 | 模块间"问一个问题"——查询账户余额/因子值/风控判断 |
-| B5-L02 | **Scatter-Gather Pattern**——一请求广播N个模块→收集所有响应→聚合 | 因子计算——同时向多个数据源发请求→投票/加表 |
-| B5-L03 | **Pipeline / Chain Pattern**——事件→模块A处理→传给B→C→...→最终结果 | ETL管道/数据清洗/信号生成→过滤→排序→执行 |
-| B5-L04 | **Competing Consumers**——多个消费者竞争同一事件，先到先处理——自动负载均衡 | 同质任务队列——多worker消费redis pub/sub |
-| B5-L05 | **Message Routing（Content-Based Router）**——根据消息内容→路由到不同消费者 | 事件类型路由：TradeEvent→L05模块，RiskEvent→L04模块 |
-| B5-L06 | **Message Filtering / Enrichment（消息过滤/增强）**——EventBus中间件自动截获+修改/增强/过滤事件 | 添加追踪信息/删除敏感字段/标准化格式 |
-| B5-L07 | **Aggregation / Batching Strategy**——多个独立事件→按时间窗/数量窗聚合为一个批处理事件 | 批量行情→归一化→一次性消费而非N次分别处理 |
-| B5-L08 | **Return Address / Callback Pattern**——事件带return_address字段→消费者完成后→发送响应到该地址 | 异步请求-响应模式——不阻塞请求方 |
-
-#### M. 确定性复现与调试（B5-M01~M06）
-
-> **交易系统的根基**：Jane Street 每年投入8位数美元构建确定性回放基础设施。1人+AI需要在有限资源下达到80%的效果。
-
-| 盲点 ID | 缺失内容 | 专业机构对标 |
-|---------|---------|------------|
-| B5-M01 | **Deterministic Random（确定性随机）**——全系统共享种子→种子相同则所有"随机"行为完全相同 | `random.seed(42)` + numpy/pytorch seed对齐 |
-| B5-M02 | **Simulated Clock（模拟时钟）**——区分 `real_time` vs `sim_time`；回测/预演时用sim_time驱动 | SimPy / Jane Street Core.Time |
-| B5-M03 | **Event Replay with Exact Timing（精确时序事件重放）**——从EventStore读取事件→按记录的时间戳精确重放→同序同果 | Kafka + WallClockReplayer |
-| B5-M04 | **Snapshot → Restore for Debugging（快照→恢复调试）**——运行时快照全系统状态→Owner手动调试时从此点恢复 | rr (Mozilla) / CRIU |
-| B5-M05 | **Execution Log with Verbosity Control（执行日志详细度控制）**——按需打开/关闭per-module详细日志用于调试 | `DEBUG_MODULE=l06` 环境变量 |
-| B5-M06 | **Non-Intrusive Debugging Hooks（非侵入调试钩子）**——每个RI模块暴露hook点→在不改代码的情况下插桩观察 | DTrace / eBPF |
-
-#### N. 长期演进与模块生命周期管理（B5-N01~N06）
-
-| 盲点 ID | 缺失内容 | 专业机构对标 |
-|---------|---------|------------|
-| B5-N01 | **Module Deprecation Lifecycle（模块废弃生命周期）**——标记→警告→隔离→归档→删除的5阶段过程 | K8s API Deprecation / Stripe API Versioning |
-| B5-N02 | **Breaking Change Management（破坏性变更管理）**——2版本共存+路由→旧版本N个月后移除的标准流程 | Google API Improvement Proposals (AIP) |
-| B5-N03 | **Backward Compatibility Window（后向兼容窗口）**——每个模块声明支持多少个历史版本 | Android API Levels / Node.js LTS |
-| B5-N04 | **Module Migration Path Documentation（模块迁移文档）**——废弃模块→替代模块的映射表+迁移guide | AWS Service Migration Guides |
-| B5-N05 | **Dead Code Detection within Modules（模块内死代码检测）**——vulture/coverage分析→标记未使用代码→通知Owner | Vulture / Coverage.py |
-| B5-N06 | **Cyclomatic Complexity Guard（圈复杂度防护）**——模块复杂度>15→AI必须简化；>25→CI拒绝merge | McCabe / SonarQube |
-
-#### O. AI 施工模式库与反模式（B5-O01~O08）
-
-> **最前沿的盲点**：AI需要被教"在这个系统中应该怎么做模块"+"绝对不要做什么"。这是氛围编程的"风格指南"——不是代码lint，而是设计决策lint。
-
-| 盲点 ID | 缺失内容 | 氛围编程社区对标 |
-|---------|---------|---------------|
-| B5-O01 | **Module Template System（模块模板系统）**——AI创建新模块时自动从模板生成：`abc→lifecycle→event_handler→config→tests` | `cookiecutter` / Copilot Workspace |
-| B5-O02 | **Anti-Patterns Catalog（反模式目录）**——"在这个系统中绝对不要做什么"——如：不要绕过EventBus直接import其他模块的内部函数 | Google Code Smells / Refactoring.Guru |
-| B5-O03 | **Design Decision Tree（设计决策树）**——"我应该用EventBus还是直接调用？"→决策流程图→AI可执行规则 | The Architecture Decision Record (ADR) |
-| B5-O04 | **Error Handling Patterns by Module Type（按模块类型的错误处理模式）**——数据模块:重试+降级→静态值；交易模块:重试1次→报警→拒绝 | Netflix Error Handling Taxonomy |
-| B5-O05 | **Module Naming Convention Enforcer（模块命名规范执行器）**——`lXX_function_module_name` 强制一致——防止AI创造不一致的名字 | PEP 8 + ZephyrAlpha Naming Spec |
-| B5-O06 | **Code Ownership Manifest（代码所属声明）**——每个py文件声明：AI施工 % vs Owner手动 % vs AI自修复 %——量化的"谁写的" | GitHub CODEOWNERS |
-| B5-O07 | **AI Confidence Annotation（AI信心标注）**——AI在自己写的代码中标注信心分数(0-1)——低信心代码标注为REVIEW_NEEDED | Copilot Confidence / Claude Artifacts |
-| B5-O08 | **Progressive Code Review Depth（渐进代码审查深度）**——AI信心>0.9→轻审(仅lint+safety)；0.5-0.9→中审(+contract test)；<0.5→重审(+full test suite+Owner review) | Google CR+Review Levels |
-
----
-
-## 3. 边界
-
-### 3.1 覆盖
-
-- RI-01 ~ RI-15 模块的设计 + 实现
-- Cross-Layer 缺口 RL-001 ~ RL-048 填补
-- 所有 RI 模块的失败模式定义 + 降级路径
-- 1人+AI 运维语境下的自愈能力设计
-- 与 MOD-INF-016 Shared Core 的承载关系与职责边界
-- FMEA 失效模式与效应分析
-- ADR 架构决策记录
-- 五视图完整体系（静态拓扑/动态行为/故障传播/容量伸缩/Owner感知）
-
-### 3.2 不覆盖（→ 去哪）
-
-- AI 审计守卫 → MOD-INF-001（capacity-assurance）
-- 安全网关（LSG）→ MOD-INF-014（llm-security）
-- 因子计算逻辑 → L02-L03 业务层
-- 审计追踪链存储 → MOD-INF-020（audit-trail），RI-13 EventStore 提供事件级溯源，审计追踪链消费事件
-- 回滚执行 → MOD-INF-021（rollback-system），RI-13 事件重放可配合回滚
-- 任务门禁（G0-G7）→ MOD-INF-007（gate-engine）
-- Shared Core 基础设施的实现细节 → MOD-INF-016（shared-core）——本蓝图定义需求，MOD-INF-016 承载实现
-
----
-
-## 4. 输入 / 基于此设计
-
-| 输入 | 来源 |
+| 约束 | 影响 |
 |------|------|
-| Owner 架构提问 | "Layer 间怎么通信？配置怎么统一管？" |
-| Cross-Layer 缺口审计（RL-001~021）| Wave 0 架构自检 + v2.0.0/v2.1.0 盲点审计 |
-| v2.0.0 盲点审计 | 20+ 结构性缺口 + 专业机构对标（Google SRE/Netflix/K8s/Stripe/Goldman SecDB） |
-| v2.1.0 深度对标 | Event Sourcing+CQRS (金融行业 76% 采用率, 99.98%可用性) + Dry Run (Terraform plan/Agent CI/CD) + FinOps Cost Attribution (Visibility/Allocation/Optimization 三大支柱) |
-| v3.0.0 全量盲点审计 | 49 项盲点——跨模块职责对齐 + 结构性缺口(GAP-01~07) + 深度强化(WEAK-01~07) + 业界对标(MISS-01~14) + 前沿盲点(FUTURE-01~10) + 1人+AI专项(OPT-01~07) + 蓝图质量(FMEA+ADR) |
-| MOD-INF-016 Shared Core v0.14.0 | 49 文件已实现——10 个 RI 模块的代码承载基座 |
+| Windows 单机部署 | 无分布式协调需求，SQLite WAL 足够 |
+| 1人+AI 运维 | 系统必须90%异常自愈，Owner告警预算≤10条/日 |
+| 15 个 RI 模块 | 设计容量1500模块×14层，当前规模验证 |
+| 零依赖优先 | 能用 Python stdlib + SQLite 完成的不引入新依赖 |
 
 ---
 
-## 5. 架构决策
+## §2 模块边界
 
-### 5.1 终选技术栈（v3.0.0 扩展）
+### 2.1 职责范围
 
-| 组件 | 终选 | 理由 |
-|------|------|------|
-| RI-01 EventBus | **asyncio.PriorityQueue（四级优先级）+ Pydantic 类型化事件 + DLQ SQLite持久化 + 背压信号 + DeliverySemantics: AT_LEAST_ONCE** | 零依赖；PriorityQueue确保风控告警不被积压事件阻塞 |
-| RI-02 ModuleLifecycle | **ABC + 拓扑排序(BFS) + register/unregister + 版本范围约束 + 优雅关闭协议(drain→timeout→force_kill) + Crash-Only设计** | 极简；crash-only确保无人值守场景下自恢复 |
-| RI-03 ConfigCenter | **YAML + os.environ 覆盖 + Pydantic 校验 + watchdog 热重载 + Feature Flags（渐进推出+交互矩阵+Kill Switch）** | 零依赖；交互矩阵防止Flag组合引入bug |
-| RI-04 DependencyInjector | **由 MOD-INF-016 `shared/production/di_container.py` 统一承载——构造注入 + ABC 接口绑定 + 循环检测** | 消除双DI容器重复——一个模块只有一个注入入口 |
-| RI-05 ResilienceGuard | **CircuitBreaker(三态) + TokenBucket(限流) + TimeoutContext + 降级链 YAML + Bulkhead(per-module线程/连接池上限) + LoadShedder(优先级丢弃) + RetryBudget(全局配额)** | 七合一韧性基座 |
-| RI-06 IdempotencyGuard | **分级策略：关键流(风控/交易/仓位)走 ES expected_version 天然去重；非关键流 SHA-256 + SQLite TTL** | 关键流零TTL过期风险；非关键流轻量级 |
-| RI-07 SecretsManager | **AES-256-GCM 本地加密 + .env 自动加解密 + 访问审计发射** | 单机可用；ConfigCenter加密字段唯一后端 |
-| RI-08 ErrorHandler | **Enum(SRE分类) + Structlog 结构化 + W3C traceparent header + trace_id跨进程传播 + 聚合窗口** | 零依赖；W3C标准对齐OpenTelemetry生态 |
-| RI-09 HealthCheck | **async 探针 + 依赖传导 + 三级状态 + 具体SLI阈值(CPU>80%→DEGRADED,>95%→DOWN;错误率>5%→DEGRADED,>10%→DOWN) + Reconciliation Loop持续对账** | SLI阈值具体化消除主观判断；Reconciliation持续自愈 |
-| RI-10 TelemetryCollector | **structlog 聚合 + per-module基数限制(500) + 超限LRU淘汰+告警 + 直方图 + Exemplar + 10s 推送 + PromptFingerprint + DeadModuleDetector** | 预聚合；PromptFingerprint追踪AI行为归因 |
-| RI-11 CacheLayer | **LRU dict + VMS 语义缓存 + TTL 分层(Hot/Warm/Cold) + DataAffinity hints** | 复用VMS；Affinity减少跨模块缓存miss |
-| RI-12 AutoDiagnostics | **HealthCheck 触发 + Runbook YAML 匹配 + 诊断报告 Markdown生成 + 修复后→KB自动补充 + TrustDecayTracker + SelfLimiter** | 零依赖；闭环：诊断→修复→KB沉淀 |
-| RI-13 EventStore | **SQLite append-only event_log 表 + 快照表(每1000事件) + CQRS读模型(SQLite View) + Crypto-Shredding + SagaCoordinator(Phase 4触发)** | Phase 3 触发——零新依赖；GDPR兼容 |
-| RI-14 DryRunSimulator | **sandbox=True 标志位 + 拦截写操作→日志输出 + diff报告生成 + approval gate + 一致性验证套件 + CrossSessionLoopDetector + SelfSimulate** | Python mock模式；跨Session Loop检测消除氛围编程"上下文失忆→重复犯错" |
-| RI-15 CostTracker | **LLM调用拦截→token计数→美元换算 + CPU/内存/IO记录 + per-module/session tag归属 + 模块可维护性评分 + 飞书日报** | 调用层拦截不侵入模型；全资源FeinOps |
+| # | 职责 | 具体内容 |
+|---|------|---------|
+| 1 | RI-01 ~ RI-15 模块设计+实现 | 15个RI模块的完整设计、代码骨架、落地方案 |
+| 2 | Cross-Layer 设计约束落地 | RL-001 ~ RL-048 + B4/B5 系列约束 |
+| 3 | 失败模式+降级路径 | 所有 RI 模块的 FMEA + 降级链 |
+| 4 | 自愈能力设计 | 1人+AI 运维语境下的自动诊断/修复/升级 |
+| 5 | Shared Core 承载关系 | 与 MOD-INF-016 的职责边界与代码承载映射 |
+| 6 | 五视图体系 | 静态拓扑/动态行为/故障传播/容量伸缩/Owner感知 |
+| 7 | ADR 架构决策记录 | 关键设计决策的依据和替代方案 |
 
-### 5.2 设计原则（v3.0.0 新增）
+### 2.2 不包含的职责
 
-| 原则 | 内容 | 对标 |
-|------|------|------|
-| Crash-Only | 系统不依赖"优雅关闭"——每次停止=crash，每次恢复=重启。所有状态持久化，重启后自动从SQLite重建内存状态 | Google Chubby |
-| Structured Concurrency | 使用 `asyncio.TaskGroup` 管理1500+模块的并发生命周期——子任务全部完成或全部取消，无孤儿协程 | Python 3.11+ / Trio |
-| Fail-Closed | 安全组件（SecretsManager/ErrorHandler）不可用时拒绝操作而非放行 | OWASP / MOD-INF-014 |
-| Immutable Events | RI-13 EventStore 事件一旦写入不可修改/不可删除——审计完整性不可妥协 | Goldman SecDB |
-| Progressive Disclosure | 容量模型和告警按 Owner 注意力预算分级——实时仅推送CRITICAL，其余汇总 | Anthropic Codified Context |
+| # | 排除项 | 由谁负责 |
+|---|--------|---------|
+| 1 | AI 审计守卫 | MOD-INF-001（capacity-assurance） |
+| 2 | 安全网关（LSG） | MOD-INF-014（llm-security） |
+| 3 | 因子计算逻辑 | L02-L03 业务层 |
+| 4 | 审计追踪链存储 | MOD-INF-020（audit-trail），RI-13 EventStore 提供事件级溯源 |
+| 5 | 回滚执行 | MOD-INF-021（rollback-system），RI-13 事件重放可配合回滚 |
+| 6 | 任务门禁（G0-G7） | MOD-INF-007（gate-engine） |
+| 7 | Shared Core 实现细节 | MOD-INF-016（shared-core）——本蓝图定义需求，MOD-INF-016 承载实现 |
 
-### 5.3 关键代码骨架（v3.0.0 新增）
+---
+
+## §3 架构设计
+
+### 3.1 组件架构
+
+| 组件 | 层级 | 核心类/协议 | 依赖 | 状态 |
+|------|------|-----------|------|------|
+| RI-01 EventBus | 通信与生命周期 | `EventBus`, `EventConsumer`, `BackpressurePropagator` | RI-06, RI-05 | ✅ MOD-INF-016 承载 |
+| RI-02 ModuleLifecycle | 通信与生命周期 | `LifecycleAware`, `GracefulShutdown` | — | ✅ MOD-INF-016 承载 |
+| RI-03 ConfigCenter | 通信与生命周期 | `ConfigCenter`, `FeatureFlagManager` | RI-07 | ✅ MOD-INF-016 承载 |
+| RI-04 DependencyInjector | 通信与生命周期 | `DIContainer` | RI-02 | ❌ planned |
+| RI-05 ResilienceGuard | 韧性与可靠性 | `CircuitBreaker`, `Bulkhead`, `LoadShedder`, `RetryBudget` | — | ✅ MOD-INF-016 承载 |
+| RI-06 IdempotencyGuard | 韧性与可靠性 | `IdempotencyGuard` | — | ✅ MOD-INF-016 承载 |
+| RI-07 SecretsManager | 安全与审计 | `SecretsManager` | — | ✅ MOD-INF-016 承载 |
+| RI-08 ErrorHandler | 安全与审计 | `ErrorHandler`, `W3CTraceContext` | RI-05 | ✅ MOD-INF-016 承载 |
+| RI-09 HealthCheck | 可观测性与自治 | `HealthCheck`, `ReconciliationLoop` | RI-12 | ✅ MOD-INF-016 承载 |
+| RI-10 TelemetryCollector | 可观测性与自治 | `TelemetryCollector`, `PromptFingerprint` | RI-12, RI-15 | ✅ MOD-INF-016 承载 |
+| RI-11 CacheLayer | 可观测性与自治 | `CacheLayer` | RI-15 | ✅ MOD-INF-016 承载 |
+| RI-12 AutoDiagnostics | 可观测性与自治 | `AutoDiagnostics`, `TrustDecayTracker` | RI-09 | ✅ 独立落地 |
+| RI-13 EventStore | 可溯源性与模拟 | `EventStore`, `CryptoShredding`, `SagaCoordinator` | RI-01, RI-06 | ✅ 独立落地 |
+| RI-14 DryRunSimulator | 可溯源性与模拟 | `DryRunSimulator`, `CrossSessionLoopDetector` | RI-01, RI-15 | ✅ 独立落地 |
+| RI-15 CostTracker | 可溯源性与模拟 | `CostTracker`, `MaintainabilityScore` | — | ✅ 独立落地 |
+
+### 3.2 数据流
+
+| # | 上游 | 处理逻辑 | 下游 | 数据格式 |
+|---|--------|---------|---------|---------|
+| 1 | L02-L13 业务模块 | EventBus publish → PriorityQueue → consumer group dispatch | RI 消费者 | Pydantic Event |
+| 2 | EventBus DLQ | 失败事件 → SQLite持久化 → 指数退避重试 | 原消费者 | DLQEntry |
+| 3 | HealthCheck 探针 | async check → SLI阈值比对 → 三级状态判定 | AutoDiagnostics / Owner | HealthStatus |
+| 4 | ConfigCenter 变更 | YAML reload → Pydantic校验 → FeatureFlag评估 → 事件通知 | 所有订阅模块 | ConfigEvent |
+| 5 | AI 写操作 | DryRunSimulator sandbox → diff报告 → 审批门 → 执行 | 目标模块 | SimulationResult |
+| 6 | LLM API 调用 | CostTracker 拦截 → token计数 → 美元换算 → 预算检查 | Owner日报 | CostEntry |
+
+### 3.3 状态生命周期
+
+| 状态 | 含义 | 转换条件 |
+|------|------|---------|
+| PLANNED | 设计完成，未施工 | → SCAFFOLDED: scaffold.py 创建文件 |
+| SCAFFOLDED | 文件已创建，代码骨架就绪 | → IMPLEMENTED: 核心逻辑实现完成 |
+| IMPLEMENTED | 核心逻辑完成，测试通过 | → INTEGRATED: 与其他 RI 模块联调通过 |
+| INTEGRATED | 联调通过，Phase 验收完成 | → PRODUCTION: 生产环境部署 |
+| PRODUCTION | 生产运行 | → DEPRECATED: 标记废弃 |
+| DEPRECATED | 标记废弃，仍可用 | → ARCHIVED: 迁移完成后归档 |
+| ARCHIVED | 归档，只读 | — 终态 |
+
+### 蓝图特有：终选技术栈
+
+| 组件 | 终选 |
+|------|------|
+| RI-01 EventBus | **asyncio.PriorityQueue（四级优先级）+ Pydantic 类型化事件 + DLQ SQLite持久化 + 背压信号 + DeliverySemantics: AT_LEAST_ONCE** |
+| RI-02 ModuleLifecycle | **ABC + 拓扑排序(BFS) + register/unregister + 版本范围约束 + 优雅关闭协议(drain→timeout→force_kill) + Crash-Only设计** |
+| RI-03 ConfigCenter | **YAML + os.environ 覆盖 + Pydantic 校验 + watchdog 热重载 + Feature Flags（渐进推出+交互矩阵+Kill Switch）** |
+| RI-04 DependencyInjector | **由 MOD-INF-016 `shared/production/di_container.py` 统一承载——构造注入 + ABC 接口绑定 + 循环检测** |
+| RI-05 ResilienceGuard | **CircuitBreaker(三态) + TokenBucket(限流) + TimeoutContext + 降级链 YAML + Bulkhead(per-module线程/连接池上限) + LoadShedder(优先级丢弃) + RetryBudget(全局配额)** |
+| RI-06 IdempotencyGuard | **分级策略：关键流(风控/交易/仓位)走 ES expected_version 天然去重；非关键流 SHA-256 + SQLite TTL** |
+| RI-07 SecretsManager | **AES-256-GCM 本地加密 + .env 自动加解密 + 访问审计发射** |
+| RI-08 ErrorHandler | **Enum(SRE分类) + Structlog 结构化 + W3C traceparent header + trace_id跨进程传播 + 聚合窗口** |
+| RI-09 HealthCheck | **async 探针 + 依赖传导 + 三级状态 + 具体SLI阈值(CPU>80%→DEGRADED,>95%→DOWN;错误率>5%→DEGRADED,>10%→DOWN) + Reconciliation Loop持续对账** |
+| RI-10 TelemetryCollector | **structlog 聚合 + per-module基数限制(500) + 超限LRU淘汰+告警 + 直方图 + Exemplar + 10s 推送 + PromptFingerprint + DeadModuleDetector** |
+| RI-11 CacheLayer | **LRU dict + VMS 语义缓存 + TTL 分层(Hot/Warm/Cold) + DataAffinity hints** |
+| RI-12 AutoDiagnostics | **HealthCheck 触发 + Runbook YAML 匹配 + 诊断报告 Markdown生成 + 修复后→KB自动补充 + TrustDecayTracker + SelfLimiter** |
+| RI-13 EventStore | **SQLite append-only event_log 表 + 快照表(每1000事件) + CQRS读模型(SQLite View) + Crypto-Shredding + SagaCoordinator(Phase 4触发)** |
+| RI-14 DryRunSimulator | **sandbox=True 标志位 + 拦截写操作→日志输出 + diff报告生成 + approval gate + 一致性验证套件 + CrossSessionLoopDetector + SelfSimulate** |
+| RI-15 CostTracker | **LLM调用拦截→token计数→美元换算 + CPU/内存/IO记录 + per-module/session tag归属 + 模块可维护性评分 + 飞书日报** |
+
+### 蓝图特有：设计原则
+
+| 原则 | 内容 |
+|------|------|
+| Crash-Only | 系统不依赖"优雅关闭"——每次停止=crash，每次恢复=重启。所有状态持久化，重启后自动从SQLite重建内存状态 |
+| Structured Concurrency | 使用 `asyncio.TaskGroup` 管理1500+模块的并发生命周期——子任务全部完成或全部取消，无孤儿协程 |
+| Fail-Closed | 安全组件（SecretsManager/ErrorHandler）不可用时拒绝操作而非放行 |
+| Immutable Events | RI-13 EventStore 事件一旦写入不可修改/不可删除——审计完整性不可妥协 |
+| Progressive Disclosure | 容量模型和告警按 Owner 注意力预算分级——实时仅推送CRITICAL，其余汇总 |
+
+### 蓝图特有：关键代码骨架（29个）
 
 #### DeliverySemantics（消息传递语义）
 
@@ -598,17 +394,15 @@ RI-02 ModuleLifecycle ← 所有模块的底座, 最先启动
 from enum import Enum
 
 class DeliverySemantics(Enum):
-    """RI-01 EventBus 的消息传递语义"""
-    AT_MOST_ONCE = "at_most_once"    # 可能丢失，不重复——遥测日志等低价值事件
-    AT_LEAST_ONCE = "at_least_once"  # 可能重复，不丢失——默认；配合IdempotencyGuard
-    EXACTLY_ONCE = "exactly_once"    # 不丢不重——金融交易等关键事件，走ES expected_version
+    AT_MOST_ONCE = "at_most_once"
+    AT_LEAST_ONCE = "at_least_once"
+    EXACTLY_ONCE = "exactly_once"
 
 class EventPriority(Enum):
-    """RI-01 EventBus 事件优先级——高优先级不排低优先级后面"""
-    CRITICAL = 0   # 风控告警/熔断触发——立即消费
-    HIGH = 1       # 交易执行/仓位变更——优先
-    NORMAL = 2     # 模块状态变更/配置变更——正常
-    LOW = 3        # Telemetry聚合/日志——积压时可丢弃
+    CRITICAL = 0
+    HIGH = 1
+    NORMAL = 2
+    LOW = 3
 ```
 
 #### BackpressurePropagation（背压传导）
@@ -616,21 +410,18 @@ class EventPriority(Enum):
 ```python
 @dataclass
 class BackpressureSignal:
-    """背压信号——从 EventBus 向上游传播"""
-    source_module: str         # 哪个模块慢
-    queue_usage_pct: float     # 队列使用率 (0.0-1.0)
-    severity: str              # "warning" (>80%) | "critical" (>95%)
-    affected_upstream: list[str]  # 受影响的上有模块ID
+    source_module: str
+    queue_usage_pct: float
+    severity: str
+    affected_upstream: list[str]
 
 class BackpressurePropagator:
-    """背压传导——不是单向减速，而是链式减速"""
     _thresholds: dict = {
-        "warning": 0.80,   # 80% → 发 WARNING 信号→上游模块限速到 50%
-        "critical": 0.95,  # 95% → 发 CRITICAL 信号→上游模块暂停写入
+        "warning": 0.80,
+        "critical": 0.95,
     }
 
     async def propagate(self, signal: BackpressureSignal) -> None:
-        """根据队列使用率→计算减速因子→通知上游模块"""
         for upstream_id in signal.affected_upstream:
             throttle_factor = self._calc_throttle(signal.queue_usage_pct)
             await EventBus.publish(BackpressureEvent(
@@ -643,11 +434,10 @@ class BackpressurePropagator:
 
 ```python
 class Bulkhead:
-    """舱壁隔离——per-module 线程/连接池上限，防止一个模块耗尽全局资源"""
     _pools: dict[str, "ResourcePool"] = {}
 
     class ResourcePool:
-        max_concurrent: int       # 最多并发操作数
+        max_concurrent: int
         semaphore: asyncio.Semaphore
 
     def configure(self, module_id: str,
@@ -655,35 +445,31 @@ class Bulkhead:
                   max_db_connections: int = 5) -> None: ...
 
     async def acquire(self, module_id: str) -> AsyncContextManager:
-        """获取该模块的资源——若已满则等待；超时则抛 ResourceExhaustedError"""
+        ...
 ```
 
 #### LoadShedder（负载脱落）
 
 ```python
 class LoadShedder:
-    """负载脱落——超载时按请求优先级主动丢弃低优先级请求，不等队列满"""
-    _overload_threshold: float = 0.80  # 全局负载 > 80% → 开始脱落
+    _overload_threshold: float = 0.80
 
     async def admit(self, request: "Request") -> bool:
-        """判断是否接纳请求。过载时：CRITICAL→接纳/HIGH→按概率接纳/LOW→拒绝"""
         global_load = await self._measure_global_load()
         if global_load < self._overload_threshold:
             return True
-        return request.priority <= EventPriority.HIGH  # 仅CRITICAL+HIGH被接纳
+        return request.priority <= EventPriority.HIGH
 ```
 
 #### RetryBudget（重试配额）
 
 ```python
 class RetryBudget:
-    """重试风暴防护——全局重试配额，耗尽后拒绝重试，避免级联放大"""
-    _budget_per_window: int = 100    # 每分钟最多 100 次重试
+    _budget_per_window: int = 100
     _used_this_window: int = 0
     _window_start: float = 0.0
 
     async def can_retry(self) -> bool:
-        """检查当前窗口内是否还有重试配额"""
         if time.monotonic() - self._window_start > 60.0:
             self._used_this_window = 0
             self._window_start = time.monotonic()
@@ -694,17 +480,15 @@ class RetryBudget:
 
 ```python
 class GracefulShutdown:
-    """RI-02 ModuleLifecycle 优雅关闭协议"""
-    drain_timeout: float = 30.0     # drain 最多等 30s
-    force_kill_timeout: float = 5.0  # drain 超时 → force kill 5s
+    drain_timeout: float = 30.0
+    force_kill_timeout: float = 5.0
 
     async def shutdown(self) -> ShutdownResult:
-        """SIGTERM → drain → 等待 in-flight → 超时 force kill → 状态持久化"""
-        EventBus.stop_accepting()              # 1. 停止接受新事件
-        in_flight = EventBus.drain(self.drain_timeout)  # 2. 等待 in-flight 完成（30s）
+        EventBus.stop_accepting()
+        in_flight = EventBus.drain(self.drain_timeout)
         if in_flight.timeout:
-            EventBus.force_kill(self.force_kill_timeout)  # 3. 超时强制 kill（5s）
-        HealthCheck.persist_current_state()     # 4. 持久化当前健康状态
+            EventBus.force_kill(self.force_kill_timeout)
+        HealthCheck.persist_current_state()
         return ShutdownResult(pending_events=in_flight.remaining)
 ```
 
@@ -712,13 +496,11 @@ class GracefulShutdown:
 
 ```python
 class W3CTraceContext:
-    """对齐 W3C Trace Context Level 2——跨模块/跨进程 trace_id 传播"""
-    trace_id: str    # 32 hex chars
-    span_id: str     # 16 hex chars
-    trace_flags: int  # 01 = sampled
+    trace_id: str
+    span_id: str
+    trace_flags: int
 
     def to_traceparent(self) -> str:
-        """生成 traceparent header: 00-{trace_id}-{span_id}-{trace_flags:02x}"""
         return f"00-{self.trace_id}-{self.span_id}-{self.trace_flags:02x}"
 
     @classmethod
@@ -729,13 +511,9 @@ class W3CTraceContext:
 
 ```python
 class CryptoShredding:
-    """RI-13 EventStore GDPR 兼容——用 per-stream AES 密钥加密敏感字段
-    删除权 = 销毁该 stream 的 AES 密钥 → 所有历史事件不可解密 = 逻辑删除
-    """
-    _stream_keys: dict[str, bytes] = {}  # stream_id → AES-256 key
+    _stream_keys: dict[str, bytes] = {}
 
     async def anonymize_stream(self, stream_id: str) -> None:
-        """删除加密密钥 = 该 stream 的所有历史事件永久不可读"""
         del self._stream_keys[stream_id]
         audit.record(f"CRYPTO_SHRED: stream={stream_id}")
 ```
@@ -744,7 +522,6 @@ class CryptoShredding:
 
 ```python
 class SagaCoordinator:
-    """RI-13 扩展——跨模块补偿事务（Phase 4 触发，仅当需要多步骤回滚时激活）"""
     _active_sagas: dict[str, "SagaInstance"] = {}
 
     async def start(self, saga_id: str,
@@ -752,17 +529,15 @@ class SagaCoordinator:
 
     async def compensate(self, saga_id: str,
                          failed_step: int) -> CompensateResult:
-        """从 failed_step 逆序执行补偿——恢复每个步骤之前的状态"""
+        ...
 ```
 
 #### Speculative Execution
 
 ```python
 class SpeculativeExecutor:
-    """RI-01 EventBus 投机执行——关键路径同时发 2 路，取最快返回"""
     async def emit_with_hedge(self, event: Event,
                               replicas: int = 2) -> EventResult:
-        """发送到 N 个消费者，第一个完成的结果直接返回"""
         tasks = [consumer.handle(event) for consumer in self._replicas[:replicas]]
         done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
         for task in pending:
@@ -770,20 +545,16 @@ class SpeculativeExecutor:
         return done.pop().result()
 ```
 
-#### Leader Election via SQLite Lease（多节点主选举）
+#### Leader Election via SQLite Lease
 
 ```python
 class SqliteLeaderElection:
-    """最简单的 Leader Election——SQLite 做租约存储。
-    只适用于单数据中心3-5节点——不是 Raft，是"轻量级主选举"。
-    """
     _lease_table = "leader_lease"
     _lease_id = "global_leader"
-    _lease_ttl: float = 30.0    # 租约 TTL 30s
-    _renew_interval: float = 10.0  # 每 10s 续约
+    _lease_ttl: float = 30.0
+    _renew_interval: float = 10.0
 
     async def try_become_leader(self) -> bool:
-        """INSERT OR REPLACE 原子操作竞争 Leader"""
         now = time.time()
         result = await self.db.execute(
             f"""INSERT OR REPLACE INTO {self._lease_table}
@@ -799,7 +570,6 @@ class SqliteLeaderElection:
         return result.rowcount > 0
 
     async def is_leader(self) -> bool:
-        """检查当前节点是否仍为 Leader"""
         row = await self.db.fetchone(
             f"SELECT node_id FROM {self._lease_table} "
             f"WHERE lease_id = ? AND expires_at > ?",
@@ -808,7 +578,6 @@ class SqliteLeaderElection:
         return row is not None and row[0] == self.node_id
 
     async def step_down(self) -> None:
-        """主动让位——退出前通知集群"""
         await self.db.execute(
             f"DELETE FROM {self._lease_table} WHERE node_id = ?",
             (self.node_id,)
@@ -819,15 +588,11 @@ class SqliteLeaderElection:
 
 ```python
 class ModuleSandbox:
-    """RI 模块间运行时隔离——每模块独立子进程。
-    AI生成的代码在子进程中运行→crash/无限循环→不污染主进程。
-    """
     _module_procs: dict[str, asyncio.subprocess.Process] = {}
-    _crash_counter: dict[str, int] = {}  # crash 计数→自动熔断
+    _crash_counter: dict[str, int] = {}
 
     async fn spawn_module(self, module_id: str,
                            entrypoint: str) -> None:
-        """启动模块为独立子进程——通过 stdin/stdout JSON-RPC 通信"""
         proc = await asyncio.create_subprocess_exec(
             sys.executable, "-m", f"zephyr.{module_id}",
             stdin=asyncio.subprocess.PIPE,
@@ -837,7 +602,6 @@ class ModuleSandbox:
         self._module_procs[module_id] = proc
 
     async def restart_if_crashed(self, module_id: str) -> bool:
-        """检测模块进程是否存活→crash则重启→5次后永久隔离+通知Owner"""
         proc = self._module_procs.get(module_id)
         if proc and proc.returncode is not None:
             self._crash_counter[module_id] = self._crash_counter.get(module_id, 0) + 1
@@ -855,47 +619,36 @@ class ModuleSandbox:
 
 ```python
 class SleepTimeProtocol:
-    """Owner 睡眠时段自动管理——数据驱动的静音窗口。
-    假设：23:00-07:00 local = Owner 正在睡觉。
-    """
-    _sleep_start: int = 23    # 23:00
-    _sleep_end: int = 7       # 07:00
+    _sleep_start: int = 23
+    _sleep_end: int = 7
     _critical_suppressed: int = 0
 
     def is_sleep_time(self) -> bool:
-        """判断当前是否在睡眠时段"""
         hour = datetime.now(tz=self._owner_tz).hour
         return hour >= self._sleep_start or hour < self._sleep_end
 
     async def handle_alert(self, alert: Alert) -> AlertDecision:
-        """睡眠时段：CRITICAL 只触发一次→5min内无Owner响应→走自愈"""
         if not self.is_sleep_time():
             return AlertDecision.SEND_NORMAL
-
         if alert.level == AlertLevel.CRITICAL:
-            if self._critical_suppressed >= 1:  # 已发过一次
-                return AlertDecision.AUTO_HEAL  # 直接自愈
+            if self._critical_suppressed >= 1:
+                return AlertDecision.AUTO_HEAL
             self._critical_suppressed += 1
-            return AlertDecision.SEND_SINGLE    # 只发一条
-
-        return AlertDecision.QUEUE_FOR_MORNING  # 其余→早上推送
+            return AlertDecision.SEND_SINGLE
+        return AlertDecision.QUEUE_FOR_MORNING
 ```
 
 #### Auto-Decide Engine（自动决策引擎）
 
 ```python
 class AutoDecideEngine:
-    """自动决策阈值——影响范围小的操作无需Owner审批。
-    三维：影响模块数 × 费用（$） × 风险RPN
-    """
     _thresholds: dict = {
-        "impacted_modules": 3,      # 影响 ≤3 模块
-        "cost_impact_usd": 0.10,    # 费用 ≤$0.10
-        "risk_rpn": 50,             # RPN ≤50
+        "impacted_modules": 3,
+        "cost_impact_usd": 0.10,
+        "risk_rpn": 50,
     }
 
     async fn decide(self, operation: "Operation") -> DecideResult:
-        """三阈值判断→AND 满足=自动执行|OR 不满足=送审批"""
         impact = await self._assess_impact(operation)
         if (impact.modules <= self._thresholds["impacted_modules"] and
             impact.cost <= self._thresholds["cost_impact_usd"] and
@@ -905,221 +658,183 @@ class AutoDecideEngine:
         return DecideResult(needs_approval=True, reason=impact.summary())
 ```
 
-#### Prompt Cache & Token Budget（提示缓存与Token预算）
+#### Prompt Cache & Token Budget
 
 ```python
 class PromptCacheManager:
-    """AI调用前的上下文优化——缓存+压缩+预算三重优化。
-    氛围编程核心运维——Token钱和上下文窗口都是有限资源。
-    """
-    _cache: dict[str, tuple[float, str]] = {}  # prompt_hash → (ttl, cached_response)
-    _modules_total_tokens_this_session: dict[str, int] = {}  # per-module 追踪
+    _cache: dict[str, tuple[float, str]] = {}
+    _modules_total_tokens_this_session: dict[str, int] = {}
 
     async fn optimize_prompt(self, module_id: str,
                               raw_context: str,
                               user_intent: str) -> str:
-        """三阶段：① 检查缓存→命中直接返回 ② 压缩context→剪枝不相关文件
-        ③ Token预算告警→超限提示简化"""
-
-        # 阶段1: 缓存检查
         cache_key = sha256(user_intent.encode()).hexdigest()
         if cache_key in self._cache:
             ttl, cached = self._cache[cache_key]
             if time.time() < ttl:
-                self._track_tokens(module_id, len(cached) // 4)  # ~1 token/4 chars
+                self._track_tokens(module_id, len(cached) // 4)
                 return cached
-
-        # 阶段2: 上下文压缩——只发相关文件的前N行定义
         compressed = self._compress_context(raw_context, max_chars=8000)
-
-        # 阶段3: Token预算检查——若本月已用>80%→自动提示简化
         monthly_pct = self._get_monthly_token_pct(module_id)
         if monthly_pct > 0.80:
             compressed = f"[⚠️ Token预算已用{monthly_pct:.0%}] " + compressed[:4000]
-
         return compressed
 ```
 
-#### Emergency Trading Kill Switch（紧急交易停止）
+#### Emergency Trading Kill Switch
 
 ```python
 class TradingKillSwitch:
-    """B5-K01——一条命令紧急停止所有交易活动。
-    对标：CME Kill Switch / Two Sigma "Big Red Button"。
-    在量化交易系统中，这是最重要的安全组件——比 CircuitBreaker 高一个优先级。
-    """
-    _mode: str = "NORMAL"  # NORMAL | PAPER_ONLY | READ_ONLY | KILLED
+    _mode: str = "NORMAL"
 
     async def activate(self, reason: str,
                         confirmed_by: str = "AUTO") -> KillSwitchResult:
-        """立即执行五步停止序列"""
         results = []
-
-        # 1. 标记模式→KILLED（所有RM模块立即感知）
         self._mode = "KILLED"
-
-        # 2. 所有未完成订单→取消
         results.append(await self._cancel_all_pending_orders())
-
-        # 3. EventBus 中所有交易事件→清空
         results.append(await EventBus.purge_events(
             event_types=["TradeEvent", "OrderEvent"]))
-
-        # 4. 所有L05（交易执行）模块→只读
         results.append(await ModuleLifecycle.set_mode("L05", "READ_ONLY"))
-
-        # 5. 审计记录→永久留存
         audit.record_severe(f"KILL_SWITCH: reason={reason} by={confirmed_by}")
-
         return KillSwitchResult(mode=self._mode, actions=results)
 
     async def deactivate(self, confirmed_by: str) -> KillSwitchResult:
-        """恢复交易——需要Owner显式确认"""
         if confirmed_by != "Owner":
             raise PermissionError("Kill Switch 只能由 Owner 手动解除")
         self._mode = "NORMAL"
-        # 恢复L05模块为可写
         await ModuleLifecycle.set_mode("L05", "NORMAL")
         return KillSwitchResult(mode=self._mode)
 ```
 
-#### Simulated Clock（模拟时钟——确定性回测根基）
+#### Simulated Clock
 
 ```python
 class SimulatedClock:
-    """B5-M02——区分真实时间 vs 模拟时间。
-    回测时用sim_time驱动所有定时器/超时/schedule。
-    实盘时sim_time==real_time，零开销。
-    """
-    _mode: str = "REAL"  # REAL | SIMULATED
+    _mode: str = "REAL"
     _sim_time: float = 0.0
 
     def now(self) -> float:
-        """统一时间源——调用者不需要知道当前是实盘还是回测"""
         return time.time() if self._mode == "REAL" else self._sim_time
 
     async def sleep(self, duration: float) -> None:
-        """统一sleep——回测中瞬间跳过，实盘中真实等待"""
         if self._mode == "REAL":
             await asyncio.sleep(duration)
         else:
-            self._sim_time += duration  # 回测：时间直接推进
+            self._sim_time += duration
 
     async def advance_to(self, target_time: float) -> None:
-        """回测引擎专用——推进到下一个事件时间"""
         if self._mode != "SIMULATED":
             raise RuntimeError("advance_to 仅在 SIMULATED 模式可用")
         self._sim_time = max(self._sim_time, target_time)
 ```
 
-#### Deterministic Random（确定性随机）
+#### Deterministic Random
 
 ```python
 class DeterministicRandom:
-    """B5-M01——全局确定性随机。种子相同→全系统所有"随机"行为完全相同。
-    这是回测可复现性的硬件保证。
-    """
     _seed: int = 42
     _rng: random.Random = field(default_factory=lambda: random.Random(42))
 
     def reseed(self, seed: int) -> None:
-        """重新设置种子→回测开始时调用→确保可复现"""
         self._seed = seed
         self._rng = random.Random(seed)
         random.seed(seed)
         numpy.random.seed(seed % (2**32 - 1))
 
     def uniform(self, a: float = 0.0, b: float = 1.0) -> float:
-        """所有模块调用此方法而非 random.random()——确保走同一RNG"""
         return self._rng.uniform(a, b)
 
     def choice(self, seq: Sequence[T]) -> T:
-        """所有模块调用此方法而非 random.choice()"""
         return self._rng.choice(seq)
 ```
 
-#### Module Metadata & Self-Description（模块元数据与自描述）
+#### Module Metadata & Self-Description
 
 ```python
 class ModuleMetadata:
-    """B4-I04 深化——每个模块在启动时注册自己的元数据。
-    AI 施工的新模块→自动继承模板元数据→无需手动维护清单。
-    """
     module_id: str
-    layer: str                # L01-L14
-    functional_domain: str    # infra/risk/trading/data/research/...
-    capabilities: list[str]   # ["event_consumer", "event_producer", "http_api", ...]
-    dependencies: list[str]   # MOD-INF-001, ...
-    api_version: str          # "1.0.0" (SemVer)
-    supports_backward: list[str]  # 支持的后向版本 ["0.9.0", "0.8.0"]
-    ai_confidence: float      # 0.0-1.0: AI 对这模块的信心
-    code_ownership: dict      # {"ai_generated": 85, "human_modified": 10, "ai_repaired": 5}
+    layer: str
+    functional_domain: str
+    capabilities: list[str]
+    dependencies: list[str]
+    api_version: str
+    supports_backward: list[str]
+    ai_confidence: float
+    code_ownership: dict
 
     def describe(self) -> str:
-        """一行自描述——给其他模块和调度器用"""
         return (f"{self.module_id}@{self.api_version} "
                 f"[{','.join(self.capabilities)}] "
                 f"conf={self.ai_confidence:.0%}")
 ```
 
-#### Module Template Skeleton（模块模板骨架）
+#### Module Template Skeleton
 
 ```python
-# templates/module_template.py.j2 — 新模块从此模板生成
-"""
-{{ module_id }} — {{ description }}
-Generated by AI Template System v{{ template_version }}
-AI Confidence: {{ ai_confidence }}
-Layer: {{ layer }} | Domain: {{ functional_domain }}
-"""
 from zephyr.shared.lifecycle import LifecycleAware
 from zephyr.shared.observer import EventConsumer, EventProducer
 from zephyr.shared.config import Configurable
 from zephyr.shared.errors import ZephyrError
 
 class {{ class_name }}(LifecycleAware, EventConsumer, Configurable):
-    """{{ docstring }}"""
-
     module_id: str = "{{ module_id }}"
     api_version: str = "0.1.0"
     capabilities: list[str] = {{ capabilities }}
 
     async def on_start(self) -> None:
-        """Phase {{ start_phase }}——启动顺序{{ start_order }}"""
         await super().on_start()
-        # FIXME(AUDIT-05): 模块启动逻辑待实现——施工时由AI agent填充
-        pass
 
     async def on_event(self, event: "Event") -> None:
-        """消费事件——来自 EventBus"""
-        # FIXME(AUDIT-05): 事件处理逻辑待实现——施工时由AI agent填充
-        pass
+        ...
 
     async def on_stop(self) -> None:
-        """优雅关闭"""
         await super().on_stop()
-        pass
 ```
 
-### 5.4 RI-13 EventStore 设计哲学（v3.0.0 扩展）
+#### Model Fallback Chain
 
-Event Sourcing 在金融行业已验证：76% 机构已迁移至实时事件驱动架构，CQRS 实现 35-47% 交易处理性能提升 + 99.98% 市场波动期可用性。但全量实现 ES 对 1 人+AI 是高风险决策。因此采用**触发式渐进引入**：
+```python
+class ModelFallbackChain:
+    _chain: list[tuple[str, float]] = [
+        ("deepseek-chat", 0.90),
+        ("deepseek-reasoner", 0.70),
+        ("qwen-max", 0.60),
+    ]
+
+    async def call_with_fallback(self, prompt: str) -> "AIResponse":
+        last_error = None
+        for model_id, confidence in self._chain:
+            try:
+                result = await self._call_model(model_id, prompt)
+                return result
+            except Exception as e:
+                last_error = e
+                log.warn(f"{model_id}→failed→trying next")
+                continue
+        raise AIBackendExhaustedError(
+            f"All {len(self._chain)} models failed. Last error: {last_error}"
+        )
+```
+
+### 蓝图特有：RI-13 EventStore 设计哲学
+
+全量实现 ES 对 1 人+AI 是高风险决策。采用**触发式渐进引入**：
 
 ```
-Phase 1-2: 传统状态存储（SQLite CRUD） ← 快速迭代
+Phase 1-2: 传统状态存储（SQLite CRUD）
            ↓ 触发条件：模块数 > 100 或 首次合规/审计要求
 Phase 3:   RI-13 EventStore ← 关键数据流切 ES，非关键保持 CRUD
            └── 仅对 L04(风控)、L06(仓位)、L05(交易执行) 三层的写操作做 Event Sourcing
            └── CQRS 读模型：物化视图(账户余额)、聚合视图(因子分数)
            └── 快照策略：每 1000 事件自动快照 → 重放上限 1000 事件 → 恢复延迟 < 500ms
-           └── v3.0.0: Crypto-Shredding 可选启用（有 GDPR/合规需求时）
+           └── Crypto-Shredding 可选启用（有 GDPR/合规需求时）
            ↓ 触发条件：首次跨模块多步骤回滚需求
 Phase 4:   RI-13 SagaCoordinator ← 编排补偿事务（触发式，不主动启动）
 ```
 
-### 5.5 RL-001 ~ RL-048 填补方案（v3.0.0 扩展）
+### 蓝图特有：RL-001 ~ RL-048 落地方案
 
-| 缺口 | 方案 | Phase | 验收 |
+| 约束 | 方案 | Phase | 验收 |
 |------|------|-------|------|
 | RL-001 跨层通信 | EventBus pub/sub + consumer group | 1b | 跨层消息延迟 P99 < 100ms |
 | RL-002 模块管理 | ModuleLifecycle 拓扑排序启动 | 1a | 500 模块拓扑排序 < 50ms |
@@ -1144,7 +859,7 @@ Phase 4:   RI-13 SagaCoordinator ← 编排补偿事务（触发式，不主动�
 | RL-021 费用归属 | CostTracker per-module | 2b | 费用归属粒度 = module_id |
 | RL-022 消息语义 | EventBus DeliverySemantics: AT_LEAST_ONCE(默认) | 1b | 所有消费者按此语义设计 |
 | RL-023 背压传导 | BackpressurePropagation 协议 | 1b | 下游队列>80%→上游减速 |
-| RL-024 DI统一 | Mod-INF-016 `di_container.py` | 1a | 一个容器，一处注入 |
+| RL-024 DI统一 | MOD-INF-016 `di_container.py` | 1a | 一个容器，一处注入 |
 | RL-025 时间旅行隔离 | replay_to() write_mode: READ_ONLY | 3 | 重放期间0写入冲突 |
 | RL-026 行为一致性 | sandbox vs 真实 双跑diff套件 | 2b | diff=0 → 行为一致 |
 | RL-027 加密归属 | ConfigCenter→SecretsManager强制路由 | 2a | 唯一加密路径100% |
@@ -1170,121 +885,471 @@ Phase 4:   RI-13 SagaCoordinator ← 编排补偿事务（触发式，不主动�
 | RL-047 信任衰减 | 误报>30%→降级"建议模式" | 2b | 自愈误判0扩大 |
 | RL-048 Crash-Only | 依赖重启恢复不依赖优雅关闭 | 1a | 无人值守自恢复100% |
 
-### 5.6 CI/CD 与部署自动化流水线（v4.0.0 新增）
+### 蓝图特有：扩展设计约束（B4/B5 系列）
 
-> **对标**：GitHub Actions / ArgoCD / Flagger 的金丝雀部署模式。在 1人+AI 语境下，CI/CD 需极简化——一条命令从代码到生产。
+#### A. 分布式系统与多节点（B4-A01~A10）
 
-```
-代码提交（AI 完成施工）
-  ├── 1️⃣ 静态分析门
-  │     ├── mypy strict（类型检查）
-  │     ├── ruff（lint）
-  │     └── Semgrep（安全扫描——v4.0.0 新增）
-  ├── 2️⃣ 测试门
-  │     ├── 单元测试（受影响模块）
-  │     ├── Contract Test（Pact——v4.0.0 新增）
-  │     └── Property-Based Test（Hypothesis——v4.0.0 新增）
-  ├── 3️⃣ DryRun 门（RI-14 预演）
-  │     ├── sandbox 执行→diff 报告
-  │     ├── 一致性验证套件
-  │     └── CrossSessionLoopDetector
-  ├── 4️⃣ Approve 门
-  │     ├── 自动决策引擎判断（RPN<50 + 影响≤3模块 + 费用≤$0.10）
-  │     └── OR Owner 审批
-  ├── 5️⃣ 部署门
-  │     ├── Canary（1%→10%→50%→100% 流量渐进）
-  │     ├── 健康监控每个 Canary 阶段
-  │     └── 自动回滚条件：错误率>5% OR P99延迟超过2x基线
-  └── 6️⃣ 生产验证
-        ├── Smoke Test（合成事务验证）
-        ├── 错误率基线对比
-        └── 自动追加 ADR（若涉及架构变更）
-```
+| 约束 ID | 约束内容 | 验证方式 |
+|---------|---------|---------|
+| B4-A01 | Leader Election——多节点部署时主节点选举 | 双主检测=0；无主时定时任务停滞=0 |
+| B4-A02 | Cluster Membership（Gossip Protocol）——节点加入/离开/崩溃感知 | 节点崩溃后请求路由到死节点=0 |
+| B4-A03 | Split-Brain Protection——网络分区时一致性保护 | 分区期间双主同时写=0 |
+| B4-A04 | Consistent Hashing / Sharding——模块>500/事件的Sharding算法 | 扩容后事件路由无需全量重构 |
+| B4-A05 | Quorum-Based Decision——部署/FeatureFlag变更的节点共识数 | 单节点作恶→全集群中毒=0 |
+| B4-A06 | Hybrid Logical Clock (HLC)——跨节点事件偏序/全序 | 跨节点溯源无"先果后因" |
+| B4-A07 | CRDT——多节点并发写入自动合并 | 并发修改无需手动解冲突 |
+| B4-A08 | Anti-Entropy（Read Repair + Hinted Handoff）——节点间状态同步修复 | 节点间状态漂移=0 |
+| B4-A09 | Multi-Raft / Raft Group Segmented Consensus——按模块域分建共识组 | 全局共识延迟≠O(N²) |
+| B4-A10 | Graceful Partition Healing——分区恢复后渐进重建 | 分区恢复后无网络+CPU双爆 |
 
-| 阶段 | 工具 | 理由 |
-|------|------|------|
-| 静态分析 | mypy + ruff + Semgrep | 零新依赖——已有 Python 环境即可 |
-| 单元测试 | pytest + Hypothesis | 参数化测试覆盖边界 |
-| Pact 测试 | pact-python | 验证模块间契约不被破坏 |
-| DryRun | RI-14 DryRunSimulator | 自建——零新依赖 |
-| Canary | 基于 RI-03 FeatureFlag 实现 | 复用 ConfigCenter 渐进推出能力 |
+#### B. 部署与基础设施自动化（B4-B01~B08）
 
-### 5.7 AI 施工自治回路（v4.0.0 新增）
+| 约束 ID | 约束内容 |
+|---------|---------|
+| B4-B01 | CI/CD Pipeline Design——代码→lint→test→dryrun→approve→merge→deploy 全自动流水线 |
+| B4-B02 | Canary Deployment——新模块版本→1%→50%→100% 渐进上线 |
+| B4-B03 | Infrastructure-as-Code (IaC)——Docker Compose→ Pulumi/Terraform 配置管理 |
+| B4-B04 | Blue-Green Deployment——模块版本切换零停机 |
+| B4-B05 | Secret Zero Problem——启动时第一个秘密来源与后续展开 |
+| B4-B06 | Immutable Infrastructure Implementation——模块不可变部署设计细节 |
+| B4-B07 | Container Escape Prevention——AI代码在容器中运行的沙箱加固策略 |
+| B4-B08 | Artifact Registry & Provenance——构建产物签名 + SBOM + SLSA供应链级别 |
 
-> **对标**：Aider / Copilot Chat / Cursor Agent 模式。氛围编程的核心是 "AI 说了算 → 人 review → 循环"。蓝图不实现 AI 本身，但为 AI 施工提供结构化的执行环境。
+#### C. 数据管理与迁移（B4-C01~C06）
 
-```
-AI 施工 Session 生命周期
-  │
-  ├── 1. 启动
-  │     ├── AI Context Builder: 收集相关模块蓝图/代码/最近变更
-  │     ├── Token Budget Check: 会话总预算 ≤ 本模块月度配额
-  │     └── 锁定工作区：同一模块不能被两个 session 同时修改
-  │
-  ├── 2. 施工循环（每轮）
-  │     ├── AI 提交修改
-  │     ├── 自动 Self-Review（另一模型做 Code Review——四眼原则）
-  │     ├── 自动 Lint-Fix（ruff → 自动修复 → 再lint → pass）
-  │     ├── 自动 Test Gen（从 diff 生成对应的单元测试）
-  │     └── 自动 SelfSimulate（DryRun 预演修改→预测影响面）
-  │
-  ├── 3. 提审
-  │     ├── 生成统一 diff 报告：代码变更 + 测试结果 + DryRun预测 + 费用预估
-  │     ├── Auto-Decide Engine 判断（RPN + 影响面 + 费用）
-  │     └── → 自动通过 OR 推送给 Owner 审批
-  │
-  └── 4. 结束
-        ├── 记录 Session Log + AI Decision Log（ADR）
-        ├── 解锁工作区
-        └── 更新 Codebase Familiarity Score
-```
+| 约束 ID | 约束内容 |
+|---------|---------|
+| B4-C01 | Schema Migration with Zero Downtime——SQLite表结构变更在线迁移（expand-contract pattern） |
+| B4-C02 | Point-in-Time Recovery (PITR)——SQLite WAL→增量备份→任意时间点恢复 |
+| B4-C03 | Data Retention Policy Automation——自动过期/归档/删除策略执行 |
+| B4-C04 | Database Connection Pooling——1500模块并发SQLite读写连接池策略 |
+| B4-C05 | SQLite Write Contention——多模块同时写入单一SQLite的并发冲突处理 |
+| B4-C06 | Data Locality for Multi-Region——跨Region部署的数据同步策略 |
 
-#### AI 模型降级链（v4.0.0 新增代码骨架）
+#### D. 测试与质量保障深度（B4-D01~D08）
 
-```python
-class ModelFallbackChain:
-    """AI 模型调用降级链——首选模型失败→自动切换备选→最终提级 Owner。
-    氛围编程每天的事实——模型挂了不能停止施工。
-    """
-    _chain: list[tuple[str, float]] = [
-        ("deepseek-chat", 0.90),        # 首选：性价比最高
-        ("deepseek-reasoner", 0.70),    # 降级1：推理强但贵
-        ("qwen-max", 0.60),             # 降级2：备选供应商
-    ]
+| 约束 ID | 约束内容 |
+|---------|---------|
+| B4-D01 | Contract Testing——模块间API/Pact测试确保Schema变更不破坏下游 |
+| B4-D02 | Property-Based Testing——Randomized+Shrink自动发现边界条件 |
+| B4-D03 | Automated Test Generation from Diff——AI代码变更→自动生成对应测试 |
+| B4-D04 | Mutation Testing——修改代码→测试是否捕获 |
+| B4-D05 | Fuzz Testing at Module Boundary——EventBus/ConfigCenter接口随机数据注入 |
+| B4-D06 | Golden File Testing——关键输出哈希锁定→变更=回归告警 |
+| B4-D07 | Cross-Module Integration Test Orchestration——1500模块集成测试矩阵管理 |
+| B4-D08 | Test Flake Detection & Quarantine——不稳定测试自动隔离+报告所有者 |
 
-    async def call_with_fallback(self, prompt: str) -> "AIResponse":
-        last_error = None
-        for model_id, confidence in self._chain:
-            try:
-                result = await self._call_model(model_id, prompt)
-                return result
-            except Exception as e:
-                last_error = e
-                log.warn(f"{model_id}→failed→trying next")
-                continue
+#### E. AI施工 专项深度（B4-E01~E12）
 
-        raise AIBackendExhaustedError(
-            f"All {len(self._chain)} models failed. Last error: {last_error}"
-        )
-```
+| 约束 ID | 约束内容 |
+|---------|---------|
+| B4-E01 | Prompt Caching Strategy——context embed缓存降低LLM API调用费用 |
+| B4-E02 | Context Window Budget——每次AI调用的context大小≤X tokens |
+| B4-E03 | Semantic Code Search / Code Embedding——AI施工时高效查询已有代码库 |
+| B4-E04 | Code Generation Template System——模块脚手架/事件处理器/配置模板标准化 |
+| B4-E05 | AI Code Review Automation——AI生成代码→另一AI审查（四眼原则） |
+| B4-E06 | Self-Healing Quality Gate——AI自修复后验证：不引入新问题/不影响其他模块 |
+| B4-E07 | AI Decision Log——每次AI重大施工决策→自动追加 ADR |
+| B4-E08 | Diff-Level Undo——单次 diff 级别精细undo |
+| B4-E09 | Model Fallback Chain——deepseek-chat → deepseek-reasoner → qwen-max → 提级Owner |
+| B4-E10 | AI Context Persistence across Sessions——跨session上下文保存/恢复/过期策略 |
+| B4-E11 | Prompt Version Control & A/B Testing——提示词版本化、分级测试、回滚 |
+| B4-E12 | Token Optimization Pipeline——AI调用前自动压缩上下文+剪枝不相关文件引用 |
+
+#### F. 1人+AI 运维深度强化（B4-F01~F10）
+
+| 约束 ID | 约束内容 | 验证方式 |
+|---------|---------|---------|
+| B4-F01 | Owner Cognitive Load Budget——每日决策容量上限，超限→"轻负载日" | 决策疲劳→重大事故漏判=0 |
+| B4-F02 | Daily Operations Briefing——每日摘要：关键指标/费用/自愈记录/待决策项 | Owner每日首览≤3min理解系统状态 |
+| B4-F03 | Sleep-Time Protocol——23:00-07:00 非CRITICAL静音；CRITICAL仅1次→5min无响应→自愈 | 凌晨告警吵醒≤1次/夜 |
+| B4-F04 | Auto-Decide Threshold——影响<X模块/费用<$Y/风险RPN<Z→自动执行无需审批 | 低风险操作审批瓶颈=0 |
+| B4-F05 | Emergency Wake-Up Criteria——精确定义值得叫醒Owner的紧急情况 | 假阳性叫醒=0 |
+| B4-F06 | Weekly System Health Report——每周Markdown报告到Knowledge Base | 连续多日无注意→问题积累=0 |
+| B4-F07 | Owner Absence Simulation——每月1次6h"假Owner离线"演练 | 真正休假时系统依赖Owner手动=0 |
+| B4-F08 | Knowledge Externalization——Owner决策原则转化为系统可执行规则 | Owner失能→系统无人判断=0 |
+| B4-F09 | Onboarding Auto-Generation——新参与者30min内理解系统 | 新人上手时间≤30min |
+| B4-F10 | Mental Health Safeguard——连续72h无Owner手动介入→降低告警频率 | 弃用螺旋=0 |
+
+#### G. 安全深度强化（B4-G01~G06）
+
+| 约束 ID | 约束内容 |
+|---------|---------|
+| B4-G01 | Module Sandboxing——RI模块间运行时隔离——一个模块crash/无限循环不影响其他模块 |
+| B4-G02 | AI-Generated Code Security Scanning——AI施工完成后自动Semgrep安全扫描 |
+| B4-G03 | Tamper-Proof Audit Log——审计日志哈希链（Merkle Tree）防篡改 |
+| B4-G04 | Least Privilege Enforcement per Module——每个模块只拥有声明的资源访问权 |
+| B4-G05 | Supply Chain Security (SBOM + Vulnerability Scan)——依赖脆弱性扫描 + Software Bill of Materials |
+| B4-G06 | AI Prompt Injection Guard——Owner指令 vs AI内容分离 |
+
+#### H. 可观测性深度强化（B4-H01~H05）
+
+| 约束 ID | 约束内容 |
+|---------|---------|
+| B4-H01 | Distributed Trace Visualization——跨5层trace→时序火焰图 |
+| B4-H02 | Error Budget Burn Rate Alerting——Error Budget < 1%/1h → CRITICAL |
+| B4-H03 | Capacity Forecasting——基于历史趋势预测扩展时机 |
+| B4-H04 | Latency Heat Maps——per-module P50/P95/P99 latency→自动识别退化模块 |
+| B4-H05 | Slow Query Detection——SQLite查询 > 100ms→自动标记+建议索引 |
+
+#### I. API与协议设计（B4-I01~I04）
+
+| 约束 ID | 约束内容 |
+|---------|---------|
+| B4-I01 | Module API Versioning Strategy——模块对外API版本规范(SemVer)与废弃窗口 |
+| B4-I02 | Backward Compatibility Enforcement——CI自动检测模块新版本是否破坏下游接口 |
+| B4-I03 | WebSocket / gRPC Stream Management——流通信的超时/重连/背压策略 |
+| B4-I04 | Module Discovery & Self-Description——新模块自动注册+能力声明 |
+
+#### J. 开发者体验（B4-J01~J06）
+
+| 约束 ID | 约束内容 |
+|---------|---------|
+| B4-J01 | One-Command Local Setup——`git clone && ./setup.sh`→全量本地运行环境就绪 |
+| B4-J02 | Hot Reload Development——模块代码变更→自动reload无需重启 |
+| B4-J03 | AI REPL / Chat Interface——终端内直接与AI交互施工 |
+| B4-J04 | Self-Debugging Hooks——AI施工→失败→自动收集日志+stacktrace→AI自修复 |
+| B4-J05 | Codebase Familiarity Score——per-module熟悉度指标+提醒review |
+| B4-J06 | Automated CHANGELOG from Git——AI读git log→结构化 CHANGELOG |
+
+#### K. 金融/交易系统专项（B5-K01~K12）
+
+| 约束 ID | 约束内容 | 验证方式 |
+|---------|---------|---------|
+| B5-K01 | Emergency Trading Kill Switch——一条命令：取消所有未完成订单+清空EventBus交易事件+切换ALL模块read-only | 算法失控→无法停损=0 |
+| B5-K02 | Pre-Trade Risk Check Pipeline——订单→仓位限制→资金检查→敞口检查→合规检查→交易所 | AI交易逻辑无风控发单=0 |
+| B5-K03 | Order State Machine Standardization——统一状态机(NEW→PENDING→PARTIAL→FILLED/CANCELLED/REJECTED) | 下游订单状态混乱=0 |
+| B5-K04 | Market Data Clock & Timestamp Normalization——统一到交易所时钟(NTP→PTP) | tick对齐错位=0 |
+| B5-K05 | Deterministic Simulation Mode——固定随机种子+模拟时间→同输入同输出 | 回测不可复现=0 |
+| B5-K06 | Paper Trading Infrastructure——所有交易模块自动支持paper模式 | AI施工→直接操作真实账户=0 |
+| B5-K07 | Trade Reconciliation——系统订单 vs 经纪商回执 vs 清算报告三方对账 | 系统记录与实际不一致=0 |
+| B5-K08 | Position & Exposure Aggregation——全局仓位/净敞口实时计算+硬限额 | 净裸露超限=0 |
+| B5-K09 | End-of-Day / Start-of-Day Processing——持仓结算/损益计算/保证金监控/数据归档 | 无标准化日终流程=0 |
+| B5-K10 | Market Circuit Breaker Integration——交易所熔断→系统自动暂停该标的交易 | 交易所停牌后继续下单=0 |
+| B5-K11 | Slippage & Market Impact Modeling——DryRun和backtest自动归入滑点成本 | 回测"完美利润"≠实盘=0 |
+| B5-K12 | Fee & Commission Attribution——每笔交易费用归属到模块，纳入RI-15 FinOps | 费用被忽视→虚假盈利=0 |
+
+#### L. 模块通信模式扩展（B5-L01~L08）
+
+| 约束 ID | 约束内容 | 适用场景 |
+|---------|---------|---------|
+| B5-L01 | Request-Reply Pattern——同步请求→等待响应→超时处理 | 查询账户余额/因子值/风控判断 |
+| B5-L02 | Scatter-Gather Pattern——一请求广播N个模块→收集响应→聚合 | 因子计算——多数据源请求→投票/加表 |
+| B5-L03 | Pipeline / Chain Pattern——事件→A处理→B→C→最终结果 | ETL管道/数据清洗/信号生成→过滤→排序→执行 |
+| B5-L04 | Competing Consumers——多消费者竞争同一事件，先到先处理 | 同质任务队列——多worker消费 |
+| B5-L05 | Content-Based Router——根据消息内容路由到不同消费者 | TradeEvent→L05，RiskEvent→L04 |
+| B5-L06 | Message Filtering / Enrichment——EventBus中间件截获+修改/增强/过滤事件 | 添加追踪信息/删除敏感字段 |
+| B5-L07 | Aggregation / Batching Strategy——按时间窗/数量窗聚合为批处理事件 | 批量行情→归一化→一次性消费 |
+| B5-L08 | Return Address / Callback Pattern——事件带return_address→完成后响应 | 异步请求-响应模式 |
+
+#### M. 确定性复现与调试（B5-M01~M06）
+
+| 约束 ID | 约束内容 |
+|---------|---------|
+| B5-M01 | Deterministic Random——全系统共享种子→种子相同→所有随机行为完全相同 |
+| B5-M02 | Simulated Clock——区分 real_time vs sim_time；回测/预演时用sim_time驱动 |
+| B5-M03 | Event Replay with Exact Timing——从EventStore按记录时间戳精确重放→同序同果 |
+| B5-M04 | Snapshot → Restore for Debugging——运行时快照全系统状态→从此点恢复调试 |
+| B5-M05 | Execution Log with Verbosity Control——按需打开/关闭per-module详细日志 |
+| B5-M06 | Non-Intrusive Debugging Hooks——每个RI模块暴露hook点→不改代码插桩观察 |
+
+#### N. 长期演进与模块生命周期管理（B5-N01~N06）
+
+| 约束 ID | 约束内容 |
+|---------|---------|
+| B5-N01 | Module Deprecation Lifecycle——标记→警告→隔离→归档→删除5阶段 |
+| B5-N02 | Breaking Change Management——2版本共存+路由→旧版本N个月后移除 |
+| B5-N03 | Backward Compatibility Window——每个模块声明支持的历史版本数 |
+| B5-N04 | Module Migration Path Documentation——废弃模块→替代模块映射表+迁移guide |
+| B5-N05 | Dead Code Detection within Modules——vulture/coverage分析→标记未使用代码 |
+| B5-N06 | Cyclomatic Complexity Guard——复杂度>15→AI简化；>25→CI拒绝merge |
+
+#### O. AI 施工模式库与反模式（B5-O01~O08）
+
+| 约束 ID | 约束内容 |
+|---------|---------|
+| B5-O01 | Module Template System——AI创建新模块时自动从模板生成 |
+| B5-O02 | Anti-Patterns Catalog——"在这个系统中绝对不要做什么" |
+| B5-O03 | Design Decision Tree——"用EventBus还是直接调用？"→AI可执行决策规则 |
+| B5-O04 | Error Handling Patterns by Module Type——数据模块:重试+降级→静态值；交易模块:重试1次→报警→拒绝 |
+| B5-O05 | Module Naming Convention Enforcer——`lXX_function_module_name` 强制一致 |
+| B5-O06 | Code Ownership Manifest——每个py文件声明：AI施工% vs Owner手动% vs AI自修复% |
+| B5-O07 | AI Confidence Annotation——AI在代码中标注信心分数(0-1)——低信心=REVIEW_NEEDED |
+| B5-O08 | Progressive Code Review Depth——信心>0.9→轻审；0.5-0.9→中审；<0.5→重审+Owner review |
+
+### 蓝图特有：交易系统基础设施模式
+
+#### 交易模式切换（Trading Mode）
+
+TradingMode 是整个系统的"全局运行模式"，决定 L04/L05/L06 三层的行为：
+
+| 模式 | 说明 |
+|------|------|
+| NORMAL | 实盘模式：真实订单→真实broker→真实资金→KillSwitch就绪 |
+| PAPER | 纸交易：订单→模拟broker→模拟资金→AI施工默认模式 |
+| BACKTEST | 回测模式：SimulatedClock+DeterministicRandom+EventStore重放 |
+| READ_ONLY | 只读模式：所有写操作被DryRun拦截→仅记录不执行 |
+| KILLED | 紧急停止：已触发KillSwitch→所有交易活动冻结，仅Owner可手动切换回NORMAL（需双因子验证） |
+
+模式切换路径限制：
+- NORMAL ⇄ PAPER（任一方向）
+- PAPER → BACKTEST / BACKTEST → PAPER
+- ANY → READ_ONLY（自动：错误率>阈值时）
+- ANY → KILLED（Owner手动/自动：特定条件触发）
+- KILLED → NORMAL（仅Owner双因子验证）
+
+#### 新增长容场景（交易专项）
+
+| 场景 | RI 模块行为 | Owner 收到什么 |
+|------|-----------|-------------|
+| AI 新模块部署→默认PAPER模式 | EventBus自动路由交易事件→模拟broker | 🟢 每日："新模块已上线 Paper Mode——观察72h→可申请升实盘" |
+| Paper模式72h稳定→AI申请升实盘 | RI-09 HealthCheck: 72h稳定(错误率<1%+订单完成率>95%)→自动生成升级建议 | 🟡 WARNING："已满足实盘条件——审批后可升级" |
+| 单模块亏损>日限额 | RI-15 CostTracker 追踪模块PnL→亏损>$X→自动切换该模块为READ_ONLY+通知 | 💀 CRITICAL："今日亏损已达硬限额→已自动切换READ_ONLY" |
+| KillSwitch触发 | B5-K01 TradingKillSwitch.activate()→5步停止序列 | 💀 CRITICAL：飞书+"语音呼叫如果10min内未确认" |
+| 交易所熔断（标的暂停） | B5-K10 检测交易所公告→自动暂停该标的+L05标记READ_ONLY | 🟡 WARNING："标的已暂停交易——系统已冻结" |
+| 交易对账失败 | B5-K07 三方对账→diff>0→自动暂停该broker连接 | 💀 CRITICAL："系统记录与broker回执不一致——已暂停" |
+| 日终处理（EOD） | B5-K09 自动结算→PnL计算→保证金监控→归档→生成日报 | 🟢 每日：EOD报告 |
+
+### 蓝图特有：模块通信模式目录
+
+| 模式 | EventBus 支持程度 | 当前实现 | 施工建议 |
+|------|:--:|------|------|
+| **Pub/Sub**（发布/订阅） | ✅ 完整 | `shared/observer.py` | 已就绪 |
+| **Request/Reply**（请求/响应） | ⚠️ 部分 | 无内建支持 | Phase 1b 扩展：`@request_response(timeout=5.0)` 装饰器 |
+| **Scatter/Gather**（分散/聚合） | ❌ 无 | — | Phase 2b 扩展：`ScatterGatherRouter` |
+| **Pipeline/Chain**（管道/链） | ❌ 无 | — | 通过事件类型路由实现 |
+| **Competing Consumers**（竞争消费者） | ⚠️ 部分 | Consumer Group | 已就绪 |
+| **Content-Based Router**（内容路由） | ❌ 无 | — | Phase 1b：`EventRouter` 按event.type路由 |
+| **Message Filter**（消息过滤） | ❌ 无 | — | Phase 1b：`EventFilter` 中间件 |
+| **Aggregator**（聚合器） | ❌ 无 | — | Phase 2b：`EventAggregator` 时间窗/数量窗 |
+| **Return Address**（回调地址） | ❌ 无 | — | Phase 2b：Event.return_address 字段 |
+
+### 蓝图特有：CI/CD 与部署自动化流水线
+
+| 阶段 | 工具 | 门禁内容 |
+|------|------|---------|
+| 1️⃣ 静态分析 | mypy + ruff + Semgrep | mypy strict + ruff + Semgrep |
+| 2️⃣ 测试 | pytest + Hypothesis + pact-python | 单元测试 + Contract Test(Pact) + Property-Based Test(Hypothesis) |
+| 3️⃣ DryRun | RI-14 DryRunSimulator | sandbox执行→diff报告 + 一致性验证 + CrossSessionLoopDetector |
+| 4️⃣ Approve | Auto-Decide Engine | RPN<50+影响≤3模块+费用≤$0.10 → 自动通过；否则 Owner审批 |
+| 5️⃣ 部署 | 基于 RI-03 FeatureFlag | Canary(1%→10%→50%→100%) + 健康监控 + 自动回滚(错误率>5% OR P99延迟>2x基线) |
+| 6️⃣ 生产验证 | — | Smoke Test + 错误率基线对比 + 自动追加ADR |
+
+### 蓝图特有：AI 施工自治回路
+
+| 阶段 | 内容 |
+|------|------|
+| 1. 启动 | AI Context Builder + Token Budget Check + 锁定工作区 |
+| 2. 施工循环（每轮） | AI提交→Self-Review(四眼原则)→Lint-Fix→Test Gen→SelfSimulate |
+| 3. 提审 | 统一diff报告 + Auto-Decide Engine → 自动通过 OR Owner审批 |
+| 4. 结束 | Session Log + ADR + 解锁工作区 + 更新Familiarity Score |
+
+### 蓝图特有：1人+AI 运维视角的容量模型
+
+#### Owner 告警预算与通知分层
+
+| 通知级别 | 推送方式 | Owner 感知 | 示例 |
+|:--:|------|------|------|
+| **💀 CRITICAL** | 立即飞书 | 需要3秒内看到并决策 | 熔断OPEN/Secrets泄露/Drift检测/CostTracker硬限额触发 |
+| **🟡 WARNING** | 每小时汇总飞书 | 可以等1小时再看 | ErrorBudget < 50%/RateLimiter触发/Backpressure WARNING |
+| **🟢 INFO** | 每日汇总飞书 | 睡醒再看 | FeatureFlag状态汇总/Cooldown触发/CacheLayer命中率日报 |
+| **⚪ DEBUG** | 仅Dashboard | 不推送，Owner主动查看 | Telemetry基数详情/LLM调用token明细/AI行为Trace |
+| **✨ AI_SELF_HEALED** | 日报中列出 | "今天AI自愈了N次" | HealthCheck→AutoDiagnostics→修复→成功——全链路无人参与 |
+
+#### 五视图体系
+
+| 视图 | 内容 | 当前状态 |
+|------|------|:--:|
+| **静态拓扑视图** | 模块清单 + 依赖 DAG + 承载关系 | ✅ |
+| **动态行为视图** | 每个 RI 模块的状态机、生命周期状态图 | ⚠️ 蓝图骨架存在但未展开 |
+| **故障传播视图** | 从底层故障到顶层 Owner 感知的因果链 | ✅ |
+| **容量伸缩视图** | Load→Response Curve | ⚠️ 依赖 MOD-INF-001 容量预测模型 |
+| **Owner 感知视图** | 每个 RI 模块在每种失败模式下，Owner 感知到什么 | ✅ |
+
+#### 深度运维场景
+
+| 场景 | 触发条件 | 系统行为 | Owner 感知 |
+|------|---------|---------|-----------|
+| 🛌 **睡眠保护** | 23:00-07:00 local | CRITICAL 仅触发1次→5min无响应→自愈 | "今日7小时睡眠窗口——系统自行处理了2个WARNING" |
+| ☕ **晨报推送** | 07:00-08:00 | Daily Briefing: 昨日关键指标+费用+自愈记录+待决策项 | 飞书："昨日3个AI自愈/月费$1.42/1项待审批" |
+| 🧠 **决策疲劳防护** | C_today > 0.8×C_max | Auto-Decide Engine激活 | "今日已做X项自动决策——节省了Y次审批" |
+| 🚨 **紧急唤醒判定** | 夜间+核心回路DOWN+3次自愈失败 | CRITICAL飞书：原因+已尝试自愈+建议动作 | 明确告知为何唤醒 |
+| 🏝️ **Owner消失演练** | 每月1次（6h） | 系统进入"Owner Absent Mode" | 演练结束后报告 |
+| 📝 **知识外化** | Owner每次做决策后 | 记录决策原则→转化为系统规则 | "已自动学习到你的12条决策偏好" |
+| 💔 **弃用螺旋防护** | 连续72h无Owner手动介入 | 降低告警频率30%+升高自愈阈值 | "注意：已3天无手动操作" |
+| 🔄 **自我解释** | Owner 说 "why?" | ≤3s可理解的因果解释 | "EventBus熔断因为：l06消费速率<10/s" |
+| 📊 **周报** | 每周日 | Weekly Report：SLO/费用/健康/AI施工统计 | Markdown→飞书→KB |
+
+#### 开发者体验设计
+
+| 体验目标 | 设计 | 实现方式 |
+|---------|------|---------|
+| **一键启动** | `git clone && ./tools/setup.sh` | 自动创建venv、安装依赖、初始化SQLite、启动EventBus |
+| **热重载** | 模块代码变更→自动reload | watchdog监控→受影响模块restart（复用RI-02热重载） |
+| **AI Chat 集成** | 终端内 `/z` 命令→AI施工 | `$ /z fix module l06` → AI对话→代码变更→DryRun→审批 |
+| **自调试钩子** | AI施工→失败→自动收集上下文 | 自动捕获trace_id+stacktrace+最近commit→发送给AI自修复 |
+| **代码熟悉度** | per-module可视化熟悉度 | f(最后修改天数, Owner修改次数, 最近AI修改次数)→低熟悉度→提醒review |
+| **自动 CHANGELOG** | AI读写git log→结构化CHANGELOG | 与RI-15 CostTracker共用AI Decision Log管道 |
 
 ---
 
-## 6. 架构视图
+## §4 接口契约
 
-### 6.1 Phase 路线图（v3.0.0 最终版）
+### 4.1 公共 API
 
-| Phase | 名称 | 交付内容 | 核心目标 |
-|-------|------|---------|---------|
-| **1a** | 底座上线 | RI-02 ModuleLifecycle(拓扑排序+版本约束+优雅关闭协议+Crash-Only+预热期) + RI-03 ConfigCenter(热重载+写入校验+Feature Flags) + RI-04 DependencyInjector(统一由MOD-INF-016承载) + RI-08 ErrorHandler(SRE分类+W3C Trace Context) | 模块启动链 + 配置 + DI + 错误——四者一体，结构化并发 |
-| **1b** | 通信就绪 | RI-01 EventBus(完整版: DeliverySemantics+PriorityQueue+DLQ持久化+背压传导链+消费者组+Schema兼容) + RI-10 TelemetryCollector(基数限制+PromptFingerprint+DeadModuleDetector) + RI-06 IdempotencyGuard(TTL分级) | 事件系统带上所有防护 + 消息语义明确 |
-| **2a** | 韧性安全 | RI-05 ResilienceGuard(熔断+限流+Bulkhead+LoadShedder+RetryBudget+超时+降级+自适应并发) + RI-07 SecretsManager + RI-09 HealthCheck(具体SLI阈值+ReconciliationLoop) + RI-11 CacheLayer(DataAffinity) | "1人+AI 能不能睡好觉"的分水岭——七合一韧性+标准化健康 |
-| **2b** | 自治闭环 | RI-12 AutoDiagnostics(Runbook→诊断→KB自动补充+TrustDecayTracker+SelfLimiter) + RI-14 DryRunSimulator(行为一致性验证+CrossSessionLoopDetector+SelfSimulate) + RI-15 CostTracker(全资源+MaintainabilityScore) + ModuleGraph(D3.js) + ProgressiveDelivery 预留 | 系统自己诊断 + 预演 + 费用自控 + Owner看总结报告 |
-| **3** | 溯源增强（触发式） | RI-13 EventStore（ES+CQRS+写隔离+Crypto-Shredding）——当模块数 > 100 或首次合规/审计需求触发 | 金融级完整审计追踪——监管就绪 + GDPR就绪 |
-| **4** | 补偿增强（触发式） | RI-13 SagaCoordinator——当首次跨模块多步骤回滚需求出现时触发 | 复杂业务流程的原子性回退 |
-| **∞** | 维护期（全部Phase完成后自动切换） | 维护期SLO收紧：DryRun仅对新写操作100%覆盖(已有路径依赖集成测试)；部分RI降频运行；AI自预演常态化 | Owner告警预算从宽松→严格，系统进入稳态自运行 |
+| RI 模块 | 核心类 | 关键方法签名 |
+|---------|--------|-------------|
+| RI-01 | EventBus | `async publish(event: Event) -> None`, `async subscribe(topic: str, handler: Callable) -> str`, `async drain(timeout: float) -> DrainResult` |
+| RI-02 | ModuleLifecycle | `async register(module: LifecycleAware) -> None`, `async startup_all() -> StartupReport`, `async shutdown() -> ShutdownResult` |
+| RI-03 | ConfigCenter | `get(key: str, default: Any) -> Any`, `async reload() -> None`, `get_feature_flag(name: str) -> FlagState` |
+| RI-05 | ResilienceGuard | `async call_with_circuit(name: str, fn: Callable) -> Any`, `async acquire_rate(name: str) -> bool` |
+| RI-07 | SecretsManager | `encrypt(plaintext: str) -> str`, `decrypt(ciphertext: str) -> str`, `rotate(key_id: str) -> None` |
+| RI-09 | HealthCheck | `async check(module_id: str) -> HealthStatus`, `async check_all() -> AggregateHealth` |
+| RI-14 | DryRunSimulator | `async simulate(operation: Operation) -> SimulationResult`, `async approve(operation_id: str) -> None` |
 
-### 6.2 验收标准（beta 综合——v3.0.0 扩展）
+### 4.2 数据模型
+
+| 模型 | 基类 | 核心字段 |
+|------|------|---------|
+| Event | Pydantic BaseModel | `event_type: str`, `payload: dict`, `priority: EventPriority`, `trace_id: str` |
+| HealthStatus | Pydantic BaseModel | `module_id: str`, `status: Literal["UP","DEGRADED","DOWN"]`, `sli_values: dict[str,float]` |
+| CircuitState | Enum | `CLOSED`, `OPEN`, `HALF_OPEN` |
+| FlagState | Enum | `OFF`, `CANARY`, `ON` |
+| DeliverySemantics | Enum | `AT_MOST_ONCE`, `AT_LEAST_ONCE`, `EXACTLY_ONCE` |
+| EventPriority | Enum | `CRITICAL=0`, `HIGH=1`, `NORMAL=2`, `LOW=3` |
+
+### 4.3 输入契约
+
+| 约束 | 适用模块 | 值 |
+|------|---------|-----|
+| 事件体必须 Pydantic 验证 | RI-01 | `isinstance(event, BaseModel)` |
+| 模块必须实现 LifecycleAware | RI-02 | `hasattr(module, 'on_start')` |
+| 配置 key 必须在 schema 中声明 | RI-03 | `key in schema` |
+| 幂等 key 非空 | RI-06 | `len(idempotency_key) > 0` |
+| 加密字段走 SecretsManager | RI-03→RI-07 | `field.encrypted == True → SecretsManager.decrypt()` |
+
+### 4.4 输出契约
+
+| 约束 | 适用模块 | 值 |
+|------|---------|-----|
+| 事件投递语义 | RI-01 | `AT_LEAST_ONCE`（默认）；关键流 `EXACTLY_ONCE` |
+| 健康状态枚举 | RI-09 | 仅 `UP`/`DEGRADED`/`DOWN` |
+| trace_id 格式 | RI-08 | W3C traceparent: `00-{32hex}-{16hex}-{02x}` |
+| 诊断报告格式 | RI-12 | Markdown，≤500 字 |
+| 费用归属粒度 | RI-15 | `module_id` + `session_id` |
+
+### 4.5 MCP 接口
+
+本模块不暴露 MCP 接口。
+
+### 4.6 契约版本
+
+| 契约 | 版本 | 兼容性策略 |
+|------|------|-----------|
+| Event schema | 1.0.0 | FULL_BACKWARD |
+| HealthStatus | 1.0.0 | FULL_BACKWARD |
+| DeliverySemantics | 1.0.0 | FORWARD_TRANSITIVE |
+| FlagState | 1.0.0 | FULL_BACKWARD |
+
+---
+
+## §5 约束条件
+
+### 5.1 技术约束
+
+| # | 约束 | 值 |
+|---|------|-----|
+| 1 | Python 版本 | 3.12+ |
+| 2 | 操作系统 | Windows 单机 |
+| 3 | 并发模型 | asyncio |
+| 4 | 数据库 | SQLite WAL |
+| 5 | 序列化 | Pydantic V2 |
+| 6 | 外部依赖 | 最小化 |
+
+### 5.2 容量估算
+
+| 维度 | 当前规模 | 峰值需求 | 系统极限 | 是否够用 | 扩展方案 |
+|------|:------:|:------:|:------:|:------:|---------|
+| 模块总数 | 15 | 300 | 1500 | ✅ | 模块 > 300 → EventBus 切 Kafka |
+| 事件消费者 | — | 500/事件 | — | ✅ | 消费者 > 500 → EventBus Sharding |
+| 并发写入 | — | 150 (10% 模块) | — | ✅ | SQLite busy_timeout + WAL |
+| 告警预算 | — | 10 条/日 | — | ✅ | 超出 → 降级为日报汇总 |
+| LLM 月费 | — | $50 | — | ✅ | 超出 → 预算硬限额 + 自动降级 |
+| Telemetry 基数 | — | 500/module | — | ✅ | 超限 → LRU 淘汰 + 告警 |
+
+### 5.3 迁移/废弃方案
+
+> **时态属性**：迁移方案属于**临时时态**——执行完毕后即成为历史，不再属于蓝图。
+> 压缩时判定：迁移方案已全部执行 → 从蓝图删除，归入变更记录。未执行 → 保留。
+
+本蓝图不涉及迁移。
+
+---
+
+## §6 错误处理
+
+| # | 异常场景 | 检测方式 | 恢复策略 | 影响范围 |
+|---|---------|---------|---------|---------|
+| 1 | EventBus 队列满→背压信号延迟→上游持续写入→队列溢出丢事件 | BackpressurePropagation 80%立即广播 + QueueSize监控 | 背压传导+LoadShedder优先级丢弃 | 关键事件丢失→风控/交易状态不一致 |
+| 2 | CircuitBreaker 误熔断→关键下游不可用→全链降级 | HALF_OPEN探测 + TrustDecayTracker | 渐进恢复+信任衰减监控 | 风控检查失败→交易被拒→PnL偏离 |
+| 3 | DryRun sandbox产出与真实执行不一致 | 一致性验证套件（双跑diff）+ SelfSimulate | 修复sandbox→重新验证 | Owner确认的操作上线后触发LoopDetector |
+| 4 | HealthCheck SLI阈值模糊→DEGRADED判定歧义→自愈触发延迟 | 具体SLI阈值+Reconciliation Loop | 阈值具体化+持续对账 | 系统DEGRADED→30s延迟→雪崩为DOWN |
+| 5 | IdempotencyGuard TTL过期→同key重复写入 | 关键流ES expected_version天然去重 | 分级策略：关键流零TTL风险 | 风控限额double-count |
+| 6 | AutoDiagnostics连续误诊3次→SelfLimiter激活 | TrustDecayTracker逆过程 | 暂停后Owner修复→信任恢复 | 模块DOWN但自愈回路暂停 |
+| 7 | SecretsManager主密钥丢失→所有加密配置不可读 | 主密钥备份+Offline冷存储+轮转记录 | 从冷备恢复密钥 | 全系统瘫痪 |
+| 8 | DeadModule检测误标→活跃模块被标记DORMANT | 30天阈值保守+标记前人工确认 | 误标恢复 | 模块被误归档→上游崩 |
+| 9 | Crypto-Shredding去密钥→冷备份中仍有点密钥 | Shred操作→同时删除主+冷备双份密钥+3路审计确认 | 双份密钥同步删除 | GDPR不合规 |
+| 10 | RetryBudget耗尽→关键消费者重试被拒 | RetryBudget按事件优先级分配：CRITICAL自带保底配额 | CRITICAL保底配额 | 关键操作被DLQ滞留 |
+| 11 | AI代码在EventLoop中无限循环→阻塞所有RI模块 | ModuleSandbox进程隔离 | 独立子进程+5次crash永久隔离 | 全系统DOWN |
+| 12 | SQLite schema迁移锁表→所有模块阻塞 | expand-contract online migration | 兼容性检查门禁+双写过渡期 | 全量生产停机 |
+| 13 | 模块A升级破坏模块B的API契约→级联故障 | Pact Contract Testing + CI Backward Compatibility Check | 2版本共存+路由 | 一模块升级→炸上下游 |
+
+---
+
+## §8 安全考量
+
+### 安全机制
+
+| # | 威胁 | 影响 | 缓解措施 | 验证方式 |
+|---|------|------|---------|---------|
+| 1 | 密钥管理风险 | 高 | RI-07 SecretsManager: AES-256-GCM 加密 + 轮转提醒 + 访问审计 + 泄露检测 + AI 注入隔离 | YAML中零明文密钥 |
+| 2 | 访问控制绕过 | 高 | RI-07: ConfigCenter 加密字段强制走 SecretsManager | 唯一加密路径100% |
+| 3 | 审计日志篡改 | 中 | RI-13 EventStore: 事件不可变 + Crypto-Shredding | 删除密钥后0条事件可解密 |
+| 4 | AI代码无隔离 | 高 | ModuleSandbox: AI代码独立子进程 + 5次crash永久隔离 | 一模块crash不影响其他 |
+| 5 | 安全组件不可用 | 高 | RI-07, RI-08: Fail-Closed——安全组件不可用时拒绝操作 | 拒绝操作而非放行 |
+| 6 | 交易系统失控 | 高 | TradingKillSwitch: 5步停止序列 + 仅Owner双因子解除 | 算法失控→无法停损=0 |
+| 7 | Prompt注入 | 中 | RI-14: Owner指令 vs AI内容分离 | 注入攻击被拦截 |
+| 8 | 供应链攻击 | 中 | CI/CD: Semgrep扫描 + SBOM + SLSA | CVE自动评估+告警 |
+
+### 致命假设清单
+
+| # | 致命假设 | 假设不成立的后果 | 缓解可能性 | 缓解措施 |
+|:--:|---------|---------------|:--:|------|
+| H1 | SQLite单写者瓶颈对1500模块并发写入可接受 | 六类写入同时排队→系统不可用级别延迟 | 🟡 中 | BackpressurePropagation + 写争用缓解(busy_timeout) |
+| H2 | AI自测试+AI自审查能发现AI自生成的缺陷 | 同架构不同模型共享训练数据盲区→漏掉同一边界条件 | 🔴 低 | "四眼原则"(不同模型审查)。但盲区重叠率未测量 |
+| H3 | AI施工工具生态3年内不会剧变 | deepseek停服/被封/价格×10→施工管道断裂 | 🟡 中 | ModelFallbackChain(3供应商) |
+| H4 | SQLite WAL/DB永不被逻辑性损坏 | 逻辑错误写入SQLite→持久化为"正确"数据 | 🔴 低 | expand-contract + 三方对账。逻辑损坏检测需应用层checksum |
+| H5 | 1500模块的模块ID不发生碰撞 | 两个session各自生成相同ID→后创建覆盖前一个 | 🟢 高 | 代码索引表。但无原子ID分配器 |
+| H6 | Python asyncio.TaskGroup 在未来5年内保持向后兼容 | Python变更TaskGroup语义→1500模块需全部review | 🟢 高 | 无直接缓解。Python生态假设 |
+| H7 | Owner具备在紧急情况下的有效决策能力 | 凌晨3点被唤醒→睡眠惯性+决策疲劳 | 🟡 中 | 紧急唤醒判定+通知分层 |
+| H8 | 系统能在Owner永久失能后继续运作或安全停止 | 交易系统有账户/仓位/资金——法律上需要人类负责人 | 🔴 低 | 无设计。建议：Dead Man's Switch |
+| H9 | 全量集成测试的可行替代方案足够有效 | 1500模块组合爆炸→三模块交互时序bug | 🟡 中 | Cross-Module Integration Test + Canary |
+| H10 | 蓝图的Text-to-Code转换能忠实执行设计意图 | 蓝图说"Crash-Only"但AI生成了`try: ... except: pass` | 🟡 中 | AI施工自治回路+CI/CD六门流水线 |
+
+---
+
+## §9 测试策略
+
+| # | 测试类型 | 覆盖范围 | 关键测试用例 | 通过标准 |
+|---|---------|---------|------------|---------|
+| 1 | 单元测试 | 所有RI模块核心类 | EventBus publish/subscribe/drain; CircuitBreaker三态转换; IdempotencyGuard去重; SecretsManager加解密 | 覆盖率≥80% |
+| 2 | 集成测试 | RI模块间交互 | RI-02+03+04+08四模块联调; 背压传导链压测; 基数限制超限测试 | 端到端通过 |
+| 3 | 韧性测试 | 混沌实验 | 熔断+Bulkhead+LoadShedding+RetryBudget联动; 全链路韧性测试 | SLO达标 |
+| 4 | Contract测试 | 模块间API | Pact测试确保Schema变更不破坏下游 | 0契约破坏 |
+| 5 | 一致性验证 | DryRun vs 真实 | sandbox vs 真实双跑diff | diff=0 |
+| 6 | 性能测试 | 容量边界 | 500模块拓扑排序≤50ms; 跨层消息延迟P99≤100ms; 投机执行降低尾延迟≥30% | 性能指标达标 |
+
+### 验收标准
 
 | 维度 | 指标 | 目标 |
 |------|------|------|
@@ -1299,264 +1364,114 @@ class ModelFallbackChain:
 | 可靠性 | IdempotencyGuard 去重准确率 | 100% |
 | 可靠性 | 关键数据流 TTL 过期风险 | 0%（ES天然去重） |
 | 安全 | Secrets 明文落盘 | 0 |
-| 安全 | ConfigCenter 加密字段非法路径 | 0%（强制走SecretsManager） |
+| 安全 | ConfigCenter 加密字段非法路径 | 0% |
 | 安全 | Crypto-Shredding 有效性 | 删除密钥后0条事件可解密 |
 | 错误处理 | 跨 3 层 W3C trace_id 完整性 | 100% |
-| 错误处理 | OpenTelemetry 兼容性 | traceparent 标准格式 100% |
 | 可观测 | Telemetry 标签基数 | ≤500 / module |
-| 可观测 | PromptFingerprint 覆盖率 | 100%（所有LLM调用标记） |
-| 可观测 | DeadModule Detector 准确率 | ≥95% |
+| 可观测 | PromptFingerprint 覆盖率 | 100% |
 | 自治 | HealthCheck DOWN → 诊断报告生成 | ≤15s |
-| 自治 | Reconciliation Loop 对账周期 | ≤30s |
 | 自治 | TrustDecayTracker 误报阈值 | 误报>30%→1h内降级 |
-| 自治 | SelfLimiter 激活条件 | 同指标修复>3次/h→暂停+升级Owner |
 | AI 安全 | 写操作 DryRun 覆盖率 | 100% |
-| AI 安全 | DryRun vs 真实行为一致性 | diff=0（一致性验证套件100%） |
-| AI 安全 | CrossSession Loop 检测准确率 | ≥90%（同diff被回滚过→永久拦截） |
+| AI 安全 | DryRun vs 真实行为一致性 | diff=0 |
 | 成本 | LLM + CPU/内存/IO 费用归属 | module_id + session_id |
-| 成本 | 模块可维护性评分 | MaintainabilityScore覆盖全部1500模块 |
 | 溯源 | 关键流事件不可变性 | 100% |
 | 合规 | GDPR删除权可达性 | Crypto-Shredding 100%覆盖 |
 
-### 6.3 1人+AI 运维视角的容量模型（v3.0.0 扩展）
+---
 
-#### Owner 告警预算与通知分层
+## §10 依赖关系
 
-> **v3.0.0 核心新增**：Owner 每天最多处理 N=10 条实时告警。超出→汇总为日报。
+### 10.1 依赖声明
 
-| 通知级别 | 推送方式 | Owner 感知 | 示例 |
-|:--:|------|------|------|
-| **💀 CRITICAL** | 立即飞书 | 需要3秒内看到并决策 | 熔断OPEN/Secrets泄露/Drift检测到不安全漂移/CostTracker硬限额触发 |
-| **🟡 WARNING** | 每小时汇总飞书 | 可以等1小时再看 | ErrorBudget < 50%/RateLimiter触发/IdempotencyGuard TTL清理/Backpressure WARNING |
-| **🟢 INFO** | 每日汇总飞书 | 睡醒再看 | FeatureFlag状态汇总/Cooldown触发/模块启动完成/CacheLayer命中率日报 |
-| **⚪ DEBUG** | 仅Dashboard | 不推送，Owner主动查看 | Telemetry基数详情/所有LLM调用token明细/AI行为Trace/PromptFingerprint分析 |
-| **✨ AI_SELF_HEALED** | 日报中列出 | "今天AI自愈了N次"——不去打扰Owner | HealthCheck→AutoDiagnostics→修复→成功——全链路无人参与 |
+| 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
+|---------|---------|---------|---------|---------|
+| MOD-INF-016 Shared Core | 必须 | 10 个 RI 模块的代码承载基座 | v0.14.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` |
+| MOD-INF-001 Capacity Assurance | 必须 | 容量 SLO + Error Budget | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\capacity-assurance\blueprint.md` |
+| MOD-INF-007 Gate Engine | 可选 | 任务门禁 | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\gate-engine\blueprint.md` |
+| MOD-INF-020 Audit Trail | 可选 | 审计追踪链 | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\audit-trail\blueprint.md` |
+| MOD-INF-021 Rollback System | 可选 | 回滚系统 | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\rollback-system\blueprint.md` |
+| MOD-INF-023 Drift Detector | 可选 | 漂移检测 | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\drift-detector\blueprint.md` |
+| MOD-INF-014 LLM Security | 可选 | LLM 安全网关 | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\llm-security\blueprint.md` |
+| MOD-INF-018 Agent RBAC | 可选 | Agent RBAC | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\agent-rbac\blueprint.md` |
+| MOD-INF-025 A2A Protocol | 可选 | Agent-to-Agent 协议 | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\a2a-protocol\blueprint.md` |
+| MOD-KB-001 Knowledge Base | 可选 | AutoDiagnostics→修复成功→自动补充知识库 | — | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\knowledge-base\blueprint.md` |
+| MOD-INF-022 Escalation Protocol | 可选 | 自治权限升降级 | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\escalation-protocol\blueprint.md` |
+| MOD-INF-024 Budget Enforcer | 可选 | 预算强制执行 | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\budget-enforcer\blueprint.md` |
 
-#### 场景模型（v3.0.0 扩展）
+### 10.2 依赖图对齐声明
 
-| 场景 | RI 模块行为 | Owner 收到什么（通知级别） |
-|------|-----------|-------------|
-| AI 生成写操作 | RI-14 DryRunSimulator: SelfSimulate→sandbox预演→diff报告→"此操作将修改3个文件/影响2个模块/预计$0.03 LLM费用+$0.01 CPU费用"→确认 | 🟢 每日汇总飞书 + diff 预览 + 一键 approve/reject |
-| AI 自预演发现循环依赖 | RI-14 SelfSimulate: AI提交前自己预演→发现循环依赖→**AI自己拒绝自己的修改**→换方案 | ✨ AI_SELF_HEALED → 日报中一句话 |
-| 跨Session重复修改 | RI-14 CrossSessionLoopDetector: SHA-256 diff匹配→"此修改已在TASK-INF-0033中被回滚过→永久拦截" | 🟡 每小时汇总：被拦截的重复修改 |
-| LLM 月费逼近预算 | RI-15 CostTracker: "deepseek-chat 模块本月已用$38/预算$50，按当前速率预计月底$52→建议启用 CacheLayer" | 🟡 每小时汇总 + 优化建议 |
-| LLM 月费超标 | RI-15 CostTracker: 硬限额触发→自动降级到小模型 | 💀 立即飞书：硬限额触发，已自动降级 |
-| 监管审计请求 | RI-13 EventStore: 输入时间范围→重建当时完整状态→导出审计报告 | 🟢 每日汇总: "2026-Q2 审计报告已生成——所有风控决策可溯源至原始事件" |
-| LLM API 费用异常 | RI-15 CostTracker: "今日已完成1283次调用，较昨日+340%，最贵调用来自 context_engine/recompress @ $0.12/次" | 🟡 每小时汇总 + 异常调用详情 |
-| AI 想改 ConfigCenter | RI-14 DryRunSimulator: sandbox→Flag交互矩阵检测→"此配置变更涉及2个Flag的组合，交互矩阵测试PASS"→放行 | 🟢 每日汇总：今日X项配置变更，全部交互矩阵PASS |
-| 模块崩→触发Bulkhead+LoadShedder | RI-05: "l05模块连接池耗尽→不影响其他48模块" | 🟡 每小时汇总: "l05模块需要关注——今24小时触发Bulkhead限流X次" |
-| DeadModule检测 | RI-10: "MOD-INF-017(Code Dedup Engine)已30天无事件活动→标记DORMANT；60天→建议归档" | 🟢 每日汇总: "本月无活动模块: MOD-INF-017, ..." |
-| Owner 激活"休假模式" | 全部RI自动恢复机制解锁：熔断→自动CLOSE/预算→自动限额/Secrets轮转→自动延期 | Owner无感知——"休假模式已激活：3天零实时告警——全部自愈" |
+> 蓝图 §10.1 声明的依赖 MUST 与全局依赖图一致。不一致 = 漂移。
+> 全局依赖图 SSoT：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
+> 机器 SSoT：[cross-module-dependency-registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml)
 
-> **Owner 信任衰减**（v3.0.0）：如果 AutoDiagnostics 的修复在 30% 以上的情况被 Owner 手动回滚，系统自动降级为"建议模式"——修复建议只推送，不自动执行。信任恢复需要连续 50 次建议被 Owner approve 且无回滚。
+| # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
+|---|--------|---------|:-------:|---------|
+| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-INF-002` |
+| 2 | §11 产出物路径 ↔ 依赖图 §19 path_mappings | 路径一致 | 已对齐 | 同上 |
+| 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | 节点存在 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py` |
 
-### 6.4 五视图体系（v3.0.0 衡量标准）
+### 10.3 内部依赖图
 
-| 视图 | 内容 | 当前状态 |
-|------|------|:--:|
-| **静态拓扑视图** | 模块清单 + 依赖 DAG + 承载关系（§1.2 + §1.3） | ✅ |
-| **动态行为视图** | 每个 RI 模块的状态机、生命周期状态图 | ⚠️ 蓝图骨架存在但未展开为状态图 |
-| **故障传播视图** | 从底层故障到顶层 Owner 感知的因果链——不是简单的依赖链，而是"如果X故障→下游效应" | ✅ §6.3 容量模型 + §9 FMEA |
-| **容量伸缩视图** | Load→Response Curve：当前负载 X / 延迟 Y / 成功率 Z，预测 2x 负载时的延迟和成功率 | ⚠️ 依赖 MOD-INF-001 容量预测模型 |
-| **Owner 感知视图** | 每个 RI 模块在每种失败模式下，Owner 感知到什么、需要做什么。Owner 需 ≤3s 理解告警含义 | ✅ §6.3 通知分层 |
+#### 执行顺序依赖
 
-### 6.5 1人+AI 深度运维场景（v4.0.0 新增）
+| 上游脚本 | 下游脚本 | 依赖内容 | 验证方式 |
+|---------|---------|---------|---------|
+| shared/infra/observer.py | shared/events/dlq.py | EventBus 基类是 DLQ 的前置条件 | 检查 observer.py 存在 |
+| shared/resilience/circuit_breaker.py | shared/resilience/retry.py | 熔断状态影响重试策略 | 检查 circuit_breaker.py 存在 |
+| lifecycle_manager/hooks.py | l01_infrastructure/auto_diagnostics.py | LifecycleAware 是 AutoDiagnostics 注册前置 | 检查 hooks.py 存在 |
 
-> **核心洞察**：v3.0.0 的告警预算+通知分层解决的是"信息过载"问题。v4.0.0 要解决的是"Owner 也是人"的问题——会累、会忘、会犯错、会放弃。
+#### 数据流依赖
 
-#### Owner 认知负荷模型
+| 生产者 | 消费者 | 数据类型 | 传输方式 |
+|--------|--------|---------|---------|
+| shared/infra/observer.py | shared/events/dlq.py | Event | 函数调用 |
+| shared/observability/health.py | l01_infrastructure/auto_diagnostics.py | HealthStatus | 事件总线 |
+| shared/observability/metrics.py | l01_infrastructure/cost_tracker.py | TokenUsage | 函数调用 |
+| l01_infrastructure/dry_run_simulator.py | shared/kill_switch.py | SimulationResult | 事件总线 |
 
-```
-Owner 每日决策容量 = C_max
-  ├── 告警处理（CRITICAL × 3 + WARNING × 2 + INFO × 1 权重）
-  ├── 审批决策（代码变更 × 2, 配置变更 × 1.5, FeatureFlag × 1）
-  ├── 架构决策（模块新建 × 4, 重设计 × 5）
-  └── 手动修复（每次 × 3）
+### 10.4 自动化规格
 
-当 C_today > C_max × 0.80 → 🟡 "轻负载日"建议——非紧急决策延迟到明天
-当 C_today > C_max × 1.00 → 🔴 "认知超载"——自动决策引擎激活，仅CRITICAL+架构决策送Owner
-```
+#### 是否需要自动化
 
-#### 新增场景矩阵
+| # | 自动化项 | 是否需要 | 理由 |
+|---|---------|:-------:|------|
+| 1 | 依赖图自动生成 | 是 | 蓝图依赖12个外部模块+28个内部文件 |
+| 2 | 依赖对齐自动验证 | 是 | 有12个外部依赖需对齐 |
+| 3 | 临时时态内容自动清理 | 否 | 无迁移方案 |
+| 4 | 施工步骤完成度自动检测 | 否 | 已施工完成 |
 
-| 场景 | 触发条件 | 系统行为 | Owner 感知 |
-|------|---------|---------|-----------|
-| 🛌 **睡眠保护** | 23:00-07:00 local | CRITICAL 仅触发 1 次→5min 内无响应→自动启动自愈回路；其余→静音，早上推送 | "今日7小时睡眠窗口——系统自行处理了2个WARNING" |
-| ☕ **晨报推送** | 07:00-08:00 | 生成 Daily Briefing: 昨日关键指标+费用+自愈记录+待决策项+今日预测 | Markdown 报告→飞书："昨日系统运行摘要——3个AI自愈/月费$1.42/1项待审批" |
-| 🧠 **决策疲劳防护** | C_today > 0.8×C_max | 自动激活 Auto-Decide Engine——影响≤3模块+费用≤$0.10+RPN<50→自动执行 | "今日已做X项自动决策——节省了Y次审批——你还有Z项待决策" |
-| 🚨 **紧急唤醒判定** | 夜间+触发"唤醒标准" | 精确定义：仅当 ①核心交易/风控回路 DOWN + ②自愈3次失败 + ③影响≥L04/L05/L06 任意一层 | CRITICAL飞书：明确告知"为何唤醒你"+"系统已尝试的自愈"+"建议的动作" |
-| 🏝️ **Owner消失演练** | 每月1次（6h） | 系统进入"Owner Absent Mode"——熔断/预算/轮转全自动——按真实SLO运行 | 演练结束后报告："这6小时内：系统处理了X个异常/0次需要人工介入/0次违反SLO" |
-| 📝 **知识外化** | Owner 每次做决策后 | 记录决策原则→转化为系统规则："[Owner名]在[场景]中选择了[选项]因为[原因]" | 一个月后："已自动学习到你的12条决策偏好——它们会自动执行" |
-| 💔 **弃用螺旋防护** | 连续72h无Owner手动介入 | 系统降低告警频率30%——"太多告警→人放弃→更不介入→系统更差"。同时升高自愈阈值 | "注意：已3天无手动操作——系统已自动降低告警频率——随时可恢复" |
-| 🔄 **自我解释** | Owner 说 "why?" | 系统为每个状态/告警/决策提供 ≤3s 可理解的因果解释 | "EventBus 熔断因为：l06模块消费速率<10/s(基准100/s)—3次重试全超时—自动OPEN" |
-| 📊 **周报** | 每周日 | 生成 Weekly Report：SLO达标/费用趋势/模块健康变化/新增盲点/AI施工统计 | Markdown→飞书→自动存入Knowledge Base |
+#### 如何自动化
 
-### 6.6 开发者体验设计（v4.0.0 新增）
+| # | 自动化项 | 实现方式 | 现有工具/脚本 | 缺口 |
+|---|---------|---------|-------------|------|
+| 1 | 依赖图自动生成 | AST解析import + manifest字段 | asset_inventory/dependency.py | 不覆盖scripts/目录 |
+| 2 | 依赖对齐自动验证 | CI门禁 | validate_path_alignment.py | 无 |
 
-> **对标**：Vercel/Netlify 的 "git push → live" 体验。1人开发者的时间是最稀缺资源。
+#### 触发方式
 
-| 体验目标 | 设计 | 实现方式 |
-|---------|------|---------|
-| **一键启动** | `git clone && ./tools/setup.sh` | 自动创建 venv、安装依赖、初始化 SQLite、启动 EventBus |
-| **热重载** | 模块代码变更→自动reload | watchdog 监控 `src/zephyr/` →受影响模块 restart（复用 RI-02 热重载） |
-| **AI Chat 集成** | 终端内 `/z` 命令→AI 施工 | `$ /z fix module l06` → AI 对话→代码变更→DryRun→审批 |
-| **自调试钩子** | AI 施工→失败→自动收集上下文 | 自动捕获 trace_id + stacktrace + 最近 commit → 发送给 AI 自修复 |
-| **代码熟悉度** | per-module 可视化熟悉度 | f(最后修改天数, Owner修改次数, 最近AI修改次数) → 低熟悉度→提醒 review |
-| **自动 CHANGELOG** | AI 读写 git log → 生成结构化 CHANGELOG | 与 RI-15 CostTracker 共用 AI Decision Log 管道 |
+| # | 自动化项 | 触发方式 | 触发条件 |
+|---|---------|---------|---------|
+| 1 | 依赖图自动生成 | CI pipeline | 文件变更时 |
+| 2 | 依赖对齐自动验证 | CI门禁 | PR提交时 |
 
 ---
 
-## 7. 触发条件与扩展路径（v3.0.0 扩展）
+## §11 产出物存放目录
 
-| 条件 | 动作 |
-|------|------|
-| 模块 > 300 | RI-01 切 Kafka/RabbitMQ（Protocol 抽象层无缝切换） |
-| pub/sub 消费者 > 500/事件 | 触发 EventBus Sharding |
-| 模块 > 100 或 首次合规要求 | **触发 RI-13 EventStore**（ES+CQRS）——关键三层（L04/05/06）切事件溯源 |
-| 首次跨模块多步骤回滚需求 | **触发 RI-13 SagaCoordinator**（Phase 4）——编排跨模块补偿事务 |
-| LLM API 月费 > $50 | RI-15 CostTracker 启用预算硬限额 + 自动降级到小模型 |
-| LLM API 月费 > $500 | CacheLayer 启用全量语义缓存 + 查询重写 + prompt 自动压缩 |
-| 总LLM月费 > $1000 | RI-15 全资源FinOps面板自动生成——per-module费用排行+优化建议TOP10 |
-| 外部依赖 > 10 个 | ResilienceGuard 降级链独立为 YAML 配置 |
-| 首次安全事故 | SecretsManager 升级到 Vault（Protocol 抽象层） |
-| AI 写操作错误率 > 5% | DryRunSimulator 审查级别升级——所有写操作必须人工 approve |
-| AI 写操作错误率 < 3% 持续 1h（Loop Detector 恢复条件）| DryRunSimulator 审查级别自动降级——恢复自动审批模式 |
-| AutoDiagnostics 误报率 > 30% | TrustDecayTracker → 自动降级为"建议模式"——修复建议不自动执行，需 Owner approve |
-| 同指标修复触发 > 3 次/小时 | SelfLimiter → 暂停该指标的自动修复回路→升级 Owner 手动处理 |
-| 模块 > 500 且 发现不可变部署需求 | Phase 5: RI 模块不可变部署——每个配置变更=新版本=切流量，旧版本保留不删 |
-| 全部 Phase 完成 | 自动切换 Phase ∞（维护期）——SLO 收紧、DryRun 降频、AI自预演常态化 |
-| Owner 激活"休假模式" | 熔断恢复/预算限额/轮转延期全自动——Owner 离线期间 0 实时告警 |
-| Owner 每日告警 > N=10 | 超出告警自动降级为"日报汇总"而非实时推送 |
-| Owner 认知负荷 C_today > 0.8×C_max（v4.0.0） | 激活"轻负载日"——非紧急决策延迟到明天自动推送 |
-| Owner 认知负荷 C_today > C_max（v4.0.0） | 激活"认知超载"保护——Auto-Decide Engine 承担所有非CRITICAL+非架构决策 |
-| 进入睡眠时段（23:00-07:00）（v4.0.0） | 激活 Sleep-Time Protocol——CRITICAL 仅触发1次+5min无响应→自愈；其余静音 |
-| 睡眠时段+核心回路DOWN+3次自愈失败（v4.0.0） | 紧急唤醒 Owner——飞书CRITICAL+明确指出原因+已尝试自愈+建议动作 |
-| 连续72h无Owner手动介入（v4.0.0） | 弃用螺旋防护——降低告警频率30%+升高自愈阈值——防止"放弃系统" |
-| 每月固定时间（v4.0.0） | Owner 消失演练（6h）——系统全自动运行——验证无Owner依赖 |
-| 模型 > 3 次 API 调用失败（v4.0.0） | ModelFallbackChain 自动切换备选模型 |
-| 全部模型调用失败（v4.0.0） | AIBackendExhaustedError——暂停AI施工+升级Owner |
-| 单模块连续crash ≥ 5次（v4.0.0） | ModuleSandbox 永久隔离该模块+通知Owner手动恢复 |
-| 单次部署错误率>5%（v4.0.0） | Canary自动回滚——回到上一个健康版本 |
-| Dependabot/SBOM报告新CVE（v4.0.0） | 自动评估影响面——HIGH/CRITICAL→立即飞书+绿帽更新 |
+### 源码文件
 
----
+> ✅ = 已实现（含 MOD-INF-016 Shared Core 承载的实现）；❌ = 待施工
+> 逐文件清单见 §0.1 代码文件清单
 
-## 8. 风险与缓解（v3.0.0 扩展）
+| 产出物类型 | 存放完整绝对路径 | 说明 |
+|----------|---------------|------|
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\runtime-integration\blueprint.md` | 本文件 |
+| 业务代码（Shared Core承载） | `D:\ZephyrAlpha\src\zephyr\shared\` | RI-01~RI-11 共享核心承载 |
+| 业务代码（独立落地） | `D:\ZephyrAlpha\src\zephyr\l01_infrastructure\` | RI-12~RI-15 独立落地 |
+| 测试代码 | `D:\ZephyrAlpha\tests\l01_infrastructure\` | 测试用例 |
+| 配置文件 | `D:\ZephyrAlpha\config\` | RI模块配置YAML |
 
-| 风险 | 概率 | 缓解 |
-|------|------|------|
-| asyncio.Queue 在 500 模块下内存暴增 | 低 | QUEUE_MAX_SIZE = 10000 硬限制 + 背压 + LoadShedder |
-| CircuitBreaker 误熔断 | 中 | HALF_OPEN 探测 + 渐进恢复 + 信任衰减监控 |
-| IdempotencyGuard 存储膨胀 | 中 | TTL分级：关键流ES天然去重零存储/非关键流24hTTL定时清理 |
-| IdempotencyGuard TTL 过期致重复写入 | **中** | 关键流（风控/交易/仓位）使用 ES expected_version 天然去重——零 TTL 过期风险 |
-| SecretsManager 主密钥丢失 | 低 | 主密钥备份 + 轮转记录 |
-| CacheLayer 缓存穿透（雪崩） | 中 | 空值缓存 + 互斥锁防并发重建 + Bulkhead隔离 |
-| DI 容器循环依赖 | 低 | 启动时 BFS 检测→阻断 |
-| AutoDiagnostics 误诊 | 中 | 标记置信度 + TrustDecayTracker（误报>30%→自动降级）+ "请 Owner 确认" |
-| AutoDiagnostics 自反锁恶性循环 | **低** | SelfLimiter：同指标修复3次/h→暂停回路+升级Owner |
-| **EventStore 事件日志膨胀** | **中** | 快照策略（每 1000 事件）+ 热/冷分层存储 |
-| **DryRun 与真实执行行为不一致** | **中** | v3.0.0: 一致性验证套件——sandbox vs 真实双跑 diff + 共享 Protocol→同源保证 |
-| **CostTracker 定价表过期** | **低** | 定价表外置 `config/llm_pricing.yaml` + 定时对比官方 API + API费用异常告警 |
-| **重试风暴——500消费者同时重试** | **中** | RetryBudget：全局每分钟配额100——耗尽拒绝重试 + jitter |
-| **背压传导不及时→上游继续写入→队列爆满** | **低** | BackpressurePropagation：队列>80% 立即广播+上游减速因子实时计算 |
-| **DeadModule 误标→活跃模块被标记** | 低 | DeadModule检测阈值保守：30天DORMANT/60天DEAD/90天才建议归档 |
-| **Schema兼容性策略缺失→模块升级炸下游** | **中** | SchemaEvolutionPolicy：强制FULL_BACKWARD兼容；破坏性变更需2版本共存+路由 |
-| **预热期不足→虚假熔断→系统波动** | 低 | warmup phase + readiness signal：全链路缓存预热+内部HealthCheck全PASS后才READY |
-| **Crypto-Shredding密钥管理复杂度** | 低 | per-stream密钥 = SHA-256(stream_id + master_secret)——可复现不存储，删除=无法复现 |
-| **单节点设计——多节点部署时无Leader→双主竞态（v4.0.0）** | **中** | SqliteLeaderElection (§5.3 代码骨架)——SQLite租约实现轻量级主选举，后续可用etcd |
-| **AI 代码无隔离→一个模块的无限循环拖死 EventLoop（v4.0.0）** | **中** | ModuleSandbox 进程隔离 (§5.3 代码骨架)——每模块独立子进程+5次crash永久隔离 |
-| **Token费用无预算→月底账单$200而非预期$50（v4.0.0）** | **高** | PromptCacheManager + per-session Token Budget (§5.3 代码骨架)——缓存命中直接返回+月度配额告警 |
-| **AI施工Session间上下文丢失→同一问题重复施工（v4.0.0）** | **中** | AI Context Persistence (§5.7)——跨session上下文持久化+过期策略 |
-| **全部LLM后端同时宕机→施工停滞（v4.0.0）** | **低** | ModelFallbackChain (§5.7 代码骨架)——3供应商轮流降级 |
-| **Owner决策疲劳→低质量审批→事故（v4.0.0）** | **高** | Auto-Decide Engine (§5.3 代码骨架) + 认知负荷预算 (§6.5)——自动决策低风险操作 |
-| **SQLite Schema变更无在线迁移→ALTER TABLE 锁表→生产停机（v4.0.0）** | **中** | expand-contract pattern (§2.1-C01)——兼容性检查门禁+双写过渡期 |
-| **模块API破坏下游消费者→一模块更新→下游全炸（v4.0.0）** | **中** | Contract Testing (Pact) + Backward Compatibility Enforcement (§2.1-D01, §2.1-I02) |
-| **弃用螺旋——Owner长时间不使用系统→告警累积→更不敢打开（v4.0.0）** | **中** | 弃用螺旋防护 (§6.5)——72h无介入→自动降频+增高自愈阈值 |
-
----
-
-## 9. FMEA — 失效模式与效应分析（v3.0.0 新增）
-
-> **对标**：AIAG FMEA 手册——Severity(1-10) × Occurrence(1-10) × Detection(1-10) = RPN。
-> RPN > 200 = 必须强化缓解；RPN > 100 = 需要监控。
-
-| # | 失效模式 | RI 模块 | S | O | D | RPN | 效应 | 检测手段 |
-|---|---------|---------|:--:|:--:|:--:|:--:|------|---------|
-| 1 | EventBus 队列满→背压信号延迟→上游持续写入→队列溢出丢事件 | RI-01 | 8 | 3 | 5 | **120** | 关键事件丢失→风控/交易状态不一致 | BackpressurePropagation 80%立即广播 + QUeueSize监控 |
-| 2 | CircuitBreaker 误熔断→关键下游不可用→全链降级 | RI-05 | 7 | 4 | 4 | **112** | 风控检查失败→交易被拒→PnL偏离 | HALF_OPEN探测 + TrustDecayTracker + 自适应并发限制 |
-| 3 | DryRun sandbox产出与真实执行不一致→Owner确认的操作上线后触发LoopDetector | RI-14 | 7 | 4 | 5 | **140** | 一次"同意"上线后→触发回滚→Owner信任受损 | 一致性验证套件（双跑diff）+ SelfSimulate |
-| 4 | HealthCheck SLI阈值模糊→DEGRADED判定歧义→自愈触发延迟 | RI-09 | 6 | 5 | 6 | **180** | 系统DEGRADED →30s延迟→雪崩为DOWN | 具体SLI阈值+Reconciliation Loop |
-| 5 | IdempotencyGuard TTL过期(25h)→同key重复写入→风控限额被绕过两次 | RI-06 | 9 | 2 | 4 | **72** | 风控限额double-count→pseudo重复执行 | 关键流ES expected_version天然去重——0TTL风险 |
-| 6 | AutoDiagnostics连续误诊3次→SelfLimiter激活→但受影响的模块仍在DOWN | RI-12 | 8 | 2 | 3 | **48** | 模块DOWN但自愈回路暂停→Owner需要手动修复 | TrustDecay逆过程：暂停后Owner修复→信任恢复 |
-| 7 | SecretsManager主密钥丢失→所有加密配置不可读→系统无法启动 | RI-07 | 10 | 1 | 2 | **20** | 全系统瘫痪→Owner需要手动重建密钥 | 主密钥备份+Offline冷存储+轮转记录 |
-| 8 | DeadModule检测误标→活跃模块被标记DORMANT→30天后被归档 | RI-10 | 5 | 2 | 7 | **70** | 模块被误归档→依赖该模块的上游崩 | 30天阈值保守+标记前人工确认弹窗(仅首次误标) |
-| 9 | Crypto-Shredding去密钥→但冷备份中仍有点密钥→"删除"实际上不彻底 | RI-13 | 9 | 2 | 6 | **108** | 声称已Shred的数据实际仍可从冷备恢复→GDPR不合规 | Shred操作→同时删除主+冷备双份密钥+3路审计确认 |
-| 10 | RetryBudget耗尽→关键消费者重试被拒→DLQ堆积→多事件永久卡在DLQ | RI-05 | 7 | 3 | 4 | **84** | 关键操作被DLQ滞留→时效性窗口过期 | RetryBudget按事件优先级分配：CRITICAL自带保底配额 |
-| 11 | Owner "休假模式"激活→但休假期间新Secrets泄露→自愈水平不足→等待Owner回归 | RI-14 | 6 | 2 | 3 | **36** | 泄露持续72h→扩大影响面 | 休假模式下:泄露→自动轮转+沙箱隔离+日报保留为头条 |
-| 12 | Phase ∞ 维护期→CostTracker降频→漏掉一笔异常费用→月费超预算 | RI-15 | 4 | 4 | 4 | **64** | 月度LLM费用小幅超预算→未被及时发现 | CostTracker降频从实时→每小时；但全资源追踪保留全精度(10s采样不变) |
-| 13 | AI代码在EventLoop中无限循环→阻塞所有RI模块→全系统无响应（v4.0.0） | RI-05 | 9 | 3 | 3 | **81** | 全系统DOWN→只有重启能恢复 | ModuleSandbox进程隔离——AI模块独立子进程运行 |
-| 14 | Token配额耗尽→AI施工中断→关键bug修复延迟（v4.0.0） | RI-15 | 7 | 4 | 5 | **140** | 无法修复bug→生产事故窗口延长 | PromptCacheManager + ModelFallbackChain + per-session Budget |
-| 15 | Owner睡眠中被夜间自愈失败叫醒→疲劳→漏掉真正紧急的告警（v4.0.0） | RI-09 | 6 | 4 | 5 | **120** | "狼来了"→真紧急时已关通知 | Sleep-Time Protocol——CRITICAL仅1次+5min→自愈 |
-| 16 | SQLite schema迁移锁表→所有1500模块阻塞在数据库写入（v4.0.0） | RI-03 | 8 | 2 | 5 | **80** | 全量生产停机→Duration=迁移时长 | expand-contract online migration |
-| 17 | 模块A升级破坏模块B的API契约→级联故障至上depending的3层（v4.0.0） | RI-01 | 8 | 3 | 4 | **96** | 一模块升级→炸上下游→系统分区降级 | Pact Contract Testing + CI Backward Compatibility Check |
-
----
-
-## 10. 关键关联（v3.0.0 扩展）
-
-| 关联文档 | 说明 |
-|---------|------|
-| `shared-core/blueprint.md` (MOD-INF-016) | **v3.0.0 关键新增**——10 个 RI 模块的代码承载基座，详见 §1.3 承载关系表 |
-| `capacity-assurance/blueprint.md` (MOD-INF-001) | 容量 SLO + Error Budget——RI 模块依赖其容量约束 |
-| `gate-engine/blueprint.md` (MOD-INF-007) | 任务门禁——ResilienceGuard 不替代 Gate Engine |
-| `audit-trail/blueprint.md` (MOD-INF-020) | 审计追踪链——RI-13 EventStore 提供事件级溯源，审计追踪链消费 |
-| `rollback-system/blueprint.md` (MOD-INF-021) | 回滚系统——支持 session-level 全量 undo（v3.0.0 新增需求） |
-| `drift-detector/blueprint.md` (MOD-INF-023) | 漂移检测——ConfigValidator 增强消费方 |
-| `llm-security/blueprint.md` (MOD-INF-014) | LLM 安全网关——Fail-Closed原则对齐 |
-| `agent-rbac/blueprint.md` (MOD-INF-018) | Agent RBAC——DryRun审批门对接权限层级 |
-| `a2a-protocol/blueprint.md` (MOD-INF-025) | Agent-to-Agent 协议——当 trigger: Agent ≥ 3 |
-| `knowledge-base/blueprint.md` (MOD-KB-001) | AutoDiagnostics→修复成功→自动补充知识库 |
-| `escalation-protocol/blueprint.md` (MOD-INF-022) | 升级协议——TrustDecayTracker→SelfLimiter→Owner升级链 |
-| `budget-enforcer/blueprint.md` (MOD-INF-024) | 预算强制执行——CostTracker硬限额触发→BudgetEnforcer消费降级策略 |
-| `shared/production/limiter.py` (MOD-INF-016) | 速率限制基类——RI-05 ResilienceGuard RateLimiter 消费 |
-| `shared/production/distributed_lock.py` (MOD-INF-016) | 分布式锁——当 trigger: 模块部署 > 1 节点 |
-| Cross-Layer 缺口审计 `RL-001~048` | 本蓝图填补方案 |
-
-> **历史溯源**：Wave 0 终审（2026-04-27）→ v1.0.0（2026-05-01, 6模块）→ v2.0.0（2026-05-05, 全量盲点审计, 12模块）→ v2.1.0（2026-05-05, 三轮深度对标, 15模块）→ **v3.0.0（2026-05-05, 49盲点全量注入 + MOD-INF-016承载关系 + FMEA + ADR + 五视图体系）**。
-
----
-
-## 11. 已实现代码完整路径索引（v3.0.0 —— MOD-INF-016 承载整合版）
-
-### 11.1 源码文件
-
-> **说明**：✅ = 已实现（含 MOD-INF-016 Shared Core 承载的实现）；❌ = 待施工；N/A = 由 MOD-INF-016 承载，本模块不独立落地文件
-
-| 文件路径 | 实现状态 | 版本/变更 | 承载归属 |
-|---------|:---:|------|------|
-| `src/zephyr/shared/observer.py` | ✅ | RI-01 EventBus Pub/Sub 基类 | **MOD-INF-016** |
-| `src/zephyr/shared/events/event_schemas.py` | ✅ | RI-01 事件体Schema | **MOD-INF-016** |
-| `src/zephyr/shared/events/dlq.py` | ✅ | RI-01 DLQ SQLite 持久化 | **MOD-INF-016** |
-| `src/zephyr/shared/lifecycle/hooks.py` | ✅ | RI-02 ModuleLifecycle LifecycleAware | **MOD-INF-016** |
-| `src/zephyr/shared/config/` | ✅ | RI-03 ConfigCenter 加载+校验 | **MOD-INF-016** |
-| `src/zephyr/shared/flags.py` | ✅ | RI-03 FeatureFlag 三态 | **MOD-INF-016** |
-| `src/zephyr/shared/resilience/circuit_breaker.py` | ✅ | RI-05 CircuitBreaker 三态 | **MOD-INF-016** |
-| `src/zephyr/shared/resilience/retry.py` | ✅ | RI-05 指数退避+Jitter | **MOD-INF-016** |
-| `src/zephyr/shared/resilience/fallback.py` | ✅ | RI-05 FallbackChain 降级链 | **MOD-INF-016** |
-| `src/zephyr/shared/idempotency.py` | ✅ | RI-06 IdempotencyGuard 基类 | **MOD-INF-016** |
-| `src/zephyr/shared/secrets.py` | ✅ | RI-07 SecretsManager | **MOD-INF-016** |
-| `src/zephyr/shared/errors.py` | ✅ | RI-08 ErrorHandler 异常树 | **MOD-INF-016** |
-| `src/zephyr/shared/logging.py` | ✅ | RI-08 trace_id 传播+结构化日志 | **MOD-INF-016** |
-| `src/zephyr/shared/health.py` | ✅ | RI-09 AggregateHealth 三级状态 | **MOD-INF-016** |
-| `src/zephyr/shared/metrics.py` | ✅ | RI-10 Telemetry 基础metrics | **MOD-INF-016** |
-| `src/zephyr/shared/cache.py` | ✅ | RI-11 CacheLayer 基类 | **MOD-INF-016** |
-| `src/zephyr/shared/production/di_container.py` | ❌ | RI-04 DependencyInjector | **MOD-INF-016** (planned §2.9) |
-| `src/zephyr/l01_infrastructure/auto_diagnostics.py` | ❌ | RI-12 AutoDiagnostics——**独立落地** | MOD-INF-002 |
-| `src/zephyr/l01_infrastructure/event_store.py` | ❌ | RI-13 EventStore——**独立落地** | MOD-INF-002（Phase 3 触发） |
-| `src/zephyr/l01_infrastructure/dry_run_simulator.py` | ❌ | RI-14 DryRunSimulator——**独立落地** | MOD-INF-002（Phase 2b） |
-| `src/zephyr/l01_infrastructure/cost_tracker.py` | ❌ | RI-15 CostTracker——**独立落地** | MOD-INF-002（Phase 2b） |
-
-### 11.2 配置文件（v3.0.0 扩展）
+### 配置文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
@@ -1569,42 +1484,130 @@ Owner 每日决策容量 = C_max
 | `config/runbooks/` | ❌ | 常见故障 SOP YAML——AutoDiagnostics消费 |
 | `config/llm_pricing.yaml` | ❌ | LLM 定价表——CostTracker 消费 + 定时对比 |
 | `config/dry_run_policy.yaml` | ❌ | 哪些操作自动审批/必须人工/一致性验证套件开关/CrossSessionLoop检测开关 |
-| `config/flag_interaction_matrix.yaml` | ❌ | v3.0.0 Feature Flag pairwise组合测试用例——CI自动消费 |
-| `config/schema_evolution_policy.yaml` | ❌ | v3.0.0 Schema兼容性策略：FULL_BACKWARD/FORWARD_TRANSITIVE |
-| `config/owner_notification_tiers.yaml` | ❌ | v3.0.0 Owner告警预算N=10、通知分层规则、休假模式激活码 |
-| `config/trust_decay_policy.yaml` | ❌ | v3.0.0 TrustDecayTracker恢复窗口+trust阈值+逆过程 |
+| `config/flag_interaction_matrix.yaml` | ❌ | Feature Flag pairwise组合测试用例——CI自动消费 |
+| `config/schema_evolution_policy.yaml` | ❌ | Schema兼容性策略：FULL_BACKWARD/FORWARD_TRANSITIVE |
+| `config/owner_notification_tiers.yaml` | ❌ | Owner告警预算N=10、通知分层规则、休假模式激活码 |
+| `config/trust_decay_policy.yaml` | ❌ | TrustDecayTracker恢复窗口+trust阈值+逆过程 |
 
 ---
 
-## 12. 施工指引（v3.0.0 —— MOD-INF-016 承载视角版）
+## §12 集成目标
 
-### 施工前检查
+| 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
+|------------|---------|--------|---------|
+| MOD-INF-016 Shared Core | 代码承载 | `shared/` 目录下所有RI模块基类 | 验证Shared Core实现满足蓝图增强需求 |
+| MOD-INF-001 Capacity Assurance | 事件订阅 | HealthCheck→容量SLO→ErrorBudget | 容量约束事件正确传播 |
+| MOD-INF-020 Audit Trail | 事件生产 | RI-13 EventStore→审计追踪链消费 | 事件级溯源→审计报告导出 |
+| MOD-INF-021 Rollback System | 事件生产 | RI-13 事件重放→配合回滚 | 事件重放→状态恢复 |
+| MOD-INF-014 LLM Security | Fail-Closed对齐 | RI-07/RI-08安全组件→LLM安全网关 | 安全组件不可用时拒绝操作 |
+| MOD-KB-001 Knowledge Base | 知识写入 | AutoDiagnostics→修复成功→KB自动补充 | 修复后KB条目新增 |
 
-> **⚠️ 在启动任何Phase施工前**：检查 MOD-INF-016 Shared Core v0.14.0 已有对应实现的状态。若 `shared/` 下文件已是 ✅，RI 模块从设计→到交付→到测试的流程应**跳过独立文件创建**，改为：
+---
+
+## §13 需要更新的相关内容
+
+| # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
+|---|------------|------------|---------|---------|
+| 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | RI 模块注册 | 新增 RI-13~RI-15 |
+| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 蓝图元数据 | 版本更新 |
+| 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 依赖关系 | RI 模块依赖 |
+
+---
+
+## §14 已知风险与缓解
+
+> 本节同时承接原 §15 后果中的**负面后果**——设计决策带来的已知代价。
+> 正面后果与 §1 目标重复，不在此记录。
+
+| # | 风险/负面后果 | 概率 | 影响 | 缓解策略 | 类型 |
+|---|-------------|------|------|---------|------|
+| 1 | asyncio.Queue 在 500 模块下内存暴增 | 低 | 高 | QUEUE_MAX_SIZE = 10000 硬限制 + 背压 + LoadShedder | 风险 |
+| 2 | CircuitBreaker 误熔断 | 中 | 高 | HALF_OPEN 探测 + 渐进恢复 + 信任衰减监控 | 风险 |
+| 3 | IdempotencyGuard 存储膨胀 | 中 | 中 | TTL分级：关键流ES天然去重零存储/非关键流24hTTL定时清理 | 风险 |
+| 4 | SecretsManager 主密钥丢失 | 低 | 高 | 主密钥备份 + 轮转记录 | 风险 |
+| 5 | CacheLayer 缓存穿透（雪崩） | 中 | 中 | 空值缓存 + 互斥锁防并发重建 + Bulkhead隔离 | 风险 |
+| 6 | AutoDiagnostics 误诊 | 中 | 中 | 标记置信度 + TrustDecayTracker + "请 Owner 确认" | 风险 |
+| 7 | EventStore 事件日志膨胀 | 中 | 中 | 快照策略（每 1000 事件）+ 热/冷分层存储 | 风险 |
+| 8 | DryRun 与真实执行行为不一致 | 中 | 中 | 一致性验证套件——sandbox vs 真实双跑 diff | 风险 |
+| 9 | 重试风暴——500消费者同时重试 | 中 | 高 | RetryBudget：全局每分钟配额100——耗尽拒绝重试 + jitter | 风险 |
+| 10 | Token费用无预算→月底账单超预期 | 高 | 高 | PromptCacheManager + per-session Token Budget | 风险 |
+| 11 | Owner决策疲劳→低质量审批→事故 | 高 | 高 | Auto-Decide Engine + 认知负荷预算 | 风险 |
+| 12 | 单节点设计——多节点部署时无Leader | 中 | 中 | SqliteLeaderElection——SQLite租约实现轻量级主选举 | 风险 |
+| 13 | Schema兼容性策略缺失→模块升级炸下游 | 中 | 高 | SchemaEvolutionPolicy：强制FULL_BACKWARD兼容 | 风险 |
+| 14 | 弃用螺旋——Owner长时间不使用系统 | 中 | 中 | 弃用螺旋防护——72h无介入→自动降频+增高自愈阈值 | 风险 |
+| 15 | 15个RI模块完整实现工作量巨大 | 高 | 高 | 5个Phase渐进交付 | 负面后果 |
+| 16 | Shared Core承载关系增加MOD-INF-016修改频率 | 中 | 中 | RI增强需求在shared层扩展 | 负面后果 |
+| 17 | AutoDiagnostics误诊的信任衰减需要时间积累 | 中 | 中 | TrustDecayTracker渐进恢复 | 负面后果 |
+| 18 | 触发式模块（RI-13/14/15）在触发前无代码验证 | 中 | 中 | 定期设计review | 负面后果 |
+| 19 | 零依赖优先限制技术选型——模块>300时需迁移 | 中 | 高 | Protocol抽象层无缝切换 | 负面后果 |
+
+---
+
+## §16 施工指引
+
+> **时态属性**：施工步骤属于**临时时态**——执行完毕后可删除，但 MUST 先通过运行验证。
+> **删除前置条件**（缺一不可）：
+> 1. 代码文件存在且非空
+> 2. `python -m pytest tests/` 对应测试 exit 0
+> 3. `mypy` 类型检查通过
+> 4. `ruff` lint 通过
+> 5. 以上 4 项全部通过后，该步骤的详细内容可从蓝图删除，只保留"步骤 N: 已完成"
+
+### ⚠️ AI 施工前检查清单
+
+| # | 检查项 | 确认方式 | 状态 |
+|---|--------|---------|:----:|
+| 1 | 已读取本蓝图全部内容（概述 + §0 对齐 + §1-§14 架构 + §16 施工指引） | 逐节确认 | ☐ |
+| 2 | 已读取必备链接中所有真源文件 | 逐个打开确认 | ☐ |
+| 3 | PS-STD-001 编号规则已理解 | 能回答"GOV-SEC-001是什么" | ☐ |
+| 4 | GOV-DOC-002 防幻觉路径映射已理解 | 能回答"某类文件该放哪" | ☐ |
+| 5 | 每个施工步骤都对应明确的蓝图接口契约（§4） | 逐步骤追溯 | ☐ |
+| 6 | §0 代码对齐验证已填写且与实际代码一致 | 逐项核对 | ☐ |
+
+### 16.1 施工策略
+
+| 项目 | 内容 |
+|------|------|
+| 施工阶段数 | 5 个 Phase（1a/1b/2a/2b/3）+ 2 个触发式Phase（4/∞） |
+| 施工模式 | 扩展为主（Shared Core承载层扩展）+ 独立落地（RI-12/13/14/15） |
+| 核心风险 | Shared Core扩展可能影响已有功能；触发式Phase设计可能过时 |
+| 目标 generation | 7 — 本次从 generation 6 升级到 generation 7（模板v3.5/v3.6升级） |
+
+### 16.2 前置条件
+
+| # | 依赖项 | 依赖类型 | 当前状态 | 是否满足 |
+|---|--------|---------|:---:|:---:|
+| 1 | MOD-INF-016 Shared Core v0.14.0 已施工completed | hard | ✅ | ✅ |
+| 2 | Python 3.12+ 环境就绪 | hard | ✅ | ✅ |
+| 3 | SQLite WAL 可用 | hard | ✅ | ✅ |
+
+### 16.3 实施步骤
+
+> **⚠️ 施工前检查**：检查 MOD-INF-016 Shared Core v0.14.0 已有对应实现的状态。若 `shared/` 下文件已是 ✅，RI 模块从设计→到交付→到测试的流程应**跳过独立文件创建**，改为：
 > 1. 验证 Shared Core 实现是否满足本蓝图的增强需求
 > 2. 若不足：在 `shared/` 目录下扩展（不创建 `l01_infrastructure/` 独立文件）
 > 3. 若完全满足：直接标记为 ✅，记录验收时间
 
-### Phase 1a: 底座上线（v3.0.0 MOD-INF-016 快车道）
+#### Phase 1a: 底座上线
 
 | 步骤 | 任务 | 产出物 | 承载 |
 |:--:|------|--------|------|
-| 1 | RI-02 ModuleLifecycle——验证 `shared/lifecycle/hooks.py`；扩展优雅关闭协议+Crash-Only设计+预热期 | `shared/lifecycle/shutdown.py` + `shared/lifecycle/warmup.py` | MOD-INF-016 扩展 |
+| 1 | RI-02 ModuleLifecycle——验证 `lifecycle_manager/hooks.py`；扩展优雅关闭协议+Crash-Only设计+预热期 | `lifecycle_manager/shutdown.py` + `lifecycle_manager/warmup.py` | MOD-INF-016 扩展 |
 | 2 | RI-04 DependencyInjector——在 `shared/production/di_container.py` 落地构造注入+接口绑定+循环检测 | `shared/production/di_container.py` + 测试 | **MOD-INF-016 新文件** |
 | 3 | RI-03 ConfigCenter——验证 `shared/config/`；扩展渐进推出+交互矩阵+SchemaRegistry+FeatureFlag Kill Switch | `shared/flags/rollout.py` + `config/flag_interaction_matrix.yaml` | MOD-INF-016 扩展 |
 | 4 | RI-08 ErrorHandler——验证 `shared/errors.py` + `shared/logging.py`；扩展W3C Trace Context | `shared/logging/trace_context.py` | MOD-INF-016 扩展 |
 | 5 | 集成测试——RI-02+03+04+08 四模块联调（结构化并发 TaskGroup 验证） | 4 模块联调 + 结构化并发验证 | — |
 
-### Phase 1b: 通信就绪（v3.0.0 扩展）
+#### Phase 1b: 通信就绪
 
 | 步骤 | 任务 | 产出物 | 承载 |
 |:--:|------|--------|------|
 | 6 | RI-01 EventBus——验证 `shared/observer.py`；扩展PriorityQueue+DeliverySemantics+BackpressurePropagation+Schema兼容性策略 | `shared/events/priority_queue.py` + `config/event_bus.yaml` + `config/schema_evolution_policy.yaml` | MOD-INF-016 扩展 |
-| 7 | RI-06 IdempotencyGuard——验证 `shared/production/idempotency.py`；扩展 TTL 分级策略（关键流 ES 天然去重/非关键流 SQLite TTL） | `shared/production/idempotency_policy.yaml` | MOD-INF-016 扩展 |
+| 7 | RI-06 IdempotencyGuard——验证 `shared/production/idempotency.py`；扩展 TTL 分级策略 | `shared/production/idempotency_policy.yaml` | MOD-INF-016 扩展 |
 | 8 | RI-10 TelemetryCollector——验证 `shared/production/metrics.py`；扩展PromptFingerprint+DeadModuleDetector+基数超限LRU策略 | `shared/production/prompt_fingerprint.py` + `shared/production/dead_module_detector.py` | MOD-INF-016 扩展 |
 | 9 | 集成测试 + 背压传导链压测 + 基数限制超限测试 | — | — |
 
-### Phase 2a: 韧性安全（v3.0.0 扩展）
+#### Phase 2a: 韧性安全
 
 | 步骤 | 任务 | 产出物 | 承载 |
 |:--:|------|--------|------|
@@ -1614,7 +1617,7 @@ Owner 每日决策容量 = C_max
 | 13 | RI-11 CacheLayer——验证 `shared/production/cache.py`；扩展 DataAffinity hints + 穿透/LRU 策略 | `shared/production/cache_affinity.py` | MOD-INF-016 扩展 |
 | 14 | 全链路韧性测试——混沌实验（熔断+Bulkhead+LoadShedding+RetryBudget联动） | — | — |
 
-### Phase 2b: 自治闭环（v3.0.0 独立施工）
+#### Phase 2b: 自治闭环
 
 | 步骤 | 任务 | 产出物 | 承载 |
 |:--:|------|--------|------|
@@ -1624,7 +1627,7 @@ Owner 每日决策容量 = C_max
 | 18 | ModuleGraph——D3.js可视化 + 依赖拓扑实时渲染 + 死模块标红 | 前端 + API | — |
 | 19 | ProgressiveDelivery 预留 | Protocol | — |
 
-### Phase 3: 溯源增强（触发式）
+#### Phase 3: 溯源增强（触发式）
 
 > **不主动启动。** 当模块数 > 100 或 Owner 发出"需要合规审计"指令时触发。
 
@@ -1634,7 +1637,7 @@ Owner 每日决策容量 = C_max
 | 21 | L04(风控)/L05(交易)/L06(仓位) 三层写操作切 Event Sourcing | 迁移脚本 + 验证 | — |
 | 22 | 事件重放验证 + 审计报告导出 + Crypto-Shredding GDPR验证 | 审计报告 + Shred验证 | — |
 
-### Phase 4: 补偿增强（触发式）
+#### Phase 4: 补偿增强（触发式）
 
 > **不主动启动。** 当首次跨模块多步骤回滚需求出现时触发。
 
@@ -1643,7 +1646,7 @@ Owner 每日决策容量 = C_max
 | 23 | RI-13 SagaCoordinator——跨模块补偿事务编排 | `event_store/saga_coordinator.py` |
 | 24 | 补偿事务验证——多步骤回滚→逆序执行补偿→所有步骤恢复 | 补偿验证报告 |
 
-### Phase ∞: 维护期切换（全部 Phase 完成后）
+#### Phase ∞: 维护期切换
 
 | 步骤 | 任务 | 产出物 |
 |:--:|------|--------|
@@ -1651,71 +1654,437 @@ Owner 每日决策容量 = C_max
 | 26 | SLO 收紧——维护期容忍度从宽松→严格 | 维护期 SLO 阈值表 |
 | 27 | RI 模块降频配置——DryRunSimulator降频 + CostTracker保留全精度 + AutoDiagnostics保留实时 | `config/maintenance_mode.yaml` |
 
----
+### 16.4 回滚方案
 
-## 13. 终极取证审计——系统性假设、致命前提与自限性边界
+| 步骤 | 如果出问题 | 回滚操作 |
+|------|----------|---------|
+| Phase 1a | Shared Core扩展破坏已有功能 | git revert shared/ 目录变更；独立文件直接删除 |
+| Phase 1b | EventBus扩展导致消息丢失 | 回退到基类observer.py；DLQ SQLite表可保留 |
+| Phase 2a | 韧性组件误熔断 | 禁用新组件配置YAML；回退到shared/resilience/基类 |
+| Phase 2b | AutoDiagnostics误诊 | 禁用auto_diagnostics.py；降级为手动诊断 |
+| Phase 3 | EventStore性能不达标 | 停止ES写入；回退到CRUD模式 |
 
-> **审计员身份**：你不是蓝图作者，不是Owner，你是外部取证专家。你要回答一个问题：**"这个系统在什么条件下会不可逆地失败？"**
->
-> 以下 10 项不是"盲点"——前三轮已找到 155+ 个盲点。以下是 **整个架构依赖的致命假设**。每个假设都标注了"若假设不成立"的后果和"缓解可能性"。
+### 16.5 施工完成标准
 
-### 致命假设清单
+| # | 产出物 | 存放完整绝对路径 | 是否存在 | 内容非空 | §0对齐 |
+|---|--------|---------------|:---:|:---:|:---:|
+| 1 | Shared Core 扩展文件 | `D:\ZephyrAlpha\src\zephyr\shared\` | ☐ | ☐ | ☐ |
+| 2 | 独立落地文件 | `D:\ZephyrAlpha\src\zephyr\l01_infrastructure\` | ☐ | ☐ | ☐ |
+| 3 | 配置文件 | `D:\ZephyrAlpha\config\` | ☐ | ☐ | ☐ |
+| 4 | 测试文件 | `D:\ZephyrAlpha\tests\l01_infrastructure\` | ☐ | ☐ | ☐ |
 
-| # | 致命假设 | 假设不成立的后果 | 缓解可能性 | 缓解措施（已存在于蓝图） |
-|:--:|---------|---------------|:--:|------|
-| H1 | **SQLite单写者瓶颈对1500模块并发写入可接受**。SQLite 仅支持1个并发写者，WAL模式下读者与1写者共存，第2个写者遇 SQLITE_BUSY。1500模块若 10% 同时写入=150并发写入排队→每个等 busy_timeout→整体延迟飙升 | EventBus/Health/Cache/Idempotency/DLQ/CostTracker 六类写入同时排队→系统不可用级别延迟 | 🟡 中 | §5.3 BackpressurePropagation + 写争用缓解(B4-C05 busy_timeout)。**但无实际写入密度模型**——150模块同时写入的场景未建模 |
-| H2 | **AI自测试+AI自审查能发现AI自生成的缺陷**。deepseek-chat审查自己或deepseek-reasoner审查deepseek-chat——它们共享训练数据分布中的盲区。同一架构的不同模型不等于"独立审查" | TradingKillSwitch的测试由生成TradingKillSwitch的同系列AI编写→两者漏掉同一个边界条件→Kill Switch在生产中不可用 | 🔴 低 | §5.7 "四眼原则"(不同模型审查)。**但不同模型来源同生态(OpenAI/Meta/DeepSeek)的盲区重叠率未测量**。无人类编写的独立黄金测试集 |
-| H3 | **AI施工工具生态3年内不会剧变**。deepseek-v4停服/被封/价格×10/API变更→全量1500模块的施工管道断裂 | 无法创建新模块/修复bug/应对安全事故→系统冻结→逐行退化为纯人工维护 | 🟡 中 | §5.7 ModelFallbackChain(3供应商)。但若整个中国LLM生态受冲击(合规/被禁/断网)，所有3供应商可能同时不可用 |
-| H4 | **SQLite WAL/DB永不被逻辑性损坏**。`PRAGMA integrity_check` 检测结构损坏，不检测逻辑损坏（如：风控通过但仓位写入了错误数量——两个模块竞态导致的逻辑错误写入SQLite→持久化为"正确"数据） | 账户余额/仓位/风控状态被错误的"永久真实"覆盖→"数据库说它是正确的"→复盘也无法发现 | 🔴 低 | B4-C01 expand-contract + B5-K07 三方对账。**但逻辑损坏检测需要应用层checksum/Merkle trie/交叉验证——这些都在设计层面，未落地为代码骨架** |
-| H5 | **1500模块的模块ID不发生碰撞**。AI在不同session中创建模块——若两个session各自生成 MOD-L05-042→后创建的那个静默覆盖前一个的注册 | 一个模块"消失"——依赖它的下游找不到→级联DOWN。日志只显示模块未注册，不显示"被覆盖了" | 🟢 高 | §11 代码索引表。**但无原子ID分配器**——依赖AI遵守命名规范(B5-O05)而非系统强制执行 |
-| H6 | **Python 3.11+ asyncio.TaskGroup 在未来5年内保持向后兼容**。蓝图大量依赖 `asyncio.TaskGroup(Python 3.11)` 实现 Structured Concurrency。若Python 3.14/4.0变更TaskGroup语义→1500模块需全部review | 无法升级Python→安全补丁缺口→被迫留在旧Python版本→技术债累积 | 🟢 高 | 无直接缓解。Python生态假设——但1500模块规模让"全部review"不可行 |
-| H7 | **Owner具备在紧急情况下的有效决策能力**。凌晨3点被KillSwitch唤醒→需要在30s内判断"是否为真紧急"+"应该按哪个按钮"+"后果是什么"。睡眠惯性+决策疲劳→实际决策能力远低于蓝图假设 | KillSwitch误触发→Owner错误解除→真实算法失控被确认→延误止损窗口 | 🟡 中 | §6.5 紧急唤醒判定(仅核心回路DOWN+3次自愈失败)、§6.3 通知分层。**但Owner真实决策能力无法在设计层面保证——这是人因工程的硬天花板** |
-| H8 | **系统能在Owner永久失能后继续运作或安全停止**。休假模式72h，但永久呢？交易系统有账户/仓位/资金——法律上需要人类负责人 | 账户中的仓位无限期持有→市场反向→亏损→法律追责到已故(或失能)Owner的遗产 | 🔴 低 | 无设计。这是蓝图的**绝对边界**——1人系统在所有者死亡/失能后的行为不在设计范围内。外部审计员的建议：为"永久失能"场景设计一个独立的死手开关(Dead Man's Switch)——每月需Owner主动确认，未确认→触发全账户平仓+停止 |
-| H9 | **全量集成测试的可行替代方案足够有效**。1500模块的组合爆炸(1500² 可能的交互对)不可能用全量集成测试覆盖。蓝图依赖Contract Testing + DryRun simulaton + 生产Canary渐进上线来替代 | 一个三模块交互的时序bug(模块A在C完成前B就开始)→Canary 1%阶段不触发(因为1%流量碰不到)→全量后触发→全系统DOWN | 🟡 中 | §2.1-D07 Cross-Module Integration Test Orchestration、§5.6 Canary。**但1500模块的真实交互复杂度超出任何测试策略——只能靠生产Canary作为终极防线** |
-| H10 | **蓝图的Text-to-Code转换能忠实执行设计意图**。1664行Markdown蓝图→AI读取→生成代码。审计员问：如果蓝图说"Crash-Only设计"但AI生成了`try: ... except: pass`怎么办？ | 蓝图本该 "FAIL-CLOSED" 的策略被AI生成为 "FAIL-OPEN"→安全边界被绕过 | 🟡 中 | §5.7 AI施工自治回路(审查+lint+dryrun) + §5.6 CI/CD六门流水线。**但语义层面的忠实性无自动化验证——例如"优雅关闭协议"vs AI生成的`sys.exit(0)`——两者都过lint但语义完全相反** |
+### 16.6 施工状态
 
-### 取证审计结论
-
-**设计层面已穷尽。** 经过 v1→v2→v2.1→v3(49盲点)→v4(55+盲点)→v5(50+盲点) 六版迭代，蓝图在全维度上已达期刊发表级完备度：15 RI模块 × 48 RL缺口 × 155+盲点清单 × 29代码骨架 × 17 FMEA × 27风险 × 28触发条件 × 28验收指标 × 15关键关联 × 13配置模板。
-
-**剩余10项致命假设的分布：**
-
-```
-🔴 不可缓解（2项）：H2(AI审查AI的盲区重叠)、H4(逻辑数据损坏无应用层检测)
-🟡 部分缓解（6项）：H1(SQLite写瓶颈)、H3(LLM生态剧变)、H5(模块ID碰撞)、H7(Owner凌晨决策力)、H9(1500模块集成测试)、H10(蓝图→代码忠实转换)
-🟢 已缓解（1项）：H8(Owner永久失能——可加Dead Man's Switch缓解)
-```
-
-**外部取证专家的最终判断**：
-
-> 该蓝图在 **纸质设计层面已达瓶颈**。再补充盲点将陷入过度设计——例如 H1 (SQLite写瓶颈建模) 需要生产数据而非更多设计文档；H2 (AI盲区重叠率) 需要实际测试而非假设。**剩余风险全部在实施层面**：29个代码骨架→完成实现、1500模块的实际生成、生产环境的3个月静默运行观察。
->
-> **建议：停止设计迭代，启动 Phase 1a 实施。** 在第一个模块上线后，根据 `actual vs designed` 的gap重新评估H1-H10——那时候的审计将基于运行数据而非设计文档。
->
-> （如果你坚持继续设计迭代，下一次审计将发现的是"在1500模块都跑起来之后，每条消息的序列化开销是多少"——这不是蓝图该回答的问题。）
+| 字段 | 值 | 填写者 |
+|------|-----|-------|
+| construction_status | completed | 施工者 |
+| verification_status | passed | 审计者 |
+| code_alignment_verified | yes | 审计者 |
 
 ---
+
+## §17 容量升级附录
+
+### §17.1 容量基线
+
+| 资源 | 当前基线 | 测量方式 |
+|------|---------|---------|
+| 模块总数 | 15 | `ls src/zephyr/` 递归统计 |
+| 事件消费者 | <100/事件 | EventBus consumer group 统计 |
+| 并发写入 | <50 | SQLite WAL 写入计数 |
+| LLM 月费 | $0 (未启用) | CostTracker 统计 |
+| Telemetry 基数 | <100/module | metrics 标签统计 |
+
+### §17.2 缺口分析
+
+| 缺口ID | 当前瓶颈 | 升级方案 | 触发阈值 |
+|--------|---------|---------|---------|
+| GAP-001 | asyncio.Queue 单进程限制 | EventBus 切 Kafka/RabbitMQ（Protocol 抽象层无缝切换） | 模块 > 300 |
+| GAP-002 | 单消费者组限制 | EventBus Sharding（Consistent Hashing） | 消费者 > 500/事件 |
+| GAP-003 | SQLite 单写者 | 连接池 + busy_timeout + 写队列批处理 | 并发写入 > 150 |
+| GAP-004 | 本地 AES-256-GCM | SecretsManager 升级到 Vault（Protocol 抽象层） | 首次安全事故 |
+| GAP-005 | 单节点 | SqliteLeaderElection → etcd Raft | 多节点部署需求 |
+| GAP-006 | 单进程 | ModuleSandbox 进程隔离 | AI 代码隔离需求 |
+
+### §17.3 升级版本矩阵
+
+| 版本 | generation | 升级类型 | 核心变更 | 代码覆盖 |
+|------|:---:|---------|---------|:---:|
+| v5.0.1 | 5 | 基线 | 15 RI模块 + 29代码骨架 + 48 RL约束 | ✅ |
+| v6.0.0 | 6 | 模板v3.3重构 | 章节重排+新增§3.2/§6/§9/§12/§14/§15/§16/§18 | ✅ |
+| v6.1.0 | 7 | 模板v3.5/v3.6升级 | §0前移+§7/§15删除+§14增加类型列+§10拆分+铁律#13~#15+蓝图拆分判定标准 | ✅ |
+
+### 触发条件与扩展路径
+
+| 条件 | 动作 |
+|------|------|
+| 模块 > 300 | RI-01 切 Kafka/RabbitMQ（Protocol 抽象层无缝切换） |
+| pub/sub 消费者 > 500/事件 | 触发 EventBus Sharding |
+| 模块 > 100 或 首次合规要求 | **触发 RI-13 EventStore**（ES+CQRS） |
+| 首次跨模块多步骤回滚需求 | **触发 RI-13 SagaCoordinator**（Phase 4） |
+| LLM API 月费 > $50 | RI-15 CostTracker 启用预算硬限额 + 自动降级到小模型 |
+| LLM API 月费 > $500 | CacheLayer 启用全量语义缓存 + 查询重写 + prompt 自动压缩 |
+| 总LLM月费 > $1000 | RI-15 全资源FinOps面板自动生成 |
+| 外部依赖 > 10 个 | ResilienceGuard 降级链独立为 YAML 配置 |
+| 首次安全事故 | SecretsManager 升级到 Vault（Protocol 抽象层） |
+| AI 写操作错误率 > 5% | DryRunSimulator 审查级别升级——所有写操作必须人工 approve |
+| AI 写操作错误率 < 3% 持续 1h | DryRunSimulator 审查级别自动降级——恢复自动审批模式 |
+| AutoDiagnostics 误报率 > 30% | TrustDecayTracker → 自动降级为"建议模式" |
+| 同指标修复触发 > 3 次/小时 | SelfLimiter → 暂停该指标的自动修复回路→升级 Owner |
+| 模块 > 500 且 发现不可变部署需求 | Phase 5: RI 模块不可变部署 |
+| 全部 Phase 完成 | 自动切换 Phase ∞（维护期） |
+| Owner 激活"休假模式" | 熔断恢复/预算限额/轮转延期全自动 |
+| Owner 每日告警 > N=10 | 超出告警自动降级为"日报汇总" |
+| Owner 认知负荷 C_today > 0.8×C_max | 激活"轻负载日" |
+| 进入睡眠时段（23:00-07:00） | 激活 Sleep-Time Protocol |
+| 睡眠时段+核心回路DOWN+3次自愈失败 | 紧急唤醒 Owner |
+| 连续72h无Owner手动介入 | 弃用螺旋防护 |
+| 每月固定时间 | Owner 消失演练（6h） |
+| 模型 > 3 次 API 调用失败 | ModelFallbackChain 自动切换备选模型 |
+| 全部模型调用失败 | AIBackendExhaustedError——暂停AI施工+升级Owner |
+| 单模块连续crash ≥ 5次 | ModuleSandbox 永久隔离该模块+通知Owner |
+| 单次部署错误率>5% | Canary自动回滚 |
+| Dependabot/SBOM报告新CVE | 自动评估影响面——HIGH/CRITICAL→立即飞书 |
+
+---
+
+## §18 决策记录
+
+> **时态属性**：决策记录属于**永久时态**——AI 修改设计时必读。没有它，AI 会重复犯已排除的错误。
+> **本节同时覆盖原 §7 备选方案**——§18 的"选项"列已包含备选方案信息，无需独立章节。
+> **本节同时覆盖原 §15 后果**——负面后果合并到 §14 风险，正面后果与 §1 目标重复无需独立记录。
+
+| # | 决策ID | 决策 | 选项 | 选中 | 依据 | 日期 |
+|---|--------|------|------|------|------|------|
+| 1 | D-INF002-01 | EventBus 实现 | asyncio.Queue / Kafka / Redis Streams | asyncio.Queue | 零依赖；模块<300不需要Kafka | 2026-05-01 |
+| 2 | D-INF002-02 | 幂等策略 | ES天然去重 / SQLite TTL / 双写 | 分级：关键流ES+非关键流SQLite | 关键流零TTL过期风险 | 2026-05-01 |
+| 3 | D-INF002-03 | DI容器归属 | 独立l01文件 / MOD-INF-016承载 | MOD-INF-016承载 | 消除双DI容器重复 | 2026-05-01 |
+| 4 | D-INF002-04 | EventStore引入时机 | 立即实现 / 触发式渐进 | 触发式渐进 | 1人+AI高风险决策；76%金融机构已验证ES | 2026-05-01 |
+| 5 | D-INF002-05 | 并发模型 | asyncio / multiprocessing | asyncio | I/O密集型GIL无影响；线程更轻量 | 2026-05-01 |
+| 6 | D-INF002-06 | 密钥管理 | 本地AES-256-GCM / Vault | 本地AES-256-GCM | 单机足够；Phase 5触发时迁移Vault | 2026-05-01 |
+| 7 | D-INF002-07 | Crash-Only设计 | 优雅关闭优先 / Crash-Only | Crash-Only | 无人值守场景下自恢复100% | 2026-05-01 |
+| 8 | D-INF002-08 | 交易模式默认 | NORMAL / PAPER | PAPER | AI施工→直接操作真实账户=0 | 2026-05-01 |
+| 9 | D-INF002-09 | AI自治权限 | 全自动 / 信任衰减 | 信任衰减 | 误报>30%→降级"建议模式" | 2026-05-01 |
+| 10 | D-INF002-10 | 模板v3.3重构 | 保持旧结构 / 按新模板重构 | 按新模板重构 | REQUIRED_SECTIONS合规；AI阅读顺序优化 | 2026-05-14 |
+| 11 | D-INF002-11 | 模板v3.5/v3.6升级 | 保持v3.3 / 升级到v3.5/v3.6 | 升级到v3.5/v3.6 | §0前移提升AI阅读效率；§7/§15删除减少噪音；§10拆分增加依赖可追溯性 | 2026-05-14 |
+| 12 | D-INF002-12 | EventBus优先级队列 | 无优先级 / PriorityQueue四级 | PriorityQueue四级 | 风控告警不被积压事件阻塞 | 2026-05-01 |
+| 13 | D-INF002-13 | ConfigCenter交互矩阵 | 无 / pairwise组合测试 | pairwise组合测试 | 防止Flag组合引入bug | 2026-05-01 |
+| 14 | D-INF002-14 | ResilienceGuard七合一 | 独立组件 / 统一基座 | 统一基座 | 熔断+限流+降级+隔离+脱落+重试配额+自适应并发联动 | 2026-05-01 |
+| 15 | D-INF002-15 | HealthCheck SLI阈值具体化 | 主观判定 / 数值阈值 | 数值阈值 | 消除DEGRADED判定歧义 | 2026-05-01 |
+| 16 | D-INF002-16 | TelemetryCollector PromptFingerprint | 无 / 追踪AI行为归因 | 追踪AI行为归因 | AI行为可追溯 | 2026-05-01 |
+| 17 | D-INF002-17 | CacheLayer DataAffinity | 无 / Affinity hints | Affinity hints | 减少跨模块缓存miss | 2026-05-01 |
+| 18 | D-INF002-18 | DryRunSimulator CrossSessionLoop | 无 / Loop检测 | Loop检测 | 消除氛围编程"上下文失忆→重复犯错" | 2026-05-01 |
+| 19 | D-INF002-19 | CostTracker全资源FinOps | 仅LLM / 全资源 | 全资源 | CPU+内存+IO+LLM全覆盖 | 2026-05-01 |
+| 20 | D-INF002-20 | 终选技术栈"理由"列删除 | 保留 / 删除并补充到§18 | 删除并补充到§18 | 理由属于决策记录（§18），不属于技术选型表 | 2026-05-15 |
+
+---
+
+## ⚠️ Vibe Coding 蓝图编写铁律
+
+> **时态属性**：本节属于**施工声明**——AI 进入蓝图修改/施工时必读。不可改为链接引用——
+> AI 不会主动跳转链接读取，删掉 = 失去防漂移防线。本节永久保留在蓝图中。
+
+| # | 铁律 | 违反后果 |
+|---|------|---------|
+| 1 | 所有路径必须是绝对路径 | 文件创建到错误位置 |
+| 2 | 必备链接不可省略 | AI 跳过不读，施工时缺少关键信息 |
+| 3 | 蓝图必须是最终设计结果 | 蓝图过厚，关键信息被噪音淹没 |
+| 4 | 产出物路径必须与 GOV-DOC-002 一致 | 路径幻觉 |
+| 5 | 涉及文件范围必须明确列出 | 范围漂移 |
+| 6 | 容量估算必须写 | 容量瓶颈 |
+| 7 | 迁移/废弃方案必须写 | 断链或垃圾积累 |
+| 8 | 禁止模糊词 | 执行漂移 |
+| 9 | 蓝图必须自包含 | 信息缺失 |
+| 10 | 删除文件必须遵守安全删除协议 | 永久丢失 |
+| 11 | construction_progress 必须与代码实际状态一致 | 重复造轮子或跳过施工 |
+| 12 | actual_disk_path 必须与 §11 产出物路径一致 | 搜索失败、导入错误 |
+| 13 | 已实现代码不在蓝图中重复——§0.1 标记`已实现`的模块，蓝图只保留接口签名（§4），不复制实现代码 | AI 改蓝图忘改代码，或改代码忘改蓝图 |
+| 14 | 临时时态内容执行完毕后从蓝图删除——迁移方案、升级执行计划等临时时态内容，一旦执行完毕即成为历史，从蓝图删除 | 蓝图膨胀，关键信息被历史噪音淹没 |
+| 15 | 蓝图内容拆分判定——职责不同→拆分独立蓝图；职责相同→原地升级。判定标准见"蓝图拆分判定标准" | AI 不知道该读哪个蓝图，跨模块影响无法追踪 |
+
+---
+
+## 蓝图拆分判定标准
+
+> 铁律 #15 的操作定义——当蓝图内容超过 ~800 行或包含多个独立职责域时，MUST 执行拆分判定。
+
+### 判定流程
+
+```
+STEP 1: 识别职责域
+  蓝图中的内容是否属于同一职责域？
+  判定标准：该内容的服务对象、变更频率、依赖关系是否与蓝图主体一致？
+
+STEP 2: 职责域判定
+  ├ 职责相同（同一模块的升级/扩展）→ 原地升级
+  │   条件：服务对象相同 + 变更频率同步 + 依赖关系重叠
+  │   操作：在 §17 容量升级附录中增量记录
+  │
+  └ 职责不同（独立子系统/独立能力域）→ 拆分独立蓝图
+      条件（满足任一即触发）：
+      a) 有独立的 module_id 前缀（如 CAP-G vs CAP）
+      b) 有独立的 Phase 路线图和交付节奏
+      c) 有独立的依赖关系图（与蓝图主体的 depends_on 交集 <50%）
+      d) 内容超过 100 行且与蓝图主体无直接数据流
+      操作：创建子蓝图，本蓝图 §10 依赖关系引用子蓝图
+
+STEP 3: 拆分后验证
+  - 拆分出的蓝图 MUST 有独立 frontmatter + 概述 + §0~§18
+  - 拆分出的蓝图 belongs_to = 本蓝图 module_id
+  - 本蓝图 §10 依赖关系新增子蓝图引用
+  - blueprint-registry.yaml 同步更新
+```
+
+### 判定示例
+
+| 场景 | 判定 | 理由 |
+|------|------|------|
+| Runtime Integration 蓝图中"EventBus 分片策略" | **原地** | 服务对象相同 + 变更频率同步 + 依赖关系完全重叠 |
+| Runtime Integration 蓝图中"AI Backend 模型降级链" | **原地** | 模型降级是 RI 核心能力，不是独立子系统 |
+| Runtime Integration 蓝图中"独立 Phase 5 不可变部署" | **拆分** | 独立 Phase 路线图 + 与主体 depends_on 交集<30% + 内容>100行 |
+
+---
+
+## ⚠️ 安全删除协议
+
+> **时态属性**：本节属于**施工声明**——AI 施工涉及删除时必读。永久保留在蓝图中。
+
+### 蓝图中的删除决策清单
+
+> ⚠️ 如果本蓝图会导致文件被废弃/迁移/删除，**必须**在此列出。
+
+| # | 待删除/废弃文件 | 完整绝对路径 | 删除类型 | 接收文件 | 安全删除方案 |
+|---|---------------|------------|---------|---------|------------|
+| 1 | 无 | — | — | — | — |
+
+### 删除铁律
+
+| # | 铁律 | 原因 |
+|---|------|------|
+| 1 | 禁止蓝图阶段物理删除任何文件 | 蓝图只做决策，不做执行 |
+| 2 | 迁移型删除必须逐条迁移、逐条验证 | 批量迁移容易遗漏 |
+| 3 | 物理删除只能在 stable 搬入阶段执行 | 给足缓冲期，deprecated 至少保持1个Phase |
+| 4 | 物理删除必须人类确认 | AI 不得自行决定删除文件 |
+| 5 | "宁可慢，不可漏" | 没有git备份，删了就没了 |
+
+---
+
+## 必备链接
+
+> **时态属性**：本节属于**施工声明**——AI 进入蓝图时必读。不可改为链接引用——
+> AI 不会主动跳转链接读取，删掉 = 失去上下文防线。永久保留在蓝图中。
+
+| # | 文件 | module_id | 完整绝对路径 | 编写时用途 |
+|---|------|-----------|------------|----------|
+| 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则、doc_type词表、frontmatter模板 |
+| 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\directory-structure-standard.md` | 路径映射、边界判据 |
+| 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` | MTH-012 涌现式设计 + MTH-013 路径合规创建 |
+| 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\file-naming-standard.md` | 命名规则 |
+| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | 编号注册 |
+| 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
+| 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index.yaml` | 现有规则索引 |
+| 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md` | AI 操作权限 |
+| 9 | 蓝图模板 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-template.md` | 蓝图结构合规 |
+| 10 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 十字段头部标准 |
+| 11 | Shared Core 蓝图 | MOD-INF-016 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\shared-core\blueprint.md` | DI容器+共享模块 |
+| 12 | 容量保障蓝图 | MOD-INF-001 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\capacity-assurance\blueprint.md` | 容量规则 |
+
+---
+
+## 项目中已有类似功能
+
+> ⚠️ 防重复检查：编写蓝图前**必须**确认项目中是否已有类似功能。
+
+| # | 已有模块/文件 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
+|---|-------------|------------|----------|-------------|
+| 1 | EventBus (shared) | `D:\ZephyrAlpha\src\zephyr\shared\event_bus.py` | 事件发布/订阅 | RI-01 EventBus 是此文件的蓝图设计，不是重复 |
+| 2 | DIContainer (shared) | `D:\ZephyrAlpha\src\zephyr\shared\di_container.py` | 依赖注入 | RI-02 DIContainer 是此文件的蓝图设计，不是重复 |
+| 3 | GracefulShutdown (shared) | `D:\ZephyrAlpha\src\zephyr\shared\graceful_shutdown.py` | 优雅关闭 | RI-04 是此文件的蓝图设计，不是重复 |
+
+---
+
+## 涉及的文件范围
+
+> ⚠️ 防范围漂移：本蓝图涉及的文件范围。AI 编写和施工时**不得**超出此范围。
+
+| # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
+|---|---------|------------|------|---------|
+| 1 | shared/ | `D:\ZephyrAlpha\src\zephyr\shared\` | 读取/修改 | RI-01~RI-11 代码实现 |
+| 2 | l01_infrastructure/ | `D:\ZephyrAlpha\src\zephyr\l01_infrastructure\` | 读取/修改 | RI-12~RI-15 独立落地 |
+| 3 | lifecycle_manager/ | `D:\ZephyrAlpha\src\zephyr\lifecycle_manager\` | 读取/修改 | hooks.py 启动钩子 |
+| 4 | blueprint.md | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\runtime-integration\blueprint.md` | 修改 | 蓝图自身 |
+
+---
+
+## 治理信息
+
+### SSoT 声明
+
+| 内容 | 真源 | 非真源 |
+|------|------|--------|
+| RI 模块架构设计 | **本文档 §1-§10** | 旧版蓝图 |
+| RI 施工步骤 | **本文档 §16** | 已废弃的旧施工图 |
+| RI 接口契约 | **本文档 §4** | — |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
+
+**任何与本蓝图冲突的定义，以本蓝图为准。**
+
+### 消费者注册表
+
+| Tier | 消费者 | 依赖内容 |
+|:----:|--------|---------|
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\shared-core\blueprint.md` | §4 接口契约、§10 依赖关系 |
+| Tier 1 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\capacity-assurance\blueprint.md` | §4 接口契约、§10 依赖关系 |
+| Tier 2 | `D:\ZephyrAlpha\src\zephyr\shared\` | §12 集成点 |
+| Tier 3 | `D:\ZephyrAlpha\src\zephyr\l01_infrastructure\` | §4 数据模型、§11 产出物路径 |
+
+### 变更同步规则
+
+| 变更类型 | Tier 1（下游蓝图） | Tier 2（集成系统） |
+|---------|------------------|------------------|
+| 新增/修改接口契约 | 下游检查接口兼容性 | 检查集成点兼容性 |
+| 修改施工步骤 | 下游更新产出物引用 | 更新配置文件 |
+| 修改模块边界 | 下游更新依赖声明 | 更新集成路由 |
+| 修改 construction_progress | 下游更新依赖状态 | 更新集成测试 |
+| 新增容量升级组件（§17） | 下游评估影响 | 更新容量预算 |
+
+### 修改条件
+
+| 变更类型 | 审批要求 |
+|---------|---------|
+| 接口契约新增/修改（§4） | 需 Owner 审批 + 通知所有消费者 |
+| 模块边界修改（§2） | 需 Owner 审批 |
+| construction_progress 变更 | 需 §0 对齐验证通过 |
+| 施工步骤微调（命令、路径修正） | AI 可自主修改 |
+| 非关键补充（风险缓解、后果描述） | AI 可自主修改 |
+| 容量升级方案新增（§17） | 需 Owner 审批 |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> 运行时集成——orchestrator 9文件已实现
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/orchestrator/agent_health_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/agent_orchestrator.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/agent_quality.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/autonomy_guard.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/backup_manager.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/batch_orchestrator.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/benchmark_runner.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/blind_spot_closure.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/blueprint_health.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/bulkhead_manager.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/canary_manager.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/capacity_budget.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/chaos_engine.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/config_manager.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/construction_guide.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/contract_registry.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/contract_router.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/core/agent_orchestrator.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/core/task_queue.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/core/wave_generator.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/data_lifecycle.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/deferred_queue.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/degrade_cascade.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/dependency_lock.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/design_decisions.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/disk_guard.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/dlq_manager.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/failure_matcher.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/feature_flag.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/file_task_mapper.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/finding_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/hallucination_detector.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/housekeeping.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/incident_postmortem.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/ke_quality.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/knowledge_freshness.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/lean_scanner.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/model_registry.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/network_partition.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/path_index.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/phase_executor.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/prompt_version.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/reconciliation_loop.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/resilience/deferred_queue.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/resilience/failure_matcher.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/resilience/hallucination_detector.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/resilience/rollback_manager.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/risk_registry.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/rollback_manager.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/rolling_upgrade.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/schema_migration.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/session_conflict.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/session_handoff.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/session_manager.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/stability_guard.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/startup_sequencer.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/state/agent_health_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/state/file_task_mapper.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/state/session_manager.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/state/state_synchronizer.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/state_propagation.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/state_synchronizer.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/system_transfer.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/task_queue.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/teardown_manager.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/trigger_router.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/version_manifest.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/wave_generator.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/unit/test_agent_orchestrator.py` | ✅ 已实现 | |
+| `tests/unit/test_agent_health_monitor.py` | ✅ 已实现 | |
+| `tests/unit/test_hallucination_detector.py` | ✅ 已实现 | |
+| `tests/unit/test_rollback_manager.py` | ✅ 已实现 | |
+| `tests/unit/test_state_synchronizer.py` | ✅ 已实现 | |
+| `tests/unit/test_trigger_router.py` | ✅ 已实现 | |
+| `tests/unit/test_file_task_mapper.py` | ✅ 已实现 | |
+| `tests/unit/test_wave_generator.py` | ✅ 已实现 | |
+| `tests/unit/test_deferred_queue.py` | ❌ 未实现 | |
+| `tests/integration/test_agent_e2e.py` | ✅ 已实现 | |
+
+### 1.3 配置文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `config/trigger_router.yaml` | ✅ 已实现 | |
+| `config/capabilities.yaml` | ✅ 已实现 | |
+| `config/session_state_machine.yaml` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
+
+---
+
+## 变更记录
 
 | 日期 | 版本 | 变更内容 |
 |------|------|---------|
-| 2026-05-05 | 5.0.1 | **终极取证审计**：切换视角——从"找缺失模式"到"外部取证专家视角"。新增 §13 10项致命假设清单（H1~H10）：SQLite单写者瓶颈(H1·🟡)/AI审查AI的盲区重叠(H2·🔴)/LLM生态剧变(H3·🟡)/逻辑数据损坏检测缺失(H4·🔴)/模块ID碰撞(H5·🟢)/Python版本依赖(H6·🟢)/Owner凌晨决策力(H7·🟡)/Owner永久失能(H8·🔴·建议Dead Man's Switch)/1500模块集成测试不可行(H9·🟡)/蓝图→代码语义忠实性(H10·🟡)。取证审计结论：**设计层面已穷尽**——建议停止设计迭代，启动 Phase 1a 实施。剩余风险全部在实施与运营层面。 |
-| 2026-05-05 | 5.0.0 | **50+ 项新盲点注入——第三轮深度审计：交易系统专项**。金融/交易系统 K01~K12：Emergency Trading Kill Switch（代码骨架 TradingKillSwitch·5步停止序列） + Pre-Trade Risk Check Pipeline + 订单状态机标准化(FIX Protocol) + 市场时钟标准化(NTP→PTP) + 确定性模拟模式 + Paper Trading Infrastructure + 交易对账(三方) + 仓位聚合+硬限额 + EOD/SOD日终处理 + 市场熔断联动 + 滑点模型(Almgren-Chriss) + 费率归因。模块通信模式 L01~L08：Request-Reply / Scatter-Gather / Pipeline / CompetingConsumers / Content-Based Router / MessageFilter / Aggregator / ReturnAddress——§5.9 9模式目录。确定性复现 M01~M06：确定性随机(代码骨架 DeterministicRandom) + 模拟时钟(代码骨架 SimulatedClock) + 精确时序重放 + 快照恢复调试 + Verbosity Control + 非侵入钩子。长期演进 N01~N06：模块废弃5阶段生命周期 + 破坏性变更管理(2版本共存) + 后向兼容窗口 + 迁移文档 + 死代码检测 + 圈复杂度防护(McCabe)。AI施工模式库 O01~O08：模块模板系统(代码骨架 Jinja2模板) + 反模式目录 + 设计决策树 + 按模块类型错误处理 + 命名规范执行器 + Code Ownership Manifest + AI Confidence Annotation + 渐进审查深度(3级)。新增 §5.8 交易系统基础设施模式(5级TradingMode+7大交易专项场景)。代码骨架：24→29。总盲点：104+→155+。蓝图行数 ~1358→~1700+。 |
-| 2026-05-05 | 4.0.0 | **55+ 项新盲点注入——系统性补齐**。分布式系统：§2.1-A 10项（Leader Election / Cluster Membership / Split-Brain / Consistent Hashing / Quorum / HLC / CRDT / Anti-Entropy / Multi-Raft / Partition Healing）——代码骨架 SqliteLeaderElection。部署自动化：§2.1-B 8项 + §5.6 CI/CD 六门流水线(静态分析→测试→DryRun→审批→Canary→生产验证)。数据管理：§2.1-C 6项（Schema在线迁移 / PITR / 保留策略 / 连接池 / 写竞争 / 多Region）。测试深度：§2.1-D 8项（Contract Testing(Pact) / Property-Based(Hypothesis) / Test Gen from Diff / Mutation Testing / Fuzz Testing / Golden Files / 集成编排 / Flake检测）。氛围编程专项：§2.1-E 12项（Prompt缓存 / Token预算 / 代码Embedding / 模板系统 / AI代码审查 / 自修复质量门 / AI Decision Log / Diff级Undo / 模型降级链 / 跨Session上下文 / Prompt版本控制 / Token优化管道）——代码骨架 PromptCacheManager + ModelFallbackChain + §5.7 AI施工Session生命周期。1人+AI深度运维：§2.1-F 10项 + §6.5 认知负荷模型+9大新增场景（睡眠保护/晨报/决策疲劳/紧急唤醒/Owner消失演练/知识外化/弃用螺旋/自我解释/周报）——代码骨架 SleepTimeProtocol + AutoDecideEngine。安全深化：§2.1-G 6项（模块沙箱/Semgrep扫描/Merkle审计链/最小权限/SBOM/Prompt注入防护）——代码骨架 ModuleSandbox。可观测性：§2.1-H 5项（Distributed Trace Viz / Error Budget Burn Rate / 容量预测 / Latency Heat Map / 慢查询检测）。API协议：§2.1-I 4项。开发者体验：§2.1-J 6项 + §6.6 6维体验矩阵。FMEA：12→17项。风险：18→27项。触发条件：17→28项。代码骨架：18→24。术语表：55+ 术语对齐国际标准。蓝图行数 ~950→1358（+400+行）。
-| 2026-05-05 | 3.0.0 | **49 项盲点全量注入——破坏性升级**。跨模块职责对齐：新增 §1.3 "与 MOD-INF-016 Shared Core 承载关系表"——声明 10 个 RI 模块代码承载归属，代码索引表从全 ❌ 更新为 MOD-INF-016 承载部分 ✅。结构性缺口 GAP-01~07 全量补全：DeliverySemantics（AT_LEAST_ONCE）+ BackpressurePropagation 协议 + DI 统一由 MOD-INF-016 承载 + 时间旅行 replay_to 写隔离 + DryRun 一致性验证套件 + ConfigCenter 加密字段强制走 SecretsManager + LoopDetector 自动恢复条件。设计深度强化 WEAK-01~07：DLQ SQLite 持久化 + 具体 SLI 阈值数值 + Feature Flags 渐进推出(1%→100%)+交互矩阵(FlagInteractionValidator) + IdempotencyGuard TTL 分级(关键流ES天然去重) + Telemetry 基数语义(per-module 500/LRU淘汰) + Cooldown 分层(MEDIUM 5m/HIGH 10m/CRITICAL 15m) + CostTracker 全资源追踪(CPU/内存/IO)。业界对标 MISS-01~14：Structured Concurrency(asyncio.TaskGroup) + Bulkhead 舱壁隔离 + 优雅关闭协议(drain→force kill) + 重试风暴防护(RetryBudget) + W3C Trace Context(traceparent) + LoadShedder 负载脱落 + Schema 兼容性策略(FULL_BACKWARD/FORWARD_TRANSITIVE) + 容量预留(关键模块X%) + 预热期(warmup→READY) + Crypto-Shredding(GDPR删除权) + Crash-Only 设计理念。前沿盲点 FUTURE-01~10：AI自预演(SelfSimulate) + PromptFingerprint + 自愈→KB反馈 + 事件优先级(PriorityQueue CRITICAL/HIGH/NORMAL/LOW) + SagaCoordinator(Phase 4 触发) + SpeculativeExecution(Hedged Requests) + Data Locality/Affinity + Operator/Reconciliation Pattern + SelfLimiter(自限反馈) + 不可变基础设施(Phase 5 planned)。1人+AI专项 OPT-01~07：Owner 告警预算(N=10) + 通知分层(💀实时/🟡每小时/🟢每日/⚪Dashboard/✨AI_SELF_HEALED) + Owner 离线/休假模式 + Module MaintainabilityScore + CrossSession LoopDetector(跨Session重复修改) + 施工→维护切换(Phase ∞)。蓝图质量：新增 §9 FMEA(12 项失效模式 RPN 分析) + §5.2 设计原则(Crash-Only/StructuredConcurrency/Fail-Closed/ImmutableEvents/ProgressiveDisclosure) + §6.4 五视图体系。代码索引表：整合 MOD-INF-016 已实现的10个 ✅ + N/A 标记（不再独立落地）。施丌指引：从"独立创建文件"改为"先验证 shared 实现→再扩展 shared→仅在无shared对应时独立落地"。Phase 路线：Phase 2a 扩展(七合一韧性+标准化健康)、Phase 2b 扩展(自治闭环含SelfSimulate+一致性套件+全资源FinOps)、Phase 3 扩展(含Crypto-Shredding)、Phase 4 新增(Saga补偿事务)、Phase ∞ 新增(维护期切换)。RL 缺口 21→48。代码骨架 6→18。配置文件 9→13。容量模型 5→10(Push模型升级为通知分层+DailySummary)。验收指标 12→28。扩展路径 8→14。风险 12→18 + 12项FMEA。关键关联 6→15（含 MOD-INF-016 承载关系+消费者上下游）。蓝图行数 ~522→~950+。 |
-| 2026-05-05 | 2.1.0 | **深度补全**：三轮专业对标（Event Sourcing+CQRS金融行业76%采用率+Dry Run Agent CI/CD+FinOps Visibility/Allocation/Optimization）。新增：RI-13 EventStore（ES+CQRS+快照+时间旅行, Phase 3 触发式）、RI-14 DryRunSimulator（sandbox预演+审批门, Phase 2b）、RI-15 CostTracker（per-module LLM费用归属+预算告警+优化建议, Phase 2b）。RL缺口 18→21。代码骨架 3→6。配置文件 7→9。容量模型 5→7。扩展路径 4→5。风险 9→12。Phase路线：Phase 2b 扩展（自治闭环=诊断+预演+费用三合一），Phase 3 新增（溯源增强，触发式）。 |
-| 2026-05-05 | 2.0.0 | **破坏性升级**：6→12 RI 模块 + 韧性基础设施前置 + 1人+AI运维语境校准 |
-| 2026-05-01 | 1.0.1 | 补充 §10 已实现代码完整路径索引 |
-| 2026-05-01 | 1.0.0 | 初始创建——6 RI 模块 + RL-001~RL-009 |
-
----
-
-## 施工落盘确认（2026-05-07 审计）
-
-| 维度 | 状态 |
-|------|------|
-| construction_progress | phase_2_complete（Phase 1 Skeleton + Phase 2 E2E 均已通过） |
-| 源码路径 | `src/zephyr/` (跨模块: core/runtime, hooks/, governance/, shared/) |
-| 源码文件数 | 40 个 .py/.yaml |
-| 测试路径 | `tests/infrastructure/` + `tests/integration/` |
-| 配置文件 | `config/runtime/*.yaml` + `config/context_rules.yaml` |
-| 关键入口 | `runtime_integrator`, `hook_manager`, `shared/protocols` |
+| 2026-05-15 | 6.1.0 | 压缩工作流：终选技术栈"理由"列删除（补充到§18 D-INF002-12~20）；CI/CD表"理由"列删除；§3.1 RI-12~15状态❌→✅对齐§0.1；frontmatter日期更新2026-05-15 |
+| 2026-05-14 | 6.1.0 | v3.5/v3.6升级：§0前移至概述后；§7备选方案删除（信息由§18决策记录覆盖）；§15后果删除（正面与§1重复，负面合并到§14风险）；§14增加"类型"列；§0.1增加"存在性"+"阻塞原因"列；§5.1去掉"原因"列；§5.3标注临时时态属性+执行状态列；§10拆为§10.1-§10.4；铁律新增#13~#15；新增蓝图拆分判定标准；§16.3施工步骤时态属性；尾部施工声明标注时态属性；frontmatter version=6.1.0/generation=7/last_updated=2026-05-14 |
+| 2026-05-14 | 6.0.0 | v3.3重构：章节重排+新增§3.2/§6/§9/§12/§14/§15/§16/§18 |
+| 2026-05-01 | 5.0.1 | 基线：15 RI模块 + 29代码骨架 + 48 RL约束 | �

@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0007"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§9 已知风险 + §10 后果声明"
@@ -69,4 +70,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

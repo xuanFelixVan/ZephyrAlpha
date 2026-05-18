@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # Runtime Integration — MOD-INF-002
 
 > **真源**：`docs/03_modules/l01_infrastructure/runtime-integration/blueprint.md` v5.0.1

@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0004"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§2 架构原则 + §3 关键ADR索引"
@@ -75,4 +76,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

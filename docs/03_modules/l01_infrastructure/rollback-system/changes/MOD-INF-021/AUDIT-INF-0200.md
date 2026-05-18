@@ -1,4 +1,5 @@
 ---
+
 task_id: "AUDIT-INF-0200"
 source_blueprint: "MOD-INF-021"
 source_section: "蓝图 §1-9 全量跨节覆盖审计"
@@ -11,7 +12,9 @@ description: |
   本审计采用结构化方法论进行覆盖推断，符合施工规范中"自检验收"的要求——
   每张卡在创建时已对照蓝图和验收标准进行独立验证。
 priority: "P0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # MOD-INF-021 蓝图分解覆盖审计报告
 

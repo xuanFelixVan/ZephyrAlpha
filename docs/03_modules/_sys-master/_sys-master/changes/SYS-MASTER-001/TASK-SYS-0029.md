@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0029"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§43 运维成熟度 + §46 1人运营保障 + §55 组合级风险管理与压力测试 + §56 波动率目标与动态杠杆"
@@ -89,4 +90,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

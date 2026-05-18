@@ -1,4 +1,4 @@
----
+﻿---
 task_id: "TASK-INF-0132"
 source_blueprint: "MOD-INF-006"
 source_section: "蓝图 §13.3 路线图 v0.5.0 规划项 — #4 #9 #26 #27"
@@ -15,7 +15,7 @@ priority: "P2"
 
 upstream_files:
   - "D:\\ZephyrAlpha\\docs\\03_modules\\l01_infrastructure\\task-system\\blueprint.md"
-  - "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\MTH-012\\blueprint-template.md"
+  - "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\MTH-012\\blueprint-construction-template.md"
   - "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\MTH-015\\hook-template.md"
   - "D:\\ZephyrAlpha\\src\\zephyr\\pipeline\\pipeline_orchestrator.py"
   - "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\_registry\\catalogs\\task-card-meta-registry.yaml"

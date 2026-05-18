@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # MOD-MASTER-001 变更目录
 
 > **蓝图**：MOD-MASTER-001 跨系统集成契约注册中心

@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0036"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§77 订单执行质量监控与异常检测 + §81 What-If仿真与灵敏度分析引擎 + §84 混沌工程与自动故障演练 + §86 AI决策可解释性与监管审计深度 + §90 A/B实验框架与统计严谨性"
@@ -92,4 +93,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

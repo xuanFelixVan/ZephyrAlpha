@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0221
 task_title: "盲点全量关闭追踪——B1-B156共156盲点关闭状态矩阵 + 风险矩阵R1-R90追踪 + Anti-Pattern AP1-AP43防护追踪"
 parent_ticket: TASK-INF-0219
@@ -49,7 +50,9 @@ rollback_instructions: "删除 blind_spot_tracker.yaml, risk_tracker.yaml, antip
 context_assembly_manifest:
   blueprint_content: "16轮审计共156盲点(B1-B156) + 风险矩阵90项(R1-R90) + 反模式43条(AP1-AP43)——结构化追踪矩阵"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0221: 全量盲点/风险/反模式追踪矩阵
 

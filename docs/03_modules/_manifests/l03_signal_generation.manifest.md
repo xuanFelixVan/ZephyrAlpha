@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # l03_signal_generation/ 文件清单（自动生成 2026-05-09）
 
 总计: 7 个文件

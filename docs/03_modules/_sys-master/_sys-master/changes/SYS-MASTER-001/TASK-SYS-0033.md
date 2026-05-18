@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0033"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§52 可重现性与确定性 + §68 氛围编程确定性保障 + §60 AI施工质量SPC + §61 PnL归因与交易成本分析"
@@ -89,4 +90,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

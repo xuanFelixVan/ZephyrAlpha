@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0210
 task_title: "§8第三轮审计-Security+Evaluation+Multi-Agent+Deployment盲点关闭(B48-B63)"
 parent_ticket: TASK-INF-0206
@@ -46,7 +47,9 @@ context_assembly_manifest:
     - "D-019-08: Multi-Skill Chaining Protocol——循环检测+碎片化管理"
     - "D-019-09: Skill Canary Deployment——灰度三部+A/B Testing"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0210: 第三轮审计盲点关闭
 

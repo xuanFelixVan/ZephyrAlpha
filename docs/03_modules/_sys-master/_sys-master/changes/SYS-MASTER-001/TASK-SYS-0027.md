@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0027"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§40 市场数据管线与回测引擎 + §91 企业行为与参考数据管线"
@@ -78,4 +79,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

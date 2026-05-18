@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0219
 task_title: "§21第十六轮审计-Security Vetting+Codebase Intelligence+MVP System (Self-Calibration收敛) + D-019-82~84"
 parent_ticket: TASK-INF-0218
@@ -40,7 +41,9 @@ rollback_instructions: "批量回退3个Python文件"
 context_assembly_manifest:
   blueprint_content: "§21 第十六轮审计——自我校准收敛层面3小节: Security Vetting(B154) + Codebase Intelligence(B155) + MVP System(B156)，不扩张新维度而是对已有设计做实战化收敛"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0219: 第十六轮审计盲点关闭
 

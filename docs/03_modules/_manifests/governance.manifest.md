@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # governance/ 文件清单（自动生成 2026-05-09）
 
 总计: 119 个文件
@@ -106,9 +110,9 @@
 - budget_enforcer/__init__.py
 - budget_enforcer/alerts.py
 - budget_enforcer/rbac_bridge.py
-- drift_detector/__init__.py
-- drift_detector/events.py
-- drift_detector/rollback_bridge.py
+- behavioral_auditor/__init__.py
+- behavioral_auditor/events.py
+- behavioral_auditor/rollback_bridge.py
 - escalation/__init__.py
 - escalation/a2a_failure.py
 - escalation/approval.py

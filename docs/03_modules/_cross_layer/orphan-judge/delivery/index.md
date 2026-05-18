@@ -1,8 +1,11 @@
 ---
+
 doc_type: index
 status: active
 generated: '2026-05-08'
+blueprint_id: DOM-GOV-001
 ---
+
 
 # Delivery — 孤儿判定子系统交付记录
 

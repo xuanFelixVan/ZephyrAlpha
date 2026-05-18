@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0207
 task_title: "施工Phase规划与14层扩展路线执行——§5全量Phase编排"
 parent_ticket: TASK-INF-0201
@@ -35,7 +36,9 @@ rollback_instructions: "删除 phase_planner.py 和 phase_tracker.yaml"
 context_assembly_manifest:
   blueprint_content: "§5 施工Phase规划——27个Phase从scaffold到discovery，§5.1 14层扩展路线——L00 foundation到L06 execution同步创建 Domain Skills，最终~100 Skills"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0207: 施工Phase规划系统
 

@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0209
 task_title: "§7 Vibe Coding与1人+AI维护专属优化——IDE热重载/零上下文启动/新文件自动注册"
 parent_ticket: TASK-INF-0201
@@ -36,7 +37,9 @@ rollback_instructions: "删除 ide_watcher.py, file_autorregister.py, context_op
 context_assembly_manifest:
   blueprint_content: "§7 Vibe Coding专属优化——针对1人+AI维护场景的IDE热重载、零上下文启动、新文件自动注册三大优化"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0209: Vibe Coding 专属优化
 

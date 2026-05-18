@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0214
 task_title: "§14第九轮审计-Cognitive Memory+Emergent Behavior+Negotiation+Temporal+Marketplace+Knowledge Decay+Cascading Failure + D-019-38~44"
 parent_ticket: TASK-INF-0213
@@ -53,7 +54,9 @@ rollback_instructions: "批量回退7个模块文件"
 context_assembly_manifest:
   blueprint_content: "§14 第九轮审计——7小节(Cognitive Memory+Emergent Behavior+Negotiation+Temporal Awareness+Marketplace+Knowledge Decay+Cascading Failure)，新增B106-B115共10盲点"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0214: 第九轮审计盲点关闭
 

@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # LLM Security Gateway (MOD-INF-014)
 
 > **模块标识**: MOD-INF-014 | **版本**: 0.10.0 | **状态**: 施工中 | **层级**: 跨层

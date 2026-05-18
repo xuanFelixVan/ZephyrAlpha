@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # l08_human_ai_interface/ 文件清单（自动生成 2026-05-09）
 
 总计: 10 个文件

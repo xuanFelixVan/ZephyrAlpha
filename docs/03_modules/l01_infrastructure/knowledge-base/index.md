@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # Knowledge Base 模块索引
 
 > MOD-KB-001 | 施工#07 active

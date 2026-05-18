@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0037"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§96 数据生命周期管理与记忆存证 + §97 时间同步与时钟一致性 + §98 实时流式与异步处理 + §100 蓝图的增量式审查与可持续维护"
@@ -84,4 +85,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

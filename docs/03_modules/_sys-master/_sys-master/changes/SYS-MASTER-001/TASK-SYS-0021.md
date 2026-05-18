@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0021"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§29 数据质量 + §53 上线后验证 + §83 数据源可靠性"
@@ -75,4 +76,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

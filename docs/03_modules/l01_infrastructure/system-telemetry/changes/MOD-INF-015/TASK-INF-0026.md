@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-INF-0026"
 source_blueprint: "MOD-INF-015"
 source_section: "蓝图 §15.5-15.7 测试检查表 + 集成测试 + 性能基准"
@@ -137,7 +138,9 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0026: 测试检查表 + 集成测试 + 性能基准
 

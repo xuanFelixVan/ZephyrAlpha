@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0206
 task_title: "§4文件组成落地——46个模块文件创建清单"
 parent_ticket: TASK-INF-0201
@@ -77,7 +78,9 @@ rollback_instructions: "批量删除 src/zephyr/agent_spec/ 下除核心4文件�
 context_assembly_manifest:
   blueprint_content: "§4 文件组成——46 个模块文件索引表"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0206: 模块文件批量创建
 

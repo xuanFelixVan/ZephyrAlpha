@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # infrastructure/ 文件清单（自动生成 2026-05-09）
 
 总计: 86 个文件
@@ -29,7 +33,7 @@
 - escalation_protocol/data_pipeline_guard.py
 - escalation_protocol/deadlock_detector.py
 - escalation_protocol/delegation_manager.py
-- escalation_protocol/drift_detector.py
+- escalation_protocol/behavioral_auditor.py
 - escalation_protocol/economic_guard.py
 - escalation_protocol/engine_sandbox.py
 - escalation_protocol/error_budget_burst_limiter.py

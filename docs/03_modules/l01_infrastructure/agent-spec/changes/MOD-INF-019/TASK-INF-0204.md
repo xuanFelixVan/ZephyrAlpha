@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0204
 task_title: "Skill Factory 自举机制与文件结构实现——D-019-05 + §2.5"
 parent_ticket: TASK-INF-0202
@@ -50,7 +51,9 @@ context_assembly_manifest:
     - "R3: Domain Skill 爆炸——100+ 模块维护成本"
     - "R8: Skill 生成质量不一——Factory Agent 产出不稳定"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0204: Skill Factory 自举机制实现
 

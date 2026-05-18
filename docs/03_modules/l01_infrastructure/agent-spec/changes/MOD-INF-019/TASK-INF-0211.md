@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0211
 task_title: "§9第四轮审计-Economics+Lifecycle+GitOps+Zero-Trust+Autonomy盲点关闭(B64-B76) + D-019-10~13"
 parent_ticket: TASK-INF-0210
@@ -45,7 +46,9 @@ rollback_instructions: "回退skill_economics.py/skill_lifecycle.py/skill_gitops
 context_assembly_manifest:
   blueprint_content: "§9 第四轮审计——Economics/Lifecycle/GitOps/Zero-Trust/Autonomy五维，新增B64-B76共13盲点"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0211: 第四轮审计盲点关闭
 

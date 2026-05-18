@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0032"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§50 多策略组合与容量管理 + §51 经纪商容灾与应急平仓 + §59 运维基础保障 + §62 日运营节奏与交易会话协议"
@@ -87,4 +88,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

@@ -1,4 +1,5 @@
 ---
+
 task_id: TASK-INF-0212
 task_title: "§10-§11第五六轮审计-Compliance/KYA/Sandbox+Cross-Model/Ontology/Prompt/Attention等 + D-019-14~22"
 parent_ticket: TASK-INF-0211
@@ -65,7 +66,9 @@ rollback_instructions: "批量回退上述14个Python文件"
 context_assembly_manifest:
   blueprint_content: "§10 第五轮审计(Compliance/KYA/Sandbox/FIPA-ACL/Antifragility/Backtesting/FormalVerification/Observability) + §11 第六轮审计(Cross-Model/Ontology/Prompt/Attention/Idempotency/Hallucination/Rollback/Shadow/Contract/Learning/CircuitBreaker/FeatureFlags/Deactivation)"
   template_version: "task-card-template.md v1.0.0"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # TASK-INF-0212: 第五六轮审计盲点关闭
 

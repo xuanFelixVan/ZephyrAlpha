@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0024"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§34 离线自治 + §79 Local-First + §80 决策疲劳"
@@ -78,4 +79,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

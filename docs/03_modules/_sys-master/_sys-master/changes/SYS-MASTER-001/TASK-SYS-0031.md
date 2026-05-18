@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0031"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§49 智能执行与微观结构 + §57 因子择时与跨资产配置 + §58 交易日历与合约管理 + §65 因子治理与策略生命周期深化"
@@ -87,4 +88,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

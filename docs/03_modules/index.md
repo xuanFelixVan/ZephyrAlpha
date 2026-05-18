@@ -1,4 +1,4 @@
----
+﻿---
 classification: internal
 date: '2026-05-02'
 doc_type: index
@@ -74,7 +74,7 @@ Step 3: 淇敼鍚?鈫?鏇存柊 module-registry.yaml 瀵瑰簲鏉＄洰鐨勭
 ### 鍒涘缓鏂版ā鍧楁椂
 
 ```
-0. 鈽呫€愬己鍒舵煡閲嶃€戝厛鍦?module-registry.yaml 涓悳绱㈠悓鍚?鍚岃矗妯″潡鈥斺€?      鈹溾攢鈹€ 鏄惁鏈?status=deprecated 浣嗚矗浠昏寖鍥撮噸鍙犵殑钃濆浘锛?      鈹?    鈫?鏈?鈫?璧?钃濆浘鍗囩骇娴佺▼"锛堣 搂鍏級锛岀姝㈡柊寤?      鈹?    鈫?鏃?鈫?缁х画涓嬩竴姝?1. 鍦?module-registry.yaml 鐨?modules 鍒楄〃涓坊鍔犱竴鏉¤褰?2. 鍦ㄥ搴斿眰绾х洰褰曚笅鍒涘缓妯″潡瀛愮洰褰曪紙鍏ㄥ皬鍐?kebab-case锛?3. 鍒涘缓 blueprint.md锛堝彲鍙傝€?templates/blueprint-template.md锛屄?-搂11 鏋舵瀯 + 搂12 鏂藉伐鎸囧紩锛?4. 鏂藉伐瀹屾垚鍚庯紝鍦?delivery/ 涓嬪垱寤虹増鏈褰曟枃浠?```
+0. 鈽呫€愬己鍒舵煡閲嶃€戝厛鍦?module-registry.yaml 涓悳绱㈠悓鍚?鍚岃矗妯″潡鈥斺€?      鈹溾攢鈹€ 鏄惁鏈?status=deprecated 浣嗚矗浠昏寖鍥撮噸鍙犵殑钃濆浘锛?      鈹?    鈫?鏈?鈫?璧?钃濆浘鍗囩骇娴佺▼"锛堣 搂鍏級锛岀姝㈡柊寤?      鈹?    鈫?鏃?鈫?缁х画涓嬩竴姝?1. 鍦?module-registry.yaml 鐨?modules 鍒楄〃涓坊鍔犱竴鏉¤褰?2. 鍦ㄥ搴斿眰绾х洰褰曚笅鍒涘缓妯″潡瀛愮洰褰曪紙鍏ㄥ皬鍐?kebab-case锛?3. 鍒涘缓 blueprint.md锛堝彲鍙傝€?templates/blueprint-construction-template.md锛屄?-搂11 鏋舵瀯 + 搂12 鏂藉伐鎸囧紩锛?4. 鏂藉伐瀹屾垚鍚庯紝鍦?delivery/ 涓嬪垱寤虹増鏈褰曟枃浠?```
 
 ### 鐧昏琛ㄦ牎楠?
 ```
@@ -88,7 +88,7 @@ pre-commit 鑴氭湰浼氳嚜鍔?
 ## 浜斻€佷笌鍏朵粬鐩綍鐨勫叧绯?
 ```
 01_policies_and_standards/  鈫?鎬庝箞绠★紙娌荤悊瑙勫垯銆佹ā鏉匡級
-    鈹溾攢鈹€ templates/blueprint-template.md        鈫?钃濆浘妯℃澘
+    鈹溾攢鈹€ templates/blueprint-construction-template.md        鈫?钃濆浘妯℃澘
     鈹溾攢鈹€ governance/module/                     鈫?妯″潡鍑嗗叆/鐢熷懡鍛ㄦ湡/娉ㄥ叆瑙勫垯
     鈹?                                            bootstrap-plans/ 宸蹭簬 2026-05-02 搴熼櫎锛?    鈹?                                            鏂藉伐鍐呭杩佸叆鍚勬ā鍧?blueprint.md 涓?
 02_enterprise_architecture/  鈫?涓轰粈涔堣繖鏍疯璁★紙浼佷笟鏋舵瀯 + ADR锛?    鈹斺攢鈹€ target-architecture/                   鈫?TOGAF 鏋舵瀯瑙嗗浘

@@ -1,11 +1,14 @@
 ---
+
 doc_type: index
 status: active
 title: "_sys-master — 目录索引"
 version: "1.0.0"
 created: "2026-05-05"
 updated: "2026-05-05"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # _sys-master
 

@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # telemetry/ 文件清单（自动生成 2026-05-09）
 
 总计: 15 个文件

@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0030"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§45 架构基础契约 + §63 系统容错模式深度 + §64 微结构防御与模拟盘保真度"
@@ -82,4 +83,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

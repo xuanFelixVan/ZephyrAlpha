@@ -1,11 +1,13 @@
 ---
 module_id: "MOD-INF-020"
-title: "审计追踪链蓝图 — 不可变动作审计 + 密码学 Provenance + Agent 级签名 + CoT 推理链 + 漂移检测 + 三角闭环"
+title: "Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证"
 doc_type: blueprint
-status: Draft
-version: "1.4.0"
-generation: 7
-layer: cross_layer
+status: Active
+version: "2.1.0"
+generation: 9
+layer: l01_infrastructure
+layer_name: infrastructure
+functional_domain: governance
 owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
@@ -13,18 +15,40 @@ created_by: human_plus_agent
 date: "2026-05-05"
 valid_from: "2026-05-05"
 ttl: permanent
-construction_progress: phase_1_partial
+actual_disk_path: "src/zephyr/audit_trail/"
+construction_progress: partially_implemented
 belongs_to: "MOD-MASTER-001"
-summary: "ZephyrAlpha 审计追踪链蓝图 v1.1.0——每个 AI 动作的不可变、密码学完整性保证的审计记录。JSONL 为唯一真源 + 哈希链防篡改 + HMAC 系统级签名 + Agent 级 Ed25519 数字签名（non-repudiation）+ CoT 推理链审计 + Lamport 逻辑时钟 + 分级 Provenance + 蓝图漂移检测 + 异常行为签名 + 元审计自监控 + 三角闭环反馈（Policy→Factory→Runtime→反馈回写 Policy）+ 渐进信任分数 + 委托链审计 + 跨 IDE 一致性交叉验证 + 外部独立验证端点 + 监管证据包导出 + 合规框架条款映射。三层存储（热/温/冷）+ 隐私脱敏策略 + 供应链审计 + 间接操作检测 + Dry-Run 预审计 + Cold Start 历史回溯 + Git 隔离审计日志。对标 Goldman SecDB immutable audit log + ISACA 2025 Agentic AI 三要素 + OWASP ASI-09/10 2026 + Microsoft AGT Merkle-chain integrity + Agent DID/Ed25519 + IATP 握手 + W3C PROV 三元组模型 + NIST 2026 AI Agent Standards + FCA 监管文件审查格式。"
+parent_module: ""
+codification_level: L1
+codification_at: "2026-05-14"
+last_verified: "2026-05-15"
+last_updated: "2026-05-15"
+rule_form: structural
+scope: global
+stability: evolving
+verifiability: hybrid
+summary: "不可变审计追踪链——JSONL SSoT + 哈希链 + HMAC + Ed25519 Agent 签名 + CoT 推理链 + 13 异常签名 + 漂移检测 + 三角闭环 + 分片写入架构 + 99 盲点覆盖"
 tags: [audit-trail, provenance, immutable-log, traceability, compliance, infrastructure, cryptographic-integrity, hash-chain, hmac-signing, ed25519, agent-signing, non-repudiation, cot-audit, reasoning-chain, lamport-clock, drift-detection, anomaly-detection, meta-audit, tiered-storage, privacy-redaction, feedback-loop, policy-factory-runtime, w3c-prov, owasp-asi09, owasp-asi10, self-monitoring, trust-score, delegation-chain, cross-ide-consistency, external-verifier, evidence-pack, compliance-map, supply-chain-audit, indirect-operation, git-isolation, kb-poisoning-prevention, nist-2026, fca]
 priority: P0
 depends_on:
-  - {target: "MOD-INF-012", at: "§3", why: "Database——SQLite 派生查询索引的存储"}
+  - {target: "MOD-INF-012", at: "§3", why: "Database——events 表查询视图（不独立存储，C15/ARB-8 裁定）"}
   - {target: "MOD-INF-007", at: "§2", why: "Gate Engine——门禁决策的审计记录 + 实时阻断联动"}
   - {target: "MOD-INF-002", at: "§2", why: "Runtime Integration——RI-13 EventStore + RI-14 DryRunSimulator + RI-15 CostTracker 联动"}
   - {target: "MOD-INF-016", at: "§2.6", why: "Shared Core——EventType 枚举 + Task Schema + 韧性基座"}
   - {target: "GOV-CMP-002", at: "full", why: "审计追踪策略——AUD-001~004 审计操作留痕规则"}
   - {target: "GOV-CMP-003", at: "§2", why: "治理审计执行协议——12 维度审计清单"}
+  - {target: "MOD-INF-018", at: "§2", why: "Agent RBAC——权限检查（G-CT-001 操作签名）"}
+  - {target: "MOD-INF-021", at: "§2", why: "Rollback——Checkpoint 触发（G-CT-002 异常事件触发 Rollback）"}
+  - {target: "MOD-INF-019", at: "§2", why: "Agent Spec——Spec 审计（G-CT-007 Spec→审计）"}
+  - {target: "MOD-INF-006", at: "§2", why: "Task System——Agent 生命周期审计"}
+  - {target: "MOD-INF-027", at: "§2", why: "Audit Orchestrator——审计记录→线5(线3→线5)跨线软依赖"}
+  - {target: "MOD-INF-035", at: "§2", why: "Runtime——运行时注册跨线软依赖"}
+  - {target: "MOD-INF-011", at: "§2", why: "Vector Memory——VM 嵌入结果→审计记录（线2→线5）"}
+  - {target: "MOD-INF-022", at: "§2", why: "Escalation Engine——升级事件→审计记录（线3→线5）"}
+  - {target: "MOD-INF-031", at: "§2", why: "Auto Fixer——修复审计（线4→线5）"}
+  - {target: "MOD-INF-005", at: "§5.7-§5.10", why: "Script System——脚本执行生命周期审计钩子 + 扫描触发→审计写入集成"}
+  - {target: "MOD-INF-009", at: "§0.6", why: "Pipeline——PipelineOrchestrator 扫描调度审计集成"}
+  - {target: "CFG-CAP-001", at: "full", why: "容量参数——max_scripts/max_modules/max_ai_sessions 决定 shard 数和缓冲区大小"}
 references:
   - {id: "MOD-INF-023", at: "§2", why: "漂移检测审计信号——仅存 references（DAG 无环）"}
   - {id: "MOD-INF-015", at: "§2", why: "遥测发射通道——仅存 references"}
@@ -32,162 +56,298 @@ references:
   - {target: "ADR-0010", at: "§4.4", why: "三层治理边界——Policy/Factory/Runtime 三角闭环接口协议"}
   - {target: "MOD-KB-001", at: "§2", why: "Knowledge Base——审计数据输入 KB 的投毒防护 + KB provenance 评分"}
   - {target: "MOD-INF-022", at: "§2", why: "Escalation Engine——异常检测升级路径 + 委托链终端判断"}
+  - {id: "MOD-INF-005", at: "§5.7", why: "Script System——BulkheadExecutor 脚本执行结果输入审计"}
+  - {id: "MOD-INF-009", at: "§4", why: "Pipeline——PipelineDAG 模块执行顺序影响审计时间线重建"}
 ---
 
-## DOM-GOV-001 集成契约锚点
+> module_id: MOD-INF-020 | version: 2.1.0 | status: active | layer: l01_infrastructure
+> actual_disk_path: src/zephyr/audit_trail/ (35 .py files) | generation: 9 | construction_progress: partially_implemented
 
-> 权威定义见 [`../../_domain-governance/blueprint.md`](../../_domain-governance/blueprint.md) §3。
+# Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证
 
-| 契约 ID | 本模块角色 | 对端模块 |
-|---------|------------|----------|
-| G-CT-001 | 消费方（记录 RBAC 判定事实） | MOD-INF-018 |
-| G-CT-002 | 产出方（异常事件触发 Rollback） | MOD-INF-021 |
-| G-CT-007 | 消费方（记录 Spec 执行审计） | MOD-INF-019 |
+## 概述
 
-# 审计追踪链蓝图 — 不可变动作审计 + 密码学 Provenance + Agent 级签名 + CoT 推理链 + 漂移检测
-
-> **module_id**: MOD-INF-020 | **version**: 1.1.0 | **status**: draft | **layer**: cross_layer
-
-> **对标**：Goldman SecDB immutable audit log（分布式 replication ring + SecSync 不一致检测）+ ISACA 2025 Agentic AI 审计三要素（agent身份+执行动作+使用工具）+ OWASP ASI-09/10 2026（代理身份管理 + 审计追踪缺失）+ Microsoft AGT Merkle-chain integrity + Agent DID/Ed25519 signing + IATP（Inter-Agent Trust Protocol）+ W3C PROV 三元组（Entity/Activity/Agent）+ NIST 2026 AI Agent Standards（agent identity + 持续重验证 + 跨系统动作重建）+ FCA 监管文件审查格式（数据源+规则+推理+置信度+最终动作）。
+本蓝图描述 ZephyrAlpha 审计追踪链——它解决了 AI 操作的不可变记录与密码学完整性保证问题。核心职责包括：JSONL 唯一真源写入、哈希链防篡改、HMAC 系统级签名、Agent 级 Ed25519 不可否认签名、CoT 推理链审计、13 种异常行为签名检测、蓝图漂移对账、三角闭环反馈驱动规则演进。当前规模 35 个代码文件（scaffold 阶段核心已实现），目标容量 100 AI 并发 × 10,000 脚本 × 峰值 120 条/秒写入。上游依赖 MOD-INF-016 Shared Core 承载层 + MOD-INF-007 Gate Engine，下游被所有 L02-L13 层模块消费审计数据。
 
 ---
 
-## 1. 概述与模块定位
+> **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
+> - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
+> - AI 压缩工作流标准：[compression-workflow-standard.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/compression-workflow-standard.md)
+> - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
+> - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md) 线3:治理闭环 + 线5:审计合规
+> - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
-### 1.1 模块身份
+---
 
-| 属性 | 值 |
-|------|-----|
-| module_id | MOD-INF-020 |
-| 代码落位 | `src/zephyr/audit_trail/` |
-| 运行时平面 | Hot memory（每个操作同步写入，延迟 < 5ms P99） |
-| 核心职责 | **"法医实验室 + 免疫系统 + 公证处"**：记录"谁在什么时候用什么工具做了什么基于什么决策"，不可变、不可篡改、密码学可验证、Agent 级不可否认、推理链可回溯、异常可检测、漂移可对账 |
-| 设计哲学 | **"会计账本 → 法医实验室 → 免疫系统 → 公证处"** 四级跃迁——不只是记录，更要检测异常、驱动规则演进、提供不可否认的证据 |
+## §0 代码对齐验证
 
-### 1.2 核心职能（一句话 + 五支柱）
+### §0.1 代码文件清单
 
-**Audit Trail 是系统的黑匣子 + 免疫系统 + 公证处**——每个 AI 动作都有密码学完整性保证的审计记录。出了问题可以回溯到任意时刻的任意操作，找到根因。异常行为自动检测并告警。蓝图漂移实时对账。闭环反馈驱动规则演进。Agent 级签名保证不可否认性。
+| # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
+|---|--------|------------|------|:-----:|-------------------|
+| 1 | `__init__.py` | §3 | 模块入口 + `__all__` | 已实现 | — |
+| 2 | `models.py` | §3 蓝图特有 | 全量 Pydantic V2 模型 + AuditEventType 枚举 + DID 模型 | 已实现 | — |
+| 3 | `writer.py` | §4.1 | 不可变写入器（JSONL + 哈希链 + HMAC + Ed25519 + Lamport） | 已实现 | — |
+| 4 | `query.py` | §4.1 | 审计查询接口（SQLite + JSONL + 元审计 + trail_for_ai_context） | 已实现 | — |
+| 5 | `integrity.py` | §4.1 | 密码学完整性验证器 | 已实现 | — |
+| 6 | `anomaly.py` | §3 蓝图特有 | 异常检测引擎（13 签名） | 已实现 | — |
+| 7 | `contracts.py` | §4 | 接口契约定义 | 已实现 | — |
+| 8 | `agent_signer.py` | §3 蓝图特有 | Ed25519 Agent 签名器 + DID 注册 | 已实现 | — |
+| 9 | `cli.py` | §4.1 | CLI 审计面板 | 已实现 | — |
+| 10 | `self_monitor.py` | §3 蓝图特有 | 自监控 heartbeat + 健康采集 | 已实现 | — |
+| 11 | `trust_engine.py` | §3 蓝图特有 | 渐进信任引擎 | 已实现 | — |
+| 12 | `delegation_auditor.py` | §3 蓝图特有 | 委托链审计器 | 已实现 | — |
+| 13 | `evidence_pack.py` | §3 蓝图特有 | 监管证据包导出 | 已实现 | — |
+| 14 | `compliance_map.py` | §3 蓝图特有 | 合规框架映射 | 已迁移→semantic_auditor | 重复 |
+| 15 | `supply_chain.py` | §3 蓝图特有 | 供应链审计 | 已迁移→semantic_auditor | 重复 |
+| 16 | `privacy.py` | §3 蓝图特有 | 隐私脱敏 | 已实现 | — |
+| 17 | `retention.py` | §3 蓝图特有 | 保留期执行 | 已实现 | — |
+| 18 | `cold_start.py` | §3 蓝图特有 | Cold Start 历史回溯 | 已实现 | — |
+| 19 | `genesis.py` | §3 蓝图特有 | Genesis 信任锚初始化 | 已实现 | — |
+| 20 | `replay_engine.py` | §3 蓝图特有 | 确定性重放引擎 | 已实现 | — |
+| 21 | `external_tool_audit.py` | §3 蓝图特有 | 外部工具调用链审计 | 已实现 | — |
+| 22 | `kb_gate.py` | §3 蓝图特有 | KB 投毒防护门禁 | 已迁移→semantic_auditor | 重复 |
+| 23 | `feedback_policy.py` | §3 蓝图特有 | 三角闭环反馈 | 已实现 | — |
+| 24 | `feedback_self_audit.py` | §3 蓝图特有 | 反馈自指循环检测 | 已实现 | — |
+| 25 | `feedback_bridge.py` | §12 | 反馈桥接 | 已实现 | — |
+| 26 | `drift_bridge.py` | §12 | 漂移桥接 | 已实现 | — |
+| 27 | `delegation_bridge.py` | §12 | 委托桥接 | 已实现 | — |
+| 28 | `trust_bridge.py` | §12 | 信任桥接 | 已实现 | — |
+| 29 | `tiered_storage.py` | §3 蓝图特有 | 三层存储迁移 | 已实现 | — |
+| 30 | `tiered_storage_bridge.py` | §12 | 分层存储桥接 | 已实现 | — |
+| 31 | `spec_auditor.py` | §12 | Spec 审计桥接 | 已实现 | — |
+| 32 | `bridge.py` | §12 | BridgeHub 桥接注册 | 已实现 | — |
+| 33 | `indexer.py` | §4.1 | SQLite 索引管理 | 已实现 | — |
+| 34 | `log_rotation.py` | §3 蓝图特有 | 日志轮转 | 已实现 | — |
+| 35 | `merkle_hourly.py` | §3 蓝图特有 | Merkle 树聚合 | 已实现 | — |
+| 36 | `shard_writer.py` | §17 §V2 | 单分片写入器 | 未实现 | — |
+| 37 | `global_index.py` | §17 §V4 | 全局路由索引 | 未实现 | — |
+| 38 | `script_audit_hook.py` | §17 §V6 | 脚本审计钩子 | 未实现 | — |
+| 39 | `query_router.py` | §17 §V4 | 跨 shard 并行查询路由 | 未实现 | — |
+| 40 | `cross_shard_merkle.py` | §17 §V3 | 跨分片 Merkle 根聚合 | 未实现 | — |
 
-| 支柱 | 职责 | 对标 |
-|------|------|------|
-| **记录（Record）** | 不可变 append-only 审计日志——JSONL 唯一真源 | Goldman SecDB immutable log |
-| **验证（Verify）** | 密码学完整性——哈希链 + HMAC 签名 + Merkle 树聚合 | Microsoft AGT Merkle-chain |
-| **归因（Attribute）** | Agent 级不可否认性——Ed25519 Agent 签名 + 委托链验证 | Microsoft AGT Ed25519 / IATP |
-| **检测（Detect）** | 异常行为签名 + 蓝图漂移检测 + 权限违规告警 + 间接操作 + 供应链风险 | ISACA 2025 / OWASP ASI-10 / NIST 2026 |
-| **进化（Evolve）** | 三角闭环反馈——审计数据回写 Policy 驱动规则演进 + 反馈自审计 | Netflix 混沌反馈 / ADR-0010 D2-B |
+### §0.2 对齐验证矩阵
 
-### 1.3 运行场景约束
+| 验证项 | 验证方法 | 结果 |
+|--------|---------|:---:|
+| construction_progress = partially_implemented → 已实现章节的代码存在 | 按章节核对 | ☐ |
+| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☐ |
+| 35 个 .py 文件全部存在于 `src/zephyr/audit_trail/` | `ls D:\ZephyrAlpha\src\zephyr\audit_trail\*.py` | ☐ |
+| v2.0 待施工组件（ShardWriter/GlobalIndex/ScriptAuditHook/CrossShardMerkle）不存在 | `ls` 确认 | ☐ |
+
+### §0.3 版本-代码映射
+
+| 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
+|---------|------------|---------|---------|
+| v1.4.0 (基线) | 35 个 .py 文件——核心写入+完整性+查询+异常+漂移+签名+信任+证据包+合规+隐私+保留+Cold Start+重放+KB门禁+反馈 | — | — |
+| v2.0.0 (容量升级) | 待施工 | ShardWriter, GlobalIndex, ScriptAuditHook, CrossShardMerkle, QueryRouter, LamportClockV2 | 待施工 P0 |
+
+---
+
+## §1 设计背景与目标
+
+### 1.1 背景
+
+审计追踪链（Audit Trail）是 ZephyrAlpha 基础设施层的**横切安全组件**——解决 AI 操作的不可变记录、密码学完整性验证、异常行为检测、蓝图漂移对账、闭环反馈驱动规则演进五大问题。
+
+| 支柱 | 职责 |
+|------|------|
+| **记录（Record）** | 不可变 append-only 审计日志——JSONL 唯一真源 |
+| **验证（Verify）** | 密码学完整性——哈希链 + HMAC 签名 + Merkle 树聚合 |
+| **归因（Attribute）** | Agent 级不可否认性——Ed25519 Agent 签名 + 委托链验证 |
+| **检测（Detect）** | 异常行为签名 + 蓝图漂移检测 + 权限违规告警 + 间接操作 + 供应链风险 |
+| **进化（Evolve）** | 三角闭环反馈——审计数据回写 Policy 驱动规则演进 + 反馈自审计 |
+
+### 1.2 目标范围
+
+| # | 目标 | 可衡量标准 |
+|---|------|-----------|
+| 1 | 不可变审计记录 | JSONL append-only + 哈希链 0 断裂 + HMAC 100% 有效 |
+| 2 | Agent 级不可否认性 | Ed25519 签名验证 100% 通过 + DID 绑定不可伪造 |
+| 3 | 异常行为自动检测 | 13 种异常签名全覆盖 + anomaly_score > 0.7 自动告警 |
+| 4 | 蓝图漂移实时对账 | 实际操作 vs 蓝图规定偏差实时检测 + 漂移事件写入审计 |
+| 5 | 三角闭环反馈 | 审计聚合数据→Policy PR→规则演进闭环可用 |
+| 6 | 100 AI 并发写入 | 峰值 120 条/秒 + 分片写入池 + 跨 shard 查询 P99 < 50ms |
+| 7 | 自监控无人运维 | heartbeat 60s + 连续 3 次失败 P0 告警 + 外部独立验证 |
+
+### 1.3 不包含的目标
+
+| # | 明确排除 | 原因 |
+|---|---------|------|
+| 1 | AI 审计守卫实现 | → MOD-INF-001 |
+| 2 | 安全网关实现 | → MOD-INF-014 |
+| 3 | 回滚执行 | → MOD-INF-021 |
+| 4 | 任务门禁 | → MOD-INF-007 |
+| 5 | Shared Core 实现细节 | → MOD-INF-016 |
+| 6 | ML 行为基线模型 | 规则签名（13 种）足够，ML 基线不纳入 v2.0 |
+| 7 | Multi-Tenant 审计隔离 | 当前单租户 |
+| 8 | RFC 3161 可信时间戳 | 需外部 TSA 服务 |
+
+### 1.4 运行场景约束
 
 | 约束 | 影响 |
 |------|------|
-| 多 IDE 并发（TRAE/Cursor/RooCode） | 审计日志必须跨 IDE 统一——JSONL 是唯一所有 IDE 都能 append 的格式；需要 Lamport 逻辑时钟解决时序；需要跨 IDE 一致性交叉验证 |
-| 10+ 并发对话 | 审计量可能很大——需要两层粒度 + 自动摘要，不能全是文件级 |
-| 1 人 + AI，99% AI 维护 | 无人监控审计系统健康 → 必须自监控（heartbeat + 自检 + 自动修复）；审计日志读者 99% 是 AI → 查询结果必须是 AI 零推理可消费的结构；需要外部独立验证端点（AI 不能自证清白） |
-| 先干后验模式 | 审计日志是后验的基础——没有审计就没有后验；需要 Dry-Run 预审计模式；Dry-Run vs Real 差异检测 |
-| 100% AI 施工 | 审计系统自身的代码也是 AI 写的 → 元审计和自监控是刚性需求；审计代码不可用于自证（需要外部 verifier） |
+| 多 IDE 并发（TRAE/Cursor/RooCode） | JSONL 是唯一所有 IDE 都能 append 的格式；需要 Lamport 逻辑时钟解决时序；需要跨 IDE 一致性交叉验证 |
+| 100 AI 并发写入 | 单 JSONL 文件锁是瓶颈→分片写入池（16 shard） |
+| 1 人 + AI，99% AI 维护 | 必须自监控（heartbeat + 自检 + 自动修复）；外部独立验证端点 |
+| 先干后验模式 | 审计日志是后验基础；需要 Dry-Run 预审计模式 |
+| 100% AI 施工 | 元审计和自监控是刚性需求；审计代码不可用于自证 |
+| Windows 单机部署 | SQLite WAL 足够；无分布式协调需求 |
 
-### 1.4 当前痛点
+### 1.5 利益相关者映射
 
-| # | 痛点 | 后果 | 本蓝图如何解决 |
-|---|------|------|-------------|
-| 1 | 只有 blueprint_reads.jsonl（蓝图读取日志） | AI 改了代码但不知道它读了哪些蓝图、跳过了哪些门禁 | 全量文件级审计（TaskAuditSummary + FileAuditDetail）|
-| 2 | session-logs/ 是人工维护 | 不完整、不及时、格式不统一 | 自动化不可变审计替代人工日志 |
-| 3 | Provenance 三件套强制要求但无运行时执行 | 大部分操作没有草稿和仲裁——要求形同虚设 | 分级 Provenance（always_allow 轻量 / auto_guard 完整 / blocked 全量）|
-| 4 | 审计日志可修改 | SQLite 存储可被 AI 直接 UPDATE——违反不可变原则 | JSONL 为唯一真源 + SQLite 为派生查询索引 |
-| 5 | 没有唯一真源 | SQLite 和 JSONL 各写各的——数据可能不一致 | JSONL SSoT + CI 门禁校验一致性 |
-| 6 | 无密码学篡改证明 | JSONL 只是 append-only，不是 tamper-evident——AI 可删除某行后重新 append 伪造行 | 哈希链 + HMAC 签名 + 完整性自检 |
-| 7 | 无异常行为检测 | 不知道什么是"可疑的 AI 操作"——AI 越权改文件、批量删除、非工作时间操作均无感知 | 行为基线 + 异常签名 + 自动告警 |
-| 8 | 无蓝图漂移对账 | 不知道 AI 实际做了什么 vs 蓝图规定该做什么 | Blueprint vs Actual 实时对账 |
-| 9 | 无 Agent 级不可否认性 | HMAC 只能证明"来自本系统"，不能证明"是 Agent X 操作的"——Agent B 可伪造 Agent A 的操作记录 | Agent 级 Ed25519 数字签名 + DID |
-| 10 | 无 LLM 推理过程回溯 | 只知道 AI 做了什么，不知道它为什么这样做——决策根因分析不可行 | CoT 推理链摘要 + 完整 CoT 哈希引用 |
+| 角色 | 关注点 | 参与阶段 | 约束 |
+|------|--------|---------|------|
+| Owner | 审计完整性+合规 | 设计+审批 | Genesis 初始化必须手动执行 |
+| AI Agent | 审计写入+查询 | 施工+运行 | 不可修改审计日志 |
+| 外部审计员 | 独立验证 | 验证 | 使用 verify_audit_integrity.py |
+
+### 1.6 当前态/目标态差距
+
+| 维度 | 当前态 | 目标态 | 差距 | 优先级 |
+|------|--------|--------|------|:------:|
+| 审计写入 | 单文件 JSONL < 1条/秒 | 16 shard 120条/秒 | 分片写入未实现 | P0 |
+| 密码学完整性 | 哈希链+HMAC+Ed25519 已实现 | 跨分片 Merkle 锚定 | CrossShardMerkle 未实现 | P0 |
+| 查询性能 | 单 SQLite | 分片 SQLite+全局路由 | GlobalIndex+QueryRouter 未实现 | P1 |
+| 脚本审计 | 无 | 15 种脚本事件+审计钩子 | ScriptAuditHook 未实现 | P1 |
+| Lamport 时钟 | 二元组 (ide, counter) | 三元组 (ide, session_id, counter) | LamportClockV2 未实现 | P1 |
+
+### 1.7 典型场景
+
+| 场景 | 触发 | 处理流程 | 输出 |
+|------|------|---------|------|
+| AI 写入文件 | AuditWriter.append() | ①构建 AuditEntryV1 → ②哈希链+HMAC+Ed25519 签名 → ③JSONL 追加 → ④SQLite 异步索引 | 审计条目+写入确认 |
+| 异常检测 | AnomalyDetector.detect() | ①匹配 13 签名 → ②计算 anomaly_score → ③>0.7 告警 | AnomalyEvent |
+| 完整性验证 | verify_integrity() | ①哈希链校验 → ②HMAC 批量验证 → ③Merkle 根对比 | IntegrityReport |
+| 蓝图漂移 | DriftDetector | ①blueprint_expected vs actual → ②diff → ③写入审计+反馈 | DriftResult |
 
 ---
 
-## 2. 核心架构
+## §2 模块边界
 
-### 2.1 两层审计粒度（决策 D-020-01）
+### 2.1 职责边界
 
-> **决策 D-020-01**：审计粒度采用两层——任务级摘要（快速浏览）+ 文件级明细（问题定位）。任务级记录是主表，文件级记录是明细表，通过 task_id 关联。
->
-> **决策依据**：1人+AI场景，审计日志主要是给 Owner"有空时翻翻"用的，任务级摘要就够了；但出了问题需要定位时，文件级明细不可少。对标 SecDB 的 trade-level + tick-level 两层审计。
+| # | 职责 | 具体内容 |
+|---|------|---------|
+| 1 | 不可变审计写入 | JSONL append-only + 哈希链 + HMAC + Ed25519 Agent 签名 + Lamport 时钟 |
+| 2 | 密码学完整性验证 | 哈希链连续性 / HMAC 批量验证 / Ed25519 签名验证 / Merkle 树重建 |
+| 3 | 审计查询 | SQLite 优先 + JSONL 回退 + 元审计 + trail_for_ai_context() |
+| 4 | 异常行为检测 | 13 种异常签名 + 告警发射 + 协同规避检测 |
+| 5 | 蓝图漂移对账 | blueprint_expected_action vs 实际记录 diff |
+| 6 | 三角闭环反馈 | 审计聚合→feedback_to_policy.py→Policy PR |
+| 7 | 数据生命周期 | 三层存储迁移 + 隐私脱敏 + 保留期执行 |
+| 8 | 自监控 | heartbeat + 健康指标 + 自动修复 + 信任分数趋势 |
+| 9 | Agent 级签名 | Ed25519 密钥管理 + 签名/验证 + DID 注册 |
+| 10 | 监管合规 | 证据包导出 + 合规框架映射 + 供应链审计 |
 
-```python
-class TaskAuditSummary(BaseModel):
-    """任务级审计摘要——快速浏览"""
-    event_id: str = Field(..., description="格式 AUD-T-{UUID7}-{SEQ}")
-    timestamp: datetime = Field(..., description="UTC 毫秒精度")
-    agent_id: str = Field(..., description="执行者——引用 AgentIdentity.agent_id")
-    ide_source: str = Field(..., description="来源 IDE——trae/cursor/roocode")
-    lamport_counter: int = Field(..., description="Lamport 逻辑时钟计数器")
-    session_id: str = Field(..., description="会话 ID")
-    task_id: str = Field(..., description="任务 ID")
-    task_type: str = Field(..., description="任务类型——architect/implementer/governor")
-    action_summary: str = Field(..., description="操作摘要——如'实现 MOD-INF-018 scaffold'")
-    files_affected: int = Field(..., description="影响文件数")
-    result: str = Field(..., description="success/fail/partial/rolled_back")
-    permission_level: str = Field(..., description="always_allow/auto_guard/blocked")
-    provenance_depth: ProvenanceDepth = Field(..., description="Provenance 深度——由权限级别决定")
-    tokens_used: int | None = Field(default=None, description="Token 消耗")
-    cost_estimate_usd: float | None = Field(default=None, description="估算费用 USD")
-    duration_ms: int | None = Field(default=None, description="操作耗时 ms")
+### 2.2 不包含的职责
 
-class FileAuditDetail(BaseModel):
-    """文件级审计明细——问题定位"""
-    event_id: str = Field(..., description="格式 AUD-F-{UUID7}-{SEQ}")
-    task_audit_id: str = Field(..., description="关联的任务级审计 ID")
-    timestamp: datetime
-    lamport_counter: int = Field(..., description="Lamport 逻辑时钟计数器")
-    file_path: str = Field(..., description="文件路径")
-    action_type: FileActionType = Field(..., description="read/write/create/delete")
-    sha256_before: Optional[str] = Field(default=None, description="操作前 SHA-256")
-    sha256_after: Optional[str] = Field(default=None, description="操作后 SHA-256")
-    diff_size_bytes: int | None = Field(default=None, description="diff 大小 (bytes)")
+| # | 排除项 | 由谁负责 |
+|---|--------|---------|
+| 1 | AI 审计守卫 | MOD-INF-001（capacity-assurance） |
+| 2 | 安全网关（LSG） | MOD-INF-014（llm-security） |
+| 3 | 回滚执行 | MOD-INF-021（rollback-system） |
+| 4 | 任务门禁（G0-G7） | MOD-INF-007（gate-engine） |
+| 5 | Shared Core 实现 | MOD-INF-016（shared-core） |
+| 6 | 事件溯源存储 | MOD-INF-002 RI-13 EventStore |
+| 7 | Dry-Run 沙箱 | MOD-INF-002 RI-14 DryRunSimulator |
 
-class FileActionType(str, Enum):
-    READ = "read"
-    WRITE = "write"
-    CREATE = "create"
-    DELETE = "delete"
-```
+---
 
-### 2.2 JSONL 为唯一真源 + 密码学完整性（决策 D-020-02 + D-020-04）
+## §3 架构设计
 
-> **决策 D-020-02**：JSONL 文件是审计日志的**唯一真源（SSoT）**，SQLite 是从 JSONL 派生的查询索引。写入流程：AI 操作 → 追加写入 JSONL → 异步重建 SQLite 索引。查询流程：读 SQLite → 如果 SQLite 不可用则回退读 JSONL。
+### 3.1 组件架构
 
-> **决策 D-020-04**（新增）：每条 JSONL 条目自带密码学完整性保证——**哈希链**（`prev_entry_hash` 链接前一条）+ **条目级 HMAC-SHA256 签名**（`hmac_signature`）+ **周期性 Merkle 树根哈希存储**（每小时生成 Merkle root 写入独立 `.merkle` 文件，供快速批量验证）。JSONL 从"append-only"升级为"append-only + tamper-evident"。
+| 组件 | 核心类 | 依赖 | 状态 |
+|------|--------|------|:----:|
+| 不可变写入器 | `AuditWriter` / `ShardedAuditWriter` | MOD-INF-016 | ✅ 已实现 |
+| 密码学验证器 | `IntegrityVerifier` | — | ✅ 已实现 |
+| 审计查询 | `AuditQuery` / `ShardedQueryRouter` | MOD-INF-012 | ✅ 已实现 |
+| 异常检测 | `AnomalyDetector` | — | ✅ 已实现 |
+| 漂移对账 | `DriftDetector` | MOD-INF-023 | ✅ 已实现 |
+| 自监控 | `SelfMonitor` | — | ✅ 已实现 |
+| Agent 签名器 | `AgentSigner` + `DIDRegistry` | — | ✅ 已实现 |
+| 委托链审计 | `DelegationChainAuditor` | — | ✅ 已实现 |
+| 信任引擎 | `TrustScoreEngine` | — | ✅ 已实现 |
+| 供应链审计 | `SupplyChainAudit` | — | ✅ 已实现 |
+| 证据包导出 | `EvidencePackExporter` | — | ✅ 已实现 |
+| 合规映射 | `ComplianceMap` | — | ✅ 已实现 |
+| 隐私脱敏 | `PrivacyRedactor` | — | ✅ 已实现 |
+| 保留期执行 | `RetentionEnforcer` | — | ✅ 已实现 |
+| Cold Start | `ColdStartBootstrapper` | — | ✅ 已实现 |
+| 跨 IDE 一致性 | `CrossIDEConsistencyChecker` | — | ✅ 已实现 |
+| 外部调用链 | `ExternalToolCallAudit` | — | ✅ 已实现 |
+| 间接操作检测 | `IndirectOperationDetector` | — | ✅ 已实现 |
+| 反馈自审计 | `FeedbackSelfAudit` | — | ✅ 已实现 |
+| KB 门禁 | `KBAuditGate` | MOD-KB-001 | ✅ 已实现 |
+| 确定性重放 | `DeterministicReplayEngine` | — | ✅ 已实现 |
+| CLI 面板 | `AuditCLI` | — | ✅ 已实现 |
+| 分片写入器 | `ShardWriter` | — | ❌ v2.0 待施工 |
+| 全局路由索引 | `GlobalIndex` | — | ❌ v2.0 待施工 |
+| 脚本审计钩子 | `ScriptAuditHook` | MOD-INF-005 | ❌ v2.0 待施工 |
+| 跨分片 Merkle | `CrossShardMerkle` | — | ❌ v2.0 待施工 |
+
+### 3.2 数据流
+
+| # | 上游 | 处理逻辑 | 下游 | 数据格式 |
+|---|--------|---------|---------|---------|
+| 1 | AI 操作 | AuditWriter.append() → 哈希链 + HMAC + Ed25519 签名 → JSONL 追加 | SQLite 索引（异步） | AuditEntryV1/V2 |
+| 2 | 查询请求 | AuditQuery → SQLite 优先 → JSONL 回退 → 完整性快速校验 | 调用者 | TaskAuditSummary / FileAuditDetail |
+| 3 | AI context 请求 | trail_for_ai_context() → 单 shard 查询 → Prompt 注入净化 → Markdown | LLM context | Markdown string |
+| 4 | 异常检测 | AnomalyDetector → 13 签名匹配 → anomaly_score 计算 → 告警发射 | Escalation Engine | AnomalyEvent |
+| 5 | 漂移对账 | DriftDetector → blueprint_expected vs actual → diff 生成 | Policy 反馈 | DriftResult |
+| 6 | 三角闭环 | Aggregator → 日聚合 → feedback_to_policy.py → Policy PR | Policy 层 | PolicyEvolutionPR |
+| 7 | 脚本执行 | Script System → 审计钩子 → SCAN_TRIGGERED/SCRIPT_EXECUTION_* 事件 | AuditWriter | ScanTriggeredEntry |
+
+### 3.3 状态生命周期
+
+| 当前状态 | 触发事件 | 目标状态 | 守卫条件 |
+|---------|---------|---------|---------|
+| NOT_WRITTEN | AI 操作触发 | WRITTEN | 审计写入成功 + 哈希链连续 |
+| WRITTEN | 异常检测匹配 | FLAGGED | anomaly_score > 阈值 |
+| FLAGGED | Owner 确认 / 自动降级 | RESOLVED | 处置动作完成 |
+| WRITTEN | 漂移检测匹配 | DRIFTED | drift_detected = True |
+| DRIFTED | Policy 更新对齐 | ALIGNED | 蓝图与代码重新对齐 |
+
+### 蓝图特有：两层审计粒度（决策 D-020-01）
+
+| 层级 | 模型 | 用途 |
+|------|------|------|
+| 任务级摘要 | `TaskAuditSummary` | 快速浏览——1 条/任务 |
+| 文件级明细 | `FileAuditDetail` | 问题定位——1 条/文件操作 |
+
+**TaskAuditSummary** 字段：`event_id`(AUD-T-{UUID7}-{SEQ}) | `timestamp`(UTC ms) | `agent_id` | `ide_source` | `lamport_counter` | `session_id` | `task_id` | `task_type` | `action_summary` | `files_affected` | `result` | `permission_level` | `provenance_depth` | `tokens_used`? | `cost_estimate_usd`? | `duration_ms`?
+
+**FileAuditDetail** 字段：`event_id`(AUD-F-{UUID7}-{SEQ}) | `task_audit_id` | `timestamp` | `lamport_counter` | `file_path` | `action_type`(FileActionType) | `sha256_before`? | `sha256_after`? | `diff_size_bytes`?
+
+### 蓝图特有：JSONL SSoT + 密码学完整性（决策 D-020-02 + D-020-04）
 
 ```yaml
 storage_ssoT:
   primary:
     format: "JSONL"
     path: "data/audit/audit-trail.jsonl"
-    write_mode: "append-only——每个操作追加一行"
-    rotation: "按日轮转——audit-trail-2026-05-05.jsonl"
-    retention: "permanent——ttl=permanent，永不删除（但按 §6 分层存储策略冷归档）"
+    write_mode: "append-only"
+    rotation: "按日轮转——audit-trail-{YYYY-MM-DD}.jsonl"
+    retention: "permanent"
     git_tracked: false
-    git_isolation: "审计 JSONL 独立于 git 工作区存储，不受 git reset/rebase 影响——防止审计日志随代码回滚而丢失；data/audit/ 加入 .gitignore"
+    git_isolation: "data/audit/ 加入 .gitignore——审计日志独立于 git 工作区"
 
-  # === 密码学完整性 ===
   cryptographic_integrity:
     hash_chain:
       enabled: true
       algorithm: "SHA-256"
       field: "prev_entry_hash"
-      description: "每条条目含前一条的 SHA-256——形成不可逆哈希链，删除中间条目立即可检测"
-
     hmac_signing:
       enabled: true
       algorithm: "HMAC-SHA256"
       secret_source: "环境变量 ZEPHYR_AUDIT_HMAC_SECRET（256-bit）"
       field: "hmac_signature"
-      description: "HMAC-SHA256(entry_without_signature, audit_secret)——伪造来源立即可检测"
-
     merkle_aggregation:
       enabled: true
       interval: "每小时"
       path: "data/audit/merkle/audit-merkle-{YYYY-MM-DDTHH}.json"
-      description: "每小时生成 Merkle 根哈希——O(log n) 批量验证，无需逐条校验"
-
     integrity_check:
       frequency: "每次查询前自动检验 + 每周全量扫描"
       on_failure: "P0 告警 → integrity_failure 审计事件 → 通知 Owner → 隔离可疑段"
@@ -197,7 +357,6 @@ storage_ssoT:
     path: "data/audit/audit-index.db"
     write_mode: "异步重建——从 JSONL 派生，5s 延迟"
     rebuild_trigger: "JSONL 追加后 5s / 手动触发 / CI 启动时 / 索引损坏自动触发"
-    purpose: "查询加速——按 agent/target/时间/任务类型/permission_level/anomaly 查询"
 
   consistency_check:
     ci_gate: "CI 门禁校验 SQLite 记录数 == JSONL 行数 + 哈希链连续性 + HMAC 有效性"
@@ -205,1148 +364,1063 @@ storage_ssoT:
     self_healing: "索引损坏 → 自动从 JSONL 重建（零人工干预）"
 ```
 
-### 2.3 分级 Provenance（决策 D-020-03）
+### 蓝图特有：审计条目数据模型（AuditEntryV1）
 
-> **决策 D-020-03**：Provenance 深度由权限级别决定——always_allow 只记录轻量 provenance，auto_guard 记录标准 provenance（含决策依据+后验检查），blocked 记录全量 provenance（含阻断原因+违反规则）。版本从 v0.2.0 的 3 级扩展到 v1.0.0 的 3 级不变，但 Light 级补充 `decision_brief`。
+`AuditEntryV1(BaseModel)`，`model_config = ConfigDict(frozen=True, extra="forbid")`
 
-```python
-class ProvenanceDepth(str, Enum):
-    LIGHT = "light"        # always_allow 操作
-    STANDARD = "standard"  # auto_guard 操作
-    FULL = "full"          # blocked 操作（阻断记录）
+| 字段组 | 字段 | 类型/默认值 |
+|--------|------|-----------|
+| 标识 | `entry_id` | str (UUID7) |
+| | `schema_version` | str ("1.1.0") |
+| | `entry_type` | AuditEventType |
+| 完整性 | `prev_entry_hash` | str |
+| | `entry_hash` | str |
+| | `hmac_signature` | str |
+| Agent签名 | `agent_did` | str? |
+| | `agent_signature` | str? |
+| | `agent_public_key_pem` | str? |
+| 委托 | `delegation_chain` | list[str] ([]) |
+| | `delegation_depth` | int (0) |
+| Merkle | `merkle_batch_id` | str? |
+| 时序 | `lamport_clock` | tuple[str, int] |
+| | `utc_timestamp` | datetime |
+| 主体 | `agent_id` | str |
+| | `ide_source` | str |
+| | `session_id` | str |
+| | `task_id` | str |
+| | `task_type` | str? |
+| | `permission_level` | str |
+| | `provenance_depth` | str |
+| | `trust_score` | float? |
+| 操作 | `action_type` | str |
+| | `file_path` | str? |
+| | `sha256_before` | str? |
+| | `sha256_after` | str? |
+| | `indirect_operation` | bool (False) |
+| | `indirect_method` | str? |
+| | `indirect_target` | str? |
+| 决策 | `decision_basis` | list[str] ([]) |
+| | `guard_checks_passed` | list[str] ([]) |
+| | `guard_checks_failed` | list[str] ([]) |
+| | `confidence_level` | str ("high") |
+| 推理 | `reasoning_trace` | str? |
+| | `cot_hash` | str? |
+| 漂移 | `blueprint_expected_action` | str? |
+| | `drift_detected` | bool (False) |
+| | `drift_severity` | str? |
+| | `drift_detail` | str? |
+| 异常 | `anomaly_detected` | bool (False) |
+| | `anomaly_type` | str? |
+| | `anomaly_score` | float? |
+| 资源 | `tokens_used` | int? |
+| | `cost_estimate_usd` | float? |
+| | `duration_ms` | int? |
+| DryRun | `dry_run` | bool (False) |
+| | `dry_run_real_diff` | str? |
+| | `dry_run_real_diff_score` | float? |
+| 关联 | `parent_entry_id` | str? |
+| | `external_tool_calls` | list[dict] ([]) |
+| | `supply_chain_info` | dict? |
+| 隐私/保留 | `contains_pii` | bool (False) |
+| | `redaction_policy` | str ("none") |
+| | `retention_tier` | str ("hot") |
 
-class ProvenanceLight(BaseModel):
-    agent_id: str
-    timestamp: datetime
-    action_type: str
-    ide_source: str
-    decision_brief: str = Field(default="", description="一句话决策依据——如'按 MOD-INF-018 §2.2'")
+### 蓝图特有：分级 Provenance（决策 D-020-03）
 
-class ProvenanceStandard(BaseModel):
-    agent_id: str
-    timestamp: datetime
-    action_type: str
-    ide_source: str
-    decision_basis: list[str] = Field(default_factory=list, description="决策依据——读了哪些蓝图/ADR/门禁结果")
-    guard_checks_executed: list[str] = Field(default_factory=list, description="执行的后验检查项")
-    guard_checks_passed: list[str] = Field(default_factory=list)
-    guard_checks_failed: list[str] = Field(default_factory=list)
-    guard_result: Optional[str] = Field(default=None, description="后验结果——pass/fail/rolled_back")
-    confidence_level: str = Field(default="high", description="AI 决策置信度——high/medium/low")
+| 级别 | 权限 | 字段 |
+|------|------|------|
+| LIGHT | always_allow | agent_id + timestamp + action_type + ide_source + decision_brief |
+| STANDARD | auto_guard | + decision_basis + guard_checks_executed/passed/failed + guard_result + confidence_level |
+| FULL | blocked | + blocked_reason + attempted_action + rule_violated + escalation_triggered/target |
 
-class ProvenanceFull(BaseModel):
-    agent_id: str
-    timestamp: datetime
-    action_type: str
-    ide_source: str
-    blocked_reason: str = Field(..., description="阻断原因")
-    attempted_action: str = Field(..., description="尝试的操作")
-    rule_violated: str = Field(..., description="违反的规则ID")
-    escalation_triggered: bool = Field(default=False, description="是否触发了升级/委托")
-    escalation_target: Optional[str] = Field(default=None, description="升级目标——human_owner/supervisor_agent")
-```
+### 蓝图特有：Lamport 逻辑时钟（决策 D-020-09）
 
-### 2.4 密码学完整性数据模型（新增 SSoT 条目体）
+`LamportClock(ide_source: str)`：`_ide` + `_counter=0`。`tick()→(ide, counter+1)`，`merge(received)→counter=max(local, received[1])+1`。
 
-```python
-class AuditEntryV1(BaseModel):
-    """审计条目 v1.1.0——密码学完整性 + Agent 签名 + CoT 推理链 + 时序一致性 + 成本归属 + 漂移检测"""
-    model_config = ConfigDict(frozen=True, extra="forbid")
+v2.0 升级为三元组 `(ide, session_id, counter)`——见 §17。
 
-    # === 身份与版本 ===
-    entry_id: str = Field(..., description="UUID7——时间有序，毫秒精度")
-    schema_version: str = Field(default="1.1.0")
-    entry_type: AuditEventType = Field(..., description="事件类型（见 §3）")
+### 蓝图特有：三层存储架构（决策 D-020-10）
 
-    # === 密码学完整性（决策 D-020-04）===
-    prev_entry_hash: str = Field(..., description="前一条目的 SHA-256（首条 = genesis）")
-    entry_hash: str = Field(..., description="SHA-256(本条目不含 entry_hash+hmac_signature+agent_signature 的规范 JSON)")
-    hmac_signature: str = Field(..., description="HMAC-SHA256(canonical_json, ZEPHYR_AUDIT_HMAC_SECRET)——系统级完整性")
+| 层 | 格式 | 路径 | 年龄 | 延迟 | 压缩 |
+|---|------|------|------|------|------|
+| 热 | JSONL | `data/audit/hot/` | ≤ 7 天 | < 5ms P99 | none |
+| 温 | gzip JSONL | `data/audit/warm/` | 8~90 天 | < 100ms | gzip level 6 |
+| 冷 | Parquet | `data/audit/cold/` | > 90 天 | 日级查询 | Parquet snappy + zstd |
 
-    # === Agent 级不可否认性（决策 D-020-14）===
-    agent_did: str | None = Field(default=None, description="Agent DID——did:zephyr:{ed25519_fingerprint}")
-    agent_signature: str | None = Field(default=None, description="Ed25519 签名(entry_hash)——Agent 级不可否认")
-    agent_public_key_pem: str | None = Field(default=None, description="Agent Ed25519 公钥 PEM——供离线验证")
-
-    # === 委托链（决策 D-020-16）===
-    delegation_chain: list[str] = Field(default_factory=list, description="委托链——[root_agent_did, ..., executor_agent_did]")
-    delegation_depth: int = Field(default=0, description="委托深度——0=直接操作")
-
-    # === Merkle ===
-    merkle_batch_id: str | None = Field(default=None, description="所属 Merkle 批次 ID")
-
-    # === 时序一致性（决策 D-020-09）===
-    lamport_clock: tuple[str, int] = Field(..., description="(ide_source, counter)——Lamport 逻辑时钟")
-    utc_timestamp: datetime = Field(..., description="UTC 毫秒精度——用于人类阅读，非排序依据")
-
-    # === 操作上下文 ===
-    agent_id: str
-    ide_source: str
-    session_id: str
-    task_id: str
-    task_type: str | None = None
-    permission_level: str
-    provenance_depth: str
-
-    # === 渐进信任（决策 D-020-17）===
-    trust_score: float | None = Field(default=None, description="操作时的 Agent 信任分数——0.0~1.0，连续值，随时间衰减")
-
-    # === 操作内容 ===
-    action_type: str
-    file_path: str | None = None
-    sha256_before: str | None = None
-    sha256_after: str | None = None
-
-    # === 间接操作（决策 D-020-21）===
-    indirect_operation: bool = False
-    indirect_method: str | None = None  # symlink / hardlink / generated_script / cron / mcp_delegation
-    indirect_target: str | None = None   # 最终受影响的目标
-
-    # === 决策溯源 —— Provenance Standard+ ===
-    decision_basis: list[str] = Field(default_factory=list)
-    guard_checks_passed: list[str] = Field(default_factory=list)
-    guard_checks_failed: list[str] = Field(default_factory=list)
-    confidence_level: str = "high"
-
-    # === LLM 推理链（决策 D-020-15）===
-    reasoning_trace: str | None = Field(default=None, description="CoT 推理链摘要——<500 chars")
-    cot_hash: str | None = Field(default=None, description="SHA-256(完整 CoT 原始文本)——存于外部 reasoning/ 目录")
-
-    # === 蓝图漂移（决策 D-020-06）===
-    blueprint_expected_action: str | None = None
-    drift_detected: bool = False
-    drift_severity: str | None = None  # low/medium/high/critical
-    drift_detail: str | None = None
-
-    # === 异常标记（决策 D-020-07）===
-    anomaly_detected: bool = False
-    anomaly_type: str | None = None
-    anomaly_score: float | None = None  # 0.0~1.0
-
-    # === 成本归属 ===
-    tokens_used: int | None = None
-    cost_estimate_usd: float | None = None
-    duration_ms: int | None = None
-
-    # === Dry-Run vs Real 差异（决策 D-020-22）===
-    dry_run: bool = False
-    dry_run_real_diff: str | None = None  # "AI 在 dry-run 时期望做 X，实际做了 Y"——差异描述
-    dry_run_real_diff_score: float | None = None  # 0.0~1.0 差异度
-
-    # === 外部调用链（决策 D-020-20）===
-    parent_entry_id: str | None = None  # 父审计条目 ID——外部调用链关联
-    external_tool_calls: list[dict] = Field(default_factory=list, description="外部 MCP/API 调用链")
-
-    # === 供应链（决策 D-020-23）===
-    supply_chain_info: dict | None = Field(default=None, description="包名+版本+SHA-256+来源——供供应链审计")
-
-    # === 隐私治理 ===
-    contains_pii: bool = False
-    redaction_policy: str = "none"  # none / masked / hashed
-    retention_tier: str = "hot"     # hot / warm / cold
-```
-
-### 2.5 逻辑时钟——多 IDE 时序一致性（决策 D-020-09）
-
-> **决策 D-020-09**（新增）：多 IDE 并发场景下，每个 IDE 维护独立 Lamport 逻辑时钟 `(ide_source: str, counter: int)`。写入 JSONL 时递增 counter；读取排序时以 `(max(local, received) + 1)` 规则合并。不对操作系统时钟做任何假设——`utc_timestamp` 仅用于人类阅读。
-
-> **短术语**：`(trae, 42)` < `(cursor, 15)` 无法直接比较大小——Lamport 只保证因果顺序（happens-before），不保证全序。全序由 `(counter, ide_source)` 字典序打破——对标 Dynamo Vector Clock 简化版。
-
-```python
-class LamportClock:
-    """单 IDE 逻辑时钟——Happens-Before 关系追踪"""
-    def __init__(self, ide_source: str) -> None:
-        self._ide = ide_source
-        self._counter = 0
-
-    def tick(self) -> tuple[str, int]:
-        """操作前递增——返回当前时钟"""
-        self._counter += 1
-        return (self._ide, self._counter)
-
-    def merge(self, received: tuple[str, int]) -> None:
-        """接收外部事件时合并——Lamport merge 规则"""
-        self._counter = max(self._counter, received[1]) + 1
-
-    def now(self) -> tuple[str, int]:
-        """返回当前时钟（不递增）"""
-        return (self._ide, self._counter)
-
-def audit_entry_sort_key(entry: AuditEntryV1) -> tuple[int, str]:
-    """审计条目全序排序键：(counter, ide_source) 字典序"""
-    return (entry.lamport_clock[1], entry.lamport_clock[0])
-```
-
-### 2.6 三层存储架构（决策 D-020-10）
-
-> **决策 D-020-10**（新增）：审计日志按时间分三层存储——热（≤7d JSONL 本地 SSD，<5ms 读写）、温（8~90d gzip JSONL 本地 HDD，<100ms）、冷（>90d Parquet 归档压缩，日级查询）。自动执行分层迁移，保留期到期自动清理（按 GOV-CMP-002 AUD-001~004 规定）。
-
-```yaml
-storage_tiers:
-  hot:
-    format: "JSONL"
-    path: "data/audit/hot/"
-    age: "≤ 7 天"
-    storage: "本地 SSD"
-    latency: "< 5ms P99 write"
-    compression: "none"
-
-  warm:
-    format: "gzip JSONL"
-    path: "data/audit/warm/"
-    age: "8 ~ 90 天"
-    storage: "本地 HDD"
-    latency: "< 100ms query"
-    compression: "gzip level 6"
-    migration: "日均 cron——每日 00:00 UTC 扫描 hot/ → >7d 条目迁移至 warm/"
-
-  cold:
-    format: "Parquet"
-    path: "data/audit/cold/"
-    age: "> 90 天"
-    storage: "本地 HDD 或对象存储"
-    latency: "日级查询（batch scan）"
-    compression: "Parquet snappy + zstd"
-    migration: "周均 cron——每周日 02:00 UTC 扫描 warm/ → >90d 条目迁移至 cold/"
-
-retention_enforcement:
-  schedule: "monthly"
-  script: "scripts/governance/enforce_audit_retention.py"
-  policy_ref: "GOV-CMP-002 AUD-001~004"
-  safe_mode: "dry-run 先行——实际删除前生成报告供 Owner 审批"
-```
-
-### 2.7 自监控——1人+AI 维护的刚需
-
-审计系统无人运维 → 必须自监控。对标 Goldman SecDB Prometheus probing + PagerDuty escalation。
-
-```yaml
-self_monitoring:
-  heartbeat:
-    interval: "60s"
-    check: "写入 1 条 heartbeat 条目 → 读回验证哈希链 → 延迟 < 5ms"
-    on_failure: "连续 3 次失败 → P0 audit_system_down 告警 → 写入 emergency fallback log"
-
-  health_metrics:
-    - name: "write_latency_p99_ms"
-      threshold: "5 ms"
-      alert: "> 10 ms P99 → P1"
-    - name: "disk_usage_pct"
-      threshold: "80%"
-      alert: "> 80% → P1，> 90% → P0"
-    - name: "jsonl_file_count"
-      threshold: "每 IDE ≤ 365 文件"
-      alert: "超过 → P2"
-    - name: "hash_chain_integrity"
-      threshold: "100% pass"
-      alert: "任一 fail → 立即 P0 阻断"
-    - name: "hmac_validity_rate"
-      threshold: "100% pass"
-      alert: "任一 fail → 立即 P0 阻断"
-    - name: "sqlite_index_health"
-      threshold: "online"
-      alert: "offline > 60s → P1 + auto-rebuild"
-    - name: "agent_signature_validity_rate"
-      threshold: "100% pass"
-      alert: "任一 fail → 立即 P0 阻断"
-    - name: "delegation_chain_validity"
-      threshold: "100% pass"
-      alert: "链断裂或权限放大 → P0"
-    - name: "trust_score_trend"
-      threshold: "下降 > 0.3 / 7d"
-      alert: "P1——Agent 行为趋势恶化"
-    - name: "cross_ide_consistency"
-      threshold: "100% pass"
-      alert: "不一致 > 0 → P1"
-
-### 2.8 Agent 级数字签名——不可否认性（决策 D-020-14）
-
-> **决策 D-020-14**（新增）：HMAC 只能证明"数据来自知道 secret 的系统"，不能证明"具体是哪个 Agent 操作的"。引入 Agent 级 Ed25519 数字签名实现不可否认性（non-repudiation）。每个 Agent 拥有独立的 Ed25519 密钥对，操作时用私钥对 `entry_hash` 签名，审计条目携带 `agent_signature` + `agent_did` + 公钥 PEM。任何第三方可以离线验证签名，不需要知道 HMAC secret。
+### 蓝图特有：Agent 级 Ed25519 签名（决策 D-020-14）
 
 ```yaml
 agent_signing:
   algorithm: "Ed25519"
-  key_generation:
-    trigger: "Agent 身份创建时（MOD-INF-018 AgentIdentity 初始化）"
-    storage: "Agent 私钥存储在密钥库（非审计系统），公钥写入 AgentIdentity 元数据"
-    rotation: "每 90 天或 Agent 权限升级时重新生成"
-
-  signing:
-    description: "Agent 私钥签名(entry_hash) → agent_signature 写入审计条目"
-    verification: "公钥验证(entry_hash, agent_signature)——任何第三方可离线验证"
-
+  key_generation: "Agent 身份创建时生成，每 90 天或权限升级时轮转"
+  signing: "Agent 私钥签名(entry_hash) → agent_signature"
+  verification: "公钥验证(entry_hash, agent_signature)——任何第三方可离线验证"
   did:
     format: "did:zephyr:{sha256(Ed25519_public_key)[:16]}"
-    example: "did:zephyr:a1b2c3d4e5f6g7h8"
     binding: "DID 绑定到 Ed25519 公钥——不可伪造"
-
-  non_repudiation_chain:
-    description: "HMAC（系统级）证明'来自本系统' + Ed25519（Agent 级）证明'来自 Agent X' —— 双重保障"
-    hmac_only: "完整性 + 来源验证（弱——不区分 Agent）"
-    ed25519: "完整性 + 来源验证 + 不可否认性（强——区分 Agent，法庭可采信）"
+  non_repudiation_chain: "HMAC（系统级）+ Ed25519（Agent 级）——双重保障"
 ```
 
-```python
-class AgentSigner:
-    """Agent 级 Ed25519 签名器"""
+### 蓝图特有：CoT 推理链审计（决策 D-020-15）
 
-    def __init__(self, agent_did: str, private_key_pem: str) -> None:
-        self._did = agent_did
-        self._private_key = Ed25519PrivateKey.from_pem(private_key_pem)
-        self._public_key_pem = self._private_key.public_key().to_pem()
-
-    def sign(self, entry_hash: str) -> str:
-        """对 entry_hash 签名——返回 base64 签名"""
-        return base64.b64encode(self._private_key.sign(entry_hash.encode())).decode()
-
-    @staticmethod
-    def verify(entry_hash: str, signature: str, public_key_pem: str) -> bool:
-        """离线验证签名——无需任何 secret"""
-        key = Ed25519PublicKey.from_pem(public_key_pem)
-        try:
-            key.verify(base64.b64decode(signature), entry_hash.encode())
-            return True
-        except Exception:
-            return False
-
-class DIDRegistry:
-    """DID → 公钥映射注册表"""
-    def register(self, did: str, public_key_pem: str, agent_metadata: dict) -> None: ...
-    def resolve(self, did: str) -> str | None: ...  # 返回公钥 PEM
-    def revoke(self, did: str, reason: str) -> None: ...
-```
-
-### 2.9 LLM 推理链（CoT）审计（决策 D-020-15）
-
-> **决策 D-020-15**（新增）：对标 OWASP ASI-10 "完整可观测性" + FCA 监管文件审查 "推理"维度。每条审计条目记录 LLM 推理链摘要（`reasoning_trace` <500 chars）+ 完整 CoT 的 SHA-256 引用（`cot_hash`）。完整 CoT 文本存储在 `reasoning/` 目录（独立于审计日志，按 session 组织）。Phase scaffold 记录摘要，Phase experimental 起记录完整 CoT。
-
-```yaml
-cot_audit:
-  summary_level:
-    field: "reasoning_trace"
-    max_length: 500  # chars
-    format: "Markdown 摘要——关键推理步骤 + 最终决策"
-
-  full_trace:
-    field: "cot_hash"
-    storage_path: "data/reasoning/{session_id}/{entry_id}.cot.json"
-    format: "JSON —— [{'step': 1, 'thought': '...', 'action': '...', 'observation': '...'}, ...]"
-    retention: "随审计日志分层存储——hot 7d / warm 90d / cold archive"
-
-  retrieval:
-    description: "通过 cot_hash 查找完整 CoT —— SHA-256(完整 CoT 文件) == cot_hash → 可信"
-    query: "AuditQuery.by_task(task_id) → 获取 cot_hash → reasoning_store.fetch(cot_hash)"
-```
-
-### 2.10 委托链审计（决策 D-020-16）
-
-> **决策 D-020-16**（新增）：对标 Microsoft AGT DelegationChain + NIST 2026 "委托身份追踪"。Agent A 委托 Agent B 执行操作时，审计条目记录完整委托链 `[root_agent_did, ..., executor_agent_did]` + `delegation_depth`。委托链约束：(a) 子 Agent 权限必须是父 Agent 权限的子集（capability narrowing），(b) 委托深度上限为 3（configurable），(c) 委托链断裂立即 P0 告警。
-
-```python
-class DelegationChainAuditor:
-    """委托链完整性审计器"""
-
-    def validate_chain(self, entry: AuditEntryV1) -> bool:
-        """校验委托链：深度 ≤ 3 + 权限逐级缩小 + 链内 DID 均有效"""
-
-    def detect_chain_break(self, entry: AuditEntryV1) -> bool:
-        """检测委托链断裂——中间 DID 不可解析或权限异常放大"""
-
-    def trace_root(self, entry: AuditEntryV1) -> str:
-        """追溯到委托链根 Agent——用于最终责任归属"""
-```
-
-### 2.11 渐进信任分数（决策 D-020-17）
-
-> **决策 D-020-17**（新增）：对标 ISACA "trust degrades without continued good behavior" + Microsoft AGT Trust Scoring。信任从离散 RBAC 角色扩展为连续浮点数 `trust_score: 0.0~1.0`。每个操作记录操作时的 trust_score。信任规则：(a) 每次成功操作 +0.001（缓慢上升），(b) 每次 anomaly -0.2（快速下降），(c) 每天无活动 -0.005（自然衰减），(d) trust_score < 0.5 → 自动降级权限级别。
-
-```python
-class TrustScoreEngine:
-    DEFAULT_SCORE: float = 0.6
-    SUCCESS_INCREMENT: float = 0.001
-    ANOMALY_DECREMENT: float = 0.2
-    DAILY_DECAY: float = 0.005
-    DEMOTION_THRESHOLD: float = 0.5
-
-    def update(self, agent_did: str, event: AuditEventType, anomaly_score: float | None) -> float: ...
-    def current(self, agent_did: str) -> float: ...
-    def trend(self, agent_did: str, days: int = 7) -> list[float]: ...
-```
-
-### 2.12 外部独立验证端点（决策 D-020-18）
-
-> **决策 D-020-18**（新增）：100% AI 施工语境下的刚性需求——"AI 不能自己写测试验证自己写的代码"。引入 `ExternalAuditVerifier`，独立于 `audit_trail/` 模块。CI/CD 中使用外部 verifier 而非内部 `verify_integrity()`。外部 verifier 仅做审计完整性校验，不依赖 audit_trail 模块的任何代码。
-
-```yaml
-external_verifier:
-  script: "scripts/governance/verify_audit_integrity.py"
-  independence: "零依赖 audit_trail/ 模块——仅使用 stdlib hashlib + hmac + json"
-  checks:
-    - "哈希链连续性（从 genesis 遍历到末尾）"
-    - "HMAC 签名全量验证（使用 ZEPHYR_AUDIT_HMAC_SECRET）"
-    - "Agent Ed25519 签名抽样验证（10% 随机抽样）"
-    - "Merkle 根哈希重建对比"
-    - "JSONL 行数 vs SQLite 索引记录数一致性"
-    - "委托链完整性（深度 + 权限缩小）"
-  ci_integration:
-    trigger: "pre-commit / CI 门禁 / 定时 cron"
-    on_failure: "CI ❌ → 阻止合并 → 通知 Owner"
-```
-
-### 2.13 跨 IDE 一致性交叉验证（决策 D-020-19）
-
-> **决策 D-020-19**（新增）：对标 Goldman SecSync 不一致检测。多 IDE 并发场景下，两个 IDE 可能对同一操作记录了相互矛盾的信息（TRAE 记录"成功"，Cursor 记录"失败"）。新增 `CrossIDEConsistencyChecker`：定期扫描所有 IDE 的 JSONL，通过 `(task_id, action_type, file_path, lamport_clock 时间窗口)` 匹配同一操作，检测内容矛盾并标记。
-
-```python
-class CrossIDEConsistencyChecker:
-    """跨 IDE 审计一致性验证器——对标 Goldman SecSync"""
-
-    def find_conflicts(self, window: timedelta = timedelta(seconds=10)) -> list[ConsistencyConflict]:
-        """扫描所有 IDE JSONL，检测同一操作的多版本矛盾"""
-
-    def merge_consensus(self, task_id: str) -> ConsensusView:
-        """合并多 IDE 对同一操作的视角——多数一致 → 可信"""
-
-class ConsistencyConflict(BaseModel):
-    entry_a_id: str
-    entry_b_id: str
-    field: str  # 冲突字段名
-    value_a: str
-    value_b: str
-    ide_a: str
-    ide_b: str
-    severity: str  # low/high/critical
-```
-
-### 2.14 确定性重放——审计日志→系统状态重建（决策 D-020-34）
-
-> **决策 D-020-34**（新增）：对标 Goldman trade reconstruction——审计日志的最高价值是支持"回到任意时刻，精确重建系统状态"。仅记录"谁做了什么"不够——必须记录操作前后的完整状态快照。关键文件操作记录 `sha256_before` → `sha256_after`，通过重放审计日志可验证重建状态的 SHA-256 是否与记录一致。
-
-```yaml
-deterministic_replay:
-  design:
-    principle: "sha256_before + sha256_after → 任何时间点状态可重建"
-    coverage: "关键文件操作 100% 记录 sha256_before/after"
-
-  replay_layers:
-    L1_file_state: "通过 sha256_after 链→重建任意时刻文件内容哈希"
-    L2_git_state: "通过 git commit SHA→重建代码仓库状态"
-    L3_system_config: "通过配置变更事件→重建系统配置状态"
-
-  validation:
-    weekly_replay_test: "随机选取 3 个时间点，重放审计日志验证 SHA-256 一致性"
-    on_demand: "zephyr audit replay --at '2026-05-03T14:00:00Z' → 输出该时刻的完整文件状态哈希映射"
-
-  limitation:
-    partial_coverage: "仅记录有审计事件的操作——未被审计覆盖的操作无法重建"
-    external_dependencies: "MCP/API 调用结果无法从审计日志重建——需外部系统配合"
-```
-
-```python
-class DeterministicReplayEngine:
-    """从审计日志重建系统状态"""
-
-    def replay_to(self, target_time: datetime) -> dict[str, str]:
-        """重放审计日志至指定时间——返回 {file_path: sha256} 状态映射"""
-
-    def verify_replay(self, target_time: datetime) -> ReplayVerification:
-        """对比重放结果与实际 git 状态——返回一致性报告"""
-
-class ReplayVerification(BaseModel):
-    target_time: datetime
-    files_in_audit: int
-    files_in_git: int
-    matched: int
-    mismatched: list[ReplayMismatch]
-    coverage_pct: float
-```
-
-### 2.15 AI 自身安全性——审计数据作为 Prompt Injection 向量（决策 D-020-31）
-
-> **决策 D-020-31**（新增）：100% AI 施工 + AI 维护 + AI 消费审计数据——闭环的核心风险是审计日志自身成为 prompt injection 攻击面。当 `trail_for_ai_context()` 将审计条目注入 LLM context 时，恶意构造的审计条目（如含 "ignore all previous instructions" 或 "输出前面所有内容"）可劫持 AI 决策。**审计日志的读者是 AI，而 AI 是控制系统的实体——这是最高级别的安全风险。**
-
-```yaml
-ai_self_security:
-  principle: "任何 AI 将要读取的数据都必须经过 prompt injection 净化——审计日志也不例外"
-
-  sanitization_pipeline:
-    step_1_strip_instructions:
-      description: "移除/转义 AI 指令关键词——ignore|disregard|override|bypass|system:|assistant:|user:"
-      method: "unicode 转义——如 'ignore' → 'i\\u0067nore'"
-
-    step_2_semantic_sandbox:
-      description: "每个审计条目包裹在语义沙箱标记中——[AUDIT_ENTRY_START]...[AUDIT_ENTRY_END]"
-      purpose: "AI 明确知道这是审计数据——不是系统指令"
-
-    step_3_length_limit:
-      description: "每条 entry 在 context 中截断至 500 chars——防止超长注入攻击"
-
-  forbidden_patterns:
-    - "包含 '---' 或 '===' 等 Markdown 分隔符——可能被解析为指令边界"
-    - "包含 '```' 代码块标记——可能逃逸 context 结构"
-    - "包含 'system:' / 'assistant:' / 'user:' 前缀——可能冒充对话角色"
-    - "任何 AI tool call 格式（如 '<function_call>' / '<invoke>'）"
-
-  audit_self_defense:
-    injection_detected: "ANM-015——检测到审计条目含 prompt injection 模式 → 自动脱毒 + 标记 anomaly"
-    alert: "P0——AI 正在读取可能含注入攻击的审计数据"
-```
-
-### 2.16 信任锚初始化——The Bootstrap Trust Problem（决策 D-020-44）
-
-> **决策 D-020-44**（新增）：审计系统的所有信任都起源于一个不可验证的时刻——**genesis block 的创建**。第一条审计条目 (`prev_entry_hash = "genesis"`) 的合法性、初始 HMAC secret 的生成、第一个 Ed25519 密钥的创建——这些都是信任根。如果初始化被 compromise，之后的一切密码学证明都是"垃圾进垃圾出"。在 100% AI 施工语境下：**初始化代码也是 AI 写的——AI 可能生成已知有后门的初始化脚本。**
-
-```yaml
-bootstrap_trust:
-  problem: "第一条审计条目如何自证？——prev_entry_hash = 'genesis' 是不可验证的占位符"
-  implication: "genesis 之前的状态永远不可知——接受这是已知盲点，显式声明而非隐藏"
-
-  initialization_ceremony:
-    description: "审计系统首次启动时执行的可审计初始化流程"
-
-    steps:
-      step_1_secret_gen:
-        action: "从 /dev/urandom 或操作系统 CSPRNG 读取 256-bit → HMAC secret"
-        verification: "SHA-256(secret) 写入 genesis_manifest.txt——可事后验证但不可逆"
-
-      step_2_genesis_entry:
-        action: "写入第一条审计条目 AUDIT_SYSTEM_BOOTSTRAP——prev_entry_hash='genesis', entry_hash=SHA256(entry), hmac=HMAC(entry, secret)"
-        verification: "外部 verifier 检查 genesis entry 的 entry_hash 自我一致性"
-
-      step_3_agent_key_gen:
-        action: "生成 Owner Agent 的 Ed25519 密钥对——DID 注册 + 公钥入 genesis 条目"
-        verification: "Owner 离线验证公钥指纹"
-
-      step_4_witness:
-        action: "将 genesis_manifest.txt (含 genesis entry_hash + Ed25519 公钥 SHA) 写入外部独立介质——USB / 纸质 QR / 云存储"
-        purpose: "独立见证——不是系统自我声明，而是有外部独立见证的起源"
-
-  self_referential_paradox:
-    description: "AI 写的初始化代码验证 AI 写的审计系统——Münchhausen trilemma"
-    mitigation:
-      - "初始化脚本最小化——<200行 Python，任何具备基础编程能力的人可审计"
-      - "外部 verifier 独立初始化——不使用 audit_trail/ 模块的任何代码"
-      - "初始化见证写入外部介质——不依赖审计系统自身存储"
-      - "规则：genesis 创建者 ≠ 日常操作者（由 Owner 手动执行初始化，AI 辅助）"
-```
-```
-
----
-
-## 3. 审计事件类型全模型
-
-### 3.1 事件类型枚举
-
-```python
-class AuditEventType(str, Enum):
-    # === 操作记录 ===
-    TASK_SUMMARY = "task_summary"           # 任务级摘要
-    FILE_DETAIL = "file_detail"             # 文件级明细
-
-    # === AI 行为异常（对标 ISACA 2025 + OWASP ASI-09/10）===
-    ANOMALY_DETECTED = "anomaly_detected"           # 行为基线偏离
-    PERMISSION_VIOLATION = "permission_violation"   # 越权操作
-    BULK_OPERATION = "bulk_operation"               # 批量操作（>N 文件/秒）
-    GATE_BYPASS = "gate_bypass"                     # 门禁跳过（检测到的）
-    OFF_HOURS_ACTIVITY = "off_hours_activity"       # 非工作时间大量操作
-
-    # === 蓝图漂移（决策 D-020-06）===
-    DRIFT_DETECTED = "drift_detected"               # 蓝图 vs 实际不一致
-
-    # === 系统治理（决策 D-020-05 元审计）===
-    INDEX_REBUILD = "index_rebuild"                 # 索引重建
-    LOG_ROTATION = "log_rotation"                   # 日志轮转
-    TIER_MIGRATION = "tier_migration"               # 存储分层迁移
-    INTEGRITY_CHECK = "integrity_check"             # 完整性校验
-    INTEGRITY_FAILURE = "integrity_failure"         # 完整性失败（P0）
-    AUDIT_QUERY = "audit_query"                     # 元审计：谁查询了审计日志
-    AUDIT_SYSTEM_HEALTH = "audit_system_health"     # 自监控 heartbeat
-
-    # === 集成事件 ===
-    POLICY_FEEDBACK_SENT = "policy_feedback_sent"   # 三角闭环：反馈已发送
-    DRY_RUN_AUDIT = "dry_run_audit"                 # Dry-Run 预审计
-    COLD_START_BOOTSTRAP = "cold_start_bootstrap"   # Cold Start 历史回溯
-
-    # === 新增 v1.1.0 ===
-    # Agent 身份与信任
-    AGENT_IMPERSONATION = "agent_impersonation"         # Agent 冒充检测（B16）
-    DELEGATION_CHAIN_ISSUE = "delegation_chain_issue"   # 委托链异常（B24）
-    TRUST_SCORE_CHANGE = "trust_score_change"           # 信任分数大幅变化
-
-    # 外部与间接操作
-    EXTERNAL_TOOL_CALL = "external_tool_call"           # 外部 MCP/API 调用（B26）
-    INDIRECT_OPERATION = "indirect_operation"           # 间接操作检测（B25）
-    SUPPLY_CHAIN_INSTALL = "supply_chain_install"       # 包安装操作（B35）
-
-    # 高级检测
-    LATENT_RISK_DETECTED = "latent_risk_detected"       # 延时风险/时间炸弹（B33）
-    COLLUSION_PATTERN = "collusion_pattern"             # 多 Agent 协同规避检测（B27）
-    DRY_RUN_MISMATCH = "dry_run_mismatch"               # Dry-Run vs Real 差异异常（B11）
-    KB_POISONING_ATTEMPT = "kb_poisoning_attempt"       # Knowledge Base 投毒尝试（B37）
-    FEEDBACK_LOOP_SELF_REINFORCING = "feedback_loop_self_reinforcing"  # 反馈自指循环检测（B34）
-    VOLUME_DOS = "volume_dos"                           # 海量小操作 DoS（B38）
-
-    # 跨 IDE
-    CROSS_IDE_CONFLICT = "cross_ide_conflict"           # 跨 IDE 审计记录矛盾（B18）
-```
-
-### 3.2 文件组成
-
-| 文件 | 职责 |
+| 字段 | 说明 |
 |------|------|
-| `models.py` | 全量 Pydantic V2 模型——`AuditEntryV1` + `TaskAuditSummary` + `FileAuditDetail` + 分级 Provenance + 事件类型枚举 + DID 模型 |
-| `writer.py` | 不可变写入器——JSONL append + 哈希链生成 + HMAC 签名 + Ed25519 Agent 签名 + Lamport 时钟递增 + 异步 SQLite 索引重建 |
-| `query.py` | 审计查询接口——SQLite 优先 + JSONL 回退 + 查询前完整性快速校验 + 元审计记录 + `trail_for_ai_context()` |
-| `integrity.py` | 密码学完整性验证器——哈希链连续性 / HMAC 批量验证 / Ed25519 签名验证 / Merkle 树重建校验 |
-| `anomaly.py` | 异常检测引擎——行为基线模型 + 异常签名匹配（13 种）+ 告警发射 + 协同规避检测 |
-| `drift.py` | 蓝图漂移对账——`blueprint_expected_action` vs 实际记录的 diff 生成 |
-| `lifecycle.py` | 数据生命周期——三层存储迁移 + 隐私脱敏 + 保留期执行 + CoT 文件生命周期 |
-| `self_monitor.py` | 自监控——heartbeat 写入/验证 + 健康指标采集 + 自动修复触发器 + 信任分数趋势 |
-| `agent_signer.py` | Agent 级 Ed25519 签名器——密钥管理 + 签名/验证 + DID 注册表（Phase scaffold） |
-| `delegation.py` | 委托链审计器——链验证 + 深度控制 + 权限缩小校验（Phase experimental） |
-| `trust_score.py` | 渐进信任引擎——分数计算 + 衰减 + 趋势分析 + 自动降级触发（Phase experimental） |
-| `supply_chain.py` | 供应链审计——包安装检测 + 来源验证 + SHA-256 对比（Phase beta） |
-| `cross_ide.py` | 跨 IDE 一致性——冲突检测 + 共识合并 + 矛盾告警（Phase experimental） |
-| `evidence_pack.py` | 监管证据包导出——一键生成完整证据链 + 合规框架映射（Phase beta） |
-| `cli.py` | CLI 审计面板——`zephyr audit query/trail/integrity/health/evidence` |
-| `rebuild_index.py` | 索引重建脚本——JSONL → SQLite + 完整性校验（scripts/governance/）|
-| `verify_audit_integrity.py` | 外部独立验证脚本——零依赖 audit_trail/，CI 门禁用（scripts/governance/） |
+| `reasoning_trace` | CoT 摘要 < 500 chars |
+| `cot_hash` | SHA-256(完整 CoT)——完整文本存 `data/reasoning/{session_id}/{entry_id}.cot.json` |
 
----
+### 蓝图特有：委托链审计（决策 D-020-16）
 
-## 4. 审计查询接口与元审计
+约束：(a) 子 Agent 权限必须是父 Agent 权限子集，(b) 委托深度上限 3，(c) 链断裂立即 P0 告警。
 
-### 4.1 查询接口
+### 蓝图特有：渐进信任分数（决策 D-020-17）
 
-```python
-class AuditQuery:
-    def by_task(self, task_id: str) -> TaskAuditSummary:
-        """查询任务级摘要——快速浏览"""
+| 事件 | 分数变化 |
+|------|---------|
+| 成功操作 | +0.001 |
+| 异常检测 | -0.2 |
+| 每天无活动 | -0.005 |
+| trust_score < 0.5 | 自动降级权限级别 |
 
-    def by_task_details(self, task_id: str) -> list[FileAuditDetail]:
-        """查询任务关联的文件级明细——问题定位"""
+### 蓝图特有：审计事件类型枚举
 
-    def by_agent(self, agent_id: str, time_range: tuple[datetime, datetime]) -> list[TaskAuditSummary]:
-        """查询某个 Agent 在某时段的所有操作"""
+`AuditEventType(str, Enum)`：task_summary | file_detail | anomaly_detected | permission_violation | bulk_operation | gate_bypass | off_hours_activity | drift_detected | index_rebuild | log_rotation | tier_migration | integrity_check | integrity_failure | audit_query | audit_system_health | policy_feedback_sent | dry_run_audit | cold_start_bootstrap | agent_impersonation | delegation_chain_issue | trust_score_change | external_tool_call | indirect_operation | supply_chain_install | latent_risk_detected | collusion_pattern | dry_run_mismatch | kb_poisoning_attempt | feedback_loop_self_reinforcing | volume_dos | cross_ide_conflict
 
-    def by_target(self, file_path: str) -> list[FileAuditDetail]:
-        """查询某个文件被谁操作过——完整 lineage"""
+v2.0 新增 15 种脚本审计事件类型——见 §17 §V5。
 
-    def by_permission_level(self, level: str, time_range: tuple[datetime, datetime]) -> list[TaskAuditSummary]:
-        """查询某个权限级别的所有操作"""
+### 蓝图特有：13 种异常行为签名（决策 D-020-07）
 
-    def by_anomaly(self, anomaly_type: str | None = None, min_score: float = 0.7) -> list[AuditEntryV1]:
-        """查询异常事件——按类型/最小分数过滤"""
+| 签名 ID | 异常模式 | 严重度 |
+|:---:|------|:---:|
+| ANM-001 | 越权操作 | 🔴 P0 |
+| ANM-002 | 批量删除（> 5 文件） | 🔴 P0 |
+| ANM-003 | 门禁跳过 | 🔴 P0 |
+| ANM-004 | 非工作时间（UTC 22-06，> 20 操作/小时） | 🟡 P1 |
+| ANM-005 | 高频操作（> 100 文件操作/分钟） | 🟡 P1 |
+| ANM-006 | 跨 Agent 冲突（5 分钟内 3+ Agent 修改同文件） | 🔴 P0 |
+| ANM-007 | 审计日志异常（哈希链断裂 / HMAC 失败 / 签名失败） | 🔴 P0 |
+| ANM-008 | Agent 冒充（DID 不匹配签名） | 🔴 P0 |
+| ANM-009 | 委托链异常（深度 > 3 / 权限放大） | 🔴 P0 |
+| ANM-010 | 协同规避（多 Agent 总效果超单阈值） | 🔴 P0 |
+| ANM-011 | 间接操作规避（symlink/script/cron/MCP） | 🟡 P1 |
+| ANM-012 | 信任趋势恶化（7 天下降 > 0.3 或 < 0.5） | 🟡 P1 |
+| ANM-013 | Dry-Run 差异异常 | 🟡 P1 |
 
-    def by_drift(self, severity: str | None = None) -> list[AuditEntryV1]:
-        """查询蓝图漂移事件——按严重度过滤"""
-
-    def by_cost(self, min_cost_usd: float = 0.0, time_range: tuple[datetime, datetime] | None = None) -> list[AuditEntryV1]:
-        """按成本查询——FinOps 审计"""
-
-    def trail_for_ai_context(self, session_id: str) -> str:
-        """为 AI agent 生成当前 session 的审计摘要——Markdown 格式，AI 零推理可消费"""
-
-    def rebuild_index(self) -> int:
-        """从 JSONL 重建 SQLite 索引——返回重建记录数"""
-
-    def verify_integrity(self, fast_mode: bool = True) -> IntegrityReport:
-        """校验密码学完整性——fast_mode 仅校验 Merkle root，否则逐条校验"""
-
-class IntegrityReport(BaseModel):
-    is_valid: bool
-    total_entries: int
-    hash_chain_breaks: list[int]  # 断裂处的 JSONL 行号
-    hmac_failures: list[int]
-    merkle_mismatches: list[str]  # Merkle 批次 ID
-    checked_at: datetime
-```
-
-### 4.2 元审计——审计系统自身的治理
-
-```python
-class MetaAuditLogger:
-    """记录审计系统自身的操作——对标 GOV-CMP-002 AUD-001"""
-
-    def log_audit_query(self, querier: str, query_params: AuditQuery) -> None:
-        """记录谁执行了什么查询"""
-
-    def log_index_rebuild(self, trigger: str, entries_count: int) -> None:
-        """记录索引重建——谁触发的、重建了多少条"""
-
-    def log_integrity_check(self, result: IntegrityReport) -> None:
-        """记录完整性校验——检查结果"""
-
-    def log_retention_enforcement(self, deleted_entries: int, dry_run: bool) -> None:
-        """记录保留期执行——删除条目数 + 是否为 dry-run"""
-
-### 4.3 监管证据包导出（决策 D-020-24）
-
-> **决策 D-020-24**（新增）：对标 FCA 监管文件审查格式 + SEC 17a-4 审计要求。输入 task_id → 一键生成完整 PDF/JSON 证据包。证据包含：操作链时间线 + 决策依据（读过的蓝图/ADR）+ 门禁结果 + CoT 推理摘要 + Agent 身份链 + HMAC + Ed25519 签名 + Merkle 证明。律师/监管可离线验证。
-
-```python
-class EvidencePackExporter:
-    """监管证据包导出器"""
-
-    def export_json(self, task_id: str) -> EvidencePack:
-        """导出完整 JSON 证据包——机器可读 + 可编程验证"""
-
-    def export_pdf(self, task_id: str) -> bytes:
-        """导出 PDF 证据包——人类可读 + 律师友好"""
-
-    def export_for_regulator(self, task_id: str) -> bytes:
-        """FCA 格式——数据源+规则+推理+置信度+最终动作"""
-
-class EvidencePack(BaseModel):
-    task_id: str
-    generated_at: datetime
-    timeline: list[TimelineEntry]  # 完整操作时间线
-    decision_dossier: DecisionDossier  # 决策档案——FCA 五维
-    cryptographic_proofs: CryptoProofs  # 密码学证明
-    agent_identity_chain: list[AgentIdentityProof]  # 身份链
-    blueprint_references: list[str]  # 引用的蓝图
-    signatures: list[str]  # 所有签名
-
-class CryptoProofs(BaseModel):
-    hmac_verified: bool
-    hash_chain_intact: bool
-    ed25519_signatures_verified: list[bool]
-    merkle_proof: str | None = None
-```
-
-### 4.4 合规框架条款映射（决策 D-020-25）
-
-> **决策 D-020-25**（新增）：对标 Microsoft Agent Compliance 自动合规验证。建立合规框架→具体条款→ZephyrAlpha 实现的映射表。CI 自动校验覆盖度。
-
-```yaml
-compliance_map:
-  gdpr:
-    art_30: "数据处理活动记录 → audit_trail 全量操作日志"
-    art_5_1_f: "数据完整性与保密性 → 哈希链 + HMAC + Ed25519 三重保障"
-    art_17: "删除权 → 隐私脱敏策略（hash/mask）+ 保留期执行"
-
-  hipaa:
-    sec_164_312_b: "审计控制 → task_summary + file_detail 两层审计"
-    sec_164_312_c_2: "传输完整性 → HMAC + Ed25519 双重签名"
-    sec_164_312_e_1: "传输加密 → JSONL 不出本地 IDE 网络边界"
-
-  eu_ai_act:
-    art_12: "记录保存 → retain_period: permanent + 三层存储"
-    art_14: "人工监督 → human_gated escalation + Gate Engine 联动"
-
-  nist_ai_rmf:
-    map_1_4: "AI 组件唯一标识 → Agent DID + Ed25519 公钥绑定"
-    measure_2_6: "持续监测 → self_monitoring + anomaly detection"
-    manage_3_2: "事件响应 → kill_switch + rollback audit + external verifier"
-```
-```
-
----
-
-## 5. 异常检测与三角闭环反馈
-
-### 5.1 AI 行为异常签名（决策 D-020-07）
-
-> **决策 D-020-07**（更新 v1.1.0）：定义 AI 行为异常签名——从 v1.0.0 的 7 种扩展到 13 种。检测到异常时写入 `anomaly_detected` 事件 + 计算 anomaly_score + 按 score 触发告警（>0.7 P1 / >0.9 P0）。
-
-| 签名 ID | 异常模式 | 检测逻辑 | 严重度 |
-|:---:|------|------|:---:|
-| ANM-001 | 越权操作 | Agent 操作了它权限级别外的文件路径 | 🔴 P0 |
-| ANM-002 | 批量删除 | 单次任务删除 > 5 文件 | 🔴 P0 |
-| ANM-003 | 门禁跳过 | 文件修改但无对应 guard_checks_passed 记录 | 🔴 P0 |
-| ANM-004 | 非工作时间 | UTC 22:00-06:00 期间 > 20 操作/小时（支持动态工作时间） | 🟡 P1 |
-| ANM-005 | 高频操作 | > 100 文件操作/分钟（异常速率） | 🟡 P1 |
-| ANM-006 | 跨 Agent 冲突 | 同一文件在 5 分钟内被 3+ 不同 agent 修改 → 自动加锁 | 🔴 P0 |
-| ANM-007 | 审计日志异常 | 哈希链断裂 / HMAC 失败 / Ed25519 签名验证失败 / 日志被外部修改 | 🔴 P0 |
-| ANM-008 | Agent 冒充 | Agent B 使用了 Agent A 的 DID 但签名验证失败——身份伪造 | 🔴 P0 |
-| ANM-009 | 委托链异常 | 委托深度 > 3 / 权限放大 / 链中 DID 不可解析 | 🔴 P0 |
-| ANM-010 | 协同规避 | 多 Agent 在同一时间窗口内对同一资源进行操作，整体效果 > 单个阈值（如 3 个 Agent 各删除 4 文件，总计 12 > 5） | 🔴 P0 |
-| ANM-011 | 间接操作规避 | Agent 通过 symlink / script / cron / MCP 间接操作受限文件 | 🟡 P1 |
-| ANM-012 | 信任趋势恶化 | trust_score 在 7 天内下降 > 0.3 或低于 0.5 阈值 | 🟡 P1 |
-| ANM-013 | Dry-Run 差异异常 | Dry-Run 预期操作 vs 实际操作差异 > 阈值 | 🟡 P1 |
-
-### 5.2 蓝图漂移检测（决策 D-020-06）
-
-> **决策 D-020-06**（新增）：每条 `FILE_DETAIL` 审计条目对比"蓝图规定的操作"与"AI 实际操作"。漂移来源：(a) AI 跳过了蓝图规定的检查项，(b) AI 执行了蓝图未授权的操作，(c) AI 修改了 immutable 文件。
-
-```python
-class DriftDetector:
-    """蓝图 vs 实际操作漂移检测器"""
-
-    def compare(self, entry: AuditEntryV1, blueprint_constraints: BlueprintConstraints) -> DriftResult:
-        """单条目漂移检测"""
-
-    def batch_compare(self, entries: list[AuditEntryV1]) -> DriftReport:
-        """批量漂移检测——生成报告"""
-
-class DriftResult(BaseModel):
-    entry_id: str
-    drift_detected: bool
-    drift_type: str | None = None  # unauthorized_op / skipped_check / immutable_violation
-    expected: str | None = None
-    actual: str | None = None
-    severity: str | None = None
-    blueprint_ref: str | None = None
-```
-
-### 5.3 三角闭环——审计反馈回写 Policy（决策 D-020-08）
-
-> **决策 D-020-08**（新增）：对接 ADR-0010 §4.4 "Runtime → Policy 反馈"接口。审计 Trail 作为 Runtime 层的"数据生产者"，定期聚合异常/漂移/权限违规数据，通过 `feedback_to_policy.py` 推送至 Policy 层，驱动规则演进。
+### 蓝图特有：三角闭环反馈（决策 D-020-08）
 
 ```yaml
 feedback_loop:
-  # ADR-0010 §4.4 接口 ④：Runtime → Policy（反馈）
   producer: "audit_trail.aggregator"
-  consumer: "feedback_to_policy.py"  # Policy 层 PR 生成器
-
+  consumer: "feedback_to_policy.py"
   aggregation:
     schedule: "daily 00:30 UTC"
-    dimensions:
-      - top_anomalies: "当日 Top 10 异常事件"
-      - drift_summary: "当日蓝图漂移摘要——按模块分组"
-      - permission_trends: "本周权限违规趋势"
-      - cost_anomalies: "单操作 > $0.50 的高成本事件"
-
+    dimensions: [top_anomalies, drift_summary, permission_trends, cost_anomalies]
   output:
     format: "Markdown policy_evolution_pr_body"
-    target: "GitHub PR → docs/01_policies_and_standards/ 对应规则文件"
+    target: "GitHub PR → docs/01_policies_and_standards/"
     approval: "human_gated——Owner 审批后合并"
-
-  # ADR-0010 激活路径 Sprint 11：L6 OPA Gatekeeper + D2-B 反馈回写闭环
-  activation_sprint: "Sprint 11"
 ```
 
-### 5.4 外部工具调用链审计（决策 D-020-20）
-
-> **决策 D-020-20**（新增）：Agent→MCP Server→外部 API 的完整调用链审计。每次外部调用产生子审计条目（`parent_entry_id` 关联父条目），形成树状审计链。外部调用失败/超时也记录，不计为 Agent 失败（不可控因素）。
-
-```python
-class ExternalToolCallAudit:
-    """外部工具调用链审计器"""
-
-    def trace_call_chain(self, entry_id: str) -> list[AuditEntryV1]:
-        """追溯完整外部调用链——从 Agent 操作 → MCP → 外部 API"""
-
-    def detect_call_loop(self, entry_id: str) -> bool:
-        """检测无限递归调用链——Agent→MCP→Agent→MCP→..."""
-
-    def blame_boundary(self, entry_id: str) -> str:
-        """故障边界判定——是 Agent 的错还是外部 API 的错？"""
-```
-
-### 5.5 间接操作检测（决策 D-020-21）
-
-> **决策 D-020-21**（新增）：Agent 可能不直接修改目标文件，而是通过 symlink、hardlink、生成脚本、cron job、MCP 委托等方式间接操作。检测方法：(a) Agent 写入的任何内容扫描潜在执行路径（脚本/shebang/shell），(b) 写入文件后短时间内被执行→关联审计，(c) MCP 操作记录携带 `indirect_operation=True`。
-
-```python
-class IndirectOperationDetector:
-    """间接操作检测器——对标 ANM-011"""
-
-    def scan_generated_scripts(self, entry: AuditEntryV1) -> bool:
-        """检测 Agent 是否生成了可执行脚本——潜在间接操作"""
-
-    def correlate_write_execute(self, write_entry: AuditEntryV1, exec_entry: AuditEntryV1) -> float:
-        """关联写入→执行——返回关联度 0.0~1.0"""
-
-    def trace_indirect_path(self, entry: AuditEntryV1) -> list[str]:
-        """追踪间接操作路径——symlink→target, script→cron→target"""
-```
-
-### 5.6 反馈循环自审计（决策 D-020-26）
-
-> **决策 D-020-26**（新增）：三角闭环反馈本身可能产生自指循环——AI 从自己的审计日志中学了坏模式，然后反馈给 Policy，Policy 强化了坏模式。引入 `FeedbackSelfAudit`：检测 Policy 变更是否仅强化过去错误而非纠正，设立 human_gated 审批。
-
-```python
-class FeedbackSelfAudit:
-    """反馈自指循环检测器"""
-
-    def detect_self_reinforcement(self, policy_pr: PolicyPR) -> float:
-        """检测 Policy 变更是否在强化过去的错误——0.0=纠正，1.0=完全自指"""
-
-    def validate_evolution_direction(self, before: PolicyState, after: PolicyState) -> str:
-        """验证演进方向——forward/backward/self_reinforcing"""
-```
-
----
-
-## 6. 数据生命周期与隐私治理
-
-### 6.1 隐私脱敏策略（决策 D-020-11）
-
-> **决策 D-020-11**（新增）：审计日志虽不可变，但敏感字段在写入时即脱敏——路径含密钥名 → hash、个人信息 → mask。脱敏不可逆——原始值不存储在审计日志中。
+### 蓝图特有：Prompt 注入防护（决策 D-020-31）
 
 ```yaml
-privacy:
-  pii_detection:
-    enabled: true
-    patterns:
-      - "file_path 含 .env / secrets / credentials / key / token → hash 存储"
-      - "file_path 含 邮箱/手机号/身份证 → mask('***')"
-      - "agent_id 含真实姓名 → hash 存储"
-
-  redaction_policy:
-    none: "无敏感信息"
-    masked: "局部掩码——如 file_path: 'src/**/secrets/***.py'"
-    hashed: "完全替换为 SHA-256——不可逆"
-
-  access_control:
-    query_audit_log: "仅 Auditor + Owner 角色（GOV-CMP-002 AUD-003）"
-    query_with_pii: "仅 Owner + 需 2FA 验证"
+ai_self_security:
+  sanitization_pipeline:
+    step_1: "移除/转义 AI 指令关键词——ignore|disregard|override|bypass|system:|assistant:|user:"
+    step_2: "语义沙箱标记——[AUDIT_ENTRY_START]...[AUDIT_ENTRY_END]"
+    step_3: "每条 entry 截断至 500 chars"
+  forbidden_patterns: ["---", "===", "```", "system:", "assistant:", "user:", "<function_call>", "<invoke>"]
+  audit_self_defense: "ANM-015——检测到注入模式 → 自动脱毒 + 标记 anomaly → P0"
 ```
 
-### 6.2 自动保留期执行（决策 D-020-12）
-
-> **决策 D-020-12**（新增）：按 GOV-CMP-002 + GOV-DATA-003 规定的保留期，自动执行过期审计日志清理。清理前必须：(a) dry-run 生成报告 → (b) Owner 审批 → (c) 冷归档迁移检查 → (d) 执行删除 → (e) 写入 `tier_migration` 元审计事件。
-
-```python
-class RetentionEnforcer:
-    def dry_run(self) -> RetentionReport:
-        """扫描过期条目——不删除，仅生成报告"""
-
-    def enforce(self, approval_token: str) -> RetentionReport:
-        """执行保留期清理——需要 Owner 审批 token"""
-
-class RetentionReport(BaseModel):
-    entries_to_delete: int
-    total_size_bytes: int
-    oldest_entry_date: datetime
-    tiers_affected: list[str]
-    dry_run: bool
-```
-
-### 6.3 Cold Start——历史操作回溯
-
-> **决策 D-020-13**（新增）：审计系统首次启动时（Cold Start），扫描现有 git log + session-logs/ 目录，生成历史审计基线 `bootstrap_audit_baseline.jsonl`。基线条目标记 `entry_type=cold_start_bootstrap` + `confidence_level=low`（历史数据不可完全验证）。
-
-```python
-class ColdStartBootstrapper:
-    def scan_git_log(self, since: datetime | None = None) -> int:
-        """扫描 git log → 生成历史审计基线条目"""
-
-    def scan_session_logs(self) -> int:
-        """扫描 session-logs/ 目录 → 标准化为审计条目"""
-
-    def merge_to_baseline(self) -> Path:
-        """合并 → 写入 bootstrap_audit_baseline.jsonl → 返回路径"""
-```
-
-### 6.4 Git 隔离——审计日志独立存储（决策 D-020-27）
-
-> **决策 D-020-27**（新增）：审计 JSONL 存储在 `data/audit/` 目录，该目录加入 `.gitignore`。防止 `git reset --hard`/`git rebase` 导致审计日志随代码回滚而丢失。完整备份通过独立于 git 的备份机制（rsync / snapshot / cloud sync）。`data/audit/` 不在 git 工作区内跟踪。
+### 蓝图特有：Genesis 信任锚初始化（决策 D-020-44）
 
 ```yaml
-git_isolation:
-  path: "data/audit/"
-  gitignore: true
-  rationale: "审计日志是时间机器——不能跟着代码版本回滚。git reset → 代码回滚 ✅ 审计日志回滚 ❌"
-  backup:
-    method: "独立于 git 的备份——每日 rsync → backup disk / 每周 snapshot"
-    restore: "从备份恢复历史审计数据——不受 git 操作影响"
-  migration_note: "Phase 1 迁移：现有 data/audit/audit-trail.jsonl 从 git tracking 中移除 + .gitignore 添加 data/audit/"
+bootstrap_trust:
+  initialization_ceremony:
+    step_1: "CSPRNG 读取 256-bit → HMAC secret → SHA-256(secret) 写入 genesis_manifest.txt"
+    step_2: "写入第一条审计条目 AUDIT_SYSTEM_BOOTSTRAP——prev_entry_hash='genesis'"
+    step_3: "生成 Owner Agent Ed25519 密钥对——DID 注册 + 公钥入 genesis 条目"
+    step_4: "genesis_manifest.txt 写入外部独立介质——USB / 纸质 QR / 云存储"
+  rule: "genesis 创建者 ≠ 日常操作者——由 Owner 手动执行初始化，AI 辅助"
 ```
 
-### 6.5 Knowledge Base 投毒防护（决策 D-020-28）
+### 蓝图特有：自监控指标
 
-> **决策 D-020-28**（新增）：审计数据被喂入 Knowledge Base 前进行安全过滤。(a) 标记 `KB_POISONING_ATTEMPT` 的条目永久排黑，(b) 审计数据进入 KB 前经过 provenance 评分——仅 `trust_score >= 0.5` 的 Agent 产生的数据可被 KB 接受，(c) 投毒检测：异常高 confidence（0.99+）+ 异常低 anomaly_score（0.0）= 潜在构造数据。
-
-```python
-class KBAuditGate:
-    """Knowledge Base 审计门禁——防止审计数据投毒 KB"""
-
-    def filter_before_kb_ingest(self, entries: list[AuditEntryV1]) -> list[AuditEntryV1]:
-        """过滤不适合进入 KB 的审计条目——POISONING_ATTEMPT / anomaly_score > 0.5 / confidence < 0.3"""
-
-    def score_for_kb_trust(self, entry: AuditEntryV1) -> float:
-        """评估单条审计记录对 KB 的 trustworthiness——0.0~1.0"""
-
-    def detect_constructed_pattern(self, entries: list[AuditEntryV1]) -> bool:
-        """检测人工构造的审计模式——confidence 异常高 + anomaly_score 异常低"""
-```
-
----
-
-## 7. 施工 Phase 规划
-
-| Phase | 名称 | 任务 | 验收标准 | 状态 |
-|:---:|------|------|---------|:---:|
-| **scaffold** | 法医账本 | `AuditEntryV1` 完整模型 + JSONL append-only 写入 + 哈希链 + Lamport 时钟 + 基础查询 + 元审计 + 完整性自检 + heartbeat 自监控 + Git 隔离审计日志 + Agent Ed25519 签名（不含密钥管理全部功能）+ 外部独立验证脚本 | 1. 7+12 个事件类型全量通过 Pydantic V2 校验 2. 哈希链 1000 条连续无断裂 3. 写入延迟 < 5ms P99 4. `zephyr audit health` CLI 可用 5. 外部 verifier 零依赖 self-check 6. 5/5 单元测试通过 | 🔨 In Progress (42%) |
-| **experimental** | 免疫系统 | 分级 Provenance 全量落地 + HMAC 签名 + Merkle 树聚合 + 异常检测（13 签名全量）+ 蓝图漂移检测 + Gate Engine/RBAC/Feedback Loop 全集成 + Dry-Run 预审计 + 间接操作检测 + 外部调用链审计 + 委托链验证 + 渐进信任分数 + 跨 IDE 一致性交叉验证 | 1. 13 种异常签名全部触发过真实/模拟事件 2. 漂移检测覆盖 10 份蓝图 3. Gate Engine 联动阻断验证通过 4. HMAC + Ed25519 签名 100% 验证 5. trust_score 趋势可见 | 📋 Backlog |
-| **beta** | 闭环进化 | 三角闭环反馈（aggregator → feedback_to_policy.py → Policy PR）+ 反馈自审计 + 审计仪表盘 + 冷启动历史回溯 + 三层存储迁移自动化 + 保留期自动执行 + CI 一致性校验全量 + 隐私 PII 检测 + 监管证据包导出 + 合规框架映射 + KB 投毒防护 + 供应链审计 | 1. Policy PR 生成脚本可用 2. 仪表盘覆盖 8+ 种查询维度 3. 三层迁移零数据丢失 4. PII 检测 0 漏报 5. 证据包可离线验证 6. CI 门禁全通过 | 📋 Backlog |
-| **production** | 公证处 | Agent DID 全量密钥管理基础设施 + Ed25519 密钥旋转自动化 + IATP 握手协议 + 分布式信誉证明 + WORM 兼容备份 + 损益（P&L）关联审计 | Phase 3 需求——不纳入 v1.1 施工范围 | 📋 Backlog |
-
-### 施工文件对照（Phase scaffold）
-
-| 文件 | 类型 | 职责 |
+| 指标 | 阈值 | 告警 |
 |------|------|------|
-| `src/zephyr/audit_trail/__init__.py` | Package | 模块入口 + `__all__` |
-| `src/zephyr/audit_trail/models.py` | Pydantic V2 | 全量审计事件模型 + AuditEventType 枚举（29 种）+ DID 模型 |
-| `src/zephyr/audit_trail/writer.py` | Runtime | 不可变写入器（JSONL + 哈希链 + HMAC + Ed25519 + Lamport） |
-| `src/zephyr/audit_trail/query.py` | Query | 审计查询接口（SQLite + JSONL + 元审计 + trail_for_ai_context） |
-| `src/zephyr/audit_trail/integrity.py` | Crypto | 密码学完整性验证器（哈希链 + HMAC + Ed25519 + Merkle） |
-| `src/zephyr/audit_trail/anomaly.py` | Detection | 异常检测引擎（experimental 阶段——13 签名） |
-| `src/zephyr/audit_trail/drift.py` | Detection | 蓝图漂移对账（experimental 阶段） |
-| `src/zephyr/audit_trail/agent_signer.py` | Crypto | Ed25519 Agent 签名器 + DID 注册（scaffold） |
-| `src/zephyr/audit_trail/supply_chain.py` | Detection | 供应链审计——包安装检测（experimental 阶段） |
-| `src/zephyr/audit_trail/delegation.py` | Governance | 委托链审计器（experimental 阶段） |
-| `src/zephyr/audit_trail/trust_score.py` | Governance | 渐进信任引擎（experimental 阶段） |
-| `src/zephyr/audit_trail/cross_ide.py` | Integrity | 跨 IDE 一致性交叉验证（experimental 阶段） |
-| `src/zephyr/audit_trail/evidence_pack.py` | Governance | 监管证据包导出（beta 阶段） |
-| `src/zephyr/audit_trail/lifecycle.py` | Lifecycle | 三层存储迁移 + 保留期执行（beta 阶段） |
-| `src/zephyr/audit_trail/self_monitor.py` | Monitor | 自监控 heartbeat + 信任分数趋势 + 健康采集 |
-| `src/zephyr/audit_trail/cli.py` | CLI | 审计命令行面板——query/trail/integrity/health/evidence |
-| `scripts/governance/rebuild_audit_index.py` | Script | JSONL → SQLite 索引重建 |
-| `scripts/governance/verify_audit_integrity.py` | Script | 外部独立验证——零依赖 audit_trail/，CI 门禁用 |
-| `scripts/governance/enforce_audit_retention.py` | Script | 保留期强制执行 + CoT 文件生命周期（beta 阶段） |
+| write_latency_p99_ms | 5 ms | > 10 ms P99 → P1 |
+| disk_usage_pct | 80% | > 80% → P1，> 90% → P0 |
+| hash_chain_integrity | 100% pass | 任一 fail → P0 阻断 |
+| hmac_validity_rate | 100% pass | 任一 fail → P0 阻断 |
+| agent_signature_validity_rate | 100% pass | 任一 fail → P0 阻断 |
+| delegation_chain_validity | 100% pass | 链断裂或权限放大 → P0 |
+| trust_score_trend | 下降 > 0.3 / 7d | P1 |
+| cross_ide_consistency | 100% pass | 不一致 > 0 → P1 |
 
 ---
 
-## 8. 风险与缓解
+## §4 接口契约
 
-| # | 风险 | 概率 | 影响 | 缓解 | 对应盲点 |
-|---|------|:---:|:---:|------|:---:|
-| R1 | 审计日志膨胀——大量操作导致 JSONL 文件过大 | 高 | 中 | 按日轮转 + gzip/Parquet 分层存储 + 保留期自动执行 | B12/B13 |
-| R2 | JSONL 写入冲突——多 IDE 同时追加同一文件 | 中 | 高 | 文件锁（fcntl/msvcrt）+ 重试机制 + Lamport 时钟保证因果序 | B5/B6 |
-| R3 | SQLite 索引延迟——异步重建导致查询不到最新记录 | 中 | 低 | 查询时先检查 JSONL 最新 N 行 + 5s 重建间隔 | — |
-| R4 | 审计日志被篡改——AI 修改 JSONL | 低 | 🔴极高 | 哈希链 + HMAC 签名 + Merkle 根 + 外部 verifier + pre-commit SHA-256 校验 | B1/B2/B3 |
-| R5 | HMAC secret 泄露——攻击者可伪造审计条目 | 低 | 🔴极高 | Secret 存储在环境变量 + 定期轮转 + 轮转时重签历史条目（迁移脚本）+ Shamir Secret Sharing 分片（2/3）+ 独立保管 | B2/B31 |
-| R6 | 自监控自身故障——heartbeat 假阳性/假阴性 | 低 | 中 | Heartbeat 3 次失败才告警 + emergency fallback 独立于主写入器 + 外部独立 verifier 交叉验证 | B7/B8/B53 |
-| R7 | 异常检测误报——Owner 告警疲劳 | 中 | 中 | anomaly_score 阈值可配置 + 首次部署仅 warn 模式（dry-run 观察 2 周）+ daily_report_composer 聚合日报 | B9 |
-| R8 | 隐私脱敏遗漏——含 PII 的路径未检测到 | 低 | 高 | PII pattern 正则维护在受控词表中 + CI 扫描新增文件路径模式 | B11 |
-| R9 | 冷启动生成的基线不可靠——git log 不完整 | 高 | 低 | baseline 明确标记 confidence=low + 不作为合规证据——仅作参考 + 隔离存储于 bootstrap 文件 | B18/B54 |
-| R10 | 三角闭环反馈质量差——Policy 层收到无价值的 PR | 中 | 低 | Aggregator 仅推送 anomaly_score >0.8 事件 + PR 含 Owner 审批步骤 + 反馈自审计过滤自指循环 | B14/B34 |
-| R11 | Dry-Run 审计与真实执行行为不一致 | 中 | 中 | RI-14 DryRunSimulator 沙箱环境与真实环境隔离 + Dry-Run 记录独立标记 `dry_run=True` + dry_run_real_diff 差异检测 | B17 |
-| R12 | 分层存储迁移中断——Warm→Cold 过程中断电 | 低 | 中 | 迁移脚本先写入新文件 → 验证 SHA-256 → 再删除旧文件（两阶段） | B13 |
-| R13 | Agent 冒充——Agent B 使用 Agent A 的 DID 操作 | 低 | 🔴极高 | Ed25519 Agent 级签名——签名验证失败 → P0 阻断 + ANM-008 检测 | B16 |
-| R14 | 委托链断裂——中间 Agent 不可追溯 | 低 | 高 | 委托链完整记录 + 深度 ≤ 3 + 权限缩小校验 + ANM-009 检测 | B24 |
-| R15 | 多 Agent 协同规避——分头操作绕过单阈值 | 低 | 高 | ANM-010 协同规避检测——跨 Agent 时间窗口聚合分析 | B27/B39 |
-| R16 | AI 上下文污染——审计数据投毒 AI 决策 | 中 | 高 | KB 投毒防护门禁 + 信任分数过滤 + 投毒签名检测 | B37/B48 |
-| R17 | 间接操作——Agent 通过 symlink/script/cron 越权 | 中 | 中 | ANM-011 间接操作检测 + 写入→执行关联分析 | B25 |
-| R18 | 时间炸弹——代码当时安全但含延迟漏洞 | 低 | 高 | LatentRiskScanner——定期扫描最近 30 天 AI 写代码中的 eval/exec/os.system 模式 | B33 |
-| R19 | 反馈自指循环——Policy 被审计反馈强化了错误 | 低 | 中 | FeedbackSelfAudit——检测 Policy 变更是否仅强化过去错误 | B34 |
-| R20 | 审计日志体积 DoS——Agent 生成海量小操作 | 低 | 高 | 速率限制——单 Agent >1000 操作/分钟 → 限流 + ANM-005 触发 + volume_dos 计数 | B38 |
-| R21 | Git 回滚致审计日志丢失——git reset 删除了审计历史 | 中 | 🔴极高 | Git 隔离——data/audit/ 加入 .gitignore + 独立备份 | B22/B43 |
-| R22 | 供应链风险——Agent 安装的包未经审计 | 中 | 高 | 每次 pip/npm install 产生 audit 事件 + 记录包 SHA-256 + untrusted_external 标记 | B35 |
-| R23 | **Prompt 注入攻击——恶意审计条目劫持 AI 决策** | 中 | 🔴极高 | trail_for_ai_context() 输入净化 + audit entry 中禁止包含 AI 指令关键词 + 语义沙箱包裹 | B55 |
-| R24 | **Vibe Drift——AI 模型版本变化致审计代码不兼容** | 中 | 中 | AuditEntry 中记录 model_version + CI 定期多模型交叉验证 + schema 版本前向兼容 | B56 |
-| R25 | **AI 审计算法幻觉——分析审计数据时生成虚假发现** | 中 | 中 | 分析结果逐条关联源条目 entry_id + 置信度标注 + human_gated 告警 | B57 |
-| R26 | **确定性重放不可行——无法从审计日志重建准确状态** | 中 | 高 | 关键操作记录 sha256_before/after + 分层 deterministic replay 测试 | B58 |
-| R27 | **单人密钥仪式失败——Shamir 分片需多保管人** | 低 | 高 | 替代方案：HSM 模拟分片 + 物理备份 + 遗嘱托管（dead man's switch）| B59/B60 |
-| R28 | **Bus Factor = 1——维护者不可用致审计系统死亡** | 低 | 高 | 全自动化自愈 + 零人工干预 + 外部 verifier 独立 + 遗嘱托管方案 | B60 |
-| R29 | **审计质量渐进退化——无 peer review 发现问题** | 高 | 中 | auto_regression_test 周检 + 覆盖率趋势 + 审计漂移告警 | B62 |
-| R30 | **GDPR 删除权 vs 审计不可变性之不可调和矛盾** | 中 | 中 | 脱敏替代删除 + legal_hold 标记 + 法律意见书 | B63 |
-| R31 | **明文存储——审计日志未加密** | 低 | 中 | AES-256-GCM 透明加密层——写入前加密 + 查询时解密 + key 派生自 HMAC secret | B64 |
-| R32 | **磁盘满——审计写入静默失败** | 低 | 🔴极高 | 磁盘水位预警（>80% P1）+ 写失败→P0 阻断 + fallback 写入内存缓冲区 | B66 |
-| R33 | **MCP/原生工具绕过审计写入路径** | 中 | 高 | audit_coverage_gap_scanner——定期检测未记录的文件变更 | B72 |
-| R34 | **Genesis 初始化被 compromise——所有后续信任崩塌** | 低 | 🔴极高 | 初始化仪式：独立 CSPRNG + 外部见证介质 + Owner 手动执行（非 AI）| B77/B87 |
-| R35 | **哈希链分叉——两个 IDE 产生两条合法审计链** | 中 | 高 | fork_detection + fork_reconciliation + 最早分支时间点告警 | B78 |
-| R36 | **撕裂写入——OS 崩溃/断电致 JSONL 行损坏** | 低 | 高 | torn_write_detector + 原子 append + 最后一行完整性回退 | B79 |
-| R37 | **Unicode 同形字绕过净化——Cyrillic "іgnore" 注入** | 中 | 🔴极高 | NFKC 归一化 → 同形字映射 → 净化——净化前必须归一化 | B80 |
-| R38 | **多会话协同攻击——跨天/周的低强度渗透** | 中 | 高 | ANM-016 跨 session 聚合 + long_term_window 配置 | B81 |
-| R39 | **AI 学习审计模式后针对性规避——读 JSONL 学格式** | 中 | 高 | AI 读审计日志→元审计记录 + audit_schema_obfuscation | B82 |
-| R40 | **依赖版本漂移——Pydantic v3 无法加载 v2 审计数据** | 中 | 中 | frozen_dependencies.txt + migration CI test + Docker 旧环境留存 | B84 |
-| R41 | **告警疲劳→系统实质上无监控** | 高 | 🔴极高 | operator_responsiveness_model + 响应率 < 30%→P0 escalation→外部通知 | B85 |
-| R42 | **信任漂移——Operator 逐渐认为"AI 不会出错"** | 高 | 中 | trust_calibration：实际 anomaly 率 vs Operator 审核通过率趋势对比 | B86 |
+### 4.1 公共 API
 
----
+```python
+class AuditWriter:
+    async def append(self, entry: AuditEntryV1) -> None:
+        """追加审计条目——JSONL append + 哈希链 + HMAC + Ed25519 + Lamport tick"""
+    async def append_batch(self, entries: list[AuditEntryV1]) -> None: ...
 
-## 9. 能力边界声明（v1.1.0 明确不覆盖项）
+class AuditQuery:
+    def by_task(self, task_id: str) -> TaskAuditSummary: ...
+    def by_task_details(self, task_id: str) -> list[FileAuditDetail]: ...
+    def by_agent(self, agent_id: str, time_range: tuple[datetime, datetime]) -> list[TaskAuditSummary]: ...
+    def by_target(self, file_path: str) -> list[FileAuditDetail]: ...
+    def by_permission_level(self, level: str, time_range: tuple[datetime, datetime]) -> list[TaskAuditSummary]: ...
+    def by_anomaly(self, anomaly_type: str | None = None, min_score: float = 0.7) -> list[AuditEntryV1]: ...
+    def by_drift(self, severity: str | None = None) -> list[AuditEntryV1]: ...
+    def by_cost(self, min_cost_usd: float = 0.0, time_range: tuple[datetime, datetime] | None = None) -> list[AuditEntryV1]: ...
+    def trail_for_ai_context(self, session_id: str) -> str: ...
+    def rebuild_index(self) -> int: ...
+    def verify_integrity(self, fast_mode: bool = True) -> IntegrityReport: ...
 
-> **设计哲学**："已知盲点 = 已管理风险"——不追求 v1.1.0 消除所有盲点，而是每个盲点都显式声明、评估风险、记录缓解策略。ISACA "Embedded not paper" 实践落地。
+class IntegrityVerifier:
+    def verify_hash_chain(self, jsonl_path: str) -> list[int]: ...
+    def verify_hmac_batch(self, entries: list[AuditEntryV1]) -> list[int]: ...
+    def verify_merkle_root(self, batch_id: str) -> bool: ...
+    def verify_agent_signatures(self, entries: list[AuditEntryV1], sample_rate: float = 0.1) -> list[bool]: ...
 
-| 盲点 ID | 盲点内容 | v1.1.0 覆盖策略 | v2.0 计划 |
-|:---:|------|------|:---:|
-| B15 | Agent 级 Ed25519 签名——完整密钥管理基础设施 | scaffold：AgentSigner 基础签名 + 验证 + DID 注册（不含密钥旋转/分布式密钥管理）| Phase production |
-| B16 | Agent 冒充检测（IATP Challenge-Response 握手） | experimental：Ed25519 签名验证 → 冒充检测（ANM-008）| Phase production |
-| B17 | LLM 完整 CoT 推理链 | scaffold：`reasoning_trace` 摘要字段（<500 chars）；完整 CoT 在 experimental 阶段记录 | Phase experimental |
-| B18 | 跨 IDE 一致性交叉验证 | experimental：CrossIDEConsistencyChecker | Phase experimental |
-| B19 | 监管证据包 PDF 导出 | beta：EvidencePackExporter (JSON + PDF) | Phase beta |
-| B20 | 外部独立验证端点 | scaffold：`verify_audit_integrity.py`（零依赖） | Phase scaffold ✅ |
-| B21 | 合规框架条款→实现的完整映射 | beta：compliance-map.yml 骨架 | Phase beta |
-| B22 | 审计日志 Git 隔离 | scaffold：data/audit/ 加入 .gitignore | Phase scaffold ✅ |
-| B23 | 渐进信任分数——连续值 + 时间衰减 | experimental：TrustScoreEngine | Phase experimental |
-| B24 | Agent-to-Agent 委托链审计 | experimental：DelegationChainAuditor | Phase experimental |
-| B25 | 间接操作检测 | experimental：IndirectOperationDetector | Phase experimental |
-| B26 | 外部工具调用链闭环审计 | experimental：ExternalToolCallAudit | Phase experimental |
-| B27 | 多 Agent 协同规避检测 | experimental：ANM-010 协同检测 | Phase experimental |
-| B28 | 行为基线模型（ML 偏离检测） | experimental：规则签名（13 种），ML 基线不纳入 v1.1 | v2.0 |
-| B29 | 权限持续重新验证 | Phase production（需无状态策略引擎重构）| Phase production |
-| B30 | 审计查询注入防御 | scaffold：全部查询参数化 + 白名单校验 | Phase scaffold ✅ |
-| B31 | HMAC Secret 泄露——伪造审计条目 | 缓解：Shamir 分片（2/3）— experimental | Phase experimental |
-| B32 | Bit Rot 静默存储损坏 | experimental：silent_corruption_detector 周检 | Phase experimental |
-| B33 | 时间炸弹——延迟触发漏洞 | experimental：LatentRiskScanner | Phase experimental |
-| B34 | 反馈自指循环 | experimental：FeedbackSelfAudit | Phase experimental |
-| B35 | 供应链接入审计 | experimental：SupplyChainAudit | Phase beta |
-| B36 | Session 边界攻击 | 不覆盖——当前依赖会话级监控 | v2.0 |
-| B37 | 审计数据 AI 上下文投毒 | experimental：KBAuditGate | Phase beta |
-| B38 | 海量操作 DoS | scaffold：rate_limit + ANM-005 + volume_dos | Phase scaffold ✅ |
-| B39 | Gradual Permission Escalation | experimental：trust_score 降级 + 阈值 <-0.5 自动降级 | Phase experimental |
-| B40 | 运行时配置渐进漂移 | 不覆盖——当前蓝图漂移仅检测蓝图 vs 操作偏差 | v2.0 |
-| B41 | Emergency Access 的审计 | 不覆盖——危机场景依赖外部日志 | v2.0 |
-| B42 | Schema Evolution 悖论 | 不覆盖——v1.1 仅 AuditEntryV1；V2 需独立迁移方案 | v2.0 |
-| B43 | Audit Trail 依赖死锁 | scaffold：按 depends_on 顺序施工 + 外部 verifier 独立 | Phase scaffold ✅ |
-| B44 | 人操作 vs AI 操作统一审计 | 不覆盖——当前仅 AI Agent 操作；人操作使用 git log + session-logs | v2.0 |
-| B45 | Provenance 数据的 Provenance 验证 | experimental：blueprint_reads 条目交叉验证 | Phase experimental |
-| B46 | Lamport 时钟边缘竞赛 | scaffold：merge 规则 `max(local, received)+1` + 冲突检测 | Phase scaffold ✅ |
-| B47 | Rollback 自身审计链 | 不覆盖——回滚操作的审计链拓扑复杂 | v2.0 |
-| B48 | Knowledge Base 投毒 | experimental：KBAuditGate 过滤 | Phase beta |
-| B49 | 审计日志作为侧信道 | 不覆盖——当前场景个人信息极低 | v2.0 |
-| B50 | 审计日志膨胀到 Context Window 溢出 | scaffold：trail_for_ai_context() token 预算控制 | Phase scaffold ✅ |
-| B51 | Multi-Tenant 审计隔离 | 不覆盖——当前单租户 | v2.0 |
-| B52 | 非工作时间定义的动态性 | 不覆盖——当前使用 UTC 固定窗口 | v2.0 |
-| B53 | Heartbeat 假阴性检测 | experimental：external verifier 交叉验证 | Phase experimental |
-| B54 | Cold Start 基线法律风险 | scaffold：confidence=low 标记 + 隔离存储 | Phase scaffold ✅ |
-| B55 | Prompt 注入——恶意审计条目劫持 AI 决策 | experimental：trail_for_ai_context() 语义沙箱 + 禁止 AI 指令关键词 | Phase beta |
-| B56 | Vibe Drift——AI 模型升级致审计代码不兼容 | experimental：model_version 元数据 + CI 多模型交叉验证 | Phase beta |
-| B57 | AI 幻觉——审计分析/日报生成虚假发现 | experimental：分析结果逐条关联 entry_id + 置信度标注 + human_gated | Phase experimental |
-| B58 | 确定性重放——无法从审计日志重建系统状态 | experimental：sha256_before/after 全覆盖 + 分层重放测试 | Phase experimental |
-| B59 | 单人密钥仪式——Shamir 需 3 人独立保管分片 | 替代方案：HSM 模拟 + 物理备份 + dead man's switch | v2.0 |
-| B60 | Bus Factor = 1——维护者不可用致审计系统死亡 | 缓解：全自动化自愈 + 零人工干预 + 遗嘱托管 + 外部 verifier 独立 | v2.0 |
-| B61 | 无 Peer Review——审计告警无人二次确认 | scaffold：human_gated escalation 审批 + AI 自 review | Phase scaffold ✅ |
-| B62 | 审计质量渐进退化——无 peer review 感知衰减 | experimental：auto_regression_test 周检 + coverage_trend 监控 | Phase beta |
-| B63 | GDPR Art.17 删除权 vs 审计不可变性 | 缓解：脱敏替代删除 + legal_hold 标记 | v2.0 |
-| B64 | 明文存储——审计日志未加密 at rest | experimental：AES-256-GCM 透明加密层——写入前加密 + 查询时解密 | Phase experimental |
-| B65 | 可信时间戳缺失——Ed25519 签名无法定时间效力 | 不覆盖——需 RFC 3161 TSA 外部服务 | v2.0 |
-| B66 | 磁盘满静默失败——审计写入丢弃 | scaffold：disk_watermark + 写失败→P0 阻断 + 内存缓冲区 fallback | Phase scaffold ✅ |
-| B67 | 审计写入阻塞主操作——"先审计还是先执行" | scaffold：异步写入（fire-and-forget）+ 写失败不影响主操作 + 内存队列 | Phase scaffold ✅ |
-| B68 | Schema 迁移完整性——v1→v2 迁移可验证 | experimental：schema_migration_verifier + 双写过渡期 + 迁移证明 | Phase beta |
-| B69 | 审计工具链完整性——Python/OS/fs 被篡改 | 不覆盖——信任链终止于操作系统层 | v2.0 |
-| B70 | 隐身 Agent——生成合法但恶意的审计条目（Mimicry） | experimental：行为-审计一致性检查 + ANM-014 学习模式检测 | v2.0 |
-| B71 | 时序攻击——操纵 Lamport 时钟/系统时间制造混乱 | experimental：时钟跳变检测 + NTP 源对比 + 时钟漂移告警 | Phase experimental |
-| B72 | MCP/原生工具绕过审计——操作未记录 | scaffold：audit_coverage_gap_scanner + 文件变更→审计条目交叉校验 | Phase scaffold ✅ |
-| B73 | 影子审计——Agent 意外创建第二条审计机制 | experimental：audit_writer_uniqueness_check + 未知 JSONL 文件扫描 | Phase experimental |
-| B74 | Vibe Coding 覆盖缺口——AI 跳过边界条件审计 | experimental：coverage_fuzzer + edge_case_injector + 覆盖率提升 PR | Phase beta |
-| B75 | AI 代码相似性混淆——生成相似但不相同的审计模式 | experimental：code_fingerprint + pattern_clustering + 误报降权 | Phase experimental |
-| B76 | 模板/脚手架伪审计——AI 生成代码产生虚假审计条目 | experimental：template_origin_tag + 模板生成代码独立追踪 | Phase experimental |
-| B77 | 法庭可采性——审计证据链的 chain of custody 缺失 | experimental：custody_log 独立记录 + 访问者身份 + 时间 + 目的 + 数字签名 | Phase beta |
-| B78 | 哈希链分叉——两个 IDE 并发写同一 prev_entry_hash | experimental：fork_detection + fork_reconciliation + fork 分支标记 | Phase experimental |
-| B79 | 部分写入/撕裂写入——OS 崩溃致 JSONL 行不完整 | scaffold：torn_write_detector + 最后一行完整性校验 + 原子写入策略 | Phase scaffold ✅ |
-| B80 | Unicode 同形字绕过净化——"іgnore"（Cyrillic і）绕过过滤器 | experimental：NFKC Unicode 归一化 + homoglyph_mapper + 净化前归一化 | Phase experimental |
-| B81 | 多会话协同攻击——单会话低于阈值、跨会话总和超标 | experimental：ANM-016——跨 session 时间窗口聚合分析 + long_term_threshold | Phase experimental |
-| B82 | AI 学习规避审计——AI 通过读原始 JSONL 学习审计模式 | experimental：audit_schema_obfuscation + AI 访问审计日志需元审计记录 | Phase experimental |
-| B83 | 格式寿命——JSONL 在 20 年内仍可解析？ | scaffold：格式规范锁定 + 自描述 schema + 参考解析器（纯 stdlib Python） | Phase scaffold ✅ |
-| B84 | 依赖版本漂移——Pydantic v2→v3 审计数据无法验证 | experimental：dependency_freeze + v1→v2 migration_test + 旧版本 Docker 镜像留存 | Phase beta |
-| B85 | 告警疲劳渐进建模——Operator 对 P1 响应率从 90%→10% | experimental：operator_responsiveness_model + 响应率 < 30% → P0 escalation | Phase beta |
-| B86 | 信任漂移曲线——Operator 逐渐过度信任 AI 致审查松懈 | experimental：trust_calibration_check——实际 anomaly 率 vs Operator 审核通过率对比 | Phase beta |
-| B87 | 新人 Onboarding 不可能——文档全是 AI 写给 AI 的 | scaffold：human_readable_onboarding.md + bootstrap 流程注解 + 3 页快速入门 | Phase scaffold ✅ |
-| B88 | 审计数据恢复——JSONL 文件部分损坏时尽可能恢复数据 | experimental：damaged_line_skipper + partial_recovery + 恢复条目标记 `recovered=True` | Phase experimental |
-| B89 | Tool 调用逃逸——自定义 MCP Tool 绕过审计写入路径 | experimental：MCP_tool_registry_audit + 未注册 tool 调用 → ANM-017 | Phase experimental |
-| B90 | 篡改痕迹时间线重建——若篡改发生，能否精确重建作案时间？ | experimental：tamper_timeline_reconstruction + 外部介质见证对比 + 前后哈希链断点分析 | Phase experimental |
-| B91 | 跨系统日志关联——审计数据需与 CI/CD/云日志交叉验证 | 不覆盖——需外部 log aggregator（ELK/Loki）| v2.0 |
-| B92 | 初始化的初始化——初始化脚本的 hash 在初始化前不可知 | scaffold：bootstrapper_hash_precommit + 手动验证 + 写入外部见证介质 | Phase scaffold ✅ |
-| B93 | 审计系统自身代码变更未被审计——AI 改 `writer.py` 无人知晓 | experimental：audit_self_code_change_detector + 审计模块文件哈希快照 + 变更→P0 alert | Phase experimental |
-| B94 | 自然语言不一致——同一操作被不同 session 描述为不同文本 | experimental：canonical_action_vocabulary + action_normalizer + 标准化后对比 | Phase experimental |
-| B95 | AI 模型供应商依赖——API 变更/倒闭/模型退役致审计系统失效 | scaffold：provider_independence_check + 双供应商兼容 + 本地 fallback 模型测试 | Phase scaffold ✅ |
-| B96 | 观测者效应——被审计的 AI 行为系统性异于未被审计的 AI | 不覆盖——承认"审计改变行为"是基本物理规律，隐性审计在伦理和法律上不可行 | v2.0 |
-| B97 | Goodhart 定律——AI 学会优化 trust_score/anomaly_score 而非优化行为 | experimental：metric_gaming_detector + score-vs-behavior 一致性校验 + ANM-018 | Phase beta |
-| B98 | 启动期审计盲区——系统启动到审计初始化之间的操作无记录 | scaffold：boot_audit_gap_logger + systemd/launchd 启动前钩子 + 独立最小记录器 | Phase scaffold ✅ |
-| B99 | "谁审计审计者？"无限递归——审计系统本身的审计链最终无外部锚点 | 承认——这是逻辑极限而非工程盲点。缓解：外部 verifier + genesis 外部见证 + 定期第三方审计计划 | v2.0 |
+class AnomalyDetector:
+    def detect(self, entry: AuditEntryV1) -> AnomalyResult: ...
+    def batch_detect(self, entries: list[AuditEntryV1]) -> list[AnomalyResult]: ...
+
+class EvidencePackExporter:
+    def export_json(self, task_id: str) -> EvidencePack: ...
+    def export_pdf(self, task_id: str) -> bytes: ...
+    def export_for_regulator(self, task_id: str) -> bytes: ...
+```
+
+### 4.2 数据模型
+
+核心数据模型见 §3 蓝图特有章节（AuditEntryV1 / TaskAuditSummary / FileAuditDetail / ProvenanceDepth / AuditEventType）。
+
+### 4.3 输入契约
+
+| 接口 | 输入字段 | 必填 | 约束 |
+|------|---------|:---:|------|
+| `append()` | `entry: AuditEntryV1` | ✅ | Pydantic V2 校验通过 + entry_hash 自洽 |
+| `by_task()` | `task_id: str` | ✅ | 非空字符串 |
+| `trail_for_ai_context()` | `session_id: str` | ✅ | 非空 + 已存在审计条目 |
+| `verify_integrity()` | `fast_mode: bool` | ❌ | 默认 True |
+
+### 4.4 输出契约
+
+| 接口 | 成功输出 | 失败输出 |
+|------|---------|---------|
+| `append()` | None | `AuditWriteError` / `HashChainBreakError` |
+| `by_task()` | `TaskAuditSummary` | `EntryNotFoundError` |
+| `trail_for_ai_context()` | `str`（Markdown，AI 零推理可消费） | `SessionNotFoundError` |
+| `verify_integrity()` | `IntegrityReport(is_valid=True)` | `IntegrityReport(is_valid=False, hash_chain_breaks=[...])` |
+
+### 4.5 MCP 接口
+
+| Tool | API | 输入 | 输出 |
+|------|-----|------|------|
+| `audit_query` | `AuditQuery.by_task()` | `{task_id: str}` | `{summary: TaskAuditSummary}` |
+| `audit_trail` | `AuditQuery.trail_for_ai_context()` | `{session_id: str}` | `{trail: str}` |
+| `audit_integrity` | `AuditQuery.verify_integrity()` | `{fast_mode: bool}` | `{report: IntegrityReport}` |
+
+### 4.6 契约版本
+
+| 契约部分 | 兼容性 | 说明 |
+|---------|:---:|------|
+| 新增事件类型 | ✅ 向后兼容 | 不破坏已有逻辑 |
+| AuditEntryV2 新增字段 | ✅ 向后兼容 | V2 继承 V1 + 新增 shard_id/shard_sequence/cross_shard_anchor |
+| 删除/重命名字段 | ❌ 破坏性 | 需 Owner 审批 + 迁移方案 |
+| MCP Tool 新增 | ✅ 向后兼容 | 不影响已有消费者 |
+
+### 4.7 OCP 扩展点
+
+| 扩展点 | 基类/接口 | 默认实现 | 扩展契约 | 注册方式 |
+|--------|----------|---------|---------|---------|
+| 异常检测策略 | AnomalyDetector.detect() | 13 签名规则匹配 | 新增签名必须返回 AnomalyResult + anomaly_score ∈ [0,1] | anomaly.py 新增签名方法 |
+| 存储层策略 | TieredStorage.migrate() | 热→温→冷三层迁移 | 新增层必须实现 write()+read()+migrate() | tiered_storage.py 配置注入 |
+| 反馈策略 | FeedbackPolicy.aggregate() | 日聚合+Policy PR | 新增维度必须输出 PolicyEvolutionPR | feedback_policy.py 配置注入 |
 
 ---
 
-## 决策记录
+## §5 约束条件
 
-| 决策 ID | 决策内容 | 日期 | 依据 |
-|---------|---------|------|------|
+### 5.1 技术约束
+
+| # | 约束 | 值 |
+|---|------|-----|
+| 1 | Python stdlib + SQLite + Pydantic V2 | 零外部依赖 |
+| 2 | JSONL 为唯一真源 | append-only |
+| 3 | 审计日志不可变 | 哈希链 + HMAC + Ed25519 |
+| 4 | Windows 单机部署 | SQLite WAL |
+| 5 | 审计写入不阻塞主操作 | 异步 + fire-and-forget |
+
+### 5.2 容量估算
+
+| 维度 | 当前规模 | 峰值需求 | 系统极限 | 是否够用 | 扩展方案 |
+|------|:------:|:------:|:------:|:------:|---------|
+| 审计写入速率 | < 1 条/秒 | 120 条/秒（100 AI 峰值） | 240 条/秒（16 shard × 15） | ⚠️ 需分片 | §17 §V2 分片写入池 |
+| 日增 JSONL | ~2,000 行 | 100,000 行（~150 MB） | 200,000 行（~300 MB 峰值日） | ⚠️ 需预估 | 按日轮转 + 分层存储 |
+| SQLite 索引 | 单文件 | 月增 3M 行 | 分片 SQLite | ❌ 需分片 | §17 §V4 分片 SQLite |
+| 热存储 7d | ~14 MB | ~1.05 GB（16 shard） | NVMe 800 GB 可用 | ✅ | — |
+| 月存储总量 | ~60 MB | ~7.5 GB（含索引+Merkle+CoT） | NVMe 充足 | ✅ | — |
+| 内存占用 | ~30 MB | ~120 MB（16 shard 缓冲+WAL+对象） | 64 GB 总内存 | ✅ | < 0.2% |
+
+### 5.3 迁移/废弃方案
+
+> **时态属性**：迁移方案属于**临时时态**——执行完毕后即成为历史，不再属于蓝图。
+> 压缩时判定：迁移方案已全部执行 → 从蓝图删除，归入变更记录。未执行 → 保留。
+
+| # | 废弃/迁移对象 | 当前位置 | 目标位置 | 处理方式 | 引用更新方案 | 执行状态 |
+|---|-------------|---------|---------|---------|------------|:-------:|
+| 1 | governance/ 根级 13 孤儿文件 | `D:\ZephyrAlpha\src\zephyr\governance\` | `D:\ZephyrAlpha\src\zephyr\audit_trail\` | 迁移+桥接导入 | 搜索全项目 import 引用并更新 | 未执行 |
+| 2 | audit-trail.jsonl git tracking | git 工作区 | `.gitignore` 隔离 | 从 git tracking 移除 + `.gitignore` 添加 `data/audit/` | 无代码引用 | 未执行 |
+| 3 | AuditEntryV1 → V2 | `models.py` | `models.py`（继承扩展） | V2 继承 V1 + 新增 3 字段 | V1 消费者无需修改 | 未执行 |
+
+### 5.4 非功能需求与服务水平
+
+| 维度 | NFR指标 | NFR目标 | 测量方式 | SLI | SLO | Error Budget | 告警阈值 |
+|------|--------|--------|---------|-----|-----|-------------|---------|
+| 可用性 | 审计写入成功率 | 99.99% | 写入计数/总计数 | write_success_rate | 99.99% | 每月≤4.3min 不可用 | <99.9%→P0 |
+| 延迟 | 写入 P99 | <5ms | 写入耗时直方图 | write_latency_p99_ms | <5ms | — | >10ms→P1 |
+| 完整性 | 哈希链连续性 | 100% | 完整性校验 | hash_chain_integrity_rate | 100% | 0 断裂允许 | 任一断裂→P0 |
+| 可观测性 | 指标覆盖率 | 100% | 指标审计 | — | — | — | — |
+
+### 5.7 禁止模式与导入约束
+
+| # | 类型 | 禁止项 | 替代/允许项 | 原因 |
+|---|:----:|--------|-----------|------|
+| 1 | 编码模式 | 直接修改 JSONL 已有条目 | append-only 追加 | 审计日志不可变 |
+| 2 | 编码模式 | 同步阻塞主操作等待审计写入 | async fire-and-forget | 审计不阻塞主流程 |
+| 3 | 导入源 | from zephyr.l02_* import * | from zephyr.audit_trail import * | 基础设施层不依赖上层 |
+| 4 | 编码模式 | 明文存储 HMAC Secret | 环境变量 ZEPHYR_AUDIT_HMAC_SECRET | Secret 不可硬编码 |
+| 5 | 编码模式 | 审计代码审计自己（自证） | 外部 verify_audit_integrity.py 独立验证 | AI 不能自证清白 |
+
+---
+
+## §6 错误处理
+
+| # | 异常场景 | 检测方式 | 恢复策略 | 影响范围 |
+|---|---------|---------|---------|---------|
+| 1 | 哈希链断裂 | integrity_check | P0 告警 + 隔离可疑段 + 从 Merkle 重建 | 审计完整性 |
+| 2 | HMAC 签名失败 | verify_integrity | P0 阻断 + 通知 Owner | 审计可信度 |
+| 3 | JSONL 写入失败 | AuditWriter 异常 | 内存缓冲区 fallback + P0 阻断 AI 操作 | 审计连续性 |
+| 4 | SQLite 索引损坏 | 查询异常 | 自动从 JSONL 重建（零人工干预） | 查询性能 |
+| 5 | 磁盘满 | disk_usage_pct > 90% | P0 阻断 + 内存缓冲区 fallback | 审计写入 |
+| 6 | Agent 签名验证失败 | Ed25519 verify | P0 阻断 + ANM-008 冒充检测 | Agent 不可否认性 |
+| 7 | 委托链断裂 | DelegationChainAuditor | P0 告警 + 追溯根 Agent | 委托可信度 |
+| 8 | Merkle 根不匹配 | merkle 重建对比 | P0 告警 + 全量哈希链校验 | 批量完整性 |
+| 9 | 分片写入超时 | shard_write_latency > 10ms P99 | 背压 + 降级 fire-and-forget | 写入吞吐 |
+
+### 6.1 可观测性规格
+
+| 指标名 | 类型 | 采集方式 | 告警阈值 | 告警级别 |
+|--------|------|---------|---------|---------|
+| write_latency_p99_ms | Histogram | 自动埋点 | >10ms | P1 |
+| hash_chain_integrity | Gauge | 完整性校验 | 任一 fail | P0 |
+| hmac_validity_rate | Gauge | HMAC 校验 | 任一 fail | P0 |
+| disk_usage_pct | Gauge | 磁盘监控 | >80% P1, >90% P0 | P0/P1 |
+| anomaly_detection_rate | Counter | 异常检测 | >5/hour | P1 |
+| trust_score_trend | Gauge | 信任引擎 | 7d 降>0.3 | P1 |
+
+### 6.2 退化矩阵
+
+| 组件 | 失败后可用功能 | 不可用功能 | 降级策略 | 恢复条件 |
+|------|-------------|-----------|---------|---------|
+| AuditWriter | 内存缓冲区暂存 | JSONL 持久化 | 内存 fallback+P0 阻断 | 磁盘恢复 |
+| SQLite 索引 | JSONL 全扫描 | 快速查询 | 从 JSONL 重建索引 | 重建完成 |
+| AnomalyDetector | 审计写入继续 | 异常告警 | 跳过检测+标记 | 检测器恢复 |
+| Merkle 聚合 | 单条哈希链有效 | 批量完整性证明 | 降级为单链验证 | Merkle 恢复 |
+| Agent 签名 | HMAC 系统级签名有效 | Agent 不可否认性 | 降级为单层签名 | Ed25519 恢复 |
+
+---
+
+## §8 安全考量
+
+| # | 威胁 | 影响 | 缓解措施 | 验证方式 |
+|---|------|------|---------|---------|
+| 1 | 审计日志被篡改 | 🔴极高 | 哈希链 + HMAC + Merkle + 外部 verifier | `verify_audit_integrity.py` |
+| 2 | HMAC Secret 泄露 | 🔴极高 | 环境变量存储 + 定期轮转 + Shamir 分片（2/3） | Secret 轮转脚本验证 |
+| 3 | Agent 冒充 | 🔴极高 | Ed25519 Agent 级签名 + ANM-008 检测 | 签名验证测试 |
+| 4 | Prompt 注入攻击 | 🔴极高 | trail_for_ai_context() 净化 + 语义沙箱 + NFKC 归一化 | 注入模式测试 |
+| 5 | Git 回滚致审计丢失 | 🔴极高 | Git 隔离——data/audit/ 加入 .gitignore | git reset 后审计日志仍在 |
+| 6 | 磁盘满静默失败 | 🔴极高 | 磁盘水位预警 + 写失败 P0 阻断 | 磁盘满模拟测试 |
+| 7 | 间接操作规避 | 高 | ANM-011 检测 + 写入→执行关联分析 | symlink 攻击模拟 |
+| 8 | 供应链风险 | 高 | 每次 install 审计 + 包 SHA-256 + untrusted_external 标记 | pip install 审计验证 |
+| 9 | Unicode 同形字绕过 | 🔴极高 | NFKC 归一化 + 同形字映射 + 净化前归一化 | Cyrillic "іgnore" 测试 |
+| 10 | Genesis 初始化被 compromise | 🔴极高 | 初始化仪式 + 外部见证介质 + Owner 手动执行 | genesis 验证脚本 |
+
+---
+
+## §9 测试策略
+
+| # | 测试类型 | 覆盖范围 | 关键测试用例 | 通过标准 |
+|---|---------|---------|------------|---------|
+| 1 | 单元测试 | models / writer / query / integrity / anomaly | AuditEntryV1 Pydantic 校验 + 哈希链 1000 条连续 + HMAC 100% 有效 | 覆盖率 > 80% |
+| 2 | 集成测试 | writer→JSONL→SQLite→query 端到端 | 写入→查询→验证完整性闭环 | 端到端通过 |
+| 3 | 安全测试 | prompt 注入 / 签名伪造 / 哈希链篡改 | Cyrillic 同形字 + Ed25519 伪造签名 + 删除中间条目 | 所有攻击被检测 |
+| 4 | 性能测试 | 写入吞吐 / 查询延迟 | 100 AI 并发模拟 + 120 条/秒峰值写入 | P99 < 5ms 写入 / < 50ms 查询 |
+| 5 | 外部验证 | verify_audit_integrity.py | 零依赖 audit_trail/ 模块 + CI 门禁 | exit 0 |
+
+---
+
+## §10 依赖关系
+
+### 10.1 依赖声明
+
+#### 上游依赖（MOD-INF-020 依赖谁）
+
+| 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
+|---------|---------|---------|---------|---------|
+| MOD-INF-012 | 硬依赖 | events 表查询视图（不独立存储，C15/ARB-8 裁定） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\blueprint.md` |
+| MOD-INF-007 | 硬依赖 | 门禁决策审计 + 实时阻断联动 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate-engine\blueprint.md` |
+| MOD-INF-016 | 硬依赖 | EventType 枚举 + Task Schema + AiAuditLogger | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` |
+| MOD-INF-018 | 硬依赖 | 权限检查（G-CT-001） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\agent-rbac\blueprint.md` |
+| MOD-INF-021 | 硬依赖 | Checkpoint 推送（G-CT-002 异常→Rollback） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\rollback-system\blueprint.md` |
+| MOD-INF-019 | 硬依赖 | Spec 审计（G-CT-007） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\agent-spec\blueprint.md` |
+| MOD-INF-006 | 硬依赖 | Agent 生命周期审计 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\task-system\blueprint.md` |
+| MOD-INF-002 | 硬依赖 | RI-13 EventStore + RI-14 DryRun + RI-15 CostTracker | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\runtime-integration\blueprint.md` |
+| MOD-INF-011 | 跨线软依赖 | VM 嵌入结果→审计记录（线2→线5） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\vector-memory\blueprint.md` |
+| MOD-INF-022 | 跨线软依赖 | Escalation 升级事件→审计记录（线3→线5） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\escalation-engine\blueprint.md` |
+| MOD-INF-031 | 跨线软依赖 | 修复审计（线4→线5） | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\auto-fixer\blueprint.md` |
+| GOV-CMP-002 | 硬依赖 | AUD-001~004 审计操作留痕规则 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\components\audit-tracking-policy.md` |
+| GOV-CMP-003 | 硬依赖 | 12 维度审计清单 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\components\governance-audit-protocol.md` |
+| MOD-INF-005 | 硬依赖 | 脚本执行生命周期审计钩子 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\script-system\blueprint.md` |
+| MOD-INF-009 | 硬依赖 | PipelineOrchestrator 扫描调度审计集成 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\pipeline\blueprint.md` |
+| CFG-CAP-001 | 硬依赖 | 容量参数决定 shard 数和缓冲区大小 | — | — |
+| MOD-INF-027 | 跨线软依赖 | 审计记录→线5 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\audit-orchestrator\blueprint.md` |
+| MOD-INF-035 | 跨线软依赖 | 运行时注册 | ≥0.1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` |
+
+#### 下游消费者（谁依赖 MOD-INF-020）
+
+| 消费者模块 | 消费内容 | 依赖图线 |
+|-----------|---------|:-------:|
+| MOD-INF-028 | 语义审计事件流 | 线5 |
+| MOD-INF-033 | 行为审计事件流 | 线5 |
+| MOD-INF-023 | 漂移事件 | 线5→线3 |
+| MOD-INF-021 | Checkpoint 触发（G-CT-002） | 线5 |
+| MOD-INF-018 | RBAC 判定事实（G-CT-001） | 线5 |
+| L06 层模块 | 执行审计 | 线7 |
+| L07 层模块 | 审计写入 | 线7 |
+
+### 10.2 依赖图对齐声明
+
+| # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
+|---|--------|---------|:-------:|---------|
+| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-INF-020` |
+| 2 | §11 产出物路径 ↔ 依赖图 §19 path_mappings | 路径一致 | 已对齐 | 同上 |
+| 3 | §0 代码文件清单 ↔ 依赖图节点 code_path | 节点存在 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py` |
+
+### 10.3 内部依赖图
+
+#### 执行顺序依赖
+
+| 上游脚本 | 下游脚本 | 依赖内容 | 验证方式 |
+|---------|---------|---------|---------|
+| `writer.py` | `indexer.py` | writer 写入 JSONL 后 indexer 才能建索引 | 检查 JSONL 文件存在 |
+| `indexer.py` | `query.py` | 索引建成后查询才能命中 SQLite | 检查 audit-index.db 存在 |
+| `merkle_hourly.py` | `integrity.py` | Merkle 树建成后才能验证批量完整性 | 检查 merkle JSON 存在 |
+| `writer.py` | `anomaly.py` | 写入后才能对条目做异常检测 | 检查 JSONL 条目存在 |
+| `genesis.py` | `writer.py` | Genesis 初始化后才能正常写入 | 检查 genesis 条目存在 |
+
+#### 数据流依赖
+
+| 生产者 | 消费者 | 数据类型 | 传输方式 |
+|--------|--------|---------|---------|
+| `writer.py` | `indexer.py` | AuditEntryV1 JSONL 条目 | 共享 JSONL 文件 |
+| `indexer.py` | `query.py` | SQLite 索引行 | 共享 SQLite DB |
+| `anomaly.py` | `feedback_policy.py` | AnomalyEvent | 函数调用 |
+| `writer.py` | `trust_engine.py` | 审计条目事件 | 函数调用 |
+| `feedback_policy.py` | `feedback_bridge.py` | PolicyEvolutionPR | 函数调用 |
+
+### 10.4 自动化规格
+
+#### 是否需要自动化
+
+| # | 自动化项 | 是否需要 | 理由 |
+|---|---------|:-------:|------|
+| 1 | 依赖图自动生成 | 是 | 13 个外部依赖 + 5 个内部依赖，手动维护易漂移 |
+| 2 | 依赖对齐自动验证 | 是 | 有外部依赖，需 CI 门禁保证对齐 |
+| 3 | 临时时态内容自动清理 | 是 | §5.3 有 3 项迁移方案，执行后需从蓝图删除 |
+| 4 | 施工步骤完成度自动检测 | 是 | 施工中，5 个 v2.0 组件待实现 |
+
+#### 如何自动化
+
+| # | 自动化项 | 实现方式 | 现有工具/脚本 | 缺口 |
+|---|---------|---------|-------------|------|
+| 1 | 依赖图自动生成 | AST 解析 import + manifest 字段 | `asset_inventory/dependency.py` | 不覆盖 scripts/ 目录 |
+| 2 | 依赖对齐自动验证 | CI 门禁 | `validate_path_alignment.py` | 无 |
+| 3 | 临时时态内容自动清理 | 压缩工作流脚本 | 无 | 需新建 |
+| 4 | 施工步骤完成度自动检测 | pytest + mypy + ruff + 产出物存在性检查 | 部分有 | 需整合 |
+
+#### 触发方式
+
+| # | 自动化项 | 触发方式 | 触发条件 |
+|---|---------|---------|---------|
+| 1 | 依赖图自动生成 | CI pipeline | 文件变更时 |
+| 2 | 依赖对齐自动验证 | CI 门禁 | PR 提交时 |
+| 3 | 临时时态内容自动清理 | 手动 | 压缩工作流执行时 |
+| 4 | 施工步骤完成度自动检测 | CI pipeline | 代码提交时 |
+
+---
+
+## §11 产出物存放目录
+
+| 产出物类型 | 存放完整绝对路径 | 说明 |
+|----------|---------------|------|
+| 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\audit-trail\blueprint.md` | 本文件 |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\audit_trail\` | Python 源码（35 .py files） |
+| 测试代码 | `D:\ZephyrAlpha\tests\audit_trail\` | 测试用例 |
+| 审计数据 | `D:\ZephyrAlpha\data\audit\` | JSONL + SQLite + Merkle |
+| 推理链数据 | `D:\ZephyrAlpha\data\reasoning\` | CoT 完整文本 |
+| 外部验证脚本 | `D:\ZephyrAlpha\scripts\governance\verify_audit_integrity.py` | 零依赖 CI 门禁 |
+| 索引重建脚本 | `D:\ZephyrAlpha\scripts\governance\rebuild_audit_index.py` | JSONL→SQLite |
+| 保留期执行脚本 | `D:\ZephyrAlpha\scripts\governance\enforce_audit_retention.py` | 保留期清理 |
+
+---
+
+## §12 集成目标
+
+| 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
+|------------|---------|--------|---------|
+| DOM-GOV-001 治理域蓝图 | 职责分派 | §2 职责分派表 | 蓝图 §2 已更新 |
+| zephyr.agent_rbac | 审计桥接(G-CT-001) | AuditWriter.log_event() | G-CT-001 契约验证 |
+| zephyr.rollback | Checkpoint 触发(G-CT-002) | AuditWriter.log_event() | G-CT-002 契约验证 |
+| zephyr.agent_spec | Spec 审计(G-CT-007) | AuditWriter.log_event() | G-CT-007 契约验证 |
+| zephyr.task_system | Agent 生命周期 | AuditWriter.log_event() | 生命周期事件写入审计 |
+| zephyr.shared | AiAuditLogger 唯一入口 | AiAuditLogger 类 | import 验证 |
+| zephyr.db | events 表唯一权威存储 | AuditEntryV1 模型 | 数据库查询验证 |
+| zephyr.audit_orchestrator | 审计记录→线5(跨线) | bridge.py | 桥接调用验证 |
+| 5 个 *_bridge.py | 跨模块桥接 | BridgeHub | 桥接注册验证 |
+
+### 12.1 域契约锚点
+
+| 契约 ID | 本模块角色 | 对端模块 |
+|---------|------------|----------|
+| G-CT-001 | 消费方（记录 RBAC 判定事实） | MOD-INF-018 |
+| G-CT-002 | 产出方（异常事件触发 Rollback） | MOD-INF-021 |
+| G-CT-007 | 消费方（记录 Spec 执行审计） | MOD-INF-019 |
+
+---
+
+## §13 需要更新的相关内容
+
+| # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
+|---|------------|------------|---------|---------|
+| 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | MOD-INF-020 条目 | 蓝图注册 |
+| 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | MOD-INF-020 条目 | 蓝图发现 |
+| 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index.yaml` | MOD-INF-020 元数据 | 资产索引 |
+| 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 线3:治理闭环 + 线5:审计合规 | 依赖声明 |
+
+---
+
+## §14 已知风险与缓解
+
+| # | 风险/负面后果 | 概率 | 影响 | 缓解策略 | 类型 |
+|---|-------------|------|------|---------|------|
+| R1 | 审计日志膨胀 | 高 | 中 | 按日轮转 + gzip/Parquet 分层 + 保留期自动执行 | 风险 |
+| R2 | JSONL 写入冲突 | 中 | 高 | 文件锁 + Lamport 时钟 + 分片写入池 | 风险 |
+| R3 | SQLite 索引延迟 | 中 | 低 | 查询时先检查 JSONL 最新 N 行 + 5s 重建间隔 | 风险 |
+| R4 | 审计日志被篡改 | 低 | 🔴极高 | 哈希链 + HMAC + Merkle + 外部 verifier | 风险 |
+| R5 | HMAC Secret 泄露 | 低 | 🔴极高 | Shamir 分片（2/3）+ 定期轮转 | 风险 |
+| R6 | 自监控假阳性/假阴性 | 低 | 中 | 3 次失败才告警 + 外部 verifier 交叉验证 | 风险 |
+| R7 | 异常检测误报 | 中 | 中 | 阈值可配置 + 首次部署 warn 模式 | 风险 |
+| R8 | 隐私脱敏遗漏 | 低 | 高 | PII pattern 正则维护 + CI 扫描 | 风险 |
+| R9 | Cold Start 基线不可靠 | 高 | 低 | confidence=low 标记 + 隔离存储 | 风险 |
+| R10 | 三角闭环反馈质量差 | 中 | 低 | 仅推送 anomaly_score > 0.8 + human_gated | 风险 |
+| R11 | Agent 冒充 | 低 | 🔴极高 | Ed25519 Agent 级签名 + ANM-008 | 风险 |
+| R12 | 委托链断裂 | 低 | 高 | 完整记录 + 深度 ≤ 3 + ANM-009 | 风险 |
+| R13 | 多 Agent 协同规避 | 低 | 高 | ANM-010 跨 Agent 时间窗口聚合 | 风险 |
+| R14 | AI 上下文污染 | 中 | 高 | KB 投毒防护 + 信任分数过滤 | 风险 |
+| R15 | 间接操作越权 | 中 | 中 | ANM-011 + 写入→执行关联 | 风险 |
+| R16 | Prompt 注入攻击 | 中 | 🔴极高 | trail_for_ai_context() 净化 + 语义沙箱 | 风险 |
+| R17 | Git 回滚致审计丢失 | 中 | 🔴极高 | Git 隔离 + 独立备份 | 风险 |
+| R18 | 磁盘满静默失败 | 低 | 🔴极高 | 磁盘水位预警 + 写失败 P0 阻断 | 风险 |
+| R19 | Genesis 初始化被 compromise | 低 | 🔴极高 | 初始化仪式 + 外部见证 + Owner 手动执行 | 风险 |
+| R20 | 哈希链分叉 | 中 | 高 | fork_detection + fork_reconciliation | 风险 |
+| R21 | 撕裂写入 | 低 | 高 | torn_write_detector + 原子 append | 风险 |
+| R22 | Unicode 同形字绕过 | 中 | 🔴极高 | NFKC 归一化 + 同形字映射 | 风险 |
+| R23 | 告警疲劳 | 高 | 🔴极高 | operator_responsiveness_model + 响应率 < 30% → P0 | 风险 |
+| R24 | 信任漂移 | 高 | 中 | trust_calibration 实际 anomaly 率 vs 审核通过率 | 风险 |
+| R25 | 供应链风险 | 中 | 高 | 每次 install 审计 + 包 SHA-256 | 风险 |
+| R26 | 确定性重放不可行 | 中 | 高 | sha256_before/after + 分层重放测试 | 风险 |
+| R27 | Bus Factor = 1 | 低 | 高 | 全自动化自愈 + 外部 verifier 独立 | 风险 |
+| R28 | GDPR 删除权 vs 不可变性 | 中 | 中 | 脱敏替代删除 + legal_hold 标记 | 风险 |
+| R29 | 明文存储 | 低 | 中 | AES-256-GCM 透明加密层 | 风险 |
+| R30 | MCP/原生工具绕过审计 | 中 | 高 | audit_coverage_gap_scanner | 风险 |
+| N1 | 审计写入增加操作延迟 | — | 中 | 异步写入 P99 < 5ms | 负面后果 |
+| N2 | JSONL 日增 150 MB 需分层存储管理 | — | 中 | 三层存储自动迁移 | 负面后果 |
+| N3 | 13 种异常签名可能产生误报需调优 | — | 中 | 首次部署 warn 模式 + 阈值可配置 | 负面后果 |
+| N4 | 99 盲点中部分需 v2.0+ 才覆盖 | — | 中 | 逐步迭代覆盖 | 负面后果 |
+| N5 | HMAC Secret 管理增加运维复杂度 | — | 中 | Shamir 分片 + 自动轮转 | 负面后果 |
+| N6 | GDPR 删除权与审计不可变性存在根本冲突 | — | 中 | 脱敏替代删除 + legal_hold | 负面后果 |
+
+### 能力边界声明（99 盲点）
+
+| 盲点 ID | 内容 | v2.0 计划 |
+|:---:|------|:---:|
+| B15 | Agent 级 Ed25519 签名——完整密钥管理基础设施 | Phase production |
+| B16 | Agent 冒充检测（IATP Challenge-Response 握手） | Phase production |
+| B17 | LLM 完整 CoT 推理链 | Phase experimental |
+| B18 | 跨 IDE 一致性交叉验证 | Phase experimental |
+| B19 | 监管证据包 PDF 导出 | Phase beta |
+| B20 | 外部独立验证端点 | Phase scaffold ✅ |
+| B21 | 合规框架条款→实现的完整映射 | Phase beta |
+| B22 | 审计日志 Git 隔离 | Phase scaffold ✅ |
+| B23 | 渐进信任分数——连续值 + 时间衰减 | Phase experimental |
+| B24 | Agent-to-Agent 委托链审计 | Phase experimental |
+| B25 | 间接操作检测 | Phase experimental |
+| B26 | 外部工具调用链闭环审计 | Phase experimental |
+| B27 | 多 Agent 协同规避检测 | Phase experimental |
+| B28 | 行为基线模型（ML 偏离检测） | v2.0 |
+| B29 | 权限持续重新验证 | Phase production |
+| B30 | 审计查询注入防御 | Phase scaffold ✅ |
+| B31 | HMAC Secret 泄露——伪造审计条目 | Phase experimental |
+| B32 | Bit Rot 静默存储损坏 | Phase experimental |
+| B33 | 时间炸弹——延迟触发漏洞 | Phase experimental |
+| B34 | 反馈自指循环 | Phase experimental |
+| B35 | 供应链接入审计 | Phase beta |
+| B36 | Session 边界攻击 | v2.0 |
+| B37 | 审计数据 AI 上下文投毒 | Phase beta |
+| B38 | 海量操作 DoS | Phase scaffold ✅ |
+| B39 | Gradual Permission Escalation | Phase experimental |
+| B40 | 运行时配置渐进漂移 | v2.0 |
+| B41 | Emergency Access 的审计 | v2.0 |
+| B42 | Schema Evolution 悖论 | v2.0 |
+| B43 | Audit Trail 依赖死锁 | Phase scaffold ✅ |
+| B44 | 人操作 vs AI 操作统一审计 | v2.0 |
+| B45 | Provenance 数据的 Provenance 验证 | Phase experimental |
+| B46 | Lamport 时钟边缘竞赛 | Phase scaffold ✅ |
+| B47 | Rollback 自身审计链 | v2.0 |
+| B48 | Knowledge Base 投毒 | Phase beta |
+| B49 | 审计日志作为侧信道 | v2.0 |
+| B50 | 审计日志膨胀到 Context Window 溢出 | Phase scaffold ✅ |
+| B51 | Multi-Tenant 审计隔离 | v2.0 |
+| B52 | 非工作时间定义的动态性 | v2.0 |
+| B53 | Heartbeat 假阴性检测 | Phase experimental |
+| B54 | Cold Start 基线法律风险 | Phase scaffold ✅ |
+| B55 | Prompt 注入——恶意审计条目劫持 AI 决策 | Phase beta |
+| B56 | Vibe Drift——AI 模型升级致审计代码不兼容 | Phase beta |
+| B57 | AI 幻觉——审计分析/日报生成虚假发现 | Phase experimental |
+| B58 | 确定性重放——无法从审计日志重建系统状态 | Phase experimental |
+| B59 | 单人密钥仪式——Shamir 需 3 人独立保管分片 | v2.0 |
+| B60 | Bus Factor = 1——维护者不可用致审计系统死亡 | v2.0 |
+| B61 | 无 Peer Review——审计告警无人二次确认 | Phase scaffold ✅ |
+| B62 | 审计质量渐进退化——无 peer review 感知衰减 | Phase beta |
+| B63 | GDPR Art.17 删除权 vs 审计不可变性 | v2.0 |
+| B64 | 明文存储——审计日志未加密 at rest | Phase experimental |
+| B65 | 可信时间戳缺失——Ed25519 签名无法定时间效力 | v2.0 |
+| B66 | 磁盘满静默失败——审计写入丢弃 | Phase scaffold ✅ |
+| B67 | 审计写入阻塞主操作——"先审计还是先执行" | Phase scaffold ✅ |
+| B68 | Schema 迁移完整性——v1→v2 迁移可验证 | Phase beta |
+| B69 | 审计工具链完整性——Python/OS/fs 被篡改 | v2.0 |
+| B70 | 隐身 Agent——生成合法但恶意的审计条目（Mimicry） | v2.0 |
+| B71 | 时序攻击——操纵 Lamport 时钟/系统时间制造混乱 | Phase experimental |
+| B72 | MCP/原生工具绕过审计——操作未记录 | Phase scaffold ✅ |
+| B73 | 影子审计——Agent 意外创建第二条审计机制 | Phase experimental |
+| B74 | Vibe Coding 覆盖缺口——AI 跳过边界条件审计 | Phase beta |
+| B75 | AI 代码相似性混淆——生成相似但不相同的审计模式 | Phase experimental |
+| B76 | 模板/脚手架伪审计——AI 生成代码产生虚假审计条目 | Phase experimental |
+| B77 | 法庭可采性——审计证据链的 chain of custody 缺失 | Phase beta |
+| B78 | 哈希链分叉——两个 IDE 并发写同一 prev_entry_hash | Phase experimental |
+| B79 | 部分写入/撕裂写入——OS 崩溃致 JSONL 行不完整 | Phase scaffold ✅ |
+| B80 | Unicode 同形字绕过净化——"іgnore"（Cyrillic і）绕过过滤器 | Phase experimental |
+| B81 | 多会话协同攻击——单会话低于阈值、跨会话总和超标 | Phase experimental |
+| B82 | AI 学习规避审计——AI 通过读原始 JSONL 学习审计模式 | Phase experimental |
+| B83 | 格式寿命——JSONL 在 20 年内仍可解析？ | Phase scaffold ✅ |
+| B84 | 依赖版本漂移——Pydantic v2→v3 审计数据无法验证 | Phase beta |
+| B85 | 告警疲劳渐进建模——Operator 对 P1 响应率从 90%→10% | Phase beta |
+| B86 | 信任漂移曲线——Operator 逐渐过度信任 AI 致审查松懈 | Phase beta |
+| B87 | 新人 Onboarding 不可能——文档全是 AI 写给 AI 的 | Phase scaffold ✅ |
+| B88 | 审计数据恢复——JSONL 文件部分损坏时尽可能恢复数据 | Phase experimental |
+| B89 | Tool 调用逃逸——自定义 MCP Tool 绕过审计写入路径 | Phase experimental |
+| B90 | 篡改痕迹时间线重建——若篡改发生，能否精确重建作案时间？ | Phase experimental |
+| B91 | 跨系统日志关联——审计数据需与 CI/CD/云日志交叉验证 | v2.0 |
+| B92 | 初始化的初始化——初始化脚本的 hash 在初始化前不可知 | Phase scaffold ✅ |
+| B93 | 审计系统自身代码变更未被审计——AI 改 `writer.py` 无人知晓 | Phase experimental |
+| B94 | 自然语言不一致——同一操作被不同 session 描述为不同文本 | Phase experimental |
+| B95 | AI 模型供应商依赖——API 变更/倒闭/模型退役致审计系统失效 | Phase scaffold ✅ |
+| B96 | 观测者效应——被审计的 AI 行为系统性异于未被审计的 AI | v2.0 |
+| B97 | Goodhart 定律——AI 学会优化 trust_score/anomaly_score 而非优化行为 | Phase beta |
+| B98 | 启动期审计盲区——系统启动到审计初始化之间的操作无记录 | Phase scaffold ✅ |
+| B99 | "谁审计审计者？"无限递归——审计系统本身的审计链最终无外部锚点 | v2.0 |
+
+---
+
+## §16 施工指引
+
+### AI 施工前检查清单
+
+| # | 检查项 | 确认方式 | 状态 |
+|---|--------|---------|:----:|
+| 1 | 已读取本蓝图全部内容 | 逐节确认 | ☐ |
+| 2 | 已读取必备链接中所有真源文件 | 逐个打开确认 | ☐ |
+| 3 | §0 代码对齐验证已填写且与实际代码一致 | 逐项核对 | ☐ |
+| 4 | 每个施工步骤都对应明确的蓝图接口契约（§4） | 逐步骤追溯 | ☐ |
+
+### 16.1 施工策略
+
+| 项目 | 内容 |
+|------|------|
+| 施工阶段数 | 4 Phase（scaffold → experimental → beta → production） |
+| 施工模式 | 扩展（v1.4.0 基线 + v2.0.0 容量升级） |
+| 核心风险 | 分片写入架构重写 writer.py 可能破坏现有写入链路 |
+| 目标 generation | 9 — 本次施工将蓝图从 generation 8 升级到 generation 9 |
+
+### 16.2 前置条件
+
+| # | 依赖项 | 依赖类型 | 当前状态 | 是否满足 |
+|---|--------|---------|:---:|:---:|
+| 1 | MOD-INF-016 Shared Core 已就绪 | hard | ✅ | ✅ |
+| 2 | MOD-INF-012 Database 已就绪 | hard | ✅ | ✅ |
+| 3 | CFG-CAP-001 容量参数已设定 | hard | ✅ | ✅ |
+| 4 | MOD-INF-005 Script System 审计钩子接口已定义 | soft | ❌ | ⚠️ |
+
+### 16.3 实施步骤
+
+> **时态属性**：施工步骤属于**临时时态**——执行完毕后可删除，但 MUST 先通过运行验证。
+> **删除前置条件**（缺一不可）：
+> 1. 代码文件存在且非空
+> 2. `python -m pytest tests/` 对应测试 exit 0
+> 3. `mypy` 类型检查通过
+> 4. `ruff` lint 通过
+> 5. 以上 4 项全部通过后，该步骤的详细内容可从蓝图删除，只保留"步骤 N: 已完成"
+
+#### 步骤 1：v2-scaffold——分片写入架构 + 新事件类型
+
+| 项目 | 内容 |
+|------|------|
+| 对应蓝图契约 | §4.1 AuditWriter / §3 蓝图特有:审计事件类型 |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\audit_trail\` |
+| 验收标准 | ShardedAuditWriter 16 shard 写入 + AuditEntryV2 Pydantic 校验 + 15 种新事件类型 |
+| 验证命令 | `python -m pytest tests/audit_trail/ -k "shard or entry_v2" -v` |
+| G7 检查项 | writer.py 重写后旧写入链路是否保留为 fallback？新 shard 文件路径是否与 §11 一致？ |
+
+#### 步骤 2：v2-experimental——Script System 集成 + 查询分片 + Lamport V2
+
+| 项目 | 内容 |
+|------|------|
+| 对应蓝图契约 | §4.1 AuditQuery / §3 蓝图特有:LamportClock |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\audit_trail\` |
+| 验收标准 | ScriptAuditHook 集成 + ShardedQueryRouter 并行查询 + LamportClockV2 三元组 |
+| 验证命令 | `python -m pytest tests/audit_trail/ -k "script_audit or query_router or lamport_v2" -v` |
+| G7 检查项 | Script System 依赖方向是否单向？Lamport V2 是否向后兼容 V1？ |
+
+#### 步骤 3：v2-beta——跨分片 Merkle + 存储容量告警 + 去抖/背压
+
+| 项目 | 内容 |
+|------|------|
+| 对应蓝图契约 | §3 蓝图特有:自监控 / §5.2 容量估算 |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\audit_trail\` |
+| 验收标准 | CrossShardMerkle 聚合 + 容量告警 + 写入去抖 500ms + 背压机制 |
+| 验证命令 | `python -m pytest tests/audit_trail/ -k "cross_shard or capacity or debounce or backpressure" -v` |
+| G7 检查项 | 跨分片 Merkle 锚定间隔是否与 §17 一致？背压阈值是否与 CFG-CAP-001 对齐？ |
+
+#### 步骤 4：v2-production——性能基准 + 容量校准 + WORM 备份
+
+| 项目 | 内容 |
+|------|------|
+| 对应蓝图契约 | §5.2 容量估算 |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\audit_trail\` + `D:\ZephyrAlpha\scripts\governance\` |
+| 验收标准 | 100 AI 并发模拟 + 容量校准器联动 + WORM 兼容分片备份 |
+| 验证命令 | `python -m pytest tests/audit_trail/ -k "benchmark or capacity_calib or worm" -v` |
+| G7 检查项 | 性能基准是否覆盖 120 条/秒峰值？WORM 备份是否独立于 git？ |
+
+### 16.4 回滚方案
+
+| 步骤 | 如果出问题 | 回滚操作 |
+|------|----------|---------|
+| 1 | ShardedAuditWriter 写入失败 | 回退到单文件 AuditWriter（保留为 fallback） |
+| 2 | Script System 集成异常 | 移除 ScriptAuditHook，审计写入不受影响 |
+| 3 | 跨分片 Merkle 聚合错误 | 禁用跨分片锚定，单 shard 哈希链仍有效 |
+| 4 | 性能基准不达标 | 调整 shard_count / buffer_max_size 参数 |
+
+### 16.5 施工完成标准
+
+| # | 产出物 | 存放完整绝对路径 | 是否存在 | 内容非空 | §0对齐 |
+|---|--------|---------------|:---:|:---:|:---:|
+| 1 | shard_writer.py | `D:\ZephyrAlpha\src\zephyr\audit_trail\shard_writer.py` | ☐ | ☐ | ☐ |
+| 2 | global_index.py | `D:\ZephyrAlpha\src\zephyr\audit_trail\global_index.py` | ☐ | ☐ | ☐ |
+| 3 | script_audit_hook.py | `D:\ZephyrAlpha\src\zephyr\audit_trail\script_audit_hook.py` | ☐ | ☐ | ☐ |
+| 4 | query_router.py | `D:\ZephyrAlpha\src\zephyr\audit_trail\query_router.py` | ☐ | ☐ | ☐ |
+| 5 | cross_shard_merkle.py | `D:\ZephyrAlpha\src\zephyr\audit_trail\cross_shard_merkle.py` | ☐ | ☐ | ☐ |
+| 6 | SLO 已定义且可测量 | §5.4 每项 SLI 有测量方式 | 就绪 | ☐ |
+| 7 | 监控指标已埋点 | §6.1 每项指标有采集实现 | 就绪 | ☐ |
+| 8 | 告警已配置 | §6.1 每项阈值有告警规则 | 就绪 | ☐ |
+| 9 | 退化策略已实现 | §6.2 每个组件有降级逻辑 | 就绪 | ☐ |
+| 10 | 回滚方案已验证 | §16.4 回滚操作可执行 | 就绪 | ☐ |
+| 11 | 文档已更新 | §13 需要更新的文件全部更新 | 就绪 | ☐ |
+| 12 | 集成测试已通过 | §12 每个集成点有测试 | 就绪 | ☐ |
+
+### 16.6 施工状态
+
+| 字段 | 值 | 填写者 |
+|------|-----|-------|
+| construction_status | in_progress | 施工者 |
+| verification_status | unverified | 审计者 |
+| code_alignment_verified | no | 审计者 |
+
+### 16.7 参考实现规格
+
+| # | 规格名称 | 类型 | 规格内容 | 对应代码 |
+|---|---------|------|---------|---------|
+| 1 | 哈希链算法 | 算法 | entry.entry_hash = SHA-256(entry_id + prev_entry_hash + entry_type + utc_timestamp.isoformat() + agent_id) | writer.py |
+| 2 | HMAC 签名 | 协议 | hmac_signature = HMAC-SHA256(ZEPHYR_AUDIT_HMAC_SECRET, entry.entry_hash) | writer.py |
+| 3 | Ed25519 Agent 签名 | 协议 | agent_signature = Ed25519.sign(entry.entry_hash, agent_private_key) | agent_signer.py |
+| 4 | Lamport 时钟合并 | 算法 | counter = max(local_counter, received_counter) + 1 | writer.py |
+| 5 | Merkle 树构建 | 算法 | 收集 1h 内所有 entry_hash → 二叉 Merkle 树 → 根哈希写入 merkle JSON | merkle_hourly.py |
+| 6 | 一致性哈希分片 | 算法 | shard_id = SHA-256(session_id + agent_did) % 16 | shard_writer.py |
+| 7 | SQLite 索引重建 | SQL | INSERT OR IGNORE INTO task_summary SELECT ... FROM jsonl_parse() | indexer.py |
+
+### 16.8 施工参考卡
+
+| # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |
+|---|:----:|------|----------|----------|----------|
+| 1 | 命令 | `python -m zephyr.audit_trail.cli verify` | 完整性验证 | `--fast-mode`: 快速模式(默认True) | IntegrityReport |
+| 2 | 命令 | `python -m zephyr.audit_trail.cli query` | 审计查询 | `--task-id`/`--agent-id`/`--session-id` | 审计摘要/明细 |
+| 3 | 配置 | `ZEPHYR_AUDIT_HMAC_SECRET` | HMAC 签名密钥 | 256-bit 环境变量 | 必须设置否则写入失败 |
+| 4 | 配置 | `data/audit/` | 审计数据目录 | JSONL+SQLite+Merkle | .gitignore 隔离 |
+
+### 16.10 故障与操作手册
+
+| # | 阶段 | 场景 | 触发条件 | 诊断/操作 | 恢复/产出 | 验证/回退 |
+|---|:----:|------|---------|----------|----------|----------|
+| 1 | 施工 | 哈希链断裂 | integrity_check 返回非空 | 检查断裂位置 → 从 Merkle 重建 | 重建断裂段 | verify_integrity exit 0 |
+| 2 | 施工 | SQLite 索引损坏 | 查询异常/数据不一致 | 删除 audit-index.db → 重建 | rebuild_index() | 记录数 == JSONL 行数 |
+| 3 | 运行 | 磁盘空间不足 | disk_usage_pct > 90% | 执行保留期清理 + 温冷迁移 | 释放空间 | disk_usage_pct < 80% |
+| 4 | 运行 | Agent 签名验证失败 | Ed25519 verify 返回 False | 检查 DID 注册 → 检查密钥轮转 | 更新公钥 | 签名验证通过 |
+| 5 | 运行 | 审计写入超时 | write_latency > 10ms P99 | 检查磁盘 I/O → 检查 shard 分布 | 调整 shard_count | P99 < 5ms |
+
+### 16.12 并发操作模型
+
+| 冲突场景 | 检测方式 | 解决策略 | 合并规则 |
+|---------|---------|---------|---------|
+| 同 shard JSONL 写入 | asyncio.Queue 串行化 | Queue FIFO 排队 | 串行追加，无合并 |
+| 跨 shard 查询 | 并行 asyncio.gather | 结果合并 | 按时间戳排序 |
+| SQLite 索引更新 | WAL 模式并发读/串行写 | 读写不互斥 | 最后写入胜出 |
+| Lamport 时钟合并 | counter 比较 | max+1 | 全序化 |
+| 同文件哈希链 | shard 内串行 | 串行保证链连续 | 无合并需求 |
+
+---
+
+## §17 容量升级附录
+
+> generation≥2 的蓝图必须填写。本节描述 v1.4.0 → v2.0.0 的容量升级方案。
+
+### §17.1 容量基线
+
+| 资源 | 当前基线 | 测量方式 |
+|------|---------|---------|
+| 审计写入速率 | < 1 条/秒 | 单 AI + 单人场景 |
+| 日增 JSONL | ~2,000 行 | 实际审计日志统计 |
+| SQLite 索引 | 单文件 | audit-index.db |
+| 哈希链模型 | 全局单链 | prev_entry_hash 指向前一条 |
+| Lamport 时钟 | (ide, counter) 二元组 | 3 个 IDE |
+
+### §17.2 缺口分析
+
+| 缺口ID | 当前瓶颈 | 升级方案 | 触发阈值 |
+|--------|---------|---------|---------|
+| GAP-AT-V1 | 审计写入吞吐不足 | 分片写入池（16 shard） | > 10 条/秒 |
+| GAP-AT-V2 | 哈希链串行瓶颈 | 分区链 + 跨分片 Merkle 锚定 | > 5 AI 并发 |
+| GAP-AT-V3 | SQLite 单索引瓶颈 | 分片 SQLite + 全局路由索引 | 月增 > 1M 行 |
+| GAP-AT-V4 | 脚本执行无审计 | 15 种新事件类型 + 审计钩子 | 任何脚本执行 |
+| GAP-AT-V5 | Lamport 二元组不够区分 | 三元组 (ide, session_id, counter) | > 10 AI session |
+| GAP-AT-V6 | 存储容量未预估 | 日增 100K 条 × 分层存储 | 日增 > 10K 条 |
+
+### §17.3 升级版本矩阵
+
+| 版本 | generation | 升级类型 | 核心变更 | 代码覆盖 |
+|------|:---:|---------|---------|:---:|
+| v1.4.0 | 7 | 基线 | 35 文件——核心写入+完整性+查询+异常+漂移+签名+信任+证据包 | ✅ |
+| v2.0.0 | 8 | 容量升级 | 分片写入+分区链+脚本审计+Lamport V2+容量预估 | ⚠️ 待施工 |
+
+### 缺口清单
+
+| 缺口ID | 缺口描述 | 优先级 | 目标版本 | 状态 |
+|--------|---------|:---:|---------|:---:|
+| GAP-AT-001 | governance/ 根级 13 文件未迁移至 audit_trail/ | P1 | v2.0 | 待迁移 |
+| GAP-AT-V1 | 审计写入吞吐不足 | P0 | v2.0 | 待施工 |
+| GAP-AT-V2 | 哈希链串行瓶颈 | P0 | v2.0 | 待施工 |
+| GAP-AT-V3 | SQLite 单索引瓶颈 | P1 | v2.0 | 待施工 |
+| GAP-AT-V4 | 脚本执行无审计 | P1 | v2.0 | 待施工 |
+| GAP-AT-V5 | Lamport 二元组不够 | P1 | v2.0 | 待施工 |
+| GAP-AT-V6 | 存储容量未预估 | P2 | v2.0 | 待施工 |
+
+### 升级组件清单
+
+| 组件名 | 对应缺口 | 代码文件 | 施工Phase | 状态 |
+|--------|---------|---------|----------|:---:|
+| ShardedAuditWriter | GAP-AT-V1 | shard_writer.py | v2-scaffold | 待施工 |
+| HashChainState (per shard) | GAP-AT-V2 | shard_writer.py | v2-scaffold | 待施工 |
+| ShardedQueryRouter | GAP-AT-V3 | query_router.py | v2-experimental | 待施工 |
+| GlobalIndex | GAP-AT-V3 | global_index.py | v2-scaffold | 待施工 |
+| ScriptAuditHook | GAP-AT-V4 | script_audit_hook.py | v2-experimental | 待施工 |
+| LamportClockV2 | GAP-AT-V5 | models.py (修改) | v2-experimental | 待施工 |
+| CrossShardMerkle | GAP-AT-V2 | cross_shard_merkle.py | v2-beta | 待施工 |
+
+### §V2 分片写入架构
+
+```yaml
+v2_audit_write_architecture:
+  shard_strategy:
+    method: "consistent_hashing_by_session"
+    shard_count: 16
+    hash_key: "session_id + agent_did"
+  shard_structure:
+    path_pattern: "data/audit/shard_{shard_id:02d}/"
+    files_per_shard:
+      - "audit-trail-{YYYY-MM-DD}.jsonl"
+      - "audit-index.db"
+      - "merkle/audit-merkle-{YYYY-MM-DDTHH}.json"
+      - "hash_chain_state.json"
+    cross_shard_index:
+      path: "data/audit/global-index.db"
+      content: "{entry_id → shard_id}"
+      rebuild: "从各 shard index.db 聚合（延迟 30s）"
+  write_pipeline:
+    step_1: "hash(session_id) % 16 → shard_id"
+    step_2: "写入该 shard 内存缓冲区（asyncio.Queue, maxsize=1000）"
+    step_3: "每 100ms 或满 50 条刷盘"
+    step_4: "O_APPEND 原子追加到 shard JSONL"
+    step_5: "shard 内串行——prev_entry_hash = SHA-256(上一条本 shard 条目)"
+    step_6: "shard SQLite 异步更新（WAL 模式）"
+  performance:
+    shard_write_latency_p99_ms: 3
+    cross_shard_query_latency_p99_ms: 50
+    total_throughput_entries_per_sec: 240
+```
+
+### §V3 哈希链并发化
+
+```yaml
+v2_hash_chain_architecture:
+  per_shard_hash_chain:
+    entry_schema_update:
+      prev_entry_hash: "指向前一条同 shard 条目的 SHA-256"
+      shard_id: "当前条目所属分片 ID（新增）"
+      shard_sequence: "同 shard 内自增序列号（新增）"
+      cross_shard_anchor: "上一份跨分片 Merkle 根的 SHA-256（每 1000 条/次，新增）"
+  cross_shard_merkle_anchoring:
+    interval: "每 1000 条全局条目 或 每小时"
+    description: "收集 16 shard 当前 Merkle 根 → 构建跨分片 Merkle 树 → 根哈希写入每个 shard 下一条"
+```
+
+### §V4 查询索引伸缩
+
+```yaml
+v2_query_architecture:
+  per_shard_index:
+    path: "data/audit/shard_{id:02d}/audit-index.db"
+    tables: [task_summary, file_detail, script_execution, scan_events]
+  global_index:
+    path: "data/audit/global-index.db"
+    content: "entry_id → shard_id → shard_sequence"
+  query_strategies:
+    by_task_id: "global_index → 定位 1 shard → 查询（P99 < 5ms）"
+    by_agent: "hash(agent_did) % 16 → 定位 1 shard（P99 < 5ms）"
+    by_file_path: "并行 16 片 SQLite（P99 < 50ms）"
+    by_time_range: "并行 16 片（P99 < 500ms，周检）"
+    trail_for_ai_context: "hash(session_id) % 16 → 单 shard（P99 < 10ms）"
+```
+
+### §V5 脚本执行审计事件模型
+
+```python
+class AuditEventTypeV2(str, Enum):
+    # ... (保留 v1.1.0 全部 31 种) ...
+    SCAN_TRIGGERED = "scan_triggered"
+    SCAN_COMPLETED = "scan_completed"
+    SCAN_FAILED = "scan_failed"
+    SCRIPT_EXECUTION_STARTED = "script_execution_started"
+    SCRIPT_EXECUTION_COMPLETED = "script_execution_completed"
+    SCRIPT_EXECUTION_FAILED = "script_execution_failed"
+    SCRIPT_EXECUTION_TIMEOUT = "script_execution_timeout"
+    SCRIPT_FINDING = "script_finding"
+    SCRIPT_REGISTERED = "script_registered"
+    SCRIPT_RETIRED = "script_retired"
+    SCRIPT_THRESHOLD_CHANGED = "script_threshold_changed"
+    MODULE_SCRIPT_MAPPING_CHANGED = "module_script_mapping_changed"
+    INCREMENTAL_SCRIPT_SELECTION = "incremental_script_selection"
+```
+
+审计记录粒度决策（D-020-57）：脚本执行级 1 条/脚本 + 扫描级 2 条/扫描 + Finding 级仅 P0/P1 入审计。单次增量扫描 ≤ 60 条。
+
+### §V6 扫描调度审计集成
+
+```yaml
+v2_script_system_integration:
+  audit_hooks:
+    on_scan_triggered: {timing: "同步——阻断式", event: "SCAN_TRIGGERED"}
+    on_script_started: {timing: "异步——fire-and-forget", event: "SCRIPT_EXECUTION_STARTED"}
+    on_script_completed: {timing: "异步", event: "SCRIPT_EXECUTION_COMPLETED/FAILED/TIMEOUT"}
+    on_finding: {timing: "异步", event: "SCRIPT_FINDING", filter: "仅 P0/P1"}
+    on_scan_completed: {timing: "同步", event: "SCAN_COMPLETED"}
+  dependency_direction: "Script System → Audit Trail（单向依赖）"
+```
+
+### §V7 Lamport 时钟三元组
+
+```python
+class LamportClockV2:
+    def __init__(self, ide_source: str, session_id: str) -> None:
+        self._ide = ide_source
+        self._session_id = session_id
+        self._counter = 0
+    def tick(self) -> tuple[str, str, int]:
+        self._counter += 1
+        return (self._ide, self._session_id, self._counter)
+```
+
+增量扫描去抖：同 session 500ms 内多次变更合并为一次扫描。
+
+### §V8 自监控容量升级
+
+新增指标：shard_write_latency_p99_ms / shard_buffer_depth / shard_jsonl_file_size_mb / script_execution_audit_coverage / scan_audit_latency_p99_ms / cross_shard_query_latency_p99_ms / global_index_staleness_seconds。
+
+### §V9 存储容量预估
+
+| 维度 | 日增量 | 月增量 |
+|------|:------:|:------:|
+| JSONL 原始 | ~150 MB | ~4.5 GB |
+| SQLite 索引 | ~30 MB | ~0.9 GB |
+| Merkle 文件 | ~2 MB | ~60 MB |
+| CoT 文件 | ~50 MB | ~1.5 GB |
+| **总计** | **~232 MB** | **~7.5 GB** |
+
+热存储 7d（16 shard）≈ 16.8 GB NVMe。3 年冷归档 ≈ 75 GB 压缩后。1TB NVMe 完全够用。
+
+### 升级对现有文件的影响
+
+| 现有文件 | v2.0.0 变更 |
+|---------|-----------|
+| `models.py` | ✅ 新增 AuditEntryV2 (3 字段) + 7 个脚本审计模型 + 15 种新事件类型 |
+| `writer.py` | 🔄 重写为 ShardedAuditWriter（16 shard + 内存缓冲 + async flush），原单文件写入器保留为 fallback |
+| `query.py` | 🔄 新增 ShardedQueryRouter |
+| `integrity.py` | 🔄 新增 per_shard + cross_shard Merkle 验证 |
+| `anomaly.py` | ✅ 新增 ANM-017 (脚本执行覆盖率异常) |
+| `self_monitor.py` | 🔄 新增 per_shard + per_agent_session heartbeat + 6 个新指标 |
+| `cli.py` | ✅ 新增 `zephyr audit scan-trail <scan_id>` 命令 |
+| 新增 `shard_writer.py` | 🆕 单 shard 写入 + JSONL + 哈希链 + SQLite 索引 |
+| 新增 `global_index.py` | 🆕 全局路由索引 |
+| 新增 `script_audit_hook.py` | 🆕 Script System 集成钩子 |
+| 新增 `query_router.py` | 🆕 跨 shard 并行查询 |
+| 新增 `cross_shard_merkle.py` | 🆕 跨分片 Merkle 根聚合 |
+
+---
+
+## §18 决策记录
+
+> **时态属性**：决策记录属于**永久时态**——AI 修改设计时必读。没有它，AI 会重复犯已排除的错误。
+> 本节同时覆盖原 §7 备选方案——"选项"列已包含备选方案信息，无需独立章节。
+> 本节同时覆盖原 §15 后果——负面后果合并到 §14 风险，正面后果与 §1 目标重复无需独立记录。
+
+| 决策 ID | 决策 | 日期 | 依据 |
+|---------|------|------|------|
 | D-020-01 | 两层审计粒度（任务级摘要+文件级明细） | 2026-05-05 | 1人场景，任务级摘要够日常浏览，文件级明细够问题定位 |
 | D-020-02 | JSONL 为唯一真源，SQLite 为派生查询索引 | 2026-05-05 | 多 IDE 并发，JSONL 天然 append-only 且 git 友好；对标 GOV-CMP-002 |
 | D-020-03 | Provenance 按权限级别分级（轻量/标准/全量） | 2026-05-05 | 1人+AI场景，99%操作无草稿和仲裁，强制三件套形同虚设 |
@@ -1407,26 +1481,202 @@ class KBAuditGate:
 
 ---
 
-## 变更记录
+## ⚠️ Vibe Coding 蓝图编写铁律
 
-| 日期 | 版本 | 变更内容 |
-|------|------|---------|
-| 2026-05-05 | 1.4.0 | **🔮 blueprint v1.4.0——从"法医实验室 + 免疫系统 + 公证处 + 安全边界 + 取证科学"升级为"法医实验室 + 免疫系统 + 公证处 + 安全边界 + 取证科学 + 元认知"。** generation 6→7。终极审查维度——外部取证专家视角发现最后 7 个盲点 (B93-B99)：(1) 审计系统自身代码变更审计 (2) 自然语言标准化 (3) AI 模型供应商独立性 (4) 观测者效应承认 (5) Goodhart 定律防御—指标博弈 ANM-018 (6) 启动期审计盲区 (7) "谁审计审计者？"无限递归—承认逻辑极限。风险 42。决策 52→57。盲点 92→99。至此——**重大盲点已穷尽。** 以下为 99 盲点未覆盖的"已知不可解"问题的显式声明。 |
-| 2026-05-05 | 1.3.0 | **🔬 blueprint v1.3.0——+取证科学。** generation 5→6。四个新维度：取证科学 + 对抗性AI + 长期存档 + 运维心理学 → 16 盲点 (B77-B92)。新 §2.16 Genesis 信任锚初始化。 |
-| 2026-05-05 | 1.2.0 | **🛡️ blueprint v1.2.0——+安全边界。** 22 盲点 (B55-B76)：Prompt 注入防护 + 确定性重放 + Vibe Drift + AI 幻觉 + 加密 + GDPR。新 §2.14-2.15。 |
-| 2026-05-05 | 1.1.0 | **🔄 blueprint v1.1.0——+公证处。** Agent Ed25519 + CoT + 委托链 + 信任分数 + 外部验证 + 跨IDE + 证据包 + 合规映射 + 供应链。 |
-| 2026-05-05 | 1.0.0 | **🎉 blueprint v1.0.0——法医实验室 + 免疫系统。** 全文重构。 |
-| 2026-05-05 | 0.2.0 | D-020-01~03——两层粒度 + JSONL SSoT + 分级 Provenance |
-| 2026-05-05 | 0.1.0 | 初始创建 |
+> **时态属性**：本节属于**施工声明**——AI 进入蓝图修改/施工时必读。不可改为链接引用——AI 不会主动跳转链接读取，删掉 = 失去防漂移防线。**永久保留**。
 
+| # | 铁律 | 违反后果 |
+|---|------|---------|
+| 1 | **所有路径必须是绝对路径**（含盘符 `D:\`） | 路径错误 |
+| 2 | **必备链接不可省略** | 信息缺失 |
+| 3 | **蓝图必须是最终设计结果**——不记录决策过程 | 信息淹没 |
+| 4 | **产出物路径必须与 GOV-DOC-002 一致** | 路径幻觉 |
+| 5 | **涉及文件范围必须明确列出** | 范围漂移 |
+| 6 | **容量估算必须写** | 容量瓶颈 |
+| 7 | **迁移/废弃方案必须写** | 断链/垃圾积累 |
+| 8 | **"待定"/"建议"/"按需"等模糊词禁止** | 执行漂移 |
+| 9 | **蓝图必须自包含** | 信息缺失 |
+| 10 | **删除文件必须遵守安全删除协议** | 永久丢失 |
+| 11 | **construction_progress 必须与代码实际状态一致** | 虚假进度 |
+| 12 | **actual_disk_path 必须与 §11 产出物路径一致** | 搜索失败 |
+| 13 | **已实现代码不在蓝图中重复**——§0.1 标记`已实现`的模块，蓝图只保留接口签名（§4），不复制实现代码 | 双源漂移 |
+| 14 | **临时时态内容执行完毕后从蓝图删除**——迁移方案、升级执行计划等临时时态内容，一旦执行完毕即成为历史，从蓝图删除。蓝图只保留永久时态内容（架构/接口/约束/当前状态） | 信息淹没 |
+| 15 | **蓝图内容拆分判定**——职责不同→拆分独立蓝图；职责相同→原地升级。判定标准见"蓝图拆分判定标准" | 职责不清 |
 
 ---
 
-## 施工落盘确认（2026-05-07 审计）
-| 维度 | 状态 |
-|------|------|
-| construction_progress | phase_1_scaffold_partial（核心写入+完整性验证可用，异常检测/漂移对账/Merkle树待施工） |
-| 源码路径 | `src/zephyr/audit_trail/` |
-| 源码文件数 | 9 个 .py/.yaml |
-| 测试路径 | `tests/unit/ + tests/infrastructure/` |
-| 关键入口 | `audit_trail.trail.AuditTrail (不可变审计+密码学Provenance)` |
+## 蓝图拆分判定标准
+
+> 铁律 #15 的操作定义——当蓝图内容超过 ~800 行或包含多个独立职责域时，MUST 执行拆分判定。
+
+### 判定流程
+
+| STEP | 判定 | 条件 | 操作 |
+|------|------|------|------|
+| 1 | 识别职责域 | 服务对象、变更频率、依赖关系是否与蓝图主体一致？ | — |
+| 2a | 职责相同→原地升级 | 服务对象相同 + 变更频率同步 + 依赖关系重叠 | §17 容量升级附录增量记录 |
+| 2b | 职责不同→拆分独立蓝图 | 满足任一：(a)独立module_id前缀 (b)独立Phase路线图 (c)独立依赖图(交集<50%) (d)内容>100行且无直接数据流 | 创建子蓝图；本蓝图§10引用子蓝图 |
+| 3 | 拆分后验证 | — | 子蓝图MUST有独立frontmatter+概述+§0~§18；belongs_to=本蓝图module_id；本蓝图§10新增子蓝图引用；blueprint-registry.yaml同步更新 |
+
+### 判定示例
+
+| 场景 | 判定 | 理由 |
+|------|------|------|
+| 本蓝图 §17 容量升级（分片写入+分区链+脚本审计） | **原地** | 服务对象相同 + 变更频率同步 + 依赖关系完全重叠 |
+| 本蓝图 §3 蓝图特有：Genesis 信任锚初始化 | **原地** | Genesis 是审计链的组成部分，不是独立子系统 |
+| 假设新增"审计可视化仪表盘"模块 | **拆分** | 独立 UI 模块 + 独立依赖（前端框架）+ 与审计核心无直接数据流 |
+
+---
+
+## ⚠️ 安全删除协议
+
+> **时态属性**：本节属于**施工声明**——AI 施工涉及删除时必读。**永久保留**。
+
+### 蓝图中的删除决策清单
+
+| # | 待删除/废弃文件 | 完整绝对路径 | 删除类型 | 安全删除方案 |
+|---|---------------|------------|---------|------------|
+| 1 | governance/ 根级 13 孤儿文件 | `D:\ZephyrAlpha\src\zephyr\governance\*.py` | 迁移型 | 迁移至 audit_trail/ + 桥接导入 + 验证 → 标记 deprecated → Phase 4 物理删除 |
+
+### 删除铁律
+
+| # | 铁律 | 原因 |
+|---|------|------|
+| 1 | 禁止蓝图阶段物理删除任何文件 | 蓝图只做决策，不做执行 |
+| 2 | 迁移型删除必须逐条迁移、逐条验证 | 批量迁移容易遗漏 |
+| 3 | 物理删除只能在 stable 搬入阶段执行 | deprecated 至少保持 1 个 Phase |
+| 4 | 物理删除必须人类确认 | AI 不得自行决定删除文件 |
+
+---
+
+## 必备链接
+
+> **时态属性**：本节属于**施工声明**——AI 进入蓝图时必读。不可改为链接引用——AI 不会主动跳转链接读取，删掉 = 失去上下文防线。**永久保留**。
+
+| # | 文件 | module_id | 完整绝对路径 | 编写时用途 |
+|---|------|-----------|------------|----------|
+| 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则、doc_type词表、frontmatter模板 |
+| 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\directory-structure-standard.md` | 路径映射、边界判据 |
+| 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` | MTH-012 涌现式设计 + MTH-013 路径合规创建 |
+| 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\file-naming-standard.md` | 命名规则 |
+| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | 编号注册 |
+| 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
+| 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index.yaml` | 现有规则索引 |
+| 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md` | AI 操作权限 |
+
+---
+
+## 项目中已有类似功能
+
+| # | 已有模块/文件 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
+|---|-------------|------------|----------|-------------|
+| 1 | AiAuditLogger (shared) | `D:\ZephyrAlpha\src\zephyr\shared\production\audit_logger.py` | 审计日志写入 | shared 版为基础实现；本蓝图定义哈希链+HMAC+Ed25519+Merkle 增强需求 |
+| 2 | blueprint_reads.jsonl | `D:\ZephyrAlpha\data\audit\blueprint_reads.jsonl` | 蓝图读取日志 | 仅记录蓝图读取，非全量审计；本蓝图替代并扩展 |
+
+---
+
+## 涉及的文件范围
+
+| # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
+|---|---------|------------|------|---------|
+| 1 | audit_trail/ 代码目录 | `D:\ZephyrAlpha\src\zephyr\audit_trail\` | 修改 | v2.0 分片写入升级 |
+| 2 | 审计数据目录 | `D:\ZephyrAlpha\data\audit\` | 修改 | 分片存储结构 |
+| 3 | 推理链数据目录 | `D:\ZephyrAlpha\data\reasoning\` | 读取 | CoT 审计引用 |
+| 4 | 外部验证脚本 | `D:\ZephyrAlpha\scripts\governance\verify_audit_integrity.py` | 修改 | 支持分片验证 |
+| 5 | 索引重建脚本 | `D:\ZephyrAlpha\scripts\governance\rebuild_audit_index.py` | 修改 | 支持分片索引重建 |
+| 6 | governance/ 根级 13 文件 | `D:\ZephyrAlpha\src\zephyr\governance\` | 迁移 | 迁移至 audit_trail/ |
+| 7 | .gitignore | `D:\ZephyrAlpha\.gitignore` | 修改 | 添加 data/audit/ |
+
+---
+
+## 治理信息
+
+### SSoT 声明
+
+| 内容 | 真源 | 非真源 |
+|------|------|--------|
+| 审计追踪链架构设计 | **本文档 §1-§10** | 已废弃的 v1.4.0 蓝图 |
+| 审计模块施工步骤 | **本文档 §16** | — |
+| 审计接口契约 | **本文档 §4** | — |
+| 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
+| 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
+
+**任何与本蓝图冲突的定义，以本蓝图为准。**
+
+### 消费者注册表
+
+| Tier | 消费者 | 依赖内容 |
+|:----:|--------|---------|
+| Tier 1 | MOD-INF-018 Agent RBAC 蓝图 | §4 接口契约(G-CT-001) |
+| Tier 1 | MOD-INF-021 Rollback 蓝图 | §4 接口契约(G-CT-002) |
+| Tier 1 | MOD-INF-019 Agent Spec 蓝图 | §4 接口契约(G-CT-007) |
+| Tier 2 | verify_audit_integrity.py | §4 数据模型+§11 产出物路径 |
+| Tier 2 | rebuild_audit_index.py | §4 数据模型+§11 产出物路径 |
+| Tier 3 | src/zephyr/audit_trail/*.py | §4 数据模型 |
+
+### 变更审批与同步规则
+
+| 变更类型 | 审批要求 | Tier 1 同步 | Tier 2 同步 |
+|---------|---------|-----------|-----------|
+| 接口契约新增/修改(§4) | 需 Owner 审批+通知消费者 | 下游检查接口兼容性 | 检查集成点兼容性 |
+| 模块边界修改(§2) | 需 Owner 审批 | 下游更新依赖声明 | 更新集成路由 |
+| construction_progress 变更 | 需 §0 对齐验证通过 | 下游更新依赖状态 | 更新集成测试 |
+| 施工步骤微调 | AI 可自主修改 | 下游更新产出物引用 | 更新配置文件 |
+| 非关键补充 | AI 可自主修改 | — | — |
+| 容量升级方案新增(§17) | 需 Owner 审批 | 下游评估影响 | 更新容量预算 |
+
+---
+
+## 变更记录
+
+> 变更历史见 `git log -- docs/03_modules/l01_infrastructure/audit-trail/blueprint.md`
+
+## 术语表
+
+| 术语 | 精确定义 | 易混淆术语 | 区别 |
+|------|---------|-----------|------|
+| JSONL SSoT | 审计日志唯一真源——JSONL append-only 文件 | SQLite 索引 | SQLite 是派生索引，可从 JSONL 重建 |
+| 哈希链 | 每条审计条目包含前一条 SHA-256 的链式结构 | Merkle 树 | 哈希链=条目级串行，Merkle=批量并行 |
+| HMAC 签名 | 系统级对称签名——证明"系统写入了这条" | Ed25519 签名 | HMAC=系统级对称，Ed25519=Agent级非对称 |
+| Provenance | 操作溯源深度——LIGHT/STANDARD/FULL 三级 | 权限级别 | 权限决定 Provenance 深度，但两者不等价 |
+| Lamport 时钟 | 逻辑时钟——解决多 IDE 时序问题 | 物理时钟 | datetime.now() 在多 IDE 间不可靠 |
+| Genesis 条目 | 审计链第一条——prev_entry_hash='genesis' | 普通条目 | Genesis 由 Owner 手动创建，不可由 AI 创建 |
+| DID | 去中心化身份标识——did:zephyr:{sha256(pubkey)[:16]} | agent_id | agent_id 是逻辑标识，DID 绑定 Ed25519 公钥 |
+| 三角闭环 | Policy→Factory→Runtime→反馈回写 Policy 的闭环 | 单向反馈 | 闭环=反馈驱动规则演进，非仅告警 |
+
+## 自检与闭合清单
+
+| # | 阶段 | 检查项 | 确认方式 | 状态 |
+|---|:----:|--------|---------|:----:|
+| 1 | 设计 | §3 每个组件在 §4 有对应接口 | 逐组件核对 | ☐ |
+| 2 | 设计 | §4 每个接口在 §16 有对应施工步骤 | 逐接口核对 | ☐ |
+| 3 | 设计 | §5 每个约束在 §9 有对应测试 | 逐约束核对 | ☐ |
+| 4 | 设计 | §0.1 每个代码文件在 §11 有对应产出物路径 | 逐文件核对 | ☐ |
+| 5 | 设计 | §10 每个依赖在 cross-module-dependency-registry.yaml 有对应条目 | 逐依赖核对 | ☐ |
+| 6 | 前 | 已读取蓝图全文 | 逐节确认 | ☐ |
+| 7 | 前 | 术语表中每个术语含义已理解 | 能回答区别 | ☐ |
+| 8 | 前 | 成熟度声明中 volatile/evolving 的部分已标记 | 知道哪些可改 | ☐ |
+| 9 | 前 | 已知问题登记中未解决的问题已知晓 | 知道哪些坑不能踩 | ☐ |
+| 10 | 中 | 每步施工后执行验证命令 | exit 0 才进下一步 | ☐ |
+| 11 | 中 | 新代码文件头部十字段完整 | 逐文件核对 | ☐ |
+| 12 | 中 | 修改接口契约后检查 §18 决策记录 | 决策ID+依据已更新 | ☐ |
+| 13 | 后 | §0 代码对齐验证已更新 | construction_progress 与实际一致 | ☐ |
+| 14 | 后 | 临时时态内容已清理 | 迁移方案已执行→删除 | ☐ |
+
+## 成熟度声明
+
+| 设计维度 | 成熟度 | 信心 | 升级标准 | 说明 |
+|---------|:------:|:---:|---------|------|
+| 核心架构 | stable | 高 | 全部 v2.0 组件实现+性能基准通过 | 基线架构已验证，分片架构待施工 |
+| 接口契约 | stable | 高 | AuditEntryV2 实现后冻结 | V1 接口已稳定 |
+| 数据模型 | evolving | 中 | AuditEntryV2 + 15 种新事件类型实现后升级 | V2 字段待添加 |
+| 施工步骤 | evolving | 中 | 步骤 1-4 全部完成 | 步骤 1 待施工 |
+
+## 版本演进路线图
+
+| 版本 | 核心变更 | 前置版本 | 施工状态 |
+|------|---------|---------|:-------:|
+| v0.2.0 | 初始设计 | — | 已完成 |
+| v1.4.0 | 35 文件基线实现 | v0.2.0 | 已完成 |
+| v2.0.0 | 分片写入+分区链+脚本审计+Lamport V2 | v1.4.0 | 待施工 |
+| v2.1.0 | 模板合规+压缩 | v2.0.0 | 施工中 |

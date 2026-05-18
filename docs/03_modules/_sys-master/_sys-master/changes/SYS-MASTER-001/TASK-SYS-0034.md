@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0034"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§54 AI代码审查深度模型 + §67 AI自诊断-自修复与知识自动化 + §71 Prompt工程全生命周期管理 + §72 AI上下文窗口策略与幻觉防御 + §73 多模型共识与智能体辩论协议 + §74 AI代码生成标准与项目脚手架"
@@ -98,4 +99,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---

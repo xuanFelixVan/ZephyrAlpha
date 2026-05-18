@@ -1,4 +1,5 @@
 ---
+
 task_id: "TASK-SYS-0025"
 source_blueprint: "SYS-MASTER-001"
 source_section: "§35 第三方依赖管理 + §38 SPOF消除 + §39 WQA氛围编程质量保障"
@@ -85,4 +86,5 @@ audit_findings: []
 ke_entries: []
 ai_autonomy_level: "supervised"
 autonomy_checklist: []
+blueprint_id: DOM-GOV-001
 ---
