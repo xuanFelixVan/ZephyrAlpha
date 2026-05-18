@@ -1,8 +1,10 @@
-# ZephyrAlpha v2.0
+# ZephyrAlpha v0.14.0
 
-> 专业级量化交易系统 — 第二代架构
+> 专业级量化交易系统
 
-发行版与 Python 包版本以 `pyproject.toml` 的 `version` 为准（当前 2.0.0）。根目录 [AGENTS.md](AGENTS.md) 顶部的 **v4.x** 为**治理与 AI 基准文档**的独立版本号，二者语义不同，请勿混为同一套 semver。
+发行版版本以 `pyproject.toml` 为准（当前 0.14.0）。
+
+> **AI 入群规则入口**: [`.trae/rules/project_rules.md`](.trae/rules/project_rules.md)（IDE 自动注入，87 行，全读完再开工）
 
 ## 项目结构
 
@@ -41,7 +43,7 @@ python demo_e2e_pipeline.py
 |------|------|
 | 目录结构标准 | [directory-structure-standard.md](docs/01_policies_and_standards/governance/document/directory-structure-standard.md) |
 | 文档与规则元数据（SSoT） | [document-metadata-index.yaml](docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml) |
-| 登记表总索引 | [registry-master-index.yaml](docs/01_policies_and_standards/_registry/catalogs/registry-master-index.yaml) |
+| 登记表总索引 | [registry-of-registries.yaml](docs/registry-of-registries.yaml) |
 | 架构概览 | [00-overview.md](docs/02_enterprise_architecture/target-architecture/00-overview.md) |
 | ADR 索引 | 已迁入 KB decisions namespace（SQLite knowledge 表） |
 | 知识库 | [08_knowledge/](docs/08_knowledge/) |

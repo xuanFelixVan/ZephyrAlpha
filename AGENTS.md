@@ -1,6 +1,8 @@
 # ZephyrAlpha — AI Agent 接入宪法
 
-> 任何 AI 进入本项目，**首先读取此文件**。
+> **硬规则入口**: [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md)（IDE 自动注入，50 行以内全读完再开工）
+> **施工指导**: [`.trae/rules/onboarding_detail.md`](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)（详细规则/冷启动序列/方法论索引）
+> **内部 Agent 系统**: [`src/zephyr/agent_spec/AGENTS.md`](file:///d:/ZephyrAlpha/src/zephyr/agent_spec/AGENTS.md)（L0/L1/L2/L3 渐进披露，Pipeline 自动注入，非 IDE AI 使用）
 
 ## 1. 项目概述
 
@@ -28,30 +30,21 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 from zephyr.runtime.capability_registry import CapabilityRegistry
 registry = CapabilityRegistry()
 all_capabilities = registry.list_all()
-# 按 tag 搜索
 inference_caps = registry.find_by_tags(["inference", "text"])
-# 发现 A2A 协调能力
 a2a_caps = registry.find_by_tags(["a2a", "coordination"])
 ```
 
 ### 4.1 Agent 间通信（A2A Protocol）
 
-当你需要与其他 Agent 协作、交接任务、或解决冲突时，使用 A2A Protocol：
-
 ```python
-# 发现可用 Agent
 from zephyr.l01_infrastructure.a2a_protocol import card_registry
 agents = card_registry.discover(capability="write")
 
-# 发送跨 Agent 消息
 from zephyr.l01_infrastructure.a2a_protocol.layer2_communication.a2a_schemas import A2AMessage, A2AMessagePart, PartType
 msg = A2AMessage(from_agent="your-id", to_agent="target-id", task_id="t-1")
 
-# 冲突检测与仲裁
 from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.conflict_detector import ConflictDetector, ChangeSet
 from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.arbitrator import Arbitrator, AgentMeta, AgentRole
-
-# 触发关键词: a2a, agent-to-agent, 冲突, 协调, 冲突解决, 多agent
 ```
 
 ## 5. 三层 AI 工作分配
@@ -74,8 +67,14 @@ from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.arbitrator impor
 - Python 3.11+, ruff lint, pydantic v2
 - 所有新组件**必须**注册 CapabilityCard 到 CapabilityRegistry
 - 所有 AI 行为**必须**写入 AiAuditLogger
+- 详细编码约束见 [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md)（四条铁律 + 写代码三条）和 [`code-construction-standards.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)（GOV-ENG-001）
+- 治理决策方法论见 [`governance-methodology-standard.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/meta/governance-methodology-standard.md)（PS-STD-011）——含MTH-006诊断反转验证：深挖后MUST回溯初始诊断，不一致时追问"为什么初始诊断错了？"
+- 审计脚本质量见 [`quality-standard.md`](file:///d:/ZephyrAlpha/scripts/governance/quality-standard.md)（SCRIPT-QUALITY-001）
+- 产出物规格化见 [`compression-workflow-standard.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/compression-workflow-standard.md)（GOV-DOC-011）
 
 ## 8. 永远不要做的事
+
+> 完整禁止清单见 [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md) 四条铁律。此处仅列项目宪法级禁令：
 
 - 不要删除 `data/` 下的任何文件
 - 不要跳过 `CapabilityRegistry.register()`
