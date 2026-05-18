@@ -1,0 +1,110 @@
+{"ts": "2026-05-18T10:16:34.216318+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "telemetry.bootstrap", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T10:16:34.220867+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "session.start", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T10:16:34.226441+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "session.restore_elapsed_ms", "value": 5.573511123657227, "tags": {}}
+{"ts": "2026-05-18T10:16:59.344992+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "phase.PHASE_0_SKELETON.elapsed_ms", "value": 25117.03062057495, "tags": {}}
+{"ts": "2026-05-18T10:16:59.345995+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "phase.PHASE_0_SKELETON.complete", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T10:16:59.346497+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "blueprint.read", "value": 1.0, "tags": {"blueprint_id": "MOD-INF-015"}}
+{"ts": "2026-05-18T11:35:30.487608+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "telemetry.bootstrap", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:30.490629+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "session.start", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:30.494170+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "session.restore_elapsed_ms", "value": 3.540515899658203, "tags": {}}
+{"ts": "2026-05-18T11:35:54.894836+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "phase.PHASE_0_SKELETON.elapsed_ms", "value": 24399.12486076355, "tags": {}}
+{"ts": "2026-05-18T11:35:54.894836+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "phase.PHASE_0_SKELETON.complete", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:54.896346+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "blueprint.read", "value": 1.0, "tags": {"blueprint_id": "MOD-INF-015"}}
+{"ts": "2026-05-18T11:35:30.487608+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "telemetry.bootstrap", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:30.490629+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "session.start", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:30.494170+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "session.restore_elapsed_ms", "value": 3.540515899658203, "tags": {}}
+{"ts": "2026-05-18T11:35:54.894836+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "phase.PHASE_0_SKELETON.elapsed_ms", "value": 24399.12486076355, "tags": {}}
+{"ts": "2026-05-18T11:35:54.894836+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "phase.PHASE_0_SKELETON.complete", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:54.896346+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "blueprint.read", "value": 1.0, "tags": {"blueprint_id": "MOD-INF-015"}}
+{"ts": "2026-05-18T11:35:30.487608+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "telemetry.bootstrap", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:30.490629+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "session.start", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:30.494170+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "session.restore_elapsed_ms", "value": 3.540515899658203, "tags": {}}
+{"ts": "2026-05-18T11:35:54.894836+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "phase.PHASE_0_SKELETON.elapsed_ms", "value": 24399.12486076355, "tags": {}}
+{"ts": "2026-05-18T11:35:54.894836+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "phase.PHASE_0_SKELETON.complete", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:54.896346+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "blueprint.read", "value": 1.0, "tags": {"blueprint_id": "MOD-INF-015"}}
+{"ts": "2026-05-18T11:35:30.487608+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "telemetry.bootstrap", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:30.490629+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "session.start", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:30.494170+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "session.restore_elapsed_ms", "value": 3.540515899658203, "tags": {}}
+{"ts": "2026-05-18T11:35:54.894836+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "phase.PHASE_0_SKELETON.elapsed_ms", "value": 24399.12486076355, "tags": {}}
+{"ts": "2026-05-18T11:35:54.894836+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "phase.PHASE_0_SKELETON.complete", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:54.896346+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "blueprint.read", "value": 1.0, "tags": {"blueprint_id": "MOD-INF-015"}}
+{"ts": "2026-05-18T11:35:30.487608+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "telemetry.bootstrap", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:30.490629+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "session.start", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:30.494170+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "session.restore_elapsed_ms", "value": 3.540515899658203, "tags": {}}
+{"ts": "2026-05-18T11:35:54.894836+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "phase.PHASE_0_SKELETON.elapsed_ms", "value": 24399.12486076355, "tags": {}}
+{"ts": "2026-05-18T11:35:54.894836+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "phase.PHASE_0_SKELETON.complete", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:54.896346+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "blueprint.read", "value": 1.0, "tags": {"blueprint_id": "MOD-INF-015"}}
+{"ts": "2026-05-18T11:35:30.487608+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "telemetry.bootstrap", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:30.490629+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "session.start", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:30.494170+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "session.restore_elapsed_ms", "value": 3.540515899658203, "tags": {}}
+{"ts": "2026-05-18T11:35:54.894836+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "phase.PHASE_0_SKELETON.elapsed_ms", "value": 24399.12486076355, "tags": {}}
+{"ts": "2026-05-18T11:35:54.894836+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "phase.PHASE_0_SKELETON.complete", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:35:54.896346+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "blueprint.read", "value": 1.0, "tags": {"blueprint_id": "MOD-INF-015"}}
+{"ts": "2026-05-18T11:37:53.194215+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "telemetry.bootstrap", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:37:53.197227+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "session.start", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:37:53.199746+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "session.restore_elapsed_ms", "value": 2.518892288208008, "tags": {}}
+{"ts": "2026-05-18T11:38:17.545605+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "phase.PHASE_0_SKELETON.elapsed_ms", "value": 24345.3528881073, "tags": {}}
+{"ts": "2026-05-18T11:38:17.545605+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "phase.PHASE_0_SKELETON.complete", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:38:17.546109+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "blueprint.read", "value": 1.0, "tags": {"blueprint_id": "MOD-INF-015"}}
+{"ts": "2026-05-18T11:37:53.194215+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "telemetry.bootstrap", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:37:53.197227+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "session.start", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:37:53.199746+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "session.restore_elapsed_ms", "value": 2.518892288208008, "tags": {}}
+{"ts": "2026-05-18T11:38:17.545605+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "phase.PHASE_0_SKELETON.elapsed_ms", "value": 24345.3528881073, "tags": {}}
+{"ts": "2026-05-18T11:38:17.545605+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "phase.PHASE_0_SKELETON.complete", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:38:17.546109+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "blueprint.read", "value": 1.0, "tags": {"blueprint_id": "MOD-INF-015"}}
+{"ts": "2026-05-18T11:37:53.194215+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "telemetry.bootstrap", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:37:53.197227+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "session.start", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:37:53.199746+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "session.restore_elapsed_ms", "value": 2.518892288208008, "tags": {}}
+{"ts": "2026-05-18T11:38:17.545605+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "phase.PHASE_0_SKELETON.elapsed_ms", "value": 24345.3528881073, "tags": {}}
+{"ts": "2026-05-18T11:38:17.545605+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "phase.PHASE_0_SKELETON.complete", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:38:17.546109+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "blueprint.read", "value": 1.0, "tags": {"blueprint_id": "MOD-INF-015"}}
+{"ts": "2026-05-18T11:37:53.194215+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "telemetry.bootstrap", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:37:53.197227+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "session.start", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:37:53.199746+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "session.restore_elapsed_ms", "value": 2.518892288208008, "tags": {}}
+{"ts": "2026-05-18T11:38:17.545605+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "phase.PHASE_0_SKELETON.elapsed_ms", "value": 24345.3528881073, "tags": {}}
+{"ts": "2026-05-18T11:38:17.545605+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "phase.PHASE_0_SKELETON.complete", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:38:17.546109+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "blueprint.read", "value": 1.0, "tags": {"blueprint_id": "MOD-INF-015"}}
+{"ts": "2026-05-18T11:37:53.194215+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "telemetry.bootstrap", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:37:53.197227+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "session.start", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:37:53.199746+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "session.restore_elapsed_ms", "value": 2.518892288208008, "tags": {}}
+{"ts": "2026-05-18T11:38:17.545605+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "phase.PHASE_0_SKELETON.elapsed_ms", "value": 24345.3528881073, "tags": {}}
+{"ts": "2026-05-18T11:38:17.545605+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "phase.PHASE_0_SKELETON.complete", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:38:17.546109+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "blueprint.read", "value": 1.0, "tags": {"blueprint_id": "MOD-INF-015"}}
+{"ts": "2026-05-18T11:37:53.194215+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "telemetry.bootstrap", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:37:53.197227+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "session.start", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:37:53.199746+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "session.restore_elapsed_ms", "value": 2.518892288208008, "tags": {}}
+{"ts": "2026-05-18T11:38:17.545605+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "phase.PHASE_0_SKELETON.elapsed_ms", "value": 24345.3528881073, "tags": {}}
+{"ts": "2026-05-18T11:38:17.545605+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "phase.PHASE_0_SKELETON.complete", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T11:38:17.546109+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "blueprint.read", "value": 1.0, "tags": {"blueprint_id": "MOD-INF-015"}}
+{"ts": "2026-05-18T13:16:25.454796+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "telemetry.bootstrap", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T13:16:25.454796+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.tokens_consumed", "value": 990000.0, "tags": {}}
+{"ts": "2026-05-18T13:16:25.454796+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.cost_usd", "value": 0.0, "tags": {}}
+{"ts": "2026-05-18T13:16:25.457310+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-COST-001.tokens_consumed", "value": 0.0, "tags": {}}
+{"ts": "2026-05-18T13:16:25.457310+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-COST-001.cost_usd", "value": 48.0, "tags": {}}
+{"ts": "2026-05-18T13:16:25.465882+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.tokens_consumed", "value": 500.0, "tags": {}}
+{"ts": "2026-05-18T13:16:25.465882+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.cost_usd", "value": 0.0, "tags": {}}
+{"ts": "2026-05-18T13:16:25.467388+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-COST-001.tokens_consumed", "value": 0.0, "tags": {}}
+{"ts": "2026-05-18T13:16:25.467388+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-COST-001.cost_usd", "value": 1.5, "tags": {}}
+{"ts": "2026-05-18T13:16:25.467896+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TIME-001.tokens_consumed", "value": 0.0, "tags": {}}
+{"ts": "2026-05-18T13:16:25.467896+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TIME-001.cost_usd", "value": 0.0, "tags": {}}
+{"ts": "2026-05-18T13:16:25.468404+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.tokens_consumed", "value": 100.0, "tags": {}}
+{"ts": "2026-05-18T13:16:25.468404+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.cost_usd", "value": 0.0, "tags": {}}
+{"ts": "2026-05-18T13:16:25.468404+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.tokens_consumed", "value": 200.0, "tags": {}}
+{"ts": "2026-05-18T13:16:25.468404+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.cost_usd", "value": 0.0, "tags": {}}
+{"ts": "2026-05-18T13:16:25.479545+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.tokens_consumed", "value": 100.0, "tags": {}}
+{"ts": "2026-05-18T13:17:12.573758+00:00", "module_id": "zephyr_core", "kind": "counter", "name": "telemetry.bootstrap", "value": 1.0, "tags": {}}
+{"ts": "2026-05-18T13:17:12.573758+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.tokens_consumed", "value": 990000.0, "tags": {}}
+{"ts": "2026-05-18T13:17:12.573758+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.cost_usd", "value": 0.0, "tags": {}}
+{"ts": "2026-05-18T13:17:12.577871+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-COST-001.tokens_consumed", "value": 0.0, "tags": {}}
+{"ts": "2026-05-18T13:17:12.577871+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-COST-001.cost_usd", "value": 48.0, "tags": {}}
+{"ts": "2026-05-18T13:17:12.585934+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.tokens_consumed", "value": 500.0, "tags": {}}
+{"ts": "2026-05-18T13:17:12.585934+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.cost_usd", "value": 0.0, "tags": {}}
+{"ts": "2026-05-18T13:17:12.585934+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-COST-001.tokens_consumed", "value": 0.0, "tags": {}}
+{"ts": "2026-05-18T13:17:12.585934+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-COST-001.cost_usd", "value": 1.5, "tags": {}}
+{"ts": "2026-05-18T13:17:12.585934+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TIME-001.tokens_consumed", "value": 0.0, "tags": {}}
+{"ts": "2026-05-18T13:17:12.585934+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TIME-001.cost_usd", "value": 0.0, "tags": {}}
+{"ts": "2026-05-18T13:17:12.587441+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.tokens_consumed", "value": 100.0, "tags": {}}
+{"ts": "2026-05-18T13:17:12.587441+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.cost_usd", "value": 0.0, "tags": {}}
+{"ts": "2026-05-18T13:17:12.587441+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.tokens_consumed", "value": 200.0, "tags": {}}
+{"ts": "2026-05-18T13:17:12.587441+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.cost_usd", "value": 0.0, "tags": {}}
+{"ts": "2026-05-18T13:17:12.597108+00:00", "module_id": "zephyr_core", "kind": "gauge", "name": "budget.BP-TOKEN-001.tokens_consumed", "value": 100.0, "tags": {}}
