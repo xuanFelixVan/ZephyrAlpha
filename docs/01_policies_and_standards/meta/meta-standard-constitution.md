@@ -25,27 +25,13 @@ ai_autonomy: immutable_core
 
 # ZephyrAlpha 元标准宪法
 
-> **module_id**: PS-STD-000 | **version**: 2.0.2 | **status**: active
->
-> 本标准是 ZephyrAlpha 项目**最高层级的元规则**。
-> 它定义的不是"规则是什么"，而是"规则怎么分类"——
-> 什么规则有资格进入宪法，什么规则只能放在登记表。
->
-> **根因**：Vibe Coding 环境下，AI 是主要执行者和规则写入者。
-> 如果"什么进宪法"的标准是模糊的、有灰色地带的，
-> AI 在写入规则时会自行判断分类，导致宪法膨胀或关键规则遗漏。
-> 因此，分类标准必须是**绝对二元的**——不是 A 就是 B，没有中间态。
->
-> **对标**：
-> - Anthropic Constitutional AI（2026 版）：四原则宪法——genuinely helpful / broadly safe / **transparent** / broadly ethical。其中"transparent"映射到本项目的 DOC-001（SSoT 唯一）+ DOC-004（完整路径引用）
-> - ISO/IEC 42001：shall vs informative（可审核性）
-> - SOC 2：Criteria vs Points of Focus（法律可执行性）
-> - DO-178C/MIL-STD-882：shall vs should（安全后果严重性）
-> - Google eng-practices：Rules vs Guidance（自动化可执行性）
-> - Codified Context（arXiv 2602.20478，2026-02）：24 共同体首次系统化研究 AI Agent 宪法的三层记忆模型（热记忆/领域触发/冷记忆），108KLOC 实战验证，283 次 Session 后宪法收敛至 ~400 行上限
->
-> 8 家专业机构 + 1 篇社区学术论文的底层逻辑一致：**后果导向**。
-> 本标准将此逻辑提炼为最干净的二元标准：**后果不可逆性**。
+> PS-STD-000 | v2.0.2 | active | ZephyrAlpha 最高层级元规则
+
+本标准定义的不是"规则是什么"，而是"规则怎么分类"——什么规则有资格进入宪法，什么规则只能放在登记表。
+
+**铁律**：分类标准 MUST 绝对二元——不是 A 就是 B，没有中间态。否则 AI 在写入规则时自行判断分类 → 宪法膨胀或关键规则遗漏。
+
+**分类标准**：**后果不可逆性**——违反后后果不可逆 → 宪法层（ABS）；违反后后果可逆 → 登记表层（COND/REC/CODE）。
 
 ---
 
@@ -63,15 +49,13 @@ ai_autonomy: immutable_core
 
 > 注：本标准创建于 `../governance/document/document-control-policy.md`（GOV-DOC-009）DOC-004（完整路径引用）之前。§1 中的 module_id 引用和 §3 中的相对路径引用属于历史遗留格式，功能等价于完整路径引用。后续修订时统一更新。
 
-### 1.1 框架原则（COBIT 2019 对标）
+### 1.1 框架原则
 
-PS-STD-000 同时承载 COBIT 2019 定义的两层原则职责。不拆分为两个文件——宪法本身即同时定义"管什么"和"自身怎么管"。
-
-| # | 框架原则 | COBIT 2019 原文 | ZephyrAlpha 体现 |
-|---|---------|----------------|-----------------|
-| GF-001 | 基于概念模型 | governance framework should be based on a conceptual model | 后果不可逆性（§2）即本框架的概念模型 |
-| GF-002 | 开放灵活 | open and flexible | 领域层规则可扩展前缀编号（DOC / MTH / 未来），宪法层 ABS 编号池可通过 PS-STD-003 增补 |
-| GF-003 | 对齐主流标准 | aligned to major standards | 对标 Anthropic/ISO 42001/Kubernetes/NIST/SOC 2/Google/OWASP/DO-178C（§1）+ MTH-001 四步决策流程 |
+| # | 原则 | ZephyrAlpha 体现 |
+|---|------|-----------------|
+| GF-001 | 基于概念模型 | 后果不可逆性（§2）即本框架的概念模型 |
+| GF-002 | 开放灵活 | 领域层规则可扩展前缀编号，ABS 编号池可通过 PS-STD-003 增补 |
+| GF-003 | 对齐主流标准 | 对标 Anthropic/ISO 42001/Kubernetes/NIST/SOC 2/Google/OWASP/DO-178C |
 
 ---
 
@@ -151,50 +135,27 @@ PS-STD-000 同时承载 COBIT 2019 定义的两层原则职责。不拆分为两
 
 ### 3.3 层级关系与加载策略
 
-```
-PS-STD-000 元标准宪法（本文件）
-  │ 定义"什么进宪法、什么进登记表"
-  │ 加载策略：热记忆（Hot Memory，always loaded）
-  │
-  ├── PS-STD-003 行为边界标准（宪法内容）
-  │     ABS-XX 条目：后果不可逆的禁止行为
-  │     加载策略：热记忆（CR-010，P0）——始终在系统提示中
-  │
-  └── PS-REG-001 规则登记表（登记表内容）
-        COND-XX：后果可逆的条件禁止
-        REC-XX：推荐做法
-        CODE-XX：代码级强制规则
-        {域代码}-XX：各领域规则索引
-        加载策略：领域触发（CR-005，P1）+ 冷记忆（CR-006，P2）
+| 层级 | 存储 | 编号 | 加载策略 | CR 规则 |
+|------|------|------|---------|---------|
+| PS-STD-000 元标准宪法（本文件） | 本文件 | — | 热记忆（always loaded） | — |
+| PS-STD-003 行为边界标准（宪法内容） | `behavior-boundaries-standard.md` | ABS-XX | 热记忆 | CR-010（P0） |
+| PS-REG-001 规则登记表（登记表内容） | `_registry/catalogs/rule-registry.md` + 各领域规则 | COND/REC/CODE/{域}-XX | 领域触发 + 冷记忆 | CR-005（P1）+ CR-006（P2）+ CR-011（P2） |
 
-> 注：宪法层 ABS 编号为全局唯一前缀。领域级操作控制原则使用各自领域前缀（如 GOV-DOC-009 用 DOC-001~DOC-008，PS-STD-011 用 MTH-001），与 ABS 编号全局不冲突。详见 `../meta/behavior-boundaries-standard.md`（PS-STD-003）§3.4 编号注册表。
->
-> **三层记忆模型**：本项目的加载策略与 Codified Context（arXiv 2602.20478）三层模型一致——热记忆（宪法，always loaded）→ 领域触发（领域规则，按任务加载）→ 冷记忆（知识库，按需检索摘要）。宪法热记忆稳定在 ~400 行以下（社区验证上限），超过此阈值开始降低 AI 遵循度。加载规则的完整定义见 `../operational/vibe_coding/vibe-coding-session-state-runbook.md`（CR-005/CR-006/CR-010/CR-011）。
-```
+> 宪法层 ABS 编号为全局唯一前缀。领域级操作控制原则使用各自领域前缀（如 GOV-DOC-009 用 DOC-001~DOC-008，PS-STD-011 用 MTH-001），与 ABS 编号全局不冲突。详见 [PS-STD-003](behavior-boundaries-standard.md) §3.4 编号注册表。
+
+> **三层记忆模型**：热记忆（宪法，always loaded）→ 领域触发（领域规则，按任务加载）→ 冷记忆（知识库，按需检索摘要）。宪法热记忆稳定在 ~400 行以下（社区验证上限），超过此阈值开始降低 AI 遵循度。加载规则完整定义见 [session-state-runbook.md](../operational/vibe_coding/vibe-coding-session-state-runbook.md)（CR-005/CR-006/CR-010/CR-011）。
 
 ---
 
 ## 4. 分类判定流程
 
-对每条新规则，按以下流程判定归属：
-
-```
-步骤 1：问"违反此规则后，后果能否通过后续操作完全消除？"
-  │
-  ├── NO（不可逆）→ 步骤 2
-  │
-  └── YES（可逆）→ 步骤 3
-
-步骤 2：不可逆 → 宪法层
-  │ 写入 PS-STD-003 §3 绝对禁止行为
-  │ 编号 ABS-XX
-  │ 同时在 PS-REG-001 对应域中登记
-
-步骤 3：可逆 → 登记表层
-  │ 写入 PS-REG-001 对应域
-  │ 按类型编号：COND-XX / REC-XX / CODE-XX
-  │ 如果是条件禁止，在领域规则中定义触发条件
-```
+| 步骤 | 问题/操作 | 结果 |
+|------|---------|------|
+| 1 | 违反此规则后，后果能否通过后续操作完全消除？ | — |
+| 1a | NO（不可逆） | → 步骤 2 |
+| 1b | YES（可逆） | → 步骤 3 |
+| 2 | 不可逆 → 宪法层 | 写入 PS-STD-003 §3，编号 ABS-XX，同时在 PS-REG-001 对应域中登记 |
+| 3 | 可逆 → 登记表层 | 写入 PS-REG-001 对应域，按类型编号 COND-XX / REC-XX / CODE-XX；条件禁止在领域规则中定义触发条件 |
 
 ### 4.1 边界案例处理
 
@@ -237,12 +198,10 @@ PS-STD-000 元标准宪法（本文件）
 
 ### 5.4 纵深防御（Defense in Depth）
 
-Vibe Coding 社区验证的两条规则系统设计原则：
-
-| 设计原则 | 内容 | 社区来源 |
-|---------|------|---------|
-| **距离递减遵从** | 同一文件中越靠后的规则越容易被 AI 忽略。宪法 §2（分类标准）放在文件前部，§6（一致性校验）是事后参考，布局符合此规律 | AI Harness 社区 |
-| **纵深防御** | 一条值得强制执行的约束至少应在两个位置声明。§2（二元分类标准）的结果应至少出现在 AGENTS.md 或 `.cursor/rules/core-governance.mdc` 中作为引用点。单一宪法文件丢失不应导致治理体系失能 | AI Harness 社区 + Codified Context |
+| 设计原则 | 内容 |
+|---------|------|
+| **距离递减遵从** | 同一文件中越靠后的规则越容易被 AI 忽略。宪法 §2（分类标准）放在文件前部，§6（一致性校验）是事后参考，布局符合此规律 |
+| **纵深防御** | 一条值得强制执行的约束至少应在两个位置声明。§2 的结果应至少出现在 AGENTS.md 或 `.cursor/rules/core-governance.mdc` 中作为引用点。单一宪法文件丢失不应导致治理体系失能 |
 
 ---
 
@@ -265,12 +224,3 @@ Vibe Coding 社区验证的两条规则系统设计原则：
 宪法层规则在登记表中标注"宪法层"，登记表层规则标注"登记表层"。
 
 ---
-
-## 7. 变更记录
-
-| 版本 | 日期 | 变更内容 |
-|------|------|---------|
-| 2.0.2 | 2026-05-01 | 编辑性变更——frontmatter 字段排序对齐 PS-STD-001 §2.3（ai_autonomy 移至 verifiability 之后）。版本号 patch +1。 |
-| 2.0.1 | 2026-05-01 | 编辑性压缩。§6.1 历史校验表从 7 行明细（含 4 行已完成升格的独立条目）压缩为 3 行汇总（已执行项归入 blockquote 注释）。版本号 patch +1（编辑性变更，规则实质未变）。 |
-| 2.0.0 | 2026-04-30 | 新增 §1.1 COBIT 2019 框架原则（GF-001/002/003），不拆分为两个文档；更新 Anthropic 基准至 2026 四原则宪法，新增 transparent 维度映射；新增 Codified Context（arXiv 2602.20478）学术验证引用；§3 层级图补充三层记忆模型加载策略与 CR 规则（CR-005/006/010/011）交叉引用；新增 §5.4 纵深防御（距离递减遵从 + 双位置引用原则）；版本号从 1.0.0 跃升至 2.0.0（结构性变更） |
-| 1.0.0 | 2026-04-29 | 初始版本。定义后果不可逆性二元分类标准。对标 8 家专业机构（Anthropic/ISO 42001/Kubernetes/NIST/SOC 2/Google/OWASP/DO-178C）。识别 4 条 COND 需升格为 ABS。 |

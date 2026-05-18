@@ -22,12 +22,11 @@ verifiability: automated
 
 # 文件命名规范 v2.5.0
 
-> **定位**：本文档是 ZephyrAlpha 2.0 **宪法层命名铁律**的唯一真源，所有目录、文件、module_id、编号空间的命名规则均以本文为准。
-> **门禁**：Stage G 通过 `GATE-11 命名规范门禁` pre-commit hook 强制校验本文档定义的规则（续号于既有 Architecture-as-Code `GATE-01 ~ GATE-10`）。
-> **历史**：
-> - v1.0.0 (2026-04-22) 首次建立基础命名规则
-> - v2.0.0 (2026-04-25) 经 Stage F 归一化批次升级，纳入扁平编号、module_id 与文件名分离、专业对标等铁律
-> - v2.0.1 (2026-04-25) **编号纠偏**：Stage G 开工阶段发现 Stage F 预占的 `GATE-06` 与 `check_architecture_gates.py v2.0.0` 已有的 `GATE-06 事件 publisher 层检查` 冲突；本门禁续号为 `GATE-11`，保留既有 GATE 编号空间 append-only（符合 ADR-0006 跳号治理精神）
+> GOV-DOC-003 | v2.5.0 | active | 宪法层命名铁律唯一真源
+>
+> **门禁**：Stage G 通过 `GATE-11 命名规范门禁` pre-commit hook 强制校验。
+>
+> **编号纠偏记录**：Stage F 预占的 `GATE-06` 与 `check_architecture_gates.py v2.0.0` 已有的 `GATE-06 事件 publisher 层检查` 冲突；本门禁续号为 `GATE-11`，保留既有 GATE 编号空间 append-only（符合 ADR-0006 跳号治理精神）。
 
 ---
 
@@ -74,15 +73,7 @@ verifiability: automated
 
 ### 〇.4 专业对标
 
-详见 §一.1.1（完整 5 家机构对标表）。此处仅列方向性来源：
-
-| 来源 | 方向性对标 |
-|------|---------|
-| PEP 8 | Python 代码文件命名：`snake_case` |
-| K8s 社区 | 文件名全小写 + kebab-case；目录名全小写无连字符（如 `controllers/`、`scheduler/`） |
-| Linux FHS | 顶级目录用单词（如 `/etc/`、`/var/`），禁止空格和特殊字符 |
-| ISO 文档管理 | 编号 + 语义名称（如 `04.02_quality/`），对应本标准的编号前缀+命名 |
-| Go 社区 | 全项目统一一种风格，不可混用——对应本标准的"全小写铁律" |
+详见 §一.1.1 对标表。方向：PEP 8 / K8s / Linux FHS / ISO / Go 社区。
 
 ---
 
@@ -107,9 +98,7 @@ verifiability: automated
 
 ### 一.0 文件名后缀必须匹配 doc_type（v2.4.0 新增）
 
-> **对标**：K8s well-known labels（label=value 强制匹配）+ OpenAPI discriminator（discriminator 字段决定 schema 类型，不允许模糊）。
-
-在 `01_policies_and_standards/` 目录下，**文件名后缀必须反映 doc_type**。不允许文件名使用与 doc_type 矛盾的后缀——做到"看名字就知道这个文件是什么类型的规则"。
+在 `01_policies_and_standards/` 目录下，**文件名后缀必须反映 doc_type**。
 
 **doc_type → 文件名后缀强制映射表**：
 
@@ -122,7 +111,7 @@ verifiability: automated
 | `register` | `{subject}-registry.md` / `-register.md` | `rule-registry.md` | 结构化数据清单 |
 | `index` | `index.md`（固定） | `index.md` | 目录导航入口，不可改名 |
 | `terminology` | 术语特定命名 | `glossary.md`、`terminology-mapping.md` | 术语定义文件 |
-| `template` | `{target_doc_type}-template.md` | `policy-template.md`、`blueprint-template.md` | templates/ 下模板文件，doc_type 取目标类型 |
+| `template` | `{target_doc_type}-template.md` | `policy-template.md`、`blueprint-construction-template.md` | templates/ 下模板文件，doc_type 取目标类型 |
 
 **禁止的行为**：
 
@@ -211,7 +200,7 @@ Q2: 目录名是否用一个单词就能准确表达？
 
 ### 2.2 Architecture Decision Record (ADR) — v2.0.0 铁律
 
-本节规则遵循 **Michael Nygard ADR 原规范 / adr-tools / AWS Prescriptive Guidance / Google Engineering Practices** 业界扁平惯例。
+本节规则遵循 Michael Nygard ADR / adr-tools / AWS / Google Engineering Practices 业界扁平惯例。
 
 #### 2.2.1 文件名
 
@@ -361,60 +350,25 @@ pre-commit hook 将检测以下违规：
 
 ---
 
-## 六、历史大改的归档说明
+## 六、历史遗留目录命名一致性
 
-### 6.1 Stage F 归一化批次（2026-04-25）
+| 目录 | 当前风格 | 符合规则？ |
+|------|---------|:---------:|
+| `governance/ai/` | 单词 | ✅ |
+| `governance/document/` | 单词 | ✅ |
+| `governance/task/` | 单词 | ✅ |
+| `operational/vibe_coding/` | snake_case | ✅ |
+| `operational/devops/` | 单词 | ✅ |
+| `domains/L00_data_source/` | L{XX}_snake_case | ✅ |
 
-- **34 个 ADR 文件名**：`ADR-NNNN-*.md` → `adr-nnnn-*.md` 全体小写化
-- **12 个嵌套编号**：`ADR-011-001~020` → `ADR-0030~0041` 扁平化
-- **19 个 module_id**：`EA-ADR-NNNN` → `ADR-NNNN` 去前缀
-- **9 个 frontmatter schema**：`doc_id:` → `module_id:` 统一
-- **全库引用更新**：200+ 处
-- **snapshot 保留**：`_reorg_snapshots/snapshot-stage-F-pre`（可回滚）
+## 六.1 新建目录命名检查清单
 
-### 6.2 Stage G 漏网清理 + GATE-11 引擎落地（2026-04-25）
-
-**GATE-06 → GATE-11 编号纠偏**：Stage F 预占的 `GATE-06` 与 Architecture-as-Code 已有 `GATE-06 事件 publisher 层检查`（`check_architecture_gates.py v2.0.0`）冲突，本门禁续号为 `GATE-11`，AaC 编号空间 append-only 不动（对标 ADR-0006 跳号治理精神）。
-
-**Stage F 漏网扫尾**：
-- **8 个 KE 文件**：`KE-NNN-*.md` → `ke-NNN-*.md` 全体小写化（`docs/08_knowledge/best-practices/`）
-- **1 个索引**：`docs/08_knowledge/INDEX.md` → `index.md`
-- **29 处视图 module_id**：`target-architecture/` 系列 `EA-ARCH-*` / `EA-VIBE-*` / `EA-AUDIT-*` / `EA-SESSION-*` / `EA-PHASE-*` → `VIEW-*` / `STD-*` / `POL-*` 三族合法命名空间
-- **2 个文件名真违规**：
-  - `memory-system-landing-v1-task-draft.md` → 去 `-v1`（作者版本后缀，不属于技术产品版本）
-  - `architecture-audit-final-verdict-20260421.md` → `-2026-04-21.md`（ISO 日期格式）
-- **pydantic-v2 等技术产品版本**：加入 `TECH_VERSION_TOKENS` 豁免白名单（§2.8）
-
-**GATE-11 引擎上线**：`scripts/governance/check_naming_convention.py` + `.pre-commit-config.yaml` 注册，7 条违规规则（N-01 ~ N-07）+ 技术栈豁免机制；全库扫描收敛到 **0 violation**。
-
-**snapshot 保留**：`_reorg_snapshots/snapshot-stage-G-pre`（可回滚）
-
----
-
-## 六.1 历史遗留目录命名不一致处理
-
-| 目录 | 当前风格 | 是否需要改 | 处理方案 |
-|------|---------|:---------:|---------|
-| `governance/ai/` | 单词 | ❌ | 符合规则 |
-| `governance/document/` | 单词 | ❌ | 符合规则 |
-| `governance/task/` | 单词 | ❌ | 符合规则 |
-| `operational/vibe_coding/` | snake_case | ❌ | 符合规则（"vibe coding"需要两个词） |
-| `operational/devops/` | 单词 | ❌ | 符合规则 |
-| `operational/migration/` | 单词 | ❌ | 符合规则 |
-| `domains/L00_data_source/`（新建） | L{XX}_snake_case | — | 符合规则 |
-
-**结论：现有目录全部符合规则，不需要改名。** 之前看起来不一致是因为没有选择规则，现在有了选择规则，三种风格各自有明确的适用场景。
-
-## 六.2 新建目录命名检查清单
-
-AI 新建目录时，必须逐项检查：
-
-- [ ] 目录是否对应架构层？→ 是：用 `L{XX}_snake_case`
-- [ ] 目录名一个词能表达吗？→ 是：用单词；否：用 `snake_case`
-- [ ] 目录名全小写？→ 必须全小写
-- [ ] 目录名不含 kebab-case？→ 文件夹名禁止 kebab-case
-- [ ] 目录名不含大写字母？→ 必须全小写
-- [ ] 目录名不含数字前缀（非层编号）？→ 数字编号只用于 docs/ 顶级目录
+- [ ] 对应架构层？→ `L{XX}_snake_case`
+- [ ] 一个词能表达？→ 单词；否 → `snake_case`
+- [ ] 全小写？→ 必须
+- [ ] 不含 kebab-case？→ 文件夹名禁止
+- [ ] 不含大写字母？→ 必须
+- [ ] 不含数字前缀（非层编号）？→ 数字编号只用于 docs/ 顶级目录
 
 ---
 
@@ -429,16 +383,4 @@ AI 新建目录时，必须逐项检查：
 | document-control-policy.md（GOV-DOC-009） | 本标准的 P4（"名字即地址，禁止改文件名以求匹配内容"）→ DOC-002（名字=责任声明） |
 | templates/policy-template.md | 本文件是 policy-template 的实质性例子——结构对齐 template 要求的 §〇 + 与其他规则的关系 + 变更记录 |
 
-## 八、变更记录
 
-| 日期 | 版本 | 修改内容 |
-|------|------|---------|
-| 2026-04-22 | 1.0.0 | 首次建立基础命名规则（通用 kebab-case + 特殊文件类型 + 历史大写遗留白名单 + 违规检测 3 条）|
-| 2026-04-25 | 2.0.0 | **Stage F 归一化升级（major）**：(1) §2.2 ADR 章节全面重写；(2) 新增 §4 module_id 命名空间；(3) §5 违规检测规则扩展至 7 条；(4) 新增 §6 历史大改归档说明 |
-| 2026-04-25 | 2.0.1 | **Stage G 开工纠偏（patch）**：编号冲突纠偏 `GATE-06` → `GATE-11`；新增 §2.8 技术栈专有名词版本白名单 |
-| 2026-04-30 | 2.1.0 | **文件夹命名规则补全（minor）**：新增 §一.1 文件夹命名风格选择规则（三种风格定义 + 决策树 + 防幻觉路径映射表 + 禁止风格）；新增 §六.1/§六.2 |
-| 2026-04-30 | 2.2.0 | 历史修订，见 header comment block |
-| 2026-05-02 | 2.4.0 | **文件名-doc_type 强制映射（minor）**。新增 §一.0：文件名后缀必须匹配 doc_type 字段——废除旧 doc_type-vocabulary.yaml v1.1.0 中"文件名不需要与 doc_type 一致"的约定。新增 GATE-11 N-08 检测规则（V1 阻断）。修正 3 个历史违规文件：governance-runbook.md → governance-protocol.md，security-incident-playbook.md → security-incident-response-policy.md，document-discovery-runbook.md → document-discovery-policy.md。 |
-| 2026-05-06 | 2.5.0 | **ADR 真源对齐（minor）**。§2.2 等处明确 ADR 权威存放为 **KB:decisions**，禁止将已移除的 `docs/02_enterprise_architecture/adr/` 作为主路径声明；补充 ADR 工作流状态表与 PS-STD-001 DocStatus / PS-STD-004 仲裁关系；正文标题版本号与 frontmatter `version` 对齐。 |
-| 2026-05-01 | 2.3.1 | **元规对齐 (patch)**。新增 frontmatter `date` 字段——PS-STD-001 §2.2 规定 Draft+ 必填 7 字段含 `date`，此前仅有 `valid_from` 缺少 `date` 违反了元规必填要求。 |
-| 2026-05-01 | 2.3.0 | **结构对齐 + 矛盾消除（minor）**。（1）删除 §1.1"文件夹命名逻辑与原则"——该节与 §一.1 互相矛盾（snake_case vs kebab-case），§一.1 为 v2.1.0 新建的权威版本（有决策树 + 5 家机构对标 + 匹配磁盘真实状态）；（2）新增 §〇.2 管理内容 + §〇.3 不覆盖内容 + §〇.4 专业对标；（3）新增 §七 与其他规则的关系；（4）§七 → §八 更名"变更记录"；（5）版本 2.2.0 → 2.3.0。对齐 templates/policy-template.md 强制结构。全量修改符合 Vibe Coding 零记忆重启标准——每个文件现在 self-describing。 |

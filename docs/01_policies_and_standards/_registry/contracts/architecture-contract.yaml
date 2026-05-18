@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # ============================================================
 # ZephyrAlpha 架构合规契约
 # ============================================================
@@ -119,7 +126,7 @@ frontmatter_schema:
       stage: draft
 
     - name: layer
-      allowed_values: [l00_data_source, l01_infrastructure, l02_alpha_factor, l03_signal_generation, l04_risk_management, l05_portfolio_construction, l06_trade_execution, l07_post_trade_analytics, l08_human_ai_interface, l09_research_innovation, l10_governance_compliance, l11_ml_platform, l12_system_telemetry, l13_experiment_pipeline, shared, cross_layer]
+      allowed_values: [l00_data_source, l01_infrastructure, l02_alpha_factor, l03_signal_generation, l04_risk_management, l05_portfolio_construction, l06_trade_execution, l07_post_trade_analytics, l08_human_ai_interface, l09_research_innovation, l10_governance_compliance, l11_ml_platform, system_telemetry, l13_experiment_pipeline, shared, cross_layer]
       description: "架构层归属——16 值（canonical SSoT: layer-vocabulary.yaml）"
       derived_from: "_registry/vocabularies/layer-vocabulary.yaml"
       stage: active

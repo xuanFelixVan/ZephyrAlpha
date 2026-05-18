@@ -11,7 +11,9 @@ language: zh
 created_by: human_plus_agent
 date: ""
 ttl: permanent
-summary: ""
+summary: "注册表文档创建模板——结构化数据清单，新建 register 类文档时使用此模板"
+completeness: "unknown"
+template_for: register
 tags: []
 rule_form: data
 scope: global
@@ -19,6 +21,23 @@ stability: evolving
 verifiability: manual
 depends_on: []
 ---
+
+<!--
+COMPLIANCE_CHECKLIST — 机器可解析合规清单
+注册表文档模板 MUST 包含以下所有标题（精确匹配关键词）。缺一 = 不合规。
+脚本：python scripts/governance/d3_metadata/check_template_compliance.py <文档路径> --template register
+-->
+<!--
+REQUIRED_SECTIONS:
+  s1: "1. 目的与范围"
+  s2: "2. 使用说明"
+  s3: "3. 注册条目"
+  s4: "4. 条目 schema"
+  s5: "5. AI 自治权限标注"
+  s6: "6. TTL 与生命周期"
+  s7: "7. 变更记录"
+END_REQUIRED_SECTIONS
+-->
 
 # {注册表名称}
 

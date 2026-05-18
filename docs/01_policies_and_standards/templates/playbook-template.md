@@ -11,7 +11,9 @@ language: zh
 created_by: human_plus_agent
 date: ""
 ttl: permanent
-summary: ""
+summary: "Playbook 创建模板——过程式操作规则，定义如何做的步骤化流程，新建 playbook 类文档时使用此模板"
+completeness: "unknown"
+template_for: operational_rule
 tags: []
 rule_form: procedural
 scope: global
@@ -21,9 +23,41 @@ depends_on: []
 ai_autonomy: human_gated
 ---
 
+<!--
+COMPLIANCE_CHECKLIST — 机器可解析合规清单
+Playbook 模板 MUST 包含以下所有标题（精确匹配关键词）。缺一 = 不合规。
+脚本：python scripts/governance/d3_metadata/check_template_compliance.py <文档路径> --template playbook
+-->
+<!--
+REQUIRED_SECTIONS:
+  overview: "概述"
+  s1: "1. 目的与范围"
+  s2: "2. 触发条件"
+  s3: "3. 通知与上报链"
+  s4: "4. 事故分级"
+  s5: "5. P0 事故响应"
+  s6: "6. P1 事故响应"
+  s7: "7. P2 事故响应"
+  s8: "8. 通用回滚方案"
+  s9: "9. 事故后复盘"
+  s10: "10. AI 自治权限标注"
+  s11: "11. TTL 与生命周期"
+  s12: "12. 变更记录"
+END_REQUIRED_SECTIONS
+-->
+
 # {标题}
 
 > module_id: {填写} | version: 0.1.0 | status: draft | layer: {填写}
+
+---
+
+## 概述
+
+> ⚠️ **必填**。AI 阅读本文档的第一段——3~5 句话建立心理模型。
+> 写清楚：这个 playbook 是什么、覆盖什么事故类型、谁执行、为什么存在。
+
+{本 Playbook 定义 {事故类型/场景} 的响应流程——从检测到恢复的完整步骤链。覆盖事故等级：P0/P1/P2。执行对象：AI Agent / 人类运维。核心目标：{一句话描述 playbook 要达成的结果——如最小化停机时间、防止数据丢失}。}
 
 ---
 

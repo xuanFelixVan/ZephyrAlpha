@@ -24,7 +24,7 @@ verifiability: automated
 
 > **目的**：强制所有文件使用 UTF-8 编码，防止 Trae 编辑器的自动编码检测导致文件损坏。
 >
-> **老树教训**：Trae 的 `files.autoGuessEncoding` 选项将 UTF-8 文件误判为 GBK/Latin-1，保存时以错误编码写回，产生双重编码乱码（表现为文件末尾出现阿拉伯文/西里尔文字符）。Cursor 以 UTF-8 重新读取后，乱码字节暴露。
+> **铁律**：MUST 设置 `files.autoGuessEncoding=false`——否则 UTF-8 被误判为 GBK/Latin-1 → 双重编码乱码（文件末尾出现阿拉伯文/西里尔文字符）。
 
 ## 〇、目的与范围
 

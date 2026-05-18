@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # Module ID Registry v2.0
 # 权威来源：此文件是模块 ID 分配的唯一真源
 # 新增模块 ID 必须先在此注册，再写入 layers/*.yaml
@@ -18,7 +25,7 @@
 
 registry_version: "2.2.0"
 last_updated: "2026-05-08"
-total_registered: 140
+total_registered: 141
 
 # ID 分配规则
 allocation_rules:
@@ -55,6 +62,13 @@ allocation_rules:
     L04: "风控层"
     L07: "盘后分析层"
   seq_format: "三位数字，从 001 开始"
+  sub_blueprint_rules: |
+    子蓝图（从父蓝图拆分出的独立文件）命名规则：
+    1. 子蓝图使用独立编号，禁止嵌套编号（如 MOD-MASTER-001-BASELINE 是违规的）
+    2. 正确做法：MOD-MASTER-002（基线）、MOD-MASTER-003（容量）、MOD-MASTER-004（Agent Spec）
+    3. 父子关系通过 frontmatter 的 parent_module / belongs_to 字段表达，不通过编号后缀
+    4. 规则来源：PS-STD-001 §5.4 铁律 #7 "禁止嵌套编号"
+    5. 校验正则：module_id 不得包含父编号+后缀模式（如 XXX-001-SUFFIX）
 
 # 已注册的文档规则模块 ID
 registered_ids:
@@ -323,7 +337,7 @@ registered_ids:
     path: "docs/01_policies_and_standards/governance/architecture/architecture-versioning-policy.md"
     doc_type: policy
     status: draft
-  - module_id: GOV-RSTR-001
+  - module_id: GOV-FSTR-001
     title: "系统重组总蓝图"
     path: "docs/03_modules/_restructuring/blueprint.md"
     doc_type: blueprint

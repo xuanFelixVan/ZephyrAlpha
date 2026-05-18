@@ -1,11 +1,14 @@
 ---
+
 doc_type: index
 status: active
 title: "01_raw_intake — 目录索引"
 version: "1.0.0"
 created: "2026-05-08"
 updated: "2026-05-08"
+blueprint_id: DOM-GOV-001
 ---
+
 
 # 01_raw_intake
 
@@ -554,7 +557,7 @@ updated: "2026-05-08"
 | [KE-documentat-7_3-002.md](KE-documentat-7_3-002.md) | Markdown | 7.3 一人团队的简化 |
 | [KE-documentat-7_3-003.md](KE-documentat-7_3-003.md) | Markdown | 7.3 复合命名规则（当二者联合引用时） |
 | [KE-documentat-7_3________04-ta__9_environmen-000.md](KE-documentat-7_3________04-ta__9_environmen-000.md) | Markdown | 7.3 环境矩阵（与 04-TA §9 Environment Matrix 对齐） |
-| [KE-documentat-7_3_____l00-m5__catalog-000.md](KE-documentat-7_3_____l00-m5__catalog-000.md) | Markdown | 7.3 与老树 L00-M5 `catalog/` 的关系 |
+| [KE-documentat-7_3_____l00-m5__catalog-000.md](KE-documentat-7_3_____l00-m5__catalog-000.md) | Markdown | 7.3 与旧体系 L00-M5 `catalog/` 的关系 |
 | [KE-documentat-7_3___open-questions-register-000.md](KE-documentat-7_3___open-questions-register-000.md) | Markdown | 7.3 与 open-questions-register 联动 |
 | [KE-documentat-7_3_ai-000.md](KE-documentat-7_3_ai-000.md) | Markdown | 7.3 AI 工具兼容性 |
 | [KE-documentat-7_3_beta-000.md](KE-documentat-7_3_beta-000.md) | Markdown | 7.3 beta+ 多用户演进 |
@@ -853,7 +856,7 @@ updated: "2026-05-08"
 | [KE-governance-1_3_________________exclusions-005.md](KE-governance-1_3_________________exclusions-005.md) | Markdown | 1.3 本规范**不**覆盖以下内容{#exclusions} |
 | [KE-governance-1_3___document-lifecycle-stand-003.md](KE-governance-1_3___document-lifecycle-stand-003.md) | Markdown | 1.3 与 document-lifecycle-standard.md（GOV-DOC-006）的区别 |
 | [KE-governance-1_3_ssot-000.md](KE-governance-1_3_ssot-000.md) | Markdown | 1.3 SSoT 声明 |
-| [KE-governance-1_4-000.md](KE-governance-1_4-000.md) | Markdown | 1.4 老树教训 |
+| [KE-governance-1_4-000.md](KE-governance-1_4-000.md) | Markdown | 1.4 旧体系教训 |
 | [KE-governance-1_4-004.md](KE-governance-1_4-004.md) | Markdown | 一.1.4 防幻觉完整路径映射表 |
 | [KE-governance-1_5-001.md](KE-governance-1_5-001.md) | Markdown | 1.5 唯一真源声明 |
 | [KE-governance-1_5-003.md](KE-governance-1_5-003.md) | Markdown | 1.5 术语 |

@@ -32,35 +32,32 @@ ai_autonomy: immutable_core
 
 # 任务关闭标准
 
-> **module_id**: GOV-TASK-005 | **version**: 1.1.0 | **status**: active
->
-> 本标准定义任务从"执行中"到"关闭"的完整流程。
-> `03_modules/l01_infrastructure/task-system/blueprint.md` §5.2-§5.3 定义状态机和门禁映射，
-> `task-lifecycle-standard.md` 定义治理规则（取消权限、优先级裁决、升级治理），
-> 本标准定义关闭流程中每个步骤的具体检查内容和操作方法。
->
-> 对标：ITIL Incident Closure + Jira Resolution + ServiceNow Close + Azure DevOps Done Criteria。
+> GOV-TASK-005 | v1.1.0 | 任务从 IN_PROGRESS 到终态（VERIFIED/CANCELLED）的完整关闭流程
 
 ## 1. 目的与范围
 
-### 1.1 目的
+任务关闭前 MUST 满足以下全部条件：
 
-确保每个任务在关闭前：
+| # | 条件 | 含义 |
+|---|------|------|
+| 1 | 交付物完整 | 所有承诺的产出物都存在且合规 |
+| 2 | 环境干净 | 无临时文件、残留文件、副产品 |
+| 3 | 验收通过 | 所有验收指标达标 |
+| 4 | 审计可追溯 | 关闭决策有据可查 |
 
-1. **交付物完整**——所有承诺的产出物都存在且合规
-2. **环境干净**——无临时文件、残留文件、副产品
-3. **验收通过**——所有验收指标达标
-4. **审计可追溯**——关闭决策有据可查
+**铁律**：MUST 执行清扫三步法后才能声明 COMPLETED——跳过 = 临时文件残留 + 交付物缺失 + 未注册 → 孤儿。
 
-> **负向责任**：本标准**不涉及**任务卡字段定义（→ [GOV-TASK-001](../../governance/task/task-card-standard.md)）、不涉及任务生命周期治理规则（→ [GOV-TASK-004](../../governance/task/task-lifecycle-standard.md)）、不涉及状态机实现和门禁检查逻辑（→ [MOD-INF-006](../../../03_modules/l01_infrastructure/task-system/blueprint.md) §5.2-§5.3）。
+**适用范围**：
 
-### 1.2 适用范围
+| 转换路径 | 适用章节 |
+|---------|---------|
+| IN_PROGRESS → COMPLETED | §2 完成定义 |
+| COMPLETED → VERIFIED | §3 验证定义 |
+| IN_PROGRESS/FAILED/BLOCKED/WAITING/READY → CANCELLED | §5 取消关闭 |
 
-- 所有从 IN_PROGRESS 转换到 COMPLETED 的任务
-- 所有从 COMPLETED 转换到 VERIFIED 的任务
-- 所有因取消而关闭的任务（IN_PROGRESS/FAILED/BLOCKED/WAITING/READY → CANCELLED）
+**SSoT 声明**：本标准是任务关闭唯一规则来源。合并 `task-card-standard.md` §8 + `task-completion-cleanup-gate.md`（已删除）。
 
-### 1.3 SSoT 声明
+**SSoT 逐项映射**：
 
 | 内容 | 真源 | 非真源 |
 |------|------|--------|
@@ -70,9 +67,11 @@ ai_autonomy: immutable_core
 | 残留物分类与处置 | 本文件 §4.3 | task-completion-cleanup-gate.md（已删除；以本文件为准） |
 | 取消关闭流程 | 本文件 §5 | — |
 
-### 1.4 老树教训
+**负向责任**：不涉及任务卡字段定义（→ [GOV-TASK-001](../../governance/task/task-card-standard.md)）、不涉及任务生命周期治理规则（→ [GOV-TASK-004](../../governance/task/task-lifecycle-standard.md)）、不涉及状态机实现和门禁检查逻辑（→ [MOD-INF-006](../../../03_modules/l01_infrastructure/task-system/blueprint.md) §5.2-§5.3）。
 
-Vibe Coding 流水线执行 120 个任务后，老树残留了大量骨架测试、临时脚本、重复文件。这些残留物未被任何门禁检测，直到手动排查才发现。根因是任务完成流程缺少"清扫"环节。
+**职责分工**：[blueprint.md §5.2-§5.3](../../../03_modules/l01_infrastructure/task-system/blueprint.md) 定义状态机和门禁映射，[task-lifecycle-standard.md](../../governance/task/task-lifecycle-standard.md) 定义治理规则（取消权限、优先级裁决、升级治理），本标准定义关闭流程中每个步骤的具体检查内容和操作方法。
+
+---
 
 ## 2. 完成定义（IN_PROGRESS → COMPLETED）
 
@@ -277,13 +276,6 @@ acceptance:
 | encoding-safety-standard.md | 编码管"写入格式"，本标准管"残留检测" |
 | handoff-protocol.md | 交接协议管跨 session 上下文，本标准管单次 session 的关闭质量 |
 
-## 10. 历史教训记录
-
-| 日期 | 事件 | 根因 | 本标准对应条款 |
-|------|------|------|-------------|
-| 2026-04-24 | 老树 tests/unit/ 残留 8 个骨架测试 + 1 个漏迁文件 | T-2-34 搬迁任务只搬 files_in_scope 内文件，未检测 scope 外残留 | §4.3 残留物检测 |
-| 2026-04-24 | 老树 scripts/infra/ 搬迁后目录空壳残留 | 搬迁脚本不删除空目录 | §4.3 ORPHAN_SHELL 分类 |
-| 2026-04-24 | tmp_replace_composer*.py 未清理 | 临时脚本无 TTL 标记 | §4.2 temp_* 清除 |
 
 ## 11. 消费者注册表
 
@@ -293,9 +285,11 @@ acceptance:
 | src/zephyr/db/task_repo.py | COMPLETED/VERIFIED 状态转换条件 | 转换条件变更必须同 commit 更新 |
 | scripts/governance/check_handoff_protocol.py | 任务状态校验 | 状态语义变更需同步 |
 
-## 12. 变更记录
+## 10. 历史教训记录
 
-| 版本 | 日期 | 变更内容 |
-|------|------|---------|
-| 1.1.0 | 2026-05-01 | 微调：§5.2 取消审批表改为引用 lifecycle-standard §2.1（消重复）；depends_on 补 GOV-TASK-004 + CP-TASK-CARD-KMS-001；PS-STD-001 引用从 §4.2 改为 §7；status draft→active |
-| 1.0.0 | 2026-04-29 | 合并 task-card-standard.md §8（G5 门禁）+ task-completion-cleanup-gate.md（清扫三步法），新增完成定义（§2）、验证定义（§3）、取消关闭流程（§5）；统一任务关闭规则 |
+| 日期 | 事件 | 根因 | 本标准对应条款 |
+|------|------|------|-------------|
+| 2026-04-24 | 老树 tests/unit/ 残留 8 个骨架测试 + 1 个漏迁文件 | T-2-34 搬迁任务只搬 files_in_scope 内文件，未检测 scope 外残留 | §4.3 残留物检测 |
+| 2026-04-24 | 老树 scripts/infra/ 搬迁后目录空壳残留 | 搬迁脚本不删除空目录 | §4.3 ORPHAN_SHELL 分类 |
+| 2026-04-24 | tmp_replace_composer*.py 未清理 | 临时脚本无 TTL 标记 | §4.2 temp_* 清除 |
+

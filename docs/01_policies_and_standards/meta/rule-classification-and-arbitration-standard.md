@@ -127,9 +127,7 @@ ai_autonomy: human_gated
 1. **SSoT 优先**：如果有 SSoT 文件声明了该领域（如 PS-STD-003 声明行为边界），先读 SSoT 再查领域规则
 2. **稳定性过�?*：`frozen` 文件优先�?`stable` 优先�?`evolving`——冻结内容的权威性最�?
 3. **层级收敛**：`cross_layer` �?`L1` �?`L2` �?`L3`——范围大的先读，在理解全局约束后再看局�?
-4. **领域隔离**：不�?`domain` 的规则互不冲突（�?`document` 领域的规则不会和 `vibe_coding` 领域的规则打架），冲突仅在同 domain �?scope 重叠时发�?
-
-> **大白�?*：AI 每次找规则时，先�?哪个领域的文件管这事"（domain），再看"文件稳不稳定、能不能�?（stability），然后�?全局→领域→模块"的顺序（layer）依次读。如果有 SSoT 文件，先读它——它是该领域所有规则的源头�?
+4. **领域隔离**：不同 `domain` 的规则互不冲突，冲突仅在同 domain 且 scope 重叠时发生
 
 ---
 
@@ -536,14 +534,3 @@ stability: frozen | stable | evolving
 - [x] §21 完整性自检清单
 
 ---
-
-## 22. 变更记录
-
-| 版本 | 日期 | 变更内容 |
-|------|------|---------|
-| 2.0.2 | 2026-05-01 | 交叉引用同步——PS-STD-002 v3.1.0 引入标准子类型，§4.1 layer 画像表中 L1/cross_layer 的章节数�?19 �?改为"6~15 章（按子类型，见 PS-STD-002 §3.2�?。版本号 patch +1�?|
-| 2.0.1 | 2026-05-01 | 编辑性变更——frontmatter 字段排序对齐 PS-STD-001 §2.3（date 移至 created_by 之后，ai_autonomy 移至 verifiability 之后）。版本号 patch +1�?|
-| 2.0.0 | 2026-05-01 | **合并 PS-STD-008**。原 PS-STD-008（rule-priority-hierarchy.md）的冲突裁决推导链（§1-§5）内容整合为本标�?§9-§11（推导链 + 示例 + 禁止行为）。更�?§1.3 术语（新增强推导�?终极仲裁）、�?.1 画像表（删除 PS-STD-008 行，新增 PS-STD-012 行）、�?3 消费者注册表（新�?PS-STD-009 消费推导链）、�?4 Normative 引用（新�?PS-STD-011 MTH-003）、�?7 审查周期（新增推导链审查项）、�?8 修改条件（新增推导链修改条件）、�?0 可验证性（新增推导链一致性校验）。精简 title�?规则分类标准"�?规则分类与冲突裁决标�?）。原 PS-STD-008 编号释放回编号池�?|
-| 1.2.0 | 2026-05-01 | Vibe Coding 社区对标补遗。新�?§2.2 Vibe Coding AI 检索策略映射——五维分类从"定义分类"�?AI 怎么�?的检索路径：五类查询意图→检索策略映射表（domain→stability→SSoT 路径�? 四条检索原则（SSoT优先/稳定性过�?层级收敛/领域隔离）�?|
-| 1.1.0 | 2026-05-01 | B6 审查修复�?1) frontmatter �?`date` 字段�?2) 全文 `stability: immutable` �?`frozen`�?3 处）�?3) 全文 `ai_editable` �?`ai_modifiable`�? 处）�?4) §6.3 约束从全硬绑定改为单向�?5) PS-STD-004 自身定位�?`frozen+immutable_core` 改为 `stable+human_gated`�?6) §8 画像表清废：删除 4 个已废弃/已迁移文件�?7) PS-STD-008/009 `layer` �?`L1` 改为 `cross_layer`�?|
-| 1.0.0 | 2026-04-29 | 初始版本。定义五维分类体系（Domain/Layer/Scope/Stability/Executor），引入 `scope`、`stability` 两个�?frontmatter 字段，完成所有现有文件的规则画像�?|

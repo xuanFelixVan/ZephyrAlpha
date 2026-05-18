@@ -11,7 +11,7 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-02"
 ttl: permanent
-summary: "templates/ 目录的导航入口。列出全部 11 个文档模板。"
+summary: "templates/ 目录的导航入口。列出全部 12 个文档模板。"
 tags: [index, templates, navigation]
 rule_form: declarative
 scope: global
@@ -30,7 +30,8 @@ ai_autonomy: human_gated
 
 | 文件 | 说明 |
 |------|------|
-| blueprint-template.md | 文档模板 |
+| blueprint-construction-template.md | 文档模板 |
+| dependency-graph-template.md | 依赖图数据结构模板 |
 | playbook-template.md | 文档模板 |
 | policy-template.md | 文档模板 |
 | protocol-template.md | 文档模板 |
@@ -39,7 +40,6 @@ ai_autonomy: human_gated
 | roadmap-template.md | 文档模板 |
 | runbook-template.md | 文档模板 |
 | standard-template.md | 文档模板 |
-| task-card-template.md | 任务卡模板 |
 
 ## 排除规则（不应放入本目录的内容）
 

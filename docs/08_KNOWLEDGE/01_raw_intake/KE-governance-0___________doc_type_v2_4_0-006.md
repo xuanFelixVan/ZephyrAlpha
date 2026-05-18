@@ -1,4 +1,4 @@
----
+﻿---
 module_id: KE-governance-0___________doc_type_v2_4_0-006
 title: 一.0 文件名后缀必须匹配 doc_type（v2.4.0 新增）
 category: governance
@@ -23,7 +23,7 @@ category: governance
 | `register` | `{subject}-registry.md` / `-register.md` | `rule-registry.md` | 结构化数据清单 |
 | `index` | `index.md`（固定） | `index.md` | 目录导航入口，不可改名 |
 | `terminology` | 术语特定命名 | `glossary.md`、`terminology-mapping.md` | 术语定义文件 |
-| `template` | `{target_doc_type}-template.md` | `policy-template.md`、`blueprint-template.md` | templates/ 下模板文件，doc_type 取目标类型 |
+| `template` | `{target_doc_type}-template.md` | `policy-template.md`、`blueprint-construction-template.md` | templates/ 下模板文件，doc_type 取目标类型 |
 
 **禁止的行为**：
 

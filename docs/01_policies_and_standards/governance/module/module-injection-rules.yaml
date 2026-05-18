@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 module_id: GOV-MOD-005
 title: 模块注入检查规�?
 doc_type: policy
@@ -26,7 +33,7 @@ ai_autonomy: human_gated
 context:
   purpose: "定义将模块注�?architecture-model/ 前必须通过的检查规则。每条规则包含可执行的验证命令和明确的失败动作�?
   scope: "所有向 architecture-model/ 注入模块的操作（新增 + 变更）�?
-  background: "老树中模块写入无前置检查，导致 ID 重复、依赖错误、接口幻觉�?
+  background: "MUST 通过注入检查后才能写入模块——无前置检查 = ID 重复 + 依赖错误 + 接口幻觉�?
   relation_to_admission: >
     本规范的检查规则与 GOV-MOD-001 的四级准入筛选（MOD-P1~P4）互补：
     INJ-001~008 是技术性检查（可自动化验证），MOD-P1~P4 是业务性筛选（需人工/AI判断）�?

@@ -1,4 +1,8 @@
 ---
+blueprint_id: DOM-GOV-001
+---
+
+---
 ke_id: KE-governance-adr_registry_migration-000
 title: "L3 架构决策记录（ADR 迁移 · R72 三层模型）"
 source: src/zephyr/governance/adr_registry.py (已删除)

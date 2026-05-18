@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # 企业架构树中的 architecture-model（镜像说明）
 
 本目录为 **交付/查阅视图**，与仓库根目录 [`architecture-model/`](../../../../architecture-model/) **并行存在**。

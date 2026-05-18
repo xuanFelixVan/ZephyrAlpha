@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # Module ID Registry v2.0
 # 权威来源：此文件是模块 ID 分配的唯一真源
 # 新增模块 ID 必须先在此注册，再写入 layers/*.yaml
@@ -720,27 +727,27 @@ registered_modules:
   # ── L12 System Telemetry ──
   - module_id: MOD-L12-001
     title: "Metrics Collection & Aggregation"
-    path: "src/zephyr/l12_system_telemetry/metrics/"
+    path: "src/zephyr/system_telemetry/metrics/"
     status: planned
     priority: P1
   - module_id: MOD-L12-002
     title: "Structured Log Pipeline"
-    path: "src/zephyr/l12_system_telemetry/logs/"
+    path: "src/zephyr/system_telemetry/logs/"
     status: planned
     priority: P1
   - module_id: MOD-L12-003
     title: "Distributed Tracing"
-    path: "src/zephyr/l12_system_telemetry/traces/"
+    path: "src/zephyr/system_telemetry/traces/"
     status: planned
     priority: P1
   - module_id: MOD-L12-004
     title: "AI Behavior Observability"
-    path: "src/zephyr/l12_system_telemetry/ai_behavior/"
+    path: "src/zephyr/system_telemetry/ai_behavior/"
     status: planned
     priority: P1
   - module_id: MOD-L12-005
     title: "Telemetry Data Archive"
-    path: "src/zephyr/l12_system_telemetry/archive/"
+    path: "src/zephyr/system_telemetry/archive/"
     status: planned
     priority: P1
   # ── L13 Experiment Pipeline ──

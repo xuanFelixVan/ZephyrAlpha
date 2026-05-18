@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PS-STD-005
 title: ZephyrAlpha 蓝图体系架构标准 — 三级金字塔与目录归属
 doc_type: standard
@@ -72,7 +72,7 @@ ai_autonomy: immutable_core
 ### 1.3 责任边界（本标准不管什么）
 
 本标准**不**覆盖以下内容：
-- 单个蓝图的章节结构 → 以 `blueprint-template.md` 为准（蓝图模板已在本标准 §5 中作为规范性引用）
+- 单个蓝图的章节结构 → 以 `blueprint-construction-template.md` 为准（蓝图模板已在本标准 §5 中作为规范性引用）
 - 蓝图内的技术决策内容 → 各蓝图独立定义
 - 蓝图审批流程 → 以 MOD-INF-006 任务系统蓝图和 gate-engine 门禁规则为准
 - 模块生命周期（planned → in_design → in_dev → testing → active → suspended → deprecated → archived） → 以 GOV-MOD-003（module-lifecycle-policy.md）为准
@@ -538,7 +538,7 @@ modules:
 
 | 文档 | 引用内容 | 冲突时以谁为准 |
 |------|------|------|
-| `01_policies_and_standards/templates/blueprint-template.md` | 蓝图模板——单份蓝图的章节结构 | 蓝图模板 |
+| `01_policies_and_standards/templates/blueprint-construction-template.md` | 蓝图模板——单份蓝图的章节结构 | 蓝图模板 |
 | `PS-STD-000` (meta-standard-constitution.md) | 元标准宪法——规则分类（标准 vs 宪法）| PS-STD-000 |
 | `PS-STD-001` (metadata-registry.md) | frontmatter 字段定义 | PS-STD-001 |
 | `PS-STD-002` (document-structure-standard.md) | L1 标准模板——格式定义型子类型适用的章节集 | PS-STD-002 |

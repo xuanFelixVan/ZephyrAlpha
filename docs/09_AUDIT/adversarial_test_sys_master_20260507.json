@@ -10,15 +10,15 @@
   "executor": "session-20260507-999",
   "summary": {
     "total_attacks": 7,
-    "detected": 7,
-    "missed": 0,
-    "detection_rate": "7/7"
+    "detected": 5,
+    "missed": 2,
+    "detection_rate": "5/7"
   },
   "attacks": [
     {
       "name": "M01-frontmatter_corruption",
       "detected": true,
-      "detail": "frontmatter=phase_9_broken (INVALID), blueprint-registry=completed, module-registry=completed"
+      "detail": "frontmatter=phase_9_broken (INVALID), blueprint-registry=phase_9_broken, module-registry=phase_9_broken"
     },
     {
       "name": "M02-registry_drift",
@@ -26,9 +26,9 @@
       "detail": "frontmatter=completed, blueprint-registry=DRIFTED_not_started, module-registry=completed"
     },
     {
-      "name": "M03-depends_on_broken",
-      "detected": true,
-      "detail": "MOD-MASTER-001 NOT in depends_on"
+      "name": "M3-CRASH",
+      "detected": false,
+      "detail": "Exception: Cannot find frontmatter boundaries"
     },
     {
       "name": "M04-cold_start_removal",
@@ -46,9 +46,9 @@
       "detail": "MOD-MASTER-001 MISSING"
     },
     {
-      "name": "M07-ai_rules_regression",
-      "detected": true,
-      "detail": "74 numbered rules found (minimum required: 76)"
+      "name": "M7-CRASH",
+      "detected": false,
+      "detail": "Exception: Cannot find frontmatter boundaries"
     }
   ]
 }

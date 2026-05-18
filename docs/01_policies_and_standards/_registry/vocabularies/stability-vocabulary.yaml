@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # 本词表是 ZephyrAlpha 2.0 稳定性唯一真源（SSoT）。任何地方的 stability 枚举值定义如果与本词表不一致，以本词表为准。
 schema_version: "1.0.0"
 doc_type: vocabulary

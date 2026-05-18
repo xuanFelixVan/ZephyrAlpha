@@ -62,7 +62,7 @@
         { "const": "l09_research_innovation", "description": "L09 研究创新——策略研究和实验" },
         { "const": "l10_governance_compliance", "description": "L10 治理合规——监管合规和审计" },
         { "const": "l11_ml_platform", "description": "L11 机器学习平台——模型训练和推理" },
-        { "const": "l12_system_telemetry", "description": "L12 系统遥测——监控和可观测性" },
+        { "const": "system_telemetry", "description": "L12 系统遥测——监控和可观测性" },
         { "const": "l13_experiment_pipeline", "description": "L13 实验管道——A/B 测试和实验管理" },
         { "const": "shared", "description": "跨层共享——不属于单一层的共享组件" },
         { "const": "cross_layer", "description": "跨层治理——横切关注点" }
@@ -434,6 +434,33 @@
         { "const": "infrastructure", "description": "基础设施——服务器/网络/存储" },
         { "const": "other", "description": "其他——不属于上述任何领域" }
       ]
+    },
+    "header_format": {
+      "description": "文件表头格式——7 值。GOV-ENG-002 §9.4 定义",
+      "oneOf": [
+        { "const": "A_full", "description": ".py 十字段完整版——code, script 文件" },
+        { "const": "A_test", "description": ".py 六字段简化版——test 文件" },
+        { "const": "B_yaml", "description": "YAML 5 字段注释块——gate, registry, contract(yaml), config, data" },
+        { "const": "C_json", "description": "JSON _meta 字段——contract(json), schema(json)" },
+        { "const": "D_md", "description": ".md YAML frontmatter——doc 文件" },
+        { "const": "E_shell", "description": "Shell/Mermaid 注释头部——infra 文件" },
+        { "const": "exempt", "description": "豁免——不需要表头" }
+      ]
+    },
+    "file_category": {
+      "description": "文件治理分类——10 值。GOV-ENG-002 §9.5 定义。决定文件应使用哪种 header_format",
+      "oneOf": [
+        { "const": "code", "description": "生产代码——src/zephyr/**/*.py" },
+        { "const": "script", "description": "治理/工具脚本——scripts/**/*.py" },
+        { "const": "gate", "description": "门禁定义——src/zephyr/gates/*.yaml" },
+        { "const": "registry", "description": "注册表——*_registry.yaml, *_manifest.yaml" },
+        { "const": "contract", "description": "契约定义——shared/contracts/*.py, contracts/*.yaml" },
+        { "const": "config", "description": "配置文件——config/*.yaml" },
+        { "const": "data", "description": "运行时数据——data/**/*.yaml" },
+        { "const": "doc", "description": "文档——docs/**/*.md" },
+        { "const": "test", "description": "测试——tests/**/*.py" },
+        { "const": "infra", "description": "基础设施——.sh, .ps1, .mmd" }
+      ]
     }
   },
   "required": ["module_id", "title", "doc_type", "status", "version", "date", "owner"],
@@ -614,6 +641,76 @@
             "not": { "const": "immutable_core" }
           }
         }
+      }
+    },
+    {
+      "description": "file_category=code 时 header_format 必须为 A_full",
+      "if": {
+        "properties": { "file_category": { "const": "code" } },
+        "required": ["file_category"]
+      },
+      "then": {
+        "properties": { "header_format": { "const": "A_full" } }
+      }
+    },
+    {
+      "description": "file_category=script 时 header_format 必须为 A_full",
+      "if": {
+        "properties": { "file_category": { "const": "script" } },
+        "required": ["file_category"]
+      },
+      "then": {
+        "properties": { "header_format": { "const": "A_full" } }
+      }
+    },
+    {
+      "description": "file_category=test 时 header_format 必须为 A_test",
+      "if": {
+        "properties": { "file_category": { "const": "test" } },
+        "required": ["file_category"]
+      },
+      "then": {
+        "properties": { "header_format": { "const": "A_test" } }
+      }
+    },
+    {
+      "description": "file_category=gate 时 header_format 必须为 B_yaml",
+      "if": {
+        "properties": { "file_category": { "const": "gate" } },
+        "required": ["file_category"]
+      },
+      "then": {
+        "properties": { "header_format": { "const": "B_yaml" } }
+      }
+    },
+    {
+      "description": "file_category=registry 时 header_format 必须为 B_yaml",
+      "if": {
+        "properties": { "file_category": { "const": "registry" } },
+        "required": ["file_category"]
+      },
+      "then": {
+        "properties": { "header_format": { "const": "B_yaml" } }
+      }
+    },
+    {
+      "description": "file_category=doc 时 header_format 必须为 D_md",
+      "if": {
+        "properties": { "file_category": { "const": "doc" } },
+        "required": ["file_category"]
+      },
+      "then": {
+        "properties": { "header_format": { "const": "D_md" } }
+      }
+    },
+    {
+      "description": "file_category=infra 时 header_format 必须为 E_shell",
+      "if": {
+        "properties": { "file_category": { "const": "infra" } },
+        "required": ["file_category"]
+      },
+      "then": {
+        "properties": { "header_format": { "const": "E_shell" } }
       }
     }
   ]

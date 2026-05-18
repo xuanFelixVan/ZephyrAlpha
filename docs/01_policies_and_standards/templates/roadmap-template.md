@@ -13,11 +13,41 @@ valid_from: YYYY-MM-DD
 horizon_start: YYYY-MM-DD
 horizon_end: YYYY-MM-DD
 summary: 一段话说清本路线图覆盖的时间范围、主题焦点与核心里程碑。
+completeness: "unknown"
+
+template_for: roadmap
 
 date: '2026-04-22'
-ttl: permanent---
+ttl: permanent
+---
+
+<!--
+COMPLIANCE_CHECKLIST — 机器可解析合规清单
+路线图模板 MUST 包含以下所有标题（精确匹配关键词）。缺一 = 不合规。
+脚本：python scripts/governance/d3_metadata/check_template_compliance.py <文档路径> --template roadmap
+-->
+<!--
+REQUIRED_SECTIONS:
+  overview: "概述"
+  s1: "1. 覆盖范围"
+  s2: "2. 里程碑地图"
+  s3: "3. 每个里程碑的出口标准"
+  s4: "4. 风险与假设"
+  s5: "5. Review 节奏"
+  s6: "6. 修订记录"
+END_REQUIRED_SECTIONS
+-->
 
 # <标题> 路线图
+
+## 概述
+
+> ⚠️ **必填**。AI 阅读本文档的第一段——3~5 句话建立心理模型。
+> 写清楚：这个路线图覆盖什么时间范围、主题焦点、核心里程碑、谁在看。
+
+{本路线图覆盖 {YYYY-MM-DD ~ YYYY-MM-DD}，主题焦点为 {主题}。核心里程碑：M1 {里程碑名称} → M2 {里程碑名称} → M3 {里程碑名称}。读者：自己 / 协作 AI / 外部利益相关者。核心目标：{一句话描述路线图要达成的结果}。}
+
+---
 
 ## 1. 覆盖范围
 

@@ -3,7 +3,7 @@ module_id: GOV-DOC-004
 title: 文件路径规范
 doc_type: standard
 status: active
-version: "1.1.3"
+version: "1.2.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -23,7 +23,7 @@ verifiability: automated
 
 > **目的**：定义 ZephyrAlpha 2.0 中所有文件的强制写入路径、废弃路径和根目录白名单，防止文件放错位置导致路径漂移。
 >
-> **老树教训**：老树中文件散落在多个位置，同类文件没有统一的存放位置，导致 AI 无法可靠地找到文件，路径引用断裂。
+> **铁律**：MUST 按本标准路径映射存放文件——散落存放 = 路径引用断裂。
 
 ## 〇、目的与范围
 
@@ -36,7 +36,7 @@ verifiability: automated
 | # | 内容 | 说明 |
 |---|------|------|
 | 1 | 21 种文件类型的强制写入路径 | 从治理规范到 AI 生成产物的完整路径映射 |
-| 2 | 废弃路径清单 | 老树体系中已被替代的路径，禁止写入 |
+| 2 | 废弃路径清单 | 旧体系中已被替代的路径，禁止写入 |
 | 3 | 根目录白名单 | 项目根目录允许存在的文件类型 |
 | 4 | 违规检测规则 | 5 种路径违规判定 |
 
@@ -86,7 +86,7 @@ verifiability: automated
 
 | 废弃路径 | 替代路径 |
 |---------|---------|
-| `docs/`（老树体系根目录下所有子目录） | `docs/` 对应子目录 |
+| `docs/`（旧体系根目录下所有子目录） | `docs/` 对应子目录 |
 | `docs/01_FRAMEWORK/` | `docs/02_enterprise_architecture/` |
 | `docs/09_audit/` | `docs/09_audit/` |
 | `docs/10_GOVERNANCE_COMPLIANCE/` | `docs/01_policies_and_standards/` |
@@ -119,11 +119,25 @@ requirements*.txt
 
 以下情况视为路径违规：
 
-- 在 `docs/`（老树体系）下新建文件
+- 在 `docs/`（旧体系）下新建文件
 - 在根目录创建白名单外的文件
 - 将治理规范放入 `02_enterprise_architecture/`
 - 将架构视图放入 `01_policies_and_standards/`
 - 将 AI 生成产物直接写入受版本控制目录
+
+## 四-A、物理路径树规则
+
+| # | 规则 | 检测方式 |
+|---|------|---------|
+| 1 | `project-path-tree.yaml` 由脚本自动生成，禁止手写 | `python scripts/governance/generate_project_path_tree.py --check` |
+| 2 | `path-ownership-map.yaml` 中同一路径只能被一个蓝图声明 | `python scripts/governance/generate_path_ownership_map.py --conflicts` |
+| 3 | 路径冲突时，`ssot_claims` 声明优先于 §0.1 清单声明 | `--conflicts` 输出 resolution 字段 |
+| 4 | 路径变更（移动/重命名）必须同步更新 `path-ownership-map.yaml` | `python scripts/governance/generate_path_ownership_map.py --check` |
+
+| 产出物 | 路径 | 生成脚本 |
+|--------|------|---------|
+| 物理路径树快照 | `docs/01_policies_and_standards/_registry/catalogs/project-path-tree.yaml` | `scripts/governance/generate_project_path_tree.py` |
+| 路径归属声明 | `docs/03_modules/path-ownership-map.yaml` | `scripts/governance/generate_path_ownership_map.py` |
 
 ## 五、禁止操作
 
@@ -145,6 +159,7 @@ requirements*.txt
 
 | 日期 | 版本 | 修改内容 |
 |------|------|---------|
+| 2026-05-16 | 1.2.0 | 新增 §四-A 物理路径树规则：4 条路径树/归属声明规则 + 2 个自动生成产出物路径。minor 版本升级。 |
 | 2026-04-22 | 1.0.0 | 初始创建。定义 21 种文件类型的强制写入路径、废弃路径、根目录白名单、违规检测规则。 |
 | 2026-05-06 | 1.1.3 | ADR 路径：`§一` / `§二` 与 **KB:decisions** 对齐；与 **META-TERM-001**、**directory-registry.yaml**（adr 键 deprecated）交叉引用一致。版本号 patch +1。 |
 | 2026-05-04 | 1.1.2 | 审计修复。Session Log 和任务书 路径更新：`docs/19_development_workspace/` 已删除（迁至外部独立目录），行内容替换为迁移说明。版本号 patch +1。 |

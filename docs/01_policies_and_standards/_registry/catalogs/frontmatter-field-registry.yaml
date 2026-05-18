@@ -13,8 +13,11 @@
 #
 # 用途: 登记 ZephyrAlpha 项目所有 frontmatter 字段的唯一定义——
 #       字段名 / 类型 / 必填性 / 枚举值 / 适用 doc_type / 定义来源。
-#       本登记表是 frontmatter 字段的 SSoT（Single Source of Truth，单一真源）。
-#       任何地方的字段定义如果与本登记表不一致，以本登记表为准。
+#       本登记表是 frontmatter 字段**数据**的 canonical SSoT。
+#       字段**规则**（校验逻辑/一致性约束/违规检测）见 PS-STD-001。
+#       两者关系：YAML=数据真源, MD=规则真源。
+#       修改本文件字段定义 → MUST 同步检查 PS-STD-001 对应章节。
+#       数据冲突 → 本文件优先。
 #
 # 与 frontmatter-schema.json 的关系:
 #   - frontmatter-schema.json 是机器可读的校验 Schema（自动生成，不可手写）
@@ -38,11 +41,13 @@ created: "2026-05-02"
 last_updated: "2026-05-02"
 ai_autonomy: human_gated
 ttl: permanent
-total_registered: 40
+total_registered: 53
 depends_on:
   - target: PS-STD-001
-    at: "§3.2.1"
-    why: "doc_type 受控词表 + register 类型合法字段定义"
+    at: "docs/01_policies_and_standards/meta/metadata-registry.md"
+    why: "字段规则真源（校验逻辑/一致性约束/违规检测）。YAML=数据真源, MD=规则真源。修改YAML→MUST检查MD。数据冲突→YAML优先"
+    relationship: "dual_ssot"
+    linked_version: "6.1.0"
   - target: "frontmatter-schema.json"
     at: "$"
     why: "字段枚举值对标——本登记表与 schema 必须一致"
@@ -81,10 +86,11 @@ fields:
     stage: null
     enum_values: []
     applicable_docs: []
-    description: "文档中文标题"
-    source: "PS-STD-001 §3.1"
+    description: "文档标题。blueprint 类 MUST 使用格式：{English Name} 蓝图 — {中文一句话描述}（如 Vector Memory Service 蓝图 — ChromaDB 8 Collection 统一向量持久化）。H1 标题 MUST 与此字段一致。其他 doc_type：中文标题"
+    source: "PS-STD-001 §2.1"
     min_length: 1
-    note: ""
+    format: "blueprint={English Name} 蓝图 — {中文描述} | other=中文标题"
+    note: "blueprint H1 = title = {English Name} 蓝图 — {中文一句话描述}。模板见 blueprint-construction-template.md"
 
   - field_name: doc_type
     type: enum
@@ -175,7 +181,7 @@ fields:
       - {value: "l09_research_innovation", description: "L09 研究创新"}
       - {value: "l10_governance_compliance", description: "L10 治理合规"}
       - {value: "l11_ml_platform", description: "L11 机器学习平台"}
-      - {value: "l12_system_telemetry", description: "L12 系统遥测"}
+      - {value: "system_telemetry", description: "L12 系统遥测"}
       - {value: "l13_experiment_pipeline", description: "L13 实验管道"}
       - {value: "shared", description: "跨层共享组件"}
       - {value: "cross_layer", description: "跨层治理"}
@@ -256,14 +262,24 @@ fields:
 
   - field_name: summary
     type: string
-    required: optional
-    stage: null
+    required: conditional
+    stage: phase0
     enum_values: []
-    applicable_docs: []
-    description: "一句话摘要——AI 检索锚点"
+    applicable_docs: [template]
+    description: "一句话摘要——AI 检索锚点。template doc_type 下必填（AI 发现模板的唯一入口）"
     source: "PS-STD-001 §3.3"
     min_length: 1
-    note: ""
+    note: "template doc_type 下 MUST 填写——对标 Agent Skills 规范的 description 字段（AI 渐进披露的发现锚点）"
+
+  - field_name: completeness
+    type: enum
+    required: conditional
+    stage: phase0
+    enum_values: ["complete", "incomplete", "incomplete_first_party_only", "incomplete_third_party_only", "unknown"]
+    applicable_docs: [template]
+    description: "完整性声明——模板自身的完整程度。对标 CycloneDX Compositions"
+    source: "TPL-DEPGRAPH-001 §6"
+    note: "template doc_type 下 MUST 填写。新模板默认 unknown，验证后升级。不声明完整性 = 不可信"
 
   - field_name: tags
     type: array
@@ -336,6 +352,28 @@ fields:
     source: "PS-STD-001 §2.5"
     derived_from: "_registry/vocabularies/verifiability-vocabulary.yaml"
     note: ""
+
+  - field_name: template_for
+    type: enum
+    required: conditional
+    stage: phase0
+    enum_values:
+      - {value: "policy", description: "策略文档模板"}
+      - {value: "standard", description: "标准文档模板"}
+      - {value: "operational_rule", description: "操作规则文档模板"}
+      - {value: "register", description: "注册表文档模板"}
+      - {value: "protocol", description: "协议文档模板"}
+      - {value: "blueprint", description: "蓝图文档模板"}
+      - {value: "task-card", description: "任务卡模板"}
+      - {value: "risk-register", description: "风险登记簿模板"}
+      - {value: "roadmap", description: "路线图模板"}
+      - {value: "ke", description: "知识条目模板"}
+      - {value: "ko", description: "知识观察模板"}
+      - {value: "dependency-graph", description: "依赖图模板"}
+    applicable_docs: [template]
+    description: "模板用于创建什么类型的文档——AI 按目标 doc_type 搜索模板时的路由键。枚举值复用 doc_type 受控词表（去掉 template 自身）+ 扩展非 doc_type 模板类型"
+    source: "PS-STD-001 §2.5"
+    note: "template_for 是模板路由的权威字段。tags 中禁止出现与 template_for 矛盾的 doc_type 值。AI 按目标 doc_type 搜索模板时 MUST 匹配 template_for，NOT tags"
 
   # ── 引用/溯源字段──
   - field_name: depends_on
@@ -586,6 +624,17 @@ fields:
     note: ""
 
   # ── 蓝图特有字段（PS-STD-005 定义）──
+  - field_name: last_verified
+    type: date
+    required: conditional
+    stage: phase0
+    enum_values: []
+    applicable_docs: [blueprint]
+    description: "蓝图与代码对齐验证通过的日期。超过 90 天未验证 = 过期，AI MUST 重新验证后再按蓝图施工"
+    source: "GOV-ENG-001 §7 + blueprint-construction-template.md frontmatter"
+    pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+    note: "blueprint doc_type 下 MUST 填写。与 last_updated 不同——last_updated 记录修改时间，last_verified 记录验证通过时间。修改≠验证"
+
   - field_name: belongs_to
     type: string
     required: optional
@@ -620,6 +669,161 @@ fields:
     source: "PS-STD-005 §10 (v1.1.0 新增)"
     pattern: "^[a-z][a-z0-9_]+$"
     note: "每个蓝图 responsibility_domain 全局唯一——禁止两个蓝图声明同一功能域。配合 covers[] 字段声明覆盖的子域范围"
+
+  # ── 代码文件头部字段（GOV-ENG-001 §7 定义，与 frontmatter 字段枚举值对齐）──
+  # 以下 10 个字段出现在 Python 代码文件的 docstring 首行，不是 YAML frontmatter。
+  # 但其中 3 个字段的枚举值与 frontmatter 字段完全一致，此处声明对齐关系。
+
+  - field_name: "[BLUEPRINT]"
+    type: string
+    required: always
+    stage: null
+    enum_values: []
+    applicable_docs: [code_file]
+    description: "代码文件头部——所属蓝图 module_id + 蓝图文件路径 + 对应蓝图章节号。格式：{module_id} | {blueprint_path} | §{N}。GOV-ENG-001 §7.1 定义"
+    source: "GOV-ENG-001 §7.2"
+    note: "代码文件 docstring 字段，非 frontmatter。§N 实现章节级漂移检测——代码标注 §3 ↔ 蓝图 §3 内容比对"
+
+  - field_name: "[MODULE]"
+    type: string
+    required: always
+    stage: null
+    enum_values: []
+    applicable_docs: [code_file]
+    description: "代码文件头部——完整 Python 模块路径。GOV-ENG-001 §7.1 定义"
+    source: "GOV-ENG-001 §7.2"
+    note: "代码文件 docstring 字段，非 frontmatter"
+
+  - field_name: "[INVARIANTS]"
+    type: string
+    required: always
+    stage: null
+    enum_values: []
+    applicable_docs: [code_file]
+    description: "代码文件头部——不可违反的约束，分号分隔。GOV-ENG-001 §7.1 定义"
+    source: "GOV-ENG-001 §7.2"
+    note: "代码文件 docstring 字段，非 frontmatter"
+
+  - field_name: "[MODIFY-GUARD]"
+    type: string
+    required: always
+    stage: null
+    enum_values: []
+    applicable_docs: [code_file]
+    description: "代码文件头部——修改此文件必须同步更新的文件，分号分隔。GOV-ENG-001 §7.1 定义"
+    source: "GOV-ENG-001 §7.2"
+    note: "代码文件 docstring 字段，非 frontmatter"
+
+  - field_name: "[CONSUMERS]"
+    type: string
+    required: conditional
+    stage: null
+    enum_values: []
+    applicable_docs: [code_file]
+    description: "代码文件头部——依赖此文件的模块，分号分隔。至少列 Tier 1 消费者。GOV-ENG-001 §7.1 定义"
+    source: "GOV-ENG-001 §7.2"
+    note: "代码文件 docstring 字段，非 frontmatter"
+
+  - field_name: "[STABILITY]"
+    type: enum
+    required: always
+    stage: null
+    enum_values:
+      - {value: "frozen", description: "冻结——不可变更"}
+      - {value: "stable", description: "稳定——通过变更门控可修改"}
+      - {value: "evolving", description: "演进中——可频繁修改"}
+      - {value: "volatile", description: "易变——AI 可自主调整"}
+    applicable_docs: [code_file]
+    description: "代码文件头部——文件稳定性。枚举值与 frontmatter stability 字段完全一致"
+    source: "GOV-ENG-001 §7.3"
+    aligned_with: "stability"
+    note: "枚举值 = frontmatter stability 字段的 4 值，零冲突"
+
+  - field_name: "[SAFETY]"
+    type: enum
+    required: always
+    stage: null
+    enum_values:
+      - {value: "H", description: "高风险——涉及安全关键路径"}
+      - {value: "M", description: "中风险——影响系统稳定性"}
+      - {value: "L", description: "低风险——辅助功能"}
+    applicable_docs: [code_file]
+    description: "代码文件头部——安全风险等级。枚举值与 frontmatter safety_level 字段完全一致"
+    source: "GOV-ENG-001 §7.3"
+    aligned_with: "safety_level"
+    note: "枚举值 = frontmatter safety_level 字段的 3 值，零冲突"
+
+  - field_name: "[AI_AUTONOMY]"
+    type: enum
+    required: always
+    stage: null
+    enum_values:
+      - {value: "immutable_core", description: "不可变核心——AI 只能读，不能改"}
+      - {value: "human_gated", description: "人工闸门——AI 可提议，需 Owner 批准"}
+      - {value: "ai_modifiable", description: "AI 可修改——AI 可直接编辑"}
+    applicable_docs: [code_file]
+    description: "代码文件头部——AI 自治权限。枚举值与 frontmatter ai_autonomy 字段完全一致"
+    source: "GOV-ENG-001 §7.3"
+    aligned_with: "ai_autonomy"
+    note: "枚举值 = frontmatter ai_autonomy 字段的 3 值，零冲突"
+
+  - field_name: "[ERROR_CONTRACT]"
+    type: string
+    required: conditional
+    stage: null
+    enum_values: []
+    applicable_docs: [code_file]
+    description: "代码文件头部——可抛出的异常列表，分号分隔。GOV-ENG-001 §7.1 定义"
+    source: "GOV-ENG-001 §7.2"
+    note: "代码文件 docstring 字段，非 frontmatter"
+
+  - field_name: "[TESTS]"
+    type: string
+    required: conditional
+    stage: null
+    enum_values: []
+    applicable_docs: [code_file]
+    description: "代码文件头部——对应测试文件路径，分号分隔。GOV-ENG-001 §7.1 定义"
+    source: "GOV-ENG-001 §7.2"
+    note: "代码文件 docstring 字段，非 frontmatter"
+
+  # ── 文件头部治理字段（GOV-ENG-002 定义）──
+  - field_name: header_format
+    type: enum
+    required: conditional
+    stage: phase0
+    enum_values:
+      - {value: "A_full", description: ".py 十字段完整版——code, script 文件"}
+      - {value: "A_test", description: ".py 六字段简化版——test 文件"}
+      - {value: "B_yaml", description: "YAML 5 字段注释块——gate, registry, contract(yaml), config, data"}
+      - {value: "C_json", description: "JSON _meta 字段——contract(json), schema(json)"}
+      - {value: "D_md", description: ".md YAML frontmatter——doc 文件"}
+      - {value: "E_shell", description: "Shell/Mermaid 注释头部——infra 文件"}
+      - {value: "exempt", description: "豁免——不需要表头"}
+    applicable_docs: [code_file, register, gate, contract, schema]
+    description: "文件表头格式——7 值。GOV-ENG-002 §9.4 定义。用于 validate_file_headers.py 路由校验逻辑"
+    source: "GOV-ENG-002 §9.4"
+    note: "与 file_category 联合使用——file_category 决定适用格式，header_format 声明实际格式"
+
+  - field_name: file_category
+    type: enum
+    required: conditional
+    stage: phase0
+    enum_values:
+      - {value: "code", description: "生产代码——src/zephyr/**/*.py"}
+      - {value: "script", description: "治理/工具脚本——scripts/**/*.py"}
+      - {value: "gate", description: "门禁定义——src/zephyr/gates/*.yaml"}
+      - {value: "registry", description: "注册表——*_registry.yaml, *_manifest.yaml"}
+      - {value: "contract", description: "契约定义——shared/contracts/*.py, contracts/*.yaml"}
+      - {value: "config", description: "配置文件——config/*.yaml"}
+      - {value: "data", description: "运行时数据——data/**/*.yaml"}
+      - {value: "doc", description: "文档——docs/**/*.md"}
+      - {value: "test", description: "测试——tests/**/*.py"}
+      - {value: "infra", description: "基础设施——.sh, .ps1, .mmd"}
+    applicable_docs: [code_file, register, gate, contract, schema]
+    description: "文件治理分类——10 值。GOV-ENG-002 §9.5 定义。决定文件应使用哪种 header_format"
+    source: "GOV-ENG-002 §9.5"
+    note: "file_category → header_format 映射见 GOV-ENG-002 §2"
 
   # ── 知识条目特有字段──
   - field_name: category
@@ -668,14 +872,14 @@ fields:
 # 汇总统计
 # ============================================================================
 summary:
-  total_fields: 40
+  total_fields: 54
   by_required:
-    always: 7
-    conditional: 8
-    optional: 25
+    always: 14
+    conditional: 12
+    optional: 26
   by_type:
     string: 7
-    enum: 20
+    enum: 22
     array: 7
     object: 3
     date: 2
@@ -686,7 +890,7 @@ summary:
     always: 7
     conditional: 1
     optional: 25
-  enum_fields: 20
+  enum_fields: 22
   referenced_standards:
     - PS-STD-001
     - doc_type-vocabulary.yaml

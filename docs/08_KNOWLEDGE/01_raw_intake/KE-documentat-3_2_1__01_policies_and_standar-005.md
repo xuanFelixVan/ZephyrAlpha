@@ -1,4 +1,4 @@
----
+﻿---
 module_id: KE-documentat-3_2_1__01_policies_and_standar-005
 title: 3.2.1 `01_policies_and_standards/` 子集（13 值）
 category: documentation
@@ -11,7 +11,7 @@ category: documentation
 > 全项目有 27 种 doc_type，但 `01_policies_and_standards/` 目录下**只使用以下 13 种**。
 > 其他 doc_type（如 `blueprint`、`construction_plan`、`roadmap`、`knowledge_entry`）属于其他目录，不在此处使用。
 > **例外**：`templates/` 下的模板文件不受此 13 值子集约束——模板 doc_type 取目标文档类型。
-> 例如 `blueprint-template.md` 的 `doc_type: blueprint` 合法（它为蓝图提供模板，其 doc_type 表达的是目标，不是文件本身的分类）。
+> 例如 `blueprint-construction-template.md` 的 `doc_type: blueprint` 合法（它为蓝图提供模板，其 doc_type 表达的是目标，不是文件本身的分类）。
 
 | # | doc_type | 含义 | 对应目录 | rule_form |
 |---|----------|------|---------|-----------|

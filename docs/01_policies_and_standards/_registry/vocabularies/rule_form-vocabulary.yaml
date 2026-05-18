@@ -1,4 +1,11 @@
-# rule_form 受控词表
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+﻿# rule_form 受控词表
 # ZephyrAlpha 2.0 规则形式唯一真源
 # 维护者：ZephyrAlpha-Owner
 # 版本：1.2.0
@@ -54,7 +61,7 @@ values:
   - value: structural
     definition: "结构类规则——定义文档/文件的结构骨架"
     ai_consumption: "AI 按模板生成文档"
-    examples: ["blueprint-template.md", "session-log-schema.yaml"]
+    examples: ["blueprint-construction-template.md", "session-log-schema.yaml"]
     doc_types: ["template", "blueprint", "construction_plan"]
 
 # ============================================================

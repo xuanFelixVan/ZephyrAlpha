@@ -1,4 +1,11 @@
-# doc_type 受控词表
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+﻿# doc_type 受控词表
 # ZephyrAlpha 2.0 文档类型唯一真源
 # 维护者：ZephyrAlpha-Owner
 # 版本：1.4.0
@@ -94,10 +101,17 @@ values:
     rule_form: structural
     allowed_directories: ["templates/"]
     forbidden_directories: ["operational/", "governance/"]
-    required_fields: []
+    required_fields: ["completeness"]
     ai_keywords: ["模板", "骨架", "template", "boilerplate"]
-    usage_note: "本文档类型的 doc_type 约束主要用于'模板的模板'（如 templates/ 目录自身结构规范）。cookbook template（用于生成目标文档的预填骨架）的 doc_type 取目标文档类型（如 blueprint-template.md 设 doc_type: blueprint 而非 template）——这是对 PS-STD-001 §3.4 的语义澄清。对标 K8s Helm：模板文件的 kind 不改 'Template'，仍是 Deployment/Service。**注意**：templates/ 下的文件不受其 doc_type 的 allowed_directories 约束——模板是 Class Definition 而非 CI 实例，详见 §模板豁免规则。"
-    examples: ["blueprint-template.md", "construction-plan-template.md"]
+    usage_note: "本文档类型的 doc_type 约束主要用于'模板的模板'（如 templates/ 目录自身结构规范）。cookbook template（用于生成目标文档的预填骨架）的 doc_type 取目标文档类型（如 blueprint-construction-template.md 设 doc_type: blueprint 而非 template）——这是对 PS-STD-001 §3.4 的语义澄清。对标 K8s Helm：模板文件的 kind 不改 'Template'，仍是 Deployment/Service。**注意**：templates/ 下的文件不受其 doc_type 的 allowed_directories 约束——模板是 Class Definition 而非 CI 实例，详见 §模板豁免规则。"
+    template_must_contain:
+      - "frontmatter completeness 字段（5 级枚举: complete/incomplete/incomplete_first_party_only/incomplete_third_party_only/unknown）"
+      - "COMPLIANCE_CHECKLIST HTML 注释块（机器可解析合规清单，含 REQUIRED_SECTIONS）"
+      - "AI 自治权限标注表"
+      - "TTL 与生命周期节"
+      - "变更记录节"
+    compliance_script: "python scripts/governance/d3_metadata/check_template_compliance.py <文档路径> --template <类型>"
+    examples: ["blueprint-construction-template.md", "dependency-graph-template.md"]
 
   - value: terminology
     definition: "术语表——核心术语的统一定义和仲裁源，用于消除跨文件语义歧义"
@@ -163,7 +177,7 @@ values:
     rule_form: declarative
     allowed_directories: ["03_blueprints/"]
     forbidden_directories: ["operational/", "governance/"]
-    required_fields: ["valid_from", "architecture_layers"]
+    required_fields: ["valid_from", "architecture_layers", "last_verified"]
     ai_keywords: ["蓝图", "设计", "架构", "blueprint", "模块"]
     examples: ["script-system-blueprint.md"]
 
@@ -325,7 +339,7 @@ values:
 #   register         → {subject}-registry.md / -register.md
 #   index            → index.md（固定，不可变）
 #   template         → {subject}-template.md（templates/ 目录下模板文件）
-#                       注：模板文件的 doc_type 取目标文档类型（如 blueprint-template.md 设 doc_type: blueprint）
+#                       注：模板文件的 doc_type 取目标文档类型（如 blueprint-construction-template.md 设 doc_type: blueprint）
 #   terminology      → 术语特定命名（如 glossary.md、terminology-mapping.md）
 #
 # 历史修正：v1.1.0 允许"文件名描述业务场景、doc_type 定义文档结构，两者不需要一致"，该条款已废除。

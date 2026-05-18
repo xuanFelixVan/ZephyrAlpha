@@ -11,7 +11,9 @@ language: zh
 created_by: human_plus_agent
 date: ""
 ttl: permanent
-summary: ""
+summary: "标准文档创建模板——声明式规范，定义度量/格式/接口，新建 standard 类文档时使用此模板"
+completeness: "unknown"
+template_for: standard
 tags: []
 rule_form: declarative
 scope: global
@@ -22,9 +24,36 @@ ai_autonomy: human_gated
 evolution_policy: ""
 ---
 
+<!--
+COMPLIANCE_CHECKLIST — 机器可解析合规清单
+标准文档模板 MUST 包含以下所有标题（精确匹配关键词）。缺一 = 不合规。
+脚本：python scripts/governance/d3_metadata/check_template_compliance.py <文档路径> --template standard
+-->
+<!--
+REQUIRED_SECTIONS:
+  overview: "概述"
+  s1: "1. 目的与范围"
+  s2: "2. SSoT 声明"
+  s3: "3. 规范定义"
+  s4: "4. 标准间引用"
+  s5: "5. 专业参考"
+  s6: "6. AI 可消费性声明"
+  s7: "7. 变更记录"
+END_REQUIRED_SECTIONS
+-->
+
 # {标题}
 
 > module_id: {填写} | version: 0.1.0 | status: draft | layer: {填写}
+
+---
+
+## 概述
+
+> ⚠️ **必填**。AI 阅读本文档的第一段——3~5 句话建立心理模型。
+> 写清楚：这个标准是什么、定义了什么、谁用它、为什么存在。
+
+{本标准文档定义 {领域} 的规范——声明式度量/格式/接口约束。适用范围：{适用范围}。使用对象：AI Agent 施工参照 / 人类 Owner 合规审计。核心原则：精确可验证——每个标准条目都能通过自动化或人工检查验证。}
 
 ---
 

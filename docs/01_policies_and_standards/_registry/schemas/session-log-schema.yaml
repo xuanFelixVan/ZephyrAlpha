@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # ZephyrAlpha 2.0 Session Log 标准 Schema
 # 定义每次 AI session 结束时必须写入的 Session Log 格式
 # 维护者：ZephyrAlpha-Owner

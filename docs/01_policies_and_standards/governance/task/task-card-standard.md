@@ -97,6 +97,22 @@ related:
 | `files` | 文件完整性 | `deliverables 全部存在 + UTF-8` |
 | `diff` | diff 范围 | `仅修改 files_in_scope` |
 
+**涉及代码重组时**（合并/拆分/迁移/重命名），必须额外引用 **GOV-ENG-002 代码重组安全策略**：
+
+| # | 必加验收标准 | 来源 |
+|---|------------|------|
+| 1 | 旧 import 路径零残留 | GOV-ENG-002 §3.3 #1 |
+| 2 | class/function 列表完整性 | GOV-ENG-002 §3.3 #2 |
+| 3 | 相关测试通过 | GOV-ENG-002 §3.3 #3 |
+
+`applicable_rules` 必须包含：
+```yaml
+applicable_rules:
+  - "GOV-ENG-002 §1 安全搬家铁律 #1-#9"
+  - "GOV-ENG-002 §2 价值分析方法论 步骤1-5"
+  - "GOV-ENG-002 §3 强制安全协议 Pre-flight + 执行中 + Post-merge"
+```
+
 ### 3.5 风险与缓解
 
 | 风险 | 缓解 |

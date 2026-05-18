@@ -1,8 +1,11 @@
 ---
+
 doc_type: index
 status: active
 generated: '2026-05-06'
+blueprint_id: DOM-GOV-001
 ---
+
 
 # Technical Feasibility — 目录索引
 

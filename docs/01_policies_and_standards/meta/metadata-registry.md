@@ -1,9 +1,9 @@
----
+﻿---
 module_id: PS-STD-001
 title: ZephyrAlpha 元数据登记表
 doc_type: standard
 status: active
-version: "6.0.1"
+version: "6.1.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -32,19 +32,25 @@ supersedes:
     version: 3.6.0
     reason: "v4.0.0 重命名为元数据注册表，扩展为全项目三域字段真源，字段改名对标 IETF AAT"
 ai_autonomy: immutable_core
-depends_on: []
+depends_on:
+  - target: PS-REG-012
+    path: docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.yaml
+    relationship: "YAML=数据真源, MD=规则真源. 修改MD规则→MUST检查YAML对应字段. 规则冲突→MD优先"
+    linked_version: "1.0.0"
 ---
 
 # ZephyrAlpha 元数据登记表
 
-> **module_id**: PS-STD-001 | **version**: 5.7.0 | **status**: active
+> **module_id**: PS-STD-001 | **version**: 6.1.0 | **status**: active
 >
-> 本注册表�?ZephyrAlpha **元数据标�?*的唯一真源（Single Source of Truth）—�?
+> 本注册表是 ZephyrAlpha **元数据规则**的 SSoT（字段**数据**真源见 PS-REG-012）——
 > 定义字段应该有什么属性、校验规则、分类体系�?
-> 覆盖三个域：文档 frontmatter（域 A）、任务卡（域 B）、AI 治理（域 C）�?
+> 覆盖四个域：文档 frontmatter（域 A）、任务卡（域 B）、AI 治理（域 C）�?、代码文件头部（域 D）——
 > **字段的具体定义（字段�?类型/必填�?枚举值）�?PS-REG-012 [frontmatter-field-registry.yaml](../_registry/catalogs/frontmatter-field-registry.yaml) �?canonical SSoT**
 > （YAML 格式、字段级粒度、机器可校验——符�?AGENTS.md §6.9 YAML 优先原则）�?
 > 本文件管"规则"（字段应满足什么规范），PS-REG-012 �?数据"（每个字段具体是什么）�?
+> 
+> **双真源声明**：YAML=PS-REG-012=数据真源，MD=PS-STD-001=规则真源。修改任一方 → MUST 同步检查另一方。数据冲突 → YAML 优先。规则冲突 → MD 优先。
 > 所有工具、AI 员工、pre-commit 钩子、CI 流水线：**读字段定�?�?�?PS-REG-012；读字段规范/校验逻辑 �?查本文件**�?
 >
 > 对标标准：ISO 11179（元数据登记表）、IETF Agent Audit Trail（AAT）、OpenLineage�?
@@ -86,15 +92,16 @@ depends_on: []
 
 ### 1.2 三域架构
 
-本注册表覆盖三个域，每个域有各自的字段集合：
+本注册表覆盖四个域，每个域有各自的字段集合：
 
 | �?| 名称 | 适用范围 | 字段�?|
 |---|------|---------|--------|
 | **A** | 文档 frontmatter | 所�?`.md` / `.yaml` 文件 | 40 |
 | **B** | 任务�?| `doc_type: plan` �?`doc_type: roadmap` 的文�?| 18 |
 | **C** | AI 治理 | AI 决策日志 + AI 员工档案 | 28+2 + 30+ |
+| **D** | 代码文件头部 | 所有 `src/zephyr/` 下 `.py` 文件 | 10 |
 
-**�?A 是全局�?*，所有文档都要遵守。域 B 和域 C 是专用的，只在特定场景下使用�?
+**域 A 是全局的**，所有文档都要遵守。域 B、C、D 是专用的，只在特定场景下使用。域 D 与 frontmatter 字段体系独立但 3 个枚举字段与域 A 对齐（见 8.1）。
 
 ### 1.3 范围
 
@@ -192,8 +199,8 @@ depends_on: []
 | `docs/01_policies_and_standards/_registry/schemas/session-log-schema.yaml` | author_agent 字段 |
 | `docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.yaml` | 任务卡元数据 |
 | `docs/08_knowledge/kms-entry-schema.md` | domain 10值、knowledge_type 6�?|
-| `docs/01_policies_and_standards/templates/blueprint-template.md` | frontmatter 模板字段 |
-| `docs/01_policies_and_standards/templates/blueprint-template.md` | 蓝图 + 施工指引统一模板（设计和实施合并�?|
+| `docs/01_policies_and_standards/templates/blueprint-construction-template.md` | frontmatter 模板字段 |
+| `docs/01_policies_and_standards/templates/blueprint-construction-template.md` | 蓝图 + 施工指引统一模板（设计和实施合并�?|
 | `docs/01_policies_and_standards/meta/document-structure-standard.md`（PS-STD-002�?| 元标准模板，§2.3 引用本注册表作为 frontmatter 字段定义的权威来�?|
 
 #### 1.5.4 Tier 4：已废弃但仍有引�?
@@ -362,6 +369,8 @@ last_reviewed_by �?review_status �?category �?domain �?custom_*
 | 9 | `doc_type: blueprint` �?`rule_form: structural` | blueprint 是结构化设计规范（对�?TOGAF Architecture Definition Document�?|
 | 10 | `doc_type: construction_plan` �?`rule_form: structural` | construction_plan 是结构化执行计划（对�?ITIL Change Enablement Plan�?|
 | 11 | `doc_type: roadmap` �?`rule_form: declarative` | roadmap 是声明式方向规划，AI 不执�?roadmap 本身 |
+| 12 | `doc_type: template` → `summary` MUST 非空 | 模板的 summary 是 AI 发现模板的唯一锚点（对标 Agent Skills 规范 description 字段） |
+| 13 | `template_for` vs `tags` 一致性：若 tags 中包含 doc_type 受控词表中的值，则该值 MUST 与 `template_for` 一致 | 防止 tags 自由文本与 template_for 受控枚举矛盾，AI 搜索模板时 MUST 匹配 `template_for` |
 
 > **架构公民原则（避免误判）**�?
 > - 约束 #1 是单向的（`frozen` �?`immutable_core`），�?*逆面不成�?*：`stability: stable` + `ai_autonomy: immutable_core` 是合法组合（�?PS-STD-003——稳定但 AI 不可修改的核心规则）
@@ -420,7 +429,7 @@ last_reviewed_by �?review_status �?category �?domain �?custom_*
 > 全项目有 27 �?doc_type，但 `01_policies_and_standards/` 目录�?*只使用以�?13 �?*�?
 > 其他 doc_type（如 `blueprint`、`construction_plan`、`roadmap`、`knowledge_entry`）属于其他目录，不在此处使用�?
 > **例外**：`templates/` 下的模板文件不受�?13 值子集约束——模�?doc_type 取目标文档类型�?
-> 例如 `blueprint-template.md` �?`doc_type: blueprint` 合法（它为蓝图提供模板，�?doc_type 表达的是目标，不是文件本身的分类）�?
+> 例如 `blueprint-construction-template.md` �?`doc_type: blueprint` 合法（它为蓝图提供模板，�?doc_type 表达的是目标，不是文件本身的分类）�?
 
 | # | doc_type | 含义 | 对应目录 | rule_form |
 |---|----------|------|---------|-----------|
@@ -527,7 +536,7 @@ last_reviewed_by �?review_status �?category �?domain �?custom_*
 | `protocol` | `governance/` | 声明�?| 同上 |
 | `operational_rule` | `operational/` | 过程�?| operational/ 下只能是 operational_rule |
 | `register` | `_registry/` | 数据 | _registry/ 下只能是 register |
-| `template` | `templates/` | 结构 | templates/ 下模板文件的 doc_type 取目标文档类型�?template"作为 doc_type 仅用�?模板的模�?（如本目录结构模板本身）；cookbook template（用于生成目标文档的预填骨架）其 doc_type = 目标类型（如 blueprint-template.md �?doc_type: blueprint）。对标：K8s Helm template 不改 kind �?Template，ITIL 模板不改标题�?"Template" 前缀�?|
+| `template` | `templates/` | 结构 | templates/ 下模板文件的 doc_type 取目标文档类型�?template"作为 doc_type 仅用�?模板的模�?（如本目录结构模板本身）；cookbook template（用于生成目标文档的预填骨架）其 doc_type = 目标类型（如 blueprint-construction-template.md �?doc_type: blueprint，为蓝图+施工图提供模板）。对标：K8s Helm template 不改 kind �?Template，ITIL 模板不改标题�?"Template" 前缀�?|
 
 ### 3.5 新增 doc_type 的流�?
 
@@ -761,7 +770,7 @@ DRAFT �?SUBMITTED �?REVIEWED �?ACCEPTED �?INDEXED �?VERIFIED
 | `ttl` | 枚举�?| 小写 | `permanent` `30d` `7d` `session` `periodic_review_90d` |
 | `language` | 枚举�?| 小写 | `zh` `en` `zh_en` |
 | `module_id` | **标识�?* | **大写** | `L00-DS-001` `ADR-0011` `PS-STD-001` `KE-016` |
-| `title` | 自由文本 | 自然语言 | `编码安全规范` |
+| `title` | 自由文本 | 自然语言。blueprint 类格式：`{English Name} 蓝图 — {中文一句话描述}` | `Vector Memory Service 蓝图 — ChromaDB 8 Collection 统一向量持久化` |
 | `version` | 语义版本 | 数字 | `1.0.0` |
 
 #### 4.5.5 否决方案
@@ -1336,6 +1345,53 @@ DOM ── domains/（层域治理，初始 4 层，按需扩展�?
 
 ---
 
+
+### 8.4 域 D：代码文件头部字段（10 个）
+
+> 定义标准：GOV-ENG-001 7（[code-construction-standards.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)）
+> 字段数据真源：PS-REG-012（[frontmatter-field-registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.yaml)）
+> 域 D 字段出现在 Python 代码文件的 docstring 首行，不是 YAML frontmatter。
+
+#### 8.4.1 字段总览
+
+| # | 字段 | 必填 | 类型 | 说明 |
+|---|------|:---:|------|------|
+| 1 | [BLUEPRINT] |  | string | 所属蓝图 module_id + 蓝图路径 |
+| 2 | [MODULE] |  | string | 完整 Python 模块路径 |
+| 3 | [INVARIANTS] |  | string | 不可违反的约束，分号分隔 |
+| 4 | [MODIFY-GUARD] |  | string | 修改此文件必须同步更新的文件，分号分隔 |
+| 5 | [CONSUMERS] |  | string | 依赖此文件的模块，分号分隔 |
+| 6 | [STABILITY] |  | enum | 文件稳定性（与域 A stability 枚举对齐） |
+| 7 | [SAFETY] |  | enum | 安全风险等级（与域 A safety_level 枚举对齐） |
+| 8 | [AI_AUTONOMY] |  | enum | AI 自治权限（与域 A i_autonomy 枚举对齐） |
+| 9 | [ERROR_CONTRACT] |  | string | 可抛异常列表，分号分隔 |
+| 10 | [TESTS] |  | string | 测试文件路径，分号分隔 |
+
+#### 8.4.2 枚举值与域 A 对齐
+
+| 域 D 字段 | 域 A 对齐字段 | 枚举值 | 对齐方式 |
+|-----------|-------------|--------|---------|
+| [STABILITY] | stability | rozen/stable/evolving/volatile | 完全一致 |
+| [SAFETY] | safety_level | H/M/L | 完全一致 |
+| [AI_AUTONOMY] | i_autonomy | immutable_core/human_gated/ai_modifiable | 完全一致 |
+
+**一致性约束**：同一文件在域 A frontmatter 中声明的 stability/safety_level/i_autonomy 值 MUST 与域 D 代码头部中的值一致。不一致 = 漂移 = META-V22 违规。
+
+#### 8.4.3 __init__.py 豁免
+
+__init__.py 仅需 [BLUEPRINT] + [AI_AUTONOMY] 两个字段。
+
+#### 8.4.4 与域 A 的关系
+
+| 维度 | 域 A（frontmatter） | 域 D（代码头部） |
+|------|-------------------|----------------|
+| 适用对象 | .md / .yaml 文件 | .py 代码文件 |
+| 存储位置 | YAML frontmatter | Python docstring |
+| 消费者 | 文档校验脚本 | AI 修改代码时 |
+| 枚举真源 | PS-REG-012 | PS-REG-012（同一真源） |
+| 独有字段 | 33 个 | 7 个（BLUEPRINT/MODULE/INVARIANTS/MODIFY-GUARD/CONSUMERS/ERROR_CONTRACT/TESTS） |
+| 共享枚举 |  | stability/safety_level/ai_autonomy |
+
 ## 9. 受控枚举定义
 
 > 本节定义跨域使用的枚举值。每个枚举有唯一的代码真源�?
@@ -1813,7 +1869,7 @@ derived_from:
 
 #### blueprint（模块蓝图）
 
-> 📄 完整模板文件：`docs/01_policies_and_standards/templates/blueprint-template.md`
+> 📄 完整模板文件：`docs/01_policies_and_standards/templates/blueprint-construction-template.md`
 
 ```
 # 标题
@@ -1842,7 +1898,7 @@ derived_from:
 
 #### construction_plan（施工图纸）
 
-> 📄 施工指引已合并至：`docs/01_policies_and_standards/templates/blueprint-template.md` §12
+> 📄 施工指引已合并至：`docs/01_policies_and_standards/templates/blueprint-construction-template.md` §12（蓝图+施工图模板）
 
 ```
 # 标题
@@ -2047,6 +2103,7 @@ derived_from:
 | META-V19 | `ai_capability_slot` 使用未定义�?| P2 | �?warn |
 | META-V20 | 两个以上 `status: active` + `doc_type: standard` 文件对同一领域声明 `唯一真源`（SSoT�?| P0 | �?|
 | META-V21 | `index.md` 清单条目描述的文件状态与实际文件�?frontmatter `status` 不一�?| P0 | �?|
+| META-V22 | 代码文件头部 [STABILITY]/[SAFETY]/[AI_AUTONOMY] 枚举值与域 A frontmatter 不一致 | P1 | alidate_file_headers.py |
 
 ### 14.2 人工审查�?
 
@@ -2163,7 +2220,7 @@ derived_from:
 | 4.1.0 | 2026-04-29 | 三域 status 分离（DocStatus 7�?TaskStatus 10�?KeStatus 10值）；新�?§7 �?B 任务卡字段（18字段）；新增 §8 �?C AI 治理字段交叉索引 + provenance 双定义澄清（frontmatter `provenance` vs 代码 `WriteTrace`）；新增 §9 受控枚举定义（category 10�?domain 10�?namespace 7�?AgentRole 6值）；layer 格式确认为全小写 `l00_data_source`；新�?§16 与专业机构对照表；章节重新编号（§7-§18�?|
 | 4.0.0 | 2026-04-28 | 重命名为元数据注册表（metadata-registry.md），扩展为全项目三域字段真源；`primary_model` �?`execution_model`（对�?IETF model_id）；`ai_model` �?`author_agent`（对�?IETF agent_id）；明确�?A（文�?frontmatter�? �?B（任务卡�? �?C（AI 治理）三层架构；新增 4 个审计字段：`compliance_tags`（�?.13）、`human_override`（�?.14）、`last_reviewed_by`（�?.15）、`review_status`（�?.16）；新增 §4 �?B 任务卡字段、�? �?C AI 治理字段；新�?§12 与专业机构对照表；章节编�?§7→�?、�?→�? |
 | 3.6.0 | 2026-04-28 | 字段标准最终定版：新增 `safety_level`（�?.10）、`evolution_policy`（�?.11）、`blueprint_refs`（�?.12）三个字段；`governance_family` 合法值加 `D`（共享底座）；`ai_capability_slot` 合法值加 `active`（已激活）；`primary_model` �?`ai_model` 明确语义分工、不可合并；新增 META-V13~V19 七项违规检测；字段排序约定更新（�?.3�?|
-| 3.5.0 | 2026-04-28 | 拆分 `design` 为三种独�?doc_type：`blueprint`（模块蓝图）、`construction_plan`（施工图纸）、`design`（架构视图）；蓝图和施工图各自拥有独立正文模板；蓝图模板侧重架构决策记录�?模块边界+接口契约+约束条件；施工图模板侧重依赖蓝图+来源追溯表（§8 自包含性）+实施步骤+施工状态双字段；doc_type �?19 种扩展为 21 �?|
+| 3.5.0 | 2026-04-28 | 拆分 `design` 为三种独�?doc_type：`blueprint`（模块蓝图）、`construction_plan`（施工图纸）、`design`（架构视图）；蓝图和施工图各自拥有独立正文模板；蓝图+施工图模板侧重架构决策记录�?模块边界+接口契约+约束条件；施工图模板侧重依赖蓝图+来源追溯表（§8 自包含性）+实施步骤+施工状态双字段；doc_type �?19 种扩展为 21 �?|
 | 3.4.0 | 2026-04-28 | 撤回 primary_model+ai_model 合并：保留两个字段，标注"未来统一�?ai_model"但当前不执行（涉�?18 个代码文�?数据库迁移，直接合并会运行时崩溃）；补全三层口子 9 项预留（§7.8）；AI 治理字段完整覆盖 49 �?|
 | 3.3.0 | 2026-04-28 | 修正 AI 员工字段：合�?primary_model �?ai_model 为统一 ai_model 字段；Session Log 专用字段（context_budget_used/knowledge_extracted/next_session_handover）从 frontmatter 移出为正文字段；新增 §7.8 三层口子预留 9 项（C/D/F �?3 项）；AC-2 四列字段 + 三层口子 9 �?= 13 �?AI 预留 |
 | 3.2.0 | 2026-04-28 | 补全 AI 员工字段：新�?§7.5 模型选择字段（primary_model/model_rationale/fallback_model）、�?.6 Session Log 专用字段（ai_model/context_budget_used/knowledge_extracted/next_session_handover）、�?.7 治理系统 AI 预留字段（governance_family/ai_capability_slot/ai_autonomy_level_planned/ai_employee_count_planned）、�?.8 AI 决策日志说明（独�?schema，非 frontmatter�?|

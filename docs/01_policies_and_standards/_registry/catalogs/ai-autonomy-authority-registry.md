@@ -89,7 +89,7 @@ related_rationale:
 | L09 研究创新 | `src/zephyr/l09_research_innovation/` | AI-Modifiable | 实验性研究 | 写 Provenance |
 | **L10 合规** | `src/zephyr/l10_compliance/` | **Immutable Core** | 合规规则刚性 | Owner + ADR |
 | L11 ML 平台 | `src/zephyr/l11_ml_platform/` | AI-Modifiable | 模型训练实现 | 写 Provenance |
-| L12 系统遥测 | `src/zephyr/l12_system_telemetry/` | AI-Modifiable | 日志实现 | 写 Provenance |
+| L12 系统遥测 | `src/zephyr/system_telemetry/` | AI-Modifiable | 日志实现 | 写 Provenance |
 | L12 采样率 | 同上 子模块 | Human-Gated（**修正**） | 采样率影响审计完整性 | Owner 审批 |
 | L13 实验平台 | `src/zephyr/l13_experimentation/` | AI-Modifiable | 实验框架 | 写 Provenance |
 
@@ -242,7 +242,7 @@ related_rationale:
 
 | 来源文档 | GLM 权限错误数 | 修正后 |
 |----------|---------------|-------|
-| script-system-design | 3 处（30%） | 已修正 |
+| governance-automation-design | 3 处（30%） | 已修正 |
 | infrastructure-7-modules | 2 处（20%）+ 缺标注 | 已修正 |
 | principles-and-positioning | 4 处（含 Provenance Chain 缺失）| 已修正 |
 | two-pipelines-design | 2 处（15%） | 已修正 |

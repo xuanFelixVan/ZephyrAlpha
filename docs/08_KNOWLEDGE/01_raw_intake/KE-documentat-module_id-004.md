@@ -8,7 +8,7 @@ category: documentation
 
 五、Module ID 跨文件一致性
 
-**权威来源**：`docs/02_enterprise_architecture/target-architecture/architecture-model/module-id-registry.yaml`（Stage D 后统一到 YAML SSoT，替代老树 JSON 注册表）
+**权威来源**：`docs/02_enterprise_architecture/target-architecture/architecture-model/module-id-registry.yaml`（Stage D 后统一到 YAML SSoT，替代旧体系 JSON 注册表）
 
 ```yaml
 protected_field: module_id

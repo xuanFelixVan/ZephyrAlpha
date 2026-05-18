@@ -321,9 +321,9 @@ TargetPosition → Order → Fill → Position → PnL
 | 禁止 `UPDATE security SET delisting_date=...`（破坏 bitemporal） | 必须 INSERT 新版本 + 旧版本标记 superseded |
 | 禁止前端/AI 直接发起主数据修改 | 必须走"修改提案 → Steward 复核 → 双人签字 → 落库"流程（暂时仅限单人 + 双 AI 评审） |
 
-### 7.3 与老树 L00-M5 `catalog/` 的关系
+### 7.3 与旧体系 L00-M5 `catalog/` 的关系
 
-老树 `construction-plan-l00-data-source.md` 中的 L00-M5 `catalog`（标的、交易所日历、数据源版本与血缘登记）就是 MDM 在代码层的物化点。本视图与老树设计**完全兼容**，新增的是"必须 bitemporal"+"必须经 OpenLineage 注册血缘"两条强约束。
+旧体系 `construction-plan-l00-data-source.md` 中的 L00-M5 `catalog`（标的、交易所日历、数据源版本与血缘登记）就是 MDM 在代码层的物化点。本视图与旧体系设计**完全兼容**，新增的是"必须 bitemporal"+"必须经 OpenLineage 注册血缘"两条强约束。
 
 ---
 
@@ -359,7 +359,7 @@ TargetPosition → Order → Fill → Position → PnL
 
 ### 8.4 与 03-AA / scripts/ 的边界
 
-DA 视图给"**断言契约清单**"；具体 Python/SQL 代码落 `scripts/fitness_functions/`、`src/zephyr/l00_data_source/quality_gate/`（对应老树 L00-M6）。
+DA 视图给"**断言契约清单**"；具体 Python/SQL 代码落 `scripts/fitness_functions/`、`src/zephyr/l00_data_source/quality_gate/`（对应旧体系 L00-M6）。
 
 ---
 

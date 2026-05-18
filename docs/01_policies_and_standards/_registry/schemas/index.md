@@ -1,10 +1,13 @@
 ---
+
 doc_type: index
 title: "_registry/schemas/ 目录索引"
 status: active
 version: "1.0.0"
 generated: '2026-05-02'
+blueprint_id: DOM-GOV-001
 ---
+
 
 # Schemas — 目录索引
 

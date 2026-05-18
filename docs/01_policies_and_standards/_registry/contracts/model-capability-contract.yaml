@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # ZephyrAlpha 2.0 AI 模型能力矩阵契约
 # 定义每个 AI 模型的能力边界、禁止操作、推荐任务类型
 # 维护者：ZephyrAlpha-Owner
@@ -19,8 +26,7 @@ ai_autonomy: human_gated
 depends_on:
   - {target: PS-STD-001, at: "§2.5", why: "frontmatter 字段分类清单"}
 
-# 老树教训：AI 模型在塞模块时经常越权操作（如 Trae 修改 Cursor 规则文件、
-# 免费模型执行复杂架构设计），导致治理层级混乱。
+# 铁律：MUST 遵守权限边界——越权操作（如 Trae 修改 Cursor 规则文件）= 治理层级混乱
 
 models:
   - name: "Cursor-Premium"
@@ -39,7 +45,7 @@ models:
       - ".cursor/rules/**"
       - "AGENTS.md"
       - ".roomodes"
-      - "_DO_NOT_USE_old_tree/**"  # 老树体系，只读
+      - "_DO_NOT_USE_old_tree/**"  # 旧体系，只读
     recommended_tasks:
       - "架构设计"
       - "契约定义"

@@ -162,7 +162,7 @@ This view is **driven by** the Business Architecture (what capabilities determin
   - `01_raw_intake` — Layer 2 Collection output: raw entries awaiting triage (G1 output) / Layer 2 采集输出：待分拣原始条目（G1 输出）
     - `papers` — Academic papers (arXiv, SSRN, NBER) / 学术论文
     - `opensource` — Open source projects (GitHub, PyPI) / 开源项目
-    - `blueprints` — Old-tree blueprints (C workflow batch input) / 老树蓝图（C 工作流批量输入）
+    - `blueprints` — Old-tree blueprints (C workflow batch input) / 旧体系蓝图（C 工作流批量输入）
     - `reports` — Industry research reports / 行业研究报告
     - `practices` — Best practice articles and talks / 最佳实践文章与演讲
     - `operations` — Operational experience from L07 / 来自 L07 的运营经验

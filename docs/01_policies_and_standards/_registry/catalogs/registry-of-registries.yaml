@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # ============================================================================
 # ZephyrAlpha 登记表的登记表 — 跨登记表一致性契约（Registry of Registries SSoT）
 # ============================================================================
@@ -12,8 +19,8 @@ module_id: PS-REG-016
 doc_type: contract
 title: "登记表的登记表 — 跨登记表一致性契约"
 status: active
-version: "1.1.0"
-date: "2026-05-03"
+version: "1.2.0"
+date: "2026-05-16"
 summary: "管理项目中所有登记表的跨表共享字段一致性规则。声明每个共享字段的 SSoT 归属、一致性级别、校验触发时机。v1.1.0：从 meta/ 迁移至 _registry/catalogs/，增补 YAML canonical 字段。"
 #
 # 对标: ITIL SACM CMDB 关系类型（CI 之间的 exact/derived/independent）
@@ -263,6 +270,26 @@ registries:
     ssoT_for:
       - "document_id"
       - "path"
+
+  - id: "REG-017"
+    name: "project-path-tree"
+    title: "物理路径树快照"
+    path: "docs/01_policies_and_standards/_registry/catalogs/project-path-tree.yaml"
+    version: "1.0.0"
+    description: "项目当前物理目录/文件结构快照，自动生成禁止手写"
+    ssoT_for:
+      - "physical_path"
+      - "directory_structure"
+
+  - id: "REG-018"
+    name: "path-ownership-map"
+    title: "路径归属声明"
+    path: "docs/03_modules/path-ownership-map.yaml"
+    version: "1.0.0"
+    description: "每个文件路径归哪个蓝图管辖的声明，路径冲突检测的 SSoT"
+    ssoT_for:
+      - "path_ownership"
+      - "blueprint_path_claim"
 
 # ============================================================================
 # 跨登记表一致性规则

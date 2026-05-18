@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 schema_version: 1.0
 module_id: PS-REG-002
 doc_type: register
@@ -1022,7 +1029,7 @@ files:
   stability: stable
   layer: cross_layer
   superseded_by: ''
-- path: docs/01_policies_and_standards/templates/blueprint-template.md
+- path: docs/01_policies_and_standards/templates/blueprint-construction-template.md
   module_id: ''
   title: ''
   doc_type: blueprint
@@ -1119,17 +1126,6 @@ files:
   rule_form: declarative
   scope: global
   stability: evolving
-  layer: cross_layer
-  superseded_by: ''
-- path: docs/01_policies_and_standards/templates/task-card-template.md
-  module_id: TEMPLATE-TASK-001
-  title: 任务卡模�?�?防漂移标准格�?
-  doc_type: template
-  status: active
-  version: 1.0.0
-  rule_form: ''
-  scope: ''
-  stability: ''
   layer: cross_layer
   superseded_by: ''
 - path: docs/01_policies_and_standards/_registry/index.md
@@ -1716,7 +1712,7 @@ files:
   layer: ''
   superseded_by: ''
 - path: docs/03_modules/_restructuring/blueprint.md
-  module_id: GOV-RSTR-001
+  module_id: GOV-FSTR-001
   title: 系统重组总蓝图 — 大文件拆分·重复模块合并·按需激活机制·LLM接入
   doc_type: blueprint
   status: active

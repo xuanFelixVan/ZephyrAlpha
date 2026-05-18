@@ -27,7 +27,7 @@ tags:
 > **用途**：定义跨文件受保护字段的权威来源（Authority Source）与合法值集合。
 > `scripts/governance/d5_architecture/validate_ssot.py` 使用本文件作为校验规则配置。
 > 每次修改本文件需同步更新上述脚本并重新运行验收测试。
-> **Stage H（2026-04-25）路径对齐完成**：全部 6 处老树 `docs/02_ARCHITECTURE/*` / `docs/09_audit/state/module_id_registry.json` 引用已替换为项目真源；`module_id` 从 `ARCH_SSOT_AUTHORITY_MAP` 迁移为 `STD-SSOT-AUTHORITY-MAP`（符合 file-naming-standard v2.0.1 §四 `STD-*` 命名空间）。
+> **Stage H（2026-04-25）路径对齐完成**：全部 6 处旧体系 `docs/02_ARCHITECTURE/*` / `docs/09_audit/state/module_id_registry.json` 引用已替换为项目真源；`module_id` 从 `ARCH_SSOT_AUTHORITY_MAP` 迁移为 `STD-SSOT-AUTHORITY-MAP`（符合 file-naming-standard v2.0.1 §四 `STD-*` 命名空间）。
 > **v2.0（2026-05-03）**：`docs/09_audit/state/` 已废弃——SQLite DB 迁移至 `data/zalpha_metadata.db`（ADR-0030 §4.1）。上述 Stage H 引用中的 `docs/09_audit/state/module_id_registry.json` 的历史上下文保留于此作为审计追踪。
 
 ---
@@ -190,7 +190,7 @@ violation_severity: P1
 
 ## 五、Module ID 跨文件一致性
 
-**权威来源**：`docs/02_enterprise_architecture/target-architecture/architecture-model/module-id-registry.yaml`（Stage D 后统一到 YAML SSoT，替代老树 JSON 注册表）
+**权威来源**：`docs/02_enterprise_architecture/target-architecture/architecture-model/module-id-registry.yaml`（Stage D 后统一到 YAML SSoT，替代旧体系 JSON 注册表）
 
 ```yaml
 protected_field: module_id
@@ -242,7 +242,7 @@ violation_severity: P2
 
 | ID | 矛盾描述 | 权威来源 | 修复方案 | 状态 | 执行阶段 | 负责人 |
 |:---|:---|:---|:---|:---:|:---|:---:|
-| SSoT-001 | 层编号双轨制（老树 T.XX.XXXX vs 当前项目 L00-L13） | 当前项目 L00-L13 编号系统 | beta 统一迁移，老树编号标记 deprecated alias | ⏳ | beta | Owner |
+| SSoT-001 | 层编号双轨制（旧体系 T.XX.XXXX vs 当前项目 L00-L13） | 当前项目 L00-L13 编号系统 | beta 统一迁移，旧体系编号标记 deprecated alias | ⏳ | beta | Owner |
 | SSoT-002 | 模块数量不一致（MODULE_INVENTORY vs 候选池清单） | module-id-registry.yaml | experimental 填充时统一注册 | ⏳ | experimental | Owner |
 | SSoT-004 | pre-commit hooks 冗余（12→5） | 简化后 5 个核心 hooks | P0C5 执行简化 | 🔧 | scaffold | AI |
 | SSoT-006 | 依赖关系未声明 | _schema.yaml depends_on | experimental 填充时声明 | 🔧 | experimental | AI |
@@ -263,10 +263,10 @@ violation_severity: P2
 | 版本  | 日期       | 变更                          |
 |-------|------------|------------------------------|
 | 1.0.0 | 2026-04-24 | 初版；覆盖 Layer/Status/Priority/ADR/ModuleID/Version 六类检查 |
-| 2.0.0 | 2026-04-25 | **Stage H 路径对齐大版本**：(1) `module_id` `ARCH_SSOT_AUTHORITY_MAP` → `STD-SSOT-AUTHORITY-MAP`（符合 file-naming-standard v2.0.1 §四 合法命名空间）；(2) Layer Authority 真源 `docs/02_ARCHITECTURE/module-inventory.md` → `architecture-model/_index.yaml` + `layers/*.yaml`；(3) ADR Authority 真源 `docs/02_ARCHITECTURE/tech-decision-records.md` → `docs/02_enterprise_architecture/adr/index.md`（41 条 ADR 扁平编号）；(4) Module ID Registry 真源 `docs/09_audit/state/module_id_registry.json` → `architecture-model/module-id-registry.yaml`（YAML SSoT 替代 JSON）；(5) Status 与 Priority 权威节点明确标注老树路径已归档 + Stage J 合并议程；(6) 第四节加入过渡说明，ADR-001~005 旧快照转为历史遗留表格，当前权威指向新索引。 |
+| 2.0.0 | 2026-04-25 | **Stage H 路径对齐大版本**：(1) `module_id` `ARCH_SSOT_AUTHORITY_MAP` → `STD-SSOT-AUTHORITY-MAP`（符合 file-naming-standard v2.0.1 §四 合法命名空间）；(2) Layer Authority 真源 `docs/02_ARCHITECTURE/module-inventory.md` → `architecture-model/_index.yaml` + `layers/*.yaml`；(3) ADR Authority 真源 `docs/02_ARCHITECTURE/tech-decision-records.md` → `docs/02_enterprise_architecture/adr/index.md`（41 条 ADR 扁平编号）；(4) Module ID Registry 真源 `docs/09_audit/state/module_id_registry.json` → `architecture-model/module-id-registry.yaml`（YAML SSoT 替代 JSON）；(5) Status 与 Priority 权威节点明确标注旧体系路径已归档 + Stage J 合并议程；(6) 第四节加入过渡说明，ADR-001~005 旧快照转为历史遗留表格，当前权威指向新索引。 |
 | 2.1.0 | 2026-04-28 | **14 层升级**：Layer 列表从 12 层（L00-L11 + cross_layer）升级到 14 层（L00-L13 + shared + cross_layer）；增补 L12 (System Telemetry)、L13 (Experiment Pipeline)、shared (Shared Concerns)；`valid_values` 同步更新；与 `validate_ssot.py` 的 `VALID_LAYERS` 对齐。原 Stage J 升级任务已完成。 |
 | 2.2.0 | 2026-05-01 | **融入清理**：§八 新增"已知 SSoT 矛盾追踪清单"，融入 `ssot-contradiction-fix-workorder.md` 的 7 条矛盾记录后删除该文件。 |
-| 2.3.0 | 2026-05-02 | **审计修复批次**：(1) §一 移除 `layer_01` 历史误标（老树过渡期已结束，不再需要保留错误值）；(2) §八 拆分为"活跃矛盾清单"（5 条未解决）+ "已解决归档"（2 条已修复），解决权威定义与审计报告混合的责任漂移问题；(3) frontmatter `date` 同步更新至 2026-05-02。 |
+| 2.3.0 | 2026-05-02 | **审计修复批次**：(1) §一 移除 `layer_01` 历史误标（旧体系过渡期已结束，不再需要保留错误值）；(2) §八 拆分为"活跃矛盾清单"（5 条未解决）+ "已解决归档"（2 条已修复），解决权威定义与审计报告混合的责任漂移问题；(3) frontmatter `date` 同步更新至 2026-05-02。 |
 | 2.4.0 | 2026-05-02 | **审计修复批次 2**：(1) §二 新增 scope 声明——文档生命周期状态 ≠ 代码模块实现状态（_schema.yaml），消除字段名相同但枚举不同的歧义隐患；(2) §四 ADR 计数从模糊的"共 41 个编号"改为显式分解"41 编号 = 33 entry + 1 skipped + 7 reserved"，消除两个数字导致的困惑；(3) §八 新增 scope 声明——矛盾追踪是临时附加功能，非本文件 canonical 职责。 |
 | 2.5.0 | 2026-05-03 | **审计修复批次 3**：(1) §一 新增 `valid_values` 派生规则声明——明确此列表从 `_index.yaml` partitions 派生，新增层时必须先更新 `_index.yaml` 再据此更新本列表，消除独立维护导致的漂移风险；(2) 标记 `cross_layer` 为"架构级概念（非 partitions 直接条目）"，解释其为何不直接从 partitions 派生。 |
 | 2.6.0 | 2026-05-06 | **AUDIT-04 全量修复**：§一 增补双树（EA 树 vs 施工树）权威表 + 与 `SCOPE.yaml` / `AGENTS.md` §6.9 的读法约定，消除「单一路径」误读。 |

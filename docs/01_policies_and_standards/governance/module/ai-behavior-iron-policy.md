@@ -36,7 +36,7 @@ ai_autonomy: human_gated
 
 适用于：所�?AI 模型的全部操作（不限于模块注入）�?
 
-本策略源自老树教训：老树中没有明确的铁律，AI 模型自由发挥，导致编码损坏、上下文溢出、SSoT 矛盾、断链累积等一系列问题�?
+**铁律**：MUST 遵守本策略全部铁律——无铁律 = 编码损坏 + 上下文溢出 + SSoT 矛盾 + 断链累积。
 
 **�?GOV-MOD-005 的分�?*：本策略管辖 AI 模型�?*行为准则**；GOV-MOD-005 管辖模块注入�?*技术检�?*。模块注入前必须同时满足本策略的行为铁律�?GOV-MOD-005 的注入检查�?
 
@@ -162,7 +162,6 @@ scaffold（治理基础设施）未完成前，禁止进入 beta（施工）�?
 
 ### IRN-011：零残留原则（铁�?1�?
 
-> **对标**：Google Dead Code Elimination Policy · vi2 "文件即债务"原则 · Toyota Production System（Muda——消除浪费） · Extreme Programming YAGNI（You Aren't Gonna Need It�?
 
 **定义**：项目的磁盘状态必须始终保�?刚刚施工完成"的整洁度——没有任何文件、代码行、注释是为已完成�?phase 的中间过程服务的�?
 
@@ -196,30 +195,6 @@ scaffold（治理基础设施）未完成前，禁止进入 beta（施工）�?
 - `check_dead_links.py` �?检测断�?
 
 **违反后果**：临时文件堆�?�?上下文噪音（下一�?AI session 加载时干扰决策质量）�?架构模型与实际文件状态偏�?�?SSoT 污染
-
-**专业对标矩阵**�?
-
-| 来源 | 对标内容 |
-|------|---------|
-| Google SWE | "Dead code is a liability, not an asset"——每个无用文件都会在未来被误读、误�?|
-| Toyota Production System | Muda（無駄）——消除不产生价值的浪费。在软件中：每个不承载决策的文件都是 Muda |
-| XP / YAGNI | "You Aren't Gonna Need It"——不要为未来的你写代码。已完成�?phase 的脚手架就是不需要的 |
-| vi2 Framework | "文件即债务"——每个非代码文件都在为当下的施工便利付出未来的维护成�?|
-| ITIL Change Control | 变更后必须验�?所有中间产物已清理"——对标准确映射到 ZR-001/002 |
-| ISO 42001 §8 | AI system impact assessment——AI 清理文件前必须评估对系统的影响（对标 §6.8 删除前两步预检�?|
-
-**氛围编程社区对标矩阵**�?
-
-| 来源 | 对标内容 |
-|------|---------|
-| VIBEcoder Code Cleanup | AI 生成代码后必须专项清理冗�?无用片段——研究表�?AI 代码�?15-30% 为冗余（对标 ZR-009�?|
-| `vibe-check`（BZPRCHNY�?| 针对 AI 代码�?20 条规则：幻觉 import、废�?API、空函数、死代码、console.log 残留——社区首�?AI 代码质量 linter（对�?ZR-009�?|
-| ULAM Labs Vibe Cleanup | 5 �?需要清�?的信号：代码重复、文件结构混乱、AI 意大利面条代码、功能瘫痪、不一致模式（对标 ZR-001/003/006�?|
-| 42coffeecups Vibe Cleanup | 4 支柱清理策略：Linting + Refactoring + Formatting + Testing—�?AI 生成代码优化的是正确性，不是可维护�?（对�?ZR-008/009�?|
-| Boy Scout Rule（社区共识） | "Always leave the campground cleaner than you found it"——应用到 AI：每�?session 结束时项目必须比开始时更干净（对�?ZR-008�?|
-| Koder.ai Vibe Coding Practice | "Remove dead code, rename confusing variables, add TODOs where you knowingly cut corners"—�? 分钟清理检查清单（对标 ZR-007/008�?|
-| Questera Vibe Coding Tips | "Monitor and Clean Up Redundant Code"——定期审�?AI 生成代码中的冗余片段，调度重构（对标 ZR-003/006�?|
-| Marvik Cursor Rules Pattern | "Do not create new functions, files, or imports that don't exist" + "Keep changes minimal and focused"——通过 prompt 约束预防残留（对�?ZR-007�?|
 
 ### 铁律�?ABS 映射�?
 
@@ -292,7 +267,6 @@ scaffold（治理基础设施）未完成前，禁止进入 beta（施工）�?
 
 ## 9. AI 可消费性声�?
 
-> 对标 Anthropic CLAUDE.md——直接向 AI 说明如何解析和执行本文档�?
 
 **AI 可直接执行的自检**�?
 - IRN-001（编码扫描）�?运行 `check_encoding.py`——每次写入后执行
@@ -383,7 +357,7 @@ scaffold（治理基础设施）未完成前，禁止进入 beta（施工）�?
 
 ## 14. 审查周期
 
-对标 ISO 11179 §6.2 定期审查要求，本策略应在以下时机进行审查�?
+本策略应在以下时机进行审查�?
 
 | 触发条件 | 审查内容 |
 |---------|---------|
@@ -407,18 +381,3 @@ scaffold（治理基础设施）未完成前，禁止进入 beta（施工）�?
 - [ ] §10 变更同步规则：每种变更类型有明确的同步动作和时机——含消费者通知机制�? 层通知体系：Session Log/ADR/registry）已定义
 - [ ] §13 异常豁免：豁免范�?截止日期+回退机制完整
 
-## 16. 变更记录
-
-| 日期 | 版本 | 变更说明 |
-|------|------|---------|
-| 2026-05-01 | 0.7.3 | P2 描述精确化：§4 Tier 1 GOV-MOD-001 消费者描述从模糊�?直接调用 IRN 规则"改为具体�?IRN→准入规则派生映射（#1 module_id 唯一←IRN-003�?2 依赖完整性←IRN-004�?|
-| 2026-05-01 | 0.7.2 | P2 补齐�?1) IRN→ABS 显式映射表（10 �?× 4 列）�?2) §10.1 消费者通知机制——三层通知体系（Session Log/ADR/registry�? 执行顺序；所�?4 个关联文件同步添加通知机制交叉引用 |
-| 2026-05-01 | 0.7.1 | 交叉引用漂移修复：informative refs 表中 §4→�? / §2→�? + 受保护路径清�?§3→�?——Round 10 插入 §3/§4 后未同步�?body ref |
-| 2026-05-01 | 0.7.0 | 对齐 PS-STD-002 §3.2.4（行为规则型条件性章节）：新�?§3 受控枚举定义�?0条铁律作为枚举） + §4 消费者注册表（Tier 1/2 �?GOV-MOD-005/001/ARCH-001/AI-005�?+ §10 变更同步规则 + §11 修改条件（L0~L3 分级�?+ §12 废弃流程 + §13 异常豁免机制（灾难恢�?Phase边界豁免通道�?+ §14 审查周期（ISO 11179�?+ §15 完整性自检清单。修�?C4（P0 严重度扩展至 IRN-008/010——覆盖不可逆后果） + C5（governance/security/→GOV-SEC-001 等相对引用→module_id�?+ C6（IRN-002 硬编�?5�?/2�?，添�?GOV-AI-005 交叉引用）。全文章节重编号 §3→�?6�?|
-| 2026-05-01 | 0.6.2 | Common Core 对齐 PS-STD-002 §3.2.1：新�?§2 SSoT声明 + §6 标准间引用规范（normative/informative�? §7 AI可消费性声�?+ 全文章节重编号（§2~§5 �?§3~§8�?|
-| 2026-05-01 | 0.6.1 | 深颗粒审计修复：§4 规则数量硬编�?7�? + 铁律4映射补全 INJ-002/008（依赖可解析+依赖方向分离�?+ 标题「模块注�?铁律」→「模块注入技术检查�?|
-| 2026-05-01 | 0.6.0 | 元规则对齐审计：frontmatter 添加 valid_from + 字段排序对齐 PS-STD-001 §2.3 + layer cross_layer→L1 + depends_on 移除 GOV-SEC-001/GOV-ARCH-001/GOV-AI-005 同级引用对齐链深=1层死规则（PS-STD-001 §2.1�?|
-| 2026-05-01 | 0.5.0 | 第三轮补缺：IRN-008/009 验证方法标注（脚本占�?Windows限制�? IRN-010 受保护路径不可写 + 规则�?9�?0 |
-| 2026-05-01 | 0.4.0 | 补齐 G3/G4/G11/G12 细颗粒审查缺漏：新增铁律8（先读后写）+ 铁律9（双工具互斥�? IRN-005 落日条款 + depends_on 补齐 GOV-AI-005 |
-| 2026-05-01 | 0.3.0 | #24 审批修复：frontmatter 补齐 depends_on 结构�?+ ai_autonomy: human_gated |
-| 2026-04-30 | 0.1.0 | 初始版本（原�?pre-model-onboarding-10-rules.md�?|

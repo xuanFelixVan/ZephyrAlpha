@@ -1,15 +1,22 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 schema_version: 1.0.0
 doc_type: register
 owner: ZephyrAlpha-Owner
 module_id: PS-REG-007
 title: 跨模块依赖登记表
-version: 1.0.2
+version: 1.0.7
 status: active
 created: '2026-05-02'
-last_updated: '2026-05-08'
+last_updated: '2026-05-18'
 ai_autonomy: human_gated
 ttl: permanent
-total_dependencies: 52
+total_dependencies: 105
 depends_on:
 - target: PS-STD-001
   at: §3.2.1
@@ -94,6 +101,18 @@ dependencies:
   contract_anchor: cross-layer-contracts.yaml §CL-017
   direction: upstream
   valid_since: '2026-05-01'
+- dep_id: DEP-005-SM
+  source: MOD-INF-006
+  source_name: task-system
+  target: MOD-INF-038
+  target_name: state-machine-engine
+  type: runtime
+  strength: hard
+  description: '任务系统10状态/19转换的状态机校验委托 MOD-INF-038 StateMachine[TaskStatus] 基类。
+
+    '
+  direction: upstream
+  valid_since: '2026-05-16'
 - dep_id: DEP-006
   source: MOD-INF-005
   source_name: script-system
@@ -303,6 +322,67 @@ dependencies:
   contract_anchor: DOM-GOV-001 G-CT-005
   direction: downstream
   valid_since: '2026-05-05'
+- dep_id: DEP-025a
+  source: MOD-INF-023
+  source_name: drift-detector
+  target: MOD-INF-022
+  target_name: escalation-protocol
+  type: runtime
+  strength: hard
+  description: '漂移预算耗尽触发升级——G-CT-006 契约锚定。'
+  contract_anchor: DOM-GOV-001 G-CT-006
+  direction: downstream
+  valid_since: '2026-05-15'
+- dep_id: DEP-025b
+  source: MOD-INF-023
+  source_name: drift-detector
+  target: MOD-INF-020
+  target_name: audit-trail
+  type: runtime
+  strength: hard
+  description: '漂移事件审计写入——tamper_proof_audit 使用 AiAuditLogger。'
+  direction: downstream
+  valid_since: '2026-05-15'
+- dep_id: DEP-025c
+  source: MOD-INF-023
+  source_name: drift-detector
+  target: MOD-INF-018
+  target_name: agent-rbac
+  type: runtime
+  strength: hard
+  description: '检测器权限控制——detector_dispatcher 权限检查。'
+  direction: downstream
+  valid_since: '2026-05-15'
+- dep_id: DEP-025d
+  source: MOD-INF-023
+  source_name: drift-detector
+  target: MOD-INF-007
+  target_name: gate-engine
+  type: runtime
+  strength: hard
+  description: '门禁持久化——gate_persistence 漂移预算门禁。'
+  direction: downstream
+  valid_since: '2026-05-15'
+- dep_id: DEP-025e
+  source: MOD-INF-023
+  source_name: drift-detector
+  target: MOD-INF-016
+  target_name: shared-core
+  type: runtime
+  strength: hard
+  description: 'AiAuditLogger + AbstractLock 共享基础设施。'
+  direction: upstream
+  valid_since: '2026-05-15'
+- dep_id: DEP-025f
+  source: MOD-INF-023
+  source_name: drift-detector
+  target: MOD-INF-012
+  target_name: database
+  type: runtime
+  strength: hard
+  description: '基线+漂移结果持久化——drift_events DB + baseline JSON。'
+  direction: upstream
+  valid_since: '2026-05-15'
 - dep_id: DEP-026
   source: MOD-INF-020
   source_name: audit-trail
@@ -362,8 +442,8 @@ dependencies:
   target_name: budget-enforcer
   type: runtime
   strength: hard
-  description: 遥测成本 metrics 聚合到 Budget Enforcer 预算追踪三级管道。
-  direction: upstream
+  description: 遥测成本 metrics 聚合到 Budget Enforcer 预算追踪三级管道。实际方向为 peer——budget_engine import system_telemetry(_budget_telemetry_bridge.py 解耦)。
+  direction: peer
   valid_since: '2026-05-03'
 - dep_id: DEP-032
   source: MOD-INF-015
@@ -574,7 +654,7 @@ dependencies:
   source: MOD-INF-030
   source_name: red-blue-validator
   target: MOD-INF-024
-  target_name: knowledge-base
+  target_name: budget-enforcer
   type: data
   strength: medium
   description: '绕过模式知识条目存储与检索——G-CT-024 契约锚点。'
@@ -688,6 +768,386 @@ dependencies:
   description: 'MCP 工具暴露——6 个资源优化 MCP 工具注册到 MCP Gateway。'
   direction: upstream
   valid_since: '2026-05-08'
+- dep_id: DEP-063
+  source: MOD-INF-024
+  source_name: budget-enforcer
+  target: MOD-INF-001
+  target_name: capacity-assurance
+  type: runtime
+  strength: hard
+  description: Kill Switch 联动 + Degradation 联动 + 成本数据读取
+  direction: upstream
+  valid_since: '2026-05-15'
+- dep_id: DEP-064
+  source: MOD-INF-024
+  source_name: budget-enforcer
+  target: MOD-INF-020
+  target_name: audit-trail
+  type: runtime
+  strength: hard
+  description: 审计写入 TamperEvidentLog
+  direction: upstream
+  valid_since: '2026-05-15'
+- dep_id: DEP-065
+  source: MOD-INF-024
+  source_name: budget-enforcer
+  target: MOD-INF-022
+  target_name: escalation-protocol
+  type: contract
+  strength: hard
+  description: G-CT-006 预算超限升级
+  direction: upstream
+  valid_since: '2026-05-15'
+- dep_id: DEP-066
+  source: MOD-INF-024
+  source_name: budget-enforcer
+  target: MOD-INF-016
+  target_name: shared-core
+  type: data
+  strength: hard
+  description: 全局成本汇聚 + 语义缓存重导出
+  direction: upstream
+  valid_since: '2026-05-15'
+- dep_id: DEP-067
+  source: MOD-INF-024
+  source_name: budget-enforcer
+  target: MOD-INF-012
+  target_name: database
+  type: data
+  strength: soft
+  description: SQLite 存储层(传递依赖 via MOD-INF-016)
+  direction: upstream
+  valid_since: '2026-05-15'
+- dep_id: DEP-068
+  source: MOD-INF-024
+  source_name: budget-enforcer
+  target: MOD-INF-014
+  target_name: llm-security-gateway
+  type: contract
+  strength: soft
+  description: IPI 检测 + 签名验证
+  direction: upstream
+  valid_since: '2026-05-15'
+- dep_id: DEP-069
+  source: MOD-INF-024
+  source_name: budget-enforcer
+  target: MOD-INF-023
+  target_name: drift-detector
+  type: contract
+  strength: soft
+  description: 漂移预算信号
+  direction: upstream
+  valid_since: '2026-05-15'
+- dep_id: DEP-070
+  source: MOD-INF-024
+  source_name: budget-enforcer
+  target: MOD-INF-008
+  target_name: context-engine
+  type: runtime
+  strength: soft
+  description: 上下文压缩联动
+  direction: upstream
+  valid_since: '2026-05-15'
+- dep_id: DEP-071
+  source: MOD-INF-024
+  source_name: budget-enforcer
+  target: MOD-INF-006
+  target_name: task-system
+  type: data
+  strength: soft
+  description: 任务预算字段
+  direction: upstream
+  valid_since: '2026-05-15'
+- dep_id: DEP-019-001
+  source: MOD-INF-019
+  source_name: agent-spec
+  target: MOD-INF-007
+  target_name: gate-engine
+  type: runtime
+  strength: hard
+  description: 'Gate Engine 门禁验证——技能加载时门禁检查。'
+  direction: upstream
+  valid_since: '2026-05-16'
+- dep_id: DEP-019-002
+  source: MOD-INF-019
+  source_name: agent-spec
+  target: MOD-INF-008
+  target_name: context-engine
+  type: runtime
+  strength: hard
+  description: 'Context Engine 上下文注入——技能渐进披露时上下文装配。'
+  direction: upstream
+  valid_since: '2026-05-16'
+- dep_id: DEP-019-003
+  source: MOD-INF-019
+  source_name: agent-spec
+  target: MOD-INF-009
+  target_name: pipeline
+  type: runtime
+  strength: hard
+  description: 'Pipeline 多模型路由——技能加载触发管线阶段调度。'
+  direction: upstream
+  valid_since: '2026-05-16'
+- dep_id: DEP-019-004
+  source: MOD-INF-019
+  source_name: agent-spec
+  target: MOD-INF-018
+  target_name: agent-rbac
+  type: runtime
+  strength: hard
+  description: 'Agent RBAC 权限检查——技能操作权限校验。'
+  direction: upstream
+  valid_since: '2026-05-16'
+- dep_id: DEP-019-005
+  source: MOD-INF-019
+  source_name: agent-spec
+  target: MOD-INF-020
+  target_name: audit-trail
+  type: runtime
+  strength: hard
+  description: 'Audit Trail 审计闭环——技能加载/执行审计记录。'
+  direction: upstream
+  valid_since: '2026-05-16'
+- dep_id: DEP-019-006
+  source: MOD-INF-019
+  source_name: agent-spec
+  target: MOD-INF-023
+  target_name: drift-detector
+  type: runtime
+  strength: hard
+  description: 'Drift Detector 漂移检测——技能规格漂移监控。'
+  direction: upstream
+  valid_since: '2026-05-16'
+- dep_id: DEP-019-007
+  source: MOD-INF-019
+  source_name: agent-spec
+  target: MOD-INF-025
+  target_name: a2a-protocol
+  type: runtime
+  strength: hard
+  description: 'A2A Protocol Agent间协调——多Agent技能协商与冲突解决。'
+  direction: upstream
+  valid_since: '2026-05-16'
+- dep_id: DEP-019-008
+  source: MOD-INF-019
+  source_name: agent-spec
+  target: MOD-INF-005
+  target_name: governance-automation
+  type: contract
+  strength: hard
+  description: 'Governance Automation 审计管线整合——技能注册触发审计管线。'
+  direction: upstream
+  valid_since: '2026-05-16'
+- dep_id: DEP-019-009
+  source: MOD-INF-019
+  source_name: agent-spec
+  target: MOD-INF-010
+  target_name: feedback-loop
+  type: runtime
+  strength: soft
+  description: 'Feedback Loop 闭环——技能效果反馈驱动进化。'
+  direction: upstream
+  valid_since: '2026-05-16'
+- dep_id: DEP-019-010
+  source: MOD-INF-019
+  source_name: agent-spec
+  target: MOD-INF-012
+  target_name: database
+  type: data
+  strength: soft
+  description: 'Database 间接依赖——技能元数据持久化（传递依赖 via shared-core）。'
+  direction: upstream
+  valid_since: '2026-05-16'
+- dep_id: DEP-019-011
+  source: MOD-INF-019
+  source_name: agent-spec
+  target: MOD-INF-014
+  target_name: llm-security-gateway
+  type: runtime
+  strength: soft
+  description: 'LLM Security Gateway 注入检测——技能内容安全审查。'
+  direction: upstream
+  valid_since: '2026-05-16'
+- dep_id: DEP-019-012
+  source: MOD-INF-019
+  source_name: agent-spec
+  target: MOD-INF-021
+  target_name: rollback-system
+  type: runtime
+  strength: soft
+  description: 'Rollback System 回滚——技能加载失败回滚。'
+  direction: upstream
+  valid_since: '2026-05-16'
+- dep_id: DEP-019-013
+  source: MOD-INF-019
+  source_name: agent-spec
+  target: MOD-INF-022
+  target_name: escalation-protocol
+  type: runtime
+  strength: soft
+  description: 'Escalation Protocol 升级——技能异常升级处理。'
+  direction: upstream
+  valid_since: '2026-05-16'
+- dep_id: DEP-019-014
+  source: MOD-INF-019
+  source_name: agent-spec
+  target: MOD-INF-024
+  target_name: budget-enforcer
+  type: runtime
+  strength: soft
+  description: 'Budget Enforcer 预算管控——技能加载Token预算检查。'
+  direction: upstream
+  valid_since: '2026-05-16'
+- dep_id: DEP-019-015
+  source: MOD-INF-019
+  source_name: agent-spec
+  target: MOD-KB-001
+  target_name: knowledge-base
+  type: contract
+  strength: soft
+  description: 'Knowledge Base KE沉淀——技能经验知识条目写入。'
+  direction: upstream
+  valid_since: '2026-05-16'
+- dep_id: DEP-072
+  source: MOD-INF-015
+  source_name: system-telemetry
+  target: MOD-INF-016
+  target_name: shared-core
+  type: contract
+  strength: hard
+  description: '蓝图 §2.2 复用清单：shared/logging + shared/flags + shared/observer + shared/contracts。'
+  direction: upstream
+  valid_since: '2026-05-18'
+- dep_id: DEP-073
+  source: MOD-INF-015
+  source_name: system-telemetry
+  target: MOD-INF-014
+  target_name: llm-security-gateway
+  type: runtime
+  strength: hard
+  description: '蓝图 §12 集成点：ai_behavior→lsg_security_gateway 安全审计。'
+  direction: upstream
+  valid_since: '2026-05-18'
+- dep_id: DEP-074
+  source: MOD-INF-015
+  source_name: system-telemetry
+  target: MOD-INF-001
+  target_name: capacity-assurance
+  type: runtime
+  strength: hard
+  description: '线6直接下游：遥测指标→容量保障 SLI 仪表盘。sli_instrumentation.py bridge→metrics.gauge()。'
+  direction: downstream
+  valid_since: '2026-05-18'
+- dep_id: DEP-075
+  source: MOD-INF-015
+  source_name: system-telemetry
+  target: MOD-INF-010
+  target_name: fle
+  type: runtime
+  strength: soft
+  description: '蓝图 §12 可选集成：FLE 消费 metrics/logs 用于自愈反馈。'
+  direction: downstream
+  valid_since: '2026-05-18'
+- dep_id: DEP-076
+  source: MOD-INF-015
+  source_name: system-telemetry
+  target: MOD-INF-020
+  target_name: audit-trail
+  type: runtime
+  strength: soft
+  description: '蓝图 §12 可选集成：遥测事件→审计日志持久化。'
+  direction: downstream
+  valid_since: '2026-05-18'
+- dep_id: DEP-077
+  source: MOD-INF-015
+  source_name: system-telemetry
+  target: MOD-INF-023
+  target_name: drift-detector
+  type: runtime
+  strength: soft
+  description: 'contract_metrics.py 委托 detect_contract_drift→behavioral_auditor.contract_drift_detector。'
+  direction: upstream
+  valid_since: '2026-05-18'
+- dep_id: DEP-078
+  source: MOD-INF-015
+  source_name: system-telemetry
+  target: MOD-INF-008
+  target_name: context-engine
+  type: runtime
+  strength: soft
+  description: 'auto_bootstrap.py monkey-patch session_continuity（运行时动态导入）。'
+  direction: upstream
+  valid_since: '2026-05-18'
+- dep_id: DEP-079
+  source: MOD-INF-015
+  source_name: system-telemetry
+  target: MOD-INF-021
+  target_name: rollback-system
+  type: runtime
+  strength: soft
+  description: 'auto_bootstrap.py monkey-patch phase_manager（运行时动态导入）。'
+  direction: upstream
+  valid_since: '2026-05-18'
+- dep_id: DEP-080
+  source: MOD-INF-024
+  source_name: budget-enforcer
+  target: MOD-INF-015
+  target_name: system-telemetry
+  type: runtime
+  strength: hard
+  description: 'budget_engine.py 运行时导入 get_global_telemetry（遥测成本 metrics 聚合）。'
+  direction: upstream
+  valid_since: '2026-05-18'
+- dep_id: DEP-081
+  source: MOD-INF-024
+  source_name: budget-enforcer
+  target: MOD-INF-034
+  target_name: model-profiler
+  type: data
+  strength: soft
+  description: 'model_router.py 懒导入 load_benchmark_history（基准性能数据加载）。'
+  direction: upstream
+  valid_since: '2026-05-18'
+- dep_id: DEP-082
+  source: MOD-INF-011
+  source_name: vector-memory
+  target: MOD-INF-039
+  target_name: local-model
+  type: runtime
+  strength: hard
+  description: 'VMS消费嵌入服务——BGE-M3嵌入路由已迁至MOD-INF-039，VMS通过local-model获取嵌入向量。'
+  direction: upstream
+  valid_since: '2026-05-18'
+- dep_id: DEP-083
+  source: MOD-INF-019
+  source_name: agent-spec
+  target: MOD-INF-039
+  target_name: local-model
+  type: runtime
+  strength: hard
+  description: 'Agent Spec语义路由——BGE-M3嵌入路由依赖local-model的EmbeddingRouter。'
+  direction: upstream
+  valid_since: '2026-05-18'
+- dep_id: DEP-084
+  source: MOD-INF-009
+  source_name: pipeline
+  target: MOD-INF-039
+  target_name: local-model
+  type: runtime
+  strength: hard
+  description: 'Pipeline嵌入+rerank——管线阶段调度依赖local-model的嵌入与重排序能力。'
+  direction: upstream
+  valid_since: '2026-05-18'
+- dep_id: DEP-085
+  source: MOD-INF-002
+  source_name: runtime-integration
+  target: MOD-INF-039
+  target_name: local-model
+  type: runtime
+  strength: soft
+  description: 'Runtime warmup——运行时启动预热依赖local-model的模型加载与缓存。'
+  direction: upstream
+  valid_since: '2026-05-18'
 dependency_graph:
   forward:
     SYS-MASTER-001:
@@ -695,6 +1155,7 @@ dependency_graph:
     MOD-INF-001: []
     MOD-INF-002:
     - MOD-INF-001
+    - MOD-INF-039
     MOD-INF-005:
     - MOD-INF-001
     - MOD-INF-006
@@ -702,11 +1163,23 @@ dependency_graph:
     - MOD-INF-001
     - MOD-INF-002
     - MOD-INF-005
+    MOD-INF-009:
+    - MOD-INF-039
+    MOD-INF-011:
+    - MOD-INF-039
     MOD-INF-015:
     - MOD-INF-012
     - MOD-INF-024
     - MOD-INF-022
     - MOD-INF-018
+    - MOD-INF-016
+    - MOD-INF-014
+    - MOD-INF-001
+    - MOD-INF-010
+    - MOD-INF-020
+    - MOD-INF-023
+    - MOD-INF-008
+    - MOD-INF-021
     MOD-INF-017:
     - MOD-INF-005
     - MOD-INF-007
@@ -725,6 +1198,12 @@ dependency_graph:
     - MOD-INF-021
     MOD-INF-023:
     - MOD-INF-021
+    - MOD-INF-022
+    - MOD-INF-020
+    - MOD-INF-018
+    - MOD-INF-007
+    - MOD-INF-016
+    - MOD-INF-012
     MOD-INF-030:
     - MOD-INF-007
     - MOD-INF-020
@@ -749,61 +1228,135 @@ dependency_graph:
     - MOD-INF-024
     - MOD-INF-019
     - MOD-INF-013
+    MOD-INF-019:
+    - MOD-INF-007
+    - MOD-INF-008
+    - MOD-INF-009
+    - MOD-INF-018
+    - MOD-INF-020
+    - MOD-INF-023
+    - MOD-INF-025
+    - MOD-INF-005
+    - MOD-INF-010
+    - MOD-INF-012
+    - MOD-INF-014
+    - MOD-INF-021
+    - MOD-INF-022
+    - MOD-INF-024
+    - MOD-KB-001
+    - MOD-INF-039
+    MOD-INF-024:
+    - MOD-INF-001
+    - MOD-INF-020
+    - MOD-INF-022
+    - MOD-INF-016
+    - MOD-INF-012
+    - MOD-INF-014
+    - MOD-INF-023
+    - MOD-INF-008
+    - MOD-INF-006
+    - MOD-INF-015
+    - MOD-INF-034
+    MOD-INF-039: []
   reverse:
     MOD-INF-001:
     - MOD-INF-002
     - MOD-INF-005
     - MOD-INF-006
+    - MOD-INF-015
     MOD-INF-002:
     - MOD-INF-006
+    - MOD-INF-039
     MOD-INF-005:
     - MOD-INF-006
     - MOD-INF-017
+    - MOD-INF-019
     MOD-INF-006:
     - MOD-INF-005
     MOD-INF-007:
     - MOD-INF-021
     - MOD-INF-017
     - MOD-INF-032
+    - MOD-INF-019
     MOD-INF-008:
     - MOD-INF-017
+    - MOD-INF-019
     MOD-INF-009:
     - MOD-INF-032
+    - MOD-INF-019
+    - MOD-INF-039
+    MOD-INF-011:
+    - MOD-INF-039
     MOD-INF-010:
     - MOD-INF-017
     - MOD-INF-032
+    - MOD-INF-019
+    - MOD-INF-015
     MOD-INF-012:
     - MOD-INF-015
     - MOD-INF-017
+    - MOD-INF-019
     MOD-INF-013:
     - MOD-INF-032
     MOD-INF-015:
     - MOD-INF-032
+    - MOD-INF-024
     MOD-INF-016:
     - MOD-INF-017
     - MOD-INF-032
+    - MOD-INF-015
     MOD-INF-018:
     - MOD-INF-021
     - MOD-INF-015
+    - MOD-INF-019
     MOD-INF-019:
     - MOD-INF-032
+    MOD-INF-025:
+    - MOD-INF-019
+    MOD-INF-014:
+    - MOD-INF-019
+    - MOD-INF-015
+    MOD-KB-001:
+    - MOD-INF-019
     MOD-INF-020:
     - MOD-INF-007
+    - MOD-INF-015
     - MOD-INF-012
     - MOD-INF-016
     - MOD-INF-023
     - MOD-INF-021
     - MOD-INF-032
+    - MOD-INF-019
+    MOD-INF-034:
+    - MOD-INF-024
+    MOD-INF-039:
+    - MOD-INF-002
+    - MOD-INF-009
+    - MOD-INF-011
+    - MOD-INF-019
     MOD-INF-021:
     - MOD-INF-022
     - MOD-INF-023
+    - MOD-INF-019
     MOD-INF-022:
     - MOD-INF-015
+    - MOD-INF-019
     MOD-INF-023:
     - MOD-INF-032
+    - MOD-INF-019
     MOD-INF-024:
+    - MOD-INF-001
+    - MOD-INF-020
+    - MOD-INF-023
+    - MOD-INF-014
+    - MOD-INF-022
+    - MOD-INF-008
+    - MOD-INF-006
+    - MOD-INF-016
+    - MOD-INF-012
     - MOD-INF-015
     - MOD-INF-032
+    - MOD-INF-019
     MOD-MASTER-001:
     - MOD-INF-021
     fle-collectors:
@@ -829,15 +1382,31 @@ dependency_graph:
     fle-protocols:
     - MOD-INF-010
 summary:
-  total_dependencies: 62
+  total_dependencies: 105
   by_type:
-    runtime: 45
-    contract: 13
-    data: 4
+    runtime: 69
+    contract: 16
+    data: 5
   by_strength:
-    hard: 46
+    hard: 62
+    soft: 13
     medium: 16
 changelog:
+- version: 1.0.7
+  date: '2026-05-18'
+  changes:
+  - MOD-INF-039依赖注册：新增 DEP-082~DEP-085 共 4 条——MOD-INF-011(VMS消费嵌入)/MOD-INF-019(语义路由)/MOD-INF-009(嵌入+rerank)/MOD-INF-002(Runtime
+    warmup) 均依赖 MOD-INF-039(local-model)
+- version: 1.0.6
+  date: '2026-05-18'
+  changes:
+  - MOD-INF-015 对齐补全：新增 DEP-072~DEP-076 共 5 条——补齐 shared-core/LLM-security/capacity-assurance/FLE/audit-trail
+    依赖，消除蓝图 §10.1 与注册表 4/8 缺口
+- version: 1.0.5
+  date: '2026-05-16'
+  changes:
+  - GAP-019：新增 DEP-019-001~DEP-019-015 共 15 条跨模块依赖——补齐 MOD-INF-019 (agent-spec)
+    作为 source 的全部依赖条目，含 8 条 hard + 7 条 soft
 - version: 1.0.4
   date: '2026-05-08'
   changes:

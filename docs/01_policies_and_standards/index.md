@@ -1,4 +1,4 @@
----
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿---
 module_id: PS-IDX-001
 title: 规则体系总索引
 doc_type: index
@@ -60,7 +60,7 @@ verifiability: manual
 │
 ├── operational/                 ← 过程式操作手册（"怎么做"）
 │   ├── devops/                  ← DevOps 操作（pre-commit、CI、架构变更 playbook）
-│   ├── migration/               ← 迁移操作（老树→当前项目审计）
+│   ├── migration/               ← 迁移操作（旧体系→当前项目审计）
 │   └── vibe_coding/             ← Vibe Coding 操作（上下文规则、状态机、应急手册）
 │
 ├── domains/                     ← 层/域特定规则
@@ -94,7 +94,7 @@ verifiability: manual
 │       └── ttl-vocabulary.yaml                    ← TTL 周期受控枚举
 │
 └── templates/                   ← 文档模板（10 个标准模板，ADR 模板已迁入 KB）
-    ├── blueprint-template.md     ← 蓝图 + 施工指引统一模板
+    ├── blueprint-construction-template.md     ← 蓝图 + 施工指引统一模板
     ├── playbook-template.md      ← 操作手册模板
     ├── policy-template.md        ← 策略模板
     ├── protocol-template.md      ← 协议模板
@@ -103,7 +103,6 @@ verifiability: manual
     ├── roadmap-template.md       ← 路线图模板
     ├── runbook-template.md       ← 执行手册模板
     ├── standard-template.md      ← 标准模板
-    └── task-card-template.md     ← 任务卡模板
 ```
 
 ---

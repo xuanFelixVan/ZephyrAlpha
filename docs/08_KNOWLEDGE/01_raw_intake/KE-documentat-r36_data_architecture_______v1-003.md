@@ -26,12 +26,12 @@ category: documentation
 
 | 章节 | 来源 | 核心决策点 |
 |------|------|----------|
-| §2 Data Entity Catalog（19 条） | cda60b89 §5 + 老树 L00 工作 | 粒度只到 entity + 字段族；字段级 DDL 归 09_data_platform |
+| §2 Data Entity Catalog（19 条） | cda60b89 §5 + 旧体系 L00 工作 | 粒度只到 entity + 字段族；字段级 DDL 归 09_data_platform |
 | §3 三维分类（温度×节奏×来源） | 业界 Data Mesh + Lambda 架构通用做法 | 分类驱动 04-TA 选型，但 DA 不指定具体技术 |
 | §4 PIT 三字段铁律 | cda60b89 §7 + SQL:2011 bitemporal | `asof_date` / `ts_ingest` / `vendor_release_ts` 三字段必填；CI fitness function 强制 |
 | §5 Survivorship 反偏差查询契约 | cda60b89 §5.1 | 强制走 `build_universe(asof, include_delisted=True)`；禁止裸查 `WHERE status='active'` |
 | §6 三层血缘模型（Schema/Pipeline/Instance） | OpenLineage / DataHub | DA 定接口标准，不选具体工具 |
-| §7 MDM 三件套 | cda60b89 §5.1 + 老树 L00-M5 catalog | Security/TradingCalendar/CorporateAction，bitemporal + Steward 责任矩阵 |
+| §7 MDM 三件套 | cda60b89 §5.1 + 旧体系 L00-M5 catalog | Security/TradingCalendar/CorporateAction，bitemporal + Steward 责任矩阵 |
 | §8 Data Quality 五类断言 | Great Expectations / Soda Core 业界规范 | PIT/Survivorship/Lineage 三类业界工具不覆盖，必须自研（呼应 OQ-032 Build vs Buy 五大铁律） |
 | §9 保留与归档矩阵 | 监管 7 年 + 量化历史永久 | Order/Fill 永久保留对齐合规；具体监管条款映射延后到 16_compliance_and_legal |
 | §10 与其他视图边界 | TOGAF 标准 + 本项目 by-domain 双轨 | DA vs IA 用"图书馆书架 vs 资金账本"类比强化区分，防止读者混淆 |

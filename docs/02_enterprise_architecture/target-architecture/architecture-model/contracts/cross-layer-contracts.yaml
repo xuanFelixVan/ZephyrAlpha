@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 schema_version: "3.0"
 srp_note: "本文件现已覆盖 6 种契约类型（P0-DATA/P0-PROTOCOL/P0-ERROR/P0-BP/P1/OCP/EXT/AI-GOV），2026-05-04 架构盲点补全批次新增 10 条 P0 契约 + 版本协商规则 + ai_prompt 字段"
 
@@ -1115,6 +1122,96 @@ contracts:
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}
       - {name: trace_context, type: "Optional[TraceContext]", required: false, description: "全链路追踪上下文"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  # --- CT-TEL-001~004: System Telemetry 契约（ARB-14 裁决，MOD-INF-015 提供）---
+  - id: CT-TEL-001
+    name: "TelemetryMetrics / 遥测指标采集"
+    priority: P1
+    frozen: false
+    source_layer: l12
+    target_layers: [l01, l06]
+    flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
+    physical_path: src/zephyr/system_telemetry/contract_metrics.py
+    stability: evolving
+    schema_version: "1.0"
+    description: "L12 → L01/L06 遥测指标采集契约。Telemetry facade 提供指标采集接口，消费方通过 gauge/counter/histogram/summary 记录指标。SLA: 指标采集延迟<1s。"
+    arb_ref: ARB-14
+    fields:
+      - {name: module_id, type: str, required: true, description: "来源模块ID"}
+      - {name: metric_name, type: str, required: true, description: "FQMN指标名（module_id::metric_name）"}
+      - {name: metric_type, type: str, required: true, description: "counter | gauge | histogram | summary"}
+      - {name: metric_value, type: float, required: true, description: "指标值"}
+      - {name: labels, type: "Dict[str, str]", required: false, description: "标签键值对"}
+      - {name: timestamp, type: datetime, required: true, description: "采集时间戳（UTC）"}
+      - {name: collection_latency_ms, type: int, required: true, description: "采集延迟（毫秒），SLA<1000"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  - id: CT-TEL-002
+    name: "TelemetryLogs / 遥测日志持久化"
+    priority: P1
+    frozen: false
+    source_layer: l12
+    target_layers: [l01, l06]
+    flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
+    physical_path: src/zephyr/system_telemetry/logs/structured_sink.py
+    stability: evolving
+    schema_version: "1.0"
+    description: "L12 → L01/L06 遥测日志持久化契约。结构化日志通过 JSONL 持久化，支持 trace_id 关联。SLA: 持久化延迟<5s。"
+    arb_ref: ARB-14
+    fields:
+      - {name: module_id, type: str, required: true, description: "来源模块ID"}
+      - {name: level, type: str, required: true, description: "DEBUG | INFO | WARNING | ERROR | FATAL"}
+      - {name: message, type: str, required: true, description: "日志消息"}
+      - {name: trace_id, type: str, required: false, description: "关联Trace ID"}
+      - {name: span_id, type: str, required: false, description: "关联Span ID"}
+      - {name: labels, type: "Dict[str, str]", required: false, description: "标签键值对"}
+      - {name: timestamp, type: datetime, required: true, description: "日志时间戳（UTC）"}
+      - {name: persistence_latency_ms, type: int, required: true, description: "持久化延迟（毫秒），SLA<5000"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  - id: CT-TEL-003
+    name: "TelemetryTraces / 遥测链路追踪"
+    priority: P1
+    frozen: false
+    source_layer: l12
+    target_layers: [l01, l06]
+    flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
+    physical_path: src/zephyr/system_telemetry/traces/span_stub.py
+    stability: evolving
+    schema_version: "1.0"
+    description: "L12 → L01/L06 遥测链路追踪契约。W3C TraceContext 传播，采样率可配置。提供 span 创建/属性设置/上下文管理接口。"
+    arb_ref: ARB-14
+    fields:
+      - {name: trace_id, type: str, required: true, description: "W3C Trace ID"}
+      - {name: span_id, type: str, required: true, description: "W3C Span ID"}
+      - {name: parent_span_id, type: str, required: false, description: "父Span ID"}
+      - {name: operation_name, type: str, required: true, description: "操作名称"}
+      - {name: attributes, type: "Dict[str, Any]", required: false, description: "Span属性"}
+      - {name: sample_rate, type: float, required: true, description: "采样率 0.0-1.0"}
+      - {name: start_time, type: datetime, required: true, description: "Span开始时间"}
+      - {name: elapsed_seconds, type: float, required: true, description: "Span耗时（秒）"}
+      - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
+
+  - id: CT-TEL-004
+    name: "TelemetryHealth / 遥测健康检查"
+    priority: P1
+    frozen: false
+    source_layer: l12
+    target_layers: [l01, l06]
+    flow: "L12 System Telemetry → L01 Capacity Assurance / L06 Resource Optimization"
+    physical_path: src/zephyr/system_telemetry/health_probes.py
+    stability: evolving
+    schema_version: "1.0"
+    description: "L12 → L01/L06 遥测健康检查契约。Liveness/Readiness/Healthz 三级探针，心跳间隔30s。"
+    arb_ref: ARB-14
+    fields:
+      - {name: module_id, type: str, required: true, description: "探针所属模块ID"}
+      - {name: probe_type, type: str, required: true, description: "liveness | readiness | healthz"}
+      - {name: status, type: str, required: true, description: "healthy | unhealthy | degraded"}
+      - {name: heartbeat_interval_s, type: int, required: true, description: "心跳间隔（秒），默认30"}
+      - {name: last_heartbeat, type: datetime, required: true, description: "最近心跳时间"}
+      - {name: details, type: "Dict[str, Any]", required: false, description: "探针详情"}
       - {name: schema_version, type: str, required: false, default: "1.0", description: "契约版本"}
 
 # =============================================================================

@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # ============================================================================
 # 任务卡元层登记表（Task Card Meta Registry）
 # module_id: PS-REG-017（与 architecture-contract PS-REG-004 区分）
@@ -48,7 +55,7 @@ systems:
     items: 20
     created_at: "2026-05-07T12:00:00+08:00"
     created_by: "session-20260507-011"
-    scheduling_note: "2026-05-07 由 session-20260507-011 通过 import_task_cards.py 导入 MOD-INF-001 容量保障模块全部 20 张任务卡。task_id 映射为 SRC-0001 ~ SRC-0020（原 TASK-MOD-INF-001-0001 ~ TASK-MOD-INF-001-0020）。后续任务卡通过同一脚本增量导入"
+    scheduling_note: "2026-05-07 由 session-20260507-011 将 MOD-INF-001 全部 20 张任务卡导入 SQLite（SRC-0001~SRC-0020）。后续任务卡通过 TaskRepository.create() 直写。"
 
   development_workspace_taskbooks:
     location: "开发工作区高层规划任务书"

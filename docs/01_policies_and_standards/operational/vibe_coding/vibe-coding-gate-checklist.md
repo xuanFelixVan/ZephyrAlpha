@@ -30,9 +30,9 @@ depends_on:
 
 ## 1. 目的
 
-本检查清单定义 Vibe Coding 会话开始前必须完成的检查项。任何一项未通过，禁止开始操作。
+Vibe Coding 会话开始前必须完成的检查项。任何一项未通过，禁止开始操作。
 
-**自动化状态（v0.3.0）**：重新校准自动化覆盖映射。"✅ GATE-XX" = 该 GATE 在校验对应领域的文件结构/格式合规性（如 UTF-8 编码、frontmatter 字段、目录位置）。"⚠️" = GATE 部分覆盖——结构校验通过，但 AI 仍需确认已读取对应政策文档。A1/A2/D1 无法脚本化，仍需 AI 自检。
+**自动化映射（v0.3.0）**："✅ GATE-XX" = GATE 校验文件结构/格式合规性。"⚠️" = GATE 部分覆盖——结构通过但 AI 仍需确认已读政策文档。A1/A2/D1 无法脚本化。
 
 ## 2. 检查清单
 
@@ -51,6 +51,7 @@ depends_on:
 | B1 | 行为边界已确认 | 已读取 PS-STD-003，知道哪些操作绝对禁止 | 读取 meta/behavior-boundaries-standard.md | ✅ GATE-14 + GATE-16 |
 | B2 | 幻觉自检已通过 | 按幻觉自检流程执行 | 读取 ai-hallucination-self-check-policy.md | ✅ GATE-15 |
 | B3 | 双编辑器规则已确认 | 知道当前使用哪个编辑器、哪些文件可编辑 | 读取 governance/ai/dual-editor-collaboration-policy.md | ❌ 人工 |
+| B4 | 诊断反转验证已执行 | 深挖后回溯初始诊断，不一致时追问"为什么错了？"并更新症状-根因映射表 | 读取 PS-STD-011 MTH-006 step 6 | ❌ 人工 |
 
 ### C. 安全检查（3 项）| 自动化：3/3
 

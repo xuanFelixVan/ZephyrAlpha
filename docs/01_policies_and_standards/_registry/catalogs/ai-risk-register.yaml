@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # ============================================================================
 # ZephyrAlpha AI 风险登记簿（AI Risk Register）— 唯一真源
 # ============================================================================
@@ -79,7 +86,7 @@ risks:
     trigger_condition: "读取外部或用户提供的 .md 时"
     blast_radius: module
     mitigation:
-      - "script-system 审查与 LSG（ADR-0020）"
+      - "governance-automation 审查与 LSG（ADR-0020）"
       - "ai-hallucination-self-check-policy"
     mitigation_status: partially_addressed
     related_gate: null
@@ -187,7 +194,7 @@ risks:
     trigger_condition: "产出 blueprint 等文档但未跑门禁时"
     blast_radius: module
     mitigation:
-      - "script-system C1-C5 流水线"
+      - "governance-automation C1-C5 流水线"
       - "GATE-12/15/16"
     mitigation_status: not_addressed
     related_gate: null

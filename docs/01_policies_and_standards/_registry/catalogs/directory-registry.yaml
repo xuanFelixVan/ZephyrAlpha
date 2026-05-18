@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 # ============================================================================
 # ZephyrAlpha 项目目录登记表（Directory Registry）�?唯一真源
 # ============================================================================
@@ -543,7 +550,7 @@ directories:
     status: active
     note: "5 个子模块"
 
-  - path: "docs/03_modules/l01_infrastructure/script-system/"
+  - path: "docs/03_modules/l01_infrastructure/governance-automation/"
     responsibility: "脚本系统蓝图——审计维�?/ 状态机 / 出厂流程"
     parent: "docs/03_modules/l01_infrastructure/"
     has_index: true
@@ -972,7 +979,7 @@ directories:
     status: active
     note: ""
 
-  - path: "src/zephyr/l12_system_telemetry/"
+  - path: "src/zephyr/system_telemetry/"
     responsibility: "L12 系统遥测�?
     parent: "src/zephyr/"
     has_index: false

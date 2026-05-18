@@ -17,7 +17,7 @@ category: documentation
 
 | ID | 矛盾描述 | 权威来源 | 修复方案 | 状态 | 执行阶段 | 负责人 |
 |:---|:---|:---|:---|:---:|:---|:---:|
-| SSoT-001 | 层编号双轨制（老树 T.XX.XXXX vs 当前项目 L00-L13） | 当前项目 L00-L13 编号系统 | beta 统一迁移，老树编号标记 deprecated alias | ⏳ | beta | Owner |
+| SSoT-001 | 层编号双轨制（旧体系 T.XX.XXXX vs 当前项目 L00-L13） | 当前项目 L00-L13 编号系统 | beta 统一迁移，旧体系编号标记 deprecated alias | ⏳ | beta | Owner |
 | SSoT-002 | 模块数量不一致（MODULE_INVENTORY vs 候选池清单） | module-id-registry.yaml | experimental 填充时统一注册 | ⏳ | experimental | Owner |
 | SSoT-004 | pre-commit hooks 冗余（12→5） | 简化后 5 个核心 hooks | P0C5 执行简化 | 🔧 | scaffold | AI |
 | SSoT-006 | 依赖关系未声明 | _schema.yaml depends_on | experimental 填充时声明 | 🔧 | experimental | AI |

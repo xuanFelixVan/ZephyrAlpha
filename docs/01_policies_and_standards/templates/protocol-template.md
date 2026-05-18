@@ -11,7 +11,9 @@ language: zh
 created_by: human_plus_agent
 date: ""
 ttl: permanent
-summary: ""
+summary: "协议文档创建模板——定义交互流程和消息时序，新建 protocol 类文档时使用此模板"
+completeness: "unknown"
+template_for: protocol
 tags: []
 rule_form: declarative
 scope: global
@@ -22,9 +24,39 @@ ai_autonomy: human_gated
 evolution_policy: ""
 ---
 
+<!--
+COMPLIANCE_CHECKLIST — 机器可解析合规清单
+协议文档模板 MUST 包含以下所有标题（精确匹配关键词）。缺一 = 不合规。
+脚本：python scripts/governance/d3_metadata/check_template_compliance.py <文档路径> --template protocol
+-->
+<!--
+REQUIRED_SECTIONS:
+  overview: "概述"
+  s1: "1. 协议类型与适用范围"
+  s2: "2. 参与方"
+  s3: "3. 前置条件"
+  s4: "4. 交互流程"
+  s5: "5. 成功条件"
+  s6: "6. 失败处理"
+  s7: "7. 版本兼容"
+  s8: "8. AI 自治权限标注"
+  s9: "9. TTL 与生命周期"
+  s10: "10. 变更记录"
+END_REQUIRED_SECTIONS
+-->
+
 # {协议名称}
 
 > module_id: {填写} | version: 0.1.0 | status: draft | layer: cross_layer | protocol_type: {handoff / interaction / emergency}
+
+---
+
+## 概述
+
+> ⚠️ **必填**。AI 阅读本文档的第一段——3~5 句话建立心理模型。
+> 写清楚：这个协议是什么、参与方是谁、适用什么场景、为什么存在。
+
+{本协议文档定义 {协议名称} 的交互流程——参与方 {角色A} 与 {角色B} 之间的消息时序和职责划分。适用场景：{场景描述}。协议类型：{handoff — AI session 间交接 / interaction — 多模块协作 / emergency — 事故应急}。核心目标：{一句话描述协议要达成的结果}。}
 
 ---
 

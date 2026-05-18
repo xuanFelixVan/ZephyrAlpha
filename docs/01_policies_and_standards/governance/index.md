@@ -75,6 +75,7 @@ depends_on:
 | `ai/` | GOV-AI-001~009 | [ai/index.md](ai/index.md) | ✅ active |
 | `task/` | GOV-TASK-001~005 | [task/index.md](task/index.md) | ✅ active |
 | `module/` | GOV-MOD-001~007 | [module/index.md](module/index.md) | ✅ active |
+| `engineering/` | GOV-ENG-001~002 | [engineering/code-construction-standards.md](engineering/code-construction-standards.md) | ✅ active |
 
 > **图例**：✅ active = 索引已建、目录已激活 | 本表所有索引文件均已创建并激活（2026-05-01 审查后修复 3 个待建索引）
 
@@ -112,6 +113,7 @@ architecture/ ←→ security/     (架构评审门控 ←→ 密钥泄露触发
    - 涉及 AI 行为 → `ai/`
    - 涉及任务管理 → `task/`
    - 涉及模块接入 → `module/`
+   - 涉及代码构建/重组 → `engineering/`
 3. **进入子域后，先读子域的 index.md**（如果有），再读具体文件
 
 所有治理文件标记 `ai_autonomy: human_gated` —— AI 可以读取和应用这些规则，但**不得单方面修改**。任何修改必须由 Owner 审批。

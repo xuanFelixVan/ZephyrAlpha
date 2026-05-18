@@ -11,10 +11,27 @@ language: zh
 created_by: agent
 valid_from: YYYY-MM-DD
 summary: 本登记簿覆盖 <主题>，记录已识别的风险、概率、影响、缓解策略与当前状态。
+completeness: "unknown"
 
 date: '2026-04-22'
 ttl: permanent
+template_for: risk-register
 ---
+
+<!--
+COMPLIANCE_CHECKLIST — 机器可解析合规清单
+风险登记簿模板 MUST 包含以下所有标题（精确匹配关键词）。缺一 = 不合规。
+脚本：python scripts/governance/d3_metadata/check_template_compliance.py <文档路径> --template risk-register
+-->
+<!--
+REQUIRED_SECTIONS:
+  s1: "1. 登记规则"
+  s2: "2. 登记表"
+  s3: "3. 优先级计算"
+  s4: "4. 状态定义"
+  s5: "5. 修订记录"
+END_REQUIRED_SECTIONS
+-->
 
 # <主题> 风险登记簿
 

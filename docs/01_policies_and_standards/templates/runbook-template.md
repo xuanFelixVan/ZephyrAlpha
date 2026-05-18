@@ -11,7 +11,9 @@ language: zh
 created_by: human_plus_agent
 date: ""
 ttl: permanent
-summary: ""
+summary: "Runbook 创建模板——过程式操作规则，定义具体操作的步骤化流程，新建 runbook 类文档时使用此模板"
+completeness: "unknown"
+template_for: operational_rule
 tags: []
 rule_form: procedural
 scope: global
@@ -21,9 +23,38 @@ depends_on: []
 ai_autonomy: human_gated
 ---
 
+<!--
+COMPLIANCE_CHECKLIST — 机器可解析合规清单
+Runbook 模板 MUST 包含以下所有标题（精确匹配关键词）。缺一 = 不合规。
+脚本：python scripts/governance/d3_metadata/check_template_compliance.py <文档路径> --template runbook
+-->
+<!--
+REQUIRED_SECTIONS:
+  overview: "概述"
+  s1: "1. 目的与范围"
+  s2: "2. 前置条件"
+  s3: "3. 执行频率与耗时"
+  s4: "4. 操作步骤"
+  s5: "5. 验证清单"
+  s6: "6. 回滚方案"
+  s7: "7. AI 自治权限标注"
+  s8: "8. TTL 与生命周期"
+  s9: "9. 变更记录"
+END_REQUIRED_SECTIONS
+-->
+
 # {标题}
 
 > module_id: {填写} | version: 0.1.0 | status: draft | layer: {填写}
+
+---
+
+## 概述
+
+> ⚠️ **必填**。AI 阅读本文档的第一段——3~5 句话建立心理模型。
+> 写清楚：这个 runbook 执行什么操作、谁来执行、什么时候执行、为什么存在。
+
+{本 Runbook 定义 {操作名称} 的标准化执行流程——从前置条件检查到验证完成的完整步骤链。执行频率：{按需/每日/每周}，预计耗时 {N} 分钟。执行对象：AI Agent / 人类运维。核心目标：{一句话描述操作要达成的结果}。}
 
 ---
 

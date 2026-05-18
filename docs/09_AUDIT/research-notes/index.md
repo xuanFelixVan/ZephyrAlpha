@@ -1,3 +1,7 @@
+---
+blueprint_id: DOM-GOV-001
+---
+
 # Research Notes
 
 > 研究笔记与调研文档归档。迁移自原 `临时工作区（不能删除）`（AUDIT-06 清理）。

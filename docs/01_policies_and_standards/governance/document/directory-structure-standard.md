@@ -1,4 +1,4 @@
----
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿---
 module_id: GOV-DOC-002
 title: 目录结构规范（docs/ + src/zephyr/ 双轨治理�?
 doc_type: standard
@@ -30,7 +30,7 @@ depends_on:
 > - 新增 §4 新模块归属判别决策树
 > - docs/ 目录重编号与小写化（Stage D 对齐 ADR-0022�?
 >
-> **老树教训**：老树中文件散落在多个位置（`docs/01_FRAMEWORK/`、`docs/09_AUDIT/`、`docs/10_GOVERNANCE_COMPLIANCE/` 等），同类文件没有统一的存放位置，AI 无法可靠地找到文件�?
+> **铁律**：MUST 按本标准目录结构存放文件——散落存放 = AI 无法可靠定位。
 
 ---
 
@@ -411,7 +411,7 @@ deny:
 | 18 | `docs/01_policies_and_standards/_registry/catalogs/` | 自动注册�?| （beta 新建�?| 脚本生成�?YAML 注册�?| **手动编辑的文�?* |
 | 19 | `docs/01_policies_and_standards/_registry/vocabularies/` | 受控词表 | （beta 新建�?| AI 消费�?YAML 词表 | .md 文件（→ governance/�?|
 | 20 | `docs/01_policies_and_standards/_registry/schemas/` | JSON Schema | （stable 新建�?| 脚本生成�?JSON Schema | **手动编辑的文�?* |
-| 21 | `docs/01_policies_and_standards/templates/` | 模板 | blueprint-template.md（已合并施工指引�?| policy/standard/runbook/playbook 模板 | 正式规则文件（→ governance/ �?operational/�?|
+| 21 | `docs/01_policies_and_standards/templates/` | 模板 | blueprint-construction-template.md（已合并施工指引�?| policy/standard/runbook/playbook 模板 | 正式规则文件（→ governance/ �?operational/�?|
 
 **反向映射表（文件类型 �?唯一目标目录�?*�?
 
@@ -595,7 +595,7 @@ _cross_layer/
 
 | 禁止操作 | 原因 |
 |---------|------|
-| �?`docs/`（老树体系）下新建文件 | 只读遗留体系（见 `migration-declaration.md`�?|
+| �?`docs/`（旧体系）下新建文件 | 只读遗留体系（见 `migration-declaration.md`�?|
 | �?`docs/` 根目录下新建 `.md` 文件（`migration-declaration.md` �?`index.md` 除外）| 根目录只允许声明文件和索引文�?|
 | 将治理规范放�?`02_enterprise_architecture/` | 类型不匹配（�?`01_policies_and_standards/`�?|
 | 将架构视图放�?`01_policies_and_standards/` | 类型不匹配（�?`02_enterprise_architecture/`�?|

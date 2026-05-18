@@ -25,41 +25,31 @@ ai_autonomy: immutable_core
 
 # 任务生命周期治理标准
 
-> **module_id**: GOV-TASK-004 | **version**: 2.0.0 | **status**: active
->
-> 本标准定义任务生命周期的**治理规则**——谁有权做什么决定、什么条件下必须升级到 Owner。
->
-> **v2.0.0 重大变更**：施工内容（10 状态机、G0-G6 门禁细则、超时检测机制）已全部迁移至 [03_modules/l01_infrastructure/task-system/blueprint.md](../../../03_modules/l01_infrastructure/task-system/blueprint.md) §5.2-§5.5。本标准现在只保留治理决策层面的规则。
->
-> 对标：Jira Workflow + ServiceNow ITIL Lifecycle + Linear Cycle + Azure DevOps Process + GitHub Projects Workflow。
+> GOV-TASK-004 | v2.0.0 | 治理决策规则（状态机/门禁/超时 → `task-system/blueprint.md` §5.2-§5.5）
 
 ## 1. 目的与范围
 
-### 1.1 目的
+任务生命周期的关键决策点权限边界和治理策略。
 
-确保任务生命周期的关键决策点有明确的权限边界和治理策略，使 AI 和 Owner 在任何时刻都能无歧义地判断：
+| 问题 | 本标准回答 |
+|------|-----------|
+| 谁有权取消？ | P0/P1 → Owner；P2-P4 → AI 可自主（须记录原因） |
+| 冲突时谁优先？ | P0>P1>P2>P3>P4 → safety_level H>M>L → created_at 先到先得 |
+| 谁可以改优先级？ | 升级 → AI 提议 Owner 审批；降级 → Owner 独占 |
+| P0 太多怎么办？ | ≥3 黄色警戒；≥5 红色冻结 |
+| 何时必须升级？ | P0 BLOCKED>2session / 任何 BLOCKED>5session / P0 FAILED×2 |
 
-- 我有没有权限取消这个任务？
-- 两个任务冲突时，谁优先？
-- 谁可以改优先级？改错了怎么办？
-- P0 任务太多了怎么办？
-- 什么情况下 AI 必须把事情升级给 Owner？
+**适用**：SQLite `tasks` 表所有任务 + AI 执行任务决策权限 + 手动任务权限流程。
 
-### 1.2 适用范围
-
-- 所有在 SQLite `tasks` 表中登记的任务
-- 所有 AI 模型执行任务时的决策权限
-- 所有手动任务的权限流程
-
-### 1.3 不在本标准范围内的内容
+**不在此范围**：
 
 | 内容 | 去这里找 |
 |------|---------|
-| 10 状态机的具体转换规则 | 03_modules/l01_infrastructure/task-system/blueprint.md §5.2 |
-| G0-G6 门禁的详细检查项 | 03_modules/l01_infrastructure/task-system/blueprint.md §5.3 |
-| 超时检测的实现方式 | 03_modules/l01_infrastructure/task-system/blueprint.md §5.4 |
-| 任务卡字段定义和格式规范 | task-card-standard.md |
-| 任务关闭验证和残留清扫 | task-closure-standard.md |
+| 10 状态机转换规则 | `task-system/blueprint.md` §5.2 |
+| G0-G6 门禁检查项 | `task-system/blueprint.md` §5.3 |
+| 超时检测实现 | `task-system/blueprint.md` §5.4 |
+| 任务卡字段定义 | `task-card-standard.md` |
+| 任务关闭验证 | `task-closure-standard.md` |
 
 ---
 
@@ -116,8 +106,6 @@ ai_autonomy: immutable_core
 
 ### 2.5 P0 通胀保护
 
-> 对标丰田生产系统（Toyota Production System）WIP Limit + ITIL Change Enablement Change Freeze。
-
 | 阈值 | 触发条件 | 动作 |
 |------|---------|------|
 | 黄色警戒 | 当前离线 P0 任务 ≥ **3** 个 | 后续 P0 升级提案必须附带"为什么必须 P0 而非 P1 / 能不能拆成 P1+P2"的论证段落 |
@@ -171,10 +159,3 @@ ai_autonomy: immutable_core
 | [03_modules/l01_infrastructure/task-system/blueprint.md](../../../03_modules/l01_infrastructure/task-system/blueprint.md) §5.2-§5.5 | 施工细节——状态机实现、门禁检查逻辑、超时检测代码、消费者同步规则 |
 
 ---
-
-## 4. 变更记录
-
-| 版本 | 日期 | 变更内容 |
-|------|------|---------|
-| 2.0.0 | 2026-05-01 | **施工内容拆分**：§2 10状态机、§3 门禁、§4 超时、§5 升级触发条件、§8 消费者注册表 全部迁移至 03_modules/l01_infrastructure/task-system/blueprint.md §5.2-§5.5。本标准从 324 行精简至 ~130 行，仅保留治理决策规则 |
-| 1.0.0 | 2026-04-29 | 从 task-card-standard.md §6-§8 提取并扩展生命周期规则 |

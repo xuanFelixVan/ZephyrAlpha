@@ -1,3 +1,10 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
 schema_version: '2.0'
 partition:
   id: l12
@@ -5,11 +12,11 @@ partition:
   layer_position: 12
   runtime_plane: warm
   view_file: 03-application-architecture.md
-  view_section: §4.1 l12_system_telemetry/
+  view_section: §4.1 system_telemetry/
 modules:
 - id: l12-metrics-warm
   name: Metrics Collection & Aggregation
-  submodule_path: src/zephyr/l12_system_telemetry/metrics/
+  submodule_path: src/zephyr/system_telemetry/metrics/
   status: planned
   priority: P1
   runtime_plane: warm
@@ -28,7 +35,7 @@ modules:
   plane_note: 标准采集 Warm；T3 阶段低延迟指标路径扩展走 Hot（l12-metrics-hot�?
 - id: l12-logs
   name: Structured Log Pipeline
-  submodule_path: src/zephyr/l12_system_telemetry/logs/
+  submodule_path: src/zephyr/system_telemetry/logs/
   status: planned
   priority: P1
   runtime_plane: warm
@@ -40,7 +47,7 @@ modules:
   kb_ref: []
 - id: l12-traces
   name: Distributed Tracing
-  submodule_path: src/zephyr/l12_system_telemetry/traces/
+  submodule_path: src/zephyr/system_telemetry/traces/
   status: planned
   priority: P1
   runtime_plane: warm
@@ -53,7 +60,7 @@ modules:
   plane_note: 实时追踪 Warm；历史归�?Cold（l12-traces-archive�?
 - id: l12-ai-behavior
   name: AI Behavior Observability
-  submodule_path: src/zephyr/l12_system_telemetry/ai_behavior/
+  submodule_path: src/zephyr/system_telemetry/ai_behavior/
   status: planned
   priority: P1
   runtime_plane: warm
@@ -67,7 +74,7 @@ modules:
   plane_note: 实时监控 Warm；历史回溯分�?Cold（l12-ai-behavior-history�?
 - id: l12-archive
   name: Telemetry Data Archive
-  submodule_path: src/zephyr/l12_system_telemetry/archive/
+  submodule_path: src/zephyr/system_telemetry/archive/
   status: planned
   priority: P1
   runtime_plane: cold

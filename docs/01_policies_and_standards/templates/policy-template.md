@@ -11,7 +11,9 @@ language: zh
 created_by: human_plus_agent
 date: ""
 ttl: permanent
-summary: ""
+summary: "策略文档创建模板——声明式规则，定义必须/禁止，新建 policy 类文档时使用此模板"
+completeness: "unknown"
+template_for: policy
 tags: []
 rule_form: declarative
 scope: global
@@ -22,9 +24,37 @@ ai_autonomy: human_gated
 evolution_policy: ""
 ---
 
+<!--
+COMPLIANCE_CHECKLIST — 机器可解析合规清单
+策略文档模板 MUST 包含以下所有标题（精确匹配关键词）。缺一 = 不合规。
+脚本：python scripts/governance/d3_metadata/check_template_compliance.py <文档路径> --template policy
+-->
+<!--
+REQUIRED_SECTIONS:
+  overview: "概述"
+  s1: "1. 目的与范围"
+  s2: "2. SSoT 声明"
+  s3: "3. 规则"
+  s4: "4. 例外"
+  s5: "5. 专业参考"
+  s6: "6. 标准间引用"
+  s7: "7. AI 可消费性声明"
+  s8: "8. 变更记录"
+END_REQUIRED_SECTIONS
+-->
+
 # {标题}
 
 > module_id: {填写} | version: 0.1.0 | status: draft | layer: {填写}
+
+---
+
+## 概述
+
+> ⚠️ **必填**。AI 阅读本文档的第一段——3~5 句话建立心理模型。
+> 写清楚：这个策略是什么、管什么、约束谁、为什么存在。
+
+{本策略文档定义 {领域} 中的规则——声明式 MUST/禁止 约束。适用范围：{适用范围}。使用对象：AI Agent 施工 / 人类 Owner 治理审计。核心原则：转化优于删除；不可因模板砍价值。}
 
 ---
 

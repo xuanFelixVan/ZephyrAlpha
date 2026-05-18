@@ -1,4 +1,4 @@
----
+﻿---
 module_id: KE-module_blu-0_2_ai_agent______81-004
 title: 0.2 AI Agent 分派表 (81域)
 category: module_blueprint
@@ -15,7 +15,7 @@ category: module_blueprint
 | 任务管线 | 本蓝图 §2 | MOD-INF-009 blueprint | ~500 |
 | 反馈闭环 | 本蓝图 §2 | MOD-INF-010 blueprint | ~500 |
 | 跨系统集成 | 本蓝图 §1-§3 | MOD-MASTER-001 CT-* | ~2000 |
-| 新建模块 | PS-STD-005 §5 | blueprint-template.md | ~800 |
+| 新建模块 | PS-STD-005 §5 | blueprint-construction-template.md | ~800 |
 | 权限管控/Agent RBAC | MOD-INF-018 blueprint §1-§2 | rbac_roles.yaml + PermissionGuard API | ~600 |
 | 架构审查 | 本文全文 | PS-STD-005 + blueprint-registry.yaml | ~4000 |
 | 成本管理/预算 | 本蓝图 §十二 | MOD-INF-024 + §12.3 | ~800 |

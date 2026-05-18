@@ -31,7 +31,7 @@ depends_on:
 
 ---
 
-## 核心术语（21 个）
+## 核心术语（24 个）
 
 | # | 术语 | 英文 | 定义 |
 |:--:|------|------|------|
@@ -56,6 +56,9 @@ depends_on:
 | 19 | **depends_on** | Depends On | frontmatter 字段——声明本文件引用的上游文件列表。**三级分层链深体系**：T1=SSoT定义者（≤1层，glossary/metadata），T2=框架构建者（≤2层，doc-structure/classification），T3=治理执行者（≤3层，其余meta文件）。铁律：仅指向 `meta/` 或 `AGENTS.md`；超过本层级上限的引用写在 prose 正文不在 depends_on；禁止循环引用；跨域引用（governance/operational/domains/modules）一律进正文。链深=从本文件沿 depends_on 走到叶子节点的最长步数 |
 | 20 | **Tier 1/2/3 消费者** | Consumer Tier | 消费者影响等级：Tier 1（硬编码了规则编号的文件，变更必须同步）> Tier 2（消费规则但不硬编码编号，变更建议同步）> Tier 3（间接消费，变更可事后通知） |
 | 21 | **ABS / COND / REC** | Absolute / Conditional / Recommended | 行为边界三级编号体系（PS-STD-003）：ABS-XX = 绝对禁止（任何情况不可违反），COND-XX = 条件禁止（特定条件下不可违反），REC-XX = 推荐做法 |
+| 22 | **安全升级** | Safety Escalation | MOD-INF-022 SSoT——AI操作安全级别从低到高迁移（autonomous→auto_guard→blocked）。触发条件：规则匹配+置信度+熔断器状态。与"权限提升"是不同概念 |
+| 23 | **权限提升** | Privilege Escalation | MOD-INF-018 SSoT——Agent获取超出其角色授权的权限。属于安全威胁（OWASP ASI03），RBAC L4 Sequence Guard 专门防护。与"安全升级"是不同概念 |
+| 24 | **委托链** | Delegation Chain | MOD-INF-022 SSoT——任务在Agent间传递的权限递减链（四级约束+MAX_DEPTH=3）。每跳scope收窄，TLA+验证安全性 |
 
 ---
 
