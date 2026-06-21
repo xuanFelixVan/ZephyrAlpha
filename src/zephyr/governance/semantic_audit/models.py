@@ -84,6 +84,10 @@ class LLMFixResult(BaseModel):
     error: str = ""
 
 
+# 向后兼容别名：FixResult 已重命名为 LLMFixResult
+FixResult = LLMFixResult
+
+
 class AlignmentReport(BaseModel):
     aligned_count: int = 0
     zombie_count: int = 0

@@ -146,8 +146,12 @@ def audit(changed_files: set[Path] | None = None) -> AuditResult:
     registered_scripts = _build_script_registry()
     registered_gates = _build_gate_registry()
 
+    # ── 1.5 批量收集所有 import 语句（消费者地图）──
+    # RULE-TWO 豁免原则：已有自然发现机制（被其他模块 import）的模块不报为 ORPHAN
+    import_map = _batch_collect_imports()
+
     # ── 2. 扫描 src/zephyr/ 模块孤儿 ──
-    _scan_module_orphans(registered_modules, result, changed_files)
+    _scan_module_orphans(registered_modules, import_map, result, changed_files)
 
     # ── 3. 扫描 scripts/ 脚本孤儿 ──
     _scan_script_orphans(registered_scripts, result, changed_files)
@@ -236,18 +240,71 @@ def _build_gate_registry() -> set[str]:
     return {g.get("file", "") for g in gates if g.get("file")}
 
 
+def _batch_collect_imports() -> dict[str, list[str]]:
+    """批量收集所有 import 语句，构建 {module: [consumer_files]} 映射。
+
+    用于 RULE-TWO 豁免判定：被其他模块 import 的模块视为"已有自然发现机制"，
+    不报为 ORPHAN（即使未注册到 __all__）。
+
+    匹配模式:
+        from zephyr.X.Y.Z import ...
+        import zephyr.X.Y.Z
+
+    Returns:
+        {full_module_path: [consumer_file_paths]}
+    """
+    import re as _re
+    from collections import defaultdict
+
+    pattern = r"(?:from\s+(zephyr[\w.]*))\s+import|(?:import\s+(zephyr[\w.]*))"
+    consumers: dict[str, list[str]] = defaultdict(list)
+
+    try:
+        result = subprocess.run(
+            ["rg", "--no-heading", "-n", "-e", pattern, "src/", "scripts/", "tests/"],
+            cwd=str(PROJECT_ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=60,
+        )
+        if result.returncode == 0:
+            for line in result.stdout.splitlines():
+                parts = line.split(":", 2)
+                if len(parts) < 3:
+                    continue
+                consumer_file = parts[0]
+                content = parts[2]
+                match = _re.search(pattern, content)
+                if match:
+                    module = match.group(1) or match.group(2)
+                    if module:
+                        consumers[module].append(consumer_file)
+    except (subprocess.SubprocessError, FileNotFoundError) as e:
+        print(f"WARNING: 批量收集 import 失败，消费者豁免将不生效: {e}", file=sys.stderr)
+
+    return dict(consumers)
+
+
 # ===================================================================
 # 孤儿扫描
 # ===================================================================
 
 def _scan_module_orphans(
     registered: dict[str, set[str]],
+    import_map: dict[str, list[str]],
     result: AuditResult,
     changed_files: set[Path] | None = None,
 ) -> None:
-    """扫描 src/zephyr/ 下所有 .py 文件，找出不在 __all__ 中的。
+    """扫描 src/zephyr/ 下所有 .py 文件，找出不在 __all__ 中且无消费者的。
+
+    RULE-TWO 豁免原则：被其他模块 import 的模块视为"已有自然发现机制"，
+    不报为 ORPHAN（即使未注册到 __all__）。
 
     Args:
+        registered: {package: {module_names}} 来自 __all__
+        import_map: {full_module: [consumer_files]} 来自批量 Grep
+        result: 审计结果
         changed_files: 增量模式下仅扫描此集合中的文件。None 表示全量扫描。
     """
     for py_file in SRC_ZEPHYR.rglob("*.py"):
@@ -279,6 +336,15 @@ def _scan_module_orphans(
 
         class_name = "".join(p.capitalize() for p in module_name.split("_"))
         if module_name not in registered[pkg] and class_name not in registered[pkg]:
+            # RULE-TWO 豁免：检查是否有消费者（被其他模块 import）
+            full_module = "zephyr." + ".".join(parts[:-1] + (module_name,)) if parts[:-1] else "zephyr." + module_name
+            consumer_files = import_map.get(full_module, [])
+            # 排除自身
+            consumer_files = [c for c in consumer_files if not c.endswith(rel_str)]
+            if consumer_files:
+                # 有消费者 = 已有自然发现机制 = 豁免
+                continue
+
             result.orphan_modules.append(OrphanEntry(
                 path=py_file,
                 relative=rel_str,

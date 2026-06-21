@@ -66,6 +66,49 @@ def __getattr__(name):
         return _mod
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
+from zephyr.governance.agent_signer import AgentSigner
+from zephyr.governance.akshare_provider import AkshareProvider
+from zephyr.governance.base import FactorMeta
+from zephyr.governance.blind_spot_tracker import BlindSpotStatus
+from zephyr.governance.canary_manager import CanaryFile
+from zephyr.governance.changelog_manager import ChangeImpact
+from zephyr.governance.classifier import Classifier
+from zephyr.governance.cli import main
+from zephyr.governance.code_archaeology import BlameRecord
+from zephyr.governance.complexity_budget import ComplexityReport
+from zephyr.governance.compliance_map import ComplianceFramework
+from zephyr.governance.construction_verifier import ConstructionVerifier
+from zephyr.governance.corporate_actions import CorporateActionType
+from zephyr.governance.dashboard import Dashboard
+from zephyr.governance.database_service import DatabaseService
+from zephyr.governance.dependency import DependencyNode
+from zephyr.governance.dlq_retry_policy import RetryResult
+from zephyr.governance.dora_metrics import DORATargets
+from zephyr.governance.feedback_self_audit import FeedbackNode
+from zephyr.governance.finding_ingest import IngestResult
+from zephyr.governance.fix_prioritizer import PrioritizedFixResult
+from zephyr.governance.gate_event_adapter import GateEventAdapter
+from zephyr.governance.glossary_matrix import GlossaryEntry
+from zephyr.governance.index_generator import IndexGenerator
+from zephyr.governance.kb_gate import KBWriteCheckResult
+from zephyr.governance.lifecycle import Lifecycle
+from zephyr.governance.llm_impact_analyzer import RiskLevel
+from zephyr.governance.metadata import GitCommitInfo
+from zephyr.governance.models import AssetType
+from zephyr.governance.phase_executor import PhaseStatus
+from zephyr.governance.pipeline_base import ExperimentConfig
+from zephyr.governance.privacy import PIICategory
+from zephyr.governance.reconciler import Reconciler
+from zephyr.governance.registry_adapter import RegistryParseError
+from zephyr.governance.sbom_generator import LicenseType
+from zephyr.governance.self_healer import SelfHealError
+from zephyr.governance.self_health import SLIResult
+from zephyr.governance.snapshot_manager import SnapshotError
+from zephyr.governance.spec_auditor import record_agent_spec
+from zephyr.governance.supply_chain import PackageRecord
+from zephyr.governance.token_budget import PoolLevel
+from zephyr.governance.trust_anchor import TrustLevel
+from zephyr.governance.wqa_scorer import WQAScore
 __all__ = [
     'agent_debate', 'agent_dispatch', 'ai_code_standards',
     'ai_self_diagnosis', 'api_lifecycle',
@@ -103,6 +146,50 @@ __all__ = [
     'a2a_protocol',
     'phase_check_registry',
     'post_process',
+    "AgentSigner",
+    "AkshareProvider",
+    "FactorMeta",
+    "BlindSpotStatus",
+    "CanaryFile",
+    "ChangeImpact",
+    "Classifier",
+    "main",
+    "BlameRecord",
+    "ComplexityReport",
+    "ComplianceFramework",
+    "ConstructionVerifier",
+    "CorporateActionType",
+    "Dashboard",
+    "DatabaseService",
+    "DependencyNode",
+    "RetryResult",
+    "DORATargets",
+    "FeedbackNode",
+    "IngestResult",
+    "PrioritizedFixResult",
+    "GateEventAdapter",
+    "GlossaryEntry",
+    "IndexGenerator",
+    "KBWriteCheckResult",
+    "Lifecycle",
+    "RiskLevel",
+    "GitCommitInfo",
+    "AssetType",
+    "Momentum20d",
+    "PhaseStatus",
+    "ExperimentConfig",
+    "PIICategory",
+    "Reconciler",
+    "RegistryParseError",
+    "LicenseType",
+    "SelfHealError",
+    "SLIResult",
+    "SnapshotError",
+    "record_agent_spec",
+    "PackageRecord",
+    "PoolLevel",
+    "TrustLevel",
+    "WQAScore",
 ]
 
 __version__ = "0.2.0"
