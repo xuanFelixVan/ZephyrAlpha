@@ -351,7 +351,7 @@ repos:
         description: "全库 SSoT 唯一真源一致性校验（P0 无效layer/重复module_id/死链/命名冲突硬阻断），KBG-0001 + KBG-0021 §4.2 强制执行层"
 
       # ── GATE-SQ: 审计脚本质量门禁（AGENTS.md §8.2.1 + SCRIPT-QUALITY-001）──
-      # 权威依据：AGENTS.md §8.2.1 _shared/ API 速查目录 + scripts/governance/quality-standard.md
+      # 权威依据：AGENTS.md §8.2.1 _shared/ API 速查目录 + scripts/governance/quality_standard.md
       # 真源声明：Session 20260502-007 五轮审计修复 → D-D-07/D-D-08 checker 系统性防护 → 接入 pre-commit 强制执行层
       # 检测范围：scripts/governance/**/*.py 变更时触发
       # 检测内容：D-A~D-H 八维度质量检查（编码安全 / 退出码 / 短路模式 /
