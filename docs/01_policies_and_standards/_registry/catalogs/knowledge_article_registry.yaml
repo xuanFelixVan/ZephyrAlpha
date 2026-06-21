@@ -1,0 +1,125 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# ============================================================================
+# ZephyrAlpha 知识条目登记表（Knowledge Base Article Registry）— 唯一真源
+# ============================================================================
+# 版本: 1.0.0 | 创建: 2026-05-02 | owner: ZephyrAlpha-Owner
+#
+# module_id: PS-REG-010
+# doc_type: register
+#
+# 对标: ITIL Knowledge Management → Knowledge Article Lifecycle
+#       + ISO 30401 Knowledge Management Systems（知识条目须有owner/状态/消费者）
+#       + MOD-INF-006 task-system blueprint §5.4（KMS 三层漏斗——50 KO→30 KE→10 KB）
+#
+# 用途: 登记 KMS 知识库中每个 KE 编号的知识条目——
+#       标题 / 摘要 / 消费者（哪些模块消费此知识）/ TTL / 状态。
+#       为 beta 自动知识抽取提供机器可读的索引基础。
+#
+# 当前状态: planned——beta 落地。scaffold 仅创建 Schema 骨架。
+# ============================================================================
+
+schema_version: "1.0.0"
+doc_type: register
+title: "知识条目登记表"
+version: "1.0.0"
+status: draft
+created: "2026-05-02"
+last_updated: "2026-05-02"
+ai_autonomy: human_gated
+ttl: permanent
+total_entries: 0
+note: "beta KMS 落地前为空登记表——仅 Schema 骨架。当前项目中知识以 blueprint.md + KB 决策记录形式存在，KE 编号体系尚未激活。"
+depends_on:
+  - target: PS-STD-001
+    at: "§3.2.1"
+    why: "doc_type 受控词表 + register 类型合法字段定义"
+
+# ============================================================================
+# 字段 Schema
+# ============================================================================
+_schema:
+  knowledge_levels:
+    - KO  # Knowledge Observation——原始观察（"某次session发现这个问题"）→上限 50条
+    - KE  # Knowledge Entry——结构化知识条目（"这个观察提炼成可复用的知识"）→上限 30条
+    - KB  # Knowledge Base——系统化知识库（"从KE中抽取成知识库规则"）→上限 10条
+
+  ke_status_values:
+    - draft       # 起草中——KE 从 KO 提炼后初稿
+    - review      # 审核中——至少 3 个模型交叉验证
+    - active      # 已生效——消费者可引用
+    - superseded  # 被替代——有更新的 KE 覆盖了此知识
+    - retired     # 退役——不再适用
+
+  consumer_tiers:
+    - Tier_1  # 核心消费者——知识错误会导致合规/安全违规
+    - Tier_2  # 优化消费者 ——知识错误会降低质量但不导致合规违规
+    - Tier_3  # 探索消费者——知识错误影响有限
+
+# ============================================================================
+# 知识条目登记
+# ============================================================================
+# 字段说明:
+#   ke_id             KE 编号，格式 KE-NNN
+#   title             知识标题
+#   summary           一句话摘要
+#   source            来源：ADR编号 / Session日志 / Wave终审等
+#   consumers[]       消费者模块——哪些 module 需要同步更新此知识变更
+#   tier              消费者影响等级（Tier 1/2/3）
+#   status            状态（draft→review→active→superseded→retired）
+#   ttl               有效期——active 到下一次复审的期限
+#   created_by        创建者
+#   last_verified     最近验证时间
+# ============================================================================
+
+knowledge_entries: []
+
+# ============================================================================
+# 预留 KE 编号段（未来填充参考）
+# ============================================================================
+# KE-001 ~ KE-009   Vibe Coding 施工方法论（双管线/上下文预算/触发出错诊断）
+# KE-010 ~ KE-019   文档体系治理（frontmatter填写/编码安全/目录结构决策）
+# KE-020 ~ KE-029   脚本系统（Finding Schema / 12维度矩阵 / 退出码约定）
+# KE-030 ~ KE-039   任务卡系统（10状态机 / G0-G6门禁 / 超时升级）
+# ============================================================================
+reserved_ranges:
+  - range: "KE-001 ~ KE-009"
+    domain: "vibe_coding"
+    blueprint_anchor: "MOD-INF-006 §5.4"
+  - range: "KE-010 ~ KE-019"
+    domain: "document_governance"
+  - range: "KE-020 ~ KE-029"
+    domain: "script_system"
+    blueprint_anchor: "MOD-INF-005 §4"
+  - range: "KE-030 ~ KE-039"
+    domain: "task_card"
+    blueprint_anchor: "MOD-INF-006 §5.2"
+
+# ============================================================================
+# 当前知识存储的实际位置（过渡期——KE 编号体系未激活）
+# ============================================================================
+transition_period:
+  note: "2 过渡期——知识以 blueprint.md + KB 决策记录形式存在，非 KE 编号"
+  knowledge_sources:
+    - {type: blueprint, count: 5, path: "docs/03_modules/l01_infrastructure/*/"}
+    - {type: kb_decision, count: 39, path: "KB:decisions namespace（Git-backed KB 决策记录；旧 docs/02_enterprise_architecture/adr/ 物理树已废弃）"}
+    - {type: rationale_log, count: 1, path: "docs/02_enterprise_architecture/architecture-rationale-log.md"}
+    - {type: session_log, count: 0, path: "已删除（`docs/19_development_workspace/` 已于 2026-05-02 迁出项目）"}
+  migration_phase: "beta"
+
+# ============================================================================
+# 变更记录
+# ============================================================================
+changelog:
+  - version: "1.0.0"
+    date: "2026-05-02"
+    author: "AI-GLM-5.1"
+    changes:
+      - "初始创建——登记 Schema 骨架 + 预留 4个KE编号段（KE-001~KE-039）"
+      - "status=planned——beta KMS 三层漏斗落地前为空表"
+      - "transition_period 标注当前知识的实际存储位置——5蓝图+39ADR"

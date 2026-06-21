@@ -1,0 +1,46 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+# module_id: MOD-INF-035
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+capability_id: ollama-chat
+category: inference
+description: qwen3:8b local inference via Ollama /api/chat, 6 work types
+examples:
+- input:
+    text: fix login bug
+    work_type: task_classification
+  output:
+    category: bug_fix
+input_schema:
+  properties:
+    text:
+      type: string
+    work_type:
+      enum:
+      - task_classification
+      - tag_completion
+      - summary_extraction
+      - anomaly_triage
+      - query_rewrite
+      - naming_suggest
+      type: string
+  type: object
+name: Ollama Chat Inference
+output_schema:
+  properties:
+    result:
+      type: object
+  type: object
+priority: P0
+registered_at: '2026-05-08T20:14:39.619574'
+requires_human: false
+runtime_plane: hot
+status: ACTIVE
+tags:
+- inference
+- chat
+- ollama
+- qwen3

@@ -1,0 +1,640 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+registry_version: 3.1.0
+last_updated: '2026-05-16'
+_schema:
+  description: 模块登记表字段——与 REG-001（registry-of-registries.yaml）及物理 blueprint.md 对齐
+  priority_values:
+  - P0
+  - P1
+  - P2
+  - P3
+  construction_plan_status_values:
+  - not_started
+  - phase_1_partial
+  - phase_1_complete
+  - phase_2_complete
+  - blocked_by_infrastructure
+  - completed
+modules:
+- module_id: ALPHA-SIGNAL-DOMAIN-001
+  name: _alpha-signal-domain
+  layer: cross_layer
+  functional_domain: alpha_signal
+  priority: P1
+  path: docs/03_modules/_alpha-signal-domain
+  blueprint:
+    status: Active
+    version: 0.4.0
+  construction_plan:
+    status: partially_implemented
+- module_id: DOM-GOV-001
+  name: _domain-governance
+  layer: domain
+  functional_domain: governance
+  priority: P0
+  path: docs/03_modules/_domain-governance
+  blueprint:
+    status: Active
+    version: 0.5.1
+  construction_plan:
+    status: phase_2_complete
+- module_id: DOM-GOV-CAP-001
+  name: capacity-upgrade
+  layer: domain
+  functional_domain: governance
+  priority: P1
+  path: docs/03_modules/_domain-governance/capacity-upgrade
+  blueprint:
+    status: Active
+    version: 0.1.0
+  construction_plan:
+    status: phase_1_complete
+- module_id: GOV-FSTR-001
+  name: _restructuring
+  layer: cross_layer
+  functional_domain: governance
+  priority: P0
+  path: docs/03_modules/_restructuring
+  blueprint:
+    status: Active
+    version: 4.2.0
+  construction_plan:
+    status: partially_implemented
+- module_id: ML-EXPERIMENT-DOMAIN-001
+  name: _ml-experiment-domain
+  layer: cross_layer
+  functional_domain: ml_experiment
+  priority: P2
+  path: docs/03_modules/_ml-experiment-domain
+  blueprint:
+    status: Active
+    version: 0.4.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-INF-001
+  name: capacity-assurance
+  layer: L01
+  functional_domain: observability
+  priority: P0
+  path: docs/03_modules/l01_infrastructure/capacity-assurance
+  blueprint:
+    status: Active
+    version: 3.1.0
+  construction_plan:
+    status: phase_2_complete
+- module_id: MOD-INF-002
+  name: runtime-integration
+  layer: L01
+  functional_domain: infra
+  priority: P0
+  path: docs/03_modules/l01_infrastructure/runtime-integration
+  blueprint:
+    status: Active
+    version: 6.1.1
+  construction_plan:
+    status: completed
+- module_id: MOD-INF-005
+  name: governance-automation
+  layer: L01
+  functional_domain: governance
+  priority: P0
+  path: docs/03_modules/l01_infrastructure/governance-automation
+  blueprint:
+    status: Active
+    version: 5.5.0
+  construction_plan:
+    status: completed
+- module_id: MOD-INF-006
+  name: task-system
+  layer: L01
+  functional_domain: execution
+  priority: P0
+  path: docs/03_modules/l01_infrastructure/task-system
+  blueprint:
+    status: Active
+    version: 0.9.4
+  construction_plan:
+    status: phase_2_complete
+- module_id: MOD-INF-007
+  name: gate-engine
+  layer: cross_layer
+  functional_domain: governance
+  priority: P0
+  path: docs/03_modules/_cross_layer/gate-engine
+  blueprint:
+    status: Draft
+    version: 0.8.1
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-INF-008
+  name: context-engine
+  layer: cross_layer
+  functional_domain: intelligence
+  priority: P0
+  path: docs/03_modules/_cross_layer/context-engine
+  blueprint:
+    status: Draft
+    version: 0.9.2
+  construction_plan:
+    status: completed
+- module_id: MOD-INF-009
+  name: pipeline
+  layer: cross_layer
+  functional_domain: execution
+  priority: P0
+  path: docs/03_modules/_cross_layer/pipeline
+  blueprint:
+    status: Active
+    version: 0.39.1
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-INF-010
+  name: feedback-loop
+  layer: cross_layer
+  functional_domain: operations
+  priority: P0
+  path: docs/03_modules/_cross_layer/feedback-loop
+  blueprint:
+    status: Draft
+    version: 0.34.3
+  construction_plan:
+    status: completed
+- module_id: MOD-INF-011
+  name: vector-memory
+  layer: cross_layer
+  functional_domain: data
+  priority: P0
+  path: docs/03_modules/l01_infrastructure/vector-memory
+  blueprint:
+    status: Active
+    version: 0.10.1
+  construction_plan:
+    status: phase_3_complete
+- module_id: MOD-INF-012
+  name: database
+  layer: cross_layer
+  functional_domain: data
+  priority: P1
+  path: docs/03_modules/_cross_layer/database
+  blueprint:
+    status: Active
+    version: 3.7.1
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-INF-013
+  name: mcp-servers
+  layer: cross_layer
+  functional_domain: execution
+  priority: P1
+  path: docs/03_modules/_cross_layer/mcp-servers
+  blueprint:
+    status: Draft
+    version: 0.3.39
+  construction_plan:
+    status: completed
+- module_id: MOD-INF-014
+  name: llm-security
+  layer: cross_layer
+  functional_domain: governance
+  priority: P0
+  path: docs/03_modules/_cross_layer/llm-security
+  blueprint:
+    status: Active
+    version: 2.0.1
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-INF-015
+  name: system-telemetry
+  layer: L01
+  functional_domain: operations
+  priority: P1
+  path: docs/03_modules/l01_infrastructure/system-telemetry
+  blueprint:
+    status: Active
+    version: 2.0.1
+  construction_plan:
+    status: completed
+- module_id: MOD-INF-016
+  name: shared-core
+  layer: cross_layer
+  functional_domain: operations
+  priority: P0
+  path: docs/03_modules/_cross_layer/shared-core
+  blueprint:
+    status: Active
+    version: 0.17.0
+  construction_plan:
+    status: completed
+- module_id: MOD-INF-017
+  name: code-dedup-engine
+  layer: L01
+  functional_domain: governance
+  priority: P2
+  path: docs/03_modules/l01_infrastructure/code-dedup-engine
+  blueprint:
+    status: Active
+    version: 0.14.1
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-INF-018
+  name: agent-rbac
+  layer: l01_infrastructure
+  functional_domain: governance
+  priority: P0
+  path: docs/03_modules/l01_infrastructure/agent-rbac
+  blueprint:
+    status: Active
+    version: 1.1.0
+  construction_plan:
+    status: completed
+- module_id: MOD-INF-019
+  name: agent-spec
+  layer: cross_layer
+  functional_domain: intelligence
+  priority: P0
+  path: docs/03_modules/l01_infrastructure/agent-spec
+  blueprint:
+    status: Active
+    version: 0.19.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-INF-020
+  name: audit-trail
+  layer: l01_infrastructure
+  functional_domain: governance
+  priority: P0
+  path: docs/03_modules/l01_infrastructure/audit-trail
+  blueprint:
+    status: Active
+    version: 2.1.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-INF-021
+  name: rollback-system
+  layer: L01
+  functional_domain: execution
+  priority: P1
+  path: docs/03_modules/l01_infrastructure/rollback-system
+  blueprint:
+    status: Active
+    version: 9.0.0
+  construction_plan:
+    status: completed
+- module_id: MOD-INF-022
+  name: escalation-protocol
+  layer: l01_infrastructure
+  functional_domain: safety_escalation
+  priority: P1
+  path: docs/03_modules/l01_infrastructure/escalation-protocol
+  blueprint:
+    status: active
+    version: 2.1.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-INF-023
+  name: drift-detector
+  layer: cross_layer
+  functional_domain: governance
+  priority: P1
+  path: docs/03_modules/l01_infrastructure/drift-detector
+  blueprint:
+    status: Active
+    version: 3.1.0
+  construction_plan:
+    status: completed
+- module_id: MOD-INF-024
+  name: budget-enforcer
+  layer: l01_infrastructure
+  functional_domain: governance
+  priority: P2
+  path: docs/03_modules/l01_infrastructure/budget-enforcer
+  blueprint:
+    status: Active
+    version: 0.13.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-INF-025
+  name: a2a-protocol
+  layer: l01_infrastructure
+  functional_domain: infra
+  priority: P2
+  path: docs/03_modules/l01_infrastructure/a2a-protocol
+  blueprint:
+    status: Active
+    version: 0.12.0
+  construction_plan:
+    status: scaffold
+- module_id: MOD-INF-026
+  name: asset-inventory
+  layer: L01
+  functional_domain: operations
+  priority: P1
+  path: docs/03_modules/l01_infrastructure/asset-inventory
+  blueprint:
+    status: Active
+    version: 3.1.0
+  construction_plan:
+    status: completed
+- module_id: MOD-INF-027
+  name: audit-orchestrator
+  layer: cross_layer
+  functional_domain: governance
+  priority: P1
+  path: docs/03_modules/_cross_layer/audit-orchestrator
+  blueprint:
+    status: Active
+    version: 6.1.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-INF-028
+  name: semantic-auditor
+  layer: cross_layer
+  functional_domain: governance
+  priority: P1
+  path: docs/03_modules/_cross_layer/semantic-auditor
+  blueprint:
+    status: Active
+    version: 6.1.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-INF-029
+  name: orphan-judge
+  layer: cross_layer
+  functional_domain: governance
+  priority: P1
+  path: docs/03_modules/_cross_layer/orphan-judge
+  blueprint:
+    status: Active
+    version: 2.1.0
+  construction_plan:
+    status: scaffold
+- module_id: MOD-INF-030
+  name: red-blue-validator
+  layer: cross_layer
+  functional_domain: governance
+  priority: P1
+  path: docs/03_modules/_cross_layer/red-blue-validator
+  blueprint:
+    status: Active
+    version: 2.1.0
+  construction_plan:
+    status: scaffold
+- module_id: MOD-INF-031
+  name: auto-fix-engine
+  layer: cross_layer
+  functional_domain: governance
+  priority: P1
+  path: docs/03_modules/_cross_layer/auto-fix-engine
+  blueprint:
+    status: Active
+    version: 5.1.0
+  construction_plan:
+    status: design_only
+- module_id: MOD-INF-032
+  name: resource-optimization-engine
+  layer: cross_layer
+  functional_domain: operations
+  priority: P1
+  path: docs/03_modules/_cross_layer/resource-optimization-engine
+  blueprint:
+    status: Active
+    version: 5.2.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-INF-033
+  name: behavioral-auditor
+  layer: cross_layer
+  functional_domain: governance
+  priority: P1
+  path: docs/03_modules/_cross_layer/behavioral-auditor
+  blueprint:
+    status: Draft
+    version: 3.3.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-INF-034
+  name: model-profiler
+  layer: cross_layer
+  functional_domain: intelligence
+  priority: P1
+  path: docs/03_modules/_cross_layer/model-profiler
+  blueprint:
+    status: Active
+    version: 2.1.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-INF-035
+  name: auto-runtime-core
+  layer: cross_layer
+  functional_domain: operations
+  priority: P0
+  path: docs/03_modules/_cross_layer/auto-runtime-core
+  blueprint:
+    status: Active
+    version: 6.0.0
+  construction_plan:
+    status: completed
+- module_id: MOD-INF-036
+  name: model-capability-exam
+  layer: cross_layer
+  functional_domain: intelligence
+  priority: P1
+  path: docs/03_modules/_cross_layer/model-capability-exam
+  blueprint:
+    status: Active
+    version: 2.1.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-INF-037
+  name: registry-governance
+  layer: l01_infrastructure
+  functional_domain: governance
+  priority: P1
+  path: docs/03_modules/l01_infrastructure/registry-governance
+  blueprint:
+    status: Draft
+    version: 0.1.0
+  construction_plan:
+    status: partial
+- module_id: MOD-INF-038
+  name: state-machine-engine
+  layer: l01_infrastructure
+  functional_domain: infra
+  priority: P1
+  path: docs/03_modules/l01_infrastructure/state-machine-engine
+  blueprint:
+    status: Draft
+    version: 0.1.0
+  construction_plan:
+    status: not_started
+- module_id: MOD-KB-001
+  name: knowledge-base
+  layer: cross_layer
+  functional_domain: intelligence
+  priority: P0
+  path: docs/03_modules/l01_infrastructure/knowledge-base
+  blueprint:
+    status: Active
+    version: 0.12.1
+  construction_plan:
+    status: completed
+- module_id: MOD-L00-001
+  name: datasource-core
+  layer: l00_data_source
+  functional_domain: data
+  priority: P0
+  path: docs/03_modules/l00_data_source/datasource-core
+  blueprint:
+    status: Active
+    version: 3.0.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-L02-001
+  name: alpha-factor-core
+  layer: l02_alpha_factor
+  functional_domain: intelligence
+  priority: P0
+  path: docs/03_modules/l02_alpha_factor/alpha-factor-core
+  blueprint:
+    status: Active
+    version: 3.0.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-L03-001
+  name: signal-generation-core
+  layer: l03_signal_generation
+  functional_domain: research
+  priority: P0
+  path: docs/03_modules/l03_signal_generation/signal-generation-core
+  blueprint:
+    status: Active
+    version: 2.2.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-L04-001
+  name: risk-management-core
+  layer: L04
+  functional_domain: risk
+  priority: P0
+  path: docs/03_modules/l04_risk_management/risk-management-core
+  blueprint:
+    status: Active
+    version: 2.2.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-L05-001
+  name: portfolio-core
+  layer: L05
+  functional_domain: portfolio
+  priority: P0
+  path: docs/03_modules/l05_portfolio_construction/portfolio-core
+  blueprint:
+    status: Active
+    version: 2.1.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-L06-001
+  name: execution-core
+  layer: l06
+  functional_domain: execution
+  priority: P0
+  path: docs/03_modules/l06_trade_execution/execution-core
+  blueprint:
+    status: Active
+    version: 2.1.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-L07-001
+  name: analytics-core
+  layer: l07_post_trade_analytics
+  functional_domain: analytics
+  priority: P1
+  path: docs/03_modules/l07_post_trade_analytics/analytics-core
+  blueprint:
+    status: Active
+    version: 2.1.0
+  construction_plan:
+    status: blocked_by_infrastructure
+- module_id: MOD-L08-001
+  name: hmi-core
+  layer: l08_human_ai_interface
+  functional_domain: interface
+  priority: P1
+  path: docs/03_modules/l08_human_ai_interface/hmi-core
+  blueprint:
+    status: Active
+    version: 2.1.0
+  construction_plan:
+    status: blocked_by_infrastructure
+- module_id: MOD-L09-001
+  name: research-core
+  layer: l09_research_innovation
+  functional_domain: research
+  priority: P2
+  path: docs/03_modules/l09_research_innovation/research-core
+  blueprint:
+    status: Active
+    version: 2.1.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-L10-001
+  name: compliance-core
+  layer: L10
+  functional_domain: compliance
+  priority: P0
+  path: docs/03_modules/l10_compliance/compliance-core
+  blueprint:
+    status: Active
+    version: 2.1.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-L11-001
+  name: ml-core
+  layer: l11_ml_platform
+  functional_domain: research
+  priority: P1
+  path: docs/03_modules/l11_ml_platform/ml-core
+  blueprint:
+    status: Active
+    version: 2.1.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-L13-001
+  name: experiment-core
+  layer: l13_experimentation
+  functional_domain: research
+  priority: P2
+  path: docs/03_modules/l13_experimentation/experiment-core
+  blueprint:
+    status: Active
+    version: 2.1.0
+  construction_plan:
+    status: partially_implemented
+- module_id: MOD-MASTER-001
+  name: _master-blueprint
+  layer: cross_layer
+  functional_domain: infrastructure
+  priority: P0
+  path: docs/03_modules/_master-blueprint
+  blueprint:
+    status: Active
+    version: 1.3.1
+  construction_plan:
+    status: phase_9_broken
+- module_id: SYS-MASTER-001
+  name: _sys-master
+  layer: meta
+  functional_domain: system
+  priority: P0
+  path: docs/03_modules/_sys-master
+  blueprint:
+    status: Active
+    version: 0.17.0
+  construction_plan:
+    status: completed

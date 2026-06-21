@@ -1,0 +1,93 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# ============================================================================
+# 任务卡元层登记表（Task Card Meta Registry）
+# module_id: PS-REG-017（与 architecture-contract PS-REG-004 区分）
+# ============================================================================
+
+schema_version: "1.2.0"
+module_id: PS-REG-017
+doc_type: register
+title: "任务卡元层登记表"
+status: active
+version: "1.2.0"
+last_updated: "2026-05-06"
+ai_autonomy: human_gated
+owner: ZephyrAlpha-Owner
+depends_on:
+  - target: PS-STD-001
+    at: "§1.5.3 Tier 3"
+    why: "Tier 3 元数据消费方登记"
+
+summary: >
+  登记三套并行任务卡体系（legacy / v2_staging / sqlite_task_db / 高层规划）的边界与迁移规则。
+
+systems:
+  legacy_task_cards:
+    location: "见项目外开发工作区历史归档"
+    status: FROZEN-LEGACY
+    frozen_at: "2026-04-27"
+    item_count_estimate: 143
+    migration_target: sqlite_task_db
+    migration_phase: Phase-1b
+
+  v2_staging_zone:
+    location: "开发工作区任务卡 v2 目录（若存在）"
+    status: STAGING
+    created_at: "2026-04-27"
+    item_limit: 15
+    migration_target: sqlite_task_db
+    migration_phase: Phase-1b
+    current_items:
+      - {task_id: T-V2-001, title: "蓝图源准入闸门", priority: P0, status: done}
+      - {task_id: T-V2-002, title: "任务卡元层登记落地", priority: P0, status: done}
+      - {task_id: T-V2-003, title: "登记表 pre-commit 自检", priority: P0, status: ready}
+
+  sqlite_task_db:
+    db_path: "data/zalpha_metadata.db"
+    status: ACTIVE
+    target_phase: Phase-1b
+    items: 20
+    created_at: "2026-05-07T12:00:00+08:00"
+    created_by: "session-20260507-011"
+    scheduling_note: "2026-05-07 由 session-20260507-011 将 MOD-INF-001 全部 20 张任务卡导入 SQLite（SRC-0001~SRC-0020）。后续任务卡通过 TaskRepository.create() 直写。"
+
+  development_workspace_taskbooks:
+    location: "开发工作区高层规划任务书"
+    status: HIGH-LEVEL-PLANNING
+    not_subject_to_migration: true
+
+migration_rules:
+  - rule_id: MR-01
+    description: "legacy 冻结后只读，不新增不修改（Owner 标注 OBSOLETE 除外）"
+    applies_to: legacy_task_cards
+  - rule_id: MR-02
+    description: "v2 隔离区任务卡不超过 item_limit"
+    applies_to: v2_staging_zone
+  - rule_id: MR-03
+    description: "SQLite 任务库建成后批量导入 v2 任务并清空隔离区"
+    applies_to: [v2_staging_zone, sqlite_task_db]
+  - rule_id: MR-04
+    description: "legacy 任务按任务评估迁移价值，无价值标 abandoned"
+    applies_to: legacy_task_cards
+  - rule_id: MR-05
+    description: "四套并行体系数量永久锁定为 4（含 development_workspace_taskbooks）"
+    applies_to: 整体
+
+state_machines_note: >
+  详细状态机见 task-system blueprint；本登记表仅保留元层摘要。
+
+revision_history:
+  - version: 1.2.0
+    date: "2026-05-06"
+    changes:
+      - "AUDIT-03：重建有效 YAML，分配 PS-REG-017，消除 TBD/断行"
+  - version: 1.1.0
+    date: "2026-05-01"
+    changes:
+      - "Wave 1 任务扩展（历史）"

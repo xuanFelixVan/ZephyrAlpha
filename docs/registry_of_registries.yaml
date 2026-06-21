@@ -1,0 +1,484 @@
+schema_version: "1.1.0"
+doc_type: registry_of_registries
+title: "ZephyrAlpha 中央注册表索引 — 全项目唯一真源总纲"
+status: active
+version: "1.1.0"
+date: "2026-05-07"
+owner: ZephyrAlpha-Owner
+description: >
+  本文件是所有子注册表（registries/manifests/indexes）的中央汇聚点。
+  任何 AI 或人类需要了解"项目有哪些登记表、在哪、管什么"时，以此为唯一入口。
+  对标 AGENTS.md RULE-TWO/RULE-FOUR：每个注册表必须在此登记，否则不存在于系统。
+
+purpose: >
+  1. 提供全项目注册表的单一发现入口（避免散落在 38 个文件里找不到）
+  2. 声明每个注册表的 SSoT 归属、格式、责任人
+  3. 驱动 registry-consistency 校验脚本的扫描范围
+  4. 新增注册表时 MUST 第一时间在此登记（RULE-FOUR）
+
+# ============================================================
+# 三个层级的注册表体系
+# ============================================================
+
+tiers:
+  - tier: 0
+    name: 核心源码级
+    description: 直接绑定源码运行时的注册表——Gate / Pipeline / 模块 / 脚本
+    registries:
+      - registry_id: REG-GATE-001
+        name: Gate 门禁注册表
+        physical_path: src/zephyr/gates/_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 73
+        status: active
+        description: 73 个门禁的 canonical 登记——gate_id/execution_plane/file/scope
+        owned_by: governance
+
+      - registry_id: REG-SCRIPT-001
+        name: 脚本清单（主注册表）
+        physical_path: scripts/script_manifest.yaml
+        format: yaml
+        maintenance: auto （scripts/generate_manifest.py）
+        entry_count: 359
+        status: active
+        description: 全 scripts/ 下 359 个 .py 脚本的完整注册——path/domain/execution_plane
+
+      - registry_id: REG-SCRIPT-002
+        name: 脚本清单（Governance 子集）
+        physical_path: scripts/governance/script_manifest.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 297
+        status: active
+        description: Governance 脚本子集（可能与 REG-SCRIPT-001 有重叠）
+
+      - registry_id: REG-MOD-001
+        name: 模块登记表
+        physical_path: docs/03_modules/module-registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 44
+        status: active
+        description: 44 个模块的 canonical 登记——module_id/layer/blueprint/construction_plan
+
+      - registry_id: REG-PIPE-001
+        name: Pipeline 路由清单
+        physical_path: src/zephyr/pipeline/route_manifest.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 2
+        status: active
+        description: Pipeline 路由声明（primary/research 双管线）
+
+      - registry_id: REG-CAP-001
+        name: 技术栈清单
+        physical_path: config/capacity/tech_stack_manifest.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 16
+        status: active
+        description: 项目技术栈声明（16 项技术决策）
+
+      - registry_id: REG-EMBED-001
+        name: 嵌入模型注册表
+        physical_path: config/embedding_model_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 4
+        status: active
+        description: 嵌入模型配置（4 个模型）
+
+      - registry_id: REG-DRIFT-001
+        name: 漂移检测器注册表
+        physical_path: src/zephyr/behavioral_auditor/_detector_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 31
+        status: active
+        description: 漂移检测器配置（18 existing + 13 new = 31 个检测器）。detector_dispatcher.py 预期从此文件加载
+
+      - registry_id: REG-SKILL-001
+        name: Agent 技能注册表
+        physical_path: src/zephyr/agent_spec/skill_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 20
+        status: active
+        description: Agent 技能声明（20 个技能：16 domain + 3 role + 1 cross-layer）
+
+      - registry_id: REG-DOMAIN-GOV-001
+        name: Agent治理八件套集成蓝图
+        physical_path: docs/03_modules/_domain-governance/blueprint.md
+        format: markdown (yaml frontmatter)
+        maintenance: manual
+        entry_count: 8
+        status: active
+        description: DOM-GOV-001 治理域集成蓝图——8模块(MOD-INF-018~025) + 8条G-CT跨模块契约 + MCP GovernanceServer统一入口
+
+      - registry_id: REG-AFX-FIXER-001
+        name: 修复器注册表
+        physical_path: src/zephyr/auto_fix_engine/_fixer_registry.yaml
+        format: yaml
+        maintenance: auto (AutoFixEngine startup → boot-register)
+        entry_count: 16
+        status: active
+        description: 16 个修复器的 canonical 登记——fixer_id/level/action_type/capabilities/dependencies
+
+      - registry_id: REG-AFX-PATTERN-001
+        name: 修复模式库注册表
+        physical_path: data/fix_patterns/pattern_index.yaml
+        format: yaml
+        maintenance: auto (FixPatternLearner → PatternLibraryUpdater)
+        entry_count: 0
+        status: draft
+        description: 修复模式知识库索引——历史修复模式聚合 + 预置模式库。初始自举时从 bootstrap_fix_patterns.json 加载，之后由 FixPatternLearner 持续更新
+
+  - tier: 1
+    name: 治理与政策级
+    description: 治理层面的登记表——文档/目录/依赖/审计等
+    registries:
+      - registry_id: REG-CATALOG-001
+        name: 登记表主索引（Catalogs 级）
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/registry-master-index.yaml
+        format: yaml
+        maintenance: auto （generate_registry_master_index.py）
+        entry_count: 16
+        status: active
+        description: Catalogs 下的 16 个治理登记表自动索引
+
+      - registry_id: REG-STD-001
+        name: 治理方法论标准
+        physical_path: docs/01_policies_and_standards/meta/governance-methodology-standard.md
+        format: markdown (yaml frontmatter)
+        maintenance: manual
+        entry_count: 13
+        status: active
+        description: MTH-001~013 治理决策方法论——标准先行/架构自检/根源分析/SSoT裁决等13条原则
+
+      - registry_id: REG-STD-002
+        name: 代码构建标准
+        physical_path: docs/01_policies_and_standards/governance/engineering/code-construction-standards.md
+        format: markdown (yaml frontmatter)
+        maintenance: manual
+        entry_count: 6
+        status: active
+        description: GOV-ENG-001 命名约定/文件组织/类型注解/导入/SSoT守卫
+
+      - registry_id: REG-STD-003
+        name: 审计脚本质量标准
+        physical_path: scripts/governance/quality-standard.md
+        format: markdown (yaml frontmatter)
+        maintenance: manual
+        entry_count: 41
+        status: active
+        description: SCRIPT-QUALITY-001 8维度25MUST+16SHOULD+自检清单
+
+      - registry_id: REG-STD-004
+        name: AI产出物压缩工作流标准
+        physical_path: docs/01_policies_and_standards/governance/document/compression-workflow-standard.md
+        format: markdown (yaml frontmatter)
+        maintenance: manual
+        entry_count: 5
+        status: active
+        description: GOV-DOC-011 转化优先/15不可删/6砍错模式/幻觉安全验证
+
+      - registry_id: REG-STD-005
+        name: Session状态机规则
+        physical_path: docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-session-state-runbook.md
+        format: markdown (yaml frontmatter)
+        maintenance: manual
+        entry_count: 5
+        status: active
+        description: OPS-VC-002 5状态/7转换/3禁止/超时/异常/不变量
+
+      - registry_id: REG-STD-006
+        name: 会话门禁检查清单
+        physical_path: docs/01_policies_and_standards/operational/vibe_coding/vibe-coding-gate-checklist.md
+        format: markdown (yaml frontmatter)
+        maintenance: manual
+        entry_count: 12
+        status: active
+        description: OPS-VC-005 12项门禁检查（A1-A3/B1-B3/C1-C3/D1-D2）
+
+      - registry_id: REG-STD-007
+        name: AI事故响应手册
+        physical_path: docs/01_policies_and_standards/operational/vibe_coding/ai-incident-and-emergency-playbook.md
+        format: markdown (yaml frontmatter)
+        maintenance: manual
+        entry_count: 13
+        status: active
+        description: OPS-VC-004 P0/P1/P2事故分级+隔离+响应+回滚+复盘
+
+      - registry_id: REG-STD-008
+        name: Vibe Coding操作入口
+        physical_path: docs/01_policies_and_standards/operational/vibe_coding/index.md
+        format: markdown
+        maintenance: manual
+        entry_count: 4
+        status: active
+        description: OPS-VC-001 Vibe Coding 4文件导航入口
+
+      - registry_id: REG-CROSS-001
+        name: 登记表的登记表（一致性契约）
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/registry-of-registries.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 16
+        status: active
+        description: 跨登记表共享字段一致性规则（非索引——管 16 个字段的一致性约束）
+
+      - registry_id: REG-CROSS-002
+        name: 跨模块依赖登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 19
+        status: active
+        description: 模块间 19 条显式依赖关系
+
+      - registry_id: REG-DIR-001
+        name: 项目目录登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/directory-registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 88
+        status: active
+        description: 项目 88 个目录结构登记
+
+      - registry_id: REG-DOC-001
+        name: 文档元数据索引
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 154
+        status: active
+        description: 154 个文档的元数据
+
+      - registry_id: REG-GATE-CAT-001
+        name: Gate 注册表（Catalogs 副本）
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/gate-registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 25
+        status: active
+        description: Gate 注册表的 Catalogs 副本——25 个门禁（可能与 REG-GATE-001 的 20 个有差异）
+
+      - registry_id: REG-INFRA-001
+        name: 基础设施注册表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 9
+        status: active
+        description: 9 个基础设施组件登记
+
+      - registry_id: REG-KB-001
+        name: 知识文章注册表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/knowledge-article-registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 0
+        status: active
+        description: 知识库文章索引（当前为空——模板就位，内容待填充）
+
+      - registry_id: REG-TASK-META-001
+        name: Task Card 元注册表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 4
+        status: active
+        description: 4 个子系统的 TaskCard 元信息
+
+      - registry_id: REG-SCRIPT-HEALTH-001
+        name: 脚本健康注册表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/script-health-registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 39
+        status: active
+        description: 39 个脚本的健康状态
+
+      - registry_id: REG-FRONTMATTER-001
+        name: Frontmatter 字段注册表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 40
+        status: active
+        description: 40 个 Frontmatter 字段定义
+
+      - registry_id: REG-INV-001
+        name: 资产盘点注册表
+        physical_path: data/asset_index/unified_asset_index.yaml
+        format: yaml
+        maintenance: auto （generate_asset_index.py）
+        entry_count: 0
+        status: draft
+        description: 全项目统一资产索引 SSoT——自动发现六大目录下全部文件资产，四维分类（type/layer/status/priority）登记，与 24 个注册表持续对账。蓝图 MOD-INF-026
+
+      - registry_id: REG-FUNC-DOMAIN-001
+        name: 功能域注册表
+        description: 模块/脚本功能域声明的唯一真源。创建新模块/脚本时SSoT门禁检查功能域重叠。
+        owner: MOD-INF-037
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml
+        format: yaml
+        tier: tier_1_governance
+
+  - tier: 2
+    name: 数据与运行时级
+    description: 数据缓存/快照/蓝图等运行时的临时或衍生登记表
+    registries:
+      - registry_id: REG-BLUEPRINT-001
+        name: 蓝图注册表
+        physical_path: docs/03_modules/blueprint-registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 41
+        status: active
+        description: 41 个施工蓝图汇总
+
+      - registry_id: REG-SYS-MASTER-001
+        name: 系统总蓝图（SYS-MASTER-001）
+        physical_path: docs/03_modules/_sys-master/blueprint.md
+        format: yaml+markdown
+        maintenance: manual
+        entry_count: 1
+        status: active
+        description: 三级金字塔顶点——102 章全覆盖，AI agent 冷启动第一站。version 0.13.0，construction_progress completed
+
+      - registry_id: REG-MOD-MASTER-001
+        name: 集成闭环总蓝图（MOD-MASTER-001）
+        physical_path: docs/03_modules/_master-blueprint/blueprint.md
+        format: yaml+markdown
+        maintenance: manual
+        entry_count: 1
+        status: active
+        description: 12 基础设施系统间集成契约 SSoT——CT-* 契约定义，version 0.9.1，construction_progress phase_1_partial
+
+      - registry_id: REG-TEMPLATE-001
+        name: 模板注册表
+        physical_path: docs/03_modules/template-registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 13
+        status: active
+        description: 13 个文档模板登记
+
+      - registry_id: REG-PATHWAY-001
+        name: 系统路径注册表
+        physical_path: docs/03_modules/system-pathway-registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 31
+        status: active
+        description: 31 个系统通道（v1.2.1 手动种子版 — 已恢复有效 YAML）
+
+      - registry_id: REG-MOD-ID-001
+        name: 模块 ID 注册表（EA 级）
+        physical_path: docs/02_enterprise_architecture/target-architecture/architecture-model/module-id-registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 138
+        status: active
+        description: 138 个企业架构级模块 ID
+
+      - registry_id: REG-ARCH-001
+        name: 架构模型索引
+        physical_path: architecture-model/_index.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 26
+        status: active
+        description: 26 个 B-track / C-track 架构分区项
+
+      - registry_id: REG-CACHE-001
+        name: Grandfather 缓存注册表
+        physical_path: data/cache/grandfather_registry.yaml
+        format: yaml
+        maintenance: auto
+        entry_count: 0
+        status: active
+        description: 三级缓存策略索引（当前为空——策略定义就位，缓存条目待生成）
+
+      - registry_id: REG-FREEZE-001
+        name: 契约冻结清单
+        physical_path: src/zephyr/shared/contracts/freeze_manifest.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 38
+        status: active
+        description: 38 个已冻结的跨层契约
+
+      - registry_id: REG-RB-001
+        name: 攻击场景注册表
+        physical_path: src/zephyr/red_blue_validator/_scenario_registry.yaml
+        format: yaml
+        maintenance: auto （red_blue_validator 场景加载器）
+        entry_count: 24
+        status: active
+        description: 24 个红白对抗攻击场景的 canonical 登记——scenario_id/tier/severity/injection/defense/steady_state
+
+      - registry_id: REG-RB-002
+        name: Constitution 条款注册表
+        physical_path: src/zephyr/red_blue_validator/_constitution_registry.yaml
+        format: yaml
+        maintenance: auto （ConstitutionEngine 绕过学习）
+        entry_count: 24
+        status: active
+        description: Constitution-Based Defense 条款的 canonical 登记——article_id/derived_from/defense_action/applicable_gates
+
+      - registry_id: REG-SM-001
+        name: 状态机实例注册表
+        physical_path: src/zephyr/shared/state_machine_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 1
+        status: active
+        description: 全项目状态机实例的 canonical 登记——fsm_id/states/transitions/owner_module。MOD-INF-038
+
+# ============================================================
+# AI 使用指南
+# ============================================================
+
+ai_usage:
+  discover_all_registries:
+    - "读取本文件 → 获取所有注册表路径和用途"
+    - "按 tier 找到目标注册表 → 直接读取其 physical_path"
+  create_new_registry:
+    - "先检查本文件——是否已有同类型注册表？（RULE-FOUR PRECHECK 1）"
+    - "确定 tier（0/1/2）——新注册表应该放在哪个层级？（RULE-FOUR PRECHECK 2）"
+    - "创建文件后 → 立即在本文件中登记（RULE-FOUR REGISTER）"
+  delete_registry:
+    - "禁止删除任何注册表除非同时从本文件中移除登记（RULE-THREE）"
+  validate:
+    - "运行审计扫描：python scripts/governance/audit_registration.py"
+    - "运行 CTR 合规检查：scripts/governance/d5_architecture/check_g6_ctr_compliance.py"
+    - "重新生成 Catalogs 索引：scripts/governance/generators/generate_registry_master_index.py"
+
+# ============================================================
+# 已知问题
+# ============================================================
+
+known_issues:
+  - issue_id: ISS-003
+    severity: info
+    description: "REG-GATE-001（20 gates — GateEngine 运行时门禁）与 REG-GATE-CAT-001（25 gates — pre-commit 构建时门禁）分属两套独立系统，条目数不同是预期的"
+    affected: [REG-GATE-001, REG-GATE-CAT-001]
+    resolution: "2026-05-07 确认：两者服务于不同生命周期阶段，无需对齐"
+
+# ============================================================
+# 统计
+# ============================================================
+
+summary:
+  total_tiers: 3
+  total_registries: 30
+  fully_scanned: 19
+  pending_scan: 5
+  broken: 1
+  by_tier:
+    tier_0_core: 10
+    tier_1_governance: 13
+    tier_2_runtime: 9

@@ -1,0 +1,323 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# ============================================================================
+# ZephyrAlpha 全系统路径地图 — 唯一真源（System Pathway Registry SSoT）
+# ============================================================================
+# 版本: 1.2.1 | 创建: 2026-05-04 | 更新: 2026-05-07 (B 轨 8 模块 blueprint 对齐 _cross_layer Phase 5)
+# owner: ZephyrAlpha-Owner
+#
+# 对标: Google Monorepo 自动索引（Piper/CitC 文件级可见性）
+#       + ITIL SACM CMDB（每个 CI 一条记录，含路径/依赖/状态）
+#
+# 用途: 全系统所有模块的文件路径汇总表。
+#       一张表看清每个 module 的源码/蓝图/测试/配置文件的磁盘位置。
+#
+# 生成策略:
+#   - 手工种子（本文件的第一版）
+#   - 后续由 scripts/generate_pathway_registry.py 扫描各模块蓝图的 §路径索引 章节自动生成
+#   - CI pipeline 在每次 push 时校验本文件与自动生成结果的一致性
+#
+# AI 使用方式:
+#   1. 按 layer 过滤 → 找到目标层级的所有模块路径
+#   2. 按 module_id 定位 → 找到指定模块的全部文件路径
+#   3. 交叉引用 → 结合 module-registry.yaml 和 blueprint-registry.yaml 获取完整模块信息
+# ============================================================================
+
+registry:
+  version: "1.2.1"
+  created: "2026-05-04"
+  updated: "2026-05-07"
+  generation: "manual_seed_phase_b"
+  auto_generated_by: "scripts/generate_pathway_registry.py"
+  last_updated: "2026-05-07"
+  total_modules: 32
+  note: "Phase B 全层路径补全——覆盖全部 C 轨（L00-L13）和 B 轨核心模块"
+
+pathways:
+  # ──── C-Track: 业务脊柱 ────
+  - module_id: "MOD-L00-001"
+    name: "data-source"
+    layer: "L00"
+    blueprint: "docs/03_modules/l00_data_source/datasource-core/blueprint.md"
+    source_dir: "src/zephyr/l00_data_source/"
+    interface_file: "src/zephyr/l00_data_source/provider_base.py"
+    test_dir: "tests/unit/l00/"
+    config: ""
+    status: "skeleton"
+    note: "Phase B 骨架就位 — DataSourceBase + DataSourceMeta 接口完整"
+
+  - module_id: "MOD-L01-001"
+    name: "infrastructure"
+    layer: "L01"
+    blueprint: "docs/03_modules/_master-blueprint/blueprint.md"
+    source_dir: "src/zephyr/l01_infrastructure/"
+    test_dir: "tests/unit/"
+    config: "config/"
+    status: "implemented"
+    note: "基建域集成真源见 MOD-MASTER-001；子模块索引 docs/03_modules/l01_infrastructure/index.md"
+
+  - module_id: "MOD-L02-001"
+    name: "alpha-factor"
+    layer: "L02"
+    blueprint: "docs/03_modules/l02_alpha_factor/alpha-factor-core/blueprint.md"
+    source_dir: "src/zephyr/l02_alpha_factor/"
+    interface_file: "src/zephyr/l02_alpha_factor/factor_base.py"
+    test_dir: "tests/unit/l02/"
+    config: ""
+    status: "implemented"
+    note: "FactorBase + FactorRegistry — OCP-001 落地"
+
+  - module_id: "MOD-L03-001"
+    name: "signal-generation"
+    layer: "L03"
+    blueprint: "docs/03_modules/l03_signal_generation/signal-generation-core/blueprint.md"
+    source_dir: "src/zephyr/l03_signal_generation/"
+    interface_file: "src/zephyr/l03_signal_generation/aggregator_base.py"
+    test_dir: "tests/unit/l03/"
+    config: ""
+    status: "skeleton"
+    note: "Phase B 对齐 — SignalAggregatorBase + CapitalAllocatorBase + DegradationMonitorBase"
+
+  - module_id: "MOD-L04-001"
+    name: "risk-management"
+    layer: "L04"
+    blueprint: "docs/03_modules/l04_risk_management/risk-management-core/blueprint.md"
+    source_dir: "src/zephyr/l04_risk_management/"
+    interface_file: "src/zephyr/l04_risk_management/stop_loss.py"
+    test_dir: "tests/unit/l04/"
+    config: "config/risk_params.yaml"
+    status: "implemented"
+    note: "StopLoss + RiskLimits 已落地"
+
+  - module_id: "MOD-L05-001"
+    name: "portfolio-construction"
+    layer: "L05"
+    blueprint: "docs/03_modules/l05_portfolio_construction/portfolio-core/blueprint.md"
+    source_dir: "src/zephyr/l05_portfolio_construction/"
+    interface_file: "src/zephyr/l05_portfolio_construction/strategy_base.py"
+    test_dir: "tests/unit/l05/"
+    config: ""
+    status: "skeleton"
+    note: "Phase B 对齐 — StrategyBase + StrategyRegistry (OCP-002 codegen)"
+
+  - module_id: "MOD-L06-001"
+    name: "trade-execution"
+    layer: "L06"
+    blueprint: "docs/03_modules/l06_trade_execution/execution-core/blueprint.md"
+    source_dir: "src/zephyr/l06_trade_execution/"
+    interface_file: "src/zephyr/l06_trade_execution/broker_interface.py"
+    test_dir: "tests/unit/l06/"
+    config: ""
+    status: "skeleton"
+    note: "Phase B 方法签名修复 — BrokerInterface (OCP-003 codegen + 手动修复)"
+
+  - module_id: "MOD-L07-001"
+    name: "post-trade-analytics"
+    layer: "L07"
+    blueprint: "docs/03_modules/l07_post_trade_analytics/analytics-core/blueprint.md"
+    source_dir: "src/zephyr/l07_post_trade_analytics/"
+    interface_file: "src/zephyr/l07_post_trade_analytics/analytics_base.py"
+    test_dir: "tests/unit/l07/"
+    config: ""
+    status: "skeleton"
+    note: "Phase B 对齐 — TCAEngineBase + AttributionEngineBase"
+
+  - module_id: "MOD-L08-001"
+    name: "human-ai-interface"
+    layer: "L08"
+    blueprint: "docs/03_modules/l08_human_ai_interface/hmi-core/blueprint.md"
+    source_dir: "src/zephyr/l08_human_ai_interface/"
+    interface_file: "src/zephyr/l08_human_ai_interface/dashboard/app.py"
+    test_dir: "tests/unit/l08/"
+    config: ""
+    status: "implemented"
+    note: "Dashboard + 人机交互面板已落地"
+
+  - module_id: "MOD-L09-001"
+    name: "research-innovation"
+    layer: "L09"
+    blueprint: "docs/03_modules/l09_research_innovation/research-core/blueprint.md"
+    source_dir: "src/zephyr/l09_research_innovation/"
+    interface_file: "src/zephyr/l09_research_innovation/backtest_base.py"
+    test_dir: "tests/unit/l09/"
+    config: ""
+    status: "skeleton"
+    note: "Phase B 就位 — BacktestEngineBase + FactorDiscovery"
+
+  - module_id: "MOD-L10-001"
+    name: "compliance"
+    layer: "L10"
+    blueprint: "docs/03_modules/l10_compliance/compliance-core/blueprint.md"
+    source_dir: "src/zephyr/l10_compliance/"
+    interface_file: "src/zephyr/l10_compliance/security_gateway_base.py"
+    test_dir: "tests/unit/l10/"
+    config: ""
+    status: "skeleton"
+    note: "Phase B 补齐 — SecurityGateway + ComplianceEngine"
+
+  - module_id: "MOD-L11-001"
+    name: "ml-platform"
+    layer: "L11"
+    blueprint: "docs/03_modules/l11_ml_platform/ml-core/blueprint.md"
+    source_dir: "src/zephyr/l11_ml_platform/"
+    interface_file: "src/zephyr/l11_ml_platform/inference_base.py"
+    test_dir: "tests/unit/l11/"
+    config: ""
+    status: "skeleton"
+    note: "Phase B 补齐 — InferenceEngineBase + ModelTrainerBase + ModelRegistry"
+
+  - module_id: "MOD-L12-001"
+    name: "system-telemetry"
+    layer: "L12"
+    blueprint: "docs/03_modules/l01_infrastructure/system-telemetry/blueprint.md"
+    source_dir: "src/zephyr/system_telemetry/"
+    test_dir: "tests/unit/l12/"
+    config: "config/telemetry/"
+    status: "implemented"
+    note: "可观测性蓝图真源为 MOD-INF-015（system-telemetry）；源码在 system_telemetry/"
+
+  - module_id: "MOD-L13-001"
+    name: "experimentation"
+    layer: "L13"
+    blueprint: "docs/03_modules/l13_experimentation/experiment-core/blueprint.md"
+    source_dir: "src/zephyr/l13_experimentation/"
+    interface_file: "src/zephyr/l13_experimentation/pipeline_base.py"
+    test_dir: "tests/unit/l13/"
+    config: ""
+    status: "skeleton"
+    note: "Phase B 对齐 — ExperimentPipelineBase + ScoutAgentBase + ExperimentMetric 重命名"
+
+  # ──── B-Track: 基础设施横切面 ────
+  - module_id: "MOD-CTX-001"
+    name: "context-engine"
+    layer: "B-Track"
+    blueprint: "docs/03_modules/_cross_layer/context-engine/blueprint.md"
+    source_dir: "src/zephyr/context_engine/"
+    test_dir: "tests/unit/"
+    config: "config/context_rules_v1.yaml"
+    status: "implemented"
+
+  - module_id: "MOD-CORE-001"
+    name: "core"
+    layer: "B-Track"
+    source_dir: "src/zephyr/core/"
+    test_dir: "tests/unit/"
+    config: ""
+    status: "implemented"
+
+  - module_id: "MOD-DB-001"
+    name: "database"
+    layer: "B-Track"
+    blueprint: "docs/03_modules/_cross_layer/database/blueprint.md"
+    source_dir: "src/zephyr/db/"
+    test_dir: "tests/unit/"
+    config: ""
+    status: "implemented"
+
+  - module_id: "MOD-FLE-001"
+    name: "feedback-loop"
+    layer: "B-Track"
+    blueprint: "docs/03_modules/_cross_layer/feedback-loop/blueprint.md"
+    source_dir: "src/zephyr/feedback_loop/"
+    test_dir: "tests/unit/"
+    config: ""
+    status: "implemented"
+
+  - module_id: "MOD-GATE-001"
+    name: "gate-engine"
+    layer: "B-Track"
+    blueprint: "docs/03_modules/_cross_layer/gate-engine/blueprint.md"
+    source_dir: "src/zephyr/gates/"
+    test_dir: "tests/unit/"
+    config: ""
+    status: "implemented"
+
+  - module_id: "MOD-KB-001"
+    name: "knowledge-base"
+    layer: "B-Track"
+    blueprint: "docs/03_modules/l01_infrastructure/knowledge-base/blueprint.md"
+    source_dir: "src/zephyr/kb/"
+    test_dir: "tests/unit/"
+    config: "config/embedding_model_registry.yaml"
+    status: "implemented"
+
+  - module_id: "MOD-LSG-001"
+    name: "llm-security"
+    layer: "B-Track"
+    blueprint: "docs/03_modules/_cross_layer/llm-security/blueprint.md"
+    source_dir: "src/zephyr/llm_security/"
+    test_dir: "tests/unit/"
+    config: ""
+    status: "implemented"
+
+  - module_id: "MOD-MCP-001"
+    name: "mcp-servers"
+    layer: "B-Track"
+    blueprint: "docs/03_modules/_cross_layer/mcp-servers/blueprint.md"
+    source_dir: "src/zephyr/mcp/"
+    test_dir: "tests/unit/"
+    config: ""
+    status: "implemented"
+
+  - module_id: "MOD-ORC-001"
+    name: "orchestrator"
+    layer: "B-Track"
+    source_dir: "src/zephyr/orchestrator/"
+    test_dir: "tests/unit/"
+    config: ""
+    status: "implemented"
+
+  - module_id: "MOD-PIPE-001"
+    name: "pipeline"
+    layer: "B-Track"
+    blueprint: "docs/03_modules/_cross_layer/pipeline/blueprint.md"
+    source_dir: "src/zephyr/pipeline/"
+    test_dir: "tests/unit/"
+    config: ""
+    status: "implemented"
+
+  - module_id: "MOD-SHARED-001"
+    name: "shared"
+    layer: "B-Track"
+    blueprint: "docs/03_modules/_cross_layer/shared-core/blueprint.md"
+    source_dir: "src/zephyr/shared/"
+    test_dir: "tests/unit/"
+    config: ""
+    status: "implemented"
+
+  - module_id: "MOD-VMS-001"
+    name: "vector-memory"
+    layer: "B-Track"
+    blueprint: "docs/03_modules/l01_infrastructure/vector-memory/blueprint.md"
+    source_dir: "src/zephyr/vector_memory/"
+    interface_file: "src/zephyr/vector_memory/interface.py"
+    test_dir: "tests/unit/vector_memory/"
+    config: ""
+    status: "skeleton"
+    note: "Phase B 骨架就位 — VectorMemoryBase + EmbeddingEngineBase 接口定义"
+
+  # ──── Cross-Layer ────
+  - module_id: "MOD-MASTER-001"
+    name: "_master-blueprint"
+    layer: "cross_layer"
+    blueprint: "docs/03_modules/_master-blueprint/blueprint.md"
+    source_dir: ""
+    test_dir: ""
+    config: "docs/03_modules/_master-blueprint/blueprint.md"
+    note: "集成契约 SSoT——非代码模块，无源码目录"
+
+  - module_id: "MOD-INF-032"
+    name: "resource-optimization-engine"
+    layer: "cross_layer"
+    blueprint: "docs/03_modules/_cross_layer/resource-optimization-engine/blueprint.md"
+    source_dir: "src/zephyr/lifecycle_manager/"
+    interface_file: "src/zephyr/lifecycle_manager/resource_optimization_engine.py"
+    test_dir: "tests/unit/resource_optimization/"
+    config: "config/resource_optimization.yaml"
+    status: "not_started"
+    note: "MAPE-K 循环驱动的资源监控/分析/优化/自愈系统"

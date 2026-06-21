@@ -1,0 +1,82 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# compliance_tags 受控词表
+# ZephyrAlpha 2.0 合规标签唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-05-06
+#
+# 本词表定义 compliance_tags 字段的所有合法值（6 种）。
+# 用于标注文件适用的监管框架和法律法规条款。
+#
+# 对标标准：
+#   - PS-STD-001 §10.13：合规标签体系
+#   - 中国证监会《证券期货业数据安全管理与保护指引》
+#   - 欧盟 AI 法案 (EU AI Act)
+#   - GDPR
+#   - PCI-DSS
+#   - MiFID-II
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-014
+version: "1.0.0"
+date: "2026-05-02"
+owner: ZephyrAlpha-Owner
+title: "compliance_tags 受控词表"
+status: active
+vocabulary_name: compliance_tags
+total_values: 6
+source: "PS-STD-001 §10.13"
+depends_on:
+  - target: PS-STD-001
+    at: "§10.13"
+    why: "compliance_tags 受控词表定义真源"
+
+values:
+  - value: SR-11-7
+    definition: "中国证监会《证券期货业数据安全管理与保护指引》"
+    ai_consumption: "涉及中国境内证券期货数据处理的文件必须标注此标签。"
+    ai_keywords: ["证监会", "数据安全", "SR-11-7", "中国证券"]
+    jurisdiction: "中国大陆"
+    effective_date: "2023-01-01"
+
+  - value: EU-AI-Act-Art12
+    definition: "欧盟 AI 法案第 12 条——记录保存"
+    ai_consumption: "涉及高风险 AI 系统的文件须标注此标签，确保记录保存义务。"
+    ai_keywords: ["欧盟 AI 法案", "记录保存", "Art12", "EU AI Act"]
+    jurisdiction: "欧盟"
+    effective_date: "2024-08-01"
+
+  - value: EU-AI-Act-Art14
+    definition: "欧盟 AI 法案第 14 条——人工监督"
+    ai_consumption: "涉及人工监督机制的文件须标注此标签。"
+    ai_keywords: ["欧盟 AI 法案", "人工监督", "Art14", "human oversight"]
+    jurisdiction: "欧盟"
+    effective_date: "2024-08-01"
+
+  - value: GDPR-Art22
+    definition: "GDPR 第 22 条——自动化决策的限制"
+    ai_consumption: "涉及自动化决策系统的文件须标注此标签，确保数据主体权利。"
+    ai_keywords: ["GDPR", "自动化决策", "Art22", "数据主体权利"]
+    jurisdiction: "欧盟/EEA"
+    effective_date: "2018-05-25"
+
+  - value: PCI-DSS
+    definition: "支付卡行业数据安全标准"
+    ai_consumption: "涉及支付卡数据处理的文件须标注此标签。"
+    ai_keywords: ["PCI-DSS", "支付卡", "数据安全", "支付行业"]
+    jurisdiction: "全球"
+    effective_date: "2004-12-15"
+
+  - value: MiFID-II
+    definition: "欧盟金融工具市场指令 II"
+    ai_consumption: "涉及欧盟金融工具交易的文件须标注此标签，确保交易报告义务。"
+    ai_keywords: ["MiFID-II", "金融工具", "交易报告", "欧盟"]
+    jurisdiction: "欧盟/EEA"
+    effective_date: "2018-01-03"

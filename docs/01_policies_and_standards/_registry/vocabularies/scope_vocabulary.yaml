@@ -1,0 +1,44 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# 本词表是 ZephyrAlpha 2.0 作用域唯一真源（SSoT）。任何地方的 scope 枚举值定义如果与本词表不一致，以本词表为准。
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-009
+version: "1.0.0"
+title: "scope 受控词表"
+status: active
+owner: ZephyrAlpha-Owner
+vocabulary_name: scope
+total_values: 4
+source: "PS-STD-001 §2.4 + architecture-contract.yaml frontmatter_schema"
+derived_from:
+  - source: "PS-STD-001"
+    relationship: "scope 合法值定义"
+    at: "§2.4"
+depends_on:
+  - target: PS-STD-001
+    at: "§2.5"
+    why: "scope 合法值规则定义真源"
+
+values:
+  - value: global
+    definition: "全局——对所有文件生效"
+  - value: domain
+    definition: "域级——对某个治理域生效"
+  - value: layer
+    definition: "层级——对某个架构层生效"
+  - value: module
+    definition: "模块级——对特定模块生效"
+
+ai_consumption:
+  when_to_use: "AI session 需要设置或验证 scope 字段值时，必须从本词表选取合法值"
+  how_to_use: "读取 values[] 列表获取合法枚举值；读取 deprecated_values[] 获取已废弃值（禁止新使用）"
+  ai_keywords:
+    - "scope"
+    - "作用域"
+    - "scope枚举"

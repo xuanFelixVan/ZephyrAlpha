@@ -1,0 +1,912 @@
+# ============================================================================
+# ZephyrAlpha Frontmatter 字段定义登记表（Frontmatter Field Registry）— 唯一真源
+# ============================================================================
+# 版本: 1.0.0 | 创建: 2026-05-02 | owner: ZephyrAlpha-Owner
+#
+# module_id: PS-REG-012
+# doc_type: register
+#
+# 对标: ITIL SACM CMDB CI → Metadata Schema（每个字段有唯一定义）
+#       + SchemaStore JSON Schema Catalog（每个 schema 有唯一 ID 和描述）
+#       + Google API Design Guide → Field naming & consistency
+#       + AWS CloudFormation Resource Schema（每个属性有类型/必填/描述）
+#
+# 用途: 登记 ZephyrAlpha 项目所有 frontmatter 字段的唯一定义——
+#       字段名 / 类型 / 必填性 / 枚举值 / 适用 doc_type / 定义来源。
+#       本登记表是 frontmatter 字段**数据**的 canonical SSoT。
+#       字段**规则**（校验逻辑/一致性约束/违规检测）见 PS-STD-001。
+#       两者关系：YAML=数据真源, MD=规则真源。
+#       修改本文件字段定义 → MUST 同步检查 PS-STD-001 对应章节。
+#       数据冲突 → 本文件优先。
+#
+# 与 frontmatter-schema.json 的关系:
+#   - frontmatter-schema.json 是机器可读的校验 Schema（自动生成，不可手写）
+#   - 本登记表是人工可读的字段定义真源（手动维护）
+#   - 两者必须一致——S1 validate_registry_master_index.py 会交叉验证
+#
+# VR-005 根因修复:
+#   - VR-005（frontmatter 校验脚本）曾产生 2484 条误报
+#   - 根因: 字段定义散落在 PS-STD-001 + vocabulary/ + schema.json 三处
+#   - 修复: 本登记表建立唯一字段定义真源 → VR-005 从此引用本表
+#
+# 自校验脚本: （experimental 补齐——validate_frontmatter_field_registry.py）
+# ============================================================================
+
+schema_version: "1.0.0"
+doc_type: register
+title: "Frontmatter 字段定义登记表"
+version: "1.0.0"
+status: active
+created: "2026-05-02"
+last_updated: "2026-05-02"
+ai_autonomy: human_gated
+ttl: permanent
+total_registered: 53
+depends_on:
+  - target: PS-STD-001
+    at: "docs/01_policies_and_standards/meta/metadata-registry.md"
+    why: "字段规则真源（校验逻辑/一致性约束/违规检测）。YAML=数据真源, MD=规则真源。修改YAML→MUST检查MD。数据冲突→YAML优先"
+    relationship: "dual_ssot"
+    linked_version: "6.1.0"
+  - target: "frontmatter-schema.json"
+    at: "$"
+    why: "字段枚举值对标——本登记表与 schema 必须一致"
+
+# ============================================================================
+# 字段登记说明
+#
+# 每个字段一条记录:
+#   field_name         字段名（YAML frontmatter key）
+#   type               字段类型: string / enum / integer / array / object / date
+#   required           是否必填: always / conditional / optional
+#   stage              required=conditional 时的阶段: phase0 / phase1 / phase2
+#   enum_values[]      枚举值列表（type=enum 时），含中文描述
+#   applicable_docs[]  适用哪些 doc_type（空 = 所有类型）
+#   description        字段说明
+#   source             定义来源: PS-STD-001 §X.Y / ADR-NNNN / vocabulary
+#   note               补充说明
+# ============================================================================
+
+fields:
+  # ── 7 个必填字段（frontmatter-schema.json required）──
+  - field_name: module_id
+    type: string
+    required: always
+    stage: null
+    enum_values: []
+    applicable_docs: []
+    description: "模块唯一标识。格式：DOMAIN-TYPE-NNN（大写字母+连字符）"
+    source: "PS-STD-001 §5"
+    pattern: "^[A-Z]+(-[A-Z]+)?-[A-Z]+-\\d{3,4}$"
+    note: "全项目唯一，不可重复"
+
+  - field_name: title
+    type: string
+    required: always
+    stage: null
+    enum_values: []
+    applicable_docs: []
+    description: "文档标题。blueprint 类 MUST 使用格式：{English Name} 蓝图 — {中文一句话描述}（如 Vector Memory Service 蓝图 — ChromaDB 8 Collection 统一向量持久化）。H1 标题 MUST 与此字段一致。其他 doc_type：中文标题"
+    source: "PS-STD-001 §2.1"
+    min_length: 1
+    format: "blueprint={English Name} 蓝图 — {中文描述} | other=中文标题"
+    note: "blueprint H1 = title = {English Name} 蓝图 — {中文一句话描述}。模板见 blueprint-construction-template.md"
+
+  - field_name: doc_type
+    type: enum
+    required: always
+    stage: null
+    enum_values:
+      - {value: "policy", description: "策略——定义'必须/禁止'的声明式规则，AI 不可修改"}
+      - {value: "standard", description: "标准——定义度量/格式/接口的声明式规范"}
+      - {value: "operational_rule", description: "操作规则——定义'如何做'的步骤化流程"}
+      - {value: "register", description: "注册表——结构化数据清单，AI 可修改"}
+      - {value: "index", description: "索引入口——目录级导航文件"}
+      - {value: "protocol", description: "协议——定义交互流程和消息时序"}
+      - {value: "template", description: "模板——可复用的文档结构骨架"}
+      - {value: "terminology", description: "术语——定义项目专有名词的统一含义"}
+      - {value: "vocabulary", description: "词表——受控枚举值的权威来源"}
+      - {value: "contract", description: "契约——声明式接口/行为约束，代码可消费"}
+      - {value: "reference", description: "参考——非规范性辅助资料"}
+      - {value: "gate", description: "闸门——CI/质量门禁定义"}
+      - {value: "schema", description: "Schema 定义——JSON/YAML 格式的数据结构校验定义"}
+    applicable_docs: []
+    description: "文档品种——01_policies_and_standards/ 目录下 13 种"
+    source: "PS-STD-001 §3.2.1 + doc_type-vocabulary.yaml"
+    derived_from: "_registry/vocabularies/doc_type-vocabulary.yaml"
+    note: ""
+
+  - field_name: status
+    type: enum
+    required: always
+    stage: null
+    enum_values:
+      - {value: "draft", description: "草稿，正在编写中"}
+      - {value: "active", description: "已生效，当前有效"}
+      - {value: "deprecated", description: "已废弃，有替代品或已合并"}
+    applicable_docs: []
+    description: "文档状态——DocStatus 仅 3 值"
+    source: "PS-STD-001 §4.1 + status-vocabulary.yaml"
+    derived_from: "_registry/vocabularies/status-vocabulary.yaml"
+    note: "deprecated 时 superseded_by 条件必填"
+
+  - field_name: version
+    type: string
+    required: always
+    stage: null
+    enum_values: []
+    applicable_docs: []
+    description: "语义化版本 X.Y.Z"
+    source: "PS-STD-001 §3.4"
+    pattern: "^\\d+\\.\\d+\\.\\d+$"
+    note: ""
+
+  - field_name: date
+    type: date
+    required: always
+    stage: null
+    enum_values: []
+    applicable_docs: []
+    description: "最后修改日期 YYYY-MM-DD"
+    source: "PS-STD-001 §3.5"
+    pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+    note: ""
+
+  - field_name: owner
+    type: string
+    required: always
+    stage: null
+    enum_values: []
+    applicable_docs: []
+    description: "文档负责人"
+    source: "PS-STD-001 §4.2"
+    default: "ZephyrAlpha-Owner"
+    note: ""
+
+  # ── 常用可选字段（scaffold 起即广泛使用）──
+  - field_name: layer
+    type: enum
+    required: optional
+    stage: null
+    enum_values:
+      - {value: "l00_data_source", description: "L00 数据源"}
+      - {value: "l01_infrastructure", description: "L01 基础设施"}
+      - {value: "l02_alpha_factor", description: "L02 Alpha 因子"}
+      - {value: "l03_signal_generation", description: "L03 信号生成"}
+      - {value: "l04_risk_management", description: "L04 风险管理"}
+      - {value: "l05_portfolio_construction", description: "L05 组合构建"}
+      - {value: "l06_trade_execution", description: "L06 交易执行"}
+      - {value: "l07_post_trade_analytics", description: "L07 盘后分析"}
+      - {value: "l08_human_ai_interface", description: "L08 人机交互"}
+      - {value: "l09_research_innovation", description: "L09 研究创新"}
+      - {value: "l10_governance_compliance", description: "L10 治理合规"}
+      - {value: "l11_ml_platform", description: "L11 机器学习平台"}
+      - {value: "system_telemetry", description: "L12 系统遥测"}
+      - {value: "l13_experiment_pipeline", description: "L13 实验管道"}
+      - {value: "shared", description: "跨层共享组件"}
+      - {value: "cross_layer", description: "跨层治理"}
+    applicable_docs: []
+    description: "架构层归属——16 值（canonical SSoT: layer-vocabulary.yaml）"
+    source: "layer-vocabulary.yaml + architecture-model/layers/"
+    derived_from: "_registry/vocabularies/layer-vocabulary.yaml"
+    note: ""
+
+  - field_name: classification
+    type: enum
+    required: optional
+    stage: null
+    enum_values:
+      - {value: "public", description: "公开——可对外分享"}
+      - {value: "internal", description: "内部——仅项目成员可见"}
+      - {value: "confidential", description: "保密——仅团队内部使用"}
+    applicable_docs: []
+    description: "机密等级——三分法"
+    source: "PS-STD-001 §4.6"
+    derived_from: "_registry/vocabularies/classification-vocabulary.yaml"
+    note: ""
+
+  - field_name: language
+    type: enum
+    required: optional
+    stage: null
+    enum_values:
+      - {value: "zh", description: "中文"}
+      - {value: "en", description: "英文"}
+      - {value: "zh_en", description: "中英双语"}
+    applicable_docs: []
+    description: "主语言"
+    source: "PS-STD-001 §4.3"
+    derived_from: "_registry/vocabularies/language-vocabulary.yaml"
+    note: ""
+
+  - field_name: created_by
+    type: enum
+    required: optional
+    stage: null
+    enum_values:
+      - {value: "human", description: "人类独立创建"}
+      - {value: "agent", description: "AI Agent 独立生成"}
+      - {value: "human_plus_agent", description: "人机协作创建"}
+    applicable_docs: []
+    description: "创建者类型"
+    source: "PS-STD-001 §4.4"
+    derived_from: "_registry/vocabularies/created_by-vocabulary.yaml"
+    note: ""
+
+  - field_name: valid_from
+    type: date
+    required: optional
+    stage: null
+    enum_values: []
+    applicable_docs: []
+    description: "生效日期 YYYY-MM-DD"
+    source: "PS-STD-001 §3.6"
+    pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+    note: ""
+
+  - field_name: ttl
+    type: enum
+    required: optional
+    stage: null
+    derived_from: "_registry/vocabularies/ttl-vocabulary.yaml"
+    enum_values:
+      - {value: "permanent", description: "永久保留"}
+      - {value: "periodic_review_90d", description: "90 天周期复查——到期需人工复核后延续或废弃"}
+      - {value: "30d", description: "30 天——月度数据/日志"}
+      - {value: "7d", description: "7 天——周度数据/临时文件"}
+      - {value: "session", description: "会话级——session 结束后可清理"}
+    applicable_docs: []
+    description: "文档保留期"
+    source: "PS-STD-001 §6"
+    note: ""
+
+  - field_name: summary
+    type: string
+    required: conditional
+    stage: phase0
+    enum_values: []
+    applicable_docs: [template]
+    description: "一句话摘要——AI 检索锚点。template doc_type 下必填（AI 发现模板的唯一入口）"
+    source: "PS-STD-001 §3.3"
+    min_length: 1
+    note: "template doc_type 下 MUST 填写——对标 Agent Skills 规范的 description 字段（AI 渐进披露的发现锚点）"
+
+  - field_name: completeness
+    type: enum
+    required: conditional
+    stage: phase0
+    enum_values: ["complete", "incomplete", "incomplete_first_party_only", "incomplete_third_party_only", "unknown"]
+    applicable_docs: [template]
+    description: "完整性声明——模板自身的完整程度。对标 CycloneDX Compositions"
+    source: "TPL-DEPGRAPH-001 §6"
+    note: "template doc_type 下 MUST 填写。新模板默认 unknown，验证后升级。不声明完整性 = 不可信"
+
+  - field_name: tags
+    type: array
+    required: optional
+    stage: null
+    enum_values: []
+    applicable_docs: []
+    description: "自由标签，补充 doc_type 细分类"
+    source: "PS-STD-001 §3.7"
+    item_type: string
+    unique: true
+    note: ""
+
+  # ── 规则特有字段（PS-STD-001 §2.5）──
+  - field_name: rule_form
+    type: enum
+    required: conditional
+    stage: phase0
+    enum_values:
+      - {value: "declarative", description: "声明式——定义'是什么'"}
+      - {value: "procedural", description: "过程式——定义操作步骤"}
+      - {value: "data", description: "数据式——结构化数据清单"}
+      - {value: "structural", description: "结构式——定义格式/骨架"}
+    applicable_docs: [policy, standard, operational_rule, register, protocol, template]
+    description: "规则表达形式——4 值"
+    source: "PS-STD-001 §2.5 + rule_form-vocabulary.yaml"
+    derived_from: "_registry/vocabularies/rule_form-vocabulary.yaml"
+    note: "doc_type 与 rule_form 有约束关系: policy→declarative, register→data, template→structural"
+
+  - field_name: scope
+    type: enum
+    required: conditional
+    stage: phase0
+    enum_values:
+      - {value: "global", description: "全局——适用整个项目"}
+      - {value: "domain", description: "领域级——适用特定业务域"}
+      - {value: "layer", description: "层级——适用特定架构层"}
+      - {value: "module", description: "模块级——适用特定功能模块"}
+    applicable_docs: [policy, standard, operational_rule, protocol]
+    description: "规则作用范围——4 值"
+    source: "PS-STD-001 §2.5"
+    derived_from: "_registry/vocabularies/scope-vocabulary.yaml"
+    note: ""
+
+  - field_name: stability
+    type: enum
+    required: conditional
+    stage: phase0
+    enum_values:
+      - {value: "frozen", description: "冻结——不可变更"}
+      - {value: "stable", description: "稳定——通过变更门控可修改"}
+      - {value: "evolving", description: "演进中——可频繁修改"}
+      - {value: "volatile", description: "易变——AI 可自主调整"}
+    applicable_docs: [policy, standard, operational_rule, protocol]
+    description: "规则稳定性——4 值"
+    source: "PS-STD-001 §2.5"
+    derived_from: "_registry/vocabularies/stability-vocabulary.yaml"
+    note: "frozen 时 ai_autonomy 必须为 immutable_core"
+
+  - field_name: verifiability
+    type: enum
+    required: conditional
+    stage: phase0
+    enum_values:
+      - {value: "automated", description: "自动化验证——CI/脚本可 100% 验证"}
+      - {value: "manual", description: "人工验证——需人类判断"}
+      - {value: "inspection", description: "审查验证——需资深人员审查"}
+    applicable_docs: [policy, standard, operational_rule, protocol]
+    description: "规则可验证性——3 值"
+    source: "PS-STD-001 §2.5"
+    derived_from: "_registry/vocabularies/verifiability-vocabulary.yaml"
+    note: ""
+
+  - field_name: template_for
+    type: enum
+    required: conditional
+    stage: phase0
+    enum_values:
+      - {value: "policy", description: "策略文档模板"}
+      - {value: "standard", description: "标准文档模板"}
+      - {value: "operational_rule", description: "操作规则文档模板"}
+      - {value: "register", description: "注册表文档模板"}
+      - {value: "protocol", description: "协议文档模板"}
+      - {value: "blueprint", description: "蓝图文档模板"}
+      - {value: "task-card", description: "任务卡模板"}
+      - {value: "risk-register", description: "风险登记簿模板"}
+      - {value: "roadmap", description: "路线图模板"}
+      - {value: "ke", description: "知识条目模板"}
+      - {value: "ko", description: "知识观察模板"}
+      - {value: "dependency-graph", description: "依赖图模板"}
+    applicable_docs: [template]
+    description: "模板用于创建什么类型的文档——AI 按目标 doc_type 搜索模板时的路由键。枚举值复用 doc_type 受控词表（去掉 template 自身）+ 扩展非 doc_type 模板类型"
+    source: "PS-STD-001 §2.5"
+    note: "template_for 是模板路由的权威字段。tags 中禁止出现与 template_for 矛盾的 doc_type 值。AI 按目标 doc_type 搜索模板时 MUST 匹配 template_for，NOT tags"
+
+  # ── 引用/溯源字段──
+  - field_name: depends_on
+    type: array
+    required: optional
+    stage: null
+    enum_values: []
+    applicable_docs: []
+    description: "结构化依赖声明——兼容 string[]（旧版）和 map[]（新版）"
+    source: "PS-STD-001 §2.1"
+    note: "新版格式: [{target, at, why}]"
+
+  - field_name: supersedes
+    type: array
+    required: optional
+    stage: null
+    enum_values: []
+    applicable_docs: []
+    description: "取代了哪些文件——[{path, version, reason}]"
+    source: "PS-STD-001 §4.7"
+    note: ""
+
+  - field_name: superseded_by
+    type: string
+    required: conditional
+    stage: null
+    enum_values: []
+    applicable_docs: []
+    description: "被哪个文件取代。deprecated 时必填"
+    source: "PS-STD-001 §4.7"
+    note: "status=deprecated 时条件必填"
+
+  - field_name: derived_from
+    type: array
+    required: optional
+    stage: null
+    enum_values:
+      - {value: "synthesized", description: "综合——多来源知识综合而成"}
+      - {value: "referenced", description: "引用——直接引用外部知识"}
+      - {value: "transformed", description: "转化——从外部知识转化适配"}
+    applicable_docs: []
+    description: "横向知识来源——[{path, relationship, sections}]"
+    source: "PS-STD-001 §10.17"
+    derived_from: "_registry/vocabularies/derived-from-relationship-vocabulary.yaml"
+    note: ""
+
+  - field_name: related_kb_ref
+    type: array
+    required: optional
+    stage: null
+    enum_values: []
+    applicable_docs: []
+    description: "关联的 KB 决策记录编号（如 [ADR-0011, ADR-0030]）"
+    source: "PS-STD-001 §10.9"
+    note: ""
+
+  # ── AI 治理特有字段（PS-STD-001 §10）──
+  - field_name: ai_autonomy
+    type: enum
+    required: conditional
+    stage: phase0
+    enum_values:
+      - {value: "immutable_core", description: "不可变核心——AI 只能读，不能改"}
+      - {value: "human_gated", description: "人工闸门——AI 可提议，需 Owner 批准"}
+      - {value: "ai_modifiable", description: "AI 可修改——AI 可直接编辑"}
+    applicable_docs: [policy, standard, operational_rule, register, protocol]
+    description: "AI 自治权限——3 值（全小写）"
+    source: "PS-STD-001 §4.5"
+    derived_from: "_registry/vocabularies/ai-autonomy-vocabulary.yaml"
+    note: ""
+
+  - field_name: safety_level
+    type: enum
+    required: optional
+    stage: null
+    enum_values:
+      - {value: "H", description: "高风险——涉及资金/安全关键路径"}
+      - {value: "M", description: "中风险——影响系统稳定性"}
+      - {value: "L", description: "低风险——辅助功能"}
+    applicable_docs: []
+    description: "安全风险等级"
+    source: "PS-STD-001 §10.10"
+    derived_from: "_registry/vocabularies/safety-level-vocabulary.yaml"
+    note: ""
+
+  - field_name: author_agent
+    type: string
+    required: optional
+    stage: null
+    enum_values: []
+    applicable_docs: []
+    description: "创作代理——编辑器/产品名（如 Cursor-Premium / Trae-Free）"
+    source: "PS-STD-001 §10.5"
+    note: ""
+
+  - field_name: governance_family
+    type: enum
+    required: optional
+    stage: planned
+    enum_values:
+      - {value: "A", description: "家族 A——策略/标准类规则"}
+      - {value: "B", description: "家族 B——操作性流程类规则"}
+      - {value: "C", description: "家族 C——Schema/契约类规则"}
+      - {value: "D", description: "家族 D——模板/骨架类规则"}
+    applicable_docs: [policy, standard, operational_rule, template]
+    description: "治理系统家族"
+    source: "PS-STD-001 §10.7"
+    derived_from: "_registry/vocabularies/governance-family-vocabulary.yaml"
+    note: ""
+
+  - field_name: ai_capability_slot
+    type: enum
+    required: optional
+    stage: planned
+    enum_values:
+      - {value: "planned", description: "已规划——尚未实现"}
+      - {value: "reserved", description: "已预留——架构中留位"}
+      - {value: "active", description: "已激活——当前在用"}
+      - {value: "none", description: "无——不需要 AI 能力槽位"}
+    applicable_docs: []
+    description: "AI 能力槽位状态"
+    source: "PS-STD-001 §10.7"
+    derived_from: "_registry/vocabularies/ai-capability-slot-vocabulary.yaml"
+    note: ""
+
+  - field_name: ai_autonomy_level_planned
+    type: enum
+    required: optional
+    stage: planned
+    enum_values:
+      - {value: "l0", description: "L0 无自治"}
+      - {value: "l1", description: "L1 低自治——写操作需审批"}
+      - {value: "l2", description: "L2 中自治——关键操作需审批"}
+      - {value: "l3", description: "L3 高自治——全权自主"}
+    applicable_docs: []
+    description: "规划的 AI 自治等级"
+    source: "PS-STD-001 §10.7"
+    derived_from: "_registry/vocabularies/ai-autonomy-level-planned-vocabulary.yaml"
+    note: ""
+
+  - field_name: ai_employee_count_planned
+    type: integer
+    required: optional
+    stage: planned
+    enum_values: []
+    applicable_docs: []
+    description: "规划的 AI 员工数量（0-10）"
+    source: "PS-STD-001 §10.7"
+    min: 0
+    max: 10
+    note: ""
+
+  # ── 文档审核/审查字段──
+  - field_name: review_status
+    type: enum
+    required: optional
+    stage: planned
+    enum_values:
+      - {value: "unreviewed", description: "未审核"}
+      - {value: "reviewed", description: "已审核"}
+      - {value: "approved", description: "已批准"}
+      - {value: "rejected", description: "已驳回"}
+    applicable_docs: []
+    description: "审核状态"
+    source: "PS-STD-001 §10.16"
+    derived_from: "_registry/vocabularies/review-status-vocabulary.yaml"
+    note: ""
+
+  - field_name: last_reviewed_by
+    type: object
+    required: optional
+    stage: planned
+    enum_values: []
+    applicable_docs: []
+    description: "最后审核人/模型——{reviewer, date, model_used}"
+    source: "PS-STD-001 §10.15"
+    note: ""
+
+  # ── 蓝图/合规字段──
+  - field_name: blueprint_refs
+    type: array
+    required: optional
+    stage: planned
+    enum_values:
+      - {value: "active", description: "当前有效——蓝图正在使用中"}
+      - {value: "draft", description: "草稿——蓝图尚未批准"}
+      - {value: "deprecated", description: "已废弃——蓝图已被替代"}
+    applicable_docs: []
+    description: "施工图引用的蓝图列表——[{path, status, decisions_used}]"
+    source: "PS-STD-001 §10.12"
+    derived_from: "_registry/vocabularies/blueprint-refs-status-vocabulary.yaml"
+    note: ""
+
+  - field_name: compliance_tags
+    type: array
+    required: optional
+    stage: planned
+    enum_values:
+      - {value: "SR-11-7", description: "中国证监会《证券期货业数据安全管理与保护指引》"}
+      - {value: "EU-AI-Act-Art12", description: "欧盟 AI 法案第 12 条——记录保存"}
+      - {value: "EU-AI-Act-Art14", description: "欧盟 AI 法案第 14 条——人工监督"}
+      - {value: "GDPR-Art22", description: "GDPR 第 22 条——自动化决策的限制"}
+      - {value: "PCI-DSS", description: "支付卡行业数据安全标准"}
+      - {value: "MiFID-II", description: "欧盟金融工具市场指令 II"}
+    applicable_docs: []
+    description: "合规标签——金融监管法规映射（6 值）"
+    source: "PS-STD-001 §10.13"
+    derived_from: "_registry/vocabularies/compliance-tags-vocabulary.yaml"
+    note: ""
+
+  # ── 溯源/进化字段──
+  - field_name: provenance
+    type: object
+    required: optional
+    stage: planned
+    enum_values:
+      - {value: "pass", description: "通过——审计链验证通过"}
+      - {value: "fail", description: "失败——审计链验证失败"}
+      - {value: "conditional", description: "有条件——审计链部分通过"}
+    applicable_docs: []
+    description: "溯源信息——{origin_drafts[], audit_chain[], arbitration}"
+    source: "PS-STD-001 §10.3"
+    derived_from: "_registry/vocabularies/provenance-audit-chain-verdict-vocabulary.yaml"
+    note: ""
+
+  - field_name: evolution_policy
+    type: enum
+    required: optional
+    stage: null
+    enum_values:
+      - {value: "frozen", description: "冻结——不可演进"}
+      - {value: "extendable", description: "可扩展——可新增，不删改"}
+      - {value: "rewritable", description: "可重写——可增删改任意内容"}
+    applicable_docs: []
+    description: "文件演进策略"
+    source: "PS-STD-001 §10.11"
+    derived_from: "_registry/vocabularies/evolution-policy-vocabulary.yaml"
+    note: ""
+
+  - field_name: human_override
+    type: object
+    required: optional
+    stage: planned
+    enum_values: []
+    applicable_docs: []
+    description: "人工干预记录——{operator_id, date, reason, original_action}"
+    source: "PS-STD-001 §10.14"
+    note: ""
+
+  # ── 蓝图特有字段（PS-STD-005 定义）──
+  - field_name: last_verified
+    type: date
+    required: conditional
+    stage: phase0
+    enum_values: []
+    applicable_docs: [blueprint]
+    description: "蓝图与代码对齐验证通过的日期。超过 90 天未验证 = 过期，AI MUST 重新验证后再按蓝图施工"
+    source: "GOV-ENG-001 §7 + blueprint-construction-template.md frontmatter"
+    pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+    note: "blueprint doc_type 下 MUST 填写。与 last_updated 不同——last_updated 记录修改时间，last_verified 记录验证通过时间。修改≠验证"
+
+  - field_name: belongs_to
+    type: string
+    required: optional
+    stage: null
+    enum_values: []
+    applicable_docs: []
+    description: "上级蓝图引用——Level 2 模块蓝图声明其归属于哪个 Level 1 域蓝图或 Level 0 总蓝图。格式：module_id（如 MOD-MASTER-001）"
+    source: "PS-STD-005 §6.1"
+    pattern: "^[A-Z]+(-[A-Z]+)?-[A-Z]+-\\d{3,4}$"
+    note: "Level 2 蓝图 MUST 声明此字段。Level 0 蓝图不声明（顶层）"
+
+  - field_name: blueprint_level
+    type: enum
+    required: optional
+    stage: null
+    enum_values:
+      - {value: "system", description: "System 级——Level 0 全系统总蓝图"}
+      - {value: "domain", description: "Domain 级——Level 1 功能域集成蓝图"}
+      - {value: "module", description: "Module 级——Level 2 单模块蓝图"}
+    applicable_docs: []
+    description: "蓝图层级——PS-STD-005 三级金字塔中的位置"
+    source: "PS-STD-005 §8.1"
+    note: "每个蓝图 MUST 声明其层级"
+
+  - field_name: responsibility_domain
+    type: string
+    required: optional
+    stage: null
+    enum_values: []
+    applicable_docs: []
+    description: "功能职责域（全局唯一标识）——低 kebab-case 字符串，声明本蓝图覆盖的功能域。如 task_lifecycle_management / capacity_assurance。GOV-MOD-001 §7 #5 功能域重叠检查用此字段判定是否冲突"
+    source: "PS-STD-005 §10 (v1.1.0 新增)"
+    pattern: "^[a-z][a-z0-9_]+$"
+    note: "每个蓝图 responsibility_domain 全局唯一——禁止两个蓝图声明同一功能域。配合 covers[] 字段声明覆盖的子域范围"
+
+  # ── 代码文件头部字段（GOV-ENG-001 §7 定义，与 frontmatter 字段枚举值对齐）──
+  # 以下 10 个字段出现在 Python 代码文件的 docstring 首行，不是 YAML frontmatter。
+  # 但其中 3 个字段的枚举值与 frontmatter 字段完全一致，此处声明对齐关系。
+
+  - field_name: "[BLUEPRINT]"
+    type: string
+    required: always
+    stage: null
+    enum_values: []
+    applicable_docs: [code_file]
+    description: "代码文件头部——所属蓝图 module_id + 蓝图文件路径 + 对应蓝图章节号。格式：{module_id} | {blueprint_path} | §{N}。GOV-ENG-001 §7.1 定义"
+    source: "GOV-ENG-001 §7.2"
+    note: "代码文件 docstring 字段，非 frontmatter。§N 实现章节级漂移检测——代码标注 §3 ↔ 蓝图 §3 内容比对"
+
+  - field_name: "[MODULE]"
+    type: string
+    required: always
+    stage: null
+    enum_values: []
+    applicable_docs: [code_file]
+    description: "代码文件头部——完整 Python 模块路径。GOV-ENG-001 §7.1 定义"
+    source: "GOV-ENG-001 §7.2"
+    note: "代码文件 docstring 字段，非 frontmatter"
+
+  - field_name: "[INVARIANTS]"
+    type: string
+    required: always
+    stage: null
+    enum_values: []
+    applicable_docs: [code_file]
+    description: "代码文件头部——不可违反的约束，分号分隔。GOV-ENG-001 §7.1 定义"
+    source: "GOV-ENG-001 §7.2"
+    note: "代码文件 docstring 字段，非 frontmatter"
+
+  - field_name: "[MODIFY-GUARD]"
+    type: string
+    required: always
+    stage: null
+    enum_values: []
+    applicable_docs: [code_file]
+    description: "代码文件头部——修改此文件必须同步更新的文件，分号分隔。GOV-ENG-001 §7.1 定义"
+    source: "GOV-ENG-001 §7.2"
+    note: "代码文件 docstring 字段，非 frontmatter"
+
+  - field_name: "[CONSUMERS]"
+    type: string
+    required: conditional
+    stage: null
+    enum_values: []
+    applicable_docs: [code_file]
+    description: "代码文件头部——依赖此文件的模块，分号分隔。至少列 Tier 1 消费者。GOV-ENG-001 §7.1 定义"
+    source: "GOV-ENG-001 §7.2"
+    note: "代码文件 docstring 字段，非 frontmatter"
+
+  - field_name: "[STABILITY]"
+    type: enum
+    required: always
+    stage: null
+    enum_values:
+      - {value: "frozen", description: "冻结——不可变更"}
+      - {value: "stable", description: "稳定——通过变更门控可修改"}
+      - {value: "evolving", description: "演进中——可频繁修改"}
+      - {value: "volatile", description: "易变——AI 可自主调整"}
+    applicable_docs: [code_file]
+    description: "代码文件头部——文件稳定性。枚举值与 frontmatter stability 字段完全一致"
+    source: "GOV-ENG-001 §7.3"
+    aligned_with: "stability"
+    note: "枚举值 = frontmatter stability 字段的 4 值，零冲突"
+
+  - field_name: "[SAFETY]"
+    type: enum
+    required: always
+    stage: null
+    enum_values:
+      - {value: "H", description: "高风险——涉及安全关键路径"}
+      - {value: "M", description: "中风险——影响系统稳定性"}
+      - {value: "L", description: "低风险——辅助功能"}
+    applicable_docs: [code_file]
+    description: "代码文件头部——安全风险等级。枚举值与 frontmatter safety_level 字段完全一致"
+    source: "GOV-ENG-001 §7.3"
+    aligned_with: "safety_level"
+    note: "枚举值 = frontmatter safety_level 字段的 3 值，零冲突"
+
+  - field_name: "[AI_AUTONOMY]"
+    type: enum
+    required: always
+    stage: null
+    enum_values:
+      - {value: "immutable_core", description: "不可变核心——AI 只能读，不能改"}
+      - {value: "human_gated", description: "人工闸门——AI 可提议，需 Owner 批准"}
+      - {value: "ai_modifiable", description: "AI 可修改——AI 可直接编辑"}
+    applicable_docs: [code_file]
+    description: "代码文件头部——AI 自治权限。枚举值与 frontmatter ai_autonomy 字段完全一致"
+    source: "GOV-ENG-001 §7.3"
+    aligned_with: "ai_autonomy"
+    note: "枚举值 = frontmatter ai_autonomy 字段的 3 值，零冲突"
+
+  - field_name: "[ERROR_CONTRACT]"
+    type: string
+    required: conditional
+    stage: null
+    enum_values: []
+    applicable_docs: [code_file]
+    description: "代码文件头部——可抛出的异常列表，分号分隔。GOV-ENG-001 §7.1 定义"
+    source: "GOV-ENG-001 §7.2"
+    note: "代码文件 docstring 字段，非 frontmatter"
+
+  - field_name: "[TESTS]"
+    type: string
+    required: conditional
+    stage: null
+    enum_values: []
+    applicable_docs: [code_file]
+    description: "代码文件头部——对应测试文件路径，分号分隔。GOV-ENG-001 §7.1 定义"
+    source: "GOV-ENG-001 §7.2"
+    note: "代码文件 docstring 字段，非 frontmatter"
+
+  # ── 文件头部治理字段（GOV-ENG-002 定义）──
+  - field_name: header_format
+    type: enum
+    required: conditional
+    stage: phase0
+    enum_values:
+      - {value: "A_full", description: ".py 十字段完整版——code, script 文件"}
+      - {value: "A_test", description: ".py 六字段简化版——test 文件"}
+      - {value: "B_yaml", description: "YAML 5 字段注释块——gate, registry, contract(yaml), config, data"}
+      - {value: "C_json", description: "JSON _meta 字段——contract(json), schema(json)"}
+      - {value: "D_md", description: ".md YAML frontmatter——doc 文件"}
+      - {value: "E_shell", description: "Shell/Mermaid 注释头部——infra 文件"}
+      - {value: "exempt", description: "豁免——不需要表头"}
+    applicable_docs: [code_file, register, gate, contract, schema]
+    description: "文件表头格式——7 值。GOV-ENG-002 §9.4 定义。用于 validate_file_headers.py 路由校验逻辑"
+    source: "GOV-ENG-002 §9.4"
+    note: "与 file_category 联合使用——file_category 决定适用格式，header_format 声明实际格式"
+
+  - field_name: file_category
+    type: enum
+    required: conditional
+    stage: phase0
+    enum_values:
+      - {value: "code", description: "生产代码——src/zephyr/**/*.py"}
+      - {value: "script", description: "治理/工具脚本——scripts/**/*.py"}
+      - {value: "gate", description: "门禁定义——src/zephyr/gates/*.yaml"}
+      - {value: "registry", description: "注册表——*_registry.yaml, *_manifest.yaml"}
+      - {value: "contract", description: "契约定义——shared/contracts/*.py, contracts/*.yaml"}
+      - {value: "config", description: "配置文件——config/*.yaml"}
+      - {value: "data", description: "运行时数据——data/**/*.yaml"}
+      - {value: "doc", description: "文档——docs/**/*.md"}
+      - {value: "test", description: "测试——tests/**/*.py"}
+      - {value: "infra", description: "基础设施——.sh, .ps1, .mmd"}
+    applicable_docs: [code_file, register, gate, contract, schema]
+    description: "文件治理分类——10 值。GOV-ENG-002 §9.5 定义。决定文件应使用哪种 header_format"
+    source: "GOV-ENG-002 §9.5"
+    note: "file_category → header_format 映射见 GOV-ENG-002 §2"
+
+  # ── 知识条目特有字段──
+  - field_name: category
+    type: enum
+    required: conditional
+    stage: phase2
+    enum_values:
+      - {value: "blueprint_decision", description: "蓝图决策"}
+      - {value: "strategy", description: "策略——交易/投资策略"}
+      - {value: "factor", description: "因子——Alpha 因子"}
+      - {value: "best_practice", description: "最佳实践"}
+      - {value: "lesson_learned", description: "经验教训"}
+      - {value: "architecture", description: "架构——系统设计"}
+      - {value: "risk_control", description: "风控"}
+      - {value: "data_governance", description: "数据治理"}
+      - {value: "operations", description: "运维"}
+      - {value: "compliance", description: "合规"}
+    applicable_docs: []
+    description: "知识条目内容类型——10 值"
+    source: "PS-STD-001 §9.1"
+    derived_from: "_registry/vocabularies/category-vocabulary.yaml"
+    note: "KMS 知识条目专用，beta 落地"
+
+  - field_name: domain
+    type: enum
+    required: conditional
+    stage: phase2
+    enum_values:
+      - {value: "data", description: "数据"}
+      - {value: "feature", description: "特征"}
+      - {value: "model", description: "模型"}
+      - {value: "signal", description: "信号"}
+      - {value: "execution", description: "执行"}
+      - {value: "risk", description: "风险"}
+      - {value: "portfolio", description: "组合"}
+      - {value: "reporting", description: "报告"}
+      - {value: "infrastructure", description: "基础设施"}
+      - {value: "other", description: "其他"}
+    applicable_docs: []
+    description: "知识条目业务领域——10 值"
+    source: "PS-STD-001 §9.2"
+    derived_from: "_registry/vocabularies/domain-vocabulary.yaml"
+    note: "KMS 知识条目专用，beta 落地"
+
+# ============================================================================
+# 汇总统计
+# ============================================================================
+summary:
+  total_fields: 54
+  by_required:
+    always: 14
+    conditional: 12
+    optional: 26
+  by_type:
+    string: 7
+    enum: 22
+    array: 7
+    object: 3
+    date: 2
+    integer: 1
+  by_stage:
+    phase0: 5
+    phase2: 2
+    always: 7
+    conditional: 1
+    optional: 25
+  enum_fields: 22
+  referenced_standards:
+    - PS-STD-001
+    - doc_type-vocabulary.yaml
+    - status-vocabulary.yaml
+    - rule_form-vocabulary.yaml
+    - frontmatter-schema.json
+
+# ============================================================================
+# 变更记录
+# ============================================================================
+changelog:
+  - version: "1.0.0"
+    date: "2026-05-02"
+    author: "AI-Trae-2026"
+    changes:
+      - "初始创建——登记 34 个 frontmatter 字段"
+      - "来源：frontmatter-schema.json + PS-STD-001 + 3 个 vocabulary/ 词表"
+      - "按 5 组分类：7 必填 + 7 常用可选 + 4 规则特有 + 6 引用溯源 + 10 AI/蓝图/知识"
+      - "每个 enum 类型的字段附完整枚举值列表 + 中文描述"

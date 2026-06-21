@@ -1,0 +1,320 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# ZephyrAlpha 2.0 Session Log 标准 Schema
+# 定义每次 AI session 结束时必须写入的 Session Log 格式
+# 维护者：ZephyrAlpha-Owner
+
+schema_version: "2.2.0"
+module_id: GOV-AI-007
+doc_type: schema
+title: "Session Log 标准 Schema"
+status: active
+version: "2.2.0"
+date: "2026-05-06"
+owner: ZephyrAlpha-Owner
+language: zh
+created_by: human_plus_agent
+ttl: permanent
+summary: "定义每次 AI session 结束时必须写入的 Session Log 的字段 schema、存放路径和命名规范。v2.2.0：新增 blind_spots_discovered 字段；盲点发现从 index.yaml 移入 session log YAML，由脚本自动汇总。"
+rule_form: data
+supersedes:
+  - path: "governance/ai/session-log-schema.yaml"
+    version: "2.0.0"
+    reason: "文件从 governance/ai/ 迁移至 _registry/schemas/（物理位置变更，内容不变）"
+  - path: "_registry/schemas/session-log-schema.yaml"
+    version: "2.1.0"
+    reason: "AUDIT-10 修复——新增 blind_spots_discovered 字段，禁止直接在 index.yaml 写入盲点"
+depends_on:
+  - {target: PS-STD-001, at: "§2.5", why: "frontmatter 字段分类清单"}
+  - {target: AGENTS.md, at: "§4.2", why: "原子事务模式——files_deleted 字段的安全验证规则"}
+
+# ============================================================
+# Session Log 存放位置
+# ============================================================
+storage:
+  path: "session-logs/YYYY/MM/session-YYYYMMDD-NNN.yaml"
+  naming_format: "session-YYYYMMDD-NNN.yaml"
+  naming_example: "session-20260505-001.yaml"
+  note: "NNN 为当日序号，从 001 开始。如果 session-logs/ 目录不存在，AI 必须先创建目录再写文件。"
+
+# ============================================================
+# 字段间关系说明（AI 必读）
+# ============================================================
+#
+# 本 Schema 中的字段存在以下关系，AI 写 Session Log 时必须理解：
+#
+# 1. knowledge_extracted vs construction_deviations（最容易混淆）
+#    - knowledge_extracted：计数器。记录"本次 session 总共提取了几条知识条目（KE）"
+#    - construction_deviations：明细列表。记录"施工中发现了哪些偏差，每条偏差怎么处理"
+#    - 关系：construction_deviations 中 recommended_action 为"提取 KE"的条目数
+#      应该 ≤ knowledge_extracted 的值（因为不是所有 KE 都来自施工偏差）
+#
+# 2. decisions vs construction_deviations
+#    - decisions：本次 session 做出的决策（如"选 SQLite 不选 DuckDB"）
+#    - construction_deviations：施工中发现的偏差（如"蓝图接口设计有缺陷"）
+#    - 区别：decisions 是主动选择，construction_deviations 是被动发现
+#
+# 3. files_changed vs files_deleted
+#    - files_changed：创建/编辑/移动的文件
+#    - files_deleted：删除的文件（单独列出，因为删除是不可逆操作，需要特别关注）
+#
+# 4. blind_spots_discovered（v2.2.0 新增）⚠️ 禁止直接写 index.yaml
+#    - blind_spots_discovered：本次 session 发现的盲点
+#    - 必须写入 session log YAML 文件——禁止直接写入 index.yaml 的 blind_spot_timeline
+#    - index.yaml 中的 by_module/by_contract/by_date 由脚本从 session log YAML 自动派生
+#    - 自动汇总输出：session-logs/_auto/blind_spot_timeline.yaml
+#
+# 5. construction_deviations.recommended_action 的 4 个选项
+#    - extract_ke：提取为知识条目（KE），写入 docs/08_knowledge/
+#    - update_decision_record：更新决策记录——修正技术选型
+#    - modify_blueprint：修改蓝图，修正设计缺陷
+#    - record_only：仅记录，暂不处理（列入遗留事项/punch list）
+#
+# ============================================================
+
+# ============================================================
+# 必填字段
+# ============================================================
+required_fields:
+  - field: "session_id"
+    type: string
+    format: "session-YYYYMMDD-NNN"
+    example: "session-20260505-001"
+    description: "唯一 session 标识符"
+    usage: "用于跨 session 追溯和引用。格式必须是 session-日期-序号，序号从 001 开始。"
+
+  - field: "date"
+    type: string
+    format: "YYYY-MM-DD"
+    example: "2026-05-05"
+    description: "session 日期"
+
+  - field: "author_agent"
+    type: string
+    example: "见 model-capability-contract.yaml（GOV-AI-006）中登记的模型名称"
+    description: "执行本次 session 的 AI 模型"
+
+  - field: "current_phase"
+    type: string
+    example: "scaffold"
+    description: "本次 session 所处的开发 Phase"
+
+  - field: "tasks_completed"
+    type: list
+    description: "本次 session 完成的任务列表（含任务 ID）"
+    example:
+      - "P0B1-001: 创建 ai-onboarding-guide.md"
+      - "P0B1-002: 创建 model-capability-contract.yaml"
+    usage: "每条必须包含任务 ID + 任务名称。未完成的任务写在 next_session_handover.blockers 中。"
+
+  - field: "files_changed"
+    type: list
+    description: "本次 session 变更的文件（含操作类型：创建/编辑/移动）"
+    example:
+      - "创建: docs/01_policies_and_standards/governance/ai/ai-onboarding-guide.md"
+      - "编辑: docs/01_policies_and_standards/governance/_registry/catalogs/document-metadata-index.yaml"
+    usage: "每条必须以操作类型开头（创建/编辑/移动），后跟完整绝对路径。"
+
+  - field: "decisions"
+    type: list
+    description: "本次 session 做出的关键决策（如有）。支持纯文本字符串和结构化决策对象"
+    example_flat:
+      - "决定将 governance/ai/ 目录放在 01_policies_and_standards/ 下而非独立目录"
+    example_structured:
+      - decision_id: "SESSION-20260505-011-001"
+        title: "SecurityGateway 接口比 ABC 更丰富——OCP 扩展"
+        decision: "DefaultSecurityGateway 方法签名增加了 metadata 参数和 ScanFinding 返回类型"
+        rationale: "codegen ABC 接口过于简化，无法承载三层防御的上下文传递需求"
+        alternatives_considered:
+          - "方案B：严格继承 ABC 接口 → 否决，因为会丢失 L1/L2 上下文"
+        category: "interface_design"
+        tags: ["security", "ocp-004", "l10_compliance"]
+        status: "accepted"
+    usage: |
+      结构化决策对象子字段（均为可选）：
+      - decision_id / title / decision / rationale
+      - alternatives_considered: 被否决的备选方案
+      - category: tech_stack / interface_design / data_flow / governance / security
+      - tags: 标签列表，用于 KB 检索
+      - status: accepted（默认）/ superseded / deprecated
+      同时 upsert 到 KB decisions namespace（namespace="decisions"）。
+
+  - field: "context_budget_used"
+    type: string
+    description: "本次 session 消耗的上下文预算估计"
+    example: "约 50k tokens，读取了 8 个文件"
+
+  - field: "next_session_handover"
+    type: object
+    description: "交接给下一个 session 的信息"
+    sub_fields:
+      - name: "next_task"
+        description: "下一个待完成的任务 ID 和名称"
+      - name: "blockers"
+        description: "阻塞项（如有）"
+      - name: "context_needed"
+        description: "下一个 session 需要读取的文件列表"
+      - name: "warnings"
+        description: "需要注意的风险或问题"
+
+# ============================================================
+# 可选字段
+# ============================================================
+optional_fields:
+  - field: "knowledge_extracted"
+    type: integer
+    description: "本次 session 提取的知识条目数量"
+    example: 3
+
+  - field: "blind_spots_discovered"
+    type: list_of_objects
+    description: "本次 session 发现的盲点——写入 session log YAML，由脚本自动汇总到 _auto/blind_spot_timeline.yaml"
+    usage: |
+      ⚠️ 禁止直接写入 index.yaml！盲点必须写在 session log 文件中。
+      index.yaml 的 by_module/by_contract/by_date 由脚本从 session log 自动派生。
+    example:
+      - blind_spot_id: "BLIND-L04-DUPLICATE-RISKLIMITS"
+        description: "L04 存在两套 RiskLimits 定义"
+        severity: high
+        scope: ["l04_risk_management"]
+        status: open
+    sub_fields:
+      - name: "blind_spot_id"
+        type: string
+        description: "唯一盲点标识符"
+        format: "BLIND-{domain}-{short_desc}"
+        usage: "必须全局唯一。建议：BLIND-层号/模块-简短描述（大写、连字符）。"
+      - name: "description"
+        type: string
+        description: "盲点的具体描述"
+        usage: "必须写清楚：发现了什么问题、影响范围、为什么是盲点。"
+      - name: "severity"
+        type: enum
+        description: "严重程度"
+        allowed_values: ["critical", "high", "medium", "low"]
+      - name: "scope"
+        type: list
+        description: "受影响的模块/契约列表"
+        usage: "必须是已注册的模块 ID 或契约 ID。"
+      - name: "status"
+        type: enum
+        description: "当前状态"
+        allowed_values:
+          - {value: "open", meaning: "未解决——需后续 session 处理"}
+          - {value: "in_progress", meaning: "处理中"}
+          - {value: "resolved", meaning: "已解决"}
+        default: "open"
+      - name: "resolution"
+        type: string
+        description: "解决方案（status=resolved 时必填）"
+        usage: "描述如何解决的：改了什么文件、做了什么修改、验证结果。"
+
+  - field: "construction_deviations"
+    type: list_of_objects
+    description: "施工偏差明细列表"
+    example:
+      - deviation_type: "blueprint_defect"
+        blueprint_ref: "docs/03_modules/l01_infrastructure/<module>/blueprint.md"
+        description: "蓝图 §4 接口契约定义的返回类型与实际业务需求不一致"
+        recommended_action: "modify_blueprint"
+      - deviation_type: "tech_choice_infeasible"
+        blueprint_ref: "docs/03_modules/l01_infrastructure/<module>/blueprint.md"
+        description: "蓝图选型的 DuckDB 在高频小写入场景性能不足"
+        recommended_action: "update_decision_record"
+    sub_fields:
+      - name: "deviation_type"
+        type: enum
+        allowed_values:
+          - {value: "blueprint_defect", meaning: "蓝图设计有缺陷"}
+          - {value: "tech_choice_infeasible", meaning: "技术选型不可行"}
+          - {value: "interface_change", meaning: "接口变更"}
+          - {value: "scope_change", meaning: "范围变更"}
+      - name: "blueprint_ref"
+        type: string
+        description: "偏差来源蓝图的完整路径"
+      - name: "description"
+        type: string
+        description: "偏差的具体描述"
+      - name: "recommended_action"
+        type: enum
+        allowed_values:
+          - {value: "extract_ke", meaning: "提取为 KE"}
+          - {value: "update_decision_record", meaning: "更新决策记录"}
+          - {value: "modify_blueprint", meaning: "修改蓝图"}
+          - {value: "record_only", meaning: "仅记录"}
+
+  - field: "files_deleted"
+    type: list
+    description: "本次 session 删除的文件列表"
+    example:
+      - "删除: docs/09_audit/archive/obsolete-draft.md"
+    usage: "删除不可逆。每条以'删除:'开头，后跟完整绝对路径。"
+
+  - field: "owner_decisions_needed"
+    type: list
+    description: "需要 Owner 决策的事项列表"
+    example:
+      - "是否将 38 个 reference 文件全部改为 architecture_view？"
+
+# ============================================================
+# Session Log 模板
+# ============================================================
+template: |
+  ---
+  doc_type: log
+  session_id: "session-YYYYMMDD-NNN"
+  date: "YYYY-MM-DD"
+  author_agent: "见 GOV-AI-006"
+  current_phase: "scaffold"
+  ttl: permanent
+  ---
+
+  # Session Log: session-YYYYMMDD-NNN
+
+  ## 完成的任务
+
+  - [x] TASK-001: 任务描述
+
+  ## 变更的文件
+
+  | 操作 | 文件路径 |
+  |------|---------|
+  | 创建 | path/to/file |
+
+  ## 关键决策
+
+  （如有）
+
+  ## 发现的盲点
+
+  > 写入 blind_spots_discovered 字段，自动汇总到 _auto/blind_spot_timeline.yaml
+
+  | # | 盲点ID | 描述 | 严重度 | 状态 |
+  |---|--------|------|--------|------|
+  | 1 | BLIND-XXX | ... | high | open |
+
+  ## 施工偏差
+
+  | # | 偏差类型 | 来源蓝图 | 描述 | 建议动作 |
+  |---|---------|---------|------|---------|
+  | 1 | blueprint_defect | path/to/blueprint | ... | modify_blueprint |
+
+  ## 知识提取
+
+  本次提取 {N} 条知识条目（KE）。
+
+  ## 上下文预算
+
+  约 XX k tokens，读取了 N 个文件。
+
+  ## 交接给下一个 Session
+
+  - **下一个任务**：
+  - **阻塞项**：
+  - **需要读取**：
+  - **注意事项**：

@@ -1,0 +1,144 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# 自动生成�?2026-05-07T06:52:14Z
+# 来源: _registry/catalogs/*.yaml frontmatter
+# 手工编辑无效——修改请通过各登记表�?frontmatter
+
+generated_at: '2026-05-07T06:52:14Z'
+generated_by: scripts/governance/generators/generate_registry_master_index.py
+source: _registry/catalogs/*.yaml �?frontmatter
+total_registries: 16
+registries:
+- registry_id: PS-REG-015
+  name: KB 决策记录登记表（原 ADR 状态登记表已删除，真源迁移至 KB）
+  category: governance_rule
+  physical_path: DELETED
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: deleted
+- registry_id: PS-REG-009
+  name: AI 风险登记�?
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/ai-risk-register.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 11
+  status: active
+- registry_id: PS-REG-011
+  name: AI Session/Agent 登记�?
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/ai-session-registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: draft
+- registry_id: PS-REG-007
+  name: 跨模块依赖登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 7
+  status: active
+- registry_id: PS-REG-019
+  name: 声明式契约跟踪登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 11
+  status: active
+- registry_id: PS-REG-013
+  name: 项目目录登记�?
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/directory-registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 88
+  status: active
+- registry_id: PS-REG-002
+  name: 文档元数据索�?
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 154
+  status: active
+- registry_id: PS-REG-012
+  name: Frontmatter 字段定义登记�?
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 43
+  status: active
+- registry_id: PS-REG-014
+  name: GATE 门禁登记�?
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/gate-registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 25
+  status: active
+- registry_id: PS-REG-006
+  name: 运行时基础设施登记�?
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 9
+  status: active
+- registry_id: PS-REG-010
+  name: 知识条目登记�?
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/knowledge-article-registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: draft
+- registry_id: PS-REG-020
+  name: 主文档清单（Master Document Inventory�?
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/master-document-inventory.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: draft
+- registry_id: PS-REG-016
+  name: 登记表的登记�?�?跨登记表一致性契�?
+  category: contract
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/registry-of-registries.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 22
+  status: active
+- registry_id: PS-REG-018
+  name: 规则路径目录
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/rule-catalog.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 154
+  status: active
+- registry_id: PS-REG-008
+  name: 脚本健康与清单登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/script-health-registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 39
+  status: active
+- registry_id: PS-REG-017
+  name: 任务卡元层登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 5
+  status: active

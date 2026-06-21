@@ -1,0 +1,28 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+# module_id: MOD-INF-035
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+capability_id: skill-dom-lsg-001
+category: security
+description: LLM Security Gateway (LSG) L0-L8 nine-layer defense-in-depth. Covers
+  prompt injection detection, jailbreak defense, PII redaction, agent permission control,
+  cost circuit breaker, observability, continuous validation, multi-agent trust. Entry
+  point is LSGSecurityGateway with scan_input/scan_output/scan_agent_action/full_scan.
+examples: []
+input_schema:
+  type: object
+name: 'Skill: lsg-security'
+output_schema:
+  type: object
+priority: P1
+registered_at: '2026-05-16T00:43:32.864582'
+requires_human: false
+runtime_plane: warm
+status: ACTIVE
+tags:
+- skill-derived
+- domain
+- lsg-security

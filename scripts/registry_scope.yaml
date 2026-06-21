@@ -1,0 +1,26 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-005 | docs/03_modules/_cross_layer/governance-automation/blueprint.md | §
+# module_id: MOD-INF-005
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# scripts 目录清单边界（SCOPE）
+# -----------------------------------------------------------------------------
+# script_manifest.yaml 是「纳入 CT-SCRIPT-GATE / run_all 编排」的治理脚本注册 SSoT。
+# 以下路径**刻意不写入** script_manifest.yaml（或仅作库/包，不单独登记）：
+#
+# - scripts/governance/_shared/**     — 共享库，非独立审计入口
+# - scripts/governance/**/__init__.py — 包初始化文件
+# - scripts/arch_guard/**             — Architecture Guard fitness functions，独立编排与退出语义
+# - scripts/context/**、scripts/construction/**、scripts/reports/** 等 — 非 governance 门禁树
+# - 仓库根目录其它 *.py shim        — 由各自策略维护，不要求进入 governance manifest
+#
+# 新增「需门禁登记」入口时：在脚本内补齐 __manifest__，再运行
+# `python scripts/governance/generators/generate_script_manifest.py`。
+# -----------------------------------------------------------------------------
+
+manifest_root: scripts/governance
+referenced_by:
+  - CT-SCRIPT-GATE-001
+  - docs/03_modules/l01_infrastructure/script-system/blueprint.md

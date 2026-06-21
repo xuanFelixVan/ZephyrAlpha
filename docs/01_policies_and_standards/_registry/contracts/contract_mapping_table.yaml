@@ -1,0 +1,221 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+schema_version: "1.0.0"
+created: "2026-05-12"
+last_updated: "2026-05-12"
+description: "AS-CT-*/ME-CT-* 域契约 → CTR-* 层契约 映射表"
+
+domain_contracts:
+  alpha_signal_domain:
+    domain_id: ALPHA-SIGNAL-DOMAIN-001
+    blueprint: docs/03_modules/_alpha-signal-domain/blueprint.md
+    contracts:
+      - domain_contract_id: AS-CT-DATA-001
+        direction: "L00→L02"
+        description: "市场数据→因子引擎（OHLCV/orderbook/tick）"
+        layer_contracts:
+          - CTR-001
+        status: Draft
+
+      - domain_contract_id: AS-CT-FACTOR-001
+        direction: "L02→L03"
+        description: "因子数据帧（MultiIndex DataFrame: (timestamp, asset)×factor）"
+        layer_contracts:
+          - CTR-P1-015
+        status: Draft
+
+      - domain_contract_id: AS-CT-FACTOR-002
+        direction: "L02 internal"
+        description: "Code-Dedup-Engine→去重后的因子值（唯一source_key）"
+        layer_contracts:
+          - MOD-INF-005
+        status: Draft
+
+      - domain_contract_id: AS-CT-SIGNAL-001
+        direction: "L03→L04"
+        description: "信号数据帧→风控引擎"
+        layer_contracts:
+          - CTR-P1-015
+          - CTR-008
+        status: Draft
+
+      - domain_contract_id: AS-CT-VMS-001
+        direction: "L02+L03→VMS"
+        description: "因子嵌入向量存储（8 collections: signal-embeddings）"
+        layer_contracts:
+          - MOD-INF-011
+        status: Draft
+
+  ml_experiment_domain:
+    domain_id: ML-EXPERIMENT-DOMAIN-001
+    blueprint: docs/03_modules/_ml-experiment-domain/blueprint.md
+    contracts:
+      - domain_contract_id: ME-CT-FEATURE-001
+        direction: "VMS/KB→L11"
+        description: "特征向量读取（ChromaDB collections: factor-signals, model-features）"
+        layer_contracts:
+          - MOD-INF-011
+        status: Draft
+
+      - domain_contract_id: ME-CT-TRAIN-001
+        direction: "L11 internal"
+        description: "训练Pipeline Gate：数据→训练→验证→Sanity→发布"
+        layer_contracts:
+          - CTR-P1-004
+          - CTR-P1-005
+        status: Draft
+
+      - domain_contract_id: ME-CT-CHECKPOINT-001
+        direction: "L11→L13"
+        description: "检查点导入（MODEL_CHECKPOINTS→AB/Backtest Experiment）"
+        layer_contracts:
+          - CTR-011
+        status: Draft
+
+      - domain_contract_id: ME-CT-AB-001
+        direction: "L13 internal"
+        description: "AB实验全流程：config→traffic_split→gate[eval]→analyst→deploy/rollback"
+        layer_contracts:
+          - CTR-009
+        status: Draft
+
+      - domain_contract_id: ME-CT-BACKTEST-001
+        direction: "L13 internal"
+        description: "回测实验：ckpt→historical→PnL→Attribution→Report"
+        layer_contracts:
+          - CTR-010
+          - CTR-P1-014
+        status: Draft
+
+      - domain_contract_id: ME-CT-SHADOW-001
+        direction: "L13"
+        description: "Shadow Mode：旁路预测→threshold→divergence alert→正式切流"
+        layer_contracts:
+          - CTR-009
+        status: Draft
+
+layer_contracts:
+  - contract_id: CTR-001
+    layer: L00
+    role: producer
+    description: "NormalizedMarketData → L02, L03, L09"
+    domain_mapping: AS-CT-DATA-001
+
+  - contract_id: CTR-TRACE-001
+    layer: L00
+    role: producer
+    description: "TraceContext 链头"
+    domain_mapping: null
+
+  - contract_id: CTR-004
+    layer: L05
+    role: producer
+    description: "Order → L06"
+    domain_mapping: null
+
+  - contract_id: CTR-005
+    layer: L06
+    role: producer
+    description: "Fill → L07"
+    domain_mapping: null
+
+  - contract_id: CTR-006
+    layer: L06
+    role: producer
+    description: "PositionSnapshot → L04, L07, L11"
+    domain_mapping: null
+
+  - contract_id: CTR-008
+    layer: L03
+    role: producer
+    description: "SignalQualityMetrics → L04, L08"
+    domain_mapping: AS-CT-SIGNAL-001
+
+  - contract_id: CTR-009
+    layer: L13
+    role: producer
+    description: "ExperimentConfig → L11 ML Platform"
+    domain_mapping: ME-CT-AB-001
+
+  - contract_id: CTR-010
+    layer: L13
+    role: producer
+    description: "ExperimentMetric → L09 Research"
+    domain_mapping: ME-CT-BACKTEST-001
+
+  - contract_id: CTR-011
+    layer: L13
+    role: consumer
+    description: "ModelCheckpoint ← L11 ML Platform"
+    domain_mapping: ME-CT-CHECKPOINT-001
+
+  - contract_id: CTR-012
+    layer: L13
+    role: producer
+    description: "ExperimentArtifact → INF-012 Database"
+    domain_mapping: null
+
+  - contract_id: CTR-P1-003
+    layer: L03
+    role: producer
+    description: "CapitalAllocationResult → L05"
+    domain_mapping: null
+
+  - contract_id: CTR-P1-004
+    layer: L11
+    role: producer
+    description: "ModelServingRequest → L03, L05"
+    domain_mapping: ME-CT-TRAIN-001
+
+  - contract_id: CTR-P1-005
+    layer: L11
+    role: producer
+    description: "ModelServingResponse → 推理响应"
+    domain_mapping: ME-CT-TRAIN-001
+
+  - contract_id: CTR-P1-006
+    layer: L05
+    role: producer
+    description: "StrategyLifecycleEvent → L07, L10"
+    domain_mapping: null
+
+  - contract_id: CTR-P1-009
+    layer: L07
+    role: producer
+    description: "PerformanceAttributionReport → L08, L10"
+    domain_mapping: null
+
+  - contract_id: CTR-P1-012
+    layer: L10
+    role: both
+    description: "ComplianceRule → L04, L06, L10"
+    domain_mapping: null
+
+  - contract_id: CTR-P1-014
+    layer: L13
+    role: producer
+    description: "ExperimentResult → L09, L11"
+    domain_mapping: ME-CT-BACKTEST-001
+
+  - contract_id: CTR-P1-015
+    layer: L03
+    role: producer
+    description: "SynthesizedSignal → L04, L05"
+    domain_mapping: AS-CT-FACTOR-001
+
+  - contract_id: CTR-ERR-003
+    layer: L03
+    role: producer
+    description: "SignalDegradationWarning → L04, L05"
+    domain_mapping: null
+
+  - contract_id: EXT-DASHBOARD-FLE-001
+    layer: L08
+    role: consumer
+    description: "消费 FLE fitness Facade"
+    domain_mapping: null

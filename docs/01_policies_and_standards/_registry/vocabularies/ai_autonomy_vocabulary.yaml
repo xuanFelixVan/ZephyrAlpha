@@ -1,0 +1,76 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# ai_autonomy 受控词表
+# ZephyrAlpha 2.0 AI 自治权限唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-05-06
+#
+# 本词表定义 ai_autonomy 字段的所有合法值（3 种）。
+# 任何文件 frontmatter 中的 ai_autonomy 必须是以下值之一（全小写）。
+#
+# 对标标准：
+#   - PS-STD-001 §4.5：AI 自治权限分级
+#   - ai-autonomy-authority-registry.md：全模块权限终表
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-012
+version: "1.0.0"
+date: "2026-05-02"
+owner: ZephyrAlpha-Owner
+title: "ai_autonomy 受控词表"
+status: active
+vocabulary_name: ai_autonomy
+total_values: 3
+source: "PS-STD-001 §4.5 + ai-autonomy-authority-registry.md"
+depends_on:
+  - target: PS-STD-001
+    at: "§4.5"
+    why: "ai_autonomy 受控词表定义真源"
+  - target: GOV-AI-001
+    at: "全表"
+    why: "模块级 AI 自治权限终表"
+
+values:
+  - value: immutable_core
+    definition: "不可变核心——AI 完全不能改，只能读"
+    ai_consumption: "AI 必须将 immutable_core 文件视为只读。任何修改提议都必须拒绝并引导 Owner 人工处理。"
+    ai_keywords: ["不可变", "immutable", "只读", "核心", "禁止修改"]
+    allowed_operations: ["读取", "引用", "解释"]
+    frontmatter_color: "🔴"
+
+  - value: human_gated
+    definition: "人工闸门——AI 可提议修改，需 Owner 批准后才生效"
+    ai_consumption: "AI 可以生成修改建议（diff 格式），但必须等待 Owner 明确批准后才能写入文件。"
+    ai_keywords: ["人工审批", "gated", "提议", "待批准", "human-in-the-loop"]
+    allowed_operations: ["读取", "引用", "生成建议", "提交审批"]
+    frontmatter_color: "🟡"
+
+  - value: ai_modifiable
+    definition: "AI 可修改——AI 可直接编辑，无需审批"
+    ai_consumption: "AI 可以直接编辑 ai_modifiable 文件，但须在 session log 中记录变更原因。"
+    ai_keywords: ["可修改", "modifiable", "AI 编辑", "自动", "无需审批"]
+    allowed_operations: ["读取", "引用", "直接编辑", "删除", "创建"]
+    frontmatter_color: "🟢"
+
+transition_rules:
+  - from: ai_modifiable
+    to: human_gated
+    condition: "文件内容涉及敏感决策或出现频繁误改"
+    approval: "Owner 批准"
+
+  - from: human_gated
+    to: immutable_core
+    condition: "文件成熟稳定，成为系统基石"
+    approval: "Owner 批准 + KB 决策记录"
+
+  - from: immutable_core
+    to: human_gated
+    condition: "发现错误需修正（极少发生）"
+    approval: "Owner 批准 + KB 决策记录 + 双签"

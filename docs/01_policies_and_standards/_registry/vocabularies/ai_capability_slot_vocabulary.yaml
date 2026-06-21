@@ -1,0 +1,55 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# ai_capability_slot 受控词表
+# ZephyrAlpha 2.0 AI 能力槽位唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-05-06
+#
+# 本词表定义 ai_capability_slot 字段的所有合法值（4 种）。
+# 用于标注模块的 AI 能力槽位状态。
+#
+# 对标标准：
+#   - PS-STD-001 §10.7：AI 能力槽位
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-020
+version: "1.0.0"
+date: "2026-05-02"
+owner: ZephyrAlpha-Owner
+title: "ai_capability_slot 受控词表"
+status: active
+vocabulary_name: ai_capability_slot
+total_values: 4
+source: "PS-STD-001 §10.7"
+depends_on:
+  - target: PS-STD-001
+    at: "§10.7"
+    why: "ai_capability_slot 受控词表定义真源"
+
+values:
+  - value: planned
+    definition: "已规划——尚未实现"
+    ai_consumption: "AI 能力已列入路线图，但尚未开发。AI 不应尝试使用 planned 能力槽位。"
+    ai_keywords: ["已规划", "planned", "路线图", "待开发"]
+
+  - value: reserved
+    definition: "已预留——架构中留位，待开发"
+    ai_consumption: "架构已为该能力预留接口，但实现尚未完成。AI 可引用接口定义但不可依赖实现。"
+    ai_keywords: ["已预留", "reserved", "接口", "占位"]
+
+  - value: active
+    definition: "已激活——当前在用"
+    ai_consumption: "AI 能力已完全实现并可正常使用。AI 可以依赖 active 能力槽位执行任务。"
+    ai_keywords: ["已激活", "active", "可用", "运行中"]
+
+  - value: none
+    definition: "无——不需要 AI 能力槽位"
+    ai_consumption: "该模块不需要 AI 能力。AI 不应尝试为该模块分配 AI 能力。"
+    ai_keywords: ["无", "none", "不需要", "非 AI"]

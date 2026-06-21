@@ -1,0 +1,301 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# ============================================================================
+# ZephyrAlpha AI 风险登记簿（AI Risk Register）— 唯一真源
+# ============================================================================
+# 版本: 1.0.1 | 创建: 2026-05-02 | 更新: 2026-05-06 | owner: ZephyrAlpha-Owner
+#
+# module_id: PS-REG-009
+# doc_type: register
+#
+# 对标: NIST AI RMF 1.0 / ISO 42001 §8 / OWASP LLM Top 10
+# ============================================================================
+
+schema_version: "1.0.0"
+doc_type: register
+title: "AI 风险登记簿"
+version: "1.0.1"
+status: active
+created: "2026-05-02"
+last_updated: "2026-05-06"
+ai_autonomy: human_gated
+ttl: permanent
+total_risks: 11
+depends_on:
+  - target: PS-STD-001
+    at: "§3.2.1"
+    why: "doc_type 受控词表与 register 合法字段"
+
+_schema:
+  risk_categories:
+    - llm_output
+    - prompt_injection
+    - data_leakage
+    - model_degradation
+    - governance
+    - supply_chain
+  probability_values:
+    - very_low
+    - low
+    - medium
+    - high
+    - very_high
+  impact_values:
+    - minimal
+    - moderate
+    - significant
+    - critical
+  mitigation_status:
+    - not_addressed
+    - partially_addressed
+    - addressed_with_manual
+    - addressed_with_auto
+
+risks:
+  - risk_id: "AI-RSK-001"
+    risk_name: "AI 幻觉输出 — 生成不可信路径 / 参数 / API"
+    category: llm_output
+    owasp_llm_id: "LLM-09"
+    description: "AI 生成文件路径指向不存在的目录、未登记的 module_id、虚构参数等。"
+    probability: high
+    impact: significant
+    risk_score: 16
+    trigger_condition: "每次 AI 执行文件写入或路径引用时"
+    blast_radius: module
+    mitigation:
+      - "pre-commit GATE-01~07 与架构 YAML 一致性"
+      - "validate_ssot.py"
+    mitigation_status: partially_addressed
+    related_gate: ["GATE-01", "GATE-02", "GATE-03", "GATE-16"]
+    related_kb_ref: null
+    last_reviewed: "2026-05-02"
+
+  - risk_id: "AI-RSK-002"
+    risk_name: "Indirect Prompt Injection — 文档内容被误读为指令"
+    category: prompt_injection
+    owasp_llm_id: "LLM-01"
+    description: "Markdown 中若嵌入类似系统提示的内容，可能被模型当作操作指令。"
+    probability: medium
+    impact: significant
+    risk_score: 12
+    trigger_condition: "读取外部或用户提供的 .md 时"
+    blast_radius: module
+    mitigation:
+      - "governance-automation 审查与 LSG（ADR-0020）"
+      - "ai-hallucination-self-check-policy"
+    mitigation_status: partially_addressed
+    related_gate: null
+    related_kb_ref: "ADR-0020"
+    last_reviewed: "2026-05-02"
+
+  - risk_id: "AI-RSK-003"
+    risk_name: "Context 窗口泄漏 — 敏感信息进入 token 窗口"
+    category: data_leakage
+    owasp_llm_id: "LLM-02"
+    description: "基线文档自动注入会话；若含敏感信息将反复进入上下文。"
+    probability: low
+    impact: critical
+    risk_score: 8
+    trigger_condition: "每次会话初始化加载 AGENTS.md 与规则树时"
+    blast_radius: system_wide
+    mitigation:
+      - "GOV-SEC-001 密钥不入库"
+      - "ContextBudgetTracker 监控"
+    mitigation_status: addressed_with_manual
+    related_gate: null
+    related_kb_ref: "GOV-SEC-001"
+    last_reviewed: "2026-05-02"
+
+  - risk_id: "AI-RSK-004"
+    risk_name: "多模型质量不一致 — 同一架构理解偏差"
+    category: model_degradation
+    owasp_llm_id: "LLM-04"
+    description: "多模型/多工具交替施工导致格式与依赖链漂移。"
+    probability: high
+    impact: moderate
+    risk_score: 12
+    trigger_condition: "切换模型或新 session 首次操作时"
+    blast_radius: module
+    mitigation:
+      - "Zero-Memory Restart 与统一 frontmatter"
+      - "Provenance 三件套"
+    mitigation_status: addressed_with_auto
+    related_gate: ["GATE-12", "GATE-15", "GATE-16"]
+    related_kb_ref: "ADR-0003"
+    last_reviewed: "2026-05-02"
+
+  - risk_id: "AI-RSK-005"
+    risk_name: "容量溢出 — 模块数增长导致全量校验超时"
+    category: governance
+    owasp_llm_id: "LLM-10"
+    description: "模块与登记表条目增长后，全量扫描可能超过 pre-commit 时限。"
+    probability: medium
+    impact: significant
+    risk_score: 12
+    trigger_condition: "模块总数超过阈值时的全量校验"
+    blast_radius: system_wide
+    mitigation:
+      - "capacity-assurance SLI/SLO"
+      - "增量校验（仅变更文件）"
+    mitigation_status: partially_addressed
+    related_gate: null
+    related_kb_ref: null
+    last_reviewed: "2026-05-02"
+
+  - risk_id: "AI-RSK-006"
+    risk_name: "登记表漂移 — registry 与物理文件不一致"
+    category: governance
+    owasp_llm_id: "LLM-05"
+    description: "手工维护 YAML 登记表时，文件变更未同步登记。"
+    probability: medium
+    impact: moderate
+    risk_score: 9
+    trigger_condition: "创建/修改/删除文件但未同步登记表时"
+    blast_radius: cross_module
+    mitigation:
+      - "validate_blueprint_registry.py"
+      - "run_all.py / pre-commit"
+    mitigation_status: partially_addressed
+    related_gate: null
+    related_kb_ref: null
+    last_reviewed: "2026-05-02"
+
+  - risk_id: "AI-RSK-007"
+    risk_name: "外部 AI API 不可用 — 供应商中断或限流"
+    category: supply_chain
+    owasp_llm_id: "LLM-03"
+    description: "依赖外部模型 API，单点故障或配额用尽会阻塞任务。"
+    probability: low
+    impact: significant
+    risk_score: 8
+    trigger_condition: "外部 API 返回 5xx/429 等"
+    blast_radius: system_wide
+    mitigation:
+      - "model-capability-contract.yaml 登记替代模型"
+      - "任务卡 model_selection_policy 多模型分工"
+    mitigation_status: addressed_with_manual
+    related_gate: null
+    related_kb_ref: null
+    last_reviewed: "2026-05-02"
+
+  - risk_id: "AI-RSK-008"
+    risk_name: "自审查门禁缺失 — 输出质量无自动守门"
+    category: governance
+    owasp_llm_id: "LLM-06"
+    description: "自审查流程若仅有设计无代码，则架构产出可能未经自动质检。"
+    probability: medium
+    impact: moderate
+    risk_score: 9
+    trigger_condition: "产出 blueprint 等文档但未跑门禁时"
+    blast_radius: module
+    mitigation:
+      - "governance-automation C1-C5 流水线"
+      - "GATE-12/15/16"
+    mitigation_status: not_addressed
+    related_gate: null
+    related_kb_ref: "MOD-INF-006 §4.3"
+    last_reviewed: "2026-05-02"
+
+  - risk_id: "AI-RSK-009"
+    risk_name: "系统提示泄露 — AI 基线规则被外部探知"
+    category: data_leakage
+    owasp_llm_id: "LLM-07"
+    description: "AGENTS.md 和规则树作为基线注入会话，若模型在输出中复述系统指令则泄露治理框架。"
+    probability: low
+    impact: significant
+    risk_score: 8
+    trigger_condition: "用户诱导模型输出系统提示内容时"
+    blast_radius: system_wide
+    mitigation:
+      - "GOV-SEC-001 系统提示分级"
+      - "output_filter 检测系统指令复述"
+    mitigation_status: not_addressed
+    related_gate: null
+    related_kb_ref: null
+    last_reviewed: "2026-05-06"
+
+  - risk_id: "AI-RSK-010"
+    risk_name: "向量嵌入弱点 — ChromaDB 检索被污染或绕过"
+    category: data_leakage
+    owasp_llm_id: "LLM-08"
+    description: "ChromaDB 向量库的嵌入可能被投毒（恶意文档注入相似向量）或被间接探询（通过相似度推断私有数据）。"
+    probability: low
+    impact: critical
+    risk_score: 8
+    trigger_condition: "向 ChromaDB 写入外部来源文档或执行相似度检索时"
+    blast_radius: cross_module
+    mitigation:
+      - "embedding_migrate.py 来源校验"
+      - "向量库访问权限隔离"
+    mitigation_status: not_addressed
+    related_gate: null
+    related_kb_ref: null
+    last_reviewed: "2026-05-06"
+
+  - risk_id: "AI-RSK-011"
+    risk_name: "不当输出处理 — AI 生成内容未经清洗直接写入"
+    category: llm_output
+    owasp_llm_id: "LLM-05"
+    description: "AI 生成的 YAML/Markdown/Python 可能包含幻觉路径、非法字符或安全漏洞，若未经门禁校验直接写入磁盘。"
+    probability: medium
+    impact: significant
+    risk_score: 12
+    trigger_condition: "AI 执行文件写入操作时"
+    blast_radius: module
+    mitigation:
+      - "pre-commit GATE-01~07"
+      - "validate_ssot.py"
+      - "ZeroResidueScanner (GATE-ZR)"
+    mitigation_status: partially_addressed
+    related_gate: ["GATE-01", "GATE-ZR"]
+    related_kb_ref: null
+    last_reviewed: "2026-05-06"
+
+heatmap:
+  critical_zone:
+    - {risk_id: AI-RSK-001, score: 16, label: "AI 幻觉输出"}
+  high_zone:
+    - {risk_id: AI-RSK-002, score: 12, label: "Prompt 注入"}
+    - {risk_id: AI-RSK-004, score: 12, label: "多模型不一致"}
+    - {risk_id: AI-RSK-005, score: 12, label: "容量溢出"}
+    - {risk_id: AI-RSK-011, score: 12, label: "不当输出处理"}
+  medium_zone:
+    - {risk_id: AI-RSK-003, score: 8, label: "Context 泄漏"}
+    - {risk_id: AI-RSK-006, score: 9, label: "登记表漂移"}
+    - {risk_id: AI-RSK-007, score: 8, label: "API 不可用"}
+    - {risk_id: AI-RSK-008, score: 9, label: "自审查缺失"}
+    - {risk_id: AI-RSK-009, score: 8, label: "系统提示泄露"}
+    - {risk_id: AI-RSK-010, score: 8, label: "向量嵌入弱点"}
+  low_zone: []
+
+summary:
+  total_risks: 11
+  by_category:
+    llm_output: 2
+    prompt_injection: 1
+    data_leakage: 3
+    model_degradation: 1
+    governance: 3
+    supply_chain: 1
+  by_mitigation_status:
+    not_addressed: 3
+    partially_addressed: 4
+    addressed_with_manual: 2
+    addressed_with_auto: 2
+  avg_risk_score: 10.75
+  max_risk_score: 16
+
+changelog:
+  - version: "1.0.1"
+    date: "2026-05-06"
+    changes:
+      - "AUDIT-03：修复 UTF-8/YAML 语法并重写受污损段落"
+  - version: "1.0.0"
+    date: "2026-05-02"
+    changes:
+      - "初始创建，登记 8 条 AI 特有风险"

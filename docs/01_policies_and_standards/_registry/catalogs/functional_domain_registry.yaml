@@ -1,0 +1,748 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+registry_id: REG-FUNC-DOMAIN-001
+name: 功能域注册表
+description: 模块/脚本功能域声明的唯一真源。创建新模块/脚本时SSoT门禁检查功能域重叠。
+owner: MOD-INF-037
+tier: tier_1_governance
+status: Active
+version: "0.1.0"
+created: "2026-05-16"
+last_updated: "2026-05-16"
+unique_key: [domain, subdomain]
+entry_schema:
+  domain: str
+  subdomain: str
+  ssot_module: str
+  ssot_path: str
+  covers: list[str]
+  aliases: list[str]
+  stability: str
+  ai_autonomy: str
+
+entries:
+  - domain: governance
+    subdomain: rule_enforcement
+    ssot_module: MOD-INF-007
+    ssot_path: src/zephyr/gates/
+    covers:
+      - 门禁引擎流程编排(GatePipeline/GateEngine)
+      - 准入门禁(MAD-001~004)
+      - 任务完成门禁合规检查
+      - 门禁完整性守卫(GateIntegrityGuard)
+      - 门禁模拟器(GateSimulator)
+      - 自适应阈值(AdaptiveThreshold)
+      - 门禁健康监控(GateHealth)
+      - 门禁覆盖(GateOverride)
+    aliases: [gate, 门禁, rule enforcement, compliance gate, admission control]
+    stability: stable
+    ai_autonomy: human_gated
+
+  - domain: governance
+    subdomain: script_governance
+    ssot_module: MOD-INF-005
+    ssot_path: src/zephyr/governance/
+    covers:
+      - Phase Manager阶段管理
+      - 脚本审计注册(audit_registration)
+      - 规则注册表同步(sync_rule_registry)
+      - AI代码标准(ai_code_standards)
+      - 反模式守卫(anti_pattern_guard)
+      - 依赖管理(dependency_manager)
+      - 会话生命周期(session_lifecycle)
+    aliases: [governance automation, 脚本治理, phase manager, 治理自动化]
+    stability: stable
+    ai_autonomy: ai_modifiable
+
+  - domain: governance
+    subdomain: drift_detection
+    ssot_module: MOD-INF-023
+    ssot_path: src/zephyr/behavioral_auditor/
+    covers:
+      - 39个漂移检测器注册与调度
+      - 基线管理(BaselineManager)
+      - 增量扫描(IncrementalScanner)
+      - 级联检测(CascadeDetector)
+      - 金丝雀控制器(CanaryController)
+      - 取证引擎(ForensicsEngine)
+      - Git二分定位(GitBisector)
+      - 漂移预算管理(DriftBudget)
+    aliases: [drift, 漂移, behavioral audit, 行为审计, drift detection, baseline]
+    stability: stable
+    ai_autonomy: human_gated
+
+  - domain: governance
+    subdomain: registry_management
+    ssot_module: MOD-INF-037
+    ssot_path: docs/01_policies_and_standards/_registry/
+    covers:
+      - 注册表总索引(registry-of-registries)
+      - 模块登记表(module-registry)
+      - 蓝图登记表(blueprint-registry)
+      - 跨模块依赖登记表
+      - Frontmatter字段登记表
+      - 注册表一致性校验
+    aliases: [registry, 注册表, registry governance, 登记表管理]
+    stability: stable
+    ai_autonomy: human_gated
+
+  - domain: governance
+    subdomain: orphan_judgment
+    ssot_module: MOD-INF-029
+    ssot_path: src/zephyr/orphan_judge/
+    covers:
+      - 孤儿文件检测(orphan_detector)
+      - 三步审判删除协议
+      - 逐行价值验证
+      - 注册表引用检查
+    aliases: [orphan, 孤儿, orphan judge, 孤儿审判, 孤儿检测]
+    stability: stable
+    ai_autonomy: human_gated
+
+  - domain: governance
+    subdomain: audit_orchestration
+    ssot_module: MOD-INF-027
+    ssot_path: src/zephyr/audit_orchestrator/
+    covers:
+      - 审计管线编排
+      - 多维度审计调度
+      - 审计结果聚合
+    aliases: [audit orchestration, 审计编排, audit orchestrator]
+    stability: evolving
+    ai_autonomy: ai_modifiable
+
+  - domain: governance
+    subdomain: semantic_audit
+    ssot_module: MOD-INF-028
+    ssot_path: src/zephyr/semantic_auditor/
+    covers:
+      - 语义一致性审计(spec_auditor)
+      - 供应链审计(supply_chain)
+      - 隐私审计(privacy)
+      - KB门禁(kb_gate)
+    aliases: [semantic audit, 语义审计, semantic auditor, 语义一致性]
+    stability: stable
+    ai_autonomy: human_gated
+
+  - domain: security
+    subdomain: access_control
+    ssot_module: MOD-INF-018
+    ssot_path: src/zephyr/agent_rbac/
+    covers:
+      - RBAC权限守卫(PermissionGuard/rbac_guard)
+      - ABAC细粒度控制(abac_guard)
+      - 身份注册与验证(identity)
+      - Kill Switch三级开关
+      - 不可变核心守卫(immutable_core)
+      - 路径守卫(path_guard)
+      - 输入/输出守卫(input_guard/output_guard)
+      - TOCTOU防护(toctou_guard)
+      - 密钥层级(key_hierarchy)
+      - 55模块完整性校验
+    aliases: [rbac, 权限, access control, 访问控制, permission, agent rbac]
+    stability: stable
+    ai_autonomy: immutable_core
+
+  - domain: security
+    subdomain: llm_defense
+    ssot_module: MOD-INF-014
+    ssot_path: src/zephyr/llm_security/
+    covers:
+      - L0供应链安全(模型验证/依赖扫描)
+      - L1输入防护(注入检测/越狱检测/编码逃逸)
+      - L2 Prompt保护(模板/防泄露/话题边界)
+      - L3输出安全(Schema验证/沙箱/PII脱敏/幻觉检测)
+      - L4 Agent安全(权限最小化/HITL/工具注入防护)
+      - L5资源保护(Token预算/速率限制/成本熔断)
+      - L6可观测性(安全日志/异常告警)
+      - L7持续验证(自动Red Team/安全回归)
+      - L8多Agent安全(权限继承/信任链)
+    aliases: [llm security, LLM安全, LSG, llm defense, 九层防御, security gateway]
+    stability: stable
+    ai_autonomy: immutable_core
+
+  - domain: security
+    subdomain: adversarial_validation
+    ssot_module: MOD-INF-030
+    ssot_path: src/zephyr/red_blue_validator/
+    covers:
+      - 红蓝对抗验证
+      - 安全回归测试
+      - 对抗样本检测
+      - 防御度量评估
+    aliases: [red blue, 红蓝, adversarial, 对抗验证, red team]
+    stability: stable
+    ai_autonomy: human_gated
+
+  - domain: security
+    subdomain: data_protection
+    ssot_module: MOD-INF-012
+    ssot_path: src/zephyr/db/
+    covers:
+      - 原子事务管理(ATM两阶段提交)
+      - 数据库连接池与健康检查
+      - 自动备份与WAL checkpoint
+      - 查询性能监控(P50/P95/P99)
+      - 审计视图与合规报告
+    aliases: [database, 数据库, data protection, 数据保护, SQLite, DuckDB]
+    stability: stable
+    ai_autonomy: human_gated
+
+  - domain: orchestration
+    subdomain: pipeline_routing
+    ssot_module: MOD-INF-009
+    ssot_path: src/zephyr/pipeline/
+    covers:
+      - M1-M11双管线路由
+      - 层路由器(layer_router)
+      - 背压管理(backpressure_manager)
+      - 死信队列(dead_letter_queue)
+      - 成本追踪(cost_tracker)
+      - LLM网关(llm_gateway)
+      - 模型路由(model_router)
+      - 抢占管理(preemption_manager)
+    aliases: [pipeline, 管线, pipeline routing, 管线路由, M1-M11]
+    stability: evolving
+    ai_autonomy: ai_modifiable
+
+  - domain: orchestration
+    subdomain: agent_lifecycle
+    ssot_module: MOD-INF-019
+    ssot_path: src/zephyr/agent_spec/
+    covers:
+      - Skill渐进披露(L0永久/L1触发/L2组合/L3按需)
+      - Skill发现与路由(skill_discovery/skill_router)
+      - Skill执行器(skill_executor)
+      - Skill安全护栏(skill_guardrails)
+      - Skill遥测(skill_telemetry)
+      - 触发路由(trigger_router)
+      - IDE观察者(ide_watcher)
+    aliases: [agent spec, Skill, 技能, agent lifecycle, Agent生命周期]
+    stability: stable
+    ai_autonomy: ai_modifiable
+
+  - domain: orchestration
+    subdomain: agent_communication
+    ssot_module: MOD-INF-025
+    ssot_path: src/zephyr/a2a/
+    covers:
+      - A2A Card注册与发现(card_registry)
+      - Agent间消息传递(A2AMessage)
+      - 冲突检测(ConflictDetector)
+      - 仲裁器(Arbitrator)
+      - 治理适配器(governance_adapter)
+      - 四级约束委托
+    aliases: [a2a, Agent通信, agent communication, agent-to-agent, 冲突解决]
+    stability: evolving
+    ai_autonomy: ai_modifiable
+
+  - domain: orchestration
+    subdomain: runtime_core
+    ssot_module: MOD-INF-035
+    ssot_path: src/zephyr/runtime/
+    covers:
+      - 三层运行时编排(L1 Trae/L2 Local/L3 API)
+      - 节律调度(circadian_scheduler)
+      - 健康监控(health_monitor)
+      - 工作编排(work_orchestrator/work_dag)
+      - 自动接入(auto_integrator)
+      - 孤儿检测(orphan_detector)
+      - 夜班队列(night_shift_queue)
+      - 能力注册(capability_registry)
+      - AI审计日志(ai_audit_logger)
+    aliases: [auto runtime, 自动运行时, runtime core, 运行时核心, 系统大脑]
+    stability: stable
+    ai_autonomy: ai_modifiable
+
+  - domain: orchestration
+    subdomain: context_management
+    ssot_module: MOD-INF-008
+    ssot_path: src/zephyr/context_engine/
+    covers:
+      - 上下文预算管理(context_budget/token_budget)
+      - 文档压缩(doc_compressor)
+      - 意图解析(intent_parser)
+      - 记忆银行(memory_bank)
+      - 模式管理(mode_manager)
+      - 向量桥接(vector_bridge)
+      - 自诊断(self_diagnosis)
+      - 影子金丝雀(shadow_canary)
+    aliases: [context engine, 上下文引擎, context management, 上下文管理]
+    stability: evolving
+    ai_autonomy: ai_modifiable
+
+  - domain: resilience
+    subdomain: circuit_breaker
+    ssot_module: MOD-INF-016
+    ssot_path: src/zephyr/shared/
+    covers:
+      - 熔断器(CircuitBreaker/CircuitState)
+      - 异步重试(async_retry)
+      - 降级链(FallbackChain)
+      - 限流器(limiter)
+      - 幂等性(idempotency)
+      - 锁(lock)
+      - 观察者(observer)
+      - 死信队列(dlq)
+    aliases: [circuit breaker, 熔断, resilience, 韧性, fallback, 降级, retry, 重试]
+    stability: stable
+    ai_autonomy: ai_modifiable
+
+  - domain: resilience
+    subdomain: rollback
+    ssot_module: MOD-INF-021
+    ssot_path: src/zephyr/rollback/
+    covers:
+      - 双轨Checkpoint(git commit + SQLite JSONL dump)
+      - 四级回滚(full_revert/partial_revert/discard/hard_reset)
+      - 自动回滚触发器(auto_guard后验信号)
+      - 回滚验证器(G0门禁 + DB一致性自愈)
+      - Forward-Fix决策器
+      - 三级Kill Switch(L1 Session/L2 Skill/L3 Global)
+      - 回滚演练调度器(DiRT drill + 混沌注入)
+      - 回滚模拟器(rollback_simulator)
+    aliases: [rollback, 回滚, 撤销, checkpoint, forward fix, kill switch]
+    stability: stable
+    ai_autonomy: human_gated
+
+  - domain: resilience
+    subdomain: budget_enforcement
+    ssot_module: MOD-INF-024
+    ssot_path: src/zephyr/budget_enforcer/
+    covers:
+      - Token/Cost/Time三维预算
+      - 预算引擎(budget_engine)
+      - 模型路由(model_router)
+      - IPI防御(ipi_defense)
+      - 螺旋早期预警(spiral_ews)
+      - 超时守卫(timeout_guard)
+      - 定价同步(pricing_sync)
+      - RBAC桥接(rbac_bridge)
+    aliases: [budget, 预算, budget enforcer, 预算执行, cost, token budget]
+    stability: evolving
+    ai_autonomy: ai_modifiable
+
+  - domain: resilience
+    subdomain: escalation
+    ssot_module: MOD-INF-022
+    ssot_path: src/zephyr/escalation_engine/
+    covers:
+      - 规则驱动升级(EscalationEngine)
+      - 自动委托(DelegationEngine/DelegationStrategy)
+      - 经济护栏(EconomicGuard)
+      - 熔断保护(CircuitBreaker)
+      - 升级疲劳管理(escalation_fatigue_manager)
+      - 升级循环检测(escalation_loop_detector)
+      - 死锁检测(deadlock_detector)
+      - 最后手段看门狗(last_resort_watchdog)
+    aliases: [escalation, 升级, escalation protocol, 委托, delegation, 经济护栏]
+    stability: stable
+    ai_autonomy: human_gated
+
+  - domain: observability
+    subdomain: audit_trail
+    ssot_module: MOD-INF-020
+    ssot_path: src/zephyr/audit_trail/
+    covers:
+      - Merkle小时级完整性(merkle_hourly)
+      - 审计日志写入(writer)
+      - 日志轮转(log_rotation)
+      - 分层存储(tiered_storage)
+      - 隐私保护(privacy)
+      - 信任引擎(trust_engine)
+      - 证据包(evidence_pack)
+      - 重放引擎(replay_engine)
+      - Agent签名(agent_signer)
+      - 异常检测(anomaly)
+    aliases: [audit trail, 审计链, audit log, 审计日志, merkle, 信任链]
+    stability: stable
+    ai_autonomy: immutable_core
+
+  - domain: observability
+    subdomain: asset_inventory
+    ssot_module: MOD-INF-026
+    ssot_path: src/zephyr/asset_inventory/
+    covers:
+      - 资产扫描器(scanner)
+      - 资产分类器(classifier)
+      - 依赖分析(dependency)
+      - 生命周期管理(lifecycle)
+      - 信任锚(trust_anchor)
+      - 资产对账(reconciler)
+      - 统一资产索引(unified_asset_index)
+    aliases: [asset inventory, 资产盘点, asset index, 资产索引, 资产]
+    stability: evolving
+    ai_autonomy: ai_modifiable
+
+  - domain: observability
+    subdomain: telemetry
+    ssot_module: MOD-INF-015
+    ssot_path: src/zephyr/system_telemetry/
+    covers:
+      - 自动引导(auto_bootstrap)
+      - SessionContinuity恢复
+      - PhaseManager阶段追踪
+      - BlueprintMetrics度量
+      - 系统遥测采集
+    aliases: [telemetry, 遥测, system telemetry, 系统遥测, 监控]
+    stability: stable
+    ai_autonomy: ai_modifiable
+
+  - domain: observability
+    subdomain: feedback_loop
+    ssot_module: MOD-INF-010
+    ssot_path: src/zephyr/feedback_loop/
+    covers:
+      - 反馈收集器(collectors)
+      - 反馈检测器(detectors)
+      - 反馈诊断器(diagnosers)
+      - 反馈执行器(actors)
+      - SLO管理(slo_manager)
+      - 错误预算(error_budget)
+      - 评估线束(eval_harness)
+      - 自动进化(auto_evolution)
+    aliases: [feedback loop, 反馈环, feedback, 反馈, SLO, error budget]
+    stability: evolving
+    ai_autonomy: ai_modifiable
+
+  - domain: observability
+    subdomain: behavioral_monitoring
+    ssot_module: MOD-INF-033
+    ssot_path: src/zephyr/behavioral_auditor/
+    covers:
+      - 行为审计仪表板(dashboard)
+      - ROI引擎(roi_engine)
+      - 趋势分析(trend_analyzer)
+      - 相关性引擎(correlation_engine)
+      - 可信度引擎(credibility_engine)
+      - 跨模块评分(cross_module_score)
+      - 自检(self_check)
+    aliases: [behavioral audit, 行为监控, behavioral monitoring, ROI, 趋势]
+    stability: evolving
+    ai_autonomy: ai_modifiable
+
+  - domain: data
+    subdomain: capacity_assurance
+    ssot_module: MOD-INF-001
+    ssot_path: src/zephyr/capacity_assurance/
+    covers:
+      - 容量保证DDL/Schema
+      - 技术栈管理(tech_stack)
+      - 容量规划与预警
+    aliases: [capacity, 容量, capacity assurance, 容量保证, 容量规划]
+    stability: stable
+    ai_autonomy: ai_modifiable
+
+  - domain: data
+    subdomain: persistence
+    ssot_module: MOD-INF-012
+    ssot_path: src/zephyr/db/
+    covers:
+      - SQLite DDL Schema(v1-v8迁移)
+      - 任务卡CRUD仓库(task_repo)
+      - OLAP分析引擎(olap_engine)
+      - 原子事务管理器(ATM)
+      - 数据库管理器(连接池/健康检查/备份)
+      - 门禁仓库(gate_repo)
+      - 熔断器仓库(circuit_breaker_repo)
+    aliases: [database, 数据库, persistence, 持久化, SQLite, DuckDB, OLAP]
+    stability: stable
+    ai_autonomy: human_gated
+
+  - domain: data
+    subdomain: vector_storage
+    ssot_module: MOD-INF-011
+    ssot_path: src/zephyr/vector_memory/
+    covers:
+      - 八大Collection管理(decisions/code_context/lessons/knowledge/rules/blueprints/session_snapshots/execution_traces)
+      - 双嵌入维度(BGE-M3 1024d + bge-small-zh 512d)
+      - 统一向量记忆体API
+      - 可审计/可自愈/可持续存储
+    aliases: [vector memory, 向量记忆, VMS, embedding storage, 向量存储, vector]
+    stability: stable
+    ai_autonomy: ai_modifiable
+
+  - domain: data
+    subdomain: knowledge_management
+    ssot_module: MOD-KB-001
+    ssot_path: src/zephyr/kb/
+    covers:
+      - 知识管线(ingest/triage/extract/activate/analyze)
+      - ChromaDB初始化(chromadb_init)
+      - 知识仓库(kb_repo)
+      - 统一记忆API(unified_memory_api)
+      - 知识完整性(integrity)
+      - 重排序(reranker)
+      - 安全制动(safety_brake)
+      - VMS记忆后端(vms_memory_backend)
+    aliases: [knowledge base, 知识库, KB, knowledge management, 知识管理]
+    stability: stable
+    ai_autonomy: ai_modifiable
+
+  - domain: intelligence
+    subdomain: embedding
+    ssot_module: MOD-INF-011
+    ssot_path: src/zephyr/vector_memory/
+    covers:
+      - BGE-M3 ONNX 1024d主嵌入模型
+      - bge-small-zh-v1.5 512d轻量嵌入模型
+      - 语义分块(500-800tk)
+      - AST感知分块(func/class)
+      - 规则级整条存储
+    aliases: [embedding, 嵌入, BGE-M3, vector embedding, 向量嵌入]
+    stability: stable
+    ai_autonomy: ai_modifiable
+
+  - domain: intelligence
+    subdomain: model_evaluation
+    ssot_module: MOD-INF-036
+    ssot_path: src/zephyr/model_capability_exam/
+    covers:
+      - 模型能力考试
+      - 模型能力矩阵评估
+      - 模型选型决策支持
+    aliases: [model exam, 模型考试, model evaluation, 模型评估, model capability]
+    stability: evolving
+    ai_autonomy: human_gated
+
+  - domain: intelligence
+    subdomain: model_profiling
+    ssot_module: MOD-INF-034
+    ssot_path: src/zephyr/model_profiler/
+    covers:
+      - 模型性能画像
+      - 延迟/吞吐/成本度量
+      - 模型路由决策数据
+    aliases: [model profiler, 模型画像, model profiling, 性能画像]
+    stability: stable
+    ai_autonomy: ai_modifiable
+
+  - domain: intelligence
+    subdomain: context_optimization
+    ssot_module: MOD-INF-008
+    ssot_path: src/zephyr/context_engine/
+    covers:
+      - Token预算优化(token_budget)
+      - 文档压缩与裁剪(doc_compressor)
+      - Prompt注册表(prompt_registry)
+      - 架构上下文加载(architecture_context_loader)
+      - 系统快照(system_snapshot)
+    aliases: [context optimization, 上下文优化, token budget, prompt optimization]
+    stability: evolving
+    ai_autonomy: ai_modifiable
+
+  - domain: infrastructure
+    subdomain: shared_services
+    ssot_module: MOD-INF-016
+    ssot_path: src/zephyr/shared/
+    covers:
+      - 事件总线(event_bus)
+      - 生命周期钩子(lifecycle/hooks)
+      - 懒加载(lazy_loader)
+      - 配置加载(config/loader)
+      - 文件工具(io/file_utils)
+      - 序列化(io/serialization)
+      - 健康检查(observability/health)
+      - 指标(observability/metrics)
+      - 追踪(observability/tracing)
+      - 特性开关(flags)
+    aliases: [shared core, 共享核心, shared services, 共享服务, infrastructure core]
+    stability: stable
+    ai_autonomy: ai_modifiable
+
+  - domain: infrastructure
+    subdomain: resource_optimization
+    ssot_module: MOD-INF-032
+    ssot_path: src/zephyr/orchestrator/
+    covers:
+      - 资源优化引擎
+      - 容量预算(capacity_budget)
+      - 隔舱管理(bulkhead_manager)
+      - 金丝雀管理(canary_manager)
+      - 混沌引擎(chaos_engine)
+      - 降级级联(degrade_cascade)
+      - 滚动升级(rolling_upgrade)
+      - 稳定性守卫(stability_guard)
+    aliases: [resource optimization, 资源优化, bulkhead, 隔舱, chaos, 混沌]
+    stability: stable
+    ai_autonomy: ai_modifiable
+
+  - domain: infrastructure
+    subdomain: runtime_integration
+    ssot_module: MOD-INF-002
+    ssot_path: src/zephyr/l01_infrastructure/
+    covers:
+      - 运行时集成层
+      - L01基础设施配置
+      - 模块间集成桥接
+    aliases: [runtime integration, 运行时集成, L01, infrastructure layer]
+    stability: stable
+    ai_autonomy: ai_modifiable
+
+  - domain: infrastructure
+    subdomain: mcp_servers
+    ssot_module: MOD-INF-013
+    ssot_path: src/zephyr/mcp/
+    covers:
+      - 11个MCP服务端 + 1 Gateway
+      - 蓝图搜索(BlueprintSearchServer)
+      - 门禁引擎(GateEngineServer)
+      - 治理(GovernanceServer)
+      - 知识库(KnowledgeBaseServer)
+      - 向量记忆(VectorMemoryServer)
+      - 哨兵(SentinelServer)
+      - 任务管理(TaskManagerMCP)
+      - 遥测(TelemetryMCP)
+      - 文档守卫(DocGuardServer)
+    aliases: [mcp, MCP servers, MCP服务器, tool server, 工具服务器]
+    stability: evolving
+    ai_autonomy: ai_modifiable
+
+  - domain: infrastructure
+    subdomain: task_management
+    ssot_module: MOD-INF-006
+    ssot_path: src/zephyr/task_system/
+    covers:
+      - 任务卡CRUD
+      - 任务状态机(10状态)
+      - 任务生命周期管理
+    aliases: [task system, 任务系统, task management, 任务管理, task card]
+    stability: evolving
+    ai_autonomy: ai_modifiable
+
+  - domain: infrastructure
+    subdomain: lifecycle_management
+    ssot_module: MOD-INF-016
+    ssot_path: src/zephyr/lifecycle_manager/
+    covers:
+      - 模块生命周期钩子(hooks)
+      - 懒加载注册(lazy_loader)
+      - 模块启动/关闭编排
+    aliases: [lifecycle, 生命周期, lifecycle manager, 模块生命周期]
+    stability: stable
+    ai_autonomy: ai_modifiable
+
+  - domain: testing
+    subdomain: code_dedup
+    ssot_module: MOD-INF-017
+    ssot_path: src/zephyr/code_dedup_engine/
+    covers:
+      - 代码去重检测
+      - 重复造轮子识别
+      - 功能覆盖度分析
+    aliases: [code dedup, 代码去重, dedup, 去重, 重复检测]
+    stability: stable
+    ai_autonomy: ai_modifiable
+
+  - domain: testing
+    subdomain: adversarial_testing
+    ssot_module: MOD-INF-030
+    ssot_path: src/zephyr/red_blue_validator/
+    covers:
+      - 红蓝对抗测试
+      - 防御穿透验证
+      - 安全回归套件
+    aliases: [red blue, 红蓝对抗, adversarial testing, 对抗测试, penetration test]
+    stability: stable
+    ai_autonomy: human_gated
+
+  - domain: testing
+    subdomain: chaos_engineering
+    ssot_module: MOD-INF-023
+    ssot_path: src/zephyr/behavioral_auditor/
+    covers:
+      - 混沌注入(chaos_injector)
+      - 路径重命名注入
+      - YAML字段翻转注入
+      - 幻觉导入注入
+      - 混沌实验度量
+    aliases: [chaos, 混沌, chaos engineering, 混沌工程, chaos injection]
+    stability: evolving
+    ai_autonomy: human_gated
+
+  - domain: testing
+    subdomain: integration_verification
+    ssot_module: MOD-INF-007
+    ssot_path: src/zephyr/gates/
+    covers:
+      - 端到端走查(end_to_end_walkthrough)
+      - 集成测试运行器(integration_test_runner)
+      - KISS执行器(kiss_enforcer)
+      - 能力检查器(capability_checker)
+    aliases: [integration test, 集成测试, e2e, 端到端, verification]
+    stability: stable
+    ai_autonomy: ai_modifiable
+
+  - domain: automation
+    subdomain: auto_delegation
+    ssot_module: MOD-INF-022
+    ssot_path: src/zephyr/escalation_engine/
+    covers:
+      - 自动委托引擎(DelegationEngine)
+      - 四级约束委托策略
+      - 委托记录(DelegationRecord)
+      - 委托管理器(delegation_manager)
+      - 进程隔离(process_isolator)
+    aliases: [delegation, 委托, auto delegation, 自动委托, delegation engine]
+    stability: stable
+    ai_autonomy: human_gated
+
+  - domain: automation
+    subdomain: auto_fix
+    ssot_module: MOD-INF-031
+    ssot_path: src/zephyr/orphan_judge/
+    covers:
+      - 自动修复引擎
+      - 修复策略生成
+      - 修复验证与回滚
+      - 修复影响分析
+    aliases: [auto fix, 自动修复, auto repair, 自动修补, self-healing]
+    stability: evolving
+    ai_autonomy: human_gated
+
+  - domain: automation
+    subdomain: self_evolution
+    ssot_module: MOD-INF-010
+    ssot_path: src/zephyr/feedback_loop/
+    covers:
+      - 自动进化(auto_evolution)
+      - 决策引擎(decision_engine)
+      - 评估线束(eval_harness)
+      - 模板生成(template/generator)
+      - 自适应参数调优
+    aliases: [self evolution, 自进化, auto evolution, feedback evolution, 反馈进化]
+    stability: evolving
+    ai_autonomy: ai_modifiable
+
+  - domain: automation
+    subdomain: auto_onboarding
+    ssot_module: MOD-INF-035
+    ssot_path: src/zephyr/runtime/
+    covers:
+      - 模块自动接入(auto_integrator)
+      - 接入注册(integration_registry)
+      - 孤儿检测与自动修复(orphan_detector)
+      - 能力卡片注册(capability_card/capability_registry)
+      - 自动任务生成(auto_task_generator)
+    aliases: [auto onboarding, 自动接入, auto integrate, 自动集成, module onboarding]
+    stability: stable
+    ai_autonomy: ai_modifiable
+
+  - domain: automation
+    subdomain: guardrail_automation
+    ssot_module: MOD-INF-022
+    ssot_path: src/zephyr/escalation_engine/
+    covers:
+      - 经济护栏(EconomicGuard)
+      - 升级规则自动匹配(EscalationRule)
+      - 规则金丝雀(rule_canary_manager)
+      - 规则影子运行(rule_shadow_runner)
+      - 规则债务审计(rule_debt_auditor)
+    aliases: [guardrail, 护栏, economic guard, 经济护栏, rule automation, 规则自动化]
+    stability: stable
+    ai_autonomy: human_gated

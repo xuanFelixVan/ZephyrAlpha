@@ -1,0 +1,41 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-007
+version: "1.0.0"
+title: "language 受控词表"
+status: active
+owner: ZephyrAlpha-Owner
+vocabulary_name: language
+total_values: 3
+source: "PS-STD-001 §2.4 + architecture-contract.yaml frontmatter_schema"
+derived_from:
+  - source: "PS-STD-001"
+    relationship: "language 合法值定义"
+    at: "§2.4"
+depends_on:
+  - target: PS-STD-001
+    at: "§4.3"
+    why: "language 合法值规则定义真源"
+
+values:
+  - value: zh
+    definition: "中文"
+  - value: en
+    definition: "英文"
+  - value: zh_en
+    definition: "中英双语"
+
+ai_consumption:
+  when_to_use: "AI session 需要设置或验证 language 字段值时，必须从本词表选取合法值"
+  how_to_use: "读取 values[] 列表获取合法枚举值；读取 deprecated_values[] 获取已废弃值（禁止新使用）"
+  ai_keywords:
+    - "language"
+    - "语言"
+    - "language枚举"

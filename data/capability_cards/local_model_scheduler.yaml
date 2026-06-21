@@ -1,0 +1,37 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+# module_id: MOD-INF-035
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+capability_id: local-model-scheduler
+category: infra
+description: 24/7 background scheduling loop for L2 embedding and inference tasks
+examples: []
+input_schema:
+  properties:
+    capability:
+      type: string
+    payload:
+      type: object
+    task_id:
+      type: string
+  type: object
+name: Local Model Scheduler
+output_schema:
+  properties:
+    result:
+      type: object
+    status:
+      type: string
+  type: object
+priority: P0
+registered_at: '2026-05-08T20:14:39.619574'
+requires_human: false
+runtime_plane: hot
+status: ACTIVE
+tags:
+- scheduler
+- daemon
+- polling

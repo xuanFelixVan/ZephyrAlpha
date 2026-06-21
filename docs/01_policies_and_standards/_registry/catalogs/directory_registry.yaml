@@ -1,0 +1,1033 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# ============================================================================
+# ZephyrAlpha 项目目录登记表（Directory Registry）�?唯一真源
+# ============================================================================
+# 版本: 1.0.1 | 创建: 2026-05-02 | owner: ZephyrAlpha-Owner
+#
+# module_id: PS-REG-013
+# doc_type: register
+#
+# 对标: ITIL SACM CMDB CI �?Physical CIs（物理配置项——目�?文件夹属于基础设施拓扑�?
+#       + Linux FHS（Filesystem Hierarchy Standard——每个目录有明确职责声明�?
+#       + TOGAF §IV-D Architecture Repository（架构资产的有序存放结构�?
+#       + Kubernetes Namespace（每�?namespace 有唯一职责边界�?
+#
+# 用�? 登记 ZephyrAlpha 项目所有目录—�?
+#       路径 / 职责声明 / 父目�?/ 是否�?index.md / 关联�?module_id�?
+#       本登记表是目录结构的 SSoT（唯一真源），用于自动校验目录是否"有职无位"�?有位无责"�?
+#
+# 自动驾驶�? experimental 补齐—�?
+#   - validate_directory_registry.py: 扫描实际目录 �?比对登记�?�?报告漂移
+#   - 新增目录时，AI 必须先查登记表确认是否有冲突
+#
+# �?directory-structure-standard.md 的关�?
+#   - directory-structure-standard.md 定义目录创建和命名的规则
+#   - 本登记表登记每个目录的当前实际状�?
+# ============================================================================
+
+schema_version: "1.0.0"
+doc_type: register
+title: "项目目录登记�?
+version: "1.0.1"
+status: active
+created: "2026-05-02"
+last_updated: "2026-05-06"
+ai_autonomy: human_gated
+ttl: permanent
+total_registered: 84
+depends_on:
+  - target: GOV-DOC-004
+    at: "$"
+    why: "directory-structure-standard.md——目录创建和命名规则"
+  - target: PS-STD-001
+    at: "§3.2.1"
+    why: "doc_type 受控词表"
+  - target: ADR-0022
+    at: "$"
+    why: "双轨目录治理——Spine-and-Wings 范式，C轨业务分�?+ B轨平台能�?
+
+# ============================================================================
+# 目录登记说明
+#
+# 每个目录一条记�?
+#   path                相对�? 的路�?
+#   responsibility      职责声明（一句话说明本目录放什么）
+#   parent              父目录路�?
+#   has_index           是否�?index.md
+#   module_id           关联的治理模�?ID（如有）
+#   adr_ref             关联�?ADR（如有）
+#   track               C 轨（业务分层）或 B 轨（平台能力），�?ADR-0022
+#   status              目录状�? active / draft（空目录�? deprecated
+#   note                补充说明
+# ============================================================================
+
+directories:
+  # ========================================
+  # 顶层目录
+  # ========================================
+  - path: "config/"
+    responsibility: "运行时配置文件——压缩策�?/ 能力声明 / 触发路由"
+    parent: "/"
+    has_index: false
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: ""
+
+  - path: "data/"
+    responsibility: "项目运行时数据——SQLite 数据库等持久化存�?
+    parent: "/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0030"
+    track: B
+    status: active
+    note: "v2.0 新增——DB �?docs/09_audit/state/ 迁移至此"
+
+  - path: "docs/"
+    responsibility: "项目文档唯一真源——治理标�?/ 企业架构 / 模块蓝图 / 审计报告"
+    parent: "/"
+    has_index: true
+    module_id: DOC-ROOT
+    kb_ref: "ADR-0001"
+    track: C
+    status: active
+    note: "ADR-0001 确立本目录为唯一真源"
+
+  - path: "schemas/"
+    responsibility: "全局 JSON Schema——frontmatter 校验�?
+    parent: "/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0002"
+    track: B
+    status: active
+    note: "frontmatter-schema.json 的副本目�?
+
+  - path: "scripts/"
+    responsibility: "项目脚本系统——脚本系�?/ 治理脚本 / git hooks"
+    parent: "/"
+    has_index: true
+    module_id: MOD-INF-005
+    kb_ref: null
+    track: B
+    status: active
+    note: "顶层 __init__.py �?scripts/ 成为 Python �?
+
+  - path: "src/"
+    responsibility: "项目源代码—�?4 业务�?+ shared 横切�?+ 基础设施"
+    parent: "/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0009"
+    track: C
+    status: active
+    note: "ADR-0009: 14 业务�?+ shared = 15 物理子目�?
+
+  # ========================================
+  # config/ 子目�?
+  # ========================================
+  - path: "config/compression/"
+    responsibility: "文档压缩策略配置"
+    parent: "config/"
+    has_index: false
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: ""
+
+  # ========================================
+  # docs/ 子目录（一级）
+  # ========================================
+  - path: "docs/01_policies_and_standards/"
+    responsibility: "治理策略与标准——规则体�?/ 注册�?/ 生命周期"
+    parent: "docs/"
+    has_index: true
+    module_id: null
+    kb_ref: "ADR-0013"
+    track: C
+    status: active
+    note: "治理系统 SSoT 所在地"
+
+  - path: "docs/02_enterprise_architecture/"
+    responsibility: "企业架构——TOGAF 10 视图 + KB 决策记录 + 架构模型 + 蓝图设计"
+    parent: "docs/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: "�?target-architecture/ adr/"
+
+  - path: "docs/03_modules/"
+    responsibility: "模块蓝图与注册表——模块定�?/ 蓝图 / 施工计划"
+    parent: "docs/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: "�?blueprint-registry.yaml module-registry.yaml"
+
+  - path: "docs/03_modules/_b_track_interfaces/"
+    responsibility: "AI 工程接口文档—�? 大核心服�?+ 接口契约（原 07_ai_engineering/�?026-05-03 迁移�?
+    parent: "docs/03_modules/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: "v2.0.0 �?07_ai_engineering/ 迁移——蓝�?接口统一�?03_modules/ �?
+    kb_ref: "ADR-0015~0020"
+    last_updated: "2026-05-03"
+
+  - path: "docs/08_knowledge/"
+    responsibility: "KMS 知识条目存储——beta 落地"
+    parent: "docs/"
+    has_index: true
+    module_id: null
+    kb_ref: "ADR-0005"
+    track: B
+    status: active
+    note: "scaffold 为空目录，beta KMS 提取落盘"
+
+  - path: "docs/09_audit/"
+    responsibility: "审计报告与状态快�?
+    parent: "docs/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: "reports/ + findings/ + state/(deprecated)"
+
+  # ========================================
+  # docs/01_policies_and_standards/ 子目录（二级�?
+  # ========================================
+  - path: "docs/01_policies_and_standards/_registry/"
+    responsibility: "登记表系统——catalogs / vocabularies / schemas / contracts"
+    parent: "docs/01_policies_and_standards/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: "登记表集中存储目�?
+
+  - path: "docs/01_policies_and_standards/domains/"
+    responsibility: "业务域策略——按架构�?L00/L02/L04/L07 分组"
+    parent: "docs/01_policies_and_standards/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: "业务域治理策�?+ 操作手册"
+
+  - path: "docs/01_policies_and_standards/governance/"
+    responsibility: "跨域治理策略——ai/architecture/compliance/data/document/module/security/task"
+    parent: "docs/01_policies_and_standards/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: "7 个子�?
+
+  - path: "docs/01_policies_and_standards/meta/"
+    responsibility: "元层标准——规则生命周�?/ 分类仲裁 / 术语映射 / 行为边界"
+    parent: "docs/01_policies_and_standards/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: "12 个文件，含规则注册表"
+
+  - path: "docs/01_policies_and_standards/operational/"
+    responsibility: "操作手册——devops/migration/vibe_coding"
+    parent: "docs/01_policies_and_standards/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: "�?Vibe Coding 门禁清单和状态机"
+
+  - path: "docs/01_policies_and_standards/templates/"
+    responsibility: "文档模板——蓝�?/ 策略 / 标准 / runbook �?12 �?
+    parent: "docs/01_policies_and_standards/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: D
+    status: active
+    note: "12 个模板文�?
+
+  # ========================================
+  # _registry/ 子目�?
+  # ========================================
+  - path: "docs/01_policies_and_standards/_registry/catalogs/"
+    responsibility: "登记�?YAML 集中存储—�?4 �?register 类型 YAML 文件"
+    parent: "docs/01_policies_and_standards/_registry/"
+    has_index: true
+    module_id: "CAT-IDX-001"
+    kb_ref: null
+    track: B
+    status: active
+    note: "本登记表在此目录�?
+
+  - path: "docs/01_policies_and_standards/_registry/contracts/"
+    responsibility: "架构契约——跨层接�?/ 模块间协�?
+    parent: "docs/01_policies_and_standards/_registry/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: "architecture-contract.yaml"
+
+  - path: "docs/01_policies_and_standards/_registry/schemas/"
+    responsibility: "校验 Schema——frontmatter-schema.json（自动生成不可手写）"
+    parent: "docs/01_policies_and_standards/_registry/"
+    has_index: true
+    module_id: null
+    kb_ref: "ADR-0002"
+    track: B
+    status: active
+    note: ""
+
+  - path: "docs/01_policies_and_standards/_registry/vocabularies/"
+    responsibility: "受控词表——doc_type / status / rule_form 的合法枚举�?
+    parent: "docs/01_policies_and_standards/_registry/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: "3 个词汇表 YAML"
+
+  # ========================================
+  # domains/ 子目�?
+  # ========================================
+  - path: "docs/01_policies_and_standards/domains/L00_data_source/"
+    responsibility: "L00 数据源域——治理策�?+ 操作手册"
+    parent: "docs/01_policies_and_standards/domains/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: ""
+
+  - path: "docs/01_policies_and_standards/domains/L02_alpha_factor/"
+    responsibility: "L02 Alpha 因子域——治理策�?+ 操作手册"
+    parent: "docs/01_policies_and_standards/domains/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: ""
+
+  - path: "docs/01_policies_and_standards/domains/L04_risk_management/"
+    responsibility: "L04 风险管理域——治理策�?+ 操作手册"
+    parent: "docs/01_policies_and_standards/domains/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: ""
+
+  - path: "docs/01_policies_and_standards/domains/L07_post_trade_analytics/"
+    responsibility: "L07 盘后分析域——治理策�?+ 操作手册"
+    parent: "docs/01_policies_and_standards/domains/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: ""
+
+  # ========================================
+  # governance/ 子目�?
+  # ========================================
+  - path: "docs/01_policies_and_standards/governance/ai/"
+    responsibility: "AI 治理——自治权�?/ 幻觉检�?/ 预算 / 编辑器协�?/ 交接协议"
+    parent: "docs/01_policies_and_standards/governance/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: "9 个文�?
+
+  - path: "docs/01_policies_and_standards/governance/architecture/"
+    responsibility: "架构治理——评审门�?/ 门禁策略 / 版本�?/ Phase 转换 / KB 决策记录协议"
+    parent: "docs/01_policies_and_standards/governance/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: "6 个文�?
+
+  - path: "docs/01_policies_and_standards/governance/compliance/"
+    responsibility: "合规治理——审计追�?/ 监管分类"
+    parent: "docs/01_policies_and_standards/governance/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: "3 个文�?
+
+  - path: "docs/01_policies_and_standards/governance/data/"
+    responsibility: "数据治理——血�?/ 质量 / 保留"
+    parent: "docs/01_policies_and_standards/governance/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: "4 个文�?
+
+  - path: "docs/01_policies_and_standards/governance/document/"
+    responsibility: "文档治理——生命周�?/ 编码安全 / 命名 / 路径 / 目录结构"
+    parent: "docs/01_policies_and_standards/governance/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: "10 个文�?
+
+  - path: "docs/01_policies_and_standards/governance/module/"
+    responsibility: "模块治理——生命周�?/ 准入 / 注入规则 / 接口契约"
+    parent: "docs/01_policies_and_standards/governance/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: "8 个文�?
+
+  - path: "docs/01_policies_and_standards/governance/security/"
+    responsibility: "安全治理——访问控�?/ 密钥管理 / 安全事件响应"
+    parent: "docs/01_policies_and_standards/governance/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: "4 个文�?
+
+  - path: "docs/01_policies_and_standards/governance/task/"
+    responsibility: "任务治理——任务卡标准 / 关闭标准 / 生命周期"
+    parent: "docs/01_policies_and_standards/governance/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: "4 个文�?
+
+  # ========================================
+  # operational/ 子目�?
+  # ========================================
+  - path: "docs/01_policies_and_standards/operational/devops/"
+    responsibility: "DevOps 操作——架构变更剧�?
+    parent: "docs/01_policies_and_standards/operational/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: ""
+
+  - path: "docs/01_policies_and_standards/operational/migration/"
+    responsibility: "迁移操作——旧数据迁移手册"
+    parent: "docs/01_policies_and_standards/operational/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: ""
+
+  - path: "docs/01_policies_and_standards/operational/vibe_coding/"
+    responsibility: "Vibe Coding 操作——门禁清�?/ 状态机 / 事故应�?
+    parent: "docs/01_policies_and_standards/operational/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: "4 个文�?
+
+  # ========================================
+  # 02_enterprise_architecture/ 子目�?
+  # ========================================
+  - path: "docs/02_enterprise_architecture/adr/"
+    responsibility: "【registry 历史路径键】ADR 物理树已移除——权威真源为 KB:decisions（KB 决策记录�?
+    parent: "docs/02_enterprise_architecture/"
+    has_index: false
+    module_id: "ADR-INDEX"
+    kb_ref: null
+    track: C
+    status: deprecated
+    note: "禁止写入。脚本读到本条目不假定磁盘路径存在；新建决策仅经�?KB ingestion�?
+
+  - path: "docs/02_enterprise_architecture/designs/"
+    responsibility: "架构设计方案——买 vs 建决策框架等"
+    parent: "docs/02_enterprise_architecture/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: planned
+    note: "目录尚未创建"
+
+  - path: "docs/02_enterprise_architecture/target-architecture/"
+    responsibility: "目标架构——TOGAF 10 视图 + 架构模型 + 蓝图 + 图表"
+    parent: "docs/02_enterprise_architecture/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: "本项目最大的文档子树"
+
+  - path: "docs/02_enterprise_architecture/target-architecture/architecture-model/"
+    responsibility: "架构模型——layers/cross-cutting/events/contracts/domain/technology/scripts"
+    parent: "docs/02_enterprise_architecture/target-architecture/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: "module-id-registry.yaml 在此目录"
+
+  - path: "docs/02_enterprise_architecture/target-architecture/by-domain/"
+    responsibility: "按域视图——docs/frontend/scripts/src 四大域入�?
+    parent: "docs/02_enterprise_architecture/target-architecture/"
+    has_index: false
+    module_id: null
+    kb_ref: null
+    track: C
+    status: deprecated
+    note: "2026-05-02 清空：域视图内容已合并至父视�?(03-AA v2.2.0)，子目录�?index.md 已删�?
+
+  - path: "docs/02_enterprise_architecture/target-architecture/diagrams/"
+    responsibility: "Mermaid 架构图表——C4/L1-L3 + 运行时拓�?+ 序列�?29 �?
+    parent: "docs/02_enterprise_architecture/target-architecture/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: C
+    status: active
+    note: "29 �?.mmd 文件 + index.md"
+
+  # ========================================
+  # 03_modules/ 子目�?
+  # ========================================
+  - path: "docs/03_modules/l01_infrastructure/"
+    responsibility: "基础设施蓝图——脚本系�?/ 容量保障 / 运行时集�?/ 任务�?KMS / Vibe Coding 管线"
+    parent: "docs/03_modules/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: "5 个子模块"
+
+  - path: "docs/03_modules/l01_infrastructure/governance-automation/"
+    responsibility: "脚本系统蓝图——审计维�?/ 状态机 / 出厂流程"
+    parent: "docs/03_modules/l01_infrastructure/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: ""
+
+  - path: "docs/03_modules/l01_infrastructure/capacity-assurance/"
+    responsibility: "容量保障蓝图——脚本健康上�?/ 预算追踪"
+    parent: "docs/03_modules/l01_infrastructure/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: ""
+
+  - path: "docs/03_modules/l01_infrastructure/runtime-integration/"
+    responsibility: "运行时集成蓝图——事件总线 / 消息队列 / 配置中心"
+    parent: "docs/03_modules/l01_infrastructure/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: ""
+
+  - path: "docs/03_modules/l01_infrastructure/task-card-kms/"
+    responsibility: "任务�?KMS 蓝图——TaskCard 结构 / 状态机 / KMS 集成"
+    parent: "docs/03_modules/l01_infrastructure/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: ""
+
+  - path: "docs/03_modules/l01_infrastructure/vibe-coding-pipelines/"
+    responsibility: "Vibe Coding 管线蓝图——M1~M9 模块 / 管道阶段"
+    parent: "docs/03_modules/l01_infrastructure/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: ""
+
+  # ========================================
+  # 09_audit/ 子目�?
+  # ========================================
+  - path: "docs/09_audit/reports/"
+    responsibility: "审计报告——架构对�?/ SSoT 验证 / 月度报告"
+    parent: "docs/09_audit/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: ""
+
+  - path: "docs/09_audit/findings/"
+    responsibility: "安全与合�?Finding、事件初�?Markdown 落盘（对�?target-architecture/06-security-architecture.md�?
+    parent: "docs/09_audit/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: "命名约定�?findings/index.md；与 reports/ 区分"
+
+  - path: "docs/09_audit/STATE/"
+    responsibility: "审计状态快照——已废弃，DB 已迁移至 data/"
+    parent: "docs/09_audit/"
+    has_index: true
+    module_id: null
+    kb_ref: "ADR-0030"
+    track: B
+    status: deprecated
+    note: "v2.0——SQLite DB 迁移�?data/zalpha_metadata.db，此目录不再使用"
+
+  # ========================================
+  # scripts/ 子目�?
+  # ========================================
+  - path: "scripts/governance/"
+    responsibility: "治理/审计脚本总入口——run_all.py / script_manifest.yaml / status.py / check_registry_consistency.py + 40+ 维度脚本"
+    parent: "scripts/"
+    has_index: true
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: "40+ 脚本，按 d1~d7+d11 子目录分�?
+
+  - path: "scripts/governance/_shared/"
+    responsibility: "治理脚本共享模块——废弃路径黑名单�?
+    parent: "scripts/governance/"
+    has_index: false
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: ""
+
+  - path: "scripts/governance/d1_structure/"
+    responsibility: "维度1 结构检查——不可变核心 / 草稿归档 / CBG 重置"
+    parent: "scripts/governance/"
+    has_index: false
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: "3 个脚�?
+
+  - path: "scripts/governance/d2_links/"
+    responsibility: "维度2 链接检查——断链审�?
+    parent: "scripts/governance/"
+    has_index: false
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: "1 个脚�?
+
+  - path: "scripts/governance/d3_metadata/"
+    responsibility: "维度3 元数据检查——frontmatter / 命名 / 蓝图 / 登记�?
+    parent: "scripts/governance/"
+    has_index: false
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: "7 个脚�?
+
+  - path: "scripts/governance/d4_paths/"
+    responsibility: "维度4 路径检查——废墟引用检�?
+    parent: "scripts/governance/"
+    has_index: false
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: "1 个脚�?
+
+  - path: "scripts/governance/d5_architecture/"
+    responsibility: "维度5 架构检查——自治权�?/ 分层依赖 / SSoT / Session Log"
+    parent: "scripts/governance/"
+    has_index: false
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: "6 个脚�?
+
+  - path: "scripts/governance/d6_security/"
+    responsibility: "维度6 安全检查——密钥检�?/ Shell 安全 / 模糊�?
+    parent: "scripts/governance/"
+    has_index: false
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: "7 个脚�?
+
+  - path: "scripts/governance/d7_code/"
+    responsibility: "维度7 代码检查——FLE 导入验证"
+    parent: "scripts/governance/"
+    has_index: false
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: "1 个脚�?
+
+  - path: "scripts/governance/d11_compliance/"
+    responsibility: "维度11 合规检查——蓝图重�?/ 真源级联"
+    parent: "scripts/governance/"
+    has_index: false
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: "2 个脚�?
+
+  - path: "scripts/hooks/"
+    responsibility: "Git hooks——自动交接日志生�?
+    parent: "scripts/"
+    has_index: false
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: ""
+
+  # ========================================
+  # src/ 子目�?
+  # ========================================
+  - path: "src/zephyr/"
+    responsibility: "ZephyrAlpha 核心代码—�?4 业务�?+ shared �?+ 基础设施"
+    parent: "src/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0009"
+    track: C
+    status: active
+    note: ""
+
+  - path: "src/zephyr/script_system/"
+    responsibility: "脚本系统模型——Finding 数据结构"
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: ""
+
+  - path: "src/zephyr/config/"
+    responsibility: "运行时配置——embedding 模型注册�?
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: null
+    track: B
+    status: active
+    note: ""
+
+  - path: "src/zephyr/context_engine/"
+    responsibility: "上下文引擎——意图解�?/ 压缩 / 注入 / prompt 注册"
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0015"
+    track: B
+    status: active
+    note: "8 �?.py 文件"
+
+  - path: "src/zephyr/core/"
+    responsibility: "核心层——文件任务映�?/ 回滚 / 状态同�?/ Wave 生成"
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0038"
+    track: B
+    status: active
+    note: ""
+
+  - path: "src/zephyr/dashboard/"
+    responsibility: "Dashboard 应用——Streamlit 前端 + 组件"
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0007"
+    track: B
+    status: planned
+    note: "目录尚未创建"
+
+  - path: "src/zephyr/db/"
+    responsibility: "数据库层——ATM / TaskRepo / OLAP / SQLite Schema"
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0030"
+    track: B
+    status: active
+    note: ""
+
+  - path: "src/zephyr/feedback_loop/"
+    responsibility: "反馈闭环——自动进�?/ 评估 / 指标收集 / 适应�?
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0019"
+    track: B
+    status: active
+    note: ""
+
+  - path: "src/zephyr/gates/"
+    responsibility: "门禁引擎——G1~G5 策略 YAML + GateEngine + 断路�?
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "T-2-17"
+    track: B
+    status: active
+    note: "10 个文�?
+
+  - path: "src/zephyr/hooks/"
+    responsibility: "运行时钩子——SSoT Guard（pre-commit 校验�?
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0021"
+    track: B
+    status: active
+    note: ""
+
+  - path: "src/zephyr/kb/"
+    responsibility: "知识库——激�?分析/提取/Triage/向量初始化等 KMS 操作"
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0005"
+    track: B
+    status: active
+    note: "11 �?.py 文件"
+
+  - path: "src/zephyr/l00_data_source/"
+    responsibility: "L00 数据源层"
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0009"
+    track: C
+    status: active
+    note: ""
+
+  - path: "src/zephyr/l01_infrastructure/"
+    responsibility: "L01 基础设施�?
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0009"
+    track: C
+    status: active
+    note: ""
+
+  - path: "src/zephyr/l02_alpha_factor/"
+    responsibility: "L02 Alpha 因子�?
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0009"
+    track: C
+    status: active
+    note: ""
+
+  - path: "src/zephyr/l03_signal_generation/"
+    responsibility: "L03 信号生成�?
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0009"
+    track: C
+    status: active
+    note: ""
+
+  - path: "src/zephyr/l04_risk_management/"
+    responsibility: "L04 风险管理�?
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0009"
+    track: C
+    status: active
+    note: ""
+
+  - path: "src/zephyr/l05_portfolio_construction/"
+    responsibility: "L05 组合构建�?
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0009"
+    track: C
+    status: active
+    note: ""
+
+  - path: "src/zephyr/l06_trade_execution/"
+    responsibility: "L06 交易执行�?
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0009"
+    track: C
+    status: active
+    note: ""
+
+  - path: "src/zephyr/l07_post_trade_analytics/"
+    responsibility: "L07 盘后分析�?
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0009"
+    track: C
+    status: active
+    note: ""
+
+  - path: "src/zephyr/l08_human_ai_interface/"
+    responsibility: "L08 人机交互�?
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0009"
+    track: C
+    status: active
+    note: ""
+
+  - path: "src/zephyr/l09_research_innovation/"
+    responsibility: "L09 研究创新�?
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0009"
+    track: C
+    status: active
+    note: ""
+
+  - path: "src/zephyr/l10_compliance/"
+    responsibility: "L10 合规�?
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0009"
+    track: C
+    status: active
+    note: ""
+
+  - path: "src/zephyr/l11_ml_platform/"
+    responsibility: "L11 ML 平台�?
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0009"
+    track: C
+    status: active
+    note: ""
+
+  - path: "src/zephyr/system_telemetry/"
+    responsibility: "L12 系统遥测�?
+    parent: "src/zephyr/"
+    has_index: false
+    module_id: null
+    kb_ref: "ADR-0009"
+    track: C
+    status: active
+    note: ""
+
+  - path: "docs/03_modules/_cross_layer/resource-optimization-engine/"
+    responsibility: "资源优化引擎蓝图——MAPE-K 循环驱动的资源监控/分析/优化/自愈系统（MOD-INF-032）"
+    parent: "docs/03_modules/_cross_layer/"
+    has_index: false
+    module_id: "MOD-INF-032"
+    kb_ref: null
+    track: B
+    status: active
+    note: "v1.0.0 蓝图——跨层资源优化基础设施"
+
+# ============================================================================
+# 汇总统计
+# ============================================================================
+summary:
+  total_directories: 83
+  by_track:
+    C_track: 42
+    B_track: 38
+    D_track: 1
+    uncategorized: 2
+  by_top_level:
+    config: 1
+    docs: 45
+    schemas: 0
+    scripts: 12
+    src: 24
+  directories_with_index: 35
+  directories_without_index: 47
+  frozen_directories: 1
+
+# ============================================================================
+# 变更记录
+# ============================================================================
+changelog:
+  - version: "1.0.0"
+    date: "2026-05-02"
+    author: "AI-Trae-2026"
+    changes:
+      - "初始创建——登�?82 个目�?
+      - "按顶层分类：config(1) + docs(45) + scripts(12) + src(24)"
+      - "每个目录标注 track（C�?B�?D轨）——对�?ADR-0022 双轨治理"
+      - "�?KB 决策记录引用、index.md 存在性、目录状�?

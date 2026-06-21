@@ -1,0 +1,50 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# derived_from.relationship 受控词表
+# ZephyrAlpha 2.0 知识关系类型唯一真源
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-05-06
+#
+# 本词表定义 derived_from 数组中 relationship 子字段的所有合法值（3 种）。
+# 用于标注横向知识来源的关系类型。
+#
+# 对标标准：
+#   - PS-STD-001 §10.17：横向知识来源
+
+schema_version: "1.0.0"
+doc_type: vocabulary
+module_id: PS-VOC-023
+version: "1.0.0"
+date: "2026-05-02"
+owner: ZephyrAlpha-Owner
+title: "derived_from.relationship 受控词表"
+status: active
+vocabulary_name: derived_from.relationship
+total_values: 3
+source: "PS-STD-001 §10.17"
+depends_on:
+  - target: PS-STD-001
+    at: "§10.17"
+    why: "derived_from.relationship 受控词表定义真源"
+
+values:
+  - value: synthesized
+    definition: "综合——从此来源提炼/归纳"
+    ai_consumption: "AI 在引用 synthesized 来源时应说明提炼过程，并保留原始来源的引用。"
+    ai_keywords: ["综合", "synthesized", "提炼", "归纳", "总结"]
+
+  - value: referenced
+    definition: "引用——直接引用此来源"
+    ai_consumption: "AI 在引用 referenced 来源时应提供直接引用标记和页码/章节。"
+    ai_keywords: ["引用", "referenced", "直接引用", "来源"]
+
+  - value: transformed
+    definition: "转换——从此来源改写得来"
+    ai_consumption: "AI 在引用 transformed 来源时应说明改写内容和原因，并保留原始来源的引用。"
+    ai_keywords: ["转换", "transformed", "改写", "改编", "衍生"]

@@ -1,0 +1,422 @@
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# ============================================================================
+# ZephyrAlpha 登记表的登记表 — 跨登记表一致性契约（Registry of Registries SSoT）
+# ============================================================================
+# 版本: 1.1.0 | 创建: 2026-05-02 | 更新: 2026-05-03 | owner: ZephyrAlpha-Owner
+#
+# module_id: PS-REG-016
+# doc_type: contract
+
+# YAML canonical 字段（AI 零歧义消费——对标 §6.12 AI-First）
+schema_version: "1.1.0"
+module_id: PS-REG-016
+doc_type: contract
+title: "登记表的登记表 — 跨登记表一致性契约"
+status: active
+version: "1.2.0"
+date: "2026-05-16"
+summary: "管理项目中所有登记表的跨表共享字段一致性规则。声明每个共享字段的 SSoT 归属、一致性级别、校验触发时机。v1.1.0：从 meta/ 迁移至 _registry/catalogs/，增补 YAML canonical 字段。"
+#
+# 对标: ITIL SACM CMDB 关系类型（CI 之间的 exact/derived/independent）
+#       + ISO 42001 §10.3 持续性改进（跨登记表一致性是 AI 系统可靠性的基础）
+#       + AGENTS.md §6.4 最有利于 AI 施工的选择——声明式期望状态
+#       + GOV-MOD-007 多登记表同步标准 v2.0.0——MRS-001 定义了全部工件类型的操作登记矩阵
+#
+# 用途: 管理项目中所有登记表（registry YAML）的跨表共享字段一致性规则。
+#       声明每个共享字段的 SSoT 归属、一致性级别、校验触发时机。
+#       校验脚本 check_registry_consistency.py 读取本文件执行自动化比对。
+#       MRS-001 全量操作-登记矩阵在 GOV-MOD-007 §5.1——本文件只管共享字段比对。
+#
+# 注意: 本文件仅覆盖共享字段一致性（version/module_id/layer/status/priority/generation）。
+#       创建工件时的全量登记目标清单见 GOV-MOD-007 MRS-001 矩阵。
+#       registry-master-index.yaml 按「脚本自动扫描 `_registry/catalogs/*.yaml`」生成 `total_registries`（数以该字段为准，勿写死）。
+#
+# AI 使用方式:
+#   1. 读本文件 → 了解项目中有哪些登记表、各自管什么字段
+#   2. 读 cross_registry_rules → 了解哪些字段跨表必须一致、以谁为准
+#   3. 修改任何登记表的共享字段后 → 运行 check_registry_consistency.py 验证
+# ============================================================================
+
+_schema:
+  description: "登记表集合的字段定义和受控词表"
+
+  # ---- 一致性级别 ----
+  consistency_levels:
+    - id: "exact"
+      description: "强制完全一致——所有来源的值必须完全相同。不一致 = 阻断级错误"
+      violation_severity: "CRITICAL"
+    - id: "derived"
+      description: "可推导——一个来源的值可由另一个来源推导（如 generation=1 当 version=1.x）。不一致 = 警告"
+      violation_severity: "MEDIUM"
+    - id: "independent"
+      description: "独立定义——各来源的值可以不同，无需比对"
+
+  # ---- 校验触发时机 ----
+  validation_triggers:
+    - id: "manual"
+      description: "手动运行 check_registry_consistency.py"
+    - id: "pre_commit"
+      description: "pre-commit 钩子自动触发（每次 git commit 前执行）"
+    - id: "scheduled"
+      description: "周度全量审计（Cron 定时任务）"
+
+  # ---- SSoT 源类型 ----
+  ssoT_source_types:
+    - id: "physical_blueprint_frontmatter"
+      description: "物理 blueprint.md 文件的 YAML frontmatter——version 等字段的第一手来源"
+    - id: "module_registry"
+      description: "module-registry.yaml 的 modules[] 条目——module_id、priority 等的登记源"
+    - id: "blueprint_registry"
+      description: "blueprint-registry.yaml 的 blueprints[] 条目——completeness_pct、generation 等的评估源"
+
+# ============================================================================
+# 登记表清单
+# ============================================================================
+registries:
+  - id: "REG-001"
+    name: "module-registry"
+    title: "模块登记表"
+    path: "docs/03_modules/module-registry.yaml"
+    version: "3.1.0"
+    description: "14 层全部模块的生命周期登记（蓝图→施工→交付三阶段）"
+    ssoT_for:
+      - "module_id"
+      - "name"
+      - "layer"
+      - "functional_domain"
+      - "priority"
+      - "construction_plan.status"
+      - "delivery.latest_version"
+      - "delivery.history"
+      - "dependencies"
+
+  - id: "REG-002"
+    name: "blueprint-registry"
+    title: "蓝图登记表"
+    path: "docs/03_modules/blueprint-registry.yaml"
+    version: "1.0.0"
+    description: "蓝图维度的深度评估（施工进度%、完整度%、代际、标的价值）"
+    ssoT_for:
+      - "completeness_pct"
+      - "completeness_breakdown"
+      - "generation"
+      - "construction_progress"
+      - "construction_detail"
+      - "purpose"
+      - "file_lines"
+
+  - id: "REG-003"
+    name: "rule-catalog"
+    title: "规则路径目录"
+    path: "docs/01_policies_and_standards/_registry/catalogs/rule-catalog.yaml"
+    version: "1.0.0"
+    description: "自动生成的规则文件路径目录（154 文件）"
+    ssoT_for:
+      - "file_path"
+      - "module_id"
+      - "doc_type"
+      - "status"
+
+  - id: "REG-004"
+    name: "frontmatter-field-registry"
+    title: "Frontmatter 字段登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.yaml"
+    version: "1.0.0"
+    description: "所有 frontmatter 字段的 SSoT 定义（字段名、类型、必填性、枚举值）"
+    ssoT_for:
+      - "field_name"
+      - "type"
+      - "required"
+      - "enum_values"
+      - "derived_from"
+
+  - id: "REG-005"
+    name: "directory-registry"
+    title: "目录登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/directory-registry.yaml"
+    version: "1.0.0"
+    description: "项目目录结构的 SSoT（路径、职责、状态）"
+    ssoT_for:
+      - "path"
+      - "responsibility"
+      - "status"
+
+  - id: "REG-006"
+    name: "gate-registry"
+    title: "门禁登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/gate-registry.yaml"
+    version: "1.0.0"
+    description: "25 个 pre-commit 门禁定义（入口脚本、触发条件、分类）"
+    ssoT_for:
+      - "gate_id"
+      - "entry"
+      - "files_trigger"
+      - "always_run"
+      - "category"
+
+  - id: "REG-007"
+    name: "ai-risk-register"
+    title: "AI 风险登记簿"
+    path: "docs/01_policies_and_standards/_registry/catalogs/ai-risk-register.yaml"
+    version: "1.0.1"
+    description: "8 条 AI 风险登记（概率、影响、缓解、OWASP 映射）"
+    ssoT_for:
+      - "risk_id"
+      - "probability"
+      - "impact"
+      - "risk_score"
+      - "owasp_llm_id"
+
+  - id: "REG-008"
+    name: "infrastructure-registry"
+    title: "基础设施登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.yaml"
+    version: "1.0.0"
+    description: "9 个基础设施组件登记（事件总线、消息队列、数据库等）"
+    ssoT_for:
+      - "infra_id"
+      - "component_type"
+      - "dependency_of"
+
+  - id: "REG-009"
+    name: "cross-module-dependency-registry"
+    title: "跨模块依赖登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml"
+    version: "1.0.2"
+    description: "模块间依赖关系登记（依赖方向、强度、契约锚点）"
+    ssoT_for:
+      - "dep_id"
+      - "source"
+      - "target"
+      - "strength"
+
+  - id: "REG-010"
+    name: "script-health-registry"
+    title: "脚本健康登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/script-health-registry.yaml"
+    version: "1.0.0"
+    description: "39 个治理脚本的健康登记（维度、入口、依赖）"
+    ssoT_for:
+      - "script_id"
+      - "dimension"
+      - "entry"
+
+  - id: "REG-011"
+    name: "ai-session-registry"
+    title: "AI 会话登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/ai-session-registry.yaml"
+    version: "1.0.0"
+    description: "AI 会话生命周期登记"
+    ssoT_for:
+      - "session_id"
+      - "model"
+      - "status"
+
+  - id: "REG-012"
+    name: "declarative-contract-tracker"
+    title: "声明式契约跟踪登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker.yaml"
+    version: "1.5.0"
+    description: "11 条声明式契约的跟踪（YAML 承诺→代码兑现）"
+    ssoT_for:
+      - "contract_id"
+      - "source"
+      - "promise"
+      - "status"
+
+  - id: "REG-013"
+    name: "document-metadata-index"
+    title: "文档元数据索引"
+    path: "docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml"
+    version: "1.0.0"
+    description: "154 个文档的元数据索引（自动生成）"
+    ssoT_for:
+      - "path"
+      - "module_id"
+      - "version"
+
+  - id: "REG-014"
+    name: "task-card-meta-registry"
+    title: "任务卡元数据登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.yaml"
+    version: "1.0.0"
+    description: "任务卡体系元层登记"
+    ssoT_for:
+      - "field_name"
+      - "schema_source"
+
+  - id: "REG-015"
+    name: "knowledge-article-registry"
+    title: "知识文章登记表"
+    path: "docs/01_policies_and_standards/_registry/catalogs/knowledge-article-registry.yaml"
+    version: "1.0.0"
+    description: "知识库文章登记"
+    ssoT_for:
+      - "article_id"
+      - "title"
+
+  - id: "REG-016"
+    name: "master-document-inventory"
+    title: "主文档清单"
+    path: "docs/01_policies_and_standards/_registry/catalogs/master-document-inventory.yaml"
+    version: "1.0.0"
+    description: "项目全部文档的清单索引"
+    ssoT_for:
+      - "document_id"
+      - "path"
+
+  - id: "REG-017"
+    name: "project-path-tree"
+    title: "物理路径树快照"
+    path: "docs/01_policies_and_standards/_registry/catalogs/project-path-tree.yaml"
+    version: "1.0.0"
+    description: "项目当前物理目录/文件结构快照，自动生成禁止手写"
+    ssoT_for:
+      - "physical_path"
+      - "directory_structure"
+
+  - id: "REG-018"
+    name: "path-ownership-map"
+    title: "路径归属声明"
+    path: "docs/03_modules/path-ownership-map.yaml"
+    version: "1.0.0"
+    description: "每个文件路径归哪个蓝图管辖的声明，路径冲突检测的 SSoT"
+    ssoT_for:
+      - "path_ownership"
+      - "blueprint_path_claim"
+
+# ============================================================================
+# 跨登记表一致性规则
+# ============================================================================
+cross_registry_rules:
+
+  # ---- CR-001: version 字段三方一致 ----
+  - rule_id: "CR-001"
+    title: "version 字段跨表一致性"
+    fields: ["version"]
+    sources:
+      - registry: "REG-001"
+        yaml_path: "modules[].blueprint.version"
+      - registry: "REG-002"
+        yaml_path: "blueprints[].version"
+      - source: "physical_blueprint"
+        file_pattern: "{module_path}/blueprint.md"
+        frontmatter_key: "version"
+    ssoT: "physical_blueprint"
+    ssoT_rationale: |
+      version 的第一手来源是蓝图作者写在 blueprint.md frontmatter 中的值。
+      登记表中的 version 是"抄录"而非"定义"——以物理文件为准。
+      对标 Kubernetes 声明式配置：资源版本定义在 manifest 自身，不在 etcd。
+    consistency: exact
+    violation_action: block
+
+  # ---- CR-002: module_id 跨表一致 ----
+  - rule_id: "CR-002"
+    title: "module_id 跨表一致性"
+    fields: ["module_id"]
+    sources:
+      - registry: "REG-001"
+        yaml_path: "modules[].module_id"
+      - registry: "REG-002"
+        yaml_path: "blueprints[].module_id"
+      - source: "physical_blueprint"
+        file_pattern: "{module_path}/blueprint.md"
+        frontmatter_key: "module_id"
+    ssoT: "REG-001"
+    ssoT_rationale: |
+      module_id 由 module-registry.yaml 首次分配并作为主键。
+      blueprint.md frontmatter 和 blueprint-registry.yaml 中的 module_id 必须与主键一致。
+    consistency: exact
+    violation_action: block
+
+  # ---- CR-003: layer 字段跨表一致 ----
+  - rule_id: "CR-003"
+    title: "layer 字段跨表一致性"
+    fields: ["layer"]
+    sources:
+      - registry: "REG-001"
+        yaml_path: "modules[].layer"
+      - registry: "REG-002"
+        yaml_path: "blueprints[].layer"
+      - source: "physical_blueprint"
+        file_pattern: "{module_path}/blueprint.md"
+        frontmatter_key: "layer"
+    ssoT: "REG-001"
+    ssoT_rationale: |
+      layer 是模块的层级归属，由 module-registry.yaml 在模块创建时分配。
+      物理文件和蓝图登记表必须与此一致。
+    consistency: exact
+    violation_action: block
+
+  # ---- CR-004: status 字段跨表一致 ----
+  - rule_id: "CR-004"
+    title: "status 字段跨表一致性"
+    fields: ["status"]
+    sources:
+      - registry: "REG-001"
+        yaml_path: "modules[].blueprint.status"
+      - registry: "REG-002"
+        yaml_path: "blueprints[].blueprint_status"
+      - source: "physical_blueprint"
+        file_pattern: "{module_path}/blueprint.md"
+        frontmatter_key: "status"
+    ssoT: "REG-001"
+    ssoT_rationale: |
+      蓝图审批状态由 module-registry.yaml 的 status 受控词表管理。
+      物理文件和蓝图登记表必须与模块登记表的状态一致。
+    consistency: exact
+    violation_action: block
+
+  # ---- CR-005: priority 字段跨表一致 ----
+  - rule_id: "CR-005"
+    title: "priority 字段跨表一致性"
+    fields: ["priority"]
+    sources:
+      - registry: "REG-001"
+        yaml_path: "modules[].priority"
+      - registry: "REG-002"
+        yaml_path: "blueprints[].priority"
+      - source: "physical_blueprint"
+        file_pattern: "{module_path}/blueprint.md"
+        frontmatter_key: "priority"
+    ssoT: "REG-001"
+    ssoT_rationale: |
+      priority 由 module-registry.yaml 集中管理以保持全局优先级排序一致。
+    consistency: exact
+    violation_action: block
+
+  # ---- CR-006: generation 可由 version 推导 ----
+  - rule_id: "CR-006"
+    title: "generation 与 version 推导关系"
+    fields: ["generation", "version"]
+    sources:
+      - registry: "REG-002"
+        yaml_path: "blueprints[].generation"
+      - source: "physical_blueprint"
+        file_pattern: "{module_path}/blueprint.md"
+        frontmatter_key: "version"
+    ssoT: "REG-002"
+    ssoT_rationale: |
+      generation 是蓝图登记表对 version 的解读（1.x → 第1代，2.x → 第2代）。
+      规则：version 主版本号 = generation。
+    consistency: derived
+    derivation_rule: "generation == int(version major)"
+    violation_action: warn
+
+# ============================================================================
+# 变更记录
+# ============================================================================
+changelog:
+  - version: "1.0.0"
+    date: "2026-05-02"
+    changes:
+      - "初始创建——登记 2 个登记表 + 6 条跨表一致性规则"
+      - "CR-001~006 覆盖 version / module_id / layer / status / priority / generation"
+      - "SSoT 归属原则：第一手来源优先（物理文件 > 登记表）"
+      - "v1.0.1: 新增 GOV-MOD-007 多登记表同步标准的交叉引用说明"

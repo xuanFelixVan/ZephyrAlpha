@@ -1,0 +1,27 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
+# module_id: MOD-INF-035
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+capability_id: skill-dom-bgt-001
+category: governance
+description: Budget Enforcer (MOD-INF-024) Token/Cost/Time 三维预算强制执行，七级预算体+ 六级降级(NORMAL→NOTIFY→WARNING→MODEL_SWITCH→COMPRESS→MINIMAL→HALT)
+  + Trust Ring 信任环:?+ IPI Defense 指令注入防御 + Tamper-Evident Log 防篡改审计链。入 BudgetEngine.pre_flight_check
+  / BudgetTracker.track / DegradationManager.degrade
+examples: []
+input_schema:
+  type: object
+name: 'Skill: budget-enforcer'
+output_schema:
+  type: object
+priority: P1
+registered_at: '2026-05-16T00:43:32.867122'
+requires_human: false
+runtime_plane: warm
+status: ACTIVE
+tags:
+- skill-derived
+- domain
+- budget-enforcer
