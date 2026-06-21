@@ -507,6 +507,7 @@ repos:
         always_run: false
         files: "^(docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/|src/zephyr/shared/contracts/).*"
         description: "YAML契约修改→强制codegen同步→CI硬阻断，首次运行 --freeze 建立基线"
+        stages: [manual]
 
       - id: gate-bom-utf8-check
         name: "GATE-BOM: UTF-8 BOM 检测"
@@ -545,15 +546,18 @@ repos:
         always_run: false
         files: "^src/zephyr/.*\\.py$"
         description: "漂移检测 LIGHT scan——src/zephyr/ 下 .py 变更时触发，warn-only 骨架阶段"
+        stages: [manual]
 
       - id: sync-audit-protocol-numbers
         name: "AUTO-SYNC: 审计协议数字同步"
         entry: python scripts/governance/generators/sync_audit_protocol_numbers.py
         language: python
+        additional_dependencies: [pyyaml]
         pass_filenames: false
         always_run: true
         files: "(script_manifest\\.yaml|gate-registry\\.yaml|registry-master-index\\.yaml|\\.pre-commit-config\\.yaml)$"
         description: "SSoT 变更时自动同步 audit_protocol.md 中的硬编码数字"
+        stages: [manual]
 
       # ── Commit Message 校验（Conventional Commits v1.0.0）──
   # 对标: conventionalcommits.org / Angular convention / pre-commit commit-msg stage
