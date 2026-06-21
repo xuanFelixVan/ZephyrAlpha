@@ -1,16 +1,16 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-001 | docs/03_modules/l01_infrastructure/capacity-assurance/blueprint.md | §
-# module_id: MOD-INF-001
+# blueprint: MOD_INF_001 | docs/03_modules/_domain_infra_ops/capacity_assurance/blueprint.md | §
+# module_id: MOD_INF_001
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
 # risk_register.yaml — 容量保障体系风险注册表（R1~R16）
 # 对标蓝图 §14 风险与缓解 + 多轮盲点审计扩展
-# 版本: 2.7.0 | 模块: MOD-INF-001
+# 版本: 2.7.0 | 模块: MOD_INF_001
 
 version: "2.7.0"
-module_id: MOD-INF-001
+module_id: MOD_INF_001
 last_review: "2026-05-07"
 
 risks:
@@ -161,7 +161,7 @@ risks:
   - risk_id: R17
     severity: medium
     description: "Asset Inventory 自身成为孤儿——unified_asset_index.yaml 不包含盘点系统的扫描器/分类器条目，导致后续 AI session 不知道盘点系统存在"
-    mitigation: "元盘点自检：每次生成索引后验证 src/zephyr/asset_inventory/ 全部模块均在 active 列表中 + Phase Manager gate_asset_inventory 阻断"
+    mitigation: "元盘点自检：每次生成索引后验证 src/zephyr/infra_ops/asset_inventory/ 全部模块均在 active 列表中 + Phase Manager gate_asset_inventory 阻断"
     status: identified
     owner: ZephyrAlpha-Owner
     handler: "meta_inventory_self_check"
@@ -170,7 +170,7 @@ risks:
   - risk_id: R18
     severity: high
     description: "24 个注册表中部分损坏导致对账全量失败——一个损坏注册表使整个对账管道崩溃，孤儿/幽灵/漂移全部漏检"
-    mitigation: "per-registry try/except 隔离——损坏注册表跳过并标记 skip，其余 23 个正常对账。skip 列表写入 reconciliation_report 告警区"
+    mitigation: "per-registry try/except 隔离——损坏注册表跳过并标记 skip，其余 23 个正常对账。skip 列表写入 reconciliation-report 告警区"
     status: identified
     owner: ZephyrAlpha-Owner
     handler: "reconciler_per_registry_isolation"

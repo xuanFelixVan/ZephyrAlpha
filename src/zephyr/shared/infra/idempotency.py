@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_idempotency | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.infra.idempotency
 
@@ -21,7 +22,7 @@
 """
 idempotency.py —— 幂等性基础设施（Phase 8 新增 | 盲点 B15 修复）
 
-痛点修复：cross-layer-contracts.yaml 定了 idempotency_key 字段，但没有幂等性存储/检查的实现——
+痛点修复：cross_layer_contracts.yaml 定了 idempotency_key 字段，但没有幂等性存储/检查的实现——
   1. AI agent 重复发送相同的 API 请求 → 重复扣费 / 重复创建资源
   2. 网络重试导致重复处理同一个事件 → 数据不一致
   3. Stripe / AWS 等平台都内置幂等性——ZephyrAlpha 缺少这个基础设施

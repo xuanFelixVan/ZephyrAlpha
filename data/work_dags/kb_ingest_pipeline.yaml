@@ -5,7 +5,8 @@
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
-dag_id: kb_ingest_pipeline
+module_id: MOD-INF-035
+dag_id: kb-ingest-pipeline
 default_layer: local
 default_priority: P1
 description: Triage-Extract-Analyze-Ingest-Activate

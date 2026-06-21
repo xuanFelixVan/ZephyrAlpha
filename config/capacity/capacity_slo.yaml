@@ -1,16 +1,17 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-001 | docs/03_modules/l01_infrastructure/capacity-assurance/blueprint.md | §
-# module_id: MOD-INF-001
+# blueprint: MOD_INF_001 | docs/03_modules/_domain_infra_ops/capacity_assurance/blueprint.md | §
+# module_id: MOD_INF_001
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
-# MOD-INF-001 M-18 — 容量 SLI/SLO 注册表（机读 SSoT）
-# 对齐: docs/03_modules/l01_infrastructure/capacity-assurance/blueprint.md §13 示例
+# MOD_INF_001 M-18 — 容量 SLI/SLO 注册表（机读 SSoT）
+# 对齐: docs/03_modules/_domain_infra_ops/capacity_assurance/blueprint.md §13 示例
 # arch_guard 脚本从此文件读取阈值，与 invariants.yaml 交叉校验见 check_capacity_slo_ssot.py
+module_id: MOD_INF_001
 schema_version: "1.0"
 doc_type: capacity_slo
-module_ref: MOD-INF-001
+module_ref: MOD_INF_001
 last_updated: "2026-05-05"
 
 slo_registry:
@@ -19,7 +20,7 @@ slo_registry:
     target_ms: 2000
     measurement: "pytest 基准"
     golden_signal: latency
-    instrumentation: { hook_point: "src/zephyr/__init__.lazy_loader", sampling_sample_rate: "TBD" }
+    instrumentation: { hook_point: "src/zephyr/__init__.py", sampling_sample_rate: "TBD" }
 
   - id: CAP-002-event-throughput
     description: "事件总线吞吐量 msg/s"
@@ -33,7 +34,7 @@ slo_registry:
     target: 0.001
     measurement: "circuit_breaker 统计"
     golden_signal: errors
-    instrumentation: { hook_point: "zephyr.gates.circuit_breaker", sampling_sample_rate: "TBD" }
+    instrumentation: { hook_point: "zephyr.shared.resilience.circuit_breaker", sampling_sample_rate: "TBD" }
 
   - id: CAP-004-memory-saturation
     description: "内存饱和度"
@@ -71,7 +72,7 @@ slo_registry:
     instrumentation: { hook_point: "scripts/governance/d5_architecture", sampling_sample_rate: "per PR" }
 
   - id: CAP-009-kill-switch-trigger-latency
-    description: "Kill Switch 触发延迟（INV-001 / ADR-0009）"
+    description: "Kill Switch 触发延迟（INV-001 / KBG-0009）"
     target_ms: 1
     measurement: "L04 stop-loss → 熔断信号（T1 实测；当前为声明 + arch_guard）"
     golden_signal: latency
@@ -120,7 +121,7 @@ arch_guard:
     cold_to_hot_requires_warm_shadow: true
   hot_path_python_scan:
     roots:
-      - src/zephyr/l06_trade_execution/adapters
+      - src/zephyr/ex_core/adapters
     forbid_asyncio: true
   ai_security_gateway:
     enabled: true

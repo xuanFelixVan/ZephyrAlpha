@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0009 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-204 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_audit_adversarial
 # [STABILITY] evolving
 # [SAFETY] L
@@ -11,7 +12,7 @@
   A2 - 哈希链断裂: 删除中间事件 → prev_hash 不连续性应被检测
   A3 - 伪造事件注入: 向 events.jsonl 追加无 chain_hash 的事件
   A4 - 空日志攻击: 从空文件开始验证
-  A5 - 链状态篡改: 修改 chain_state.json → 下次写入应产生断链
+  A5 - 链状态篡改: 修改 chain-state.json → 下次写入应产生断链
   A6 - 并发写入: 多线程同时写 → 不应产生损坏数据
   A7 - Merkle 树伪造: 篡改 merkle_root → MerkleAggregator.verify 应失败
   A8 - Ed25519 密钥替换: 用不同密钥签名 → AgentSigner.verify 应失败
@@ -29,8 +30,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import pytest
 
-from zephyr.audit_trail.writer import AuditWriter
-from zephyr.audit_trail.integrity import IntegrityVerifier
+from zephyr.governance.audit_trail.writer import AuditWriter
+from zephyr.governance.integrity import IntegrityVerifier
 
 
 @pytest.fixture
@@ -138,7 +139,7 @@ class TestChainStateTampering:
     """A5: 链状态篡改."""
 
     def test_chain_state_tamper_causes_integrity_failure(self, temp_audit_dir: Path):
-        """篡改 chain_state.json → 下次写入后验证应检测到不一致."""
+        """篡改 chain-state.json → 下次写入后验证应检测到不一致."""
         writer = AuditWriter(temp_audit_dir)
         h1 = writer.write({"event": "e1"})
 
@@ -183,7 +184,7 @@ class TestMerkleForgery:
     """A7: Merkle 树伪造攻击."""
 
     def test_tampered_merkle_root_detected(self, temp_audit_dir: Path):
-        from zephyr.audit_trail.integrity import MerkleAggregator
+        from zephyr.governance.integrity import MerkleAggregator
 
         leaves = [
             hashlib.sha256(f"event-{i}".encode()).hexdigest()
@@ -198,7 +199,7 @@ class TestMerkleForgery:
         assert MerkleAggregator.verify(leaves, fake_root) is False
 
     def test_modified_leaf_detected(self, temp_audit_dir: Path):
-        from zephyr.audit_trail.integrity import MerkleAggregator
+        from zephyr.governance.integrity import MerkleAggregator
 
         leaves = [
             hashlib.sha256(f"event-{i}".encode()).hexdigest()
@@ -211,7 +212,7 @@ class TestMerkleForgery:
         assert MerkleAggregator.verify(tampered_leaves, real_root) is False
 
     def test_empty_leaves_merkle(self, temp_audit_dir: Path):
-        from zephyr.audit_trail.integrity import MerkleAggregator
+        from zephyr.governance.integrity import MerkleAggregator
 
         root = MerkleAggregator.build([])
         assert root == ""
@@ -222,7 +223,7 @@ class TestEd25519KeySubstitution:
     """A8: Ed25519 密钥替换攻击."""
 
     def test_wrong_key_verification_fails(self, temp_audit_dir: Path):
-        from zephyr.audit_trail.agent_signer import AgentSigner
+        from zephyr.governance.audit_trail.agent_signer import AgentSigner
 
         priv1, pub1 = AgentSigner.generate_key_pair()
         priv2, pub2 = AgentSigner.generate_key_pair()
@@ -234,7 +235,7 @@ class TestEd25519KeySubstitution:
         assert AgentSigner.verify(event, pub2, signature) is False
 
     def test_tampered_event_fails_verification(self, temp_audit_dir: Path):
-        from zephyr.audit_trail.agent_signer import AgentSigner
+        from zephyr.governance.audit_trail.agent_signer import AgentSigner
 
         priv, pub = AgentSigner.generate_key_pair()
         event = {"event": "original", "agent_id": "agent-1"}
@@ -244,7 +245,7 @@ class TestEd25519KeySubstitution:
         assert AgentSigner.verify(tampered_event, pub, signature) is False
 
     def test_invalid_signature_rejected(self, temp_audit_dir: Path):
-        from zephyr.audit_trail.agent_signer import AgentSigner
+        from zephyr.governance.audit_trail.agent_signer import AgentSigner
 
         priv, pub = AgentSigner.generate_key_pair()
         event = {"event": "test", "agent_id": "agent-1"}

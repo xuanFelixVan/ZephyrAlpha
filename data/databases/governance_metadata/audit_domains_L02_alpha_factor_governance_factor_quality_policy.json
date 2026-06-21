@@ -1,0 +1,94 @@
+{
+  "task_id": "DM-100064",
+  "source_file": "docs/01_policies_and_standards/domains/L02_alpha_factor/governance/factor_quality_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_050_domain_policy_data_factor.yaml",
+  "yaml_section": "dom_l02_001",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "ABS-001": {
+      "content": "因子必须通过四维质量检查（年化夏普≥1.0/最大回撤≤15%/Rank IC均值≥0.03/IC_IR≥0.5）",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l02_001.conditions[0] + actions[0]"
+    },
+    "ABS-002": {
+      "content": "禁止上线未通过质量门控的因子，未达标标记quality_gate:failed",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l02_001.actions[1] + prohibitions[0]"
+    },
+    "ABS-003": {
+      "content": "因子必须通过实盘可行性检查（换手率≤30%/容量/AUM≤5倍/延迟≤50ms）",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l02_001.conditions[1] + actions[2]"
+    },
+    "ABS-003_量价换手率": {
+      "content": "量价因子换手率阈值从严≤20%，基本面因子可放宽≤50%",
+      "type": "constraint",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l02_001.conditions[1].check"
+    },
+    "COND-001": {
+      "content": "因子衰减必须监控（IC衰减/夏普衰减/完全失效/相关性漂移）",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l02_001.conditions[2] + actions[3]"
+    },
+    "COND-002": {
+      "content": "新因子上线前必须执行准入流程（6步）",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l02_001.actions[4]"
+    },
+    "COND-003": {
+      "content": "回测必须覆盖牛市/熊市/震荡/极端行情四种市场状态",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l02_001.conditions[3] + actions[5]"
+    },
+    "禁止行为1": {
+      "content": "禁止上线未通过四维质量检查的因子",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l02_001.prohibitions[0]"
+    },
+    "禁止行为2": {
+      "content": "禁止不执行实盘可行性检查即上线因子",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l02_001.prohibitions[1]"
+    },
+    "禁止行为3": {
+      "content": "禁止衰减因子继续以原权重运行",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l02_001.prohibitions[2]"
+    },
+    "禁止行为4": {
+      "content": "禁止跳过市场状态分段回测",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l02_001.prohibitions[3]"
+    },
+    "禁止行为5": {
+      "content": "禁止上线与现有因子相关性>0.7的新因子",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l02_001.prohibitions[4]"
+    }
+  },
+  "summary": {
+    "total_rules": 11,
+    "COVERED": 11,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "原dom_l02_001 section仅有一行泛化描述'遵守 DOM-L02-001: 因子质量门控'，已替换为完整规则内容",
+    "新增4个conditions（四维质量/实盘可行性/衰减监控/市场状态回测）",
+    "新增6个actions（ABS-001/002/003 + COND-001/002/003）",
+    "新增5个prohibitions（对应§9禁止行为表）",
+    "original_rules从[DOM-L02-001]扩展为[DOM-L02-001-ABS-001~003, COND-001~003]"
+  ]
+}

@@ -8,7 +8,7 @@ lock_files.py —— AI 对话文件锁协议（硬规则执行工具）
 对标：
   - K8s ResourceQuota（资源互斥）
   - etcd 分布式锁（TTL + 租约续期）
-  - Git pre-commit hooks（门禁阻断）
+  - Git pre_commit hooks（门禁阻断）
 
 设计原则：
   - 原子目录创建（os.makedirs exist_ok=False）→ 互斥保证
@@ -36,7 +36,7 @@ AI 施工铁律：
   任何文件修改完成后 MUST 执行 release → 释放锁给他人
 
 SSoT: AGENTS.md §4 编码安全（扩展）
-Version: 1.0.0
+Version: 2.0.0
 """
 
 from __future__ import annotations
@@ -52,6 +52,8 @@ from pathlib import Path
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO_ROOT / "scripts" / "governance" / "d3_metadata"))
+from check_naming_convention import check_file as _check_naming  # noqa: E402
 LOCK_ROOT = REPO_ROOT / ".ailocks"
 DEFAULT_TTL_S = 1800.0  # 30 分钟——超时未释放视为死锁（AI 对话级锁）
 REGISTRY_PATH = LOCK_ROOT / "registry.json"
@@ -224,10 +226,19 @@ def cmd_check(file_path: str) -> int:
     return 1
 
 
-def cmd_acquire(file_path: str, owner_id: str, task: str = "") -> int:
+def cmd_acquire(file_path: str, owner_id: str, task: str = "", skip_naming_check: bool = False) -> int:
     _ensure_lock_root()
     normalized = _normalize_path(file_path)
     lock_dir = _lock_dir(file_path)
+
+    # 命名规范门禁：写入前校验文件名合规性（可跳过，用于历史命名文件）
+    if not skip_naming_check:
+        naming_violations = _check_naming(normalized, Path(REPO_ROOT / normalized) if (REPO_ROOT / normalized).exists() else None, REPO_ROOT)
+        if naming_violations:
+            print(f"NAMING VIOLATION — {normalized} 命名不合规，拒绝写入：")
+            for v in naming_violations:
+                print(f"  [{v.rule}] {v.message}")
+            return 1
 
     if lock_dir.is_dir():
         if _is_stale(lock_dir):
@@ -368,6 +379,102 @@ def _remove_from_registry(file_path: str) -> None:
     _save_registry(registry)
 
 
+class FileLockedError(Exception):
+    """文件被其他session锁定时抛出。"""
+
+    def __init__(self, file_path: str, owner_id: str, task: str = ""):
+        self.file_path = file_path
+        self.owner_id = owner_id
+        self.task = task
+        msg = f"RULE-ZERO 违规: {file_path} 被 {owner_id} 锁定"
+        if task:
+            msg += f"（任务: {task}）"
+        super().__init__(msg)
+
+
+def pre_write_guard(file_path: str, session_id: str, task: str = "") -> None:
+    """写前自动门禁：check + acquire 原子操作。
+
+    文件未被锁 → 自动获取锁，调用方必须在写完后调用 cmd_release()。
+    文件已被他人锁 → 抛出 FileLockedError。
+    文件已被自己锁 → 静默通过（重入）。
+
+    用法（AI工具调用链集成）:
+        from lock_files import pre_write_guard, FileLockedError
+        try:
+            pre_write_guard("src/main.py", "session-20260611-001", "重构认证")
+            # ... 执行写入 ...
+        except FileLockedError as e:
+            print(e)  # 报告用户，拒绝写入
+        finally:
+            cmd_release("src/main.py", "session-20260611-001")
+    """
+    rc = cmd_acquire(file_path, session_id, task)
+    if rc != 0:
+        lock_dir = _lock_dir(file_path)
+        owner = _read_owner(lock_dir)
+        owner_id = owner.get("owner_id", "unknown") if owner else "unknown"
+        owner_task = owner.get("task", "") if owner else ""
+        raise FileLockedError(_normalize_path(file_path), owner_id, owner_task)
+
+
+class LockGuard:
+    """Context manager：自动获取/释放文件锁。
+
+    用法:
+        from lock_files import LockGuard, FileLockedError
+        try:
+            with LockGuard("src/main.py", "session-20260611-001", "重构认证"):
+                # ... 执行写入 ...
+                pass
+        except FileLockedError as e:
+            print(e)  # 报告用户，拒绝写入
+    """
+
+    def __init__(self, file_path: str, session_id: str, task: str = ""):
+        self.file_path = file_path
+        self.session_id = session_id
+        self.task = task
+        self._acquired = False
+
+    def __enter__(self) -> "LockGuard":
+        pre_write_guard(self.file_path, self.session_id, self.task)
+        self._acquired = True
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        if self._acquired:
+            cmd_release(self.file_path, self.session_id)
+            self._acquired = False
+
+
+def cmd_guard_write(file_path: str, session_id: str, task: str = "") -> int:
+    """CLI入口：写前自动锁检查+获取。成功exit 0，冲突exit 1。"""
+    _ensure_lock_root()
+    normalized = _normalize_path(file_path)
+    lock_dir = _lock_dir(file_path)
+
+    if lock_dir.is_dir() and not _is_stale(lock_dir):
+        owner = _read_owner(lock_dir)
+        existing_owner = owner.get("owner_id", "unknown") if owner else "unknown"
+        if existing_owner != session_id:
+            existing_task = owner.get("task", "") if owner else ""
+            print(f"BLOCKED — {normalized} 被 {existing_owner} 锁定")
+            if existing_task:
+                print(f"  对方任务: {existing_task}")
+            ts = owner.get("timestamp", 0) if owner else 0
+            age = time.time() - ts
+            age_str = f"{age:.0f}s" if age < 60 else f"{age / 60:.1f}m"
+            print(f"  已锁定: {age_str}")
+            return 1
+
+    rc = cmd_acquire(file_path, session_id, task)
+    if rc == 0:
+        print(f"GUARD-OK — {normalized} 写前门禁通过，锁已获取")
+        print(f"  写完后请执行: python scripts/lock_files.py release {normalized} {session_id}")
+    return rc
+
+
 def _print_help() -> None:
     print(__doc__)
     print("\n子命令：")
@@ -377,6 +484,7 @@ def _print_help() -> None:
     print("  release   <file> <owner>  释放文件锁")
     print("  release-all <owner>       释放该持有者的所有锁")
     print("  cleanup                   清理所有死锁（TTL过期/PID已死）")
+    print("  guard-write <file> <session> [--task <desc>]  写前自动门禁（check+acquire原子操作）")
 
 
 def main() -> int:
@@ -396,11 +504,14 @@ def main() -> int:
 
     if cmd == "acquire" and len(args) >= 3:
         task = ""
+        skip_naming = False
         if "--task" in args:
             ti = args.index("--task")
             if ti + 1 < len(args):
                 task = args[ti + 1]
-        return cmd_acquire(args[1], args[2], task)
+        if "--skip-naming-check" in args:
+            skip_naming = True
+        return cmd_acquire(args[1], args[2], task, skip_naming)
 
     if cmd == "release" and len(args) >= 3:
         return cmd_release(args[1], args[2])
@@ -410,6 +521,14 @@ def main() -> int:
 
     if cmd == "cleanup":
         return cmd_cleanup()
+
+    if cmd == "guard-write" and len(args) >= 3:
+        task = ""
+        if "--task" in args:
+            ti = args.index("--task")
+            if ti + 1 < len(args):
+                task = args[ti + 1]
+        return cmd_guard_write(args[1], args[2], task)
 
     if cmd in ("help", "--help", "-h"):
         _print_help()

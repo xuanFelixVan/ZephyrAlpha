@@ -1,27 +1,28 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1989 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-606 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_code_dedup_engine
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """code-dedup-engine 核心模块单元测试 — Scanner, MonocultureGuard, AutoFixer."""
 
-from __future__ import annotations
 
 import pytest
 import tempfile
 from pathlib import Path
 
-from zephyr.l01_infrastructure.code_dedup_engine.scanner import (
+from zephyr.governance.scanner import (
     Scanner,
     ScanResult,
     DuplicateGroup,
 )
-from zephyr.l01_infrastructure.code_dedup_engine.monoculture_guard import (
+from zephyr.governance.monoculture_guard import (
     MonocultureGuard,
     BlastRadiusScore,
 )
-from zephyr.l01_infrastructure.code_dedup_engine.auto_fixer import (
+from zephyr.governance.auto_fixer import (
     AutoFixer,
     FixParams,
     SafetyTier,

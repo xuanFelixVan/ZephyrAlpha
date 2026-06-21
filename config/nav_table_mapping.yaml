@@ -1,16 +1,17 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-002 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# blueprint: MOD-INF-002 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
-﻿# nav_table_mapping.yaml — 全流程导航表映射配置 v1.0.0
+# nav_table_mapping.yaml — 全流程导航表映射配置 v1.0.0
 # 本文件是 AGENTS.md §5.2 的 SSoT。
 # 新增规则/脚本时：更新本文件 → 运行 scripts/governance/generate_nav_table.py → §5.2 自动刷新。
 # 设计原则：本文件只定义"什么规则/脚本出现在导航表中、对应哪个阶段/维度"，
 #           不重复 registries 中已有的路径/版本/状态信息（这些由 generate_nav_table.py 从 registries 自动拉取）。
 
+module_id: MOD-INF-002
 seven_stages:
   - id: "①"
     name: "想法"
@@ -52,7 +53,7 @@ seven_stages:
       - "规则冲突时是否按 PS-STD-004 五维分类推导链裁决（stability→layer→scope→Owner）？"
     scripts:
       - "人工"
-      - "d5_architecture/validate_session_gate_check.py"
+      - "d12_ai_hallucination/validate_session_gate_check.py"
     rule_module_ids:
       - PS-STD-004
       - GOV-AI-002
@@ -63,16 +64,16 @@ seven_stages:
     actions: "将裁定结论写入蓝图（YAML canonical + MD 视图）。遵守 PS-STD-002 标准文档模板（L1/L2/L3）。若涉及架构决策 → 走 KB 决策记录（GOV-ARCH-001）"
     check_items:
       - "蓝图是否自包含（AI读完蓝图≈读完整个项目）？"
-      - "§6.9 YAML优先——架构事实是否先在 architecture-model/layers/ YAML 中登记？"
+      - "§6.9 YAML优先——架构事实是否先在 architecture_model/layers/ YAML 中登记？"
       - "§6.14 蓝图§16路径索引是否与磁盘一致？"
       - "provenance三件套是否完整（origin_drafts + audit_chain≥3 + arbitration）？"
       - "若涉及新增/删除模块、修改接口、换技术栈、改数据流 → 是否已触发 GOV-ARCH-002 架构评审？"
       - "模块状态是否符合 GOV-MOD-003 生命周期8阶段？"
-      - "接口契约是否已注册到 cross-layer-contracts.yaml（GOV-MOD-004）？"
+      - "接口契约是否已注册到 cross_layer_contracts.yaml（GOV-MOD-004）？"
     scripts:
-      - "d5_architecture/validate_blueprint_code_sync.py"
+      - "d5_architecture/validators/blueprint/validate_blueprint_code_sync.py"
       - "d3_metadata/validate_blueprint_provenance.py"
-      - "d5_architecture/validate_code_yaml_alignment.py"
+      - "d5_architecture/validators/validate_code_yaml_alignment.py"
     rule_module_ids:
       - PS-STD-002
       - GOV-ARCH-001
@@ -80,14 +81,14 @@ seven_stages:
       - GOV-MOD-003
       - GOV-MOD-004
     manual_files:
-      - "docs/01_policies_and_standards/templates/blueprint-construction-template.md"
+      - "docs/01_policies_and_standards/templates/blueprint_construction_template.md"
 
   - id: "⑤"
     name: "施工"
     actions: "按蓝图施工（写代码/写规则/写脚本）。代码写成后必须通过两部分门禁：① 编写时（pre-commit）→ ② 推送前（CI governance.yml）。遵守 GOV-AI-004 双编辑器协作规则"
     check_items:
       - "§6.2 原子事务：联动修改是否在同一批完成？"
-      - "§6.5 脚本入库：新建.py是否已在 script_manifest.yaml 注册？"
+      - "§6.5 脚本入库：新建.py是否已在 script-manifest.yaml 注册？"
       - "§4 源码-测试同步：改 src/zephyr/ 后是否同步更新测试并跑通全量？"
       - "§6.11 索引-实际同步：文件变更后是否已更新所有 index.md？"
       - "§6.13 枚举同步：vocabulary YAML 变更后是否已同步所有 derived_from 标注的派生文件？"
@@ -107,7 +108,7 @@ seven_stages:
       - GOV-AI-004
       - GOV-DOC-005
     manual_files:
-      - "docs/01_policies_and_standards/governance/document/encoding-safety-standard.md"
+      - "docs/01_policies_and_standards/rules/encoding_safety_standard.md"
 
   - id: "⑥"
     name: "验收"
@@ -130,7 +131,7 @@ seven_stages:
     actions: "定期/触发式全量审计（push→CI / 手动→run_all.py），发现漂移 → §6.15 漂移免疫自检 → 追问\"为什么漂移没被拦截\""
     check_items:
       - "D1~D12 十二维度是否零漂移？"
-      - "发现漂移 → 是否执行了 MTH-015 漂移免疫自检 + MTH-006 5 Whys 根源分析？"
+      - "发现漂移 → 是否执行了 MTH-015 漂移免疫自检 + MTH-006 追问到底根源分析？"
       - "是否治根而非治标？"
       - "Session Log 是否已交接（做了什么+为什么做+下一步）？"
       - "审计日志是否完整（GOV-CMP-002 AUD-001~004）？"
@@ -153,9 +154,9 @@ audit_dimensions:
       - "同一概念是否只在1处定义？"
       - "是否有万能文件夹？"
     script_names:
-      - "d5_architecture/validate_field_ownership.py"
-      - "d5_architecture/detect_duplicate_module_names.py"
-      - "d5_architecture/validate_directory_structure.py"
+      - "d5_architecture/validators/validate_field_ownership.py"
+      - "d5_architecture/detectors/detect_duplicate_module_names.py"
+      - "d5_architecture/validators/validate_directory_structure.py"
     linked_rules: "§5.1原则2、§6.4、§6.9"
 
   - id: "B"
@@ -166,25 +167,25 @@ audit_dimensions:
       - "vocabulary YAML↔所有派生文件枚举是否一致？"
       - "Markdown是否与YAML冲突（冲突→YAML为准）？"
     script_names:
-      - "d5_architecture/validate_ssot.py"
+      - "d5_architecture/validators/validate_ssot.py"
       - "d3_metadata/validate_enum_consistency.py"
       - "d3_metadata/validate_derived_from.py"
-      - "d5_architecture/validate_code_yaml_alignment.py"
+      - "d5_architecture/validators/validate_code_yaml_alignment.py"
     linked_rules: "§6.9、§6.13、§6.15"
 
   - id: "C"
     name: "内容无冲突"
     scope: "不同文件对同一事实的描述是否一致？"
     check_items:
-      - "frontmatter status=正文blockquote status=document-metadata-index.yaml status（三方对齐）？"
+      - "frontmatter status=正文blockquote status=document_metadata_index_registry.yaml status（三方对齐）？"
       - "YAML版本>MD引用版本（MD落后于YAML）？"
       - "跨登记表共享字段是否一致？"
       - "YAML Summary声称数字与实际是否一致？"
     script_names:
-      - "d5_architecture/validate_three_way_consistency.py"
-      - "d5_architecture/validate_cross_references.py"
+      - "d5_architecture/validators/validate_three_way_consistency.py"
+      - "d5_architecture/validators/validate_cross_references.py"
       - "d11_compliance/validate_truth_source_cascade.py"
-      - "d5_architecture/validate_yaml_summaries.py"
+      - "d5_architecture/validators/yaml_md/validate_yaml_summaries.py"
       - "check_registry_consistency.py"
     linked_rules: "§6.10、§6.15"
 
@@ -197,9 +198,9 @@ audit_dimensions:
       - "是否有\"源码↔YAML↔MD\"三层漂移？"
       - "一级目录是否符合白名单？"
     script_names:
-      - "d5_architecture/validate_directory_structure.py"
+      - "d5_architecture/validators/validate_directory_structure.py"
       - "d1_structure/audit_directory_integrity.py"
-      - "d5_architecture/validate_code_yaml_alignment.py"
+      - "d5_architecture/validators/validate_code_yaml_alignment.py"
     linked_rules: "GOV-DOC-002, §6.10"
 
   - id: "E"
@@ -227,9 +228,9 @@ audit_dimensions:
       - "蓝图路径 vs 实际路径是否一致（路径漂移）？"
       - "completed蓝图是否含实际代码实现情况节？"
     script_names:
-      - "d5_architecture/validate_blueprint_code_sync.py"
-      - "d5_architecture/sync_blueprint_code_index.py"
-      - "d5_architecture/validate_blueprint_implementation_docs.py"
+      - "d5_architecture/validators/blueprint/validate_blueprint_code_sync.py"
+      - "d5_architecture/syncers/sync_blueprint_code_index.py"
+      - "d5_architecture/validators/blueprint/validate_blueprint_implementation_docs.py"
     linked_rules: "§6.14"
 
   - id: "G"
@@ -242,8 +243,8 @@ audit_dimensions:
     script_names:
       - "d2_links/audit_broken_links.py"
       - "d2_links/detect_relative_references.py"
-      - "d5_architecture/audit_depends_on_chain_depth.py"
-      - "d5_architecture/detect_depends_on_cycles.py"
+      - "d5_architecture/analyzers/audit_depends_on_chain_depth.py"
+      - "d5_architecture/detectors/detect_depends_on_cycles.py"
     linked_rules: "§5.1原则3、§6.2"
 
   - id: "H"
@@ -308,7 +309,7 @@ audit_dimensions:
       - "d3_metadata/validate_superseded_by.py"
       - "d3_metadata/detect_skip_active_status.py"
       - "d3_metadata/detect_stale_version.py"
-      - "d5_architecture/validate_deprecated_dependents.py"
+      - "d5_architecture/validators/validate_deprecated_dependents.py"
       - "d3_metadata/detect_deprecated_overdue.py"
     linked_rules: "GOV-DOC-006, PS-STD-009"
 
@@ -326,44 +327,44 @@ mantra:
 
 methodology_files:
   - name: "PS-STD-011 治理方法论"
-    path: "docs/01_policies_and_standards/meta/governance-methodology-standard.md"
+    path: "docs/01_policies_and_standards/meta/governance_methodology_standard.md"
     stage: "全局前提"
     description: "所有阶段的思维基线——最优先行原则（先判断最优→再检查约束）+ 项目清爽原则（能删就删）+ MTH-001~013"
   - name: "PS-STD-000 元标准宪法"
-    path: "docs/01_policies_and_standards/meta/meta-standard-constitution.md"
+    path: "docs/01_policies_and_standards/meta/meta_standard_constitution_standard.md"
     stage: "全局前提"
     description: "规则体系最高元规则——什么进宪法（ABS）、什么进登记表（COND/REC）"
   - name: "GOV-DOC-010 文档可发现性策略"
-    path: "docs/01_policies_and_standards/governance/document/document-discovery-policy.md"
+    path: "docs/01_policies_and_standards/rules/document_discovery_policy.md"
     stage: "①~⑦"
     description: "文档发现机制——index.md是一切发现的起点、module_id是通用钥匙"
   - name: "PS-STD-002 标准文档模板"
-    path: "docs/01_policies_and_standards/meta/document-structure-standard.md"
+    path: "docs/01_policies_and_standards/meta/document_structure_standard.md"
     stage: "②~④"
     description: "标准文档模板元标准——L1/L2/L3三层模板体系、SSoT声明、消费者注册表"
   - name: "GOV-DOC-009 文档控制原则"
-    path: "docs/01_policies_and_standards/governance/document/document-control-policy.md"
+    path: "docs/01_policies_and_standards/rules/document_control_policy.md"
     stage: "②~⑤"
     description: "文档控制8原则——SSoT唯一、责任二选一、安全删除、完整路径引用、创建前必查、先读后改、引用不复制、上下文预算意识"
   - name: "GOV-AI-002 模型路由策略"
-    path: "docs/01_policies_and_standards/governance/ai/model-routing-policy.md"
+    path: "docs/01_policies_and_standards/governance/ai/model_routing_policy.md"
     stage: "③"
     description: "模型路由策略——DeepSeek主力+GLM审查+Claude救援三层防御"
   - name: "PS-STD-004 规则分类与冲突裁决"
-    path: "docs/01_policies_and_standards/meta/rule-classification-and-arbitration-standard.md"
+    path: "docs/01_policies_and_standards/meta/rule_classification_and_arbitration_standard.md"
     stage: "③"
     description: "规则冲突裁决——五维分类+推导链（stability→layer→scope→Owner）"
   - name: "PS-STD-000 元标准宪法"
   - name: "Gate Strategy Standard"
-    path: "docs/01_policies_and_standards/governance/architecture/gate-strategy-standard.md"
+    path: "docs/01_policies_and_standards/governance/architecture/gate_strategy_standard.md"
     stage: "④~⑤"
     description: "5级门禁策略（G0~G4）+ Gate Pipeline 触发条件"
   - name: "Phase Transition Protocol"
-    path: "docs/01_policies_and_standards/governance/architecture/phase-transition-protocol.md"
+    path: "docs/01_policies_and_standards/governance/architecture/phase_transition_protocol.md"
     stage: "④~⑤"
     description: "阶段转换协议（开发阶段之间的切换规则）"
   - name: "GOV-ARCH-002 架构评审门控"
-    path: "docs/01_policies_and_standards/governance/architecture/architecture-review-policy.md"
+    path: "docs/01_policies_and_standards/governance/architecture/architecture_review_policy.md"
     stage: "④~⑤"
     description: "架构评审门控——触发条件、评审清单（6项）、否决条件（7项）"
   - name: "GOV-ARCH-001 架构决策记录"
@@ -371,43 +372,43 @@ methodology_files:
     stage: "④~⑤"
     description: "33 ADRs 已迁入 KB decisions namespace（原 adr-protocol.md 已删除）"
   - name: "GOV-MOD-001 模块准入门控"
-    path: "docs/01_policies_and_standards/governance/module/module-admission-policy.md"
+    path: "docs/01_policies_and_standards/governance/module/module_admission_policy.md"
     stage: "④~⑥"
     description: "模块准入门控——四级筛选（MAD-001~005）+ P0额外条件"
   - name: "GOV-MOD-003 模块生命周期"
-    path: "docs/01_policies_and_standards/governance/module/module-lifecycle-policy.md"
+    path: "docs/01_policies_and_standards/governance/module/module_lifecycle_policy.md"
     stage: "④~⑥"
     description: "模块生命周期——8阶段状态机（planned→archived）"
   - name: "GOV-MOD-004 模块接口契约"
-    path: "docs/01_policies_and_standards/governance/module/module-interface-contract-policy.md"
+    path: "docs/01_policies_and_standards/governance/module/module_interface_contract_policy.md"
     stage: "④~⑥"
     description: "模块接口契约——7必填字段、语义化版本、契约注册表、退役级联"
   - name: "GOV-AI-003 AI幻觉自检"
-    path: "docs/01_policies_and_standards/governance/ai/ai-hallucination-self-check-policy.md"
+    path: "docs/01_policies_and_standards/governance/ai/ai_hallucination_self_check_policy.md"
     stage: "⑤"
     description: "AI幻觉自检清单——session开始前6项自检（路径/模块ID/接口/依赖/SSoT/编号）"
   - name: "GOV-AI-004 双编辑器协作"
-    path: "docs/01_policies_and_standards/governance/ai/dual-editor-collaboration-policy.md"
+    path: "docs/01_policies_and_standards/governance/ai/dual_editor_collaboration_policy.md"
     stage: "⑤"
     description: "双编辑器协作规则——Cursor vs Trae分工、编码安全、切换检查清单"
   - name: "GOV-DOC-005 编码安全标准"
-    path: "docs/01_policies_and_standards/governance/document/encoding-safety-standard.md"
+    path: "docs/01_policies_and_standards/rules/encoding_safety_standard.md"
     stage: "⑤"
     description: "编码安全标准——UTF-8强制、BOM禁止、LF换行符、PowerShell陷阱"
   - name: "PS-STD-003 行为边界标准"
-    path: "docs/01_policies_and_standards/meta/behavior-boundaries-standard.md"
+    path: "docs/01_policies_and_standards/meta/behavior_boundaries_standard.md"
     stage: "⑤"
     description: "行为边界标准——ABS绝对禁止（48条）+ COND条件禁止 + REC推荐做法"
   - name: "GOV-AI-008 跨会话交接协议"
-    path: "docs/01_policies_and_standards/governance/ai/handoff-protocol.md"
+    path: "docs/01_policies_and_standards/governance/ai/handoff_protocol.md"
     stage: "⑤"
     description: "跨会话交接协议——HandoffPackage 8必填字段"
   - name: "PS-STD-012 规则验证标准"
-    path: "docs/01_policies_and_standards/meta/rule-verification-standard.md"
+    path: "docs/01_policies_and_standards/meta/rule_verification_standard.md"
     stage: "⑦"
     description: "规则验证标准——V1~V4四级验证（自动化阻断/警告/人工审查/审计抽样）"
   - name: "GOV-CMP-002 审计追踪策略"
-    path: "docs/01_policies_and_standards/governance/compliance/audit-trail-policy.md"
+    path: "docs/01_policies_and_standards/governance/compliance/audit_trail_policy.md"
     stage: "⑦"
     description: "审计追踪策略——6类操作必须审计、日志不可篡改、访问受限"
   - name: "审计脚本体系总入口"

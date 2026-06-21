@@ -1,0 +1,132 @@
+schema_version: "1.0"
+doc_type: gate
+title: "Observability Baseline Gate — System Telemetry MOD-INF-015 v0.9.0"
+status: active
+ttl: permanent
+
+gate_id: GATE-OBSERVABILITY
+gate_name: observability_baseline
+description: "Phase 1 observability baseline gate — validates System Telemetry (MOD-INF-015) 9-subsystem facade is importable, health-registerable, metrics-writable, and all loops closed before proceeding to Phase 2 E2E"
+rule_ids:
+  - TRAE-002
+
+entry_conditions:
+  - id: OBS-C01
+    name: telemetry_facade_importable
+    type: import_check
+    description: "System Telemetry (MOD-INF-015) must be importable without circular deps"
+    check: "Telemetry facade can be instantiated in test_mode"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "from zephyr.infrastructure.runtime_integration.system_telemetry import Telemetry; t = Telemetry('gate_test', test_mode=True)"
+    rule_ids:
+      - TRAE-002
+
+  - id: OBS-C02
+    name: nine_subsystems_accessible
+    type: structure_check
+    description: "All 9 subsystems (metrics/logs/traces/ai_behavior/health/profiles/alerts/schema/archive) must be accessible"
+    check: "Each subsystem attribute on Telemetry instance returns non-None"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "attrs = ['metrics','logs','traces','ai_behavior','health','profiles','alerts','schema','archive']; all(hasattr(t,a) for a in attrs)"
+    rule_ids:
+      - TRAE-002
+
+  - id: OBS-C03
+    name: metrics_gauge_writable
+    type: io_check
+    description: "Metrics subsystem must accept gauge writes without exception"
+    check: "t.metrics.gauge('gate_test_metric', 1.0) succeeds"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "result = t.metrics.gauge('obs_gate_test', 1.0); assert result is not None"
+    rule_ids:
+      - TRAE-002
+
+  - id: OBS-C04
+    name: health_registerable
+    type: lifecycle_check
+    description: "Health subsystem must register and return HEALTHY status"
+    check: "t.health.register() returns HealthStatus with status=HEALTHY"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "hs = t.health.register(); assert hs.status == 'HEALTHY'"
+    rule_ids:
+      - TRAE-002
+
+  - id: OBS-C05
+    name: traces_span_creatable
+    type: io_check
+    description: "Traces subsystem must create spans without exception"
+    check: "t.traces.span('gate_test_span') succeeds as context manager"
+    severity: warning
+    on_failure: reject
+    verifiable: true
+    verification_method: "with t.traces.span('obs_gate_span') as span: pass"
+    rule_ids:
+      - TRAE-002
+
+  - id: OBS-C06
+    name: three_loops_closed
+    type: completeness_check
+    description: "Blueprint §1.6's three closed loops (AI dev/ops/governance) must be documented and traceable"
+    check: "Blueprint defines loop_ai_development, loop_ai_operations, loop_ai_governance"
+    severity: warning
+    on_failure: warn
+    verifiable: true
+    verification_method: "Read blueprint.md §1.6 for three closed-loop definitions"
+    rule_ids:
+      - TRAE-002
+
+  - id: OBS-C07
+    name: graceful_shutdown
+    type: lifecycle_check
+    description: "shutdown() must execute without exception and reverse-close all 9 subsystems"
+    check: "t.shutdown() succeeds"
+    severity: warning
+    on_failure: warn
+    verifiable: true
+    verification_method: "t.shutdown(); assert True"
+    rule_ids:
+      - TRAE-002
+
+  - id: OBS-C08
+    name: fail_closed_resilience
+    type: resilience_check
+    description: "Any subsystem write failure must NOT crash the main process"
+    check: "In test_mode, all writes are no-ops = process continues"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "In test_mode, gauge/log/span all succeed silently"
+    rule_ids:
+      - TRAE-002
+
+  - id: OBS-C09
+    name: alerts_publishable
+    type: io_check
+    description: "Alerts subsystem must accept publish without exception"
+    check: "t.alerts.publish(...) succeeds"
+    severity: warning
+    on_failure: warn
+    verifiable: true
+    verification_method: "t.alerts.publish(level='INFO', title='obs_gate_test', detail='gate validation')"
+    rule_ids:
+      - TRAE-002
+
+  - id: OBS-C10
+    name: schema_validated
+    type: structure_check
+    description: "Schema subsystem must validate metric/log/trace schemas"
+    check: "t.schema.validate_metric(name='test', value=1.0, kind='gauge') succeeds"
+    severity: warning
+    on_failure: warn
+    verifiable: true
+    verification_method: "t.schema.validate_metric('obs_gate_test', 1.0, 'gauge')"
+    rule_ids:
+      - TRAE-002

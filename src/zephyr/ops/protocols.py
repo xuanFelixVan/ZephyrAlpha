@@ -1,0 +1,48 @@
+# [A_module] module_id=MOD-UNK_protocols | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+
+# [MODULE] zephyr.observability.feedback_loop.protocols
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] M
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+from enum import Enum
+from typing import Any, Protocol
+
+
+class ActionType(str, Enum):
+    NOTIFY_OWNER = "NOTIFY_OWNER"
+    ADJUST_THRESHOLD = "ADJUST_THRESHOLD"
+    REPAIR = "REPAIR"
+    DEPLOY = "DEPLOY"
+    SELF_UPGRADE = "SELF_UPGRADE"
+    REBALANCE = "REBALANCE"
+
+
+class FeedbackProtocolAdapter(Protocol):
+    def dispatch_action(
+        self, action_type: ActionType, payload: dict[str, Any]
+    ) -> bool:
+        ...
+
+class AgentCapability:
+    def __init__(self, name='', level=0, description=''):
+        self.name = name
+        self.level = level
+        self.description = description
+
+    def __repr__(self):
+        return f'AgentCapability({self.name}, level={self.level})'

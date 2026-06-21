@@ -11,13 +11,13 @@ AGENTS.md §6.10 双层对齐闸门的根治层：
 
 检查范围：
   - layers/l*.yaml           -> modules[].status/priority/runtime_plane vs summary
-  - infra/core-services.yaml -> services[].status/priority vs summary
-  - infra/shared-infra.yaml  -> modules[].status/priority vs summary
-  - scripts/scripts-model.yaml -> modules[].status/priority/runtime_plane vs summary
+  - infra/core_services.yaml -> services[].status/priority vs summary
+  - infra/shared_infra.yaml  -> modules[].status/priority vs summary
+  - scripts/scripts_model.yaml -> modules[].status/priority/runtime_plane vs summary
   - frontend/*.yaml           -> modules[].status/priority vs summary
-  - cross-cutting/capability-heatmap.yaml -> capabilities[].current_level vs summary.by_maturity
-  - technology/technology-landscape.yaml  -> technologies[].quadrant vs summary.by_quadrant
-  - module-id-registry.yaml   -> registered_ids 条目数 vs total_registered
+  - cross-cutting/capability_heatmap.yaml -> capabilities[].current_level vs summary.by_maturity
+  - technology/technology_landscape.yaml  -> technologies[].quadrant vs summary.by_quadrant
+  - module_id_registry.yaml   -> registered_ids 条目数 vs total_registered
   - _index.yaml              -> partitions 条目数 vs global_stats.total_partitions
                               -> 跨文件聚合 P0/P1/P2/P3/deferred vs global_stats
 
@@ -166,7 +166,7 @@ def validate_yaml_summaries() -> tuple[bool, list[str]]:
                     actual_count = actual.get(quadrant, 0)
                     if declared != actual_count:
                         errors.append(f"{file_label}: summary.by_quadrant.{quadrant}={declared}，实际={actual_count}")
-    registry_path = ARCH_MODEL / "module-id-registry.yaml"
+    registry_path = ARCH_MODEL / "module_id_registry.yaml"
     if registry_path.exists():
         data = load_yaml(registry_path)
         if data:
@@ -176,9 +176,9 @@ def validate_yaml_summaries() -> tuple[bool, list[str]]:
                 declared = data.get("total_registered")
                 if declared is not None and declared != actual:
                     errors.append(
-                        f"module-id-registry.yaml: total_registered={declared}，实际 registered_ids 条目数={actual}"
+                        f"module_id_registry.yaml: total_registered={declared}，实际 registered_ids 条目数={actual}"
                     )
-    index_path = ARCH_MODEL / "_index.yaml"
+    index_path = ARCH_MODEL / "index.yaml"
     if index_path.exists():
         data = load_yaml(index_path)
         if data:
@@ -190,7 +190,7 @@ def validate_yaml_summaries() -> tuple[bool, list[str]]:
                     actual = len(partitions) if isinstance(partitions, list) else 0
                     if declared != actual:
                         errors.append(
-                            f"_index.yaml: global_stats.total_partitions={declared}，实际 partitions 条目数={actual}"
+                            f"index.yaml: global_stats.total_partitions={declared}，实际 partitions 条目数={actual}"
                         )
                 cross_p0 = 0
                 cross_p1 = 0
@@ -235,7 +235,7 @@ def validate_yaml_summaries() -> tuple[bool, list[str]]:
                 def _check_global(field: str, declared_val, actual_val: int):
                     """_check_global implementation."""
                     if declared_val is not None and declared_val != actual_val:
-                        errors.append(f"_index.yaml: global_stats.{field}={declared_val}，实际跨文件聚合={actual_val}")
+                        errors.append(f"index.yaml: global_stats.{field}={declared_val}，实际跨文件聚合={actual_val}")
 
                 total_all = len(all_items)
                 _check_global("total_modules_p0", global_stats.get("total_modules_p0"), cross_p0)

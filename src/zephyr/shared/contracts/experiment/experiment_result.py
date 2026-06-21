@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_experiment_result | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.contracts.experiment.experiment_result
 
@@ -30,7 +31,7 @@ from zephyr.shared.contracts.core.trace_context import TraceContext
 # category: data_contract
 # status: auto_generated
 # created: "2026-05-05"
-# generated_by: codegen from cross-layer-contracts.yaml
+# generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
 ZephyrAlpha — shared/contracts/experiment_result.py
@@ -39,7 +40,7 @@ CTR-P1-014: ExperimentResult / 实验结论
 
 L13 → L09/L11 实验结论契约。Scout Agent 完成对照实验后产出的结构化结论。
 
-SSoT: cross-layer-contracts.yaml -> CTR-P1-014
+SSoT: cross_layer_contracts.yaml -> CTR-P1-014
 Version: 1.0
 Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.

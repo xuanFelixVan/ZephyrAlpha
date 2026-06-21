@@ -1,6 +1,7 @@
 ---
 blueprint_id: DOM-GOV-001
----
+title: Runtime.Manifest
+module_id: MOD-067---
 
 # runtime/ 文件清单（自动生成 2026-05-09）
 
@@ -17,9 +18,9 @@ blueprint_id: DOM-GOV-001
 - capability_registry.py
 - circadian_scheduler.py
 - dream_cycle.py
-- feedback_loop.py
+- feedback-loop.py
 - finalizer.py
-- health_monitor.py
+- health-monitor.py
 - integration_registry.py
 - lifecycle_manager.py
 - module_onboarding_scanner.py

@@ -63,7 +63,7 @@ from typing import Any
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 _GATES_DIR = _PROJECT_ROOT / "src" / "zephyr" / "gates"
-_DB_PATH = _PROJECT_ROOT / "data" / "zephyr.db"
+_DB_PATH = _PROJECT_ROOT / "data" / "zephyr.infrastructure.db"
 _SNAPSHOT_PATH = _PROJECT_ROOT / "scripts" / "governance" / "meta" / "gate_engine_hashes.json"
 _SRC = _PROJECT_ROOT / "src"
 
@@ -220,8 +220,8 @@ def run_canary_injection_test() -> dict[str, Any]:
 
     sys.path.insert(0, str(_SRC))
     try:
-        from zephyr.gates.gate_engine import GateEngine
-        from zephyr.shared.schemas import Task, TaskNamespace, SafetyLevel
+        from zephyr.governance.rule_enforcement.gate_engine import GateEngine
+        from zephyr.integration.schema.schemas import Task, TaskNamespace, SafetyLevel
     except Exception as exc:
         return {
             "label": "V4. Canary 注入测试",
@@ -324,7 +324,7 @@ def verify_registry_filesystem_consistency() -> dict[str, Any]:
             continue
 
     unregistered = yaml_gate_ids - registry_gate_ids
-    # GATE-18 是非 YAML 的 pre-commit gate，跳过
+    # GATE-18 是非 YAML 的 pre_commit gate，跳过
     phantom = registry_gate_ids - yaml_gate_ids - {"GATE-18", ""}
 
     for gid in unregistered:
@@ -334,7 +334,7 @@ def verify_registry_filesystem_consistency() -> dict[str, Any]:
 
     for gid, fpath in registry_files.items():
         if gid == "GATE-18":
-            continue  # pre-commit hook——不是在 gates/ 目录下的 YAML 文件
+            continue  # pre_commit hook——不是在 gates/ 目录下的 YAML 文件
         if fpath.endswith((".yaml", ".yml")):
             full_path = _GATES_DIR / fpath
             if not full_path.exists():
@@ -356,8 +356,8 @@ def verify_import_integrity() -> dict[str, Any]:
 
     sys.path.insert(0, str(_SRC))
     try:
-        import zephyr.gates.gate_engine
-        import zephyr.gates.circuit_breaker
+        import zephyr.governance.rule_enforcement.gate_engine
+        import zephyr.governance.rule_enforcement.circuit_breaker
         importable = True
     except SyntaxError as exc:
         issues.append(f"SyntaxError: {exc}")

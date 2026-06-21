@@ -73,7 +73,7 @@ def _check_root_pollution(file_path: str) -> tuple[bool, str]:
 def _check_phase_health() -> tuple[bool, str]:
     """_check_phase_health implementation."""
     try:
-        from zephyr.governance.phase_manager import GateResult, session_startup
+        from zephyr.governance.rule_enforcement.phase_manager import GateResult, session_startup
         result = session_startup(quick=True)
         if result["ready"]:
             return True, f"PHASE_OK: {result['green']}G/{result['yellow']}Y/{result['red']}R"
@@ -100,6 +100,106 @@ def _check_registered(file_path: str, is_create: bool) -> tuple[bool, str]:
     return True, "OK"
 
 
+def _check_encoding_safety(file_path: str) -> tuple[bool, str]:
+    """Check that existing file has no mojibake, and warn about encoding safety."""
+    p = Path(file_path)
+    if not p.exists():
+        return True, "OK (new file)"
+    if p.suffix not in (".py", ".md", ".yaml", ".yml", ".json", ".toml"):
+        return True, "OK (non-text file)"
+    try:
+        raw = p.read_bytes()
+    except OSError:
+        return True, "OK (cannot read)"
+    try:
+        raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return False, f"ENCODING_BLOCK: {file_path} is not valid UTF-8 — writing may corrupt the file further"
+    # Mojibake detection
+    try:
+        content = raw.decode("utf-8")
+        # Method 1: known markers
+        MOJIBAKE_MARKERS = [
+            "\u9516\u65a4\u62f7",  # 锟斤拷
+            "\u93d4\u63d2\u53c2", "\u93d4\u659c\u7280\u6362", "\u93d4\u529c\u00b0\u20ac",
+            "\u94c6\u003f",
+        ]
+        if any(m in content for m in MOJIBAKE_MARKERS):
+            return False, f"MOJIBAKE_BLOCK: {file_path} contains known mojibake markers — fix encoding before modifying (DM-378)"
+        # Method 2: round-trip via GBK (CJK segments only)
+        import re as _re
+        # 2a: test segments WITHOUT U+FFFD
+        clean_content = content.replace("\ufffd", "")
+        if clean_content.strip():
+            cjk_segments = _re.findall(r'[\u4e00-\u9fff\u3400-\u4dbf]+', clean_content)
+            for seg in cjk_segments:
+                if len(seg) < 2:
+                    continue
+                try:
+                    gbk_bytes = seg.encode("gbk")
+                    try:
+                        roundtrip = gbk_bytes.decode("utf-8")
+                        if roundtrip != seg:
+                            orig_cjk = sum(1 for c in seg if 0x4E00 <= ord(c) <= 0x9FFF)
+                            rt_cjk = sum(1 for c in roundtrip if 0x4E00 <= ord(c) <= 0x9FFF)
+                            if rt_cjk > 0 and orig_cjk > 0:
+                                rt_cjk_density = rt_cjk / len(roundtrip)
+                                orig_cjk_density = orig_cjk / len(seg)
+                                if rt_cjk_density >= orig_cjk_density:
+                                    return False, f"MOJIBAKE_BLOCK: {file_path} contains GBK-as-UTF-8 mojibake (round-trip detected) — fix encoding before modifying (DM-378)"
+                    except UnicodeDecodeError:
+                        # Partial decode may reveal mojibake
+                        try:
+                            partial_rt = gbk_bytes.decode("utf-8", errors="replace")
+                            partial_cjk = sum(1 for c in partial_rt
+                                              if 0x4E00 <= ord(c) <= 0x9FFF and c != "\ufffd")
+                            if partial_cjk >= 3:
+                                return False, f"MOJIBAKE_BLOCK: {file_path} contains GBK-as-UTF-8 mojibake (partial round-trip) — fix encoding before modifying (DM-378)"
+                        except Exception:
+                            pass
+                except UnicodeEncodeError:
+                    pass
+        # 2b: test segments WITH U+FFFD — split at U+FFFD and test sub-segments
+        if "\ufffd" in content:
+            cjk_with_replacement = _re.findall(r'[\u4e00-\u9fff\u3400-\u4dbf\ufffd]+', content)
+            for seg in cjk_with_replacement:
+                if "\ufffd" not in seg:
+                    continue
+                sub_segs = [s for s in seg.split("\ufffd") if len(s) >= 2]
+                for sub in sub_segs:
+                    try:
+                        gbk_bytes = sub.encode("gbk")
+                        try:
+                            roundtrip = gbk_bytes.decode("utf-8")
+                            if roundtrip != sub:
+                                orig_cjk = sum(1 for c in sub if 0x4E00 <= ord(c) <= 0x9FFF)
+                                rt_cjk = sum(1 for c in roundtrip if 0x4E00 <= ord(c) <= 0x9FFF)
+                                if rt_cjk > 0 and orig_cjk > 0:
+                                    rt_cjk_density = rt_cjk / len(roundtrip)
+                                    orig_cjk_density = orig_cjk / len(sub)
+                                    if rt_cjk_density >= orig_cjk_density:
+                                        return False, f"MOJIBAKE_BLOCK: {file_path} contains GBK-as-UTF-8 mojibake (round-trip with U+FFFD) — fix encoding before modifying (DM-378)"
+                        except UnicodeDecodeError:
+                            pass
+                    except UnicodeEncodeError:
+                        pass
+        # Method 3: U+FFFD in CJK context
+        if "\ufffd" in content:
+            cjk_context = _re.findall(r'[\u4e00-\u9fff\u3400-\u4dbf]\ufffd|\ufffd[\u4e00-\u9fff\u3400-\u4dbf]', content)
+            if len(cjk_context) >= 2:
+                return False, f"MOJIBAKE_BLOCK: {file_path} has U+FFFD replacement chars in CJK context — likely mojibake (DM-378)"
+        # Method 4: statistical fallback
+        total_cjk = sum(1 for c in content if 0x4E00 <= ord(c) <= 0x9FFF)
+        if total_cjk >= 50:
+            common_cjk = sum(1 for c in content if 0x4E00 <= ord(c) <= 0x77FF)
+            gbk_ext_cjk = sum(1 for c in content if 0x9400 <= ord(c) <= 0x9FFF)
+            if gbk_ext_cjk / total_cjk > 0.50 and common_cjk / total_cjk < 0.30:
+                return False, f"MOJIBAKE_BLOCK: {file_path} has abnormal CJK distribution — likely mojibake (DM-378)"
+    except UnicodeDecodeError:
+        pass
+    return True, "OK"
+
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
@@ -123,6 +223,9 @@ def main() -> int:
 
     ok, msg = _check_registered(args.file_path, args.create)
     checks.append({"check": "registration", "pass": ok, "message": msg})
+
+    ok, msg = _check_encoding_safety(args.file_path)
+    checks.append({"check": "encoding_safety", "pass": ok, "message": msg})
 
     blocked = [c for c in checks if not c["pass"]]
 

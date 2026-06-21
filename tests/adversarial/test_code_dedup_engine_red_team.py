@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0011 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-206 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_code_dedup_engine_red_team
 # [STABILITY] evolving
 # [SAFETY] L
@@ -22,58 +23,58 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 
 class TestStage00_ImportChain:
     def test_l01_import(self):
-        from zephyr.l01_infrastructure import code_dedup_engine
+        from zephyr.testing import code_dedup
         assert code_dedup_engine.__version__ == "0.15.0"
         assert code_dedup_engine.__module_id__ == "MOD-INF-017"
 
     def test_root_proxy_import(self):
-        from zephyr.l01_infrastructure.code_dedup_engine import __version__ as v, __module_id__ as m
+        from zephyr.governance import __version__ as v, __module_id__ as m
         assert v == "0.15.0"
         assert m == "MOD-INF-017"
 
     def test_scanner_via_proxy(self):
-        from zephyr.l01_infrastructure.code_dedup_engine import scanner
+        from zephyr.governance import scanner
         assert hasattr(scanner, "Scanner")
 
     def test_scanner_direct(self):
-        from zephyr.l01_infrastructure.code_dedup_engine.scanner import Scanner, ScanResult, DuplicateGroup
+        from zephyr.governance.scanner import Scanner, ScanResult, DuplicateGroup
         s = Scanner()
         assert s is not None
 
     def test_monoculture_guard(self):
-        from zephyr.l01_infrastructure.code_dedup_engine.monoculture_guard import MonocultureGuard, BlastRadiusScore
+        from zephyr.governance.monoculture_guard import MonocultureGuard, BlastRadiusScore
         g = MonocultureGuard()
         assert g is not None
 
     def test_self_scanner(self):
-        from zephyr.l01_infrastructure.code_dedup_engine.self_scanner import SelfScanner
+        from zephyr.governance.self_scanner import SelfScanner
         ss = SelfScanner()
         assert ss is not None
 
     def test_decision_auditor(self):
-        from zephyr.l01_infrastructure.code_dedup_engine.decision_auditor import DecisionAuditor
+        from zephyr.governance.decision_auditor import DecisionAuditor
         da = DecisionAuditor()
         assert da is not None
 
     def test_cli_module(self):
-        from zephyr.l01_infrastructure.code_dedup_engine import cli
+        from zephyr.governance import cli
         import inspect
         sig = inspect.signature(cli.main)
         assert len(sig.parameters) == 0, f"main() should take no args, got: {sig}"
 
     def test_integration_hub(self):
-        from zephyr.l01_infrastructure.code_dedup_engine.integration_hub import IntegrationHub
+        from zephyr.governance.integration_hub import IntegrationHub
         hub = IntegrationHub()
         assert hub is not None
 
     def test_exit_codes(self):
-        from zephyr.l01_infrastructure.code_dedup_engine.exit_codes import ExitCode
+        from zephyr.governance.exit_codes import ExitCode
         assert ExitCode.PASS is not None
 
 
 class TestStage01_ScannerAdversarial:
     def test_scan_file_detects_self(self):
-        from zephyr.l01_infrastructure.code_dedup_engine.scanner import Scanner
+        from zephyr.governance.scanner import Scanner
         scanner = Scanner()
         result = scanner.scan_file(__file__)
         assert result is not None
@@ -94,7 +95,7 @@ class TestStage01_ScannerAdversarial:
         with open(b, "w", encoding="utf-8") as f:
             f.write(code)
 
-        from zephyr.l01_infrastructure.code_dedup_engine.scanner import Scanner
+        from zephyr.governance.scanner import Scanner
         scanner = Scanner()
         scanner.scan_file(a)
         scanner.scan_file(b)
@@ -110,7 +111,7 @@ class TestStage01_ScannerAdversarial:
         with open(b, "w", encoding="utf-8") as f:
             f.write("class HttpServer:\n    def start(self): pass\n")
 
-        from zephyr.l01_infrastructure.code_dedup_engine.scanner import Scanner
+        from zephyr.governance.scanner import Scanner
         scanner = Scanner()
         scanner.scan_file(a)
         scanner.scan_file(b)
@@ -120,7 +121,7 @@ class TestStage01_ScannerAdversarial:
 
 class TestStage02_MonocultureAdversarial:
     def test_brs_computation(self):
-        from zephyr.l01_infrastructure.code_dedup_engine.monoculture_guard import MonocultureGuard, BlastRadiusScore
+        from zephyr.governance.monoculture_guard import MonocultureGuard, BlastRadiusScore
         guard = MonocultureGuard()
         brs = guard.compute_brs(
             caller_count=12,
@@ -132,7 +133,7 @@ class TestStage02_MonocultureAdversarial:
         assert 0 <= brs.blast_radius_score <= 100, f"BRS out of range: {brs.blast_radius_score}"
 
     def test_should_not_block_trivial(self):
-        from zephyr.l01_infrastructure.code_dedup_engine.monoculture_guard import MonocultureGuard
+        from zephyr.governance.monoculture_guard import MonocultureGuard
         guard = MonocultureGuard()
         brs = guard.compute_brs(
             caller_count=0, cross_layer_count=0,
@@ -144,7 +145,7 @@ class TestStage02_MonocultureAdversarial:
 
 class TestStage03_SelfScanIntegrity:
     def test_self_scan_no_crash(self):
-        from zephyr.l01_infrastructure.code_dedup_engine.self_scanner import SelfScanner
+        from zephyr.governance.self_scanner import SelfScanner
         scanner = SelfScanner()
         report = scanner.scan_self()
         assert report is not None
@@ -154,7 +155,7 @@ class TestStage03_SelfScanIntegrity:
 
 class TestStage04_DecisionAuditChain:
     def test_log_decision_chain(self):
-        from zephyr.l01_infrastructure.code_dedup_engine.decision_auditor import DecisionAuditor
+        from zephyr.governance.decision_auditor import DecisionAuditor
         auditor = DecisionAuditor()
         auditor.log_decision(
             decision_id="RED-001",
@@ -176,5 +177,5 @@ class TestStage05_TriageIntegration:
             "cli", "config", "function_discovery", "auto_test_generator",
         ]
         for name in modules:
-            mod = __import__(f"zephyr.l01_infrastructure.code_dedup_engine.{name}", fromlist=[name])
+            mod = __import__(f"zephyr.testing.code_dedup.{name}", fromlist=[name])
             assert mod is not None, f"Failed to import: {name}"

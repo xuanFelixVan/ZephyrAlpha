@@ -1,0 +1,115 @@
+# [A_module] module_id=MOD-ORC_windows_service | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
+
+# [MODULE] zephyr.trading.windows_service
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+"""
+WindowsService — Windows Service 包装器
+=========================================
+蓝图: ARC-0001 §6.1
+
+注册方式:
+  sc create ZephyrAlpha binPath= "python -m zephyr.orchestration.runtime_core"
+  sc config ZephyrAlpha start= auto
+
+卸载:
+  sc delete ZephyrAlpha
+"""
+
+
+from __future__ import annotations
+
+import sys
+
+
+def install_service() -> None:
+    import subprocess
+    python_exe = sys.executable
+    bin_path = f'"{python_exe}" -m zephyr.orchestration.runtime_core'
+    subprocess.run(
+        ["sc", "create", "ZephyrAlpha", f"binPath={bin_path}"],
+        check=True,
+    )
+    subprocess.run(
+        ["sc", "config", "ZephyrAlpha", "start=auto"],
+        check=True,
+    )
+    print("ZephyrAlpha Windows Service installed and set to auto-start.")
+
+
+def uninstall_service() -> None:
+    import subprocess
+    subprocess.run(["sc", "delete", "ZephyrAlpha"], check=True)
+    print("ZephyrAlpha Windows Service uninstalled.")
+
+
+def run_as_service() -> None:
+    try:
+        import win32serviceutil
+        import win32service
+        import win32event
+    except ImportError:
+        print("pywin32 not installed. Run: pip install pywin32")
+        print("Falling back to console mode...")
+        from zephyr.trading.__main__ import main
+        main()
+        return
+
+    class _ZephyrAlphaService(win32serviceutil.ServiceFramework):
+        _svc_name_ = "ZephyrAlpha"
+        _svc_display_name_ = "ZephyrAlpha AutoRuntime Core"
+        _svc_description_ = "Three-layer AI runtime orchestration brain"
+
+        def __init__(self, args: tuple[str, ...]) -> None:
+            super().__init__(args)
+            self.hWaitStop = win32event.CreateEvent(None, 0, 0, None)
+
+        def SvcStop(self) -> None:
+            self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
+            win32event.SetEvent(self.hWaitStop)
+
+        def SvcDoRun(self) -> None:
+            from zephyr.trading.auto_runtime_core import AutoRuntimeCore
+            from zephyr.trading.runtime_config import RuntimeConfig
+
+            config = RuntimeConfig()
+            core = AutoRuntimeCore(config)
+            core.boot()
+
+            while True:
+                rc = win32event.WaitForSingleObject(self.hWaitStop, int(config.poll_interval * 1000))
+                if rc == win32event.WAIT_OBJECT_0:
+                    break
+                core.reconcile()
+
+            core.shutdown()
+
+    win32serviceutil.HandleCommandLine(_ZephyrAlphaService)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "install":
+            install_service()
+        elif sys.argv[1] == "uninstall":
+            uninstall_service()
+        else:
+            run_as_service()
+    else:
+        run_as_service()

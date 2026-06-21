@@ -1,0 +1,34 @@
+schema_version: "1.0.0"
+partition:
+  id: pipeline
+  name: Pipeline
+  track: b_track
+  bounded_context: false
+  status: implemented
+
+modules:
+  - id: pipeline-core
+    module_id: MOD_INF_009
+    name: Pipeline Orchestrator
+    submodule_path: src/zephyr/pipeline/
+    status: implemented
+    priority: P0
+    runtime_plane: warm
+    description: >
+      M1-M11 双管�?�?A�?M1-M5)生产管线 + B�?M6-M11)审计管线�?      模型路由依据 GOV-AI-002 v2 决策树：全部使用 DeepSeek V4 Pro�?      Claude API 仅在极端救援场景触发（DeepSeek 连续失败>=3�?�?autonomy_level==unsafe �?DeepSeek 已失败）�?      执行模式依据 b_execution_model.yaml 三层模型：Trae(人在旁边)/Local(嵌入)/API(无人值守)�?      当前状态：_call_model() 返回 simulated: True，尚未接入真�?API�?    files:
+      - models.py
+      - pipeline_orchestrator.py
+    interfaces:
+      - contract_id: CT-PIPE-ORC-001
+        role: producer
+        description: 任务→M1-M11 管线节点路由
+      - contract_id: CT-EXEC-API-001
+        role: consumer
+        description: 依赖执行模型层的 API 调用能力
+    kb_ref:
+      - KE-governance-adr_registry_migration-000
+
+summary:
+  total: 1
+  by_status:
+    implemented: 1

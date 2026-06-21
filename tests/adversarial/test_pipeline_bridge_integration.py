@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0016 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-211 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_pipeline_bridge_integration
 # [STABILITY] evolving
 # [SAFETY] L
@@ -19,12 +20,12 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.agent_spec.integration.pipeline_bridge import (
+from zephyr.autonomy_core.integration.pipeline_bridge import (
     PipelineSkillBridge,
     SkillContextInjector,
     SkillInjectionResult,
 )
-from zephyr.agent_spec.skill_loader import SkillLoader
+from zephyr.autonomy_core.skill_loader import SkillLoader
 
 
 class TestPipelineSkillBridge:

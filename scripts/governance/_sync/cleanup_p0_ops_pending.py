@@ -20,7 +20,7 @@ import sqlite3
 import json
 from datetime import datetime, timezone
 
-DB = "data/zalpha_metadata.db"
+DB = "data/databases/governance.db"
 NOW = datetime.now(timezone.utc).isoformat()
 
 conn = sqlite3.connect(DB)

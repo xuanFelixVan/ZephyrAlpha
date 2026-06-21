@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0175 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-332 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.integration.test_phase_f_layers
 # [STABILITY] evolving
 # [SAFETY] L
@@ -14,7 +15,7 @@
   L12 System Telemetry      : SLA 监控 + 契约漂移检测
   L13 Experimentation       : 实验管线 + A/B 测试
   Backpressure (BP)         : Pause/Throttle/Resume 状态机
-  P1 Contracts              : CTR-P1-001～CTR-P1-015（与 cross-layer-contracts.yaml 编号对齐）
+  P1 Contracts              : CTR-P1-001～CTR-P1-015（与 cross_layer_contracts.yaml 编号对齐）
 
 Phase F | Safety: MEDIUM
 """
@@ -28,7 +29,7 @@ from typing import Any
 import pandas as pd
 import pytest
 
-from zephyr.l08_human_ai_interface.interface_base import (
+from zephyr.frontend.interface_base import (
     ApprovalAction,
     ApprovalGatewayBase,
     ApprovalRequest,
@@ -37,45 +38,45 @@ from zephyr.l08_human_ai_interface.interface_base import (
     NotificationLevel,
     NotificationManagerBase,
 )
-from zephyr.l09_research_innovation.backtest_base import (
+from zephyr.simulation.backtest_base import (
     BacktestEngineBase,
     BacktestResult,
     FactorDiscovery,
 )
-from zephyr.l09_research_innovation.implementations.default_backtest_engine import (
+from zephyr.simulation.default_backtest_engine import (
     BacktestConfig,
     DefaultBacktestEngine,
 )
-from zephyr.l10_compliance.security_gateway_base import (
+from zephyr.governance.security_gateway_base import (
     AuditAction,
     AuditDecision,
     ComplianceEngine,
     SecurityGateway,
 )
-from zephyr.l10_compliance.implementations.default_security_gateway import DefaultSecurityGateway
-from zephyr.l11_ml_platform.inference_base import (
+from zephyr.governance.compliance_gate_a6.default_security_gateway import DefaultSecurityGateway
+from zephyr.intelligence.model_evaluation.inference_base import (
     InferenceEngineBase,
     ModelMetadata,
     ModelRegistry,
     ModelTrainerBase,
 )
-from zephyr.l11_ml_platform.implementations.default_inference_engine import DefaultInferenceEngine
-from zephyr.l01_infrastructure.system_telemetry.contract_metrics import (
+from zephyr.intelligence.model_evaluation.implementations.default_inference_engine import DefaultInferenceEngine
+from zephyr.infrastructure.system_telemetry.contract_metrics import (
     ContractMetricsCollector,
     DriftAlert,
     SlaRecord,
     get_contract_metrics,
 )
-from zephyr.l13_experimentation.pipeline_base import (
+from zephyr.simulation.pipeline_base import (
     ExperimentConfig,
     ExperimentMetric,
     ExperimentPipelineBase,
     ScoutAgentBase,
 )
-from zephyr.l13_experimentation.implementations.default_experiment_pipeline import (
+from zephyr.simulation.implementations.default_experiment_pipeline import (
     DefaultExperimentPipeline,
 )
-from zephyr.pipeline.backpressure_manager import (
+from zephyr.integration.backpressure_manager import (
     BackpressureManager,
     BpState,
     BpSymbolState,
@@ -83,22 +84,22 @@ from zephyr.pipeline.backpressure_manager import (
     emit_throttle,
     emit_resume,
 )
-from zephyr.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
-from zephyr.trading_contracts.risk.compliance_rule import ComplianceRule
-from zephyr.trading_contracts.market.factor_monitor_report import FactorMonitorReport
-from zephyr.trading_contracts.execution.execution_report import ExecutionReport
-from zephyr.shared.contracts.experiment.experiment_result import ExperimentResult
-from zephyr.trading_contracts.execution.fill import Fill
-from zephyr.trading_contracts.execution.model_serving_request import ModelServingRequest
-from zephyr.shared.contracts.experiment.model_serving_response import ModelServingResponse
-from zephyr.trading_contracts.market.macro_factor_signal import MacroFactorSignal
-from zephyr.shared.contracts.portfolio.performance_attribution_report import PerformanceAttributionReport
-from zephyr.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
-from zephyr.trading_contracts.risk.risk_metrics import RiskMetricsReport
-from zephyr.shared.contracts.portfolio.strategy_lifecycle_event import StrategyLifecycleEvent
-from zephyr.trading_contracts.market.synthesized_signal import SynthesizedSignal
-from zephyr.shared.contracts.core.system_configuration import SystemConfiguration
-from zephyr.shared.contracts.core.telemetry_emitter import TelemetryEmitter
+from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
+from zephyr.pf_core.compliance_rule import ComplianceRule
+from zephyr.integration.shared_08.contracts.factor_monitor_report import FactorMonitorReport
+from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
+from zephyr.integration.shared_08.contracts.experiment_result import ExperimentResult
+from zephyr.trading.trading_contracts.execution.fill import Fill
+from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
+from zephyr.integration.shared_08.contracts.model_serving_response import ModelServingResponse
+from zephyr.integration.shared_08.contracts.macro_factor_signal import MacroFactorSignal
+from zephyr.integration.shared_08.contracts.performance_attribution_report import PerformanceAttributionReport
+from zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
+from zephyr.trading.trading_contracts.risk.risk_metrics import RiskMetricsReport
+from zephyr.integration.shared_08.contracts.strategy_lifecycle_event import StrategyLifecycleEvent
+from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.integration.shared_08.contracts.core.system_configuration import SystemConfiguration
+from zephyr.integration.shared_08.contracts.core.telemetry_emitter import TelemetryEmitter
 
 
 class TestPhaseFL08:
@@ -270,7 +271,7 @@ class TestPhaseFL10:
             decision.action = AuditAction.ALLOW
 
     def test_security_gateway_is_abstract(self):
-        assert SecurityGateway.__abstractmethods__ == frozenset({"pre_filter", "security_scan", "decide"})
+        assert SecurityGateway.__abstractmethods__ == frozenset({"pre_filter", "security-scan", "decide"})
 
     def test_compliance_engine_is_abstract(self):
         assert ComplianceEngine.__abstractmethods__ == frozenset({"evaluate", "enforce"})
@@ -535,7 +536,7 @@ class TestPhaseFBackpressure:
     def test_backpressure_manager_auto_resume_on_timeout(self):
         mgr = BackpressureManager()
         state = mgr.handle_pause(
-            __import__("zephyr.shared.contracts.backpressure.pause", fromlist=["BackpressurePause"]).BackpressurePause(
+            __import__("zephyr.integration.shared_08.contracts.backpressure.pause", fromlist=["BackpressurePause"]).BackpressurePause(
                 signal_id="bp-001",
                 symbol="600519",
                 duration_ms=1,
@@ -583,7 +584,7 @@ class TestPhaseFBackpressure:
 
 
 class TestPhaseFP1Contracts:
-    """P1 契约显式验证 — 测试方法名与 cross-layer-contracts.yaml 中 CTR-P1-xxx 编号对齐"""
+    """P1 契约显式验证 — 测试方法名与 cross_layer_contracts.yaml 中 CTR-P1-xxx 编号对齐"""
 
     def test_ctr_p1_001_factor_monitor_report(self):
         rpt = FactorMonitorReport(
@@ -770,7 +771,7 @@ class TestPhaseFP1Contracts:
             metric_name="trade_latency_ms",
             metric_type="gauge",
             metric_value=45.2,
-            source_module="l06_trade_execution",
+            source_module="l06-trade-execution",
             correlation_id=f"corr-{uuid.uuid4().hex[:8]}",
             timestamp=datetime.now(timezone.utc),
             labels={},

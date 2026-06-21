@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0145 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-302 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.infrastructure.drift_red_blue_adversarial
 # [STABILITY] evolving
 # [SAFETY] L
@@ -18,8 +19,8 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from zephyr.behavioral_auditor.ai_construction_detectors import AIConstructionDetectors
-from zephyr.behavioral_auditor.chaos_injector import (
+from zephyr.behavioral_audit.ai_construction_detectors import AIConstructionDetectors
+from zephyr.behavioral_audit.chaos_injector import (
     ChaosInjection,
     ChaosInjectionType,
     ChaosMetrics,
@@ -29,8 +30,8 @@ from zephyr.behavioral_auditor.chaos_injector import (
     inject_path_rename,
     inject_yaml_field_flip,
 )
-from zephyr.behavioral_auditor.drift_models import DriftEvent
-from zephyr.behavioral_auditor.self_test_verifier import SelfTestVerifier
+from zephyr.behavioral_audit.drift_models import DriftEvent
+from zephyr.behavioral_audit.self_test_verifier import SelfTestVerifier
 
 
 def setup_target_files(tmp_dir: str) -> list[Path]:

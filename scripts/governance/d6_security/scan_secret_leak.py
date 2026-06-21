@@ -1,10 +1,10 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/scan_secret_leak.py | §
 """
-对标 06-security-architecture.md §6.3 L3-Audit：
+对标 06-security_architecture.md §6.3 L3-Audit：
   周扫描全库 secret 泄漏，Finding 写 docs/09_audit/findings/。
 
 与 detect_secrets.py 的区别：
-  - detect_secrets.py = CI pre-commit 级轻量扫描（单文件/增量）
+  - detect_secrets.py = CI pre_commit 级轻量扫描（单文件/增量）
   - scan_secret_leak.py = 全库深度扫描 + 历史对比 + Finding 持久化
 
 用法:
@@ -149,9 +149,9 @@ def write_findings_report(findings: list[dict], new_findings: list[dict]) -> Pat
         return None
     FINDINGS_DIR.mkdir(parents=True, exist_ok=True)
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    report_path = FINDINGS_DIR / f"SEC-LEAK-{ts}.json"
+    report_path = FINDINGS_DIR / f"sec_leak_{ts}.json"
     report = {
-        "id": f"SEC-LEAK-{ts}",
+        "id": f"sec_leak_{ts}",
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "total_findings": len(findings),
         "new_findings": len(new_findings),

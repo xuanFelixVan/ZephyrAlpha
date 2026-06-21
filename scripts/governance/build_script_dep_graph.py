@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §3.9
+# [BLUEPRINT] GOV-071 | docs/03_modules/_domain-governance/blueprint.md | §3.9
 # [MODULE] scripts.governance.build_script_dep_graph
 # [INVARIANTS] DAG不可有循环;拓扑排序必须完整
 # [MODIFY-GUARD] manifest格式变更需同步scaffold.py

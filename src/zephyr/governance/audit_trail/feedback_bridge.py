@@ -1,0 +1,103 @@
+# [A_module] module_id=MOD-GOV_feedback_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §12
+# [MODULE] zephyr.governance.audit_trail.feedback_bridge
+# [INVARIANTS] 不实现反馈逻辑; 仅桥接FeedbackLoop.analyze_pending()+generate_proposals()+apply_proposal()
+# [MODIFY-GUARD] FeedbackLoop API变更时同步此桥接
+# [CONSUMERS] audit-orchestrator.feedback_policy(策略引擎消费反馈)
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] 桥接失败返回空结果
+# [TESTS] tests/audit-orchestrator/test_feedback_bridge.py
+
+from __future__ import annotations
+
+import logging
+from pathlib import Path
+from tempfile import mkdtemp
+from typing import Any
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["FeedbackBridge"]
+
+
+class FeedbackBridge:
+    def __init__(self) -> None:
+        self._loop = None
+        self._available = False
+        try:
+            from zephyr.trading.feedback_loop import FeedbackLoop
+            self._loop = FeedbackLoop(Path(mkdtemp(prefix="ao_feedback_")))
+            self._available = True
+        except ImportError:
+            logger.warning("FeedbackLoop not available")
+        except Exception as exc:
+            logger.warning("FeedbackLoop init failed: %s", exc)
+
+    def analyze_audit_findings(self, findings: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        if not self._available or self._loop is None:
+            return []
+        try:
+            entries = [{
+                "id": f.get("issue_id", str(i)),
+                "module": "audit-orchestrator",
+                "context": f.get("detail", f.get("type", "unknown finding")),
+            } for i, f in enumerate(findings)]
+            proposals = self._loop.analyze_pending(entries)
+            return [{
+                "proposal_id": p.proposal_id,
+                "source": p.source,
+                "pattern": p.pattern,
+                "change": p.suggested_rule_change,
+                "confidence": p.confidence,
+            } for p in proposals]
+        except Exception as exc:
+            logger.error("FeedbackBridge.analyze_audit_findings failed: %s", exc)
+            return []
+
+    def generate_rules(self, pending: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        if not self._available or self._loop is None:
+            return []
+        try:
+            proposals = self._loop.generate_proposals(pending)
+            return [{
+                "proposal_id": p.proposal_id,
+                "source": p.source,
+                "pattern": p.pattern,
+                "change": p.suggested_rule_change,
+                "confidence": p.confidence,
+                "status": p.status,
+            } for p in proposals]
+        except Exception as exc:
+            logger.error("FeedbackBridge.generate_rules failed: %s", exc)
+            return []
+
+    def apply(self, proposal: dict[str, Any]) -> bool:
+        if not self._available or self._loop is None:
+            return False
+        try:
+            from zephyr.trading.feedback_loop import EvolutionProposal
+            p = EvolutionProposal(
+                source=proposal.get("source", "unknown"),
+                pattern=proposal.get("pattern", ""),
+                suggested_rule_change=proposal.get("change", ""),
+                confidence=proposal.get("confidence", 0.5),
+            )
+            return self._loop.apply_proposal(p)
+        except Exception as exc:
+            logger.error("FeedbackBridge.apply failed: %s", exc)
+            return False
+
+    def is_available(self) -> bool:
+        return self._available
+
+class AuditFeedbackBridge:
+    def __init__(self, config=None):
+        self.config = config or {}
+
+    def send_feedback(self, feedback):
+        return BridgeResult()
+
+    def receive_feedback(self, source=''):
+        return []

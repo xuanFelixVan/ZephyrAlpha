@@ -1,9 +1,11 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1932 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-551 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.resource_optimization.test_process_pool
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """
 test_process_pool.py - MCPProcessPool unit tests
 =================================================
@@ -11,7 +13,6 @@ test_process_pool.py - MCPProcessPool unit tests
 TASK-INF-0142 Phase 4 verification.
 """
 
-from __future__ import annotations
 
 import subprocess
 import sys
@@ -19,7 +20,7 @@ import time
 
 import pytest
 
-from zephyr.shared.infra.process_pool import MCPProcessPool, PooledProcess
+from zephyr.shared.shared_services.infra_06.process_pool import MCPProcessPool, PooledProcess
 
 
 class TestProcessPoolBasic:

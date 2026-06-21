@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_contract_bus | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.contract_bus
 
@@ -32,6 +33,8 @@ import functools
 import traceback
 from dataclasses import dataclass, field
 from typing import Any, Callable, Optional, TypeVar
+
+from zephyr.shared.contracts.errors.contract_violation_error import ContractViolationError as _CanonicalContractViolationError
 
 F = TypeVar("F", bound=Callable[..., Any])
 

@@ -1,24 +1,16 @@
-# [BLUEPRINT] DOM-GOV-001 | 03_modules/_domain-governance/blueprint.md | §
-
-# [MODULE] zephyr.governance.supply_chain_security
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
-# [CONSUMERS]
-
-# [STABILITY] evolving
-
-# [SAFETY] L
-
-# [AI_AUTONOMY] ai_modifiable
-
-# [ERROR_CONTRACT]
-
-# [TESTS]
-
+# [A_module] module_id=MOD-UNK_supply_chain_security | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
+
+# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md
+# [MODULE] zephyr.governance.audit_trail
+# [INVARIANTS] 不可变审计记录;密码学完整性;只追加
+# [MODIFY-GUARD] docs/03_modules/_domain-governance/audit-trail/blueprint.md;src/zephyr/audit-trail/__init__.py
+# [CONSUMERS] MOD-INF-027;MOD-INF-015;MOD-INF-010
+# [STABILITY] stable
+# [SAFETY] H
+# [AI_AUTONOMY] immutable_core
+# [ERROR_CONTRACT] IntegrityError;WriteError
+# [TESTS] tests/test_audit_trail/
 
 import json
 import logging
@@ -30,12 +22,10 @@ from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 
-
 class VendorRisk(str, Enum):
     OK = "OK"
     WARNING = "WARNING"
     CRITICAL = "CRITICAL"
-
 
 class SupplyChainReport(BaseModel):
     scanned_at: str = ""
@@ -45,14 +35,12 @@ class SupplyChainReport(BaseModel):
     last_vendor_update: Optional[str] = None
     vendor_risk: VendorRisk = VendorRisk.OK
 
-
 def scan_dependencies(lock_file_path: str = "requirements.lock") -> SupplyChainReport:
     report = SupplyChainReport(
         scanned_at=datetime.now(timezone.utc).isoformat(),
     )
     report.total_deps = 0
     return report
-
 
 def check_vendor_lockin(last_update: str, months_threshold: int = 12) -> VendorRisk:
     try:
@@ -65,7 +53,6 @@ def check_vendor_lockin(last_update: str, months_threshold: int = 12) -> VendorR
         return VendorRisk.OK
     except (ValueError, TypeError):
         return VendorRisk.WARNING
-
 
 def generate_spdx(project_name: str, packages: list[dict[str, str]]) -> dict[str, object]:
     return {

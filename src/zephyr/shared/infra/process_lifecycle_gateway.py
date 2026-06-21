@@ -1,8 +1,9 @@
+# [A_module] module_id=MOD-SHR_process_lifecycle_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §2.10
 # [MODULE] zephyr.shared.infra.process_lifecycle_gateway
 # [INVARIANTS] 所有子进程创建必须经过此网关；所有池化进程必须在 DaemonRegistry 中注册；idle_timeout_s 后必须被回收；Gateway 不持有业务逻辑
 # [MODIFY-GUARD] ProcessPool 和 DaemonRegistry 的接口变更必须同步更新此网关
-# [CONSUMERS] zephyr.runtime.auto_runtime_core (ollama serve) ; scripts.mcp.launcher (MCP Server DAG)
+# [CONSUMERS] zephyr.trading.auto_runtime_core (ollama serve) ; scripts.mcp.launcher (MCP Server DAG)
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable

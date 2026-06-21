@@ -1,3 +1,4 @@
+# [A_config] module_id=CFG-ai-session-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: DOM-GOV-001
@@ -25,6 +26,7 @@
 #          （已移出项目至外部工作区）。本登记表为未来结构化记录提供 Schema。
 # ============================================================================
 
+module_id: DOM-GOV-001
 schema_version: "1.0.0"
 doc_type: register
 title: "AI Session/Agent 登记表"

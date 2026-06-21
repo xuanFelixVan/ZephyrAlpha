@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_hot_warm_ipc.py | §
 """check_hot_warm_ipc.py — INV-018 Hot↔Warm IPC 协议检查
 
-对标 runtime-planes.yaml HOT_WARM_IPC_ONLY + invariants.yaml INV-018。
+对标 runtime_planes.yaml HOT_WARM_IPC_ONLY + invariants.yaml INV-018。
 检查 Hot/Warm 平面模块间是否存在直接函数调用（应通过 IPC）。
 
 当前状态：L2-static-scan——扫描 import 依赖图。
@@ -16,8 +16,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 
-HOT_MODULES = {"l04_risk_management", "l06_trade_execution"}
-WARM_MODULES = {"l02_alpha_factor", "l03_signal_generation", "l05_portfolio_construction", "l10_compliance", "l11_ml_platform", "system_telemetry"}
+HOT_MODULES = {"risk", "ex_core"}
+WARM_MODULES = {"factor", "signal", "pf_core", "compliance", "ml_train", "observability"}
 
 
 def main() -> int:

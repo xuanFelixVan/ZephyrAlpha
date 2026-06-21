@@ -3,11 +3,11 @@ name: Dedup Test
 on:
   push:
     paths:
-      - "src/zephyr/l01_infrastructure/code_dedup_engine/**"
+      - "src/zephyr/l01-infrastructure/code_dedup_engine/**"
       - "tests/test_code_dedup_engine/**"
   pull_request:
     paths:
-      - "src/zephyr/l01_infrastructure/code_dedup_engine/**"
+      - "src/zephyr/l01-infrastructure/code_dedup_engine/**"
 
 jobs:
   test:

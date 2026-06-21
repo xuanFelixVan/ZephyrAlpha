@@ -23,19 +23,19 @@ def main() -> None:
     checks: list[tuple[str, bool, str]] = []
 
     modules = [
-        ("collection_manager", "zephyr.vector_memory.collection_manager", "CollectionManager"),
-        ("embedding_router", "zephyr.vector_memory.embedding_router", "EmbeddingRouter"),
-        ("chunk_strategy_router", "zephyr.vector_memory.chunk_strategy_router", "ChunkStrategyRouter"),
-        ("hybrid_retriever", "zephyr.vector_memory.hybrid_retriever", "HybridRetriever"),
-        ("provenance_enforcer", "zephyr.vector_memory.provenance_enforcer", "ProvenanceEnforcer"),
-        ("index_health_monitor", "zephyr.vector_memory.index_health_monitor", "IndexHealthMonitor"),
-        ("retrieval_feedback", "zephyr.vector_memory.retrieval_feedback", "RetrievalFeedback"),
-        ("cache_layer", "zephyr.vector_memory.cache_layer", "CacheLayer"),
-        ("bridge_layer", "zephyr.vector_memory.bridge_layer", "BridgeLayer"),
-        ("vector_bridge", "zephyr.vector_memory.vector_bridge", "VectorBridge"),
-        ("cross_collection_retriever", "zephyr.vector_memory.cross_collection_retriever", "CrossCollectionRetriever"),
-        ("in_memory_backend", "zephyr.vector_memory.in_memory_memory_backend", "InMemoryMemoryBackend"),
-        ("vms_schemas", "zephyr.vector_memory.vms_schemas", "ScoredHit"),
+        ("collection_manager", "zephyr.integration.vector_memory.collection_manager", "CollectionManager"),
+        ("embedding_router", "zephyr.integration.vector_memory.embedding_router", "EmbeddingRouter"),
+        ("chunk_strategy_router", "zephyr.integration.vector_memory.chunk_strategy_router", "ChunkStrategyRouter"),
+        ("hybrid_retriever", "zephyr.integration.vector_memory.hybrid_retriever", "HybridRetriever"),
+        ("provenance_enforcer", "zephyr.integration.vector_memory.provenance_enforcer", "ProvenanceEnforcer"),
+        ("index_health_monitor", "zephyr.integration.vector_memory.index_health_monitor", "IndexHealthMonitor"),
+        ("retrieval_feedback", "zephyr.integration.vector_memory.retrieval_feedback", "RetrievalFeedback"),
+        ("cache_layer", "zephyr.integration.vector_memory.cache_layer", "CacheLayer"),
+        ("bridge_layer", "zephyr.integration.vector_memory.bridge_layer", "BridgeLayer"),
+        ("vector_bridge", "zephyr.integration.vector_memory.vector_bridge", "VectorBridge"),
+        ("cross_collection_retriever", "zephyr.integration.vector_memory.cross_collection_retriever", "CrossCollectionRetriever"),
+        ("in_memory_backend", "zephyr.integration.vector_memory.in_memory_memory_backend", "InMemoryMemoryBackend"),
+        ("vms_schemas", "zephyr.integration.vector_memory.vms_schemas", "ScoredHit"),
     ]
 
     print("VMS Build 完成检查")

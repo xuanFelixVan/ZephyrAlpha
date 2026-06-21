@@ -1,10 +1,10 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/checkers/check_blueprint_template_compliance.py | §
-﻿"""
-[BLUEPRINT] GOV-DOC-011 | d:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\compression-workflow-standard.md
+"""
+[BLUEPRINT] GOV-DOC-011 | d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml
 [MODULE] scripts.governance.d5_architecture.checkers.check_blueprint_template_compliance
 [INVARIANTS] 蓝图模板合规检查不可绕过;52项检查全覆盖
 [MODIFY-GUARD] blueprint-construction-template.md REQUIRED_SECTIONS;check_blueprint_compliance.py
-[CONSUMERS] pre_write_gate.py;g6_blueprint_compliance.yaml;AI施工者
+[CONSUMERS] pre_write_gate.py;g6-blueprint-compliance.yaml;AI施工者
 [STABILITY] stable
 [SAFETY] M
 [AI_AUTONOMY] ai_modifiable

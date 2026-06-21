@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
+# [A_module] module_id=MOD-SHR_gate_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §
 
 # [MODULE] zephyr.shared.contracts.core.gate_types
 
@@ -6,7 +7,7 @@
 
 # [MODIFY-GUARD] none
 
-# [CONSUMERS] backward-compat shim — canonical location is zephyr.gates.gate_types
+# [CONSUMERS] backward-compat shim — canonical location is zephyr.governance.rule_enforcement.gate_types
 
 # [STABILITY] evolving
 
@@ -18,4 +19,9 @@
 
 # [TESTS]
 
-from zephyr.gates.gate_types import *  # noqa: F401, F403
+# Lazy import to avoid circular dependency deadlock:
+# shared.contracts → governance.rule_enforcement → governance.__init__ → ... → governance (cycle)
+# At module load time, governance may not be fully initialized yet.
+def __getattr__(name):
+    _mod = __import__('zephyr.governance.rule_enforcement.gate_types', fromlist=[name])
+    return getattr(_mod, name)

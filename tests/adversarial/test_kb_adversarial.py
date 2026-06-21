@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0013 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-208 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_kb_adversarial
 # [STABILITY] evolving
 # [SAFETY] L
@@ -20,7 +21,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.kb.ingest import IngestGate, IngestResult
+from zephyr.governance.ingest import IngestGate, IngestResult
 
 
 @pytest.fixture
@@ -57,7 +58,7 @@ class TestMaliciousContent:
         os.close(fd)
         try:
             Path(tmp_path).write_text(
-                "---\ntitle: Test\n---\n\nSELECT * FROM users; DROP TABLE audit_trail; --",
+                "---\ntitle: Test\n---\n\nSELECT * FROM users; DROP TABLE audit-trail; --",
                 encoding="utf-8",
             )
             result = kb_gate.ingest(Path(tmp_path))

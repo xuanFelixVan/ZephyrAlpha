@@ -1,3 +1,4 @@
+# [A_config] module_id=CFG-template-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: DOM-GOV-001
@@ -31,11 +32,12 @@
 #   - 模板废弃 → status 设为 deprecated，保留历史记录
 # ============================================================================
 
+module_id: DOM-GOV-001
 registry:
   version: "1.0.0"
   created: "2026-05-04"
   last_updated: "2026-05-13"
-  total_templates: 13
+  total_templates: 14
   note: "全部路径已改为项目根相对路径（docs/...）。新 AI 从 project_rules.md 入口读此文件，可直连每个模板。"
 
 templates:
@@ -50,7 +52,7 @@ templates:
 
   - template_id: "TPL-KE-001"
     name: "知识条目 KE 模板"
-    path: "docs/03_modules/l01_infrastructure/knowledge-base/blueprint.md §3.2.2"
+    path: "docs/03_modules/_domain-infra_ops/knowledge-base/blueprint.md §3.2.2"
     version: "1.0.0"
     for: "知识库 KE 条目的创建——含 YAML frontmatter 18 字段 + body 5 段模板"
     template_for: "ke"
@@ -59,7 +61,7 @@ templates:
 
   - template_id: "TPL-KO-001"
     name: "知识观察 KO 模板"
-    path: "docs/03_modules/l01_infrastructure/knowledge-base/blueprint.md §3.10"
+    path: "docs/03_modules/_domain-infra_ops/knowledge-base/blueprint.md §3.10"
     version: "1.0.0"
     for: "知识库 KO 条目的创建——含 4 状态机 + 轻量模板"
     template_for: "ko"
@@ -69,15 +71,15 @@ templates:
   - template_id: "TPL-DEPGRAPH-001"
     name: "依赖图模板"
     path: "docs/01_policies_and_standards/templates/dependency-graph-template.md"
-    version: "5.1.0"
-    for: "依赖图数据结构的创建——19 大结构 + 10 组受控词表 + 计算规则 + 约束验证 + 蓝图双向链接 + 四层路径对齐 + 概述段"
+    version: "5.3.1"
+    for: "依赖图数据结构的创建——19 大结构 + 11 组受控词表 + 计算规则 + 约束验证 + 蓝图双向链接 + 四层路径对齐 + 文件级/架构级双粒度词表统一 + AI Agent 自检协议"
     template_for: "dependency-graph"
     status: "active"
-    last_updated: "2026-05-13"
+    last_updated: "2026-05-19"
 
   - template_id: "TPL-POLICY-001"
     name: "策略文档模板"
-    path: "docs/01_policies_and_standards/templates/policy-template.md"
+    path: "docs/01_policies_and_standards/templates/policy-policy.md"
     version: "0.2.0"
     for: "策略文档的创建——声明式规则，定义必须/禁止 + 概述段"
     template_for: "policy"
@@ -86,7 +88,7 @@ templates:
 
   - template_id: "TPL-STANDARD-001"
     name: "标准文档模板"
-    path: "docs/01_policies_and_standards/templates/standard-template.md"
+    path: "docs/01_policies_and_standards/templates/standard-standard.md"
     version: "0.2.0"
     for: "标准文档的创建——声明式规范，定义度量/格式/接口 + 概述段"
     template_for: "standard"
@@ -104,7 +106,7 @@ templates:
 
   - template_id: "TPL-RUNBOOK-001"
     name: "Runbook 模板"
-    path: "docs/01_policies_and_standards/templates/runbook-template.md"
+    path: "docs/01_policies_and_standards/templates/runbook-runbook.md"
     version: "0.2.0"
     for: "Runbook 的创建——例行操作流程，日历驱动 + 概述段"
     template_for: "operational_rule"
@@ -113,7 +115,7 @@ templates:
 
   - template_id: "TPL-PROTOCOL-001"
     name: "协议模板"
-    path: "docs/01_policies_and_standards/templates/protocol-template.md"
+    path: "docs/01_policies_and_standards/templates/protocol-protocol.md"
     version: "0.2.0"
     for: "协议文档的创建——定义交互流程和消息时序 + 概述段"
     template_for: "protocol"
@@ -122,7 +124,7 @@ templates:
 
   - template_id: "TPL-REGISTER-001"
     name: "注册表模板"
-    path: "docs/01_policies_and_standards/templates/register-template.md"
+    path: "docs/01_policies_and_standards/templates/register-registry.md"
     version: "0.1.0"
     for: "注册表文档的创建——结构化数据清单"
     template_for: "register"
@@ -131,7 +133,7 @@ templates:
 
   - template_id: "TPL-RISKREG-001"
     name: "风险登记簿模板"
-    path: "docs/01_policies_and_standards/templates/risk-register-template.md"
+    path: "docs/01_policies_and_standards/templates/risk-register-registry.md"
     version: "1.0.0"
     for: "风险登记簿的创建——记录已识别风险、概率、影响、缓解策略"
     template_for: "risk-register"
@@ -146,3 +148,12 @@ templates:
     template_for: "roadmap"
     status: "active"
     last_updated: "2026-05-13"
+
+  - template_id: "TPL-TASK-001"
+    name: "任务卡模板"
+    path: "docs/01_policies_and_standards/governance/task/task-card-standard.md"
+    version: "3.0.0"
+    for: "任务卡的创建——TaskCard 62 字段填写指南 + description 根因→治根格式 + MTH-006 深挖到底协议 + 关闭三步法 + 门禁速查"
+    template_for: "task-card"
+    status: "active"
+    last_updated: "2026-05-21"

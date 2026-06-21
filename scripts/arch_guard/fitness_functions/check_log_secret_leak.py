@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_log_secret_leak.py | §
 """check_log_secret_leak.py — R2 日志不写 secret 适应度函数
 
-对标 architecture-principles.md §1 R2（日志不写 secret）。
+对标 architecture_principles.md §1 R2（日志不写 secret）。
 扫描 src/zephyr/ 下所有 Python 文件中的 structlog/logging/print 调用，
 检测是否包含密钥/token/私钥等敏感 pattern。
 

@@ -1,5 +1,5 @@
 ---
-module_id: AUD-INDEX-001
+module_id: GOV-054
 title: 审计总控索引
 doc_type: index
 status: Active
@@ -34,7 +34,7 @@ depends_on:
 
 ## 快速导航
 
-- **最新架构审计**：[reports/architecture-alignment-audit.md](reports/architecture-alignment-audit.md)
+- **最新架构审计**：[reports/architecture_alignment_audit.md](reports/architecture_alignment_audit.md)
 - **SSoT 验证 LATEST**：[reports/ssot-validation-LATEST.md](reports/ssot-validation-LATEST.md)
 - **Finding 与安全事件初稿**：[findings/index.md](findings/index.md)
 - **审计协议**：[GOV-CMP-003](../01_policies_and_standards/governance/compliance/audit-protocol.md)

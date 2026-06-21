@@ -1,0 +1,21 @@
+# [A_module] module_id=MOD-GOV_intelligence_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+__all__ = [
+    "ai_self_diagnosis",
+    "knowledge_engine",
+    "model_drift_monitor",
+    "multi_model_consensus",
+    "ConsensusProtocol",
+    "DebateRound",
+    "escalate_to_owner",
+    "KnowledgeEntry",
+    "KnowledgeIndex",
+    "get_index",
+    "DriftType",
+    "DriftConfig",
+    "get_drift_config",
+    "AutoFixLayer",
+    "auto_fix_known_pattern",
+    "DebateVerdict",
+    "ModelResponse",
+    "AgentDebate",
+]

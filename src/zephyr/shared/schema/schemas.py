@@ -1,8 +1,9 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_schemas | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 # [MODULE] zephyr.shared.schema.schemas
 # [INVARIANTS] All public symbols MUST be re-exported; __all__ MUST match actual exports; Task types canonical source is gates.task_types; severity types canonical source is shared.schema.severity_types; base config canonical source is shared.schema.base_config
 # [MODIFY-GUARD] ADR-0040; ADR-0030; GOV-TASK-004
-# [CONSUMERS] gates; context_engine; orchestrator; kb; runtime; db; pipeline; mcp; core; shared.events; scripts; tests
+# [CONSUMERS] gates; context-engine; orchestrator; kb; runtime; db; pipeline; mcp; core; shared.events; scripts; tests
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] human_gated
@@ -10,6 +11,7 @@
 # [TESTS] tests/unit/test_schemas.py; tests/unit/shared/test_schemas.py; tests/contract/test_schema_stability.py
 from __future__ import annotations
 
+import importlib
 from datetime import datetime
 from enum import Enum
 from typing import Annotated, Any, Self
@@ -23,13 +25,23 @@ from zephyr.shared.schema.severity_types import (
     Priority,
     SafetyLevel,
 )
-from zephyr.gates.task_types import (
-    ExecutionModel,
-    Task,
-    TaskNamespace,
-    TaskStatus,
-    normalize_execution_model,
-)
+
+_TASK_TYPES_NAMES = {
+    "ExecutionModel",
+    "Task",
+    "TaskNamespace",
+    "TaskStatus",
+    "normalize_execution_model",
+}
+
+
+def __getattr__(name):
+    if name in _TASK_TYPES_NAMES:
+        _mod = importlib.import_module("zephyr.governance.rule_enforcement.task_types")
+        _val = getattr(_mod, name)
+        globals()[name] = _val
+        return _val
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 __all__ = [
     "TaskStatus",

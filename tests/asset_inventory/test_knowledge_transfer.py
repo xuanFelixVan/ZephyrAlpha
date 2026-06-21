@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0074 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-232 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.asset_inventory.test_knowledge_transfer
 # [STABILITY] evolving
 # [SAFETY] L
@@ -8,7 +9,7 @@
 
 from pathlib import Path
 
-from zephyr.asset_inventory.dashboard import KnowledgeTransferGate
+from zephyr.infrastructure.asset_inventory.dashboard import KnowledgeTransferGate
 
 
 class TestKnowledgeTransferGate:

@@ -1,7 +1,0 @@
-{
-  "task_id": "T-REAL-002",
-  "capability": "anomaly_triage",
-  "payload": {
-    "text": "检测到异常: 用户登录接口 QPS 突增 500%，疑似 DDoS 攻击，已触发限流但部分 IP 仍可达"
-  }
-}

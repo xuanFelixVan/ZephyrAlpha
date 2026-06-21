@@ -1,6 +1,7 @@
 ---
 blueprint_id: DOM-GOV-001
----
+title: Orchestrator.Manifest
+module_id: MOD-063---
 
 # orchestrator/ 文件清单（自动生成 2026-05-09）
 

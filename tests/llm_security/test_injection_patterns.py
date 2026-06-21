@@ -1,3 +1,4 @@
+# [A_test] module_id: SRC-TST-0187 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
 # [MODULE] tests.llm_security.test_injection_patterns
 # [STABILITY] evolving
@@ -6,7 +7,7 @@
 # [TESTS] —
 import pytest
 
-from zephyr.llm_security.patterns.injection_patterns import (
+from zephyr.security.llm_defense.llm_security.patterns.injection_patterns import (
     PRECOMPILED_DIRECT,
     PRECOMPILED_JAILBREAK,
     PRECOMPILED_NESTED,

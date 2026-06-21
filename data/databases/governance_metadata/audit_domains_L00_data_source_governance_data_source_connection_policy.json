@@ -1,0 +1,34 @@
+{
+  "task_id": "DM-100060",
+  "source_file": "docs/01_policies_and_standards/domains/L00_data_source/governance/data_source_connection_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_050_domain_policy_data_factor.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "ABS-001": {"status": "COVERED", "yaml_section": "abs_001_auth"},
+    "ABS-002": {"status": "COVERED", "yaml_section": "abs_002_no_hardcode"},
+    "ABS-003": {"status": "COVERED", "yaml_section": "abs_003_tier"},
+    "ABS-004": {"status": "COVERED", "yaml_section": "abs_004_disaster_recovery"},
+    "COND-001": {"status": "COVERED", "yaml_section": "cond_001_timeout"},
+    "COND-002": {"status": "COVERED", "yaml_section": "cond_002_exponential_backoff"},
+    "COND-003": {"status": "COVERED", "yaml_section": "cond_003_degradation"},
+    "COND-004": {"status": "COVERED", "yaml_section": "cond_004_fallback"},
+    "§6_admission": {"status": "COVERED", "yaml_section": "admission_check"},
+    "§7_disconnect": {"status": "COVERED", "yaml_section": "disconnect_handling"}
+  },
+  "summary": {
+    "total_rules": 10,
+    "COVERED": 10,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "Expanded trae_050_domain_policy_data_factor.yaml from 2 generic sections to 10 detailed sections",
+    "Added conditions/actions/prohibitions for all ABS-001~004 and COND-001~004",
+    "Added admission_check and disconnect_handling sections",
+    "Fixed references.rule_ids to use TRAE-* format"
+  ],
+  "verification": {
+    "coverage_check": "PASS",
+    "traceability_check": "PASS"
+  }
+}

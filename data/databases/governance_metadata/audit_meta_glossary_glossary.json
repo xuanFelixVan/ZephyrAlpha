@@ -1,0 +1,34 @@
+{
+  "task_id": "DM-100164",
+  "source_file": "docs/01_policies_and_standards/meta/glossary_glossary.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "glossary_prohibition": {
+      "title": "术语表禁止行为",
+      "rules": [
+        "禁止：术语定义与 PS-STD-001 元数据定义冲突时以 PS-STD-001 为准"
+      ]
+    },
+    "skipped_content": {
+      "description": "24个术语定义条目为纯定义内容，非规则类内容（禁止/必须/约束/流程步骤/检查命令），不进入YAML",
+      "terms": [
+        "SSoT", "蓝图", "施工图", "门禁", "注册表", "治理", "漂移",
+        "原子写入", "文件锁", "删除审判", "孤儿文件", "临时文件",
+        "冷启动", "任务卡", "验证门", "导入验证", "自审闭环",
+        "步骤验证门", "安全最低通过", "计划先行", "跨文件影响检查",
+        "上下文新鲜度", "假设显式化", "防幻觉"
+      ]
+    }
+  },
+  "summary": {
+    "total_rules": 1,
+    "COVERED": 1,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "TRAE-043 enriched in current session: added glossary_prohibition(1 rule)",
+    "24 term definitions skipped as non-rule content (pure definitions per task spec)"
+  ]
+}

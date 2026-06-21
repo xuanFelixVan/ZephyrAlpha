@@ -54,7 +54,7 @@ _SRC = REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from zephyr.l01_infrastructure.system_telemetry.metrics.blueprint_metrics import record_blueprint_read  # noqa: E402
+from zephyr.ops.telemetry.blueprint_metrics import record_blueprint_read  # noqa: E402
 
 
 # ── 30 个模拟 Session 场景 ──────────────────────────────────────────
@@ -349,7 +349,7 @@ def main() -> int:
         print(f"  {bpid}: {dist[bpid]:>2}  {bar}")
 
     # 输出完整 report JSON
-    report_path = REPO_ROOT / "data" / "telemetry" / "session_simulator_report.json"
+    report_path = REPO_ROOT / "data" / "telemetry" / "session-simulator-report.json"
     full_report = {
         "phase": "P2_hard_compliance",
         "g6_active": True,

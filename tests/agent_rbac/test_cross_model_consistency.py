@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [A_test] module_id: SRC-TST-0026 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §
 # [MODULE] tests.agent_rbac.test_cross_model_consistency
 # [STABILITY] evolving
 # [SAFETY] L
@@ -23,12 +24,12 @@ from typing import Any
 
 import pytest
 
-from zephyr.agent_rbac.identity import AgentIdentity, AgentRole, MaturityLevel, IDESource
-from zephyr.agent_rbac.permission_guard import PermissionGuard, GuardDecision
-from zephyr.agent_rbac.rbac_guard import RBACGuard, PermissionDecision
-from zephyr.agent_rbac.immutable_core import ImmutableCore
-from zephyr.agent_rbac.derive_rbac_roles import RBACRoleDeriver
-from zephyr.agent_rbac.integrity_self_check import IntegritySelfCheck
+from zephyr.security.access_control.identity import AgentIdentity, AgentRole, MaturityLevel, IDESource
+from zephyr.security.access_control.permission_guard import PermissionGuard, GuardDecision
+from zephyr.security.access_control.rbac_guard import RBACGuard, PermissionDecision
+from zephyr.security.access_control.immutable_core import ImmutableCore
+from zephyr.security.access_control.derive_rbac_roles import RBACRoleDeriver
+from zephyr.security.access_control.integrity_self_check import IntegritySelfCheck
 
 MODEL_AGENTS: dict[str, AgentIdentity] = {
     "DeepSeek": AgentIdentity(
@@ -114,11 +115,11 @@ class TestDeterministicConsistency:
         core = ImmutableCore()
         test_paths = [
             ".git/config",
-            "src/zephyr/agent_rbac/__init__.py",
+            "src/zephyr/agent-rbac/__init__.py",
             "config/rbac_roles.yaml",
             "tests/test.py",
             "docs/readme.md",
-            "src/zephyr/agent_rbac/immutable_core.py",
+            "src/zephyr/agent-rbac/immutable_core.py",
         ]
         for p in test_paths:
             r1 = core.is_protected_path(p)

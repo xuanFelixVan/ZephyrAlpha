@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
+# [A_module] module_id=MOD-SHR_enforcer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §
 
 # [MODULE] zephyr.shared.contracts.core.enforcer
 
@@ -6,7 +7,7 @@
 
 # [MODIFY-GUARD] none
 
-# [CONSUMERS]
+# [CONSUMERS] governance.rule_enforcement.invariants.en_003_contract_compatibility
 
 # [STABILITY] evolving
 
@@ -41,7 +42,7 @@ CTR-ERR-006: ContractEnforcer / 运行时契约强制执行
 用法
 ----
     from zephyr.shared.contracts.core.enforcer import enforce_output, enforce_input
-    from zephyr.trading_contracts.market.market_data import NormalizedMarketData
+    from zephyr.trading.trading_contracts.market.market_data import NormalizedMarketData
 
     @enforce_output(NormalizedMarketData, trace_required=True)
     def on_market_data(raw: dict) -> NormalizedMarketData:
@@ -51,7 +52,7 @@ CTR-ERR-006: ContractEnforcer / 运行时契约强制执行
     def compute_factor(data: NormalizedMarketData) -> FactorSignal:
         ...
 
-SSoT: cross-layer-contracts.yaml → CTR-ERR-006
+SSoT: cross_layer_contracts.yaml → CTR-ERR-006
 """
 from __future__ import annotations
 
@@ -74,7 +75,7 @@ from pydantic import ValidationError
 
 F = TypeVar("F", bound=Callable[..., Any])
 
-_logger = logging.getLogger("zephyr.contracts.enforcer")
+_logger = logging.getLogger("zephyr.shared.contracts.enforcer")
 
 
 class EnforcementMode(str, Enum):

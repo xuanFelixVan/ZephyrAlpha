@@ -1,0 +1,28 @@
+# [A_module] module_id=MOD-SEC_environment_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+"""Stub module: zephyr.security.access_control.environment_manager — implementation pending."""
+
+ENVIRONMENTS = None  # stub constant
+
+class EnvConfig:
+    """Stub class — implementation pending."""
+    pass
+
+class Environment:
+    """Stub class — implementation pending."""
+    pass
+
+def get_env(*args, **kwargs):
+    """Stub function — implementation pending."""
+    raise NotImplementedError(f'get_env not implemented')
+
+def switch_env(*args, **kwargs):
+    """Stub function — implementation pending."""
+    raise NotImplementedError(f'switch_env not implemented')
+
+__all__ = [
+    "ENVIRONMENTS",
+    "EnvConfig",
+    "Environment",
+    "get_env",
+    "switch_env",
+]

@@ -1,0 +1,65 @@
+{
+  "task_id": "DM-100164",
+  "source_file": "docs/01_policies_and_standards/meta/blueprint_architecture_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "ps_std_005_pyramid": {
+      "title": "蓝图三级金字塔体系",
+      "rules": [
+        "Level 0 SYSTEM: 系统蓝图，定义全局架构和跨域约束",
+        "Level 1 DOMAIN: 集成蓝图，定义域内模块间协作",
+        "Level 2 MODULE: 模块蓝图，定义单个模块内部设计",
+        "禁止：模块蓝图包含跨模块约束",
+        "禁止：域蓝图包含系统级约束",
+        "禁止：跳级引用（Level 2 直接引用 Level 0）"
+      ]
+    },
+    "ps_std_005_belongs_to": {
+      "title": "belongs_to 字段",
+      "rules": [
+        "每个蓝图必须有 belongs_to 字段指向父蓝图",
+        "Level 0 蓝图的 belongs_to 为 null",
+        "禁止：belongs_to 指向非直接父级"
+      ]
+    },
+    "ps_std_005_directory": {
+      "title": "目录结构约定",
+      "rules": [
+        "Level 0 蓝图存放于 docs/ 根目录",
+        "Level 1 蓝图存放于 docs/{domain}/ 目录",
+        "Level 2 蓝图存放于 docs/{domain}/{module}/ 目录"
+      ]
+    },
+    "ps_std_005_prohibitions": {
+      "title": "蓝图体系禁止行为",
+      "rules": [
+        "禁止：蓝图缺少 level 字段",
+        "禁止：蓝图缺少 belongs_to 字段（Level 0 除外）",
+        "禁止：Level 2 蓝图包含跨模块接口定义",
+        "禁止：蓝图 §4 文件清单与实际文件不一致",
+        "禁止：蓝图版本号与代码版本不同步",
+        "禁止：蓝图变更不经门控",
+        "禁止：蓝图模板不合规"
+      ]
+    },
+    "ps_std_005_cold_start": {
+      "title": "AI 冷启动定位",
+      "rules": [
+        "AI 冷启动时从 Level 0 蓝图开始定位",
+        "通过 belongs_to 链向下导航到具体模块",
+        "禁止：AI 直接跳到 Level 2 蓝图而不经过 Level 1"
+      ]
+    }
+  },
+  "summary": {
+    "total_rules": 22,
+    "COVERED": 22,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "TRAE-042 enriched in current session: added ps_std_005_pyramid(6 rules), ps_std_005_belongs_to(3 rules), ps_std_005_directory(3 rules), ps_std_005_prohibitions(7 rules), ps_std_005_cold_start(3 rules)",
+    "All PS-STD-005 rules from MD now covered in YAML sections"
+  ]
+}

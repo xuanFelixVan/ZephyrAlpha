@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-2092 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-709 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.verify_b54_b56_b59_deep
 # [STABILITY] evolving
 # [SAFETY] L
@@ -10,14 +11,14 @@ sys.path.insert(0, r"D:\ZephyrAlpha\src")
 from pathlib import Path
 from datetime import datetime, timezone
 
-DB = Path(r"D:\ZephyrAlpha\data\zalpha_metadata.db")
+DB = Path(r"D:\ZephyrAlpha\data\databases\governance.db")
 
-from zephyr.db.task_repo import (
+from zephyr.governance.persistence.task_repo import (
     TaskRepository, P0InflationFrozenError, P0InflationWarning,
 )
-from zephyr.core.models import TaskCard
-from zephyr.gates.task_types import TaskStatus, TaskNamespace
-from zephyr.shared.schema.severity_types import Priority as P
+from zephyr.shared.shared_services.models import TaskCard
+from zephyr.governance.rule_enforcement.task_types import TaskStatus, TaskNamespace
+from zephyr.integration.shared.schema.severity_types import Priority as P
 
 repo = TaskRepository(enable_gate=False)
 now = datetime.now(timezone.utc)

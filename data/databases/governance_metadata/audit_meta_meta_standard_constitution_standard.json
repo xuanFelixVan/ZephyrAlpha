@@ -1,0 +1,43 @@
+{
+  "task_id": "DM-100164",
+  "source_file": "docs/01_policies_and_standards/meta/meta_standard_constitution_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "ps_std_000_irreversibility": {
+      "title": "后果不可逆性二元分类",
+      "rules": [
+        "宪法层(ABS): 后果不可逆，违反即系统级风险",
+        "登记表层(COND/REC/CODE): 后果可逆或可修复",
+        "禁止：将宪法层规则降级为登记表层",
+        "禁止：将登记表层规则升级为宪法层（需Owner审批）"
+      ]
+    },
+    "ps_std_000_conditional_irreversibility": {
+      "title": "条件性不可逆升格",
+      "rules": [
+        "登记表层规则在特定条件下可升格为宪法层",
+        "升格条件：违反后果涉及安全/资金/数据完整性",
+        "升格必须经Owner审批+KB决策记录"
+      ]
+    },
+    "ps_std_000_frozen": {
+      "title": "宪法层frozen约束",
+      "rules": [
+        "宪法层规则stability=frozen，禁止修改",
+        "修改宪法层规则需：Owner审批+全系统影响评估+KB决策记录",
+        "禁止：AI自主修改宪法层规则"
+      ]
+    }
+  },
+  "summary": {
+    "total_rules": 10,
+    "COVERED": 10,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "TRAE-043 enriched in current session: added ps_std_000_irreversibility(4 rules), ps_std_000_conditional_irreversibility(3 rules), ps_std_000_frozen(3 rules)",
+    "All PS-STD-000 rules from MD now covered in YAML sections"
+  ]
+}

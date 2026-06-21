@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-002 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# blueprint: MOD-INF-002 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: M
@@ -9,7 +9,7 @@
 #
 # 创建日期   : 2026-05-04
 # 关联标准   : PS-STD-005 §7（AI Agent 蓝图定位规则）
-# 关联蓝图   : MOD-INF-009（Task Pipeline, §触发式路由表）
+# 关联蓝图   : MOD_INF_009（Task Pipeline, §触发式路由表）
 # 关联决策   : R90（蓝图三级金字塔架构决策）
 # 权限层级   : Human-Gated（路由映射变更 = 关键架构变更）
 # 真源声明   : 本文件是蓝图路由分派的 SSoT —— AI Agent 在决定"读哪份蓝图"时 MUST 查询本表
@@ -19,10 +19,10 @@
 #              — 本表扩展为 route domain documents (blueprints) + agents
 #
 # 文件模式语法
-# ------------
+# _______-----
 # path_pattern:  glob 模式（相对于项目根）
 #                 支持 ** 递归通配，* 单级通配
-#                 示例: "src/zephyr/orchestrator/**" → 所有 orchestrator 文件
+#                 示例: "src/zephyr/orchestration/runtime_core/orchestrator/**" → 所有 orchestrator 文件
 # task_keywords: Python 列表，关键字匹配（任意一个命中即触发）
 #                支持中英文混合
 # scope:         pre_change（修改前加载）/ post_change（修改后加载）/ always
@@ -30,22 +30,23 @@
 # priority:      1-100 —— 并发匹配时取最高优先级（参考 COBIT APO03）
 #
 # v0.2.0: 修复编码损坏 + 补齐 INF-018~INF-026, INF-030 路由条目
-# -----------------------------------
+# ________________________________---
 
+module_id: MOD-INF-002
 version: "1.0.0"
 schema_version: "1.0.0"
 doc_type: rule
 title: "Blueprint Routing Table"
 status: active
 ttl: permanent
-belongs_to: "MOD-INF-009"
+belongs_to: "MOD_INF_009"
 
-# -----------------------------------------------------------------------------
+# _______________________________________________________________________------
 # AUDIT-08 / route_manifest task_dual_pipeline — routing SSoT boundary
 # - M1-M11 entry decision tree: TaskCard + ct_pipe_routing + PipelineOrchestrator (CT-PIPE-ORC-001)
-# - This file (MOD-INF-009): keywords + path_pattern -> blueprint docs for humans/agents
+# - This file (MOD_INF_009): keywords + path_pattern -> blueprint docs for humans/agents
 #   (incl. blueprint_search MCP). It does NOT select Mx module execution order.
-# -----------------------------------------------------------------------------
+# _______________________________________________________________________------
 
 # =========================================================================
 # §1  路由映射表
@@ -55,11 +56,11 @@ routes:
 
   # ---- Level 1: 域蓝图（先于模块蓝图加载） ---
   - route_id: "R001"
-    blueprint_id: "MOD-MASTER-001"
+    blueprint_id: "MOD_MASTER_001"
     blueprint_level: domain
     path_patterns:
-      - "src/zephyr/orchestrator/**"
-      - "src/zephyr/tasks/**"
+      - "src/zephyr/orchestration/runtime_core/orchestrator/**"
+      - "src/zephyr/data/persistence/task_repo.py"
       - "config/trigger_router.yaml"
     task_keywords:
       - "集成"
@@ -81,14 +82,13 @@ routes:
 
   # -- INF-001 容量保障体系 --
   - route_id: "R002"
-    blueprint_id: "MOD-INF-001"
+    blueprint_id: "MOD_INF_001"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/core/capacity_planner.py"
-      - "src/zephyr/core/budget_allocator.py"
-      - "src/zephyr/core/throttle.py"
-      - "src/zephyr/core/quota_manager.py"
-      - "scripts/capacity/**"
+      - "src/zephyr/orchestration/runtime_core/orchestrator/capacity_budget.py"
+      - "src/zephyr/integration/shared_08/contracts/backpressure/throttle.py"
+      - "src/zephyr/autonomy_perm/budget_enforcer/**"
+      - "scripts/governance/d10_performance/**"
     task_keywords:
       - "容量"
       - "预算"
@@ -111,10 +111,10 @@ routes:
     blueprint_id: "MOD-INF-002"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/runtime/**"
+      - "src/zephyr/infrastructure/runtime_integration/runtime/**"
       - "src/zephyr/integration/**"
-      - "src/zephyr/hooks/**"
-      - "src/zephyr/adapters/**"
+      - "src/zephyr/governance/**"
+      - "src/zephyr/integration/**"
     task_keywords:
       - "运行时"
       - "集成"
@@ -133,8 +133,8 @@ routes:
   - route_id: "R004"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/task_card/**"
-      - "src/zephyr/kms/**"
+      - "src/zephyr/data/persistence/task_repo.py"
+      - "src/zephyr/infrastructure/shared_services/knowledge/kms_interface.py"
     task_keywords:
       - "任务卡"
       - "KMS"
@@ -149,7 +149,8 @@ routes:
   - route_id: "R005"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/vibe_coding/**"
+      - "src/zephyr/orchestration/agent_lifecycle/vibe_coding_quality_gate.py"
+      - "src/zephyr/autonomy_perm/agent_rbac/vibe_coding_guard.py"
     task_keywords:
       - "vibe coding"
       - "双管线"
@@ -165,12 +166,12 @@ routes:
     blueprint_id: "MOD-INF-005"
     blueprint_level: module
     path_patterns:
-      - "scripts/quality_checks/**"
-      - "scripts/validation/**"
-      - "scripts/ci/**"
-      - "scripts/devops/**"
-      - "src/zephyr/core/script_registry.py"
-      - "src/zephyr/core/script_executor.py"
+      - "scripts/governance/d7_code/**"
+      - "scripts/governance/d1_structure/**"
+      - "scripts/governance/d5_architecture/**"
+      - "scripts/governance/d10_performance/**"
+      - "scripts/hooks/**"
+      - "scripts/pre-commit/**"
     task_keywords:
       - "脚本"
       - "shell"
@@ -188,15 +189,14 @@ routes:
 
   # -- INF-006 任务系统 --
   - route_id: "R007"
-    blueprint_id: "MOD-INF-006"
+    blueprint_id: "MOD_INF_006"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/orchestrator/**"
-      - "src/zephyr/tasks/**"
-      - "src/zephyr/core/task_manager.py"
-      - "src/zephyr/core/task_state_machine.py"
+      - "src/zephyr/orchestration/runtime_core/orchestrator/**"
+      - "src/zephyr/data/persistence/task_repo.py"
+      - "src/zephyr/data/persistence/transition.py"
       - "config/session_state_machine.yaml"
-      - "docs/19_development_workspace/**"
+
     task_keywords:
       - "任务"
       - "task"
@@ -220,8 +220,8 @@ routes:
     blueprint_id: "MOD-KB-001"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/kb/**"
-      - "config/knowledge_base/**"
+      - "src/zephyr/data/knowledge_management/kb/**"
+      - "config/kb_parameters.yaml"
     task_keywords:
       - "知识"
       - "knowledge"
@@ -242,12 +242,12 @@ routes:
 
   # -- INF-007 Gate Engine --
   - route_id: "R009"
-    blueprint_id: "MOD-INF-007"
+    blueprint_id: "MOD_INF_007"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/gates/**"
-      - "src/zephyr/mcp/gate_engine_server.py"
-      - "config/gates/**"
+      - "src/zephyr/observability/feedback_loop/gates/**"
+      - "src/zephyr/governance/rule_enforcement/_registry.yaml"
+      - "src/zephyr/integration/mcp/gate_engine_server.py"
     task_keywords:
       - "门禁"
       - "gate"
@@ -277,15 +277,15 @@ routes:
     scope: pre_change
     safety: "H"
     priority: 92
-    cross_read_hint: "跨模块任务时 ALSO read MOD-INF-014 (LLM Security) if modifying fail-closed logic"
+    cross_read_hint: "跨模块任务时 ALSO read MOD_INF_014 (LLM Security) if modifying fail-closed logic"
 
   # -- INF-008 Context Engine --
   - route_id: "R010"
-    blueprint_id: "MOD-INF-008"
+    blueprint_id: "MOD_INF_008"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/context_engine/**"
-      - "config/context_rules_v1.yaml"
+      - "src/zephyr/orchestration/context_management/**"
+      - "config/context_rules.yaml"
       - "config/compression/**"
     task_keywords:
       - "上下文"
@@ -306,12 +306,14 @@ routes:
 
   # -- INF-009 Pipeline --
   - route_id: "R011"
-    blueprint_id: "MOD-INF-009"
+    blueprint_id: "MOD_INF_009"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/pipeline/**"
-      - "config/pipeline/**"
-      - "src/zephyr/orchestrator/trigger_router.py"
+      - "src/zephyr/infrastructure/runtime_integration/pipeline/**"
+      - "src/zephyr/infra_runtime/pipeline/**"
+      - "config/trigger_router.yaml"
+      - "src/zephyr/orchestration/runtime_core/orchestrator/trigger_router.py"
+      - "src/zephyr/orchestration/agent_lifecycle/trigger_router.py"
     task_keywords:
       - "管线"
       - "pipeline"
@@ -331,11 +333,11 @@ routes:
 
   # -- INF-010 Feedback Loop --
   - route_id: "R012"
-    blueprint_id: "MOD-INF-010"
+    blueprint_id: "MOD_INF_010"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/feedback_loop/**"
-      - "src/zephyr/decision_engine.py"
+      - "src/zephyr/observability/feedback_loop/**"
+      - "src/zephyr/observability/feedback_loop/decision_engine.py"
     task_keywords:
       - "反馈"
       - "feedback"
@@ -359,10 +361,10 @@ routes:
     blueprint_id: "MOD-INF-011"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/vector_memory/**"
-      - "src/zephyr/kb/chromadb_client.py"
-      - "src/zephyr/kb/vector_store.py"
-      - "src/zephyr/kb/bge_m3_onnx.py"
+      - "src/zephyr/data/knowledge_management/vector_memory/**"
+      - "src/zephyr/data/knowledge_management/kb/chromadb_init.py"
+      - "src/zephyr/data/knowledge_management/kb/embedding_migrate.py"
+      - "src/zephyr/integration/vector_memory/**"
       - "config/embedding_model_registry.yaml"
     task_keywords:
       - "向量"
@@ -384,11 +386,11 @@ routes:
 
   # -- INF-012 Database --
   - route_id: "R014"
-    blueprint_id: "MOD-INF-012"
+    blueprint_id: "MOD_INF_012"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/db/**"
-      - "src/zephyr/kb/atomic_transaction_manager.py"
+      - "src/zephyr/data/persistence/**"
+      - "src/zephyr/data/persistence/atomic_transaction_manager.py"
     task_keywords:
       - "数据库"
       - "database"
@@ -409,10 +411,10 @@ routes:
 
   # -- INF-013 MCP Servers --
   - route_id: "R015"
-    blueprint_id: "MOD-INF-013"
+    blueprint_id: "MOD_INF_013"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/mcp/**"
+      - "src/zephyr/integration/mcp/**"
     task_keywords:
       - "MCP"
       - "server"
@@ -429,12 +431,12 @@ routes:
 
   # -- INF-014 LLM Security --
   - route_id: "R016"
-    blueprint_id: "MOD-INF-014"
+    blueprint_id: "MOD_INF_014"
     blueprint_level: module
     path_patterns:
       - "src/zephyr/security/**"
-      - "src/zephyr/llm/guard.py"
-      - "src/zephyr/llm/sanitizer.py"
+      - "src/zephyr/security/llm_defense/llm_security_01/gateway.py"
+      - "src/zephyr/security/llm_defense/llm_security_01/input_sanitizer.py"
     task_keywords:
       - "安全"
       - "security"
@@ -459,16 +461,16 @@ routes:
     scope: pre_change
     safety: "H"
     priority: 93
-    cross_read_hint: "跨模块任务时 ALSO read MOD-INF-007 (Gate Engine) if modifying gate/fail-closed logic, ALSO read MOD-INF-015 (Telemetry) if modifying audit log format"
+    cross_read_hint: "跨模块任务时 ALSO read MOD_INF_007 (Gate Engine) if modifying gate/fail-closed logic, ALSO read MOD-INF-015 (Telemetry) if modifying audit log format"
 
   # -- INF-015 System Telemetry --
   - route_id: "R017"
     blueprint_id: "MOD-INF-015"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/telemetry/**"
-      - "src/zephyr/core/metrics.py"
-      - "src/zephyr/core/logging_config.py"
+      - "src/zephyr/infrastructure/runtime_integration/system_telemetry/**"
+      - "src/zephyr/infrastructure/shared_services/observability/metrics.py"
+      - "src/zephyr/infrastructure/shared_services/observability/logging.py"
     task_keywords:
       - "遥测"
       - "telemetry"
@@ -490,12 +492,11 @@ routes:
 
   # -- INF-016 Shared+Core --
   - route_id: "R018"
-    blueprint_id: "MOD-INF-016"
+    blueprint_id: "MOD_INF_016"
     blueprint_level: module
     path_patterns:
       - "src/zephyr/shared/**"
-      - "src/zephyr/_shared/**"
-      - "src/zephyr/_core/**"
+      - "src/zephyr/infrastructure/shared_services/**"
     task_keywords:
       - "共享"
       - "shared"
@@ -519,8 +520,8 @@ routes:
     blueprint_id: "MOD-INF-017"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/core/code_dedup.py"
-      - "src/zephyr/core/duplicate_detector.py"
+      - "src/zephyr/testing/code_dedup/"
+      - "src/zephyr/autonomy_perm/orphan_judge/duplicate_detector.py"
     task_keywords:
       - "去重"
       - "dedup"
@@ -542,7 +543,7 @@ routes:
     blueprint_id: "MOD-INF-018"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/agent_rbac/**"
+      - "src/zephyr/autonomy_perm/agent_rbac/**"
       - "config/capabilities.yaml"
     task_keywords:
       - "RBAC"
@@ -565,7 +566,7 @@ routes:
     blueprint_id: "MOD-INF-019"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/agent_spec/**"
+      - "src/zephyr/governance/agent_spec/**"
     task_keywords:
       - "skill"
       - "技能"
@@ -588,8 +589,7 @@ routes:
     blueprint_id: "MOD-INF-020"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/audit_trail/**"
-      - "logs/mcp_audit/**"
+      - "src/zephyr/compliance/audit_trail/**"
     task_keywords:
       - "审计追踪"
       - "audit trail"
@@ -608,7 +608,7 @@ routes:
     blueprint_id: "MOD-INF-021"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/rollback/**"
+      - "src/zephyr/resilience/rollback/**"
       - "scripts/rollback.py"
     task_keywords:
       - "回滚"
@@ -632,7 +632,7 @@ routes:
     blueprint_id: "MOD-INF-022"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/escalation/**"
+      - "src/zephyr/autonomy_perm/escalation-engine/**"
     task_keywords:
       - "升级"
       - "escalation"
@@ -652,7 +652,8 @@ routes:
     blueprint_id: "MOD-INF-023"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/drift_detector/**"
+      - "src/zephyr/governance/drift_detection/**"
+      - "src/zephyr/autonomy_perm/escalation-engine/drift_detector.py"
     task_keywords:
       - "漂移"
       - "drift"
@@ -674,8 +675,8 @@ routes:
     blueprint_id: "MOD-INF-024"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/budget_enforcer/**"
-      - "config/drift_thresholds.yaml"
+      - "src/zephyr/autonomy_perm/budget_enforcer/**"
+      - "config/budget_policy.yaml"
     task_keywords:
       - "预算执行"
       - "budget enforcer"
@@ -697,7 +698,7 @@ routes:
     blueprint_id: "MOD-INF-025"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/a2a_protocol/**"
+      - "src/zephyr/infrastructure/runtime_integration/a2a_protocol/**"
     task_keywords:
       - "A2A"
       - "agent-to-agent"
@@ -718,8 +719,8 @@ routes:
     blueprint_id: "MOD-INF-026"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/asset_inventory/**"
-      - "config/unified_asset_index.yaml"
+      - "src/zephyr/infrastructure/runtime_integration/asset_inventory/**"
+      - "data/asset_index/unified_asset_index.yaml"
     task_keywords:
       - "资产盘点"
       - "asset inventory"
@@ -739,7 +740,7 @@ routes:
     blueprint_id: "MOD-INF-030"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/red_blue_validator/**"
+      - "src/zephyr/autonomy_perm/red_blue_validator/**"
     task_keywords:
       - "红蓝对抗"
       - "red-blue"
@@ -759,14 +760,14 @@ routes:
 
   # -- INF-032 Resource Optimization Engine --
   - route_id: "R030"
-    blueprint_id: "MOD-INF-032"
+    blueprint_id: "MOD_INF_032"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/lifecycle_manager/resource_optimization_engine.py"
+      - "src/zephyr/infrastructure/shared_services/lifecycle/resource_optimization_engine.py"
       - "src/zephyr/shared/io/io_cache.py"
       - "src/zephyr/shared/io/streaming_reader.py"
       - "src/zephyr/shared/infra/process_pool.py"
-      - "src/zephyr/lifecycle_manager/lazy_loader.py"
+      - "src/zephyr/integration/shared_08/lifecycle/lazy_loader.py"
       - "config/resource_optimization.yaml"
     task_keywords:
       - "资源优化"
@@ -804,13 +805,13 @@ routes:
     blueprint_id: "MOD-INF-037"
     blueprint_level: module
     path_patterns:
-      - "docs/01_policies_and_standards/_registry/catalogs/project-path-tree.yaml"
-      - "docs/03_modules/path-ownership-map.yaml"
+      - "docs/01_policies_and_standards/_registry/catalogs/project_path_tree.yaml"
+      - "docs/03_modules/path_ownership_map.yaml"
       - "scripts/governance/generate_project_path_tree.py"
       - "scripts/governance/generate_path_ownership_map.py"
-      - "src/zephyr/l01_infrastructure/registry_governance.py"
-      - "docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml"
-      - "docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.yaml"
+      - "src/zephyr/infra_ops/cicd_pipeline/registry_governance.py"
+      - "docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml"
+      - "docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.md"
     task_keywords:
       - "路径树"
       - "path tree"

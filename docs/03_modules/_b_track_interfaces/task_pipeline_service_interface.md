@@ -1,5 +1,5 @@
 ---
-module_id: AI-ENG-PIP-001
+module_id: MOD-007
 title: Task Pipeline Service Interface / 任务双管线服务接口规范
 doc_type: service_interface_spec
 status: Active
@@ -16,7 +16,7 @@ template_source: "vector-memory-service-interface.md（B 轨接口目录结构�
 truth_source:
   - "03_modules/_cross_layer/pipeline/blueprint.md（MOD-INF-009 — 详细设计与 CT 锚点；Phase 5 真源）"
   - "architecture-model/layers/b_pipeline.yaml（Pipeline YAML SSoT）"
-related_adrs: []
+related_kb: []
 integration_points:
   - "Agent Orchestrator（downstream，任务调度与状态机消费 Pipeline 路由决策）"
   - "LLM Security Gateway MOD-INF-014（Pipeline L1/L3 输入输出检测）"

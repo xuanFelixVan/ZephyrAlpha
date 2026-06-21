@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
+# [A_module] module_id=MOD-SHR_timestamp | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §
 
 # [MODULE] zephyr.shared.contracts.core.timestamp
 
@@ -6,7 +7,7 @@
 
 # [MODIFY-GUARD] none
 
-# [CONSUMERS]
+# [CONSUMERS] infrastructure.runtime_integration.system_telemetry.health_aggregator
 
 # [STABILITY] evolving
 

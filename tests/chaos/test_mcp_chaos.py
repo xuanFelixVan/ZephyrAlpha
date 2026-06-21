@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0089 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-247 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.chaos.test_mcp_chaos
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,7 +17,7 @@ import time
 
 import pytest
 
-from zephyr.mcp._base_server import BaseMCPServer, MCPError, ERR_TOOL_NOT_FOUND, ERR_TOOL_EXECUTION
+from zephyr.infrastructure._base_server import BaseMCPServer, MCPError, ERR_TOOL_NOT_FOUND, ERR_TOOL_EXECUTION
 
 
 class TestMCPChaos:

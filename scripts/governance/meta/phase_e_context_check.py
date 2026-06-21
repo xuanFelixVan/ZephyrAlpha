@@ -49,7 +49,7 @@ for name, info in scripts.items():
 
 print()
 print('=== CTR contracts ===')
-with open('docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross-layer-contracts.yaml', encoding='utf-8') as f:
+with open('docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml', encoding='utf-8') as f:
     contracts = yaml.safe_load(f)
 ctr_list = contracts.get('contracts', [])
 ctr_count = sum(1 for c in ctr_list if 'ctr_id' in c)

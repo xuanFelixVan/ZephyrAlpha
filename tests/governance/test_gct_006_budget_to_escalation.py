@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0129 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-286 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.governance.test_gct_006_budget_to_escalation
 # [STABILITY] evolving
 # [SAFETY] L
@@ -11,21 +12,21 @@ import pytest
 
 
 class TestGCT006BudgetToEscalation:
-    """验证 budget_enforcer/alerts.py 的 BudgetAlert 可被 escalation/budget_handler.py 处理."""
+    """验证 budget-enforcer/alerts.py 的 BudgetAlert 可被 escalation/budget_handler.py 处理."""
 
     def test_budget_alert_creatable(self):
-        from zephyr.budget_enforcer.alerts import BudgetAlert
+        from zephyr.governance.alerts import BudgetAlert
         a = BudgetAlert(alert_id="B001")
         assert a.alert_id == "B001"
 
     def test_budget_handler_accepts_alert(self):
-        from zephyr.budget_enforcer.alerts import BudgetAlert
-        from zephyr.escalation_engine.budget_handler import on_budget_alert
+        from zephyr.governance.alerts import BudgetAlert
+        from zephyr.governance.budget_handler import on_budget_alert
         a = BudgetAlert(alert_id="B001")
         result = on_budget_alert(a)
         assert result is not None
 
     def test_budget_severity_enum(self):
-        from zephyr.budget_enforcer.alerts import BudgetSeverity
+        from zephyr.governance.alerts import BudgetSeverity
         assert BudgetSeverity.WARNING is not None
         assert BudgetSeverity.CRITICAL is not None

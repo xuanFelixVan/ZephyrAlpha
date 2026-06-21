@@ -1,1 +1,2 @@
-# [BLUEPRINT] DOM-GOV-001 | tests/agent_rbac/__init__.py | §
+# [A_test] module_id: SRC-TST-0021 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable | error_contract=ImportError→skip
+# [BLUEPRINT] SRC-216 | tests/agent_rbac/__init__.py | §

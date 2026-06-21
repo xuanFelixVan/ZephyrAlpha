@@ -47,18 +47,18 @@ VIEW_LINE_LIMITS = {
 # 需要检查行数的视图文件
 VIEW_FILES = [
     "00-overview.md",
-    "01-business-architecture.md",
-    "02-information-architecture.md",
-    "03-application-architecture.md",
-    "04-technology-architecture.md",
-    "04bis-runtime-planes.md",
-    "04ter-capability-heatmap.md",
-    "05-data-architecture.md",
-    "06-security-architecture.md",
-    "07-integration-architecture.md",
-    "08-operations-architecture.md",
-    "09-governance-architecture.md",
-    "10-frontend-architecture.md",
+    "01-business_architecture.md",
+    "02-information_architecture.md",
+    "03-application_architecture.md",
+    "04-technology_architecture.md",
+    "04bis-runtime_planes.md",
+    "04ter-capability_heatmap.md",
+    "05-data_architecture.md",
+    "06-security_architecture.md",
+    "07-integration_architecture.md",
+    "08-operations_architecture.md",
+    "09-governance_architecture.md",
+    "10-frontend_architecture.md",
 ]
 
 import subprocess
@@ -98,15 +98,15 @@ def _call_validate_yaml_summaries() -> tuple[bool, list[str]]:
 def gate_01_index_reachable() -> tuple[bool, list[str]]:
     """GATE-01: _index.yaml 存在且所有分区文件可达"""
     errors = []
-    index_path = ARCH_MODEL / "_index.yaml"
+    index_path = ARCH_MODEL / "index.yaml"
 
     if not index_path.exists():
-        errors.append(f"_index.yaml 不存在: {index_path}")
+        errors.append(f"index.yaml 不存在: {index_path}")
         return False, errors
 
     data = load_yaml(index_path)
     if not data:
-        errors.append("_index.yaml 为空或无法解析")
+        errors.append("index.yaml 为空或无法解析")
         return False, errors
 
     partitions = data.get("partitions", [])
@@ -161,9 +161,9 @@ def _collect_layer_ids() -> set[str]:
 
 
 def _collect_contract_ids() -> set[str]:
-    """收集 cross-layer-contracts.yaml 中所有 contract / ocp / external 的 id。"""
+    """收集 cross_layer_contracts.yaml 中所有 contract / ocp / external 的 id。"""
     ids: set[str] = set()
-    contracts_path = ARCH_MODEL / "contracts" / "cross-layer-contracts.yaml"
+    contracts_path = ARCH_MODEL / "contracts" / "cross_layer_contracts.yaml"
     if not contracts_path.exists():
         return ids
     data = load_yaml(contracts_path)
@@ -228,7 +228,7 @@ def gate_02_p0_interfaces() -> tuple[bool, list[str]]:
                         if cid and valid_contract_ids and cid not in valid_contract_ids:
                             errors.append(
                                 f"{yaml_file.name}: P0 模块 {mod_id} 引用 contract_id={cid} "
-                                f"在 cross-layer-contracts.yaml 中不存在"
+                                f"在 cross_layer_contracts.yaml 中不存在"
                             )
 
     return len(errors) == 0, errors
@@ -374,17 +374,17 @@ def extra_02_interface_refs_exist() -> tuple[bool, list[str]]:
 
 
 def gate_06_event_publisher_exists() -> tuple[bool, list[str]]:
-    """GATE-06: domain-events.yaml 每个事件的 publisher 层 ID 在 layer YAML 分区中存在"""
+    """GATE-06: domain_events.yaml 每个事件的 publisher 层 ID 在 layer YAML 分区中存在"""
     errors = []
-    events_path = ARCH_MODEL / "events" / "domain-events.yaml"
+    events_path = ARCH_MODEL / "events" / "domain_events.yaml"
 
     if not events_path.exists():
-        errors.append(f"domain-events.yaml 不存在: {events_path}")
+        errors.append(f"domain_events.yaml 不存在: {events_path}")
         return False, errors
 
     data = load_yaml(events_path)
     if not data:
-        errors.append("domain-events.yaml 为空或无法解析")
+        errors.append("domain_events.yaml 为空或无法解析")
         return False, errors
 
     valid_layer_ids = _collect_layer_ids()
@@ -419,17 +419,17 @@ def gate_06_event_publisher_exists() -> tuple[bool, list[str]]:
 
 
 def gate_07_aggregate_layer_exists() -> tuple[bool, list[str]]:
-    """GATE-07: ddd-model.yaml 每个 aggregate 的 layer 在 layer YAML 分区中存在"""
+    """GATE-07: ddd_model.yaml 每个 aggregate 的 layer 在 layer YAML 分区中存在"""
     errors = []
-    ddd_path = ARCH_MODEL / "domain" / "ddd-model.yaml"
+    ddd_path = ARCH_MODEL / "domain" / "ddd_model.yaml"
 
     if not ddd_path.exists():
-        errors.append(f"ddd-model.yaml 不存在: {ddd_path}")
+        errors.append(f"ddd_model.yaml 不存在: {ddd_path}")
         return False, errors
 
     data = load_yaml(ddd_path)
     if not data:
-        errors.append("ddd-model.yaml 为空或无法解析")
+        errors.append("ddd_model.yaml 为空或无法解析")
         return False, errors
 
     valid_layer_ids = _collect_layer_ids()
@@ -439,7 +439,7 @@ def gate_07_aggregate_layer_exists() -> tuple[bool, list[str]]:
 
     aggregate_roots = data.get("aggregate_roots", [])
     if not isinstance(aggregate_roots, list):
-        errors.append("ddd-model.yaml 缺少 aggregate_roots 列表")
+        errors.append("ddd_model.yaml 缺少 aggregate_roots 列表")
         return False, errors
 
     for agg in aggregate_roots:
@@ -456,24 +456,24 @@ def gate_07_aggregate_layer_exists() -> tuple[bool, list[str]]:
 
 
 def gate_08_technology_quadrant_valid() -> tuple[bool, list[str]]:
-    """GATE-08: technology-landscape.yaml 每个条目的 quadrant 值合法"""
+    """GATE-08: technology_landscape.yaml 每个条目的 quadrant 值合法"""
     errors = []
-    tech_path = ARCH_MODEL / "technology" / "technology-landscape.yaml"
+    tech_path = ARCH_MODEL / "technology" / "technology_landscape.yaml"
 
     if not tech_path.exists():
-        errors.append(f"technology-landscape.yaml 不存在: {tech_path}")
+        errors.append(f"technology_landscape.yaml 不存在: {tech_path}")
         return False, errors
 
     data = load_yaml(tech_path)
     if not data:
-        errors.append("technology-landscape.yaml 为空或无法解析")
+        errors.append("technology_landscape.yaml 为空或无法解析")
         return False, errors
 
     valid_quadrants = {"adopt", "trial", "assess", "hold", "build"}
 
     technologies = data.get("technologies", [])
     if not isinstance(technologies, list):
-        errors.append("technology-landscape.yaml 缺少 technologies 列表")
+        errors.append("technology_landscape.yaml 缺少 technologies 列表")
         return False, errors
 
     for tech in technologies:
@@ -637,9 +637,9 @@ def gate_a_code_yaml_alignment() -> tuple[bool, list[str]]:
         errors.append(f"src/zephyr/ 目录不存在: {src_zephyr}")
         return False, errors
 
-    index_data = load_yaml(ARCH_MODEL / "_index.yaml")
+    index_data = load_yaml(ARCH_MODEL / "index.yaml")
     if not index_data:
-        errors.append("_index.yaml 为空或无法解析")
+        errors.append("index.yaml 为空或无法解析")
         return False, errors
 
     partitions = index_data.get("partitions", [])
@@ -667,7 +667,7 @@ def gate_a_code_yaml_alignment() -> tuple[bool, list[str]]:
     for dir_name in sorted(layer_dirs):
         layer_num = dir_name[:3]
         if layer_num not in part_map:
-            errors.append(f"CRITICAL: src/zephyr/{dir_name}/ 存在但 _index.yaml 无对应分区 ({layer_num})")
+            errors.append(f"CRITICAL: src/zephyr/{dir_name}/ 存在但 index.yaml 无对应分区 ({layer_num})")
 
     for pid in sorted(part_map):
         if not (pid.startswith("l") and len(pid) == 3 and pid[1:].isdigit()):
@@ -895,7 +895,7 @@ def gate_d_doc_directory_index_required() -> tuple[bool, list[str]]:
 
     # 检查 4: 声明的嵌套/特殊路径也必须有 index.md
     extra_check_dirs = [
-        "03_modules/l01_infrastructure",
+        "03_modules/infrastructure.runtime_integration",
     ]
     for rel_path in extra_check_dirs:
         check_path = DOCS_ROOT / rel_path
@@ -1103,7 +1103,7 @@ def main() -> int:
     print("=" * 60)
 
     gates = [
-        ("GATE-01", "_index.yaml 存在且分区可达", gate_01_index_reachable),
+        ("GATE-01", "index.yaml 存在且分区可达", gate_01_index_reachable),
         ("GATE-02", "P0 模块 interface_contract 非空 + contract_id 存在", gate_02_p0_interfaces),
         ("GATE-03", "invariants.yaml 每条有 owner", gate_03_invariants_owner),
         ("GATE-04", "视图文件行数 ≤ 800", gate_04_view_line_count),

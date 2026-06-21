@@ -1,0 +1,192 @@
+rule_id: TRAE-024
+title: 方法论-诊断与根因分析
+aliases:
+- MTH-001
+- MTH-002
+- MTH-003
+- MTH-006
+- PS-STD-011
+layer: L2
+severity: warning
+scope: methodology_diagnosis
+domain: TRAE
+triggers:
+- operation: methodology_diagnosis
+sections:
+  professional_framework_mapping:
+    title: 专业框架映射表
+    section_type: rule
+    original_rules:
+    - MTH-001 专业框架映射
+    conditions:
+    - type: pre_condition
+      check: 治理决策需要查找专业标准时
+      pass: 找到对应专业框架和适用章节
+      fail: 决策缺乏行业标准基础
+    actions:
+    - type: mandatory
+      step: 按治理问题类型查找对应专业框架——安全策略→ISO 27001 Annex A；AI治理→ISO 42001 §6~§8；IT服务管理→ITIL 4 SACM/Change Enablement/Incident Management；治理问责→COBIT 2019 Governance&Management Objectives；安全控制与隐私→NIST 800-53 AU/SC/IA/MP控制家族；质量管理→ISO 9001 §7.5；风险管理→ISO 31000 §5~§7；Vibe Coding/AI辅助开发→Anthropic/Cursor/Windsurf官方指南
+    prohibitions: []
+  mth_006_symptom_mapping:
+    section_type: symptom_mapping
+    title: MTH-006 症状-根因映射表
+    original_rules:
+    - MTH-006 症状根因映射
+    mappings:
+    - symptom: 多处路径引用失效
+      root_cause: 系统按路径而非属性判定行为
+      treatment: 改为属性推导引用
+    - symptom: 多文件字段冲突
+      root_cause: 概念在多处定义非SSoT
+      treatment: 合并真源其余改为引用
+    - symptom: 编号跳跃不连续
+      root_cause: 编号规则未被显式定义
+      treatment: 编号分配铁律(PS-STD-001 §5.4)
+    - symptom: 相似规则在多个文件重复
+      root_cause: 文件边界未按责任单一原则划分
+      treatment: 按唯一职责重新划分文件边界
+    - symptom: 修完文件后才发现目录缺文件
+      root_cause: 诊断时跳过结构盘点直接修字段
+      treatment: 先结构前置检查补全再修字段
+    - symptom: 误诊循环依赖实际是事件驱动
+      root_cause: 依赖图契约表未区分hard/soft/event类型
+      treatment: 声明循环依赖前MUST代码级验证import方向
+    - symptom: 深挖后未发现逻辑问题
+      root_cause: 写法表述制造了误解
+      treatment: 修正写法使AI读者零歧义
+    prohibitions:
+    - 忽略症状-根因映射表直接在症状层面修复
+  mth_001:
+    title: 标准先行
+    section_type: rule
+    original_rules:
+    - MTH-001
+    conditions:
+    - type: pre_condition
+      check: 做出治理决策时
+      pass: 决策经过四步标准先行流程
+      fail: 治理体系不符合行业标准，审计不通过
+    actions:
+    - type: mandatory
+      step: 1.明确问题→2.查找标准(专业框架映射表)→3.适配标准(有现成方案→适配；无→记录原因自行定义)→4.记录溯源(规则"专业参考"字段填写专业框架和章节号)
+    prohibitions: []
+  mth_002:
+    title: 架构上下文自检
+    section_type: rule
+    original_rules:
+    - MTH-002
+    conditions:
+    - type: pre_condition
+      check: 每次文件操作前
+      pass: 架构层完整性已确认
+      fail: 文件被放在错误位置，产生孤立文件
+    actions:
+    - type: mandatory
+      step: 1.定位架构层(layer字段→对应目录)→2.查验架构完整性(该层目录是否有架构描述文件)→3.不完整则探查架构该有的样子(专业框架+社区实践)→4.仅当架构完整时才操作文件
+    prohibitions: []
+  mth_003:
+    title: 目标优先原则
+    section_type: rule
+    original_rules:
+    - MTH-003
+    conditions:
+    - type: trigger
+      check: 规则字面执行与系统目标冲突时
+      pass: 选择最接近系统目标的路径
+      fail: 规则形式主义压倒系统目标
+    actions:
+    - type: mandatory
+      step: 1.冲突识别(规则矛盾/破坏性后果/规则滞后)→2.裁决方向(目标优先于规则)→3.偏离记录MUST(偏离规则/原因/替代方案/达到目标)→4.事后修正(评估是否需修改原规则)
+    prohibitions:
+    - 以"规则说不允许"作为停止思考的借口
+    - 跳过步骤1(判断最优方案)直接进入步骤2(检查规则约束)
+    - 在3b中只说"不能"不给覆盖建议
+  mth_006:
+    section_type: root_cause_analysis
+    title: 根源分析原则
+    original_rules:
+    - MTH-006
+    methodology:
+    - 追问到底(持续问为什么直到不可再分的根源)
+    - 根因判定(治根vs治标)
+    - 结构前置检查(修复前先确认受影响目录完整文件清单)
+    - 原子治根(检查所有受同一根因影响的文件一次性修复)
+    - 根因记录(根因/症状/影响文件/修复后原则)
+    - 诊断反转验证(初始诊断与深挖结论不一致则追问为什么)
+    - 表达检查(未发现系统性问题则检查写法是否制造误解)
+    reasoning_chain:
+    - decision: 发现问题时不停在第一个为什么
+      evidence: 在第一个为什么就停下导致治标不治根
+      conclusion: 持续追问直到不可再分的根源
+    - decision: 治根而非治标
+      evidence: 治标仅作用于当前实例，同类问题会重现
+      conclusion: 修复根因使同类问题不再产生
+    - decision: 诊断反转验证不可跳过
+      evidence: 初始诊断与深挖结论可能不一致
+      conclusion: 不一致时追问为什么初始诊断是错的
+    prohibitions:
+    - 在第一个为什么就停下
+    - 治标不治根(仅作用于当前实例)
+    - 跳过诊断反转验证
+  general_principles:
+    title: 总则最优先行原则
+    section_type: rule
+    original_rules:
+    - PS-STD-011 总则
+    conditions:
+    - type: pre_condition
+      check: AI面对任何决策问题时
+      pass: 先判断最优方案再检查规则约束
+      fail: 以规则为借口停止思考
+    actions:
+    - type: mandatory
+      step: 1.先判断最优方案(不考虑规则约束)→2.再检查规则约束→3a无约束则执行→3b有约束则输出(最优方案X/被规则Y约束/是否值得覆盖/需要什么审批)
+    prohibitions:
+    - 以"规则说不允许"作为停止思考的借口
+  clean_project:
+    title: 项目清爽原则
+    section_type: rule
+    original_rules:
+    - PS-STD-011 项目清爽原则
+    conditions:
+    - type: trigger
+      check: 评估文件是否应保留时
+      pass: 每个文件都有存在理由
+      fail: 项目堆积无用文件
+    actions:
+    - type: mandatory
+      step: 唯一真源(同一概念只在一个文件定义)/唯一责任(每个文件一项职责)/能删就删(过时无意义已被替代→立即删除)/最小维护成本；判定标准：若现在删掉，未来3个AI session内会有人发现它不见了吗？不会→删
+    prohibitions:
+    - 保留"万一将来需要"的文件
+    - 以"历史遗留"为由保留过时文件
+    - 创建占位跳转文件
+    - 创建平行文件覆盖已有责任(需升级原文件)
+  change_history:
+    title: 修订记录
+    section_type: examples
+    items:
+    - version: "1.1.0"
+      date: "2026-06-19"
+      change: "RQ-01~RQ-14审查修复——移除3个错误context段(mr_scope/mr_normative_refs/mr_change_history，内容为元数据注册表非方法论诊断)；添加正确change_history段；修复provenance路径(下划线→连字符匹配meta/index.md)并添加note标注源文件已迁移；aliases补充PS-STD-011(文件含PS-STD-011总则和项目清爽原则)"
+    - version: "1.0.0"
+      date: "2026-06-13"
+      change: "初始提取——从governance-methodology-standard.md提取MTH-001/002/003/006方法论诊断与根因分析规则"
+references:
+  rule_ids:
+  - TRAE-041
+  - TRAE-042
+  scripts: []
+  modules: []
+  blueprints: []
+enforcement:
+  type: doc
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: evolving
+  impact_level: L
+  modification_permission: ai_modifiable
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

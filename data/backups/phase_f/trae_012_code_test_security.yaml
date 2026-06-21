@@ -1,0 +1,234 @@
+rule_id: TRAE-012
+title: 代码构建-测试与安全
+aliases:
+- CODE-008
+- CODE-009
+- CODE-010
+layer: L1
+severity: error
+scope: code_test_security
+domain: TRAE
+triggers:
+- operation: code_test_security
+sections:
+  code_008:
+    title: 测试规范与防幻觉(#7/#13/#14)
+    section_type: rule
+    original_rules:
+    - CODE-008
+    conditions:
+    - type: constraint
+      check: 新建模块是否有测试
+      pass: 已创建test_{module}.py
+      fail: 无测试文件
+    - type: constraint
+      check: 修改函数是否更新测试
+      pass: 已更新或添加对应测试用例
+      fail: 测试未同步更新
+    - type: constraint
+      check: 修改Bug是否添加回归测试
+      pass: 已添加回归测试
+      fail: 无回归测试
+    actions:
+    - type: mandatory
+      step: 新建模块MUST创建test_{module}.py
+    - type: mandatory
+      step: 修改函数MUST更新或添加对应测试用例
+    - type: mandatory
+      step: 修改Bug MUST添加回归测试
+    - type: mandatory
+      step: 产出代码后逐项自检：功能完整/边界处理/错误路径/类型一致/导入完整
+    prohibitions:
+    - "占位符规则见 trae_007_anti_hallucination_behavior.yaml（ANTI-HALL-07）——禁止TODO/FIXME/HACK/.../pass/NotImplementedError（@abstractmethod豁免）；禁止# implement later / # will add"
+  code_009:
+    title: 编辑优先与最小变更(#8/#9/#10)
+    section_type: rule
+    original_rules:
+    - CODE-009
+    conditions:
+    - type: constraint
+      check: git diff是否整文件删除+新增
+      pass: 只有少量行变更
+      fail: 整文件删除+新增=违反编辑优先
+    - type: constraint
+      check: diff中是否有与需求无关的变更
+      pass: 仅包含需求相关变更
+      fail: 包含无关变更=违反最小变更
+    actions:
+    - type: mandatory
+      step: 修改文件使用surgical edit（SearchReplace精确替换）
+    - type: mandatory
+      step: 仅修改需求指定的最小代码
+    - type: mandatory
+      step: 不确定时标记[ASSUMPTION]等待确认
+    prohibitions:
+    - "编辑优先/最小变更/假设显式化规则见 trae_007_anti_hallucination_behavior.yaml（ANTI-HALL-08/09/10）——禁止删除文件后重建；禁止'顺便'重命名变量/优化相邻函数/调整代码风格；禁止假设路径和签名（必须Grep/Read验证）"
+  code_010:
+    title: 安全编码(#15/#16/#17/#18)
+    section_type: rule
+    original_rules:
+    - CODE-010
+    conditions:
+    - type: trigger
+      check: 修改>3文件 / 新增>50行 / 接口变更>2模块 / Schema变更
+      pass: 执行计划先行流程
+      fail: 未执行计划先行
+    - type: constraint
+      check: 认证检查
+      pass: 敏感操作有权限控制
+      fail: 缺失权限控制
+    - type: constraint
+      check: 注入检查
+      pass: SQL/命令/路径有参数化
+      fail: 使用字符串拼接
+    - type: constraint
+      check: 数据暴露检查
+      pass: 日志/错误信息不泄露敏感数据
+      fail: 泄露敏感数据
+    actions:
+    - type: mandatory
+      step: 敏感操作必须有权限控制
+    - type: mandatory
+      step: SQL/命令/路径必须参数化
+    - type: mandatory
+      step: 日志/错误信息必须脱敏
+    - type: mandatory
+      step: 计划先行：输出计划→确认→执行→验证
+    - type: mandatory
+      step: 修改文件前：读取[CONSUMERS]→Grep所有引用→评估影响→同步修改
+    - type: mandatory
+      step: 对话>30轮/AI输出矛盾/AI重复输出/AI忘记决策→开新会话
+    prohibitions:
+    - "安全防护规则见 trae_009_anti_hallucination_safety.yaml（ANTI-HALL-15/16/17/18）——禁止敏感操作无权限控制；禁止SQL/命令/路径使用字符串拼接；禁止日志/错误信息泄露敏感数据"
+  gov_eng_012_security_procedure:
+    title: 安全编码检查流程
+    section_type: procedure
+    original_rules:
+    - CODE-010
+    items:
+    - order: 1
+      action: "认证检查——敏感操作是否有权限控制"
+      pre_condition: "代码涉及敏感操作"
+      expected_result: "有权限控制"
+      on_failure: "缺失→必须添加"
+    - order: 2
+      action: "注入检查——SQL/命令/路径是否有参数化"
+      pre_condition: "代码涉及SQL/命令/路径操作"
+      expected_result: "使用参数化"
+      on_failure: "拼接→必须参数化"
+    - order: 3
+      action: "数据暴露检查——日志/错误信息是否泄露敏感数据"
+      pre_condition: "代码涉及日志/错误输出"
+      expected_result: "敏感数据已脱敏"
+      on_failure: "泄露→必须脱敏"
+    - order: 4
+      action: "计划先行——输出计划→确认→执行→验证"
+      pre_condition: "修改>3文件或新增>50行或接口变更>2模块或Schema变更"
+      expected_result: "计划已确认后执行"
+      on_failure: "无计划大范围修改=禁止"
+    - order: 5
+      action: "跨文件影响检查——读取[CONSUMERS]→Grep所有引用→评估影响→同步修改"
+      pre_condition: "准备修改文件"
+      expected_result: "所有受影响消费者已同步"
+      on_failure: "遗漏消费者→集成断裂"
+    - order: 6
+      action: "上下文新鲜度——对话>30轮/AI输出矛盾/AI重复输出/AI忘记决策→开新会话"
+      pre_condition: "对话进行中"
+      expected_result: "上下文保持新鲜"
+      on_failure: "上下文退化→必须开新会话"
+  gov_eng_012_scope:
+    title: 适用范围
+    section_type: context
+    original_rules:
+    - GOV-ENG-001
+    summary: 测试与安全规范是代码构建标准的防护层，覆盖防幻觉#7-#18的代码级实施
+    impact_on_rules: 测试缺失=代码不可交付；安全检查不通过=禁止交付
+    key_decisions:
+    - __init__.py和纯配置YAML豁免测试要求
+    - "@abstractmethod+NotImplementedError是唯一豁免的占位符"
+  gov_eng_012_cross_refs:
+    title: 交叉引用
+    section_type: context
+    original_rules:
+    - GOV-ENG-001
+    - GOV-ENG-002
+    summary: 测试与安全规范依赖文件头部标准(GOV-ENG-002)的[CONSUMERS]字段和[STABILITY]枚举
+    impact_on_rules: "[CONSUMERS]缺失=跨文件影响检查无法执行"
+    key_decisions:
+    - "安全编码规范与防幻觉安全防护层(#15-#18)是同一规则的两个视角"
+    - 计划先行触发条件与TRAE-009完全一致
+  gov_eng_012_verification:
+    title: 测试与安全验证流程
+    section_type: verification
+    original_rules:
+    - CODE-008
+    - CODE-009
+    - CODE-010
+    items:
+    - step: "测试文件存在性检查"
+      command: "pytest tests/ --collect-only -q"
+      expected_exit: 0
+      on_fail: "测试文件缺失——必须创建"
+    - step: "占位符检查"
+      command: "grep -rn 'TODO\\|FIXME\\|HACK\\|\\.\\.\\.\\|pass$\\|NotImplementedError' src/zephyr/"
+      expected_exit: 1
+      on_fail: "发现占位符——必须实现"
+    - step: "git diff整文件变更检查"
+      command: "git diff --stat"
+      expected_exit: 0
+      on_fail: "出现整文件变更——必须改为surgical edit"
+    - step: "安全编码检查"
+      command: "python scripts/governance/d6_security/scan_secret_leak.py"
+      expected_exit: 0
+      on_fail: "安全漏洞——必须修复"
+    - step: "自审闭环5项检查"
+      command: "对照需求逐项确认功能完整/边界处理/错误路径/类型一致/导入完整"
+      expected_exit: 0
+      on_fail: "自审未通过——必须补充"
+  gov_eng_012_change_history:
+    title: 变更历史
+    section_type: context
+    original_rules:
+    - GOV-ENG-001
+    items:
+    - version: "1.2.0"
+      date: "2026-06-19"
+      change: "RQ审查修复（STEP10散布完整修复）：code_008/code_009/code_010 三个 section 的 prohibitions 改为引用 trae_007/009（ANTI-HALL-07~18），消除 #7-#18 规则的重复定义；references.rule_ids 添加 TRAE-007 和 TRAE-009。保留 conditions/actions 执行层细节"
+    - version: "1.1.0"
+      date: "2026-06-19"
+      change: "RQ审查修复：移除断链引用validate_file_headers.py(脚本不存在,项目级断链,trae_047也引用)改为引用TRAE-047+scan_secret_leak.py（RQ-04）；provenance标注源文件已superseded（RQ-04/RQ-09）；补充change_history（RQ-14）"
+    - version: "1.0.0"
+      date: "2026-06-13"
+      change: "初始提取自GOV-ENG-001§8(防幻觉代码级规则#7-#18)"
+    summary: 测试与安全规范提取自GOV-ENG-001§8(防幻觉代码级规则#7-#18)
+    impact_on_rules: 无结构性变更
+    key_decisions:
+    - §8防幻觉代码级规则从GOV-ENG-001独立提取为测试与安全规范
+references:
+  rule_ids:
+  - CODE-008
+  - CODE-009
+  - CODE-010
+  - TRAE-047
+  - TRAE-007
+  - TRAE-009
+  scripts:
+  - scripts/governance/d6_security/scan_secret_leak.py
+  modules:
+  - GOV-ENG-001
+  - GOV-ENG-002
+  blueprints: []
+enforcement:
+  type: code
+  executors:
+  - pytest
+  - ruff
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

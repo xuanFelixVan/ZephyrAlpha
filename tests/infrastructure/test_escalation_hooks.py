@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0157 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-314 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.infrastructure.test_escalation_hooks
 # [STABILITY] evolving
 # [SAFETY] L
@@ -9,13 +10,13 @@
 Validates that all 15 extension detector modules are correctly loaded and integrated
 into the EscalationEngine's hook system.
 
-Blueprint: docs/03_modules/l01_infrastructure/escalation-protocol/blueprint.md D-022-07~D-022-30
+Blueprint: docs/03_modules/_domain-infra_ops/escalation-protocol/blueprint.md D-022-07~D-022-30
 """
 from unittest.mock import patch
 
 import pytest
 
-from zephyr.escalation_engine import (
+from zephyr.governance.escalation import (
     EscalationEngine,
     RuleCategory,
     EscalationLevel,

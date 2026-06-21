@@ -1,0 +1,21 @@
+# [A_module] module_id=MOD-SEC_security | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+# [MODULE] zephyr.ops.security
+# [INVARIANTS] pending_review
+# [MODIFY-GUARD] no structural changes without owner approval
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [CONSUMERS] 
+# [ERROR_CONTRACT] 
+# [TESTS] 
+"""feedback-loop.security — auto-generated package init."""
+from . import wireheading_prevention
+from . import agent_skill_guard
+from . import dep_cve_correlator
+from . import metric_prompt_scanner
+from . import remote_attestation
+from . import secret_rotation
+
+__all__ = ['agent_skill_guard', 'dep_cve_correlator', 'metric_prompt_scanner', 'remote_attestation', 'secret_rotation', 'wireheading_prevention']
+

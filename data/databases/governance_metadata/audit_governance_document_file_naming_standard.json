@@ -1,0 +1,27 @@
+{
+  "task_id": "DM-100100",
+  "source_file": "docs/01_policies_and_standards/governance/document/file_naming_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "doc_003": {
+      "title": "文件命名规范 (GOV-DOC-003)",
+      "conditions_count": 8,
+      "actions_count": 3,
+      "prohibitions_count": 7
+    }
+  },
+  "summary": {
+    "total_rules": 18,
+    "COVERED": 18,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    {
+      "action": "YAML_UPDATE",
+      "target": "trae_028_doc_structure_naming.yaml section doc_003",
+      "detail": "从空壳更新为包含8个conditions+3个actions+7个prohibitions的完整规则提取:通用命名规则+doc_type后缀映射+文件夹命名风格+GATE-11检测规则N-01/N-02/N-08+大写白名单+技术栈版本豁免"
+    }
+  ]
+}

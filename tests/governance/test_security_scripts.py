@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0143 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-300 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.governance.test_security_scripts
 # [STABILITY] evolving
 # [SAFETY] L
@@ -101,7 +102,7 @@ class TestExitCodeConstants:
     def test_manifest_has_owner_field(self):
         import yaml
 
-        manifest_path = GOV_DIR / "script_manifest.yaml"
+        manifest_path = GOV_DIR / "script-manifest.yaml"
         data = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
         assert "scripts" in data
         first_with_owner = any("owner" in s for s in data["scripts"])

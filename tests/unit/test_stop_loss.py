@@ -1,11 +1,12 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-2073 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-690 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_stop_loss
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """
-单元测试：src/zephyr/l04_risk_management/stop_loss.py
+单元测试：src/zephyr/risk/stop_loss.py
 ======================================================
 
 Phase C 升级后测试——验证四种止损模式的实际行为。
@@ -30,7 +31,7 @@ from __future__ import annotations
 from datetime import datetime, timezone, timedelta
 
 import pytest
-from zephyr.l04_risk_management.stop_loss import (
+from zephyr.risk.stop_loss import (
     StopLossResult,
     evaluate_stop_loss,
     reset_kill_switch,

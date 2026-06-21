@@ -1,0 +1,11 @@
+---
+module_id: KE-2691
+title: DB-025-0073：T-DB-007——EXPLAIN QUERY PLAN
+category: module_blueprint
+---
+
+# DB-025-0073：T-DB-007——EXPLAIN QUERY PLAN
+
+DB-025-0073：T-DB-007——EXPLAIN QUERY PLAN
+
+§16.4 T-DB-007: query_metrics 集成 EXPLAIN QUERY PLAN。

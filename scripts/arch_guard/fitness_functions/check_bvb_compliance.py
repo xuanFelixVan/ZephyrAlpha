@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_bvb_compliance.py | §
 """check_bvb_compliance.py — BvB 五维评分合规检查（stub）
 
-对标 architecture-principles.md §2 "开源优先与 Build-vs-Buy"。
+对标 architecture_principles.md §2 "开源优先与 Build-vs-Buy"。
 检查新模块蓝图是否包含 "OSS Candidates" 小节。
 
 当前状态：stub——需要 blueprint-registry 集成后才能实现完整检查。

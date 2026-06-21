@@ -1,14 +1,15 @@
 ---
 doc_type: index
-module_id: AUDIT-STATE-IDX-001
+module_id: GOV-066
 layer: cross_layer
 status: Active
-version: "1.0.0"
-date: "2026-05-02"
+version: 1.0.0
+date: '2026-05-02'
 owner: ZephyrAlpha-Owner
-summary: "审计状态数据目录 — SQLite DB 等运行时状态（待填充）"
+summary: 审计状态数据目录 — SQLite DB 等运行时状态（待填充）
 ttl: permanent
 generated: '2026-05-02'
+title: State
 ---
 
 # State — 目录索引

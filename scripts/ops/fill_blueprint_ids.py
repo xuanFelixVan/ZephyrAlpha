@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-005 | 03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 import os
 import re
 import yaml
@@ -6,7 +6,7 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 ROOT = Path(r"d:\ZephyrAlpha")
-DEPGRAPH_PATH = ROOT / "data" / "asset_index" / "project-entity-depgraph.yaml"
+DEPGRAPH_PATH = ROOT / "data" / "databases" / "depgraph.db"
 MODULE_REGISTRY_PATH = ROOT / "docs" / "03_modules" / "module-registry.yaml"
 BLUEPRINT_REGISTRY_PATH = ROOT / "docs" / "03_modules" / "blueprint-registry.yaml"
 SRC_ZEPHYR = ROOT / "src" / "zephyr"
@@ -35,7 +35,7 @@ MANUAL_OVERRIDES = {
     "core": "MOD-INF-002",
     "db": "MOD-INF-012",
     "escalation": "MOD-INF-022",
-    "escalation_engine": "MOD-INF-022",
+    "escalation-engine": "MOD-INF-022",
     "shared": "MOD-INF-016",
     "contracts": "MOD-INF-016",
     "gates": "MOD-INF-007",
@@ -43,19 +43,19 @@ MANUAL_OVERRIDES = {
     "hooks": "MOD-INF-002",
     "infrastructure": "MOD-INF-002",
     "kb": "MOD-KB-001",
-    "l00_data_source": "MOD-L00-001",
-    "l01_infrastructure": "MOD-INF-002",
-    "l02_alpha_factor": "MOD-L02-001",
-    "l03_signal_generation": "MOD-L03-001",
-    "l04_risk_management": "MOD-L04-001",
-    "l05_portfolio_construction": "MOD-L05-001",
-    "l06_trade_execution": "MOD-L06-001",
-    "l07_post_trade_analytics": "MOD-L07-001",
-    "l08_human_ai_interface": "MOD-L08-001",
-    "l09_research_innovation": "MOD-L09-001",
-    "l10_compliance": "MOD-L10-001",
-    "l11_ml_platform": "MOD-L11-001",
-    "l13_experimentation": "MOD-L13-001",
+    "data": "MOD-L00-001",
+    "infrastructure.runtime_integration": "MOD-INF-002",
+    "factor": "MOD-L02-001",
+    "signal": "MOD-L03-001",
+    "risk": "MOD-L04-001",
+    "pf_core": "MOD-L05-001",
+    "ex_core": "MOD-L06-001",
+    "pf_core": "MOD-L07-001",
+    "frontend": "MOD-L08-001",
+    "research": "MOD-L09-001",
+    "compliance": "MOD-L10-001",
+    "ml_train": "MOD-L11-001",
+    "integration": "MOD-L13-001",
     "lifecycle_manager": "MOD-INF-002",
     "orchestrator": "MOD-INF-035",
     "runtime": "MOD-INF-035",
@@ -63,17 +63,17 @@ MANUAL_OVERRIDES = {
     "mcp": "MOD-INF-013",
     "mcp_servers": "MOD-INF-013",
     "rollback": "MOD-INF-021",
-    "system_telemetry": "MOD-INF-015",
+    "system-telemetry": "MOD-INF-015",
     "telemetry": "MOD-INF-015",
     "task_system": "MOD-INF-006",
-    "vector_memory": "MOD-INF-011",
-    "model_capability_exam": "MOD-INF-036",
+    "vector-memory": "MOD-INF-011",
+    "model-capability-exam": "MOD-INF-036",
     "_cross_layer": "MOD-INF-002",
     "__init__": "MOD-INF-002",
 }
 
 SUBDIR_OVERRIDES = {
-    "l01_infrastructure": {
+    "infrastructure.runtime_integration": {
         "a2a_protocol": "MOD-INF-025",
         "code_dedup_engine": "MOD-INF-017",
         "script_system": "MOD-INF-005",

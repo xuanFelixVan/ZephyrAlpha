@@ -1,0 +1,315 @@
+rule_id: TRAE-046
+title: 工程治理-代码重组安全
+aliases:
+- GOV-ENG-004
+layer: L1
+severity: error
+scope: engineering_code_restructure
+domain: TRAE
+triggers:
+- operation: code_merge
+- operation: code_split
+- operation: code_migration
+- operation: code_rename
+sections:
+  gov_eng_004_s1:
+    title: 安全搬家铁律(9条)
+    section_type: rule
+    original_rules:
+    - GOV-ENG-004
+    conditions:
+    - type: pre_condition
+      check: 执行前是否重新扫描目标文件的所有import引用
+      pass: grep -rn "from zephyr.目标模块" src/ 输出完整引用清单
+      fail: 蓝图记录可能过时，必须现场确认
+    - type: pre_condition
+      check: 是否确认无未提交变更
+      pass: git status working tree clean
+      fail: 有未提交变更
+    actions:
+    - type: mandatory
+      step: 执行前必须重新扫描目标文件的所有import引用
+    - type: mandatory
+      step: 重复文件合并必须逐条做价值分析
+    - type: mandatory
+      step: 合并后必须验证内容完整性（对比合并前后的class/function列表）
+    - type: mandatory
+      step: import更新必须全量验证（grep -r "from zephyr.旧路径" src/ 返回零结果）
+    - type: mandatory
+      step: 一次只搬一个文件
+    - type: mandatory
+      step: 搬完一个验证一个（pytest tests/相关目录/ 返回0 failed）
+    - type: mandatory
+      step: 每步必提交
+    - type: mandatory
+      step: 安全优先，速度第二
+    - type: mandatory
+      step: 做完一个，更新一个蓝图（重组+蓝图更新是原子操作）
+    prohibitions:
+    - 禁止批量合并多个重复文件
+    - 禁止批量延迟更新蓝图
+    - 禁止"看起来一样就直接删"——必须用diff确认
+  gov_eng_004_s2:
+    title: 重复文件价值分析方法论(5步)
+    section_type: rule
+    original_rules:
+    - GOV-ENG-004
+    conditions:
+    - type: constraint
+      check: 同名文件内容对比
+      pass: diff标记差异完成
+      fail: 未做内容对比
+    actions:
+    - type: mandatory
+      step: 步骤1：用diff对比两个同名文件，标记差异
+    - type: mandatory
+      step: 步骤2：分类判定（完全相同/re-export wrapper/版本分叉/同名不同功能）
+    - type: mandatory
+      step: 步骤3：价值提取——列出A/B独有class/function+共有但实现不同的
+    - type: mandatory
+      step: 步骤4：归并决策（独有→迁移真源/共有→保留更完整/全部独有→保留并重命名）
+    - type: mandatory
+      step: 步骤5：验证——归并后对比class/function列表确认无遗漏
+    prohibitions: []
+  gov_eng_004_s3:
+    title: 强制安全协议
+    section_type: rule
+    original_rules:
+    - GOV-ENG-004
+    conditions:
+    - type: pre_condition
+      check: Pre-flight Scan 3项全通过
+      pass: import引用完整+蓝图记录偏差<5%+working tree clean
+      fail: 任一项未通过
+    actions:
+    - type: mandatory
+      step: "Pre-flight: 扫描目标文件import引用+确认与蓝图记录一致+确认无未提交变更"
+    - type: mandatory
+      step: "执行中: 一次只操作1个文件+每步操作后立即验证+验证通过后立即提交"
+    - type: mandatory
+      step: "Post-merge: 旧import路径零残留+class/function列表完整性+相关测试全部通过"
+    prohibitions:
+    - 禁止批量操作
+    - 禁止验证未通过就提交
+  gov_eng_004_preflight_verify:
+    title: Pre-flight Scan验证流程
+    section_type: verification
+    original_rules:
+    - GOV-ENG-004
+    items:
+    - step: "扫描目标文件的所有import引用"
+      command: "grep -rn 'from zephyr.目标模块' src/"
+      expected_exit: 0
+      on_fail: "输出完整引用清单，无遗漏"
+    - step: "确认目标文件与蓝图记录一致"
+      command: "wc -l 目标文件"
+      expected_exit: 0
+      on_fail: "行数与蓝图记录偏差>=5%"
+    - step: "确认无未提交变更"
+      command: "git status"
+      expected_exit: 0
+      on_fail: "working tree not clean——必须先提交或stash"
+  gov_eng_004_postmerge_verify:
+    title: Post-merge Verify验证流程
+    section_type: verification
+    original_rules:
+    - GOV-ENG-004
+    items:
+    - step: "旧import路径零残留"
+      command: "grep -r 'from zephyr.旧路径' src/"
+      expected_exit: 1
+      on_fail: "仍有旧import残留——必须更新"
+    - step: "class/function列表完整性"
+      command: "diff <(旧grep class) <(新grep class)"
+      expected_exit: 0
+      on_fail: "仅新增项允许，无删除项——有删除=遗漏"
+    - step: "相关测试全部通过"
+      command: "pytest tests/相关目录/"
+      expected_exit: 0
+      on_fail: "测试失败——必须修复"
+  gov_eng_004_taskcard_template:
+    title: 任务卡安全条款模板
+    section_type: examples
+    original_rules:
+    - GOV-ENG-004
+    items:
+    - description: "acceptance_criteria模板"
+      details: "旧import路径零残留: grep -r 'from zephyr.旧路径' src/ 返回零结果; class/function列表完整性: 合并后对比无遗漏; 相关测试通过: pytest tests/相关目录/ 返回0 failed"
+    - description: "applicable_rules模板"
+      details: "GOV-ENG-004 §1 安全搬家铁律 #1-#9; GOV-ENG-004 §2 价值分析方法论 步骤1-5; GOV-ENG-004 §3 强制安全协议 Pre-flight + 执行中 + Post-merge"
+  gov_eng_004_classification_decision:
+    title: 重复文件分类判定决策树
+    section_type: decision_tree
+    original_rules:
+    - GOV-ENG-004
+    items:
+    - condition: "diff结果为0差异"
+      if_true: "完全相同——保留1份，其余标记deprecated"
+      if_false: "继续检查"
+    - condition: "顶行含Backward-compatible alias或re-export"
+      if_true: "re-export wrapper——保留真源，wrapper标记deprecated"
+      if_false: "继续检查"
+    - condition: "有实质差异但有共享类名"
+      if_true: "版本分叉——进入价值提取(步骤3)"
+      if_false: "同名不同功能——两个都保留，重命名消除歧义"
+  gov_eng_004_merge_decision:
+    title: 归并决策树
+    section_type: decision_tree
+    original_rules:
+    - GOV-ENG-004
+    items:
+    - condition: "独有功能(仅A或仅B有)"
+      if_true: "迁移到真源文件"
+      if_false: "继续检查"
+    - condition: "共有功能(两者都有但实现不同)"
+      if_true: "保留更完整的版本，删除冗余版本"
+      if_false: "继续检查"
+    - condition: "全部独有(A和B功能完全不同)"
+      if_true: "两个文件都保留，重命名"
+      if_false: "无效场景"
+  gov_eng_004_source_truth_mapping:
+    title: 真源声明映射(GOV-FSTR-001重组结果)
+    section_type: examples
+    original_rules:
+    - GOV-ENG-004
+    items:
+    - description: "EventBus"
+      details: "真源: shared/event_bus.py | 废弃: core/events/event_bus.py | 状态: 已合并"
+    - description: "KillSwitch"
+      details: "真源: shared/kill_switch.py | 废弃: 4个副本 | 状态: 已合并"
+    - description: "SafetyGate"
+      details: "真源: feedback_loop/gates/parameterized_safety_gate.py | 废弃: 所有safety_gate_L*.py | 状态: 已参数化"
+    - description: "PipelineOrchestrator拆分"
+      details: "2541行→7组件: PipelineOrchestrator/ModelRouter/CircuitBreakerManager/CostTracker/DeadLetterQueue/PreemptionManager/PipelineLock"
+    - description: "DriftEngine拆分"
+      details: "2134行→5组件: DriftEngine/DriftInfrastructure/AIConstructionDetectors/DriftResultTypes/DriftTraining"
+  gov_eng_004_scope:
+    title: 适用范围
+    section_type: context
+    original_rules:
+    - GOV-ENG-004
+    summary: 代码重组安全策略适用于跨目录重复文件合并、大文件拆分、版本分叉归一、模块迁移、re-export shim创建
+    impact_on_rules: 任何涉及代码搬家的操作必须遵守本策略
+    key_decisions:
+    - 一次只搬一个文件是原子操作底线
+    - 重组+蓝图更新是不可分割的原子操作
+    - 安全优先速度第二
+  gov_eng_004_cross_refs:
+    title: 交叉引用
+    section_type: context
+    original_rules:
+    - GOV-ENG-004
+    summary: 代码重组安全策略依赖代码构建标准(GOV-ENG-001)和文件操作安全策略(GOV-DOC-007)
+    impact_on_rules: 重组后代码必须符合GOV-ENG-001构建规范
+    key_decisions:
+    - GOV-DOC-007的三问三步是删除/移动文件的前置条件
+    - IRN-003 SSoT唯一+IRN-004断链清零是重组的约束
+    - "消费者: gate_engine(CheckType: restructuring_safety)/task-card-standard/drift_detector/construction_verifier"
+  gov_eng_004_change_history:
+    title: 变更历史
+    section_type: examples
+    original_rules:
+    - GOV-ENG-004
+    items:
+    - version: "1.0.0"
+      date: "2026-06-13"
+      change: "初始提取自GOV-FSTR-001重组蓝图§4.1b/§4.1c/§11.0b/§3.5/§3.4"
+    - version: "1.0.1"
+      date: "2026-06-19"
+      change: "RQ审查修复：移除aliases中误声明的GOV-ENG-001(GOV-ENG-001归属trae_010/011/012)；title从'工程治理-代码与重组安全'改为'工程治理-代码重组安全'(内容仅覆盖GOV-ENG-004)；修复gov_eng_004_s2的prohibitions字段从字符串'[]'为空列表[]；补充结构化change_history"
+    context:
+      summary: 提取自GOV-FSTR-001重组蓝图§4.1b/§4.1c/§11.0b/§3.5/§3.4
+      impact_on_rules: 铁律变更需Owner+架构师双签，必须附案例说明
+      key_decisions:
+      - 修改条件: 需Owner+架构师双签
+  gov_eng_004_source_truth_full:
+    title: 真源声明完整映射(GOV-ENG-004§5)
+    section_type: examples
+    original_rules:
+    - GOV-ENG-004
+    items:
+    - description: "EventBus"
+      details: "真源: shared/event_bus.py | 废弃: core/events/event_bus.py | 状态: 已合并"
+    - description: "EventBusUpgrade"
+      details: "真源: shared/upgrade_strategy.py(升级策略)+shared/event_bus_upgrade.py(事件版本化) | 废弃: 无 | 状态: 已独立命名"
+    - description: "DriftDetector"
+      details: "真源: drift_detector/ | 废弃: gates/drift-detector.py等4个副本 | 状态: 已声明"
+    - description: "Telemetry"
+      details: "真源: infra_ops/ | 废弃: telemetry/ | 状态: shim已建立"
+    - description: "EscalationEngine"
+      details: "真源: escalation_engine/ | 废弃: escalation/ | 状态: 独立保留"
+    - description: "SafetyGate"
+      details: "真源: feedback_loop/gates/parameterized_safety_gate.py | 废弃: 所有safety_gate_L*.py | 状态: 已参数化"
+    - description: "KillSwitch"
+      details: "真源: shared/kill_switch.py | 废弃: 4个副本 | 状态: 已合并"
+    - description: "UnifiedMemoryAPI"
+      details: "真源: kb/storage/unified_memory_api.py | 废弃: kb/unified_memory_api.py(shim) | 状态: shim已建立"
+    - description: "PipelineOrchestrator"
+      details: "真源: pipeline/pipeline_orchestrator.py | 废弃: context_engine/pipeline_orchestrator.py(shim) | 状态: shim已建立"
+    - description: "TriggerRouter"
+      details: "真源: orchestrator/core/trigger_router.py | 废弃: orchestrator/trigger_router.py(shim) | 状态: shim已建立"
+    - description: "AgentOrchestrator"
+      details: "真源: orchestrator/core/agent_orchestrator.py | 废弃: orchestrator/agent_orchestrator.py(shim) | 状态: shim已建立"
+    - description: "AgentHealthMonitor"
+      details: "真源: orchestrator/state/agent_health_monitor.py | 废弃: orchestrator/agent_health_monitor.py(shim) | 状态: shim已建立"
+    - description: "RollbackManager"
+      details: "真源: orchestrator/resilience/rollback_manager.py | 废弃: orchestrator/rollback_manager.py(shim) | 状态: shim已建立"
+    - description: "FailureMatcher"
+      details: "真源: orchestrator/resilience/failure_matcher.py | 废弃: orchestrator/failure_matcher.py(shim) | 状态: shim已建立"
+    - description: "HallucinationDetector"
+      details: "真源: orchestrator/resilience/hallucination_detector.py | 废弃: orchestrator/hallucination_detector.py(shim) | 状态: shim已建立"
+    - description: "SessionManager"
+      details: "真源: orchestrator/state/session_manager.py | 废弃: orchestrator/session_manager.py(shim) | 状态: shim已建立"
+    - description: "StateSynchronizer"
+      details: "真源: orchestrator/state/state_synchronizer.py | 废弃: 无 | 状态: 已声明"
+    - description: "FileTaskMapper"
+      details: "真源: orchestrator/state/file_task_mapper.py | 废弃: orchestrator/file_task_mapper.py(shim) | 状态: shim已建立"
+    - description: "Context"
+      details: "真源: shared/utils/context.py | 废弃: shared/context.py(shim) | 状态: shim已建立"
+    - description: "BlueprintCodeSync"
+      details: "真源: core/sync/blueprint_code_sync.py | 废弃: core/blueprint_code_sync.py(shim) | 状态: shim已建立"
+    - description: "SessionContinuity"
+      details: "真源: core/session/session_continuity.py | 废弃: core/session_continuity.py(shim) | 状态: shim已建立"
+    - description: "DocCompressor"
+      details: "真源: context_engine/support/doc_compressor.py | 废弃: context_engine/doc_compressor.py(shim) | 状态: shim已建立"
+    - description: "PromptRegistry"
+      details: "真源: context_engine/support/prompt_registry.py | 废弃: context_engine/prompt_registry.py(shim) | 状态: shim已建立"
+    - description: "IntentKeywordMapper"
+      details: "真源: context_engine/parsing/intent_keyword_mapper.py | 废弃: context_engine/intent_keyword_mapper.py(shim) | 状态: shim已建立"
+    - description: "IntentParser"
+      details: "真源: context_engine/parsing/intent_parser.py | 废弃: context_engine/intent_parser.py(shim) | 状态: shim已建立"
+    - description: "CheckType"
+      details: "真源: gates/check_types/ct_*.py+check_type_registry.py | 废弃: gate_engine.py内if/elif链 | 状态: 已注册表化"
+    - description: "AssetInventory"
+      details: "真源: asset_inventory/(15文件) | 废弃: 原22文件 | 状态: 已合并"
+  gov_eng_004_split_mapping:
+    title: 拆分后组件映射(GOV-ENG-004§6)
+    section_type: examples
+    original_rules:
+    - GOV-ENG-004
+    items:
+    - description: "PipelineOrchestrator拆分(2541行→7组件)"
+      details: "PipelineOrchestrator: pipeline/pipeline_orchestrator.py | ModelRouter: pipeline/model_router.py | CircuitBreakerManager: pipeline/circuit_breaker_manager.py | CostTracker: pipeline/cost_tracker.py | DeadLetterQueue: pipeline/dead_letter_queue.py | PreemptionManager: pipeline/preemption_manager.py | PipelineLock: pipeline/pipeline_lock.py"
+    - description: "DriftEngine拆分(2134行→5组件)"
+      details: "DriftEngine: drift_detector/drift_engine.py | DriftInfrastructure: drift_detector/drift_infrastructure.py | AIConstructionDetectors: drift_detector/ai_construction_detectors.py | DriftResultTypes: drift_detector/drift_result_types.py | DriftTraining: drift_detector/drift_training.py"
+references:
+  rule_ids:
+  - GOV-ENG-004
+  scripts:
+  - scripts/governance/audit_registration.py
+  modules:
+  - GOV-ENG-004
+  blueprints: []
+enforcement:
+  type: code
+  executors:
+  - pytest
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: H
+  modification_permission: human_gated
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

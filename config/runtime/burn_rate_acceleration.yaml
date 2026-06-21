@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-002 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# blueprint: MOD-INF-002 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: M
@@ -11,7 +11,7 @@
 # doc_type: config
 # status: active
 # version: "1.0.0"
-# layer: l01_infrastructure
+# layer: infra_ops
 # owner: ZephyrAlpha-Owner
 # classification: confidential
 # language: zh
@@ -28,6 +28,7 @@
 # ---
 
 # 加速度 tracker——过去 1h 消耗 vs 前一个 1h 消耗
+module_id: MOD-INF-002
 snapshots:
   #   - timestamp: "2026-05-05T12:00:00Z"
   #     burn_rate_1h_percent: 0.5

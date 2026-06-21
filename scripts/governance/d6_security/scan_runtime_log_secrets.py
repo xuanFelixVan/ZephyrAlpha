@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/scan_runtime_log_secrets.py | §
 """
-对标 architecture-principles.md §1bis R2 安全红线：
+对标 architecture_principles.md §1bis R2 安全红线：
   "日志输出禁止包含密钥/Token/Secret 值"
 
 检测方式：

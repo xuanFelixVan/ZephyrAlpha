@@ -1,0 +1,58 @@
+{
+  "task_id": "DM-100164",
+  "source_file": "docs/01_policies_and_standards/meta/rule_classification_and_arbitration_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_041_meta_rule_classification.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "ps_std_004_five_dimensions": {
+      "title": "五维分类体系",
+      "rules": [
+        "五维：Domain/Layer/Scope/Stability/Executor",
+        "每条规则必须在五个维度上完整定义",
+        "禁止：规则缺少任一维度定义"
+      ]
+    },
+    "ps_std_004_scope_stability": {
+      "title": "scope与stability字段",
+      "rules": [
+        "scope枚举：local/domain/global",
+        "stability枚举：frozen/stable/evolving/volatile",
+        "禁止：scope或stability使用非枚举值"
+      ]
+    },
+    "ps_std_004_derivation_chain": {
+      "title": "冲突裁决推导链",
+      "rules": [
+        "推导链顺序：stability→layer→scope→Owner",
+        "禁止：跳过推导链直接裁决",
+        "禁止：低stability覆盖高stability（volatile不能覆盖frozen）",
+        "禁止：低layer覆盖高layer（L2不能覆盖L0）"
+      ]
+    },
+    "ps_std_004_new_domain": {
+      "title": "新增领域流程",
+      "rules": [
+        "新增领域必须：1.定义Domain维度 2.注册到registry-of-registries 3.创建对应蓝图",
+        "禁止：新增领域不注册"
+      ]
+    },
+    "skipped_content": {
+      "description": "分类表、映射表为参考数据而非规则，不进入YAML",
+      "items": [
+        "五维分类示例表",
+        "Domain-Layer映射参考表",
+        "冲突裁决示例"
+      ]
+    }
+  },
+  "summary": {
+    "total_rules": 13,
+    "COVERED": 13,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "TRAE-041 enriched in current session: added ps_std_004_five_dimensions(3 rules), ps_std_004_scope_stability(3 rules), ps_std_004_derivation_chain(4 rules), ps_std_004_new_domain(3 rules)",
+    "Non-rule content skipped: classification examples, mapping tables, arbitration examples"
+  ]
+}

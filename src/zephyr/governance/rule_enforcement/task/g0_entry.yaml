@@ -1,0 +1,106 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# ─────────────────────────────────────────────────────────────────────────────
+# 可读叙述（rules）仍在本文件中保留。
+# GateEngine 可执行配置（checks）：task/g0-orc-gate-engine.yaml（CT-ORC-GATE-001 子集）。
+# ─────────────────────────────────────────────────────────────────────────────
+
+# G0 Task Entry Gate
+# 任务入口门禁 —— 所有 AI/人工作业任务进入系统前的准入检查
+# SSoT: src/zephyr/autonomy_core/gates/_registry.yaml → G0
+
+module_id: MOD-INF-007
+gate_id: G0
+gate_name: task_entry
+title: "G0 Task Entry Gate"
+category: task
+scope: global
+execution_plane: warm
+status: active
+version: "1.0"
+created: "2026-05-04"
+rule_ids:
+  - TRAE-002
+  - TRAE-005
+
+description: >
+  G0 是所有任务（AI Agent 任务 + 人工作业）进入 ZephyrAlpha 工作流系统
+  的强制性入口门禁。对标 Kubernetes Admission Controller。
+
+rules:
+  - rule_id: G0-R1
+    name: task_type_enum
+    description: "任务类型 MUST 属于已注册的 task_type 枚举"
+    enforcement: REJECT
+    rule_ids:
+      - TRAE-002
+      - TRAE-005
+    check: task_type in ["research", "implementation", "fix", "refactor", "governance", "audit", "experiment"]
+
+  - rule_id: G0-R2
+    name: layer_target_valid
+    description: "实施任务 MUST 指定 target_layer，且该层必须存在于架构中"
+    enforcement: REJECT
+    rule_ids:
+      - TRAE-002
+      - TRAE-005
+    check: >
+      if task_type in ["implementation", "fix", "refactor"]:
+          assert target_layer in REGISTERED_LAYERS  # L00-L13
+
+  - rule_id: G0-R3
+    name: dependency_check
+    description: "任务依赖的目标层 MUST 已完成前置层实现（Phase gating）"
+    enforcement: REJECT
+    rule_ids:
+      - TRAE-002
+      - TRAE-005
+    check: >
+      检查 target_layer 的所有前置依赖层是否已达到 required_maturity（当前阶段：framework-ready）
+
+  - rule_id: G0-R4
+    name: contract_awareness
+    description: "数据生产/消费任务 MUST 声明涉及的 CTR 契约 ID"
+    enforcement: WARN
+    rule_ids:
+      - TRAE-002
+      - TRAE-005
+    check: >
+      if task produces or consumes cross-layer data:
+          assert contract_ids is not empty
+
+  - rule_id: G0-R5
+    name: task_id_format
+    description: "任务 ID MUST 符合 {project}-{type}-{seq} 格式"
+    enforcement: REJECT
+    rule_ids:
+      - TRAE-002
+      - TRAE-005
+    check: task_id matches pattern r"^ZALPHA-\w+-\d{4}$"
+
+  - rule_id: G0-R6
+    name: no_circular_task
+    description: "禁止创建与进行中任务形成循环依赖的任务"
+    enforcement: REJECT
+    rule_ids:
+      - TRAE-002
+      - TRAE-005
+    check: "new_task.dependencies 不与任何 active_task.depends_on 形成环"
+
+  - rule_id: G0-R7
+    name: ai_capability_level
+    description: "AI 发起的任务 MUST 声明所需能力等级并匹配 capability_matrix"
+    enforcement: REJECT
+    rule_ids:
+      - TRAE-002
+      - TRAE-005
+    check: >
+      if created_by == "ai_agent":
+          assert capability_level in ["FULL", "EXTEND"]
+          if capability_level == "EXTEND":
+              assert task does not modify IMMUTABLE files

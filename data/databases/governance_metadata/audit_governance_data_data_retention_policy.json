@@ -1,0 +1,27 @@
+{
+  "task_id": "DM-100100",
+  "source_file": "docs/01_policies_and_standards/governance/data/data_retention_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_045_data_quality_lineage.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "gov_data_003": {
+      "title": "数据保留策略 (GOV-DATA-003)",
+      "conditions_count": 6,
+      "actions_count": 4,
+      "prohibitions_count": 5
+    }
+  },
+  "summary": {
+    "total_rules": 15,
+    "COVERED": 15,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    {
+      "action": "YAML_UPDATE",
+      "target": "trae_045_data_quality_lineage.yaml section gov_data_003",
+      "detail": "从空壳更新为包含6个conditions+4个actions+5个prohibitions的完整规则提取(DRP-001~003+保留期限表)"
+    }
+  ]
+}

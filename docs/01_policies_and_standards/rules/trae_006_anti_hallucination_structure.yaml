@@ -1,0 +1,265 @@
+rule_id: TRAE-006
+title: 防幻觉-结构追溯层
+aliases:
+- ANTI-HALL-01
+- ANTI-HALL-02
+- ANTI-HALL-03
+- ANTI-HALL-04
+- ANTI-HALL-05
+- ANTI-HALL-06
+layer: L0
+severity: critical
+scope: code_structure
+domain: TRAE
+triggers:
+- operation: code_write
+- operation: code_modify
+sections:
+  anti_hall_01:
+    title: 源头追溯——代码文件MUST标注[BLUEPRINT]
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-01
+    conditions:
+    - type: pre_condition
+      check: 代码文件头部十字段完整性检查
+      pass: 所有必填字段已标注
+      fail: 缺失字段=孤儿文件
+    actions:
+    - type: mandatory
+      step: 代码文件MUST标注 [BLUEPRINT] 字段
+    prohibitions:
+    - 无[BLUEPRINT]标注=孤儿文件
+    - 标注指向不存在的蓝图=幻觉
+  anti_hall_02:
+    title: 模块路径——代码文件MUST标注[MODULE]
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-02
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 代码文件MUST标注 [MODULE] 字段
+    prohibitions: []
+  anti_hall_03:
+    title: 不变量声明——代码文件MUST标注[INVARIANTS]
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-03
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 代码文件MUST标注 [INVARIANTS] 字段
+    prohibitions:
+    - AI修改时破坏关键约束
+  anti_hall_04:
+    title: 修改守卫——代码文件MUST标注[MODIFY-GUARD]
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-04
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 代码文件MUST标注 [MODIFY-GUARD] 字段
+    prohibitions:
+    - AI改一处忘其他，集成断裂
+  anti_hall_05:
+    title: 消费者声明——代码文件MUST标注[CONSUMERS]
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-05
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 代码文件MUST标注 [CONSUMERS] 字段
+    prohibitions:
+    - AI不知道修改的影响范围
+  anti_hall_06:
+    title: 稳定性声明——代码文件MUST标注[STABILITY]
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-06
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 代码文件MUST标注 [STABILITY] 字段
+    prohibitions: []
+  gov_eng_001_scope:
+    title: 适用范围——全14层(L00-L15)
+    section_type: context
+    original_rules:
+    - GOV-ENG-001
+    summary: 本规则适用于全14层(L00-L15)，按§3分层定级。写Python代码前MUST加载本标准。
+    impact_on_rules: 所有代码文件的头部十字段必须完整，缺失=孤儿文件
+    key_decisions:
+    - 十字段表头是代码文件的治理锚定，不是可选注释
+    - 枚举值SSoT在PS-REG-012，本标准仅引用
+  gov_eng_001_field_template:
+    title: A_full十字段模板
+    section_type: examples
+    original_rules:
+    - GOV-ENG-001
+    - GOV-ENG-002
+    items:
+    - description: A_full十字段注释头部格式
+      details: "[BLUEPRINT] {module_id} | {blueprint_path} | §{N} / [MODULE] {full.module.path} / [INVARIANTS] {不可违反的约束，分号分隔} / [MODIFY-GUARD] {修改此文件必须同步更新的文件，分号分隔} / [CONSUMERS] {依赖此文件的模块，分号分隔} / [STABILITY] {frozen|stable|evolving|volatile} / [SAFETY] {H|M|L} / [AI_AUTONOMY] {immutable_core|human_gated|ai_modifiable} / [ERROR_CONTRACT] {可抛异常列表，分号分隔} / [TESTS] {测试文件路径，分号分隔}"
+    - description: A_test六字段简化版格式
+      details: "[BLUEPRINT] {module_id} | {blueprint_path} | §{N} / [MODULE] {full.module.path} / [STABILITY] evolving / [SAFETY] L / [AI_AUTONOMY] ai_modifiable / [TESTS] —"
+  gov_eng_001_enum_ref:
+    title: 枚举值SSoT引用
+    section_type: principles
+    original_rules:
+    - GOV-ENG-001
+    - GOV-ENG-002
+    - PS-REG-012
+    items:
+    - id: ENUM-001
+      statement: "[STABILITY]枚举值=frozen/stable/evolving/volatile，SSoT在PS-REG-012"
+      rationale: 枚举值跨标准引用，必须与PS-REG-012保持零冲突
+      applies_to: 所有代码文件的[STABILITY]字段
+    - id: ENUM-002
+      statement: "[SAFETY]枚举值=H/M/L，SSoT在PS-REG-012"
+      rationale: 同上
+      applies_to: 所有代码文件的[SAFETY]字段
+    - id: ENUM-003
+      statement: "[AI_AUTONOMY]枚举值=immutable_core/human_gated/ai_modifiable，SSoT在PS-REG-012"
+      rationale: 同上
+      applies_to: 所有代码文件的[AI_AUTONOMY]字段
+  gov_eng_001_stability_behavior:
+    title: STABILITY与修改行为映射
+    section_type: decision_tree
+    original_rules:
+    - GOV-ENG-001
+    - GOV-ENG-002
+    items:
+    - condition: "[STABILITY]=frozen"
+      if_true: "禁止修改——修改=破坏不变量"
+      if_false: "继续检查下一个条件"
+    - condition: "[STABILITY]=stable"
+      if_true: "需变更门控——跳过门控=漂移"
+      if_false: "继续检查下一个条件"
+    - condition: "[STABILITY]=evolving"
+      if_true: "可频繁修改，无额外约束"
+      if_false: "继续检查下一个条件"
+    - condition: "[STABILITY]=volatile"
+      if_true: "AI可自主调整"
+      if_false: "无效枚举值"
+  gov_eng_001_autonomy_behavior:
+    title: AI_AUTONOMY与修改行为映射
+    section_type: decision_tree
+    original_rules:
+    - GOV-ENG-001
+    - GOV-ENG-002
+    items:
+    - condition: "[AI_AUTONOMY]=immutable_core"
+      if_true: "只读——禁止任何修改"
+      if_false: "继续检查下一个条件"
+    - condition: "[AI_AUTONOMY]=human_gated"
+      if_true: "可提议修改，需Owner批准——未批准就改=越权"
+      if_false: "继续检查下一个条件"
+    - condition: "[AI_AUTONOMY]=ai_modifiable"
+      if_true: "可直接修改"
+      if_false: "无效枚举值"
+  gov_eng_001_verification:
+    title: 结构追溯层验证流程
+    section_type: verification
+    original_rules:
+    - GOV-ENG-001
+    - GOV-ENG-002
+    items:
+    - step: 检查代码文件头部十字段完整性
+      command: "python scripts/governance/add_file_headers.py"
+      expected_exit: 0
+      on_fail: "缺失字段=孤儿文件，MUST补充后重新验证"
+    - step: 检查[BLUEPRINT]指向的蓝图是否存在
+      command: "Grep工具: pattern='{module_id}' path='docs/03_modules/' output_mode='files_with_matches'"
+      expected_exit: 0
+      on_fail: "标注指向不存在的蓝图=幻觉，MUST修正"
+    - step: 检查枚举值与PS-REG-012一致性
+      command: "python scripts/governance/add_file_headers.py"
+      expected_exit: 0
+      on_fail: "枚举值不一致=MUST同步PS-REG-012"
+    - step: 检查蓝图-代码双向对齐
+      command: "python scripts/governance/audit_registration.py"
+      expected_exit: 0
+      on_fail: "蓝图§0.1文件清单与代码[BLUEPRINT]字段不对齐"
+  gov_eng_001_cross_refs:
+    title: 交叉引用
+    section_type: context
+    original_rules:
+    - GOV-ENG-001
+    - GOV-ENG-002
+    summary: 结构追溯层与文件头部标准、元数据注册表的交叉依赖
+    impact_on_rules: 修改GOV-ENG-002的枚举值或格式MUST同步更新GOV-ENG-001§7速查表+PS-REG-012对应字段
+    key_decisions:
+    - GOV-ENG-001§7引用GOV-ENG-002完整规范
+    - PS-REG-012是枚举值SSoT
+    - 修改PS-REG-012 MUST同步检查PS-STD-001对应章节
+  gov_eng_001_change_history:
+    title: 变更历史
+    section_type: context
+    original_rules:
+    - GOV-ENG-001
+    summary: GOV-ENG-001 v1.4.0 §7简化为引用GOV-ENG-002（文件头部标准独立文件）
+    impact_on_rules: §7从完整定义变为引用，不影响十字段要求
+    key_decisions:
+    - v1.4.0将文件头部标准独立为GOV-ENG-002，§7仅保留速查表
+    items:
+    - version: "1.2.0"
+      date: "2026-06-21"
+      change: "std_009/std_011审查修复：gov_eng_001_verification步骤2的grep -r命令改为Grep工具引用（RULE-SEVENTEEN禁止shell grep）"
+    - version: "1.1.0"
+      date: "2026-06-19"
+      change: "RQ-09修复：更新provenance哈希至当前源文件实际值；RQ-04修复：断裂源文件code_construction_standards.md(已迁移)更新为trae_047_engineering_file_header.yaml；RQ-04修复：验证步骤断裂脚本引用validate_file_headers.py(不存在)更新为add_file_headers.py；RQ-14补全items格式"
+    - version: "1.0.0"
+      date: "2026-06-13"
+      change: "从project_rules.md(防幻觉十八条)/onboarding_detail.md(§十三)/code_construction_standards.md(§7§8)提取规则"
+  gov_eng_001_loading:
+    title: 加载时机(GOV-ENG-001§6)
+    section_type: procedure
+    original_rules:
+    - GOV-ENG-001
+    items:
+    - order: 1
+      action: "AGENTS.md→读到§6.15的引用→定位到GOV-ENG-001"
+      pre_condition: "AI session准备写Python代码"
+      expected_result: "已定位到代码构建标准文件"
+      on_failure: "未加载标准=盲目施工"
+    - order: 2
+      action: "加载GOV-ENG-001全部章节"
+      pre_condition: "已定位到标准文件"
+      expected_result: "所有章节已加载到上下文"
+      on_failure: "部分加载=规则遗漏"
+    - order: 3
+      action: "根据当前任务所在层级(L00-L15)确定适用的类型注解强制级别(§3)"
+      pre_condition: "标准已加载"
+      expected_result: "mypy模式已确定(strict/关键接口strict/public API strict)"
+      on_failure: "层级未确定=类型注解级别不明"
+    - order: 4
+      action: "代码写完后pre-commit阶段的ruff+mypy自动执行对应层级的检查"
+      pre_condition: "代码已写入"
+      expected_result: "所有检查通过"
+      on_failure: "检查失败=必须修复"
+references:
+  rule_ids: []
+  scripts: []
+  modules: []
+  blueprints:
+  - GOV-ENG-001
+  - GOV-ENG-002
+enforcement:
+  type: code
+  executors:
+  - ruff
+  - mypy
+  - pre-commit
+  - audit_registration.py
+  bypass_allowed: false
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

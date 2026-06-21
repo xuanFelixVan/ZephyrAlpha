@@ -9,8 +9,9 @@
 # 对齐 NASA-STD-8739.8B: SRR → PDR → CDR → TRR → SAR
 # 每个门禁定义：触发时机、需通过的脚本清单、不通过后果
 
+module_id: MOD-INF-005
 generated_at: "2026-05-07T00:00:00Z"
-source: "docs/03_modules/l01_infrastructure/script-system/blueprint.md §10"
+source: "docs/03_modules/infrastructure/script-system/blueprint.md §10"
 standard: "NASA-STD-8739.8B"
 version: "1.0.0"
 
@@ -64,13 +65,13 @@ milestones:
       - "meta/compute_sla_metrics.py"
       - "meta/milestone_gate_matrix.yaml"
       - "meta/risk_mitigation_matrix.yaml"
-      - "payloads/red_team_payloads.yaml"
+      - "payloads/red-team-payloads.yaml"
       - "dashboard/app.py"
     mandatory_scripts_count: 5
     entry_criteria:
       - "sla_metrics.jsonl 存在且有 ≥ 1 条记录"
       - "compute_sla_metrics.py 可计算全部 6 项 SLA/SLO"
-      - "red_team_payloads.yaml 包含 ≥ 200+ OWASP LLM01-10 载荷"
+      - "red-team-payloads.yaml 包含 ≥ 200+ OWASP LLM01-10 载荷"
       - "dashboard/app.py 可启动 Streamlit (import pass)"
     exit_criteria:
       - "全部 6 项 SLA/SLO 从「待测量」→「已测量」"

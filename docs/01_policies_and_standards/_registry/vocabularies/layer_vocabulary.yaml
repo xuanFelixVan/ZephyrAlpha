@@ -1,3 +1,4 @@
+# [A_config] module_id=CFG-layer-vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: DOM-GOV-001
@@ -30,86 +31,86 @@ title: "layer 受控词表"
 status: active
 vocabulary_name: layer
 total_values: 16
-source: "architecture-model/layers/（canonical SSoT）+ PS-STD-001 §9.5"
+source: "docs/03_modules/_domain-*/blueprint.md（新35域架构SSoT）+ PS-STD-001 §9.5"
 depends_on:
-  - target: architecture-model
-    at: "layers/lXX-*.yaml"
-    why: "层 ID 和名称的 canonical 定义源"
+  - target: docs/03_modules/_domain-*
+    at: "blueprint.md"
+    why: "新35域架构SSoT"
 
 values:
-  - value: l00_data_source
+  - value: data
     definition: "L00 数据源层——外部数据接入和连接器管理"
-    architecture_model_file: "architecture-model/layers/l00-data-source.yaml"
+    architecture_model_file: "docs/03_modules/_domain-data/datasource-core/blueprint.md"
     ai_keywords: ["数据源", "data source", "连接器", "connector", "L00"]
 
-  - value: l01_infrastructure
+  - value: infra_ops
     definition: "L01 基础设施层——平台基础设施和共享服务"
-    architecture_model_file: "architecture-model/layers/l01-infrastructure.yaml"
+    architecture_model_file: "docs/03_modules/_domain-infra_runtime/l01_infrastructure_index.md"
     ai_keywords: ["基础设施", "infrastructure", "平台", "platform", "L01"]
 
-  - value: l02_alpha_factor
+  - value: factor
     definition: "L02 Alpha 因子层——因子研究和信号生成"
-    architecture_model_file: "architecture-model/layers/l02-alpha-factor.yaml"
+    architecture_model_file: "docs/03_modules/_domain-factor/alpha-factor-core/blueprint.md"
     ai_keywords: ["Alpha因子", "alpha factor", "因子", "factor", "L02"]
 
-  - value: l03_signal_generation
+  - value: signal
     definition: "L03 信号生成层——交易信号产生和组合"
-    architecture_model_file: "architecture-model/layers/l03-signal-generation.yaml"
+    architecture_model_file: "docs/03_modules/_domain-signal/signal-generation-core/blueprint.md"
     ai_keywords: ["信号生成", "signal generation", "信号", "signal", "L03"]
 
-  - value: l04_risk_management
+  - value: risk
     definition: "L04 风险管理层——风险监控和止损"
-    architecture_model_file: "architecture-model/layers/l04-risk-management.yaml"
+    architecture_model_file: "docs/03_modules/_domain-risk/risk-management-core/blueprint.md"
     ai_keywords: ["风险管理", "risk management", "风控", "止损", "L04"]
 
-  - value: l05_portfolio_construction
+  - value: pf_core
     definition: "L05 组合构建层——投资组合优化和再平衡"
-    architecture_model_file: "architecture-model/layers/l05-portfolio-construction.yaml"
+    architecture_model_file: "docs/03_modules/_domain-pf_core/portfolio-core/blueprint.md"
     ai_keywords: ["组合构建", "portfolio construction", "组合", "portfolio", "L05"]
 
-  - value: l06_trade_execution
+  - value: ex_core
     definition: "L06 交易执行层——订单路由和执行"
-    architecture_model_file: "architecture-model/layers/l06-trade-execution.yaml"
+    architecture_model_file: "docs/03_modules/_domain-ex_core/execution-core/blueprint.md"
     ai_keywords: ["交易执行", "trade execution", "交易", "execution", "L06"]
 
-  - value: l07_post_trade_analytics
+  - value: reporting
     definition: "L07 盘后分析层——绩效归因和报告"
-    architecture_model_file: "architecture-model/layers/l07-post-trade-analytics.yaml"
+    architecture_model_file: "docs/03_modules/_domain-reporting/analytics-core/blueprint.md"
     ai_keywords: ["盘后分析", "post-trade analytics", "归因", "attribution", "L07"]
 
-  - value: l08_human_ai_interface
+  - value: frontend
     definition: "L08 人机交互层——人机协作界面和审批流"
-    architecture_model_file: "architecture-model/layers/l08-human-ai-interface.yaml"
+    architecture_model_file: "docs/03_modules/_domain-frontend/hmi-core/blueprint.md"
     ai_keywords: ["人机交互", "human-AI interface", "交互", "interface", "L08"]
 
-  - value: l09_research_innovation
+  - value: research
     definition: "L09 研究创新层——策略研究和实验"
-    architecture_model_file: "architecture-model/layers/l09-research-innovation.yaml"
+    architecture_model_file: "docs/03_modules/_domain-research/research-core/blueprint.md"
     ai_keywords: ["研究创新", "research innovation", "研究", "research", "L09"]
 
-  - value: l10_governance_compliance
+  - value: compliance
     definition: "L10 治理合规层——监管合规和审计"
-    architecture_model_file: "architecture-model/layers/l10-governance-compliance.yaml"
+    architecture_model_file: "docs/03_modules/_domain-governance/registry-governance/blueprint.md"
     ai_keywords: ["治理合规", "governance compliance", "合规", "compliance", "L10"]
 
-  - value: l11_ml_platform
+  - value: ml_train
     definition: "L11 机器学习平台层——模型训练和推理"
-    architecture_model_file: "architecture-model/layers/l11-ml-platform.yaml"
+    architecture_model_file: "docs/03_modules/_domain-ml_train/ml-core/blueprint.md"
     ai_keywords: ["ML平台", "ML platform", "机器学习", "ML", "L11"]
 
-  - value: system_telemetry
+  - value: system-telemetry
     definition: "L12 系统遥测层——监控和可观测性"
-    architecture_model_file: "architecture-model/layers/l12-system-telemetry.yaml"
+    architecture_model_file: "architecture-model/layers/system_telemetry.yaml"
     ai_keywords: ["系统遥测", "system telemetry", "监控", "monitoring", "L12"]
 
-  - value: l13_experiment_pipeline
+  - value: simulation
     definition: "L13 实验管道层——A/B 测试和实验管理"
-    architecture_model_file: "architecture-model/layers/l13-experiment-pipeline.yaml"
+    architecture_model_file: "docs/03_modules/_domain-research/research-core/blueprint.md"
     ai_keywords: ["实验管道", "experiment pipeline", "实验", "experiment", "L13"]
 
   - value: shared
     definition: "跨层共享——不属于单一层的共享组件"
-    architecture_model_file: "architecture-model/layers/shared.yaml"
+    architecture_model_file: "architecture-model/layers/b_shared.yaml"
     ai_keywords: ["共享", "shared", "跨层", "公共"]
 
   - value: cross_layer
@@ -123,7 +124,7 @@ deprecated_values: []
 # ============================================================
 # 以下值曾在旧版中使用，现已废弃：
 # - "domain" → 废弃原因：domain 不是层 ID，是 domains/ 目录的描述词。
-#   正确值取决于文件所属层：L00→l00_data_source, L02→l02_alpha_factor 等
-# - "L1" → 废弃原因：格式错误（大写+无下划线）。正确值：l01_infrastructure
-# - 旧命名系统（l01_data_processing, l03_signal_generation 等）→ 废弃原因：
+#   正确值取决于文件所属层：L00→data, L02→factor 等
+# - "L1" → 废弃原因：格式错误（大写+无下划线）。正确值：infra_ops
+# - 旧命名系统（data, signal 等）→ 废弃原因：
 #   与架构模型 YAML 不一致。以 architecture-model/layers/ 为准。

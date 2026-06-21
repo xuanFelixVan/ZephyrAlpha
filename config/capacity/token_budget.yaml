@@ -1,6 +1,6 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-001 | docs/03_modules/l01_infrastructure/capacity-assurance/blueprint.md | §5.1
-# module_id: MOD-INF-001
+# blueprint: MOD_INF_001 | docs/03_modules/_domain_infra_ops/capacity_assurance/blueprint.md | §5.1
+# module_id: MOD_INF_001
 # stability: deprecated
 # safety_level: M
 # ai_autonomy: immutable_core
@@ -11,6 +11,7 @@
 # 预算执行策略以 config/budget_policy.yaml 为唯一真源
 # 版本：v2.6.0 (frozen)
 
+module_id: MOD_INF_001
 config_version: "2.6.0"
 
 token_budget:
@@ -22,19 +23,19 @@ levels:
     name: "MCP 工具级"
     scope: "per_tool_call"
     default_limit: 2048
-    source: "tool_contracts.yaml"
+    source: "config/mcp.json"
 
   - level: 2
     name: "session 级"
     scope: "per_session"
     default_limit: 200000
-    source: "context_budget_tracker.py"
+    source: "src/zephyr/orchestration/context_management/management/context_budget_tracker.py"
 
   - level: 3
     name: "org 级"
     scope: "per_organization"
     default_limit: 2000000
-    source: "error_budget_tracker.py"
+    source: "src/zephyr/shared/error_budget_tracker.py"
 
   - level: 4
     name: "global 级"

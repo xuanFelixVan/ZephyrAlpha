@@ -1,0 +1,91 @@
+# [A_config] module_id=CFG-scalability-1500-module-grouping | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# 1500 模块容量 — 二级分组预定义方案
+# AUDIT-06 P3-14 | 前置规划，防止紧急重构
+# 当前规模 (~40 模块) 无需执行——方案仅作前瞻备案
+
+module_id: DOM-GOV-001
+schema_version: "1.0.0"
+created: "2026-05-06"
+audit_round: "AUDIT-06"
+status: forward_planning
+trigger_condition: "modules_per_layer >= 15 时启动二级分组"
+
+strategy:
+  principle: >
+    当前 docs/03_modules/_domain-infra_ops/ 等目录扁平放置子模块目录（如 script-system/、
+    task-system/、knowledge-base/ 等并列）。在 ~40 模块规模下这是最优结构——无冗余层级，
+    AI session 查找成本 O(N) = N，N 小。当模块数增长至 100+ 时，扁平目录会退化：
+    - AI session 在 docs/03_modules/_domain-infra_ops/ 下 ls 返回 100+ 条目，噪声淹没信号
+    - 同名模块冲突风险增大
+    - 治理脚本的 glob 匹配变慢
+    因此，在每层模块数突破 15 时，引入功能域二级分组。
+
+  domain_groups:
+    infra_ops:
+      trigger_at: 15
+      groups:
+        - name: "agent-governance"
+          description: Agent 身份、权限、生命周期治理
+          candidate_modules:
+            - agent-rbac
+            - agent-spec
+            - escalation-protocol
+        - name: "audit-compliance"
+          description: 审计追踪、漂移检测、预算治理
+          candidate_modules:
+            - audit-trail
+            - drift-detector
+            - budget-enforcer
+        - name: "runtime-core"
+          description: 脚本系统、任务系统、容量保障
+          candidate_modules:
+            - script-system
+            - task-system
+            - capacity-assurance
+        - name: "protocol-integration"
+          description: 协议适配与运行时集成
+          candidate_modules:
+            - a2a-protocol
+            - runtime-integration
+        - name: "storage-indexing"
+          description: 知识库、向量内存、去重引擎
+          candidate_modules:
+            - knowledge-base
+            - vector-memory
+            - code-dedup-engine
+        - name: "resilience"
+          description: 回滚、断路器、熔断
+          candidate_modules:
+            - rollback-system
+    data:
+      trigger_at: 15
+      groups:
+        - name: "market-data"
+        - name: "fundamental-data"
+        - name: "alternative-data"
+    signal:
+      trigger_at: 15
+      groups:
+        - name: "signal-fusion"
+        - name: "signal-scoring"
+        - name: "signal-filtering"
+
+  path_pattern: >
+    docs/03_modules/{layer}/{domain_group}/{module_name}/blueprint.md
+    src/zephyr/{layer}/{domain_group}/{module_name}/
+
+  backward_compat:
+    existing_modules: "不移动——只对新创建的模块生效"
+    index_maintenance: "每层和每域组各自维护 index.md——AI session 入口链不断裂"
+
+conclusion: >
+  1500 模块下，每个 C-track 层平均承载 107 个子模块。14 层 × 5-8 个域组 = 70-112 个域组，
+  每组 13-21 个模块——查找深度 O(3) 下降到 O(1)的域组 + O(N)的模块列表 = O(N/组数)，
+  相比扁平 O(N) 降低了 5-8 倍的出于查找成本。

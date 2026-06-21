@@ -1,0 +1,395 @@
+rule_id: TRAE-035
+title: 任务系统-施工与验证
+aliases:
+- TASK-002
+- TASK-003
+layer: L1
+severity: error
+scope: task_construction_verification
+domain: TRAE
+triggers:
+- operation: task_construction_verification
+sections:
+  task_002_construction:
+    title: 施工规范
+    section_type: rule
+    original_rules:
+    - TASK-002
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 施工步骤必须精确到改哪个文件的哪个方法改成什么
+    - type: mandatory
+      step: 简单搬家(1旧→1新)使用shutil.move()剪切粘贴，旧位置立即清空
+    - type: mandatory
+      step: 拆分搬家(1旧→N新)读取旧文件→拆分写入N个新文件→验证符号完整→删除旧文件
+    - type: mandatory
+      step: 合并搬家(N旧→1新)读取N个旧文件→合并写入1个新文件→验证符号完整→删除N个旧文件
+    - type: mandatory
+      step: 剪切后原地更新import路径和头部[BLUEPRINT]/[MODULE]字段
+    prohibitions:
+    - 禁止复制粘贴——复制导致新旧两份文件共存引发import歧义和漂移
+  task_002_pre_check:
+    title: 前置检查(施工前强制执行)
+    section_type: rule
+    original_rules:
+    - TASK-002
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 验证files_in_scope中所有文件路径存在且可读
+    - type: mandatory
+      step: 验证allowed_touch中所有路径存在(如不存在则标记为待创建)
+    - type: mandatory
+      step: 验证upstream_files中所有文件内容符合预期(关键字段/函数签名未漂移)
+    - type: mandatory
+      step: 验证无幻觉——Grep确认引用的模块/类/函数实际存在
+    - type: mandatory
+      step: 验证无漂移——对比文件mtime或关键字段确认与任务卡创建时一致
+    - type: mandatory
+      step: 验证路径符合容量规划——目标路径与架构全景图/迁移登记表一致
+    prohibitions:
+    - 禁止跳过前置检查直接施工
+  task_002_plan_audit_gate:
+    title: 计划审查门禁(边审查边执行模式)
+    section_type: rule
+    original_rules:
+    - TASK-002
+    triggers:
+    - 架构变更(域拆分/合并/模块迁移/路径重构)
+    - 大规模迁移(>100文件)
+    - depgraph.db操作(INSERT域/UPDATE domain_id/UPDATE path)
+    - 跨文件一致性验证(>50个消费者import更新)
+    conditions:
+    - type: pre_condition
+      check: 复杂任务执行前
+      pass: 先审查执行计划本身，审查通过后直接执行
+      fail: 跳过审查直接执行导致计划数据失真
+    flow:
+      step_1: 审查计划(7大类——数据准确性/方案合理性/风险/回滚/验证命令/规则合规/遗漏检查)
+      step_2: 就地修复FAIL(修复计划文档→重新验证该项PASS→继续下一项，不重新整体审查)
+      step_3: 全部PASS+对抗性反思完成→同一会话内直接进入执行
+    actions:
+    - type: mandatory
+      step: 审查MUST覆盖7大类——A.数据准确性(计划中的数字是否真实)/B.方案合理性(是否符合第一性原理)/C.风险(执行过程中可能的风险)/D.回滚(回滚方案是否完整)/E.验证命令(每步验证命令是否有效)/F.规则合规(是否符合项目规则)/G.遗漏检查(对抗性反思)
+    - type: mandatory
+      step: 审查中发现的FAIL MUST就地修复——若是计划文档错误(如数字错误)直接修复计划文档，若是方案缺陷(如遗漏prototype处理)直接补充计划，重新验证该项PASS后继续下一项
+    - type: mandatory
+      step: 事实性QUESTION(如字段是否存在/蓝图是否存在)MUST由执行者直接查询验证后判定PASS/FAIL，不留给Owner
+    - type: mandatory
+      step: 审查+执行MUST在同一会话内完成(充分利用上下文缓存，节省费用)
+    - type: mandatory
+      step: 阶段分离——审查阶段只读(不执行目标文件操作，仅查询验证)，执行阶段才操作目标文件
+    prohibitions:
+    - 禁止跳过计划审查直接执行复杂任务
+    - 禁止审查中发现FAIL后跳过，留到执行阶段再修——MUST当场修复当场验证
+    - 禁止"审查完一轮再重新审查一轮"——只审查一轮，FAIL就地修复后继续下一项，全部PASS后直接执行
+    - 禁止把事实性QUESTION留给Owner——MUST直接查询验证后判定
+    - 禁止审查阶段修改目标文件(仅允许修改计划文档本身和只读查询depgraph.db)
+  task_002疏通:
+    title: 疏通机制(施工中发现问题时)
+    section_type: rule
+    original_rules:
+    - TASK-002
+    conditions:
+    - type: trigger
+      check: 第二步或第三步发现问题
+      pass: 暂停施工进入疏通
+      fail: 继续施工
+    actions:
+    - type: mandatory
+      step: 为每个发现的问题创建修复任务卡(修复卡同样遵循八步工作流)
+    - type: mandatory
+      step: 修复卡优先级≥当前卡(阻塞当前卡继续)
+    - type: mandatory
+      step: 等待修复卡COMPLETED后回到第二步重新检查
+    prohibitions: []
+  task_003_circular_acceptance:
+    title: 循环验收协议
+    section_type: rule
+    original_rules:
+    - TASK-003
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 执行任务卡全部施工步骤
+    - type: mandatory
+      step: 运行验收命令(acceptance中的命令+post_sync_standard中的命令)
+    - type: mandatory
+      step: 记录错误数E1
+    - type: mandatory
+      step: 若E1>0修复所有错误→重新运行验收命令→记录错误数E2
+    - type: mandatory
+      step: 直到连续两次验收错误数=0任务卡才算COMPLETED(CIRCULAR_ACCEPTANCE_ROUNDS=2)
+    - type: mandatory
+      step: 若修复3轮仍无法归零→标记FAILED报告Owner
+    prohibitions:
+    - 禁止单次0错误就声明COMPLETED——必须连续2次
+  task_003_panorama_alignment:
+    title: 全景图对齐协议
+    section_type: rule
+    original_rules:
+    - TASK-003
+    conditions:
+    - type: trigger
+      check: 任务涉及文件结构变更(创建/删除/移动/重命名)
+      pass: MUST执行全景图对齐
+      fail: 可豁免(但仍需循环验收)
+    actions:
+    - type: mandatory
+      step: 循环验收通过后重新生成依赖全景图——python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py
+        --output-yaml D:/ZephyrAlpha/data/databases/depgraph.db（⚠️架构升级期间禁止运行——会覆盖depgraph.db全景图；正常期方可运行）
+    - type: mandatory
+      step: 重新生成路径树——python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py
+        --write
+    - type: mandatory
+      step: 运行诊断——python D:/ZephyrAlpha/scripts/governance/diagnose_depgraph.py
+    - type: mandatory
+      step: 全景图和路径树中无旧层名/旧路径引用→对齐通过
+    - type: mandatory
+      step: 双向回写——由上至下:新增模块设计→depgraph.modules新增条目; 由下至上:新产出代码→更新depgraph对应node
+    prohibitions:
+    - 任何一方过时禁止关闭任务
+  task_003_gate_check:
+    title: 门禁验证命令
+    section_type: rule
+    original_rules:
+    - TASK-003
+    conditions: []
+    actions:
+    - type: mandatory
+      step: G7注册审计——python D:/ZephyrAlpha/scripts/governance/audit_registration.py
+    - type: mandatory
+      step: G6依赖全景图生成——python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py
+        --output-yaml D:/ZephyrAlpha/data/databases/depgraph.db（⚠️架构升级期间禁止运行——会覆盖depgraph.db全景图；正常期方可运行）
+    - type: mandatory
+      step: G6依赖图诊断——python D:/ZephyrAlpha/scripts/governance/diagnose_depgraph.py
+    - type: mandatory
+      step: 路径树刷新——python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py
+        --write
+    prohibitions: []
+  task_002_scope:
+    title: 施工与验证-目的与范围
+    section_type: context
+    original_rules: []
+    content:
+      summary: 任务施工规范和验证协议的联合范围
+      source_files:
+      - file: task_card_standard.md
+        module_id: GOV-TASK-001
+        scope: §2施工规范(搬家/前置检查/疏通) + §5循环验收+全景图对齐
+      - file: task_closure_standard.md
+        module_id: GOV-TASK-005
+        scope: §4清扫三步法 + §6自动化脚本
+      impact_on_rules: 施工和验证是任务执行的核心流程
+      key_decisions:
+      - 循环验收必须连续2轮0问题
+      - 全景图对齐是强制标准
+  task_002_move_specs:
+    title: 搬家施工规范
+    section_type: procedure
+    original_rules:
+    - TASK-002
+    steps:
+    - order: 1
+      action: 简单搬家(1旧→1新)：shutil.move()剪切粘贴到新位置，旧位置立即清空
+      pre_condition: 单文件迁移
+      expected_result: 不存在两份文件
+      on_failure: git checkout恢复
+    - order: 2
+      action: 拆分搬家(1旧→N新)：读取旧文件→拆分写入N个新文件→验证N个新文件符号完整→删除旧文件
+      pre_condition: 单文件拆分为多文件
+      expected_result: N个新文件符号完整
+      on_failure: git checkout恢复旧文件
+    - order: 3
+      action: 合并搬家(N旧→1新)：读取N个旧文件→合并写入1个新文件→验证新文件符号完整→删除N个旧文件
+      pre_condition: 多文件合并为单文件
+      expected_result: 新文件符号完整
+      on_failure: git checkout恢复旧文件
+    - order: 4
+      action: 剪切后原地更新import路径和头部[BLUEPRINT]/[MODULE]字段
+      pre_condition: 搬家完成
+      expected_result: import路径和头部字段正确
+      on_failure: 修正路径
+  task_003_circular_judgment:
+    title: 循环验收判定规则
+    section_type: decision_tree
+    original_rules:
+    - TASK-003
+    branches:
+    - condition: 第1次0错误 + 第2次0错误
+      if_true: ✅ COMPLETED
+      if_false: ''
+    - condition: 第1次0错误 + 第2次>0错误
+      if_true: ❌ 不稳定，继续修复
+      if_false: ''
+    - condition: 第1次>0错误
+      if_true: ❌ 未完成，继续修复
+      if_false: ''
+    - condition: 3轮修复后仍无法连续2次归零
+      if_true: ❌ FAILED，升级Owner
+      if_false: ''
+  task_003_panorama_judgment:
+    title: 全景图对齐判定规则
+    section_type: decision_tree
+    original_rules:
+    - TASK-003
+    branches:
+    - condition: 依赖图+路径树均无旧引用 + diagnose exit 0
+      if_true: ✅ 对齐通过，可COMPLETED
+      if_false: ''
+    - condition: 依赖图或路径树有旧引用
+      if_true: ❌ 未对齐，必须重新生成
+      if_false: ''
+    - condition: diagnose exit ≠ 0
+      if_true: ❌ 有错误，必须修复
+      if_false: ''
+  task_003_panorama_sources:
+    title: 全景图真源文件位置
+    section_type: context
+    original_rules:
+    - TASK-003
+    content:
+      summary: 全景图对齐涉及的真源文件和派生视图
+      sources:
+      - file: D:/ZephyrAlpha/data/databases/depgraph.db
+        type: 唯一真源
+        note: 设计态+运行态合一，双向驱动。由上至下：域→模块→依赖设计→path_design命名规则；由下至上：文件→域+模块+蓝图
+      - file: D:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/project_path_tree.yaml
+        type: 派生视图
+        note: 由generate_project_path_tree.py从depgraph自动生成，非独立真源
+      exemption: 纯内容修改(不改文件结构、不改路径)的任务卡可豁免全景图对齐，但仍需循环验收
+      impact_on_rules: 依赖全景图是唯一真源，路径树是派生视图
+      key_decisions:
+      - 连续2次0错误方可通过验收
+  task_003_gate_commands:
+    title: 门禁验证命令详情
+    section_type: verification
+    original_rules:
+    - TASK-003
+    steps:
+    - step: G7注册审计
+      command: python D:/ZephyrAlpha/scripts/governance/audit_registration.py
+      expected_exit: 0
+      on_fail: 有孤儿禁止关闭
+    - step: G6依赖全景图生成（⚠️架构升级期间禁止运行——会覆盖depgraph.db全景图；正常期方可运行）
+      command: python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py
+        --output-yaml D:/ZephyrAlpha/data/databases/depgraph.db
+      expected_exit: 0
+      on_fail: 结构未同步
+    - step: G6依赖图诊断
+      command: python D:/ZephyrAlpha/scripts/governance/diagnose_depgraph.py
+      expected_exit: 0
+      on_fail: 有错误需修复
+    - step: 路径树刷新
+      command: python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py
+        --write
+      expected_exit: 0
+      on_fail: 下个session看到旧结构
+  task_002_normative_refs:
+    title: 施工与验证-规范性引用
+    section_type: context
+    original_rules: []
+    content:
+      summary: 施工与验证的规范性引用和依赖
+      depends_on:
+      - target: GOV-TASK-001
+        at: §2施工规范 + §5循环验收
+        why: 施工规范和验收协议的定义
+      - target: GOV-TASK-005
+        at: §4清扫三步法 + §6自动化脚本
+        why: 关闭验证和清扫流程
+      - target: GOV-TASK-004
+        at: §1目的与范围
+        why: 生命周期治理规则
+      - target: MOD-INF-006
+        at: §5.2-§5.5
+        why: 状态机实现+门禁检查逻辑+超时检测
+      impact_on_rules: 施工和验证依赖任务系统其他标准的定义
+      key_decisions: []
+  task_002_change_history:
+    title: 施工与验证-修订记录
+    section_type: examples
+    original_rules: []
+    items:
+    - title: v1.1.0 2026-06-19 RQ审查修复
+      code: 修复路径格式不一致(相对→绝对)/修正project_path_tree.yaml文件名(kebab→snake)/修正task-system蓝图路径/provenance标注源文件已合并/补充变更历史version/date格式
+      language: text
+      note: PS-STD-009 §9 RQ-01~RQ-14审查
+    - title: v1.0.1 2026-06-13 深度YAML化
+      code: 补充B~I类内容：scope/move_specs/circular_judgment/panorama_judgment/panorama_sources/gate_commands/normative_refs
+      language: text
+      note: DM-100231执行
+    - title: v1.0.0 2026-06-13 初始版本
+      code: 从task_card_standard.md和task_closure_standard.md提取TASK-002/TASK-003规则
+      language: text
+      note: 第一轮YAML化仅提取A类规则
+references:
+  rule_ids:
+  - TRAE-035
+  scripts:
+  - scripts/governance/audit_registration.py
+  - scripts/governance/generate_project_depgraph.py
+  - scripts/governance/generate_project_path_tree.py
+  - scripts/governance/diagnose_depgraph.py
+  modules:
+  - src/zephyr/governance/rule_enforcement/task_completion_gate.py
+  - src/zephyr/governance/task_repo.py
+  blueprints:
+  - 03_modules/_domain_infra_runtime/task_system/blueprint.md
+enforcement:
+  type: code
+  executors:
+  - scripts/governance/audit_registration.py
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+  change_history:
+  - version: 1.2.3
+    date: '2026-06-21'
+    by: AI-Assistant
+    changes:
+    - P2修复——task_003_panorama_sources.key_decisions"为什么必须连续2次"解释段改为陈述性约束"连续2次0错误方可通过验收"，符合GOV-DOC-016纯陈述原则
+    - P2修复——generate_project_depgraph.py命令(行140/163/276)添加"架构升级期间禁止运行"条件限制说明
+  - version: 1.2.2
+    date: '2026-06-21'
+    by: session-20260621-fix4
+    changes:
+    - P1修复——references.rule_ids去重(2个TRAE-035→1个)，符合RQ-02规范
+    - P1修复——v1.2.0的date从'2026-06-22'(未来日期)修正为'2026-06-21'(当天日期)，消除版本递增但日期递减的矛盾
+  - version: 1.2.1
+    date: '2026-06-21'
+    by: session-20260621-batch4
+    changes:
+    - P1修复——enforcement.executors补充scripts/governance/audit_registration.py(原为空)，符合RQ-06规范
+  - version: 1.2.0
+    date: '2026-06-21'
+    by: session-20260622-001
+    changes:
+    - 新增task_002_plan_audit_gate计划审查门禁(边审查边执行模式)——复杂任务执行前MUST先审查计划本身，审查通过后同一会话内直接执行
+  - version: 1.1.2
+    date: '2026-06-19'
+    by: session-20260619-001
+    changes:
+    - 全量审查STEP9修复——references.modules从rule_id(GOV-TASK-001/005)改为模块路径(task_completion_gate.py/task_repo.py)
+  - version: 1.1.1
+    date: '2026-06-19'
+    by: session-20260619-001
+    changes:
+    - 全量审查STEP9修复——L65"七步工作流"→"八步工作流"(与trae_034权威定义对齐)
+  - version: 1.1.0
+    date: '2026-06-19'
+    by: session-20260619-001
+    changes:
+    - RQ审查修复——路径格式统一/修正project_path_tree.yaml文件名/修正task-system蓝图路径/provenance标注源文件已合并/补充变更历史version/date格式
+  - version: 1.0.0
+    date: '2026-06-13'
+    by: session-20260613-001
+    changes:
+    - 初始YAML化，从task_card_standard.md和task_closure_standard.md提取TASK-002/TASK-003规则
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

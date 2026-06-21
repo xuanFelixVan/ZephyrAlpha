@@ -1,0 +1,90 @@
+# CT-ORC-CE-001: Orchestrator → Context Engine 上下文请求契约
+# 蓝图: MOD-MASTER-001 | blueprint_baseline.md
+# 状态: IMPLEMENTED (OPS-14)
+
+contract:
+  id: CT-ORC-CE-001
+  title: "Orchestrator → Context Engine 上下文请求"
+  direction: "orchestrator → context-engine"
+  phase: 2
+  status: IMPLEMENTED
+
+protocol:
+  data_unit: ContextRequest
+  transport: Python 内存调用
+
+  schema:
+    ContextRequest:
+      task_id:
+        type: str
+        required: true
+      task_type:
+        type: str
+        enum: [code_construction, audit_execution, knowledge_query, governance_check, infra_connect]
+        required: true
+      blueprint_refs:
+        type: list[str]
+        required: true
+      file_context:
+        type: list[str]
+      max_tokens:
+        type: int
+        default: 8000
+      session_id:
+        type: str
+
+  response:
+    ContextResponse:
+      task_id:
+        type: str
+      blocks:
+        type: list
+        item:
+          type:
+            type: str
+            enum: [blueprint, code, contract, ke, audit_finding, convention]
+          content:
+            type: str
+          tokens:
+            type: int
+          source:
+            type: str
+          priority:
+            type: str
+            enum: [required, recommended, optional]
+      total_tokens:
+        type: int
+      status:
+        type: str
+        enum: [complete, partial, degraded]
+      build_stages:
+        type: dict
+        keys: [build_ms, compress_ms, validate_ms, inject_ms]
+      error:
+        type: str
+
+  pipeline:
+    - stage: BUILD
+      description: 从蓝图路由表定位相关蓝图+代码文件
+    - stage: COMPRESS
+      description: 压缩上下文到 Token 预算内
+    - stage: VALIDATE
+      description: 安全检查+路径验证
+    - stage: INJECT
+      description: 日志记录+会话注入
+
+  auto_trigger:
+    on_task_transition: READY → IN_PROGRESS
+
+  degradation:
+    - condition: ContextEngine 导入失败
+      behavior: 返回 status=degraded，不阻塞任务
+    - condition: 蓝图文件缺失
+      behavior: 返回 status=partial，缺失文件标记 priority=optional
+
+cli:
+  path: scripts/connect/orc_ce.py
+  commands:
+    - "--verify: 检查链路完整性"
+    - "--trigger: 用测试任务触发上下文构建"
+    - "--warn-only: 非阻塞检查"

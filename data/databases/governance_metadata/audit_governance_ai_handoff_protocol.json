@@ -1,0 +1,67 @@
+{
+  "task_id": "DM-100076",
+  "source_file": "docs/01_policies_and_standards/governance/ai/handoff_protocol.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_040_ai_model_routing.yaml",
+  "module_id": "GOV-AI-008",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "HANDOFF_8_FIELDS": {
+      "rule": "HandoffPackage必须包含8个字段：session_id/completed_tasks/in_progress_tasks/blocked_items/decisions_made/next_actions/context_summary/open_questions",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "IN_PROGRESS_CONTEXT": {
+      "rule": "in_progress_tasks必须附带离开时上下文：当前执行步骤、已完成部分产出物路径、下一session接手第一个动作",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "DECISIONS_RATIONALE": {
+      "rule": "decisions_made中rationale（理由）是必填项",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "NEXT_ACTIONS_MIN_1": {
+      "rule": "next_actions至少1项",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "CONTEXT_SUMMARY_LIMIT": {
+      "rule": "context_summary不超过500字",
+      "type": "constraint",
+      "status": "COVERED"
+    },
+    "FILE_NAMING": {
+      "rule": "文件命名：docs/09_audit/handoff/session-YYYYMMDD-NNN.yaml，编码UTF-8，换行符LF",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "PROHIBIT_DELETE_FIELD": {
+      "rule": "禁止删除HandoffPackage中任一字段（删任一字段视为非法交接）",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_NO_RATIONALE": {
+      "rule": "禁止decisions_made中无rationale的决策",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_EMPTY_NEXT_ACTIONS": {
+      "rule": "禁止next_actions为空（至少1项）",
+      "type": "prohibition",
+      "status": "COVERED"
+    }
+  },
+  "summary": {
+    "total_rules": 9,
+    "COVERED": 9,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "原YAML仅有占位action'遵守GOV-AI-008'，无实际规则内容",
+    "新增section gov_ai_008_handoff：6个actions+3个prohibitions+1个trigger condition",
+    "字段补充说明（in_progress上下文/rationale必填/next_actions至少1项）已纳入actions和prohibitions",
+    "YAML模板（§3）为格式参考，非规则，不纳入YAML",
+    "版本历史（§4）为变更记录，非规则，不纳入YAML"
+  ]
+}

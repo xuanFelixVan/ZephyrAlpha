@@ -1,0 +1,79 @@
+{
+  "task_id": "DM-100188",
+  "source_file": "docs/01_policies_and_standards/operational/devops/architecture_change_playbook.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_049_ops_domain_manual.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "change_classification": {
+      "content": "变更分级L1/L2/L3/L4及审批要求：L1无需审批、L2同层Owner审批、L3 KB决策记录+Owner审批、L4 Emergency Change Board",
+      "status": "COVERED",
+      "yaml_section": "ops_dev_002"
+    },
+    "l1_minor_change_steps": {
+      "content": "L1微调4步操作：确认仅影响模块内部→执行修改→运行测试→PATCH+1",
+      "status": "COVERED",
+      "yaml_section": "ops_dev_002"
+    },
+    "l2_local_change_steps": {
+      "content": "L2局部变更6步操作：确认影响范围→通知同层Owner→执行修改→更新受影响模块→集成测试→MINOR+1",
+      "status": "COVERED",
+      "yaml_section": "ops_dev_002"
+    },
+    "l3_cross_layer_change_steps": {
+      "content": "L3跨层变更9步操作：创建KB决策记录(GOV-ARCH-001)→评估影响→设计迁移方案→Owner审批→执行变更→更新受影响模块→更新cross_layer_contracts.yaml→全量集成测试→MAJOR+1",
+      "status": "COVERED",
+      "yaml_section": "ops_dev_002"
+    },
+    "l4_architecture_change_steps": {
+      "content": "L4架构变更8步操作：创建KB决策记录+影响分析报告→召集Emergency Change Board→Board审批→制定实施计划→分阶段执行→全量回归测试→更新架构模型→通知所有相关方",
+      "status": "COVERED",
+      "yaml_section": "ops_dev_002"
+    },
+    "rollback_plan": {
+      "content": "回滚方案：L1直接回滚文件、L2回滚文件+恢复受影响模块、L3回滚文件+恢复受影响模块+恢复契约+废弃KB决策记录、L4回滚所有变更+恢复架构模型+通知Board",
+      "status": "COVERED",
+      "yaml_section": "ops_dev_002_rollback"
+    },
+    "change_recording_mandatory": {
+      "content": "变更记录必须在KB决策记录(L3/L4必须创建)、模块版本号、Session Log、architecture-versioning-policy.md(GOV-ARCH-003)变更日志中记录",
+      "status": "COVERED",
+      "yaml_section": "ops_dev_002"
+    },
+    "prohibition_skip_l2_approval": {
+      "content": "L2变更必须同层Owner审批，不得跳过",
+      "status": "COVERED",
+      "yaml_section": "ops_dev_002"
+    },
+    "prohibition_skip_l3_approval": {
+      "content": "L3变更必须创建KB决策记录并获Owner审批，不得跳过",
+      "status": "COVERED",
+      "yaml_section": "ops_dev_002"
+    },
+    "prohibition_skip_l4_approval": {
+      "content": "L4变更必须经Emergency Change Board审批，不得跳过",
+      "status": "COVERED",
+      "yaml_section": "ops_dev_002"
+    },
+    "prohibition_l3_skip_contracts": {
+      "content": "L3变更必须更新cross_layer_contracts.yaml",
+      "status": "COVERED",
+      "yaml_section": "ops_dev_002"
+    },
+    "prohibition_l3_l4_skip_tests": {
+      "content": "L3/L4变更必须运行全量集成/回归测试",
+      "status": "COVERED",
+      "yaml_section": "ops_dev_002"
+    }
+  },
+  "summary": {
+    "total_rules": 12,
+    "COVERED": 12,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "原ops_dev_002 section仅有通用占位文本'遵守 OPS-DEV-002: 连接器入职/因子入职/止损配置/分析管线/架构变更'",
+    "替换为详细的变更分级条件、L1-L4操作步骤、变更记录要求、5条禁止项",
+    "新增ops_dev_002_rollback section覆盖回滚方案(4级回滚步骤)"
+  ]
+}

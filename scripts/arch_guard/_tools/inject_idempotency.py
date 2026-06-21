@@ -22,7 +22,7 @@ YAML_PATH = (
     / "target-architecture"
     / "architecture-model"
     / "contracts"
-    / "cross-layer-contracts.yaml"
+    / "cross_layer_contracts.yaml"
 )
 
 IDEMPOTENCY_FIELD = '- {name: idempotency_key, type: str, required: true, description: "幂等键（UUID），防止重复处理"}'

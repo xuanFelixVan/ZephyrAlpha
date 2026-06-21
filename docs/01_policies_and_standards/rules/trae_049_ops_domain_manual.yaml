@@ -1,0 +1,445 @@
+rule_id: TRAE-049
+title: 操作-领域操作手册
+aliases:
+- OPS-001
+- OPS-002
+- OPS-003
+- OPS-004
+- OPS-DEV-002
+layer: L2
+severity: warning
+scope: operational_domain
+domain: TRAE
+triggers:
+- operation: operational_domain
+sections:
+  ops_001:
+    title: 连接器入职操作手册
+    section_type: rule
+    original_rules:
+    - OPS-001
+    conditions:
+    - type: trigger
+      check: 新数据源连接器上线前
+      pass: 按连接器入职流程执行
+      fail: 跳过入职流程
+    actions:
+    - type: mandatory
+      step: 连接器入职详细流程见 trae_050_domain_policy_data_factor.yaml connector_onboarding_procedure section（DOM-L00-002）
+    prohibitions:
+    - 跳过安全审查直接上线连接器
+  ops_002:
+    title: 因子入职操作手册
+    section_type: rule
+    original_rules:
+    - OPS-002
+    conditions:
+    - type: trigger
+      check: 新因子上线前
+      pass: 按因子入职流程执行
+      fail: 跳过入职流程
+    actions:
+    - type: mandatory
+      step: 因子入职详细流程见 trae_050_domain_policy_data_factor.yaml dom_l02_002 section（DOM-L02-002）
+    prohibitions:
+    - 跳过四维质量检查直接上线因子
+  ops_003:
+    title: 止损配置操作手册
+    section_type: rule
+    original_rules:
+    - OPS-003
+    conditions:
+    - type: trigger
+      check: 策略止损参数配置时
+      pass: 按止损配置流程执行
+      fail: 跳过配置流程
+    actions:
+    - type: mandatory
+      step: 止损配置详细流程见 trae_051_domain_policy_risk_backtest.yaml dom_l04_002 section（DOM-L04-002）
+    prohibitions:
+    - 无止损运行策略
+  ops_004:
+    title: 分析管线操作手册
+    section_type: rule
+    original_rules:
+    - OPS-004
+    conditions:
+    - type: trigger
+      check: 盘后分析管线执行时
+      pass: 按分析管线流程执行
+      fail: 跳过管线流程
+    actions:
+    - type: mandatory
+      step: 分析管线详细流程见 trae_051_domain_policy_risk_backtest.yaml dom_l07_002 section（DOM-L07-002）
+    prohibitions:
+    - 管线超时>30分钟未中断
+  ops_dev_002:
+    title: 架构变更操作手册
+    section_type: procedure
+    original_rules:
+    - OPS-DEV-002
+    conditions:
+    - type: trigger
+      check: 架构模型/模块增删/接口契约/层级结构发生变更
+      pass: 按变更等级执行对应操作步骤
+      fail: 不适用
+    actions:
+    - type: mandatory
+      step: 按变更等级(L1/L2/L3/L4)执行对应操作步骤
+    - type: mandatory
+      step: L1微调：确认仅影响模块内部→执行修改→运行测试→PATCH+1
+    - type: mandatory
+      step: L2局部变更：确认影响范围→通知同层Owner→执行修改→更新受影响模块→集成测试→MINOR+1
+    - type: mandatory
+      step: L3跨层变更：创建KB决策记录(GOV-ARCH-001)→评估影响→设计迁移方案→Owner审批KB决策记录→执行变更→更新受影响模块→更新cross_layer_contracts.yaml→全量集成测试→MAJOR+1
+    - type: mandatory
+      step: L4架构变更：创建KB决策记录+影响分析报告→召集Emergency Change Board→Board审批→制定实施计划→分阶段执行(每阶段验证)→全量回归测试→更新架构模型→通知所有相关方
+    - type: mandatory
+      step: 变更记录必须在KB决策记录(L3/L4必须创建)、模块版本号、Session Log、architecture-versioning-policy.md(GOV-ARCH-003)变更日志中记录
+    prohibitions:
+    - L2变更必须同层Owner审批，不得跳过
+    - L3变更必须创建KB决策记录并获Owner审批，不得跳过
+    - L4变更必须经Emergency Change Board审批，不得跳过
+    - L3变更必须更新cross_layer_contracts.yaml
+    - L3/L4变更必须运行全量集成/回归测试
+  ops_dev_002_rollback:
+    title: 架构变更回滚方案
+    section_type: rollback
+    original_rules:
+    - OPS-DEV-002
+    conditions:
+    - type: trigger
+      check: 架构变更需要回滚
+      pass: 按变更等级执行对应回滚方案
+      fail: 不适用
+    actions:
+    - type: mandatory
+      step: L1回滚：直接回滚文件
+    - type: mandatory
+      step: L2回滚：回滚文件+恢复受影响模块
+    - type: mandatory
+      step: L3回滚：回滚文件+恢复受影响模块+恢复契约+废弃KB决策记录
+    - type: mandatory
+      step: L4回滚：回滚所有变更+恢复架构模型+通知Board
+    prohibitions: []
+  ops_dev_002_scope:
+    title: 架构变更操作手册-适用范围
+    section_type: context
+    original_rules:
+    - OPS-DEV-002
+    content:
+      summary: 定义ZephyrAlpha系统中架构变更的完整操作流程
+      impact_on_rules:
+      - 所有架构变更必须按本手册分级和流程执行
+      - 变更等级决定审批要求和操作步骤
+      - 跳过审批流程等同于违规
+      key_decisions:
+      - 架构变更分为L1微调/L2局部变更/L3跨层变更/L4架构变更四个等级
+      - 不同等级对应不同审批要求和回滚方案
+      - L3/L4变更必须创建KB决策记录
+      applicable_to:
+      - 架构模型(architecture-model/)的任何变更
+      - 模块增删
+      - 接口契约变更
+      - 层级结构调整
+  ops_dev_002_classification:
+    title: 架构变更分级分类
+    section_type: context
+    original_rules:
+    - OPS-DEV-002
+    content:
+      summary: 架构变更按影响范围分为四个等级，每个等级有明确的定义、审批要求和示例
+      impact_on_rules:
+      - 变更等级直接决定需执行的流程步骤和审批要求
+      - 等级判定错误会导致流程缺失或过度审批
+      key_decisions:
+      - L1微调：不影响其他模块的内部修改，无需审批
+      - L2局部变更：影响同层其他模块，需同层Owner审批
+      - L3跨层变更：影响其他层的模块，需KB决策记录+Owner审批
+      - L4架构变更：影响整体架构，需Emergency Change Board审批
+      classification:
+      - level: L1
+        name: 微调
+        definition: 不影响其他模块的内部修改
+        approval_required: 无需审批
+        examples:
+        - 修改模块内部注释
+        - 优化代码结构
+      - level: L2
+        name: 局部变更
+        definition: 影响同层其他模块
+        approval_required: 同层Owner审批
+        examples:
+        - 修改模块接口（非破坏性）
+        - 新增可选字段
+      - level: L3
+        name: 跨层变更
+        definition: 影响其他层的模块
+        approval_required: KB决策记录+Owner审批
+        examples:
+        - 修改跨层契约
+        - 新增模块
+        - 删除模块
+      - level: L4
+        name: 架构变更
+        definition: 影响整体架构
+        approval_required: Emergency Change Board
+        examples:
+        - 修改层级结构
+        - 修改kill switch规则
+  ops_dev_002_l1_procedure:
+    title: L1微调操作步骤
+    section_type: procedure
+    original_rules:
+    - OPS-DEV-002
+    content:
+    - order: 1
+      action: 确认变更仅影响模块内部
+      pre_condition: 变更内容已明确
+      expected_result: 无外部依赖受影响
+      on_failure: 影响范围超出模块内部→升级为L2或更高等级
+    - order: 2
+      action: 执行修改
+      pre_condition: 确认仅影响模块内部
+      expected_result: 修改完成
+      on_failure: 修改过程中发现影响范围扩大→暂停并重新评估等级
+    - order: 3
+      action: 运行相关测试
+      pre_condition: 修改已完成
+      expected_result: 测试通过
+      on_failure: 修复测试失败项→重新运行测试
+    - order: 4
+      action: 更新模块版本号PATCH+1
+      pre_condition: 测试通过
+      expected_result: 版本号已更新
+      on_failure: 版本号未更新→手动更新
+  ops_dev_002_l2_procedure:
+    title: L2局部变更操作步骤
+    section_type: procedure
+    original_rules:
+    - OPS-DEV-002
+    content:
+    - order: 1
+      action: 确认变更影响范围
+      pre_condition: 变更内容已明确
+      expected_result: 受影响模块清单完整
+      on_failure: 影响范围不完整→补充调查
+    - order: 2
+      action: 通知受影响模块的Owner
+      pre_condition: 受影响模块清单完整
+      expected_result: Owner已知晓
+      on_failure: Owner未响应→等待或升级
+    - order: 3
+      action: 执行修改
+      pre_condition: Owner已知晓
+      expected_result: 修改完成
+      on_failure: 修改过程中发现影响范围扩大→暂停并重新评估等级
+    - order: 4
+      action: 更新受影响模块
+      pre_condition: 修改完成
+      expected_result: 所有受影响模块已更新
+      on_failure: 模块未更新→逐个排查并更新
+    - order: 5
+      action: 运行集成测试
+      pre_condition: 所有受影响模块已更新
+      expected_result: 测试通过
+      on_failure: 修复测试失败项→重新运行测试
+    - order: 6
+      action: 更新模块版本号MINOR+1
+      pre_condition: 集成测试通过
+      expected_result: 版本号已更新
+      on_failure: 版本号未更新→手动更新
+  ops_dev_002_l3_procedure:
+    title: L3跨层变更操作步骤
+    section_type: procedure
+    original_rules:
+    - OPS-DEV-002
+    content:
+    - order: 1
+      action: 创建KB决策记录（参考GOV-ARCH-001）
+      pre_condition: 变更内容已明确且判定为L3等级
+      expected_result: KB决策记录已创建
+      on_failure: KB决策记录创建失败→检查GOV-ARCH-001模板
+    - order: 2
+      action: 评估变更影响范围
+      pre_condition: KB决策记录已创建
+      expected_result: 影响分析完整
+      on_failure: 影响分析不完整→补充跨层影响评估
+    - order: 3
+      action: 设计迁移方案
+      pre_condition: 影响分析完整
+      expected_result: 迁移方案可行
+      on_failure: 迁移方案不可行→重新设计或降级变更范围
+    - order: 4
+      action: Owner审批KB决策记录
+      pre_condition: 迁移方案可行
+      expected_result: Owner已批准
+      on_failure: Owner未批准→修改方案后重新提交
+    - order: 5
+      action: 执行变更
+      pre_condition: Owner已批准
+      expected_result: 变更完成
+      on_failure: 变更执行失败→启动回滚方案
+    - order: 6
+      action: 更新所有受影响模块
+      pre_condition: 变更完成
+      expected_result: 模块已更新
+      on_failure: 模块未更新→逐个排查并更新
+    - order: 7
+      action: 更新cross_layer_contracts.yaml
+      pre_condition: 模块已更新
+      expected_result: 契约已更新
+      on_failure: 契约未更新→手动更新契约文件
+    - order: 8
+      action: 运行全量集成测试
+      pre_condition: 契约已更新
+      expected_result: 测试通过
+      on_failure: 修复测试失败项→重新运行全量测试
+    - order: 9
+      action: 更新模块版本号MAJOR+1
+      pre_condition: 全量集成测试通过
+      expected_result: 版本号已更新
+      on_failure: 版本号未更新→手动更新
+  ops_dev_002_l4_procedure:
+    title: L4架构变更操作步骤
+    section_type: procedure
+    original_rules:
+    - OPS-DEV-002
+    content:
+    - order: 1
+      action: 创建KB决策记录+影响分析报告
+      pre_condition: 变更内容已明确且判定为L4等级
+      expected_result: 文档完整
+      on_failure: 文档不完整→补充KB决策记录和影响分析
+    - order: 2
+      action: 召集Emergency Change Board
+      pre_condition: 文档完整
+      expected_result: Board已召集
+      on_failure: Board无法召集→等待或升级至最高决策层
+    - order: 3
+      action: Board审批
+      pre_condition: Board已召集
+      expected_result: Board已批准
+      on_failure: Board未批准→修改方案后重新提交或放弃变更
+    - order: 4
+      action: 制定详细实施计划
+      pre_condition: Board已批准
+      expected_result: 计划完整
+      on_failure: 计划不完整→补充阶段划分和验证点
+    - order: 5
+      action: 分阶段执行变更
+      pre_condition: 实施计划完整
+      expected_result: 每阶段验证通过
+      on_failure: 某阶段验证失败→暂停后续阶段，评估是否回滚
+    - order: 6
+      action: 全量回归测试
+      pre_condition: 所有阶段执行完成
+      expected_result: 测试通过
+      on_failure: 修复测试失败项→重新运行全量回归测试
+    - order: 7
+      action: 更新架构模型
+      pre_condition: 回归测试通过
+      expected_result: 模型已更新
+      on_failure: 模型未更新→手动更新架构模型文件
+    - order: 8
+      action: 通知所有相关方
+      pre_condition: 架构模型已更新
+      expected_result: 通知完成
+      on_failure: 通知未送达→补充通知渠道
+  ops_dev_002_change_record:
+    title: 架构变更记录要求
+    section_type: rule
+    original_rules:
+    - OPS-DEV-002
+    conditions:
+    - type: trigger
+      check: 架构变更已执行
+      pass: 必须在指定位置记录变更
+      fail: 不适用
+    actions:
+    - type: mandatory
+      step: L3/L4变更必须创建KB决策记录
+    - type: mandatory
+      step: 每次变更必须更新模块版本号
+    - type: mandatory
+      step: 每次变更必须在Session Log中记录
+    - type: mandatory
+      step: 每次变更必须在architecture-versioning-policy.md(GOV-ARCH-003)的变更日志中记录
+    prohibitions:
+    - L3/L4变更不得省略KB决策记录
+    - 变更不得在无版本号更新的情况下完成
+  ops_dev_002_normative_refs:
+    title: 架构变更操作手册-规范性引用
+    section_type: context
+    original_rules:
+    - OPS-DEV-002
+    content:
+      summary: 架构变更操作手册引用的规范性文件和模块
+      impact_on_rules:
+      - GOV-ARCH-001定义了KB决策记录的创建模板和流程
+      - GOV-ARCH-003定义了架构版本策略和变更日志格式
+      - cross_layer_contracts.yaml是跨层契约的唯一真源
+      key_decisions: []
+      references:
+      - id: GOV-ARCH-001
+        title: KB决策记录模板
+        usage: L3/L4变更创建KB决策记录时参考
+      - id: GOV-ARCH-003
+        title: 架构版本策略
+        usage: 变更日志记录和版本号管理
+      - id: cross_layer_contracts.yaml
+        title: 跨层契约文件
+        usage: L3变更必须更新此文件
+      - id: architecture-model/
+        title: 架构模型目录
+        usage: L4变更必须更新架构模型
+  ops_dev_002_change_history:
+    title: 架构变更操作手册-变更历史
+    section_type: examples
+    original_rules:
+    - OPS-DEV-002
+    content:
+      items:
+      - version: 0.1.0
+        date: '2026-06-13'
+        change: 初始提取，从architecture_change_playbook.md(MD源)提取为TRAE-049规则YAML
+      - version: 0.2.0
+        date: '2026-06-16'
+        change: 深度提取补充：新增scope/classification/l1~l4_procedure/change_record/normative_refs/change_history共9个section
+      - version: 0.3.0
+        date: '2026-06-19'
+        change: RQ审查修复——ops_001~004区分标题+补充conditions/prohibitions+cross-ref到trae_050/051；references补充TRAE-050/051/GOV-ARCH-001/003；provenance源文件标记deprecated；change_history版本号去重
+references:
+  rule_ids:
+  - TRAE-049
+  - TRAE-050
+  - TRAE-051
+  scripts: []
+  modules:
+  - docs/01_policies_and_standards/rules/trae_037_arch_qualification_versioning.yaml
+  blueprints: []
+enforcement:
+  type: doc
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: evolving
+  impact_level: L
+  modification_permission: ai_modifiable
+  superseded_by: null
+  change_history:
+  - version: "1.0.2"
+    date: '2026-06-21'
+    by: AI-Assistant
+    changes: '重新审查修复——references.rule_ids补充TRAE-049；references.modules由module_id(GOV-ARCH-001/GOV-ARCH-003)改为文件路径格式（GOV-ARCH-003对应trae_037，GOV-ARCH-001无对应trae_XXX.yaml文件已移除）；change_history统一为changes字段并补充by字段'
+  - version: "1.0.1"
+    date: '2026-06-21'
+    by: AI-Assistant
+    changes: '同步修复——ops_001引用trae_050的connector_onboarding section改为connector_onboarding_procedure section（trae_050删除actions格式重复section后同步更新引用）'
+  - version: "1.0.0"
+    date: "2026-06-13"
+    by: session-20260613-001
+    changes: "初始提取——从ops_domain_manual相关.md提取运维域操作手册；源文件已迁移为本规则文件（status: migrated）"
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

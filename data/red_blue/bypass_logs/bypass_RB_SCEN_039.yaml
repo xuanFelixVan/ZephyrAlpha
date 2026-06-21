@@ -1,0 +1,179 @@
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce:
+    sandbox_integrity.self_check + resource_boundary_enforce failed to block sandbox_boundary_breach'
+  entry_id: BY-84ba9573
+  escalated: false
+  gate_id: sandbox_integrity.self_check + resource_boundary_enforce
+  occurred_at: '2026-05-23T14:39:35.464901+00:00'
+  root_cause: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce:
+    sandbox_integrity.self_check + resource_boundary_enforce failed to block sandbox_boundary_breach'
+  scenario_id: RB-SCEN-039
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce:
+    sandbox_integrity.self_check + resource_boundary_enforce failed to block sandbox_boundary_breach'
+  entry_id: BY-2bf3ddf8
+  escalated: false
+  gate_id: sandbox_integrity.self_check + resource_boundary_enforce
+  occurred_at: '2026-05-23T14:42:26.022384+00:00'
+  root_cause: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce:
+    sandbox_integrity.self_check + resource_boundary_enforce failed to block sandbox_boundary_breach'
+  scenario_id: RB-SCEN-039
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce:
+    sandbox_integrity.self_check + resource_boundary_enforce failed to block sandbox_boundary_breach'
+  entry_id: BY-039034e1
+  escalated: false
+  gate_id: sandbox_integrity.self_check + resource_boundary_enforce
+  occurred_at: '2026-05-23T14:44:50.446016+00:00'
+  root_cause: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce:
+    sandbox_integrity.self_check + resource_boundary_enforce failed to block sandbox_boundary_breach'
+  scenario_id: RB-SCEN-039
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce
+    [simulated]: sandbox_integrity.self_check + resource_boundary_enforce failed to
+    block sandbox_boundary_breach'
+  entry_id: BY-bc4d24a2
+  escalated: false
+  gate_id: sandbox_integrity.self_check + resource_boundary_enforce
+  occurred_at: '2026-05-26T12:51:07.221346+00:00'
+  root_cause: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce [simulated]:
+    sandbox_integrity.self_check + resource_boundary_enforce failed to block sandbox_boundary_breach'
+  scenario_id: RB-SCEN-039
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce
+    [simulated]: sandbox_integrity.self_check + resource_boundary_enforce failed to
+    block sandbox_boundary_breach'
+  entry_id: BY-7096e71f
+  escalated: false
+  gate_id: sandbox_integrity.self_check + resource_boundary_enforce
+  occurred_at: '2026-05-27T19:03:59.214987+00:00'
+  root_cause: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce [simulated]:
+    sandbox_integrity.self_check + resource_boundary_enforce failed to block sandbox_boundary_breach'
+  scenario_id: RB-SCEN-039
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce
+    [simulated]: sandbox_integrity.self_check + resource_boundary_enforce failed to
+    block sandbox_boundary_breach'
+  entry_id: BY-6f5d073a
+  escalated: false
+  gate_id: sandbox_integrity.self_check + resource_boundary_enforce
+  occurred_at: '2026-05-27T19:39:37.326234+00:00'
+  root_cause: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce [simulated]:
+    sandbox_integrity.self_check + resource_boundary_enforce failed to block sandbox_boundary_breach'
+  scenario_id: RB-SCEN-039
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce
+    [simulated]: sandbox_integrity.self_check + resource_boundary_enforce failed to
+    block sandbox_boundary_breach'
+  entry_id: BY-9b0c3e85
+  escalated: false
+  gate_id: sandbox_integrity.self_check + resource_boundary_enforce
+  occurred_at: '2026-05-27T19:49:35.237889+00:00'
+  root_cause: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce [simulated]:
+    sandbox_integrity.self_check + resource_boundary_enforce failed to block sandbox_boundary_breach'
+  scenario_id: RB-SCEN-039
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce
+    [simulated]: sandbox_integrity.self_check + resource_boundary_enforce failed to
+    block sandbox_boundary_breach'
+  entry_id: BY-1232591d
+  escalated: false
+  gate_id: sandbox_integrity.self_check + resource_boundary_enforce
+  occurred_at: '2026-05-27T20:11:23.742807+00:00'
+  root_cause: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce [simulated]:
+    sandbox_integrity.self_check + resource_boundary_enforce failed to block sandbox_boundary_breach'
+  scenario_id: RB-SCEN-039
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce
+    [simulated]: sandbox_integrity.self_check + resource_boundary_enforce failed to
+    block sandbox_boundary_breach'
+  entry_id: BY-74cda5ce
+  escalated: false
+  gate_id: sandbox_integrity.self_check + resource_boundary_enforce
+  occurred_at: '2026-05-27T20:34:45.470982+00:00'
+  root_cause: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce [simulated]:
+    sandbox_integrity.self_check + resource_boundary_enforce failed to block sandbox_boundary_breach'
+  scenario_id: RB-SCEN-039
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce
+    [simulated]: sandbox_integrity.self_check + resource_boundary_enforce failed to
+    block sandbox_boundary_breach'
+  entry_id: BY-400e90ef
+  escalated: false
+  gate_id: sandbox_integrity.self_check + resource_boundary_enforce
+  occurred_at: '2026-05-28T06:16:43.729326+00:00'
+  root_cause: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce [simulated]:
+    sandbox_integrity.self_check + resource_boundary_enforce failed to block sandbox_boundary_breach'
+  scenario_id: RB-SCEN-039
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce
+    [simulated]: sandbox_integrity.self_check + resource_boundary_enforce failed to
+    block sandbox_boundary_breach'
+  entry_id: BY-9e34c655
+  escalated: false
+  gate_id: sandbox_integrity.self_check + resource_boundary_enforce
+  occurred_at: '2026-05-28T08:55:48.756105+00:00'
+  root_cause: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce [simulated]:
+    sandbox_integrity.self_check + resource_boundary_enforce failed to block sandbox_boundary_breach'
+  scenario_id: RB-SCEN-039
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce
+    [simulated]: sandbox_integrity.self_check + resource_boundary_enforce failed to
+    block sandbox_boundary_breach'
+  entry_id: BY-de8302ff
+  escalated: false
+  gate_id: sandbox_integrity.self_check + resource_boundary_enforce
+  occurred_at: '2026-05-28T09:11:27.809640+00:00'
+  root_cause: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce [simulated]:
+    sandbox_integrity.self_check + resource_boundary_enforce failed to block sandbox_boundary_breach'
+  scenario_id: RB-SCEN-039
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce
+    [simulated]: sandbox_integrity.self_check + resource_boundary_enforce failed to
+    block sandbox_boundary_breach'
+  entry_id: BY-d61e5a4b
+  escalated: false
+  gate_id: sandbox_integrity.self_check + resource_boundary_enforce
+  occurred_at: '2026-05-28T09:26:21.451298+00:00'
+  root_cause: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce [simulated]:
+    sandbox_integrity.self_check + resource_boundary_enforce failed to block sandbox_boundary_breach'
+  scenario_id: RB-SCEN-039
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce
+    [simulated]: sandbox_integrity.self_check + resource_boundary_enforce failed to
+    block sandbox_boundary_breach'
+  entry_id: BY-1f997d07
+  escalated: false
+  gate_id: sandbox_integrity.self_check + resource_boundary_enforce
+  occurred_at: '2026-05-28T09:27:24.764092+00:00'
+  root_cause: 'BYPASSED sandbox_integrity.self_check + resource_boundary_enforce [simulated]:
+    sandbox_integrity.self_check + resource_boundary_enforce failed to block sandbox_boundary_breach'
+  scenario_id: RB-SCEN-039
+  tier: TIER_6

@@ -2,7 +2,7 @@
 #!/usr/bin/env python3
 """
 GATE-FRONTMATTER: Validate frontmatter enum values against vocabulary YAMLs.
-Prevents illegal enum values (like layer: L1 instead of l01_infrastructure)
+Prevents illegal enum values (like layer: L1 instead of infrastructure.runtime_integration)
 from reaching the codebase—closes the root cause of C8 (9 files with illegal layer values).
 
 
@@ -16,7 +16,7 @@ Dimensions:
   DIM-6: classification values in vocabulary
   DIM-7: All other vocabulary-backed fields
 
-Exit 1 on any FAIL -> pre-commit blocks the commit.
+Exit 1 on any FAIL -> pre_commit blocks the commit.
 """
 
 from __future__ import annotations

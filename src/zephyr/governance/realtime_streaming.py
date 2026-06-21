@@ -1,4 +1,7 @@
-# [BLUEPRINT] DOM-GOV-001 | 03_modules/_domain-governance/blueprint.md | §
+# [A_module] module_id=MOD-DAT_realtime_streaming | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+from __future__ import annotations
+
+# [BLUEPRINT] SRC-005 | docs/03_modules/_domain-governance/blueprint.md
 
 # [MODULE] zephyr.governance.realtime_streaming
 
@@ -18,7 +21,6 @@
 
 # [TESTS]
 
-from __future__ import annotations
 from enum import Enum
 
 class PipelineMode(str, Enum):

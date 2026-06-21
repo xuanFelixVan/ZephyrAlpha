@@ -1,0 +1,27 @@
+---
+blueprint_id: DOM-GOV-001
+created: '2026-05-03'
+doc_type: index
+module_id: MOD-INF-046
+status: Draft
+title: feedback-loop — 目录索引
+updated: '2026-05-03'
+version: 1.0.0
+---
+
+
+# feedback-loop
+
+> 本文件由 `generate_missing_index_md.py` 自动生成
+> 生成日期：2026-05-03
+
+## 目录内容
+
+| 文件/目录 | 类型 | 说明 |
+|-----------|------|------|
+| [blueprint.md](blueprint.md) | Markdown | Feedback Loop Engine 蓝图 — collect→detect→dispatch 自我改进闭环 |
+
+## 导航
+
+- [上级目录](../index.md)
+- [项目根](../../index.md)

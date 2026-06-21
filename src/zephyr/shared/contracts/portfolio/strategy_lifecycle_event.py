@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-PRT_strategy_lifecycle_event | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.contracts.portfolio.strategy_lifecycle_event
 
@@ -28,7 +29,7 @@ from dataclasses import dataclass
 # category: data_contract
 # status: auto_generated
 # created: "2026-05-04"
-# generated_by: codegen from cross-layer-contracts.yaml
+# generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
 ZephyrAlpha — shared/contracts/strategy_lifecycle_event.py
@@ -37,7 +38,7 @@ CTR-P1-006: StrategyLifecycleEvent / 策略生命周期事件
 
 L05 → L07/L10 策略生命周期事件契约。
 
-SSoT: cross-layer-contracts.yaml → CTR-P1-006
+SSoT: cross_layer_contracts.yaml → CTR-P1-006
 Version: 1.0
 Status: AUTO-GENERATED — DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.

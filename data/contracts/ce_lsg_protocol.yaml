@@ -1,0 +1,68 @@
+# CT-CE-LSG-001: ContextEngine → LSGSecurityGateway 安全扫描契约
+# 蓝图: MOD-MASTER-001 | blueprint_baseline.md
+# 状态: IMPLEMENTED (OPS-15)
+
+contract:
+  id: CT-CE-LSG-001
+  title: "ContextEngine → LSGSecurityGateway 上下文安全扫描"
+  direction: "context-engine → llm-security"
+  phase: 2
+  status: IMPLEMENTED
+
+protocol:
+  data_unit: SecurityCheckRequest
+  transport: Python 内存调用
+
+  schema:
+    SecurityCheckRequest:
+      blocks:
+        type: list
+        item: ContextBlock
+      task_id:
+        type: str
+        required: true
+      session_id:
+        type: str
+
+    ContextBlock:
+      type:
+        type: str
+        enum: [blueprint, code, contract, ke, audit_finding, convention]
+      content:
+        type: str
+      tokens:
+        type: int
+      source:
+        type: str
+      priority:
+        type: str
+        enum: [required, recommended, optional]
+
+  response:
+    SecurityCheckResponse:
+      passed:
+        type: bool
+      blocked_blocks:
+        type: list
+      sanitized_blocks:
+        type: list
+      warnings:
+        type: list
+      scan_duration_ms:
+        type: int
+
+  defense_layers:
+    gateway: LSGSecurityGateway (九层纵深)
+    scan_mode: INPUT_ONLY
+    fail_mode: fail-closed (任一层 DENY → 整体 DENY)
+
+  degradation:
+    - condition: LSGSecurityGateway 不可用
+      behavior: 返回 passed=true + all_original_blocks + degraded_warning
+
+cli:
+  path: scripts/connect/ce_lsg.py
+  commands:
+    - "--verify: 检查 CE→LSG 链路完整性"
+    - "--trigger: 用测试上下文触发安全扫描"
+    - "--warn-only: 非阻塞检查"

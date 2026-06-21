@@ -10,13 +10,13 @@ SRC_DIR = Path(__file__).resolve().parents[2] / "src"
 sys.path.insert(0, str(SRC_DIR))
 
 EXPECTED_MODULES: dict[str, str] = {
-    "MOD-INF-018": "agent_rbac",
-    "MOD-INF-019": "agent_spec",
-    "MOD-INF-020": "audit_trail",
+    "MOD-INF-018": "agent-rbac",
+    "MOD-INF-019": "agent-spec",
+    "MOD-INF-020": "audit-trail",
     "MOD-INF-021": "rollback_system",
     "MOD-INF-022": "escalation_protocol",
-    "MOD-INF-023": "drift_detector",
-    "MOD-INF-024": "budget_enforcer",
+    "MOD-INF-023": "drift-detector",
+    "MOD-INF-024": "budget-enforcer",
     "MOD-INF-025": "a2a_protocol",
 }
 
@@ -26,7 +26,7 @@ REQUIRED_ANCHOR = "DOM-GOV-001"
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     results: dict[str, bool] = {}
-    base = Path("docs/03_modules/l01_infrastructure")
+    base = Path("docs/03_modules/infrastructure.runtime_integration")
 
     for mod_id, mod_dir in EXPECTED_MODULES.items():
         bp = base / mod_dir / "blueprint.md"

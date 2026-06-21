@@ -86,7 +86,7 @@ _ROOT_SCRIPTS = [
     ("status.py", "健康仪表盘"),
     ("check_registry_consistency.py", "跨登记表一致性校验"),
     ("script_manifest.yaml", "脚本注册表"),
-    ("quality-standard.md", "审计脚本质量标准"),
+    ("quality_standard.md", "审计脚本质量标准"),
 ]
 
 def _load_manifest() -> list[dict]:

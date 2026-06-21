@@ -1,0 +1,65 @@
+# CT-CE-VMS-001: ContextEngine → VectorMemory 上下文向量化存储契约
+# 蓝图: MOD-MASTER-001 | blueprint_baseline.md
+# 状态: IMPLEMENTED (OPS-16)
+
+contract:
+  id: CT-CE-VMS-001
+  title: "ContextEngine → VectorMemory 上下文向量化存储"
+  direction: "context-engine → vector-memory"
+  phase: 2
+  status: IMPLEMENTED
+
+protocol:
+  data_unit: VMSContextIngestRequest
+  transport: Python 内存调用
+
+  schema:
+    VMSContextIngestRequest:
+      blocks:
+        type: list
+        item: ContextBlock
+      collection:
+        type: str
+        enum: [session_context, task_context, global_knowledge]
+        default: session_context
+      task_id:
+        type: str
+        required: true
+      session_id:
+        type: str
+
+  response:
+    VMSWriteResult:
+      stored_count:
+        type: int
+      total_blocks:
+        type: int
+      collection:
+        type: str
+      status:
+        type: str
+        enum: [complete, partial, degraded]
+      write_duration_ms:
+        type: int
+      error:
+        type: str
+
+  vms_write_targets:
+    session_context: "单会话上下文"
+    task_context: "单任务上下文"
+    global_knowledge: "全局知识"
+
+  degradation:
+    - condition: VMS不可用
+      behavior: in-memory fallback, 返回status=degraded
+
+  auto_trigger:
+    on_context_built: context构建完成后自动调用vectorize_and_store()
+
+cli:
+  path: scripts/connect/ce_vms.py
+  commands:
+    - "--verify: 检查 CE→VMS 链路完整性"
+    - "--trigger: 用测试上下文触发向量化存储"
+    - "--query: 查询已存储的上下文 (--collection --text)"
+    - "--warn-only: 非阻塞检查"

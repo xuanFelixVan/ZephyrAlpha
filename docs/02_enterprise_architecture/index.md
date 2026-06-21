@@ -1,12 +1,17 @@
 ---
-module_id: EA-INDEX
+module_id: GOV-036
 doc_type: index
-status: active
+status: Active
 version: 2.1.0
 generated: '2026-05-03'
 depends_on:
-  - {target: DOCS-INDEX, at: "§子目录", why: "根目录索引——02抽屉为根 docs/ 子目录，引用其抽屉一览"}
-  - {target: AGENTS.md, at: "§6.9~§6.10", why: "双轨制+双层对齐 canonical 规则——本文件仅引用，不重复定义"}
+- target: DOCS-INDEX
+  at: §子目录
+  why: 根目录索引——02抽屉为根 docs/ 子目录，引用其抽屉一览
+- target: AGENTS.md
+  at: §6.9~§6.10
+  why: 双轨制+双层对齐 canonical 规则——本文件仅引用，不重复定义
+title: 02 Enterprise Architecture
 ---
 
 # 02 Enterprise Architecture — 目录索引
@@ -42,7 +47,7 @@ depends_on:
 
 > `designs/` 和 `by-domain/` 目录已于 2026-05-03 物理删除（僵尸目录——索引已移除引用但物理目录未删，现已彻底清除）。
 > 
-> `adr/` 目录已于 2026-05 前全量迁入 `knowledge` 表（33 条 ADR，全部 VERIFIED），物理目录及配套文件（registry、template、protocol、adr_ingest.py）已删除。ADR 现通过 KE 管线检索，不再作为独立子目录存在。
+> `adr/` 目录已于 2026-05 前全量迁入 `knowledge` 表（33 条 KB 决策记录，全部 VERIFIED），物理目录及配套文件（registry、template、protocol、adr_ingest.py）已删除。KB 决策记录 现通过 KE 管线检索，不再作为独立子目录存在。
 
 ## 顶层文件清单
 

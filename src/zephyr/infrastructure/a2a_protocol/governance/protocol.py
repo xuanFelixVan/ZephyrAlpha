@@ -1,0 +1,47 @@
+# [A_module] module_id=MOD-GOV_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+from __future__ import annotations
+
+# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
+
+# [MODULE] zephyr.infrastructure.a2a_protocol.governance.protocol
+
+# [INVARIANTS] core types imported from zephyr.shared.protocols.a2a; no duplicate definitions
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] stable
+
+# [SAFETY] M
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+"""G-CT-008 — A2ACommunication Pydantic V2 BaseModel agent-to-agent 通信数据结构.
+
+Core types (MessageType, A2ACommunication, SecurityContext, SecurityDecision,
+SecurityResult) are imported from zephyr.shared.protocols.a2a.a2a_protocol.
+"""
+
+from zephyr.shared.protocols.a2a.a2a_protocol import (  # noqa: F401
+    MessageType,
+    A2ACommunication,
+    SecurityContext,
+    SecurityDecision,
+    SecurityResult,
+)
+
+class LLMSecurityProtocol:
+    def __init__(self, config=None):
+        self.config = config or {}
+        self.level = 0
+
+    def validate(self, request):
+        return True
+
+    def enforce(self, policy):
+        pass

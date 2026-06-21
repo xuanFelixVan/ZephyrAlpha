@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/_tools/build_ocp_manifest.py | §
-"""从 cross-layer-contracts.yaml 生成 OCP 冻结契约指纹（INV-009）。"""
+"""从 cross_layer_contracts.yaml 生成 OCP 冻结契约指纹（INV-009）。"""
 from __future__ import annotations
 
 import os
@@ -13,7 +13,7 @@ _ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_ROOT))
 from _arch_ssot import CONTRACTS_PATH, REPO_ROOT  # noqa: E402
 
-MANIFEST_REL = Path("src/zephyr/shared/contracts/_frozen_signatures/ocp_manifest.json")
+MANIFEST_REL = Path("src/zephyr/shared/contracts/_frozen_signatures/ocp-manifest.json")
 
 
 def main() -> int:

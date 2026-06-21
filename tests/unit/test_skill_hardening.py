@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-2066 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-683 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_skill_hardening
 # [STABILITY] evolving
 # [SAFETY] L
@@ -9,18 +10,18 @@ import pytest
 import threading
 import time
 
-from zephyr.agent_spec.skill_locking import SkillLock, SkillFileLock
-from zephyr.agent_spec.skill_calibration import SkillCalibration
-from zephyr.agent_spec.skill_consensus import SkillConsensus, VoteResult
-from zephyr.agent_spec.skill_idempotency import SkillIdempotency
-from zephyr.agent_spec.skill_feature_flags import SkillFeatureFlags
-from zephyr.agent_spec.skill_kill_switch import SkillKillSwitch
-from zephyr.agent_spec.skill_resilience import SkillResilience
-from zephyr.agent_spec.skill_schema_registry import SkillSchemaRegistry
-from zephyr.agent_spec.skill_prompt_cache import SkillPromptCache
-from zephyr.agent_spec.skill_lineage import SkillLineage
-from zephyr.agent_spec.skill_di import SkillDI
-from zephyr.agent_spec.skill_temperature import SkillTemperature
+from zephyr.autonomy_core.skill_locking import SkillLock, SkillFileLock
+from zephyr.autonomy_core.skill_calibration import SkillCalibration
+from zephyr.autonomy_core.skill_consensus import SkillConsensus, VoteResult
+from zephyr.autonomy_core.skill_idempotency import SkillIdempotency
+from zephyr.autonomy_core.skill_feature_flags import SkillFeatureFlags
+from zephyr.autonomy_core.skill_kill_switch import SkillKillSwitch
+from zephyr.autonomy_core.skill_resilience import SkillResilience
+from zephyr.autonomy_core.skill_schema_registry import SkillSchemaRegistry
+from zephyr.autonomy_core.skill_prompt_cache import SkillPromptCache
+from zephyr.autonomy_core.skill_lineage import SkillLineage
+from zephyr.autonomy_core.skill_di import SkillDI
+from zephyr.autonomy_core.skill_temperature import SkillTemperature
 
 
 class TestConcurrencySafety:

@@ -1,0 +1,27 @@
+{
+  "task_id": "DM-100100",
+  "source_file": "docs/01_policies_and_standards/governance/document/encoding_safety_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "doc_005": {
+      "title": "编码安全规范 (GOV-DOC-005)",
+      "conditions_count": 4,
+      "actions_count": 2,
+      "prohibitions_count": 6
+    }
+  },
+  "summary": {
+    "total_rules": 12,
+    "COVERED": 12,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    {
+      "action": "YAML_UPDATE",
+      "target": "trae_028_doc_structure_naming.yaml section doc_005",
+      "detail": "从空壳更新为包含4个conditions+2个actions+6个prohibitions的完整规则提取:UTF-8强制+Trae配置+Python/PowerShell编码+损坏识别+修复流程+5条绝对禁止"
+    }
+  ]
+}

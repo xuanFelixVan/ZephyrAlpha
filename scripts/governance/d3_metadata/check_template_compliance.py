@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 """
-[BLUEPRINT] MOD-INF-005 | 03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+[BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 [MODULE] scripts.governance.d3_metadata.check_template_compliance
 [INVARIANTS] 模板合规检查必须覆盖所有模板
 [MODIFY-GUARD] __init__.py;script_manifest.yaml
@@ -57,13 +57,13 @@ TEMPLATES_DIR = REPO_ROOT / "docs" / "01_policies_and_standards" / "templates"
 TEMPLATE_TYPE_TO_FILE = {
     "blueprint": "blueprint-construction-template.md",
     "playbook": "playbook-template.md",
-    "policy": "policy-template.md",
-    "protocol": "protocol-template.md",
-    "register": "register-template.md",
-    "risk-register": "risk-register-template.md",
+    "policy": "policy-policy.md",
+    "protocol": "protocol-protocol.md",
+    "register": "register-registry.md",
+    "risk-register": "risk-register-registry.md",
     "roadmap": "roadmap-template.md",
-    "runbook": "runbook-template.md",
-    "standard": "standard-template.md",
+    "runbook": "runbook-runbook.md",
+    "standard": "standard-standard.md",
     "dependency-graph": "dependency-graph-template.md",
 }
 

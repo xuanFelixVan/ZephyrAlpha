@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [A_test] module_id: SRC-TST-0050 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §
 # [MODULE] tests.agent_rbac.test_permission_guard
 # [STABILITY] evolving
 # [SAFETY] L
@@ -8,11 +9,11 @@
 import pytest
 import yaml
 from pathlib import Path
-from zephyr.agent_rbac.identity import AgentIdentity, MaturityLevel, AgentRole
-from zephyr.agent_rbac.permission_guard import (
+from zephyr.security.access_control.identity import AgentIdentity, MaturityLevel, AgentRole
+from zephyr.security.access_control.permission_guard import (
     PermissionGuard, GuardDecision, GuardResult,
 )
-from zephyr.agent_rbac.exceptions import ColdStartLockedError
+from zephyr.security.access_control.exceptions import ColdStartLockedError
 
 
 @pytest.fixture
@@ -36,8 +37,8 @@ def temp_rbac_config(tmp_path: Path, monkeypatch) -> Path:
 
 class TestBasicFlows:
     def test_read_allowed(self, tmp_path, monkeypatch, temp_rbac_config):
-        monkeypatch.setattr("zephyr.agent_rbac.immutable_core.PROJECT_ROOT", tmp_path)
-        from zephyr.agent_rbac.immutable_core import ImmutableCore
+        monkeypatch.setattr("zephyr.security.access_control.immutable_core.PROJECT_ROOT", tmp_path)
+        from zephyr.security.access_control.immutable_core import ImmutableCore
         guard = PermissionGuard()
         guard._l0 = ImmutableCore(project_root=tmp_path)
         guard._l1 = type(guard._l1)(immutable_core=guard._l0)
@@ -47,8 +48,8 @@ class TestBasicFlows:
         assert not guard.is_blocked(result)
 
     def test_always_blocked(self, tmp_path, monkeypatch, temp_rbac_config):
-        monkeypatch.setattr("zephyr.agent_rbac.immutable_core.PROJECT_ROOT", tmp_path)
-        from zephyr.agent_rbac.immutable_core import ImmutableCore
+        monkeypatch.setattr("zephyr.security.access_control.immutable_core.PROJECT_ROOT", tmp_path)
+        from zephyr.security.access_control.immutable_core import ImmutableCore
         guard = PermissionGuard()
         guard._l0 = ImmutableCore(project_root=tmp_path)
         guard._l1 = type(guard._l1)(immutable_core=guard._l0)
@@ -58,8 +59,8 @@ class TestBasicFlows:
         assert guard.is_blocked(result)
 
     def test_write_with_auto_guard(self, tmp_path, monkeypatch, temp_rbac_config):
-        monkeypatch.setattr("zephyr.agent_rbac.immutable_core.PROJECT_ROOT", tmp_path)
-        from zephyr.agent_rbac.immutable_core import ImmutableCore
+        monkeypatch.setattr("zephyr.security.access_control.immutable_core.PROJECT_ROOT", tmp_path)
+        from zephyr.security.access_control.immutable_core import ImmutableCore
         guard = PermissionGuard()
         guard._l0 = ImmutableCore(project_root=tmp_path)
         guard._l1 = type(guard._l1)(immutable_core=guard._l0)
@@ -73,8 +74,8 @@ class TestBasicFlows:
 
 class TestBlockedScenarios:
     def test_blocked_by_l0(self, tmp_path, monkeypatch, temp_rbac_config):
-        monkeypatch.setattr("zephyr.agent_rbac.immutable_core.PROJECT_ROOT", tmp_path)
-        from zephyr.agent_rbac.immutable_core import ImmutableCore
+        monkeypatch.setattr("zephyr.security.access_control.immutable_core.PROJECT_ROOT", tmp_path)
+        from zephyr.security.access_control.immutable_core import ImmutableCore
         guard = PermissionGuard()
         guard._l0 = ImmutableCore(project_root=tmp_path)
         guard._l1 = type(guard._l1)(immutable_core=guard._l0)
@@ -83,8 +84,8 @@ class TestBlockedScenarios:
         assert guard.is_blocked(result) or result.decision == GuardDecision.BLOCKED
 
     def test_explain_blocked(self, tmp_path, monkeypatch, temp_rbac_config):
-        monkeypatch.setattr("zephyr.agent_rbac.immutable_core.PROJECT_ROOT", tmp_path)
-        from zephyr.agent_rbac.immutable_core import ImmutableCore
+        monkeypatch.setattr("zephyr.security.access_control.immutable_core.PROJECT_ROOT", tmp_path)
+        from zephyr.security.access_control.immutable_core import ImmutableCore
         guard = PermissionGuard()
         guard._l0 = ImmutableCore(project_root=tmp_path)
         guard._l1 = type(guard._l1)(immutable_core=guard._l0)

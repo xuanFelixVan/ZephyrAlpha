@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0537 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-365 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.test_code_dedup_engine.test_self_scan_integrity
 # [STABILITY] evolving
 # [SAFETY] L
@@ -13,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 
 def test_engine_self_import():
-    from zephyr.l01_infrastructure.code_dedup_engine import __version__
+    from zephyr.governance import __version__
     assert __version__ == "0.10.0"
 
 
@@ -26,7 +27,7 @@ def test_all_modules_importable():
         "ast_comparator",
         "degradation",
         "report",
-        "health_monitor",
+        "health-monitor",
         "config",
         "extraction_safety",
         "doom_loop_guard",
@@ -37,12 +38,12 @@ def test_all_modules_importable():
     ]
     for mod_name in modules:
         mod = __import__(
-            f"zephyr.l01_infrastructure.code_dedup_engine.{mod_name}",
+            f"zephyr.testing.code_dedup.{mod_name}",
             fromlist=[mod_name],
         )
         assert mod is not None, f"Module {mod_name} import failed"
 
 
 def test_config_tier_count():
-    from zephyr.l01_infrastructure.code_dedup_engine.config import PROJECT_SCALE_TIERS
+    from zephyr.governance.config import PROJECT_SCALE_TIERS
     assert len(PROJECT_SCALE_TIERS) == 4

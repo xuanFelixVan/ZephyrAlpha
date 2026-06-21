@@ -1,0 +1,47 @@
+{
+  "task_id": "DM-100164",
+  "source_file": "docs/01_policies_and_standards/meta/governance_metrics_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "gov_metrics_kpi": {
+      "title": "6项治理KPI",
+      "rules": [
+        "K1: 孤儿率 ≤ 5%",
+        "K2: 注册覆盖率 = 100%",
+        "K3: 规则-代码同步率 ≥ 95%",
+        "K4: 门禁通过率 ≥ 90%",
+        "K5: 漂移检测响应时间 ≤ 24h",
+        "K6: 审计链完整性 = 100%"
+      ]
+    },
+    "gov_metrics_prohibitions": {
+      "title": "度量禁止行为",
+      "rules": [
+        "禁止：KPI数据造假",
+        "禁止：跳过度量直接关闭任务",
+        "禁止：度量不达标时强制推进",
+        "禁止：度量指标变更不经审批"
+      ]
+    },
+    "skipped_content": {
+      "description": "SSoT声明、消费者注册表、审查周期等为非规则类内容，不进入YAML",
+      "items": [
+        "度量数据SSoT声明（指向governance_metadata数据库）",
+        "度量消费者注册表",
+        "度量审查周期定义",
+        "度量采集流程描述（纯流程描述无禁止/必须约束）"
+      ]
+    }
+  },
+  "summary": {
+    "total_rules": 10,
+    "COVERED": 10,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "TRAE-043 enriched in current session: added gov_metrics_kpi(6 rules), gov_metrics_prohibitions(4 rules)",
+    "Non-rule content skipped: SSoT declarations, consumer registry, review cycles, collection process descriptions"
+  ]
+}

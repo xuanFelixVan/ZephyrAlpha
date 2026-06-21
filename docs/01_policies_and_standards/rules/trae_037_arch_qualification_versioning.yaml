@@ -1,0 +1,531 @@
+rule_id: TRAE-037
+title: 架构治理-合格与版本化
+aliases:
+- GOV-ARCH-003
+- GOV-ARCH-004
+- GOV-ARCH-010
+layer: L1
+severity: error
+scope: architecture_qualification
+domain: TRAE
+triggers:
+- operation: architecture_qualification
+sections:
+  gov_arch_003:
+    title: 架构版本化策略
+    section_type: rule
+    original_rules:
+    - GOV-ARCH-003
+    - AVP-001
+    - AVP-002
+    - AVP-003
+    - AVP-004
+    conditions:
+    - type: constraint
+      check: 架构文档frontmatter是否包含version字段
+      pass: 格式为X.Y.Z，合规
+      fail: 文档不合规
+    - type: constraint
+      check: 版本号递增是否符合规则
+      pass: Patch(Z+1)=文字修正；Minor(Y+1)=新增章节/规则；Major(X+1)=架构方向变更
+      fail: 版本号混乱
+    - type: trigger
+      check: Minor及以上变更
+      pass: 必须在文档末尾修订记录中记录变更日期、版本和内容
+      fail: 审计不通过
+    - type: trigger
+      check: 架构变更导致代码修改
+      pass: 代码变更的PR必须引用对应的架构文档版本
+      fail: PR不被接受
+    actions:
+    - type: mandatory
+      step: 所有架构文档frontmatter必须包含version字段，格式X.Y.Z（AVP-001）
+    - type: mandatory
+      step: 版本号递增遵循Patch/Minor/Major规则（AVP-002）
+    - type: mandatory
+      step: Minor及以上变更必须在修订记录中记录变更日期、版本和内容（AVP-003）
+    - type: mandatory
+      step: 架构变更导致代码修改时，PR必须引用对应架构文档版本，架构决策记录参见KB:decisions namespace（AVP-004）
+    prohibitions:
+    - 架构文档不得省略version字段
+    - 版本号递增不得违反Patch/Minor/Major语义
+  gov_arch_004:
+    title: 系统合格判定标准
+    section_type: rule
+    original_rules:
+    - GOV-ARCH-004
+    - SQS-001
+    - SQS-002
+    - SQS-003
+    - SQS-004
+    conditions:
+    - type: constraint
+      check: 工程层6项基础检查——模块边界清晰、统一日志/Tracing、回测&实盘一致性、异常处理机制、数据质量校验、延迟监控与SLI
+      pass: 全部满足=达到工程级门槛
+      fail: 任何一项不满足=系统尚未达到工程级门槛
+    - type: constraint
+      check: 架构层5项核心能力——数据流标准化、统一消息/数据总线、可扩展性、统一风控层、回放&仿真
+      pass: 满足至少4项=专业级系统
+      fail: 不满足4项=未达专业级
+    - type: constraint
+      check: 机构级7问——无人值守一周、100%决策回放、1天接入新策略、100+策略并行、统一风险敞口控制、交易成本可控(<收益20%)、合规审计要求
+      pass: 7项全部满足=接近机构级系统
+      fail: 未全部满足
+    actions:
+    - type: mandatory
+      step: 工程层6项基础检查必须全部满足才算合格（SQS-001）
+    - type: mandatory
+      step: 架构层5项核心能力满足至少4项判定为专业级（SQS-002）
+    - type: mandatory
+      step: 机构级7问全部满足判定为接近机构级系统（SQS-003）
+    - type: mandatory
+      step: 系统水平综合公式=架构成熟度×策略质量×风控能力×执行稳定性，模块数量≠系统水平（SQS-004）
+    prohibitions:
+    - 不得以模块数量作为系统水平的判定依据
+  gov_arch_010:
+    title: 基础设施层依赖规则
+    section_type: rule
+    original_rules:
+    - GOV-ARCH-010
+    - ILDR-001
+    - ILDR-002
+    - ILDR-003
+    - ILDR-004
+    conditions:
+    - type: constraint
+      check: DEPTH_0边——shared-core依赖（所有MOD-INF-*→MOD-INF-019单向依赖）
+      pass: 允许存在，不触发循环告警
+      fail: N/A
+    - type: constraint
+      check: DEPTH_0边——database(MOD-INF-012)↔system-telemetry(MOD-INF-015)双向依赖
+      pass: 合法循环LEGAL-001，有限步长收敛，不触发循环告警
+      fail: N/A
+    - type: constraint
+      check: DEPTH_1边——运行时调用关系应通过EventBus或Shared/Contract接口实现松耦合
+      pass: 已迁至EventBus或标记pending_refactor
+      fail: 触发循环告警，附带recommendation
+    - type: constraint
+      check: 跨层依赖边界——cross_layer模块间仅允许单向depends_on shared-core
+      pass: 符合规则
+      fail: 违规，需架构评审
+    actions:
+    - type: mandatory
+      step: 所有infra/cross_layer模块允许单向depends_on MOD-INF-019(shared-core)，不触发循环告警（ILDR-001）
+    - type: mandatory
+      step: database↔system-telemetry双向依赖为合法循环LEGAL-001，telemetry写db走connection-pool直写不走ORM（ILDR-002）
+    - type: mandatory
+      step: DEPTH_1边应迁至EventBus松耦合，已列出12条候选边及recommendation（ILDR-003）
+    - type: mandatory
+      step: 跨层依赖边界4条规则：cross_layer间仅单向depends_on shared-core；禁止直接双向depends_on（除LEGAL-001）；infra_ops→cross_layer仅允许depends_on shared-core/pipeline/database（需架构评审）；cross_layer→infra_ops仅允许depends_on具体l01模块（需架构评审，优先EventBus）（ILDR-004）
+    - type: mandatory
+      step: detect_depends_on_cycles.py消费本规则，DEPTH_0白名单边不触发循环告警，DEPTH_1边仍触发告警但附带recommendation
+    prohibitions:
+    - cross_layer模块之间禁止直接双向depends_on（除白名单LEGAL-001）
+    - 禁止在DEPTH_1边维持直接depends_on而不迁至EventBus（pending_refactor状态需逐步消除）
+    - 合法循环必须收敛、有限步长、可证明无分歧
+  gov_arch_003_scope:
+    title: 架构版本化策略适用范围
+    section_type: context
+    original_rules:
+    - GOV-ARCH-003
+    summary: 本策略适用于架构视图文档、架构决策记录（KB decisions namespace）、系统设计文档
+    impact_on_rules:
+    - 界定AVP-001~004规则的适用范围，非架构类文档不强制遵循版本化策略
+    key_decisions:
+    - 架构决策记录参见KB:decisions namespace，ADR协议规约由本规则承接
+  gov_arch_003_verification:
+    title: 架构版本化验证方式
+    section_type: verification
+    original_rules:
+    - GOV-ARCH-003
+    steps:
+    - step: AVP-001 检查架构文档是否有version字段
+      command: 检查架构文档frontmatter是否包含version字段
+      expected_exit: 0
+      on_fail: 文档不合规，必须补齐version字段
+    - step: AVP-002 检查版本号递增是否符合规则
+      command: 对比变更前后版本号，验证Patch/Minor/Major递增语义
+      expected_exit: 0
+      on_fail: 版本号混乱，必须修正递增规则
+    - step: AVP-003 检查修订记录是否完整
+      command: Minor及以上变更后检查文档末尾修订记录
+      expected_exit: 0
+      on_fail: 审计不通过，必须补齐修订记录
+    - step: AVP-004 检查代码PR是否引用架构版本
+      command: 代码PR中检查是否引用对应架构文档版本
+      expected_exit: 0
+      on_fail: PR不被接受，必须补充架构文档版本引用
+  gov_arch_003_change_history:
+    title: 架构版本化策略修订记录
+    section_type: examples
+    original_rules:
+    - GOV-ARCH-003
+    items:
+    - description: '2026-05-01 v0.2.0'
+      details: '#20审批修复：ABS/COND→AVP-（AVP-001~AVP-004）。补齐depends_on:[GOV-ARCH-001]+ai_autonomy:human_gated。date→2026-05-01。'
+    - description: '2026-04-30 v0.1.0'
+      details: 初始版本
+    - description: '2026-06-19 v0.3.0'
+      details: RQ审查修复——补充references.scripts和enforcement.executors(detect_depends_on_cycles.py)、provenance迁移状态标记(RQ-04/RQ-09)。
+  gov_arch_004_principles:
+    title: 系统合格判定核心原则
+    section_type: principles
+    original_rules:
+    - GOV-ARCH-004
+    - SQS-004
+    items:
+    - id: SQS-P001
+      statement: 模块数量≠系统水平
+      rationale: 模块数量既可能代表复杂度高，也可能代表拆分过度、设计混乱。顶级量化系统有的模块很多，但也有极其精简、靠抽象和复用取胜的。
+      applies_to: 系统合格判定、系统水平评价
+    - id: SQS-P002
+      statement: 系统水平=架构成熟度×策略质量×风控能力×执行稳定性
+      rationale: 综合公式而非单一维度，模块数量不是评价因子
+      applies_to: 系统水平综合评价
+  gov_arch_004_verification:
+    title: 工程层6项基础检查
+    section_type: verification
+    original_rules:
+    - GOV-ARCH-004
+    - SQS-001
+    steps:
+    - step: 模块边界清晰
+      command: 依赖图分析——检查模块间低耦合、高内聚，无循环依赖
+      expected_exit: 0
+      on_fail: 系统尚未达到工程级门槛，必须解决循环依赖
+    - step: 统一日志/Tracing
+      command: 日志审计——检查全链路可追踪，支持上下文传递
+      expected_exit: 0
+      on_fail: 系统尚未达到工程级门槛，必须补齐统一日志
+    - step: 回测&实盘一致性
+      command: 回归测试——验证同一套代码逻辑在不同执行模式下结果一致
+      expected_exit: 0
+      on_fail: 系统尚未达到工程级门槛，必须修复一致性问题
+    - step: 异常处理机制
+      command: 混沌测试——验证单点故障不扩散，有降级策略
+      expected_exit: 0
+      on_fail: 系统尚未达到工程级门槛，必须补齐异常处理
+    - step: 数据质量校验
+      command: 数据质量报告——检查价格跳空检测、重复数据检测、时间戳一致性
+      expected_exit: 0
+      on_fail: 系统尚未达到工程级门槛，必须补齐数据质量校验
+    - step: 延迟监控与SLI
+      command: 监控仪表盘——检查端到端延迟分布（P50/P99/P99.9）可观测
+      expected_exit: 0
+      on_fail: 系统尚未达到工程级门槛，必须补齐延迟监控
+  gov_arch_004_architecture_patterns:
+    title: 架构层5项核心能力与架构模式
+    section_type: context
+    original_rules:
+    - GOV-ARCH-004
+    - SQS-002
+    summary: 架构层关键看5个核心能力（数据流标准化、统一消息/数据总线、可扩展性、统一风控层、回放&仿真），满足至少4项=专业级系统。2026年主流为混合架构，非纯EDA。
+    impact_on_rules:
+    - SQS-002判定规则依赖5项能力的满足数量
+    key_decisions:
+    - 满足5项中至少4项=专业级系统
+    - 2026年主流为混合架构（EDA+Dataflow+RPC），非纯EDA
+    architecture_capabilities:
+    - '序号①: 数据流标准化——市场数据→特征→信号→决策→执行，链路清晰'
+    - '序号②: 统一消息/数据总线——基于标准化总线（事件驱动/数据流/混合均可），非硬编码调用'
+    - '序号③: 可扩展性——新增策略无需修改多个模块'
+    - '序号④: 统一风控层——风险敞口集中管控，非各策略自行处理'
+    - '序号⑤: 回放&仿真——可复现任意历史日期的决策过程'
+    architecture_patterns:
+    - pattern: 事件驱动(EDA)
+      scenario: 高频、复杂事件处理
+      trend: 仍主流，但混合模式增多
+    - pattern: 数据流驱动(Dataflow)
+      scenario: 中低频、批量特征计算
+      trend: 因Apache Flink/Beam成熟，占比上升
+    - pattern: 请求-响应(RPC)
+      scenario: 策略配置、风控查询
+      trend: 与EDA混合使用
+    - pattern: 混合架构
+      scenario: 大型机构
+      trend: 2026年主流，非纯EDA
+  gov_arch_004_frontier_tech:
+    title: 前沿技术评估（2026年）
+    section_type: context
+    original_rules:
+    - GOV-ARCH-004
+    summary: 2026年前沿技术在量化系统中的成熟度评估，包括LLM异常检测、因果推断、联邦学习、量子优化
+    impact_on_rules:
+    - 前沿技术评估不直接影响合格判定，但影响架构演进方向
+    key_decisions:
+    - LLM-based异常检测建议评估引入（生产中）
+    - 因果推断中长期规划（学术界→工业界）
+    - 联邦学习视合作需求（早期采用）
+    - 量子优化持续关注（实验阶段）
+    frontier_tech_table:
+    - tech: LLM-based异常检测
+      maturity: 生产中
+      scenario: 市场异常模式识别
+      recommendation: 建议评估引入
+    - tech: 因果推断(Causal Inference)
+      maturity: 学术界→工业界
+      scenario: 区分相关性与因果性，避免过拟合
+      recommendation: 中长期规划
+    - tech: 联邦学习(Federated Learning)
+      maturity: 早期采用
+      scenario: 多机构联合训练因子
+      recommendation: 视合作需求
+    - tech: 量子优化(Quantum Optimization)
+      maturity: 实验阶段
+      scenario: 组合优化（仓位分配）
+      recommendation: 持续关注
+  gov_arch_004_module_matrix:
+    title: 模块数量与系统水平四象限矩阵
+    section_type: decision_tree
+    original_rules:
+    - GOV-ARCH-004
+    - SQS-004
+    items:
+    - condition: 模块多+结构清晰
+      if_true: 有机构级雏形
+      if_false: null
+    - condition: 模块多+调用混乱
+      if_true: 复杂但不高级
+      if_false: null
+    - condition: 模块少+抽象复用强
+      if_true: 高水平设计
+      if_false: null
+    - condition: 模块少+功能单薄
+      if_true: 玩具项目
+      if_false: null
+  gov_arch_004_change_history:
+    title: 系统合格判定标准修订记录
+    section_type: examples
+    original_rules:
+    - GOV-ARCH-004
+    items:
+    - description: v1.0.0 2026-05-01
+      details: 初始版本。定义工程层6项基础检查、架构层5项核心能力、机构级7问、系统水平综合公式、模块数量四象限矩阵。
+    - description: v1.1.0 2026-06-19
+      details: RQ审查修复——补充change_history记录（RQ-14）。
+  gov_arch_010_terminology:
+    title: 基础设施层依赖术语定义
+    section_type: context
+    original_rules:
+    - GOV-ARCH-010
+    summary: 定义DEPTH_0边、DEPTH_1边、合法循环、EventBus松耦合、shared-core五个核心术语
+    impact_on_rules:
+    - 术语定义是ILDR-001~004规则的理解基础
+    - detect_depends_on_cycles.py依赖这些术语进行循环检测分类
+    key_decisions:
+    - DEPTH_0边断则系统无法运行时初始化，不触发循环告警
+    - DEPTH_1边可重构，应迁至EventBus松耦合
+    - 合法循环必须收敛、有限步长、可证明无分歧
+    terminology:
+    - term: DEPTH_0边
+      definition: 物理部署必须同时存在的依赖关系。断则系统无法运行时初始化。
+    - term: DEPTH_1边
+      definition: 运行时通过接口/EventBus/Shared实现的调用关系，可重构。
+    - term: 合法循环
+      definition: 两个模块互为DEPTH_0依赖（如database↔telemetry）。必须收敛、有限步长、可证明无分歧。
+    - term: EventBus松耦合
+      definition: 替代直接depends_on的模式——生产者发事件到Topic，消费者订阅，双方互不感知module_id。
+    - term: shared-core
+      definition: MOD-INF-019，位于_cross_layer/，提供所有基础设施模块共用的类型、常量、异常、协议定义。
+  gov_arch_010_legal_cycle:
+    title: 合法循环白名单
+    section_type: context
+    original_rules:
+    - GOV-ARCH-010
+    - ILDR-002
+    summary: 合法循环LEGAL-001为database(MOD-INF-012)↔system-telemetry(MOD-INF-015)双向依赖，有限步长收敛，不触发循环告警
+    impact_on_rules:
+    - LEGAL-001是ILDR-002的核心实例
+    - detect_depends_on_cycles.py对LEGAL-001不触发循环告警
+    key_decisions:
+    - LEGAL-001经owner批准，approved_date为2026-05-06
+    - telemetry写db走connection-pool直写不走ORM
+    legal_cycles:
+    - id: LEGAL-001
+      path: MOD-INF-012→MOD-INF-015→MOD-INF-012
+      justification: database↔system-telemetry运行时bootstrap对
+      status: approved
+      approved_by: owner
+      approved_date: '2026-05-06'
+      constraint: telemetry写db走connection-pool直写不走ORM
+  gov_arch_010_eventbus_edges:
+    title: 应迁至EventBus的DEPTH_1边
+    section_type: procedure
+    original_rules:
+    - GOV-ARCH-010
+    - ILDR-003
+    steps:
+    - order: 1
+      action: 将feedback-loop(MOD-INF-010)→pipeline(MOD-INF-009)迁至EventBus Topic:action.execute
+      pre_condition: feedback-loop depends_on pipeline
+      expected_result: depends_on移除，FLE向pipeline提交Action走EventBus
+      on_failure: 维持pending_refactor状态，触发循环告警
+    - order: 2
+      action: 将llm-security(MOD-INF-014)→feedback-loop(MOD-INF-010)迁至EventBus Topic:alert.security
+      pre_condition: llm-security depends_on feedback-loop
+      expected_result: depends_on已移除，LSG异常上送改用EventBus松耦合
+      on_failure: N/A（已resolved）
+    - order: 3
+      action: 将pipeline(MOD-INF-009)→llm-security(MOD-INF-014)迁至EventBus Topic:action.security_check
+      pre_condition: pipeline depends_on llm-security
+      expected_result: depends_on移除，pipeline执行前安全检查走EventBus
+      on_failure: 维持pending_refactor状态，触发循环告警
+    - order: 4
+      action: 将audit-trail(MOD-INF-020)→database(MOD-INF-012)迁至database Contract接口
+      pre_condition: audit-trail depends_on database
+      expected_result: depends_on移除，审计记录写入走database Contract接口
+      on_failure: 维持pending_refactor状态，可降级为DEPTH_0（audit必须持久化）
+    - order: 5
+      action: 将feedback-loop(MOD-INF-010)→system-telemetry(MOD-INF-015)迁至Shared/EventBus松耦合
+      pre_condition: feedback-loop depends_on system-telemetry
+      expected_result: depends_on已移除，FLE消费遥测改用Shared/EventBus松耦合
+      on_failure: N/A（已resolved）
+    - order: 6
+      action: 移除system-telemetry(MOD-INF-015)自引用
+      pre_condition: system-telemetry depends_on自身（自引用）
+      expected_result: 自体监控不进入depends_on图
+      on_failure: N/A（已resolved）
+    - order: 7
+      action: 将agent-rbac(MOD-INF-018)→audit-trail(MOD-INF-020)迁至EventBus Topic:audit.record
+      pre_condition: agent-rbac depends_on audit-trail
+      expected_result: depends_on移除，RBAC决策审计走EventBus
+      on_failure: 维持pending_refactor状态，触发循环告警
+    - order: 8
+      action: 将rollback-system(MOD-INF-021)→audit-trail(MOD-INF-020)迁至EventBus Topic:audit.record
+      pre_condition: rollback-system depends_on audit-trail
+      expected_result: depends_on移除，回滚审计走EventBus
+      on_failure: 维持pending_refactor状态，触发循环告警
+    - order: 9
+      action: 将drift-detector(MOD-INF-023)→audit-trail(MOD-INF-020)迁至EventBus Topic:audit.record
+      pre_condition: drift-detector depends_on audit-trail
+      expected_result: depends_on移除，漂移检测记录走EventBus
+      on_failure: 维持pending_refactor状态，触发循环告警
+    - order: 10
+      action: 将budget-enforcer(MOD-INF-024)→audit-trail(MOD-INF-020)迁至EventBus Topic:audit.record
+      pre_condition: budget-enforcer depends_on audit-trail
+      expected_result: depends_on移除，预算执行记录走EventBus
+      on_failure: 维持pending_refactor状态，触发循环告警
+    - order: 11
+      action: 将escalation-protocol(MOD-INF-022)→audit-trail(MOD-INF-020)迁至EventBus Topic:audit.record
+      pre_condition: escalation-protocol depends_on audit-trail
+      expected_result: depends_on移除，升级记录走EventBus
+      on_failure: 维持pending_refactor状态，触发循环告警
+    - order: 12
+      action: 将vector-memory(MOD-INF-011)→llm-security(MOD-INF-014)迁至EventBus Topic:query.security_check
+      pre_condition: vector-memory depends_on llm-security
+      expected_result: depends_on移除，向量检索安全检查走EventBus
+      on_failure: 维持pending_refactor状态，触发循环告警
+  gov_arch_010_resolved_edges:
+    title: Phase 6已解决边
+    section_type: examples
+    original_rules:
+    - GOV-ARCH-010
+    items:
+    - description: BREAK-001 REG-LLM-001→GOV-AI-002
+      details: 数据目录不应依赖策略文档。移除REG-LLM-001的depends_on:GOV-AI-002。
+    - description: BREAK-002 MOD-INF-014→MOD-INF-010
+      details: LSG异常通过EventBus松耦合上送，不依赖FLE直接调用。移除depends_on。
+    - description: BREAK-003 MOD-INF-010→MOD-INF-015
+      details: FLE消费遥测通过Shared/EventBus松耦合。移除depends_on。
+    - description: BREAK-004 MOD-INF-015→MOD-INF-015
+      details: 自体监控不进入depends_on图。移除自引用。
+    - description: Phase 6结果汇总
+      details: 循环数从25降至21，减少4个循环。
+  gov_arch_010_cycle_analysis:
+    title: 剩余21循环根因分析
+    section_type: root_cause_analysis
+    original_rules:
+    - GOV-ARCH-010
+    methodology: 按类别分层分析——文档级循环2个+跨层网格19个，识别核心致密三角并制定分步解网方案
+    reasoning_chain:
+    - step: 1
+      finding: 2个文档级循环——REMAIN-DOC-001(task-system↔task-card-template)和REMAIN-DOC-002(model-routing-policy↔task-system)
+      implication: 文档模板与模块间的双向引用需改为单向依赖
+    - step: 2
+      finding: 19个跨层网格循环，核心簇为feedback-loop↔pipeline↔llm-security致密三角
+      implication: 核心三角是根因，所有外围模块通过audit-trail↔database接入该三角
+    - step: 3
+      finding: 外围模块(agent-rbac/rollback-system/drift-detector/budget-enforcer/escalation-protocol)均依赖audit-trail
+      implication: 将外围模块对audit-trail的依赖全部迁至EventBus可立即消除大量小循环
+    - step: 4
+      finding: 核心三角需架构级重新设计，定义EventBus Topic契约将调用关系转为subscribe/publish
+      implication: 需owner+架构评审决策，预计Step A后剩余约10循环，Step B后剩余0-3循环（含LEGAL-001）
+  gov_arch_010_automation_rules:
+    title: 自动化消费规则
+    section_type: procedure
+    original_rules:
+    - GOV-ARCH-010
+    steps:
+    - order: 1
+      action: detect_depends_on_cycles.py启动时MUST加载本策略文件
+      pre_condition: 策略文件存在于expected_load_path
+      expected_result: 成功加载DEPTH_0/DEPTH_1规则
+      on_failure: 使用内置默认规则并输出warn_only警告
+    - order: 2
+      action: DEPTH_0白名单边MUST不触发循环告警（即使形成环）
+      pre_condition: 边在DEPTH_0白名单中（shared-core依赖或LEGAL-001）
+      expected_result: 无告警输出
+      on_failure: N/A（白名单边不告警）
+    - order: 3
+      action: DEPTH_1边MUST触发告警但附带对应recommendation
+      pre_condition: 边在DEPTH_1列表中且状态为pending_refactor
+      expected_result: 输出循环告警+recommendation
+      on_failure: 无recommendation则仅输出循环告警
+    - order: 4
+      action: 已解决边(resolved)MUST不触发告警
+      pre_condition: 边状态为resolved
+      expected_result: 无告警输出
+      on_failure: N/A
+    - order: 5
+      action: 策略文件加载失败时MUST回退到默认规则——MOD-INF-*→MOD-INF-019的边不参与环检测；TEMPLATE-*和GOV-*之间的小环(≤3步)降级为WARNING
+      pre_condition: 策略文件加载失败时回退
+      expected_result: shared_core_immune和document_immune规则生效
+      on_failure: 全量循环告警
+    implementation_note: 'RQ-06脚本对齐说明(2026-06-19)：当前detect_depends_on_cycles.py仅实现基础DFS环检测，尚未实现DEPTH_0/DEPTH_1分类、LEGAL-001白名单、recommendation输出。上述steps为脚本MUST实现的规约要求（非当前行为），脚本升级后MUST同步更新本note。'
+  gov_arch_010_change_history:
+    title: 基础设施层依赖规则版本历史
+    section_type: examples
+    original_rules:
+    - GOV-ARCH-010
+    items:
+    - description: v1.0.0 2026-05-06
+      details: 初始版本。定义DEPTH_0/DEPTH_1规则、EventBus松耦合模式、已解决4条边记录、剩余21循环分析。
+    - description: v1.1.0 2026-06-19
+      details: RQ审查修复——补充references.scripts和enforcement.executors(detect_depends_on_cycles.py)、provenance迁移状态标记(RQ-04/RQ-09)。
+references:
+  rule_ids:
+  - TRAE-037
+  scripts:
+  - scripts/governance/d5_architecture/detectors/detect_depends_on_cycles.py
+  modules: []
+  blueprints: []
+enforcement:
+  type: code
+  executors:
+  - scripts/governance/d5_architecture/detectors/detect_depends_on_cycles.py
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+  change_history:
+  - version: 0.4.2
+    date: '2026-06-21'
+    by: AI-Assistant
+    changes:
+    - P2修复——gov_arch_003_scope.key_decisions否定陈述句"原adr-protocol.md已删除"改为肯定陈述"ADR协议规约由本规则承接"，符合GOV-DOC-016纯陈述原则
+  - version: 0.4.1
+    date: '2026-06-21'
+    by: AI-Assistant
+    changes:
+    - P2修复——references.rule_ids从[]补充为[TRAE-037]（本文件rule_id）
+  - version: 0.4.0
+    date: '2026-06-21'
+    by: session-20260621-batch4
+    changes:
+    - P1修复——gov_arch_010_automation_rules内部矛盾修正：actions从陈述语气(声称已实现)改为规约语气(MUST要求)，与implementation_note(承认未实现)对齐，符合GOV-DOC-016纯陈述原则+GOV-DOC-017规则抽象性原则
+provenance:
+  migration_note: 源文件已迁移为trae_XXX.yaml格式，本文件(trae_037)现为SSoT。源文件hash为迁移前历史记录。
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

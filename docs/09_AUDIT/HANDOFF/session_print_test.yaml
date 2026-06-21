@@ -1,0 +1,31 @@
+# [A_config] module_id=CFG-session-print-test | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+module_id: DOM-GOV-001
+---
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# [BLUEPRINT] DOM-GOV-001 | docs/09_audit/handoff/session-print-test.yaml | §
+session_id: "print-test"
+created_at: "2026-05-08T12:41:09.561898+00:00"
+completed_tasks:
+  - "CP-1"
+in_progress_tasks:
+  - task_id: "CP-2"
+    step: "pending"
+    next_step: "CP-2: Bridge"
+blocked_items:
+  - task_id: "OPS-001"
+    reason: "missing dep"
+decisions_made:
+next_actions:
+  - priority: 1
+    action: "CP-3: Next"
+    task_ref: "CP-3"
+context_summary: "完成 1 个任务, 1 个进行中, 1 个阻塞. 总计 3 个任务有活动记录."
+open_questions:
+  - "阻塞任务 OPS-001 的解除条件是否仍然有效？是否需要 Owner 介入？"
+  - "上一个 session 的变更是否需要同步更新对应的蓝图文档？"

@@ -1,0 +1,46 @@
+# [A_module] module_id=MOD-SHR_severity_types | layer=module | stability=frozen | safety=L | ai_autonomy=immutable_core
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
+# [MODULE] zephyr.integration.shared.schema.severity_types
+# [INVARIANTS] Priority P0-P4 MUST align with GOV-TASK-004 §2.2; AuditSeverity MUST be backward-compatible alias for Priority P0-P2
+# [MODIFY-GUARD] GOV-TASK-004; 
+# [CONSUMERS] gates.task_types; gates.check_types.ct_audit_findings_resolved; shared.schema.schemas; shared.schema.audit_types; kb.knowledge_types
+# [STABILITY] frozen
+# [SAFETY] L
+# [AI_AUTONOMY] immutable_core
+# [ERROR_CONTRACT] ValueError on invalid enum value
+# [TESTS] tests/unit/test_schemas.py; tests/unit/shared/test_schemas.py
+
+from __future__ import annotations
+
+from enum import Enum
+
+import importlib as _il
+_mod = _il.import_module("zephyr.ops.circuit_breaker_types")
+CircuitBreakerState = _mod.CircuitBreakerState
+
+__all__ = [
+    "SafetyLevel",
+    "AuditSeverity",
+    "Priority",
+    "CircuitBreakerState",
+]
+
+
+class SafetyLevel(str, Enum):
+    L = "L"
+    M = "M"
+    H = "H"
+
+
+class AuditSeverity(str, Enum):
+    P0 = "P0"
+    P1 = "P1"
+    P2 = "P2"
+
+
+class Priority(str, Enum):
+    P0 = "P0"
+    P1 = "P1"
+    P2 = "P2"
+    P3 = "P3"
+    P4 = "P4"

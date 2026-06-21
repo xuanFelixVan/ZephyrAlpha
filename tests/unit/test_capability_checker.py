@@ -1,16 +1,17 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1983 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-601 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_capability_checker
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """能力检查器单元测试——capability_check + checksum校验 + 离线更新 T。"""
 
-from __future__ import annotations
 
 import pytest
-from zephyr.gates.cbac_matrix import CbacMatrix
-from zephyr.gates.capability_checker import CapabilityChecker
+from zephyr.governance.rule_enforcement.cbac_matrix import CbacMatrix
+from zephyr.governance.rule_enforcement.capability_checker import CapabilityChecker
 
 
 @pytest.fixture
@@ -36,5 +37,5 @@ def test_checksum_consistent(checker, matrix):
 
 
 def test_audit_log_after_deny(checker):
-    checker.capability_check("orchestrator", "llm_security", "check_safety")
+    checker.capability_check("orchestrator", "llm-security", "check_safety")
     assert len(checker.audit_log()) >= 1

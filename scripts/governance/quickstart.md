@@ -38,9 +38,9 @@ python scripts/governance/run_all.py --diff-ref HEAD~1
 
 | 看什么 | 去哪里 |
 |--------|--------|
-| 蓝图全文 | `docs/03_modules/l01_infrastructure/script-system/blueprint.md` |
+| 蓝图全文 | `docs/03_modules/infrastructure/script-system/blueprint.md` |
 | 脚本注册表 | `scripts/governance/script_manifest.yaml` |
-| 质量铁律 | `scripts/governance/quality-standard.md` |
+| 质量铁律 | `scripts/governance/quality_standard.md` |
 | 所有阈值 | `scripts/governance/_shared/thresholds.yaml` |
 | Kill Switch | `scripts/governance/meta/kill_switch_state.yaml` |
 | 健康自检 | `python scripts/governance/meta/validate_script_system_health.py` |
@@ -49,7 +49,7 @@ python scripts/governance/run_all.py --diff-ref HEAD~1
 
 - 新脚本必须走**三件套入库**：落位 → manifest注册 → 运行验证
 - 脚本退出码：**0**=通过 / **1**=警告 / **2**=阻断 / **3**=崩溃
-- pre-commit 门禁：V1违规硬阻断、V2违规警告
+- pre_commit 门禁：V1违规硬阻断、V2违规警告
 - 假阳性率 > 5% → Error Budget 消耗 → 可能触发 Feature Freeze
 
 ## 1 人+AI 维护备忘

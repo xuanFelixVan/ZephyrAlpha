@@ -1,43 +1,7 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
-# Re-export shim — canonical location is now zephyr.pipeline.backpressure_types
+# [A_module] module_id=MOD-SHR_resume | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
+# Import from shared-internal _types.py — eliminates circular import to infrastructure
 
-from zephyr.pipeline.backpressure_types import BackpressureResume
+from zephyr.shared.contracts.backpressure._types import BackpressureResume
 
 __all__ = ["BackpressureResume"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

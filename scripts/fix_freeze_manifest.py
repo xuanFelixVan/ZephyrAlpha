@@ -1,9 +1,9 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/fix_freeze_manifest.py | §
-"""Fix freeze_manifest.yaml - comprehensive repair of all corrupted desc fields."""
+"""Fix freezemanifest.yaml - comprehensive repair of all corrupted desc fields."""
 from pathlib import Path
 import re
 
-p = Path("src/zephyr/shared/contracts/freeze_manifest.yaml")
+p = Path("src/zephyr/shared/contracts/freezemanifest.yaml")
 text = p.read_text(encoding="utf-8")
 
 # Replace all =>? with ⇒
@@ -31,7 +31,7 @@ text = "\n".join(fixed)
 # Also fix any remaining broken patterns
 text = text.replace('补参⇒', '补参⇒完成')
 text = text.replace('所⇒consumer ⇒owner', '所有 consumer 的 owner')
-text = text.replace('更新⇒freeze_manifest.yaml', '更新 freeze_manifest.yaml')
+text = text.replace('更新⇒freezemanifest.yaml', '更新 freezemanifest.yaml')
 
 p.write_text(text, encoding="utf-8")
 

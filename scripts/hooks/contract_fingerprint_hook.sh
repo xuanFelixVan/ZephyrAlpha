@@ -1,22 +1,22 @@
 #!/usr/bin/env bash
-# contract-fingerprint-hook.sh — pre-commit hook: 契约文件变更时自动更新 ocp_manifest.json
+# contract_fingerprint_hook.sh — pre_commit hook: 契约文件变更时自动更新 ocp-manifest.json
 #
 # L2 修复：消除"改契约文件但忘更新 manifest"的漂移根因。
-# 当 src/zephyr/shared/contracts/*.py 或 cross-layer-contracts.yaml 变更时，
+# 当 src/zephyr/shared/contracts/*.py 或 cross_layer_contracts.yaml 变更时，
 # 自动调用 build_ocp_manifest.py 重新生成指纹，并 git add 到当前 commit。
 #
 # 安装方式：
-#   1. 在 .git/hooks/pre-commit 中添加：
-#      bash scripts/hooks/contract-fingerprint-hook.sh
-#   2. 或运行 scripts/hooks/git-secrets-setup.sh 时自动集成
+#   1. 在 .git/hooks/pre_commit 中添加：
+#      bash scripts/hooks/contract_fingerprint_hook.sh
+#   2. 或运行 scripts/hooks/git_secrets_setup.sh 时自动集成
 
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 CONTRACT_DIR="src/zephyr/shared/contracts"
-CONTRACTS_YAML="docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross-layer-contracts.yaml"
+CONTRACTS_YAML="docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml"
 BUILD_SCRIPT="scripts/arch_guard/_tools/build_ocp_manifest.py"
-MANIFEST_PATH="src/zephyr/shared/contracts/_frozen_signatures/ocp_manifest.json"
+MANIFEST_PATH="src/zephyr/shared/contracts/_frozen_signatures/ocp-manifest.json"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -36,7 +36,7 @@ if [ -z "$(contract_files_changed)" ]; then
     exit 0
 fi
 
-info "检测到契约文件变更，重新生成 ocp_manifest.json ..."
+info "检测到契约文件变更，重新生成 ocp-manifest.json ..."
 
 CHANGED="$(contract_files_changed | tr '\n' ' ')"
 info "变更文件: ${CHANGED}"

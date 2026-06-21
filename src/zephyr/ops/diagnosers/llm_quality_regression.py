@@ -1,0 +1,37 @@
+# [A_module] module_id=MOD-UNK_llm_quality_regression | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+
+# [MODULE] zephyr.observability.feedback_loop.diagnosers.llm_quality_regression
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+"""LLM Quality Regression — v0.12.0 R161
+
+Blindspot: LLM model updates cause regression in diagnostic quality.
+Risk: R161 — New model version produces worse diagnoses than previous.
+"""
+
+from dataclasses import dataclass
+
+@dataclass
+class LLMQualityRegression:
+    previous_accuracy: float = 0.0
+    current_accuracy: float = 0.0
+
+    @property
+    def regressed(self) -> bool:
+        return self.current_accuracy < self.previous_accuracy - 0.05

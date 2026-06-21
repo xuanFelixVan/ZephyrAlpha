@@ -1,5 +1,5 @@
 ---
-module_id: "GOV-D10-README"
+module_id: GOV-072
 title: "d10_performance 维度 — 规划中"
 doc_type: governance_readme
 status: planned

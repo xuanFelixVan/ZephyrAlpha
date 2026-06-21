@@ -1,11 +1,12 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1827 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-456 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.auto_fix_engine.test_auto_fix_core
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 
-"""Test suite: auto_fix_engine core — AutoFixEngine init + fix_safety validation + basic fix workflow"""
+"""Test suite: auto-fix-engine core — AutoFixEngine init + fix_safety validation + basic fix workflow"""
 
 import os
 import tempfile
@@ -13,8 +14,8 @@ import time
 
 import pytest
 
-from zephyr.auto_fix_engine.engine import AutoFixEngine, _NO_AUTO_FIX_TYPES
-from zephyr.auto_fix_engine.fix_safety import (
+from zephyr.security.access_control.auto_fix_engine_03.engine import AutoFixEngine, _NO_AUTO_FIX_TYPES
+from zephyr.security.access_control.auto_fix_engine_03.fix_safety import (
     CascadeBreaker,
     FixValidator,
     LockGuard,
@@ -23,7 +24,7 @@ from zephyr.auto_fix_engine.fix_safety import (
     SecretLeakGuard,
     WriteSafety,
 )
-from zephyr.auto_fix_engine.models import (
+from zephyr.security.access_control.auto_fix_engine_03.models import (
     FixAction,
     FixConfidence,
     FixHealthReport,
@@ -37,7 +38,7 @@ from zephyr.auto_fix_engine.models import (
 
 @pytest.fixture
 def engine(tmp_path):
-    config_path = str(tmp_path / "auto_fix_config.yaml")
+    config_path = str(tmp_path / "auto-fix-config.yaml")
     with open(config_path, "w", encoding="utf-8") as f:
         f.write("safety:\n  safety_gate_enabled: true\nbudget:\n  daily_limit: 50\n  monthly_limit: 500\n")
     return AutoFixEngine(config_path=config_path)

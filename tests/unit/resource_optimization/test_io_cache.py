@@ -1,9 +1,11 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1930 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-549 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.resource_optimization.test_io_cache
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """
 test_io_cache.py - FileCache unit tests
 ========================================
@@ -11,7 +13,6 @@ test_io_cache.py - FileCache unit tests
 TASK-INF-0140 Phase 2 verification.
 """
 
-from __future__ import annotations
 
 import json
 import os
@@ -21,7 +22,7 @@ import time
 import yaml
 import pytest
 
-from zephyr.shared.io.io_cache import FileCache
+from zephyr.integration.shared_08.io.io_cache import FileCache
 
 
 class TestFileCacheBasic:

@@ -1,0 +1,275 @@
+rule_id: TRAE-041
+title: 元规则-规则分类与裁决
+aliases:
+- PS-STD-004
+- PS-STD-012
+- STD-007
+- STD-008
+layer: L2
+severity: warning
+scope: meta_rule_classification
+domain: TRAE
+triggers:
+- operation: meta_rule_classification
+sections:
+  ps_std_004_five_dimensions:
+    title: 五维分类体系
+    section_type: context
+    original_rules:
+    - PS-STD-004 §2~§7
+    conditions:
+    - type: trigger
+      check: 创建或修改规则文件时
+      pass: 规则文件五维分类完整且合规
+      fail: 分类缺失或不合规
+    actions:
+    - type: mandatory
+      step: 每条规则必须按5个维度分类：Domain(9值)/Layer(L1/L2/L3/cross_layer)/Scope(global/domain/module/session)/Stability(frozen/stable/evolving)/Executor(immutable_core/human_gated/ai_modifiable)；每条规则必须且只能属于一个domain和scope
+    prohibitions: []
+  ps_std_004_scope_stability:
+    title: scope与stability字段
+    section_type: context
+    original_rules:
+    - PS-STD-004 §5~§6
+    conditions:
+    - type: trigger
+      check: 新增规则文档时
+      pass: scope和stability字段已声明且值在受控词表中
+      fail: 字段缺失或值不在受控词表中
+    actions:
+    - type: mandatory
+      step: scope必填(默认domain)；stability必填(默认stable)；frozen必须对应immutable_core(单向强制)；stability与ai_autonomy遵循PS-STD-001 §2.6架构公民原则(正交维度)
+    prohibitions: []
+  ps_std_004_derivation_chain:
+    title: 冲突裁决推导链
+    section_type: context
+    original_rules:
+    - PS-STD-004 §9
+    conditions:
+    - type: trigger
+      check: 两条规则发生冲突时
+      pass: 按推导链裁决出优先级
+      fail: 无法推导或AI自行裁决
+    actions:
+    - type: mandatory
+      step: 按stability→layer→scope→Owner四步链式推导：frozen>stable>evolving；cross_layer>L1>L2>L3；global>domain>module；三步后仍冲突→停止操作上报Owner(MTH-003目标优先裁决)
+    prohibitions:
+    - AI自行裁决无法推导的冲突(必须上报Owner)
+    - AI选择对自己更方便的规则
+    - AI忽略高stability或高layer的规则
+    - AI绕过推导链直接声称"这条规则优先"
+  ps_std_004_new_domain:
+    title: 新增领域流程
+    section_type: decision_tree
+    original_rules:
+    - PS-STD-004 §3.3
+    conditions:
+    - type: trigger
+      check: 需要新增领域(domain)受控词表条目时
+      pass: 按流程新增
+      fail: 未经批准新增领域
+    actions:
+    - type: mandatory
+      step: 在PS-STD-004 §3.1新增受控词表条目→在01_policies_and_standards/下创建对应子目录→更新PS-STD-001的doc_type路径映射→更新document_metadata_index_registry.yaml；新增领域需Owner批准+KB决策记录
+    prohibitions: []
+  ps_std_004_scope:
+    title: 规则分类与仲裁标准的目的与范围
+    section_type: context
+    original_rules:
+    - PS-STD-004 §1
+    summary: "ZephyrAlpha项目规则分类体系与规则冲突裁决机制的唯一真源。上半卷（§2-§8）定义五维分类体系（Domain/Layer/Scope/Stability/Executor），下半卷（§9-§11）定义冲突裁决推导链（stability→layer→scope→Owner）。"
+    applies_to:
+    - "01_policies_and_standards/下所有规则文档"
+    - "规则冲突裁决场景"
+    impact_on_rules:
+    - "新增scope和stability两个frontmatter字段，由本标准定义受控词表和分类规则"
+    - "推导链为规则冲突提供机械裁决机制，三步推导后仍冲突则上报Owner"
+    key_decisions:
+    - "五维分类体系：domain(9值)/layer(4值)/scope(4值)/stability(3值)/executor(3值)"
+    - "推导链优先级：frozen>stable>evolving → cross_layer>L1>L2>L3 → global>domain>module"
+    - "v2.0.0合并原PS-STD-008（rule_priority_hierarchy.md），分类与裁决是供需关系"
+  ps_std_004_normative_refs:
+    title: 规则分类与仲裁标准规范性引用
+    section_type: context
+    original_rules:
+    - PS-STD-004 §0
+    summary: "规则分类与仲裁标准依赖的规范性文件和标准"
+    depends_on:
+    - target: PS-STD-001
+      at: "§2~§3"
+      why: "layer/ai_autonomy字段定义——本标准引用其字段定义不重复定义"
+    - target: PS-STD-002
+      at: "§3"
+      why: "L1/L2/L3层级定义——Layer维度引用其层级定义"
+    - target: PS-STD-011
+      at: "MTH-003"
+      why: "目标优先裁决原则——推导链失效时的终极仲裁"
+    impact_on_rules:
+    - "字段定义权归属PS-STD-001，本标准仅定义受控词表和分类规则"
+    - "冲突仲裁时本标准与PS-STD-001冲突以PS-STD-001为准（字段定义权属于PS-STD-001）"
+    key_decisions:
+    - "scope和stability字段由本标准向PS-STD-001注册，字段定义权归PS-STD-001"
+    - "stability与ai_autonomy一致性约束：frozen必须对应immutable_core（单向强制）"
+  ps_std_004_change_history:
+    title: 规则分类与仲裁标准修订记录
+    section_type: examples
+    original_rules:
+    - PS-STD-004
+    items:
+    - version: "2.0.2"
+      date: "2026-05-01"
+      change: "规则分类与仲裁标准当前版本。定义五维分类体系+冲突裁决推导链+新增scope/stability字段注册。"
+  ps_std_012_v1_v4:
+    title: 验证分级V1-V4
+    section_type: rule
+    original_rules:
+    - PS-STD-012 §2
+    conditions:
+    - type: trigger
+      check: 验证规则合规性时
+      pass: 按验证级别执行
+      fail: 跳过验证级别
+    actions:
+    - type: mandatory
+      step: V1自动化阻断(pre-commit/CI即时阻止)；V2自动化警告(允许继续但同类型3次升格V1)；V3人工审查(每月/每季度)；V4审计抽样(每年20%随机抽取)；V1阻断不可绕过
+    prohibitions:
+    - 绕过V1阻断继续操作
+    - 忽略V2警告超过3次不处理
+    - 跳过V3审查周期
+    - 在V4审计中隐瞒已知问题
+  ps_std_012_v5:
+    title: V5深度内容审计
+    section_type: context
+    original_rules:
+    - PS-STD-012 §7
+    conditions:
+    - type: trigger
+      check: 目录结构变更后/文件批量搬迁后/规则体系重大重构后
+      pass: 执行四步审计流程
+      fail: 跳过深度审计
+    actions:
+    - type: mandatory
+      step: Step1字段扫描(自动化)→Step2内容读取(人工/AI判断doc_type与实际内容是否一致)→Step3交叉验证(目录/module_id/depends_on一致性)→Step4判定与修复(搬迁/修改doc_type/改名/搬出)
+    prohibitions: []
+  ps_std_012_scope:
+    title: 规则验证标准的目的与范围
+    section_type: context
+    original_rules:
+    - PS-STD-012 §1
+    summary: "定义ZephyrAlpha规则体系的验证标准——五级验证（V1自动化阻断/V2自动化警告/V3人工审查/V4审计抽样/V5深度内容审计）、验证频率矩阵、违规响应流程"
+    applies_to: "01_policies_and_standards/下所有规则文档及其enforcement机制"
+    impact_on_rules: "所有规则文档必须按V1-V4级别接受验证；V5深度审计在目录结构变更/文件批量搬迁/规则体系重大重构后触发"
+    key_decisions:
+    - "V1阻断不可绕过"
+    - "V2警告同类型3次升格V1"
+    - "V5为独立深度审计不计入V1-V4频率矩阵"
+  ps_std_012_normative_refs:
+    title: 规则验证标准规范性引用
+    section_type: context
+    original_rules:
+    - PS-STD-012 §0
+    summary: "规则验证标准的规范性引用文件"
+    depends_on:
+    - target: "PS-STD-001"
+      at: "§2~§3"
+      why: "字段定义+受控词表——验证字段合法性依据"
+    impact_on_rules: "PS-STD-001定义的字段受控词表是V1/V2自动化验证的判定依据"
+    key_decisions:
+    - "对标OWASP ASVS v5三级验证体系+Kubernetes Conformance+ISO 42001 §8.2"
+  ps_std_012_change_history:
+    title: 规则验证标准修订记录
+    section_type: examples
+    original_rules:
+    - PS-STD-012
+    items:
+    - version: "1.2.1"
+      date: "2026-05-06"
+      change: "§2：澄清V1-V4与§7 V5深度审计关系；§2.1 index.md失真阻断正式注册为META-V21；§7.2：KB决策记录讨论稿处置改为KB:decisions"
+    - version: "1.2.0"
+      date: "2026-05-02"
+      change: "新增V5深度内容审计；新增§7：四步审计流程、审计判定速查表、可脚本化程度评估"
+    - version: "1.1.0"
+      date: "2026-05-01"
+      change: "新增索引一致性/index失真V1阻断项草案"
+    - version: "1.0.1"
+      date: "2026-05-01"
+      change: "状态升格：draft→active；V1-V4已在PS-STD-001 §14 META-V规则中实现"
+    - version: "1.0.0"
+      date: "2026-05-01"
+      change: "初始创建——meta/目录系统审查后补齐"
+  tmr_scope:
+    title: 术语映射参考的目的与范围
+    section_type: context
+    original_rules:
+    - GOV-027
+    summary: "双向映射表，让人用大白话表达需求、AI理解成行业术语；也让AI输出的行业术语能被快速翻译回大白话"
+    applies_to: "所有AI agent和人类用户在项目沟通中使用的术语"
+    impact_on_rules: "AI首次使用未收录术语时须附大白话解释；用户用大白话表述时AI可内部翻译但回复应同时给出大白话"
+    key_decisions:
+    - "本YAML规则文件为术语定义唯一仲裁源（源.md文件已合并入本YAML后删除）"
+    - "争议术语不强行合并而是分行列出并标注使用上下文"
+  tmr_normative_refs:
+    title: 术语映射参考规范性引用
+    section_type: context
+    original_rules:
+    - GOV-027
+    depends_on:
+    - PS-STD-001
+    - GOV-027
+    references: []
+  tmr_change_history:
+    title: 术语映射参考修订记录
+    section_type: examples
+    original_rules:
+    - GOV-027
+    items:
+    - date: "2026-04-17"
+      change: "初版：建立大白话↔行业术语双向映射表，覆盖架构/治理/决策/记忆/任务/流程/元数据/AI协作/投资业务9类"
+  trae_041_change_history:
+    title: TRAE-041文件变更记录
+    section_type: examples
+    original_rules:
+    - TRAE-041
+    items:
+    - version: "1.3.0"
+      date: "2026-06-21"
+      change: "RQ-04修复——移除tmr_normative_refs.references中对已删除文件glossary_glossary.md和terminology_mapping_reference.md的引用（Glob验证不存在）；tmr_scope.key_decisions更新术语定义仲裁源描述为本YAML规则文件"
+    - version: "1.2.0"
+      date: "2026-06-19"
+      change: "RQ-03散布修复——从trae_025迁入ps_std_004_scope/normative_refs/change_history(PS-STD-004 scope/history)；从trae_027迁入ps_std_012_scope/normative_refs/change_history(PS-STD-012 scope/history)；aliases新增PS-STD-012(本文件已有ps_std_012_v1_v4/v5规则章节但alias缺失)；历史kebab-case文件名rule_priority_hierarchy.md snake_case化"
+    - version: "1.1.0"
+      date: "2026-06-19"
+      change: "RQ审查修复——tmr_scope/tmr_normative_refs/tmr_change_history补充original_rules(违反RQ-08)；tmr_normative_refs引用标注archived状态；provenance源文件标注archived+补充TMR源文件；新增文件级change_history(违反RQ-14)；全量审查修复document-metadata-index-registry.yaml→document_metadata_index_registry.yaml snake_case化(违反RQ-05/§2.2裁定)"
+references:
+  rule_ids:
+  - TRAE-041
+  - TRAE-018
+  - TRAE-019
+  - TRAE-020
+  scripts: []
+  modules: []
+  blueprints: []
+enforcement:
+  type: doc
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: evolving
+  impact_level: L
+  modification_permission: ai_modifiable
+  superseded_by: null
+  change_history:
+  - version: 1.4.1
+    date: '2026-06-21'
+    by: AI-Assistant
+    changes:
+    - P1修复——references.rule_ids补充TRAE-041(本文件rule_id，原缺失)，符合RQ-02规范
+  - version: 1.4.0
+    date: '2026-06-21'
+    by: AI-Assistant
+    changes:
+    - P2修复——metadata补充change_history字段（原缺失），符合RQ-14规范
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001
+  archive_note: 源.md文件已合并入本YAML规则文件后删除，hash为提取时记录值，RQ-09哈希验证不适用(status=archived)

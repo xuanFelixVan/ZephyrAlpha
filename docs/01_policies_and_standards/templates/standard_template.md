@@ -1,27 +1,27 @@
 ---
-module_id: ""
-title: ""
-doc_type: standard
-status: Draft
-version: "0.1.0"
-layer: cross_layer
-owner: ZephyrAlpha-Owner
+ai_autonomy: human_gated
 classification: confidential
-language: zh
+completeness: unknown
 created_by: human_plus_agent
-date: ""
-ttl: permanent
-summary: "标准文档创建模板——声明式规范，定义度量/格式/接口，新建 standard 类文档时使用此模板"
-completeness: "unknown"
-template_for: standard
-tags: []
+date: ''
+depends_on: []
+doc_type: template
+evolution_policy: ''
+language: zh
+layer: cross_layer
+module_id: STD-009
+owner: ZephyrAlpha-Owner
 rule_form: declarative
 scope: global
 stability: evolving
+status: Draft
+summary: 标准文档创建模板——声明式规范，定义度量/格式/接口，新建 standard 类文档时使用此模板
+tags: []
+template_for: standard
+title: Standard Template
+ttl: permanent
 verifiability: manual
-depends_on: []
-ai_autonomy: human_gated
-evolution_policy: ""
+version: 0.1.0
 ---
 
 <!--

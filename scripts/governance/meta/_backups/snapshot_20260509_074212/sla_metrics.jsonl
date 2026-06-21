@@ -1,8 +1,0 @@
-# SLA Metrics — 每次 run_all.py 扫描后自动追加
-# 格式: 每行一个 JSON 对象 (JSONL)
-# 字段: timestamp / scan_type / total_findings / critical_count / high_count / scan_duration_s / exit_code
-{"timestamp": "2026-05-09T05:54:19.218642+00:00", "scan_type": "dimension", "total_findings": 8, "critical_count": 6, "high_count": 1, "scan_duration_s": 64.9, "exit_code": 2}
-{"timestamp": "2026-05-09T06:12:26.586253+00:00", "scan_type": "dimension", "total_findings": 7, "critical_count": 5, "high_count": 1, "scan_duration_s": 61.2, "exit_code": 2}
-{"timestamp": "2026-05-09T06:17:20.489102+00:00", "scan_type": "dimension", "total_findings": 8, "critical_count": 6, "high_count": 1, "scan_duration_s": 120.1, "exit_code": 2}
-{"timestamp": "2026-05-09T06:28:48.390487+00:00", "scan_type": "dimension", "total_findings": 8, "critical_count": 6, "high_count": 1, "scan_duration_s": 120.1, "exit_code": 2}
-{"timestamp": "2026-05-09T06:32:19.721774+00:00", "scan_type": "dimension", "total_findings": 7, "critical_count": 5, "high_count": 1, "scan_duration_s": 65.9, "exit_code": 2}

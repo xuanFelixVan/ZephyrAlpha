@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0083 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-241 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.asset_inventory.test_security_enforcer
 # [STABILITY] evolving
 # [SAFETY] L
@@ -8,7 +9,7 @@
 
 from pathlib import Path
 
-from zephyr.asset_inventory.scanner import (
+from zephyr.infrastructure.asset_inventory.scanner import (
     SecurityAccessLogger,
     SecurityAccessRecord,
     SecurityFilter,

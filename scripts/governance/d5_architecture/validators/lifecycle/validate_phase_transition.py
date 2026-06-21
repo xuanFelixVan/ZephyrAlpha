@@ -1,6 +1,6 @@
-# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/lifecycle/validate_phase_transition.py | §
+﻿# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/lifecycle/validate_phase_transition.py | §
 """
-对标 12-dimension-audit-matrix.md §4.12：
+对标 dimension_audit_matrix.md §4.12：
   校验 Phase 过渡是否满足双门协议（技术门禁 + 治理门禁）。
 
 检测内容：
@@ -20,7 +20,7 @@ __manifest__ = """
 args:
 - --from
 - --to
-description: Phase 过渡双门协议合规率校验（12-dimension-audit-matrix §4.12 — Phase transition gates）
+description: Phase 过渡双门协议合规率校验（dimension-audit-matrix §4.12 — Phase transition gates）
 dimensions:
 - D5
 priority: P1

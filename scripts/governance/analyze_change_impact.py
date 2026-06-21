@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §3.9
+# [BLUEPRINT] GOV-070 | docs/03_modules/_domain-governance/blueprint.md | §3.9
 # [MODULE] scripts.governance.analyze_change_impact
 # [INVARIANTS] 影响分析必须包含传递依赖;增量扫描列表不可遗漏直接依赖
 # [MODIFY-GUARD] 依赖图格式变更需同步generate_project_depgraph.py
@@ -22,8 +22,36 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Optional
 
+import sqlite3
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-DEFAULT_DEPGRAPH_PATH = PROJECT_ROOT / "data" / "asset_index" / "project-entity-depgraph.yaml"
+DEFAULT_DEPGRAPH_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
+
+
+def _load_depgraph_from_db(db_path: Path) -> dict:
+    """从 SQLite 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。"""
+    conn = sqlite3.connect(str(db_path))
+    conn.row_factory = sqlite3.Row
+    data: dict = {"nodes": {}, "edges": [], "domains": {}, "metadata": {}}
+    for row in conn.execute("SELECT * FROM nodes"):
+        node = dict(row)
+        nid = node.pop("node_id")
+        if "node_type" in node:
+            node["type"] = node.pop("node_type")
+        data["nodes"][nid] = node
+    for row in conn.execute("SELECT * FROM edges"):
+        edge = dict(row)
+        if "from_node" in edge:
+            edge["from"] = edge.pop("from_node")
+        if "to_node" in edge:
+            edge["to"] = edge.pop("to_node")
+        data["edges"].append(edge)
+    for row in conn.execute("SELECT * FROM domains"):
+        domain = dict(row)
+        did = domain.pop("domain_id")
+        data["domains"][did] = domain
+    conn.close()
+    return data
 
 
 class DependencyGraphError(Exception):
@@ -66,14 +94,7 @@ class ChangeImpactAnalyzer:
             self._loaded = True
             return
         try:
-            import yaml
-            def _tuple_constructor(loader, node):
-                return tuple(loader.construct_sequence(node))
-            yaml.SafeLoader.add_constructor("tag:yaml.org,2002:python/tuple", _tuple_constructor)
-            with open(str(depgraph_path), "r", encoding="utf-8") as f:
-                self._depgraph = yaml.safe_load(f) or {}
-        except ImportError:
-            self._depgraph = self._load_depgraph_json_fallback()
+            self._depgraph = _load_depgraph_from_db(depgraph_path)
         except Exception as exc:
             raise DependencyGraphError(
                 f"Failed to load depgraph: {exc}",
@@ -81,13 +102,6 @@ class ChangeImpactAnalyzer:
             )
         self._build_adjacency()
         self._loaded = True
-
-    def _load_depgraph_json_fallback(self) -> dict[str, Any]:
-        json_path = DEFAULT_DEPGRAPH_PATH.with_suffix(".json")
-        if json_path.exists():
-            with open(str(json_path), "r", encoding="utf-8") as f:
-                return json.load(f)
-        return {}
 
     def _build_adjacency(self) -> None:
         nodes = self._depgraph.get("nodes", {})
@@ -198,7 +212,7 @@ class ChangeImpactAnalyzer:
         result["commit"] = commit_hash
         result["source"] = "commit_analysis"
         try:
-            from zephyr.rollback.llm_impact_analyzer import LLMImpactAnalyzer
+            from zephyr.infrastructure.rollback.llm_impact_analyzer import LLMImpactAnalyzer
             analyzer = LLMImpactAnalyzer(project_root=self._repo_root)
             llm_result = analyzer.analyze(commit_hash)
             result["llm_risk_score"] = llm_result.risk_score

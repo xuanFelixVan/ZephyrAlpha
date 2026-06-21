@@ -1,23 +1,24 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1885 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-505 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.gates.test_sys_master_compliance
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
-from __future__ import annotations
 
+from __future__ import annotations
 import json
 import sys
 from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 
-SYS_MASTER = "zephyr.gates.sys_master_compliance"
+SYS_MASTER = "zephyr.governance.rule_enforcement.sys_master_compliance"
 
 
 class TestBlueprintExistence:
     def test_return_type(self):
-        from zephyr.gates.sys_master_compliance import check_blueprint_existence
+        from zephyr.governance.rule_enforcement.sys_master_compliance import check_blueprint_existence
 
         results = check_blueprint_existence()
         assert isinstance(results, list)
@@ -31,7 +32,7 @@ class TestBlueprintExistence:
 
 class TestColdStartIntegration:
     def test_project_rules_missing(self):
-        from zephyr.gates.sys_master_compliance import check_cold_start_integration
+        from zephyr.governance.rule_enforcement.sys_master_compliance import check_cold_start_integration
 
         with patch(f"{SYS_MASTER}.PROJECT_RULES") as mock_path:
             mock_path.exists.return_value = False
@@ -40,7 +41,7 @@ class TestColdStartIntegration:
             assert "MISSING" in results[0]["detail"]
 
     def test_cold_start_referenced(self):
-        from zephyr.gates.sys_master_compliance import check_cold_start_integration
+        from zephyr.governance.rule_enforcement.sys_master_compliance import check_cold_start_integration
 
         with patch(f"{SYS_MASTER}.PROJECT_RULES") as mock_path:
             mock_path.exists.return_value = True
@@ -59,7 +60,7 @@ class TestColdStartIntegration:
 
 class TestDependsOnIntegrity:
     def test_mod_master_present(self):
-        from zephyr.gates.sys_master_compliance import check_depends_on_integrity
+        from zephyr.governance.rule_enforcement.sys_master_compliance import check_depends_on_integrity
 
         raw_yaml = "depends_on:\n  - target: MOD-MASTER-001\n    type: reference\n"
         mock_data = {"depends_on": [{"target": "MOD-MASTER-001", "type": "reference"}]}
@@ -68,7 +69,7 @@ class TestDependsOnIntegrity:
             assert results[0]["status"] == "PASS"
 
     def test_mod_master_missing(self):
-        from zephyr.gates.sys_master_compliance import check_depends_on_integrity
+        from zephyr.governance.rule_enforcement.sys_master_compliance import check_depends_on_integrity
 
         with patch(f"{SYS_MASTER}.extract_frontmatter", return_value={"depends_on": []}):
             results = check_depends_on_integrity()
@@ -77,7 +78,7 @@ class TestDependsOnIntegrity:
 
 class TestConstructionProgressConsistency:
     def test_all_match(self):
-        from zephyr.gates.sys_master_compliance import check_construction_progress_consistency
+        from zephyr.governance.rule_enforcement.sys_master_compliance import check_construction_progress_consistency
 
         fm_sys = {"construction_progress": "completed"}
         fm_mod = {"construction_progress": "phase_1_complete"}
@@ -102,7 +103,7 @@ class TestConstructionProgressConsistency:
                 assert all(r["status"] == "PASS" for r in results)
 
     def test_mismatch(self):
-        from zephyr.gates.sys_master_compliance import check_construction_progress_consistency
+        from zephyr.governance.rule_enforcement.sys_master_compliance import check_construction_progress_consistency
 
         fm_sys = {"construction_progress": "completed"}
         fm_mod = {"construction_progress": "phase_1_complete"}
@@ -130,7 +131,7 @@ class TestConstructionProgressConsistency:
 
 class TestAiRulesCount:
     def test_76_rules(self):
-        from zephyr.gates.sys_master_compliance import check_ai_rules_count
+        from zephyr.governance.rule_enforcement.sys_master_compliance import check_ai_rules_count
 
         ai_role = " ".join([f"({i}) rule {i}" for i in range(1, 77)])
         with patch(f"{SYS_MASTER}.extract_frontmatter", return_value={"ai_role_instruction": ai_role}):
@@ -138,7 +139,7 @@ class TestAiRulesCount:
             assert results[0]["status"] == "PASS"
 
     def test_less_than_76(self):
-        from zephyr.gates.sys_master_compliance import check_ai_rules_count
+        from zephyr.governance.rule_enforcement.sys_master_compliance import check_ai_rules_count
 
         ai_role = " ".join([f"({i}) rule {i}" for i in range(1, 50)])
         with patch(f"{SYS_MASTER}.extract_frontmatter", return_value={"ai_role_instruction": ai_role}):
@@ -148,7 +149,7 @@ class TestAiRulesCount:
 
 class TestGateRegistryEntry:
     def test_entry_present(self):
-        from zephyr.gates.sys_master_compliance import check_gate_registry_entry
+        from zephyr.governance.rule_enforcement.sys_master_compliance import check_gate_registry_entry
 
         with patch(f"{SYS_MASTER}.GATE_REGISTRY") as mock_path:
             mock_path.exists.return_value = True
@@ -157,7 +158,7 @@ class TestGateRegistryEntry:
             assert results[0]["status"] == "PASS"
 
     def test_entry_missing(self):
-        from zephyr.gates.sys_master_compliance import check_gate_registry_entry
+        from zephyr.governance.rule_enforcement.sys_master_compliance import check_gate_registry_entry
 
         with patch(f"{SYS_MASTER}.GATE_REGISTRY") as mock_path:
             mock_path.exists.return_value = True
@@ -168,7 +169,7 @@ class TestGateRegistryEntry:
 
 class TestMainFunction:
     def test_main_returns_0_when_all_pass(self):
-        from zephyr.gates.sys_master_compliance import main
+        from zephyr.governance.rule_enforcement.sys_master_compliance import main
 
         all_pass = [
             {"check_id": "X", "label": "a", "status": "PASS", "detail": "ok"},
@@ -184,7 +185,7 @@ class TestMainFunction:
                                     assert main() == 0
 
     def test_main_returns_1_when_any_fail(self):
-        from zephyr.gates.sys_master_compliance import main
+        from zephyr.governance.rule_enforcement.sys_master_compliance import main
 
         one_fail = [{"check_id": "X", "label": "a", "status": "FAIL", "detail": "bad"}]
         with patch(f"{SYS_MASTER}.check_blueprint_existence", return_value=one_fail):
@@ -197,7 +198,7 @@ class TestMainFunction:
                                     assert main() == 1
 
     def test_main_json_flag(self):
-        from zephyr.gates.sys_master_compliance import main
+        from zephyr.governance.rule_enforcement.sys_master_compliance import main
 
         all_pass = [{"check_id": "X", "label": "a", "status": "PASS", "detail": "ok"}]
         with patch.object(sys, "argv", ["prog", "--json"]):
@@ -213,7 +214,7 @@ class TestMainFunction:
 
 class TestIntegrationRealFileSystem:
     def test_all_checks_pass_on_real_system(self):
-        from zephyr.gates.sys_master_compliance import (
+        from zephyr.governance.rule_enforcement.sys_master_compliance import (
             check_ai_rules_count,
             check_blueprint_existence,
             check_cold_start_integration,
@@ -236,6 +237,6 @@ class TestIntegrationRealFileSystem:
                 assert r["status"] in ("PASS", "WARN"), f"FAILED: {r}"
 
     def test_main_exit_zero(self):
-        from zephyr.gates.sys_master_compliance import main
+        from zephyr.governance.rule_enforcement.sys_master_compliance import main
 
         assert main() == 0

@@ -1,0 +1,74 @@
+# [A_module] module_id=MOD-RSC_sync_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
+# [MODULE] zephyr.intelligence.model_evaluation.sync_engine
+# [INVARIANTS] 增量按created_at > since检测; 全量since=None; VMS不可用降级不阻塞
+# [MODIFY-GUARD] CT-KB-VMS-001 集合映射变更同步更新collection_manager
+# [CONSUMERS] zephyr.knowledge.kb.scheduler; AutoRuntime Core sync phase
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] VMS不可用返回degraded; 空增量返回0
+# [TESTS] scripts/connect/kb_vms.py --trigger
+"""KB→VMS 同步引擎 — sync_to_vms() 生产者"""
+
+
+from __future__ import annotations
+
+import logging
+from datetime import datetime, timezone
+from dataclasses import dataclass, field
+from typing import Any
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["SyncEngine", "SyncResult", "sync_to_vms"]
+
+
+@dataclass
+class SyncResult:
+    synced: int = 0
+    total: int = 0
+    status: str = "complete"
+    error: str | None = None
+
+
+class SyncEngine:
+    def sync_to_vms(self, since: datetime | None = None) -> SyncResult:
+        try:
+            from zephyr.governance.persistence.sqlite_schema import get_db_connection
+            from zephyr.governance.vector_memory.in_memory_fake_vms import InMemoryFakeVMS
+            from zephyr.autonomy_core.vector_bridge import VectorBridge
+
+            conn = get_db_connection()
+            since_str = since.isoformat() if since else "1970-01-01"
+            rows = conn.execute(
+                "SELECT ke_id,title,summary,category,tags FROM knowledge WHERE status='INDEXED' AND created_at > ? LIMIT 50",
+                (since_str,),
+            ).fetchall()
+            conn.close()
+
+            if not rows:
+                return SyncResult(synced=0, total=0)
+
+            vms = InMemoryFakeVMS()
+            bridge = VectorBridge(vms)
+            stored = 0
+            for row in rows:
+                ke_id, title, summary, category, tags = row
+                text = f"{title}: {summary or ''}"[:2000]
+                meta = {"ke_id": ke_id, "category": category or "", "tags": tags or ""}
+                try:
+                    bridge._vms.write("knowledge", text, metadata=meta)
+                    stored += 1
+                except Exception as exc:
+                    logger.debug("[KB-VMS] write failed for %s: %s", ke_id, exc)
+
+            logger.info("[KB-VMS] synced: %d/%d", stored, len(rows))
+            return SyncResult(synced=stored, total=len(rows))
+        except Exception as exc:
+            logger.warning("[KB-VMS] degraded: %s", exc)
+            return SyncResult(status="degraded", error=str(exc))
+
+
+def sync_to_vms(since: datetime | None = None) -> SyncResult:
+    return SyncEngine().sync_to_vms(since)

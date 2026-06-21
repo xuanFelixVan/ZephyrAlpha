@@ -1,3 +1,4 @@
+# [A_config] module_id=CFG-infrastructure-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: DOM-GOV-001
@@ -27,6 +28,7 @@
 # 自检: （experimental — scan infrastructure connectivity）
 # ============================================================================
 
+module_id: DOM-GOV-001
 schema_version: "1.0.0"
 doc_type: register
 title: "运行时基础设施登记表"
@@ -128,7 +130,7 @@ infrastructure:
     type: relational_db
     description: "SQLite 任务库——存放 TaskCard、状态迁移历史、Audit Trail"
     runtime_plane: cold
-    host: ".runtime/db/tasks.db"
+    host: ".runtime/db/data/databases/governance.db"
     health_check: query
     dependency_of:
       - "MOD-INF-006"
@@ -136,7 +138,7 @@ infrastructure:
     sla: "persisted, ACID, < 30ms read p50"
     status: planned
     provisioned_at: null
-    note: "Schema 源：task-system/blueprint.md §2.1；迁移路径见 task-card-meta-registry.yaml"
+    note: "Schema 源：task-system/blueprint.md §2.1；迁移路径见 task-card-meta-registry.md"
 
   # --- 向量数据库（ChromaDB）---
   - infra_id: "INFRA-DB-002"
@@ -151,7 +153,7 @@ infrastructure:
     sla: "< 200ms retrieval p95, index rebuild < 10 min"
     status: planned
     provisioned_at: null
-    note: "ADR-0031：ChromaDB 选型。vibe-coding-pipelines M2 模块"
+    note: "KBG-0031：ChromaDB 选型。vibe-coding-pipelines M2 模块"
 
   # --- 缓存（Redis）---
   - infra_id: "INFRA-CACHE-001"

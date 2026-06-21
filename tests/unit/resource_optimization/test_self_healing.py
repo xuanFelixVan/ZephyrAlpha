@@ -1,9 +1,11 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1933 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-552 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.resource_optimization.test_self_healing
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """
 test_self_healing.py - Self-healing + config + EventBus + Audit integration tests
 ==================================================================================
@@ -11,7 +13,6 @@ test_self_healing.py - Self-healing + config + EventBus + Audit integration test
 TASK-INF-0143 Phase 5 verification.
 """
 
-from __future__ import annotations
 
 import os
 import time
@@ -20,7 +21,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 import yaml
 
-from zephyr.core.lifecycle.resource_optimization_engine import (
+from zephyr.shared.lifecycle.resource_optimization_engine import (
     OptimizationStrategy,
     PressureLevel,
     ResourceOptimizationEngine,
@@ -114,7 +115,7 @@ class TestSelfHealing:
         engine = ResourceOptimizationEngine()
         engine._self_healing_verification_delay_s = 0.0
 
-        from zephyr.core.lifecycle.resource_optimization_models import OptimizationResult
+        from zephyr.shared.lifecycle.resource_optimization_models import OptimizationResult
         mock_opt.return_value = OptimizationResult(
             strategy=OptimizationStrategy.MEMORY_COMPACT,
             success=True,
@@ -167,7 +168,7 @@ class TestEventBusIntegration:
             ResourceSnapshot(pressure=PressureLevel.WARNING)
         )
 
-    @patch("zephyr.core.lifecycle.resource_optimization_engine.get_bus", create=True)
+    @patch("zephyr.infrastructure.shared_services.lifecycle.resource_optimization_engine.get_bus", create=True)
     def test_emit_on_pressure_change(self, mock_get_bus):
         engine = ResourceOptimizationEngine()
         engine._eventbus_enabled = True
@@ -176,7 +177,7 @@ class TestEventBusIntegration:
         mock_bus = MagicMock()
         mock_get_bus.return_value = mock_bus
 
-        with patch.dict("sys.modules", {"zephyr.shared.event_bus": MagicMock(get_bus=mock_get_bus)}):
+        with patch.dict("sys.modules", {"zephyr.integration.shared_08.event_bus": MagicMock(get_bus=mock_get_bus)}):
             engine._emit_pressure_event(
                 ResourceSnapshot(
                     pressure=PressureLevel.WARNING,
@@ -197,19 +198,19 @@ class TestAuditIntegration:
     def test_audit_skipped_when_disabled(self):
         engine = ResourceOptimizationEngine()
         engine._audit_enabled = False
-        from zephyr.core.lifecycle.resource_optimization_models import OptimizationRecord
+        from zephyr.shared.lifecycle.resource_optimization_models import OptimizationRecord
         record = OptimizationRecord(
             trigger=PressureLevel.WARNING,
             strategy=OptimizationStrategy.MEMORY_COMPACT,
         )
         engine._audit_optimization(record)
 
-    @patch("zephyr.core.lifecycle.resource_optimization_engine.write_to_core", create=True)
+    @patch("zephyr.infrastructure.shared_services.lifecycle.resource_optimization_engine.write_to_core", create=True)
     def test_audit_called_when_enabled(self, mock_write):
         engine = ResourceOptimizationEngine()
         engine._audit_enabled = True
 
-        from zephyr.core.lifecycle.resource_optimization_models import OptimizationRecord
+        from zephyr.shared.lifecycle.resource_optimization_models import OptimizationRecord
         record = OptimizationRecord(
             trigger=PressureLevel.WARNING,
             strategy=OptimizationStrategy.MEMORY_COMPACT,
@@ -217,5 +218,5 @@ class TestAuditIntegration:
             success=True,
         )
 
-        with patch.dict("sys.modules", {"zephyr.audit_trail.bridge": MagicMock(write_to_core=mock_write)}):
+        with patch.dict("sys.modules", {"zephyr.governance.audit_trail.bridge": MagicMock(write_to_core=mock_write)}):
             engine._audit_optimization(record)

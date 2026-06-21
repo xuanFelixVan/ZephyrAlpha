@@ -1,3 +1,4 @@
+# [A_config] module_id=CFG-knowledge-article-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: DOM-GOV-001
@@ -24,6 +25,7 @@
 # 当前状态: planned——beta 落地。scaffold 仅创建 Schema 骨架。
 # ============================================================================
 
+module_id: DOM-GOV-001
 schema_version: "1.0.0"
 doc_type: register
 title: "知识条目登记表"
@@ -68,7 +70,7 @@ _schema:
 #   ke_id             KE 编号，格式 KE-NNN
 #   title             知识标题
 #   summary           一句话摘要
-#   source            来源：ADR编号 / Session日志 / Wave终审等
+#   source            来源：KB 决策记录编号 / Session日志 / Wave终审等
 #   consumers[]       消费者模块——哪些 module 需要同步更新此知识变更
 #   tier              消费者影响等级（Tier 1/2/3）
 #   status            状态（draft→review→active→superseded→retired）
@@ -106,8 +108,8 @@ reserved_ranges:
 transition_period:
   note: "2 过渡期——知识以 blueprint.md + KB 决策记录形式存在，非 KE 编号"
   knowledge_sources:
-    - {type: blueprint, count: 5, path: "docs/03_modules/l01_infrastructure/*/"}
-    - {type: kb_decision, count: 39, path: "KB:decisions namespace（Git-backed KB 决策记录；旧 docs/02_enterprise_architecture/adr/ 物理树已废弃）"}
+    - {type: blueprint, count: 5, path: "docs/03_modules/_domain-infra_ops/*/"}
+    - {type: kb_decision, count: 39, path: "KB:decisions namespace（Git-backed KB 决策记录；原 docs/02_enterprise_architecture/adr/ 内容已迁移至 KB）"}
     - {type: rationale_log, count: 1, path: "docs/02_enterprise_architecture/architecture-rationale-log.md"}
     - {type: session_log, count: 0, path: "已删除（`docs/19_development_workspace/` 已于 2026-05-02 迁出项目）"}
   migration_phase: "beta"
@@ -122,4 +124,4 @@ changelog:
     changes:
       - "初始创建——登记 Schema 骨架 + 预留 4个KE编号段（KE-001~KE-039）"
       - "status=planned——beta KMS 三层漏斗落地前为空表"
-      - "transition_period 标注当前知识的实际存储位置——5蓝图+39ADR"
+      - "transition_period 标注当前知识的实际存储位置——5蓝图+39KB 决策记录"

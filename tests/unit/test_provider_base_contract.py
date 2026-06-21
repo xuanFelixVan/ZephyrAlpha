@@ -1,18 +1,19 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-2056 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-673 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_provider_base_contract
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """L00 provider_base — DataSourceBase 最小可实例化桩与注册。"""
 
-from __future__ import annotations
 
 from datetime import datetime
 
 import pandas as pd
 
-from zephyr.l00_data_source.provider_base import DataSourceBase, DataSourceMeta
+from zephyr.governance.alt_data_connector.provider_base import DataSourceBase, DataSourceMeta
 
 
 _META = DataSourceMeta(

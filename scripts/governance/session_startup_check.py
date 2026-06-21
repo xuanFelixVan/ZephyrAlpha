@@ -17,6 +17,15 @@
 """
 
 from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 
@@ -27,7 +36,7 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, str(__import__("pathlib").Path(__file__).parent.parent.parent))
 
-from zephyr.governance.phase_manager import (
+from zephyr.governance.ops_governance.phase_manager import (
     PHASE_SEQUENCE,
     ConstructionPhase,
     GateResult,
@@ -45,7 +54,7 @@ def _emoji(result: GateResult) -> str:
 
 def _run_phase(phase: ConstructionPhase, label: str) -> dict:
     """_run_phase implementation."""
-    from zephyr.governance.phase_check_registry import run_check
+    from zephyr.governance.ops_governance.phase_check_registry import run_check
 
     phase_gate = PHASE_SEQUENCE[phase]
     result = phase_gate.run_checks()

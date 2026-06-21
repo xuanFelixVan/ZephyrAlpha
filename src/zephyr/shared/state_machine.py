@@ -1,12 +1,13 @@
-# [BLUEPRINT] MOD-INF-038 | docs/03_modules/l01_infrastructure/state-machine-engine/blueprint.md | §4
+# [A_module] module_id=MOD-SHR_state_machine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-038 | docs/03_modules/_domain-infra_runtime/state-machine-engine/blueprint.md | §4
 
 # [MODULE] zephyr.shared.state_machine
 
 # [INVARIANTS] 状态转换必须合法;转换守卫必须同步;命名冲突必须注册
 
-# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__; _state_machine_registry.yaml
+# [MODIFY-GUARD] blueprint.md §4; __init__.py __all__; _state-machine-registry.yaml
 
-# [CONSUMERS] MOD-INF-006(task);MOD-INF-023(drift);MOD-INF-021(rollback);MOD-INF-019(skill);MOD-INF-025(a2a);MOD-INF-018(rbac);MOD-INF-032(resource);MOD-INF-015(telemetry)
+# [CONSUMERS] MOD-INF-006(task);MOD-INF-023(drift);MOD-INF-021(rollback);MOD-INF-019(skill);MOD-INF-025(a2a);MOD-INF-018(rbac);MOD-INF-032(resource);MOD-INF-015(telemetry);governance.drift_detection.state_machine;infrastructure.runtime_integration.auto_fix_engine.state_machine
 
 # [STABILITY] evolving
 
@@ -67,7 +68,7 @@ logger = logging.getLogger(__name__)
 
 S = TypeVar("S")
 
-_REGISTRY_PATH = Path(__file__).parent / "_state_machine_registry.yaml"
+_REGISTRY_PATH = Path(__file__).parent / "_state-machine-registry.yaml"
 
 
 class InvalidTransitionError(ZephyrBaseError):

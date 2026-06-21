@@ -2,7 +2,7 @@
 """Architecture Guard — 不变量自动强制执行基础设施
 
 对标 Google Tricorder / Netflix Conformity Monkey / ArchUnit。
-本目录下的所有脚本在 CI Pipeline 中按 _manifest.yaml 注册表执行，
+本目录下的所有脚本在 CI Pipeline 中按 manifest.yaml 注册表执行，
 任何 exit(1) 的脚本都会阻塞 PR Merge。
 
 设计原则：
@@ -15,3 +15,4 @@
   invariants.yaml 中 fitness_function_path 字段指向本目录的具体脚本。
   本目录是 invariants 的"执行面"——invariants 是"设计面"。
 """
+__all__ = ['check_acl_boundary', 'check_cross_plane_communication', 'check_fe_acl_boundary', 'check_hot_path_purity', 'check_scaffold_exit_gates', 'check_schema_consistency', 'fitness_functions', 'import_linter', 'run_all']

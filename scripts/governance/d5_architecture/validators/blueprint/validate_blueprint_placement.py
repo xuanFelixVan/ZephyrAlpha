@@ -51,7 +51,7 @@ ensure_utf8_stdout()
 
 BLUEPRINTS_DIR = REPO_ROOT / "docs" / "03_modules"
 CROSS_LAYER_DIR = BLUEPRINTS_DIR / "_cross_layer"
-INFRA_DIR = BLUEPRINTS_DIR / "l01_infrastructure"
+INFRA_DIR = BLUEPRINTS_DIR / "infrastructure.runtime_integration"
 
 VALID_LAYERS: frozenset[str] = frozenset({f"L{i:02d}" for i in range(0, 14)} | {"cross_layer"})
 
@@ -127,7 +127,7 @@ def main() -> int:
     for module_id, (filepath, fm) in sorted(blueprints.items()):
         layer = fm.get("layer", "")
         if layer.startswith("L") and layer != "cross_layer":
-            # 检查完整路径中是否包含 l{NN}_ 前缀（适配 l01_infrastructure/task-system/ 这种嵌套结构）
+            # 检查完整路径中是否包含 l{NN}_ 前缀（适配 infrastructure.runtime_integration/task-system/ 这种嵌套结构）
             prefix = _layer_to_dir_prefix(layer)
             if prefix is None:
                 continue

@@ -1,0 +1,103 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# MAD-004 Interface Definability Gate
+# 接口可定义性门禁 —— 模块接口必须清晰定义
+# SSoT: src/zephyr/autonomy_core/gates/_registry.yaml → MAD-004
+
+module_id: MOD-INF-007
+gate_id: MAD-004
+gate_name: interface_definability
+title: "MAD-004 Interface Definability"
+category: admission
+scope: global
+execution_plane: warm
+status: active
+version: "1.0"
+created: "2026-05-04"
+rule_ids:
+  - TRAE-013
+  - TRAE-014
+
+description: >
+  对标：Interface Segregation Principle (ISP) + Contract-First Design。
+  任何新模块 MUST 在实现前明确定义其公开接口：
+  - 入站接口（消费什么数据/事件）
+  - 出站接口（产出什么数据/事件）
+  - 异常接口（抛出什么错误）
+  - 配置接口（需要什么配置参数）
+
+rules:
+  - rule_id: MAD-004-R1
+    name: public_api_declared
+    description: "模块 MUST 在模块蓝图中声明 __all__ 或等效公开 API"
+    enforcement: REJECT
+    rule_ids:
+      - TRAE-013
+      - TRAE-014
+    check: >
+      module blueprint must contain Public API section
+      listing exported classes, functions, and exceptions
+
+  - rule_id: MAD-004-R2
+    name: input_contract_specified
+    description: "入站接口 MUST 声明期望的 CTR 类型和 schema_version"
+    enforcement: REJECT
+    rule_ids:
+      - TRAE-013
+      - TRAE-014
+    check: >
+      for each inbound data flow:
+          assert contract_id in CTR_REGISTRY
+          assert compatible_versions is declared
+
+  - rule_id: MAD-004-R3
+    name: output_contract_specified
+    description: "出站接口 MUST 声明产出的 CTR 类型和 schema_version"
+    enforcement: REJECT
+    rule_ids:
+      - TRAE-013
+      - TRAE-014
+    check: >
+      for each outbound data flow:
+          assert contract_id in CTR_REGISTRY
+          assert output_type is dataclass with frozen=True (for P0)
+
+  - rule_id: MAD-004-R4
+    name: error_contracts_declared
+    description: "模块 MUST 声明可能抛出的异常类型及其恢复策略"
+    enforcement: WARN
+    rule_ids:
+      - TRAE-013
+      - TRAE-014
+    check: >
+      declared_exceptions must reference CTR-ERR-* contracts
+      or custom exceptions with documented recovery hints
+
+  - rule_id: MAD-004-R5
+    name: config_interface_declared
+    description: "模块 MUST 声明所需配置项的 key、类型和默认值"
+    enforcement: WARN
+    rule_ids:
+      - TRAE-013
+      - TRAE-014
+    check: >
+      config requirements must be documented:
+      {key: {type: ..., default: ..., required: bool}}
+
+  - rule_id: MAD-004-R6
+    name: extension_points_documented
+    description: "如果模块提供 OCP 扩展点，MUST 声明基类/注册表和扩展方式"
+    enforcement: REJECT (if claims OCP)
+    rule_ids:
+      - TRAE-013
+      - TRAE-014
+    check: >
+      if module.is_extension_point:
+          assert abstract_base_class is defined
+          assert registry is defined
+          assert extension_guide is documented

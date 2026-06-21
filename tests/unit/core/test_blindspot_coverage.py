@@ -1,15 +1,16 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1847 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-475 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.core.test_blindspot_coverage
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """
 48盲点覆盖审计 — 盲点 vs 代码实现覆盖检查。
 TASK-INF-0130 产出物
 """
 
-from __future__ import annotations
 
 import importlib
 import sys
@@ -22,18 +23,18 @@ BLINDSPOT_TO_CODE = {
     "A2_dependency_timeout": "reliability/circuit_breaker.CircuitBreaker",
     "A3_task_card_validation": "core/models.TaskCard",
     "A4_decomposition_fidelity": "blueprint_decomposer.BlueprintDecomposer",
-    "A5_context_overflow": "context_engine.ContextEngine",
+    "A5_context_overflow": "context-engine.ContextEngine",
     "A6_diff_accuracy": "reliability/diff_planner.DiffPlanner",
     "A7_forbidden_touch": "reliability/context_guard.ContextGuard",
-    "A8_token_budget": "context_engine.ContextEngine",
+    "A8_token_budget": "context-engine.ContextEngine",
     "A9_rto_sla": "sla/sla_monitor.SLAMonitor",
     "B1_lifecycle_states": "lifecycle/task_lifecycle_manager.TaskLifecycleManager",
     "B2_gate_integrity": "lifecycle/task_lifecycle_manager.GateID",
     "B3_scope_drift": "lifecycle/scope_guard.ScopeGuard",
-    "B4_dependency_cycle": "dependency/dependency_graph.DependencyGraph",
+    "B4_dependency_cycle": "dependency/dependency-graph.DependencyGraph",
     "B5_blueprint_sync": "sync/blueprint_code_sync.BlueprintCodeSyncService",
     "B6_rollback_instructions": "lifecycle/task_lifecycle_manager.TaskLifecycleManager",
-    "B7_context_manifest": "context_engine.ContextEngine",
+    "B7_context_manifest": "context-engine.ContextEngine",
     "C1_owner_absent": "owner_absent.OwnerAbsent",
     "C2_autonomy_downgrade": "maintenance/autonomy_monitor.AutonomyMonitor",
     "C3_manual_override": "lifecycle/task_lifecycle_manager.TaskLifecycleManager",
@@ -74,7 +75,7 @@ def test_blindspot_coverage() -> None:
         module_name, class_name = module_path.rsplit(".", 1)
 
         try:
-            importlib.import_module(f"zephyr.core.{module_name}")
+            importlib.import_module(f"zephyr.trading.orchestrator.core.{module_name}")
             resolved += 1
         except ImportError:
             unresolved.append(f"{blindspot_id} → {module_path}")

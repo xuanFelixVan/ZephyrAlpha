@@ -11,7 +11,7 @@
 # doc_type: config
 # status: active
 # version: "1.0.0"
-# layer: l01_infrastructure
+# layer: infrastructure
 # owner: ZephyrAlpha-Owner
 # classification: confidential
 # language: zh
@@ -29,6 +29,7 @@
 # ---
 
 # 全局冻结——Error Budget 耗尽时自动设为 true
+module_id: MOD-INF-005
 global_freeze: false
 freeze_reason: ""
 freeze_set_at: ""

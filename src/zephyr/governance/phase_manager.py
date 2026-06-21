@@ -1,22 +1,14 @@
-# [BLUEPRINT] DOM-GOV-001 | 03_modules/_domain-governance/blueprint.md | §
-
-# [MODULE] zephyr.governance.phase_manager
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
-# [CONSUMERS]
-
+# [A_module] module_id=MOD-RES_phase_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
+# [MODULE] zephyr.infrastructure.rollback.phase_manager
+# [INVARIANTS] Git-native回滚;SQLite Dump Checkpoint;自动回滚
+# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md;src/zephyr/rollback/__init__.py
+# [CONSUMERS] MOD-INF-020;MOD-INF-007;MOD-INF-022
 # [STABILITY] evolving
-
-# [SAFETY] L
-
+# [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
-
-# [ERROR_CONTRACT]
-
-# [TESTS]
+# [ERROR_CONTRACT] RollbackError;CheckpointError;VerificationError
+# [TESTS] tests/test_rollback/
 
 """Phase Manager — ZephyrAlpha 施工阶段门控引擎.
 
@@ -39,6 +31,7 @@ PhaseManager ↔ GateEngine 桥梁:
     （81 域分派表）定位任务域，再使用本 PhaseManager 判断施工阶段。
     冷启动序列：AGENTS.md → SYS-MASTER-001 §0 → project_rules.md → SessionContinuity → PhaseManager
 """
+
 
 from __future__ import annotations
 
@@ -92,121 +85,83 @@ class PhaseGate(BaseModel):
 
 
 PHASE_SEQUENCE: dict[ConstructionPhase, PhaseGate] = {
-    # ================================================================
-    # Phase 0 — 骨架搭建 (15 checks)
-    # 对标: 项目初始化 + RULE-ZERO~FIVE 合规 + 安全/目录基线 + 代码去重
-    # ================================================================
     ConstructionPhase.PHASE_0_SKELETON: PhaseGate(
         phase=ConstructionPhase.PHASE_0_SKELETON,
         name="Phase 0 — 骨架搭建",
         description="基础设施就绪：项目骨架、安全基线、注册表一致性、编码规范",
         dependencies=[],
         gate_checks=[
-            # ── 会话与锁协议 ──
             "gate_session_manager",
             "gate_session_continuity",
             "gate_lock_protocol",
-            # ── 蓝图与路径 ──
             "gate_blueprint_mandatory",
             "gate_path_resolver",
-            "gate_path_tree_freshness",
             "gate_script_manifest",
-            # ── 环境与编码 ──
             "gate_env_vars",
             "gate_encoding_safety",
-            # ── 安全基线 (D6 子集) ──
             "gate_secret_leak_scan",
             "gate_shell_dangerous",
-            # ── 结构完整性 (D1 子集) ──
             "gate_orphan_detection",
             "gate_temp_file_scan",
-            # ── 代码去重 ──
             "gate_code_dedup",
-            # ── 注册表完整性 ──
             "gate_registry_consistency",
             "gate_precommit_config",
             "gate_sys_master_compliance",
         ],
     ),
-    # ================================================================
-    # Phase 1 (24 checks) — 核心系统就绪：各引擎健康、数据库完整性、契约合规
-    # ================================================================
     ConstructionPhase.PHASE_1_FUNCTIONAL: PhaseGate(
         phase=ConstructionPhase.PHASE_1_FUNCTIONAL,
         name="Phase 1 — 功能集成",
         description="核心系统就绪：各引擎健康、数据库完整性、契约合规、蓝图同步",
         dependencies=[ConstructionPhase.PHASE_0_SKELETON],
         gate_checks=[
-            # ── 数据与因子 ──
             "gate_data_vendor_integration",
             "gate_factor_factory",
             "gate_alpha_validator",
             "gate_backtest_minimal",
-            # ── 核心引擎 ──
             "gate_context_engine_health",
             "gate_kb_pipeline",
             "gate_vms_health",
-            "gate_vms_migration",
             "gate_gate_engine_judge",
             "gate_feedback_loop",
-            # ── 数据库 ──
             "gate_db_integrity",
             "gate_query_metrics",
-            # ── 任务系统 (Task System MOD-INF-006) ──
             "gate_task_system",
-            # ── 架构合规 ──
             "gate_ssot_validator",
             "gate_contract_compliance",
             "gate_blueprint_compliance",
-            # ── Agent 系统 ──
             "gate_agent_rbac",
             "gate_audit_trail",
             "gate_audit_trail_context",
-            # ── 资产盘点 ──
             "gate_asset_inventory",
-            # ── 观测基线 (System Telemetry MOD-INF-015) ──
             "gate_observability_baseline",
             "gate_mcp_servers_health",
-            # ── 升级协议 ──
             "gate_escalation_protocol",
-            # ── LLM 安全网关 ──
             "gate_lsg_security",
-            # ── 预算执行 ──
             "gate_budget_enforcer",
         ],
     ),
-    # ================================================================
-    # Phase 2 — 全链路集成 (15 checks)
-    # 对标: end-to-end pipeline + 全量审计回归 + Canary/Shadow/Rollback
-    # ================================================================
     ConstructionPhase.PHASE_2_E2E: PhaseGate(
         phase=ConstructionPhase.PHASE_2_E2E,
         name="Phase 2 — 全链路集成",
         description="全链路就绪：审计全量回归、架构守卫、金丝雀测试、回滚演练、E2E",
         dependencies=[ConstructionPhase.PHASE_1_FUNCTIONAL],
         gate_checks=[
-            # ── 策略与执行管道 ──
             "gate_strategy_pipeline",
             "gate_execution_pipeline",
-            # ── 全量审计回归 ──
             "gate_full_audit_regression",
             "gate_architecture_guard",
             "gate_full_backtest",
-            # ── Resilience 测试 ──
             "gate_chaos_test",
             "gate_kill_switch",
             "gate_shadow_mode",
-            # ── 回滚与恢复 ──
             "gate_rollback_drill",
             "gate_drift_detection",
-            # ── 集成 E2E ──
             "gate_e2e_integration_test",
             "gate_mcp_e2e",
             "gate_pipeline_e2e",
-            # ── 技能与依赖 ──
             "gate_skill_canary",
             "gate_dependency_audit",
-            # ── A2A Hold 占位 ──
             "gate_a2a_hold",
         ],
     ),
@@ -229,7 +184,6 @@ def get_next_phase(current: ConstructionPhase) -> Optional[ConstructionPhase]:
 
 
 def phase_resolver(completed_gates: set[str]) -> ConstructionPhase:
-    """根据已完成的 gate 集合判断当前施工阶段。"""
     p0_gates = set(PHASE_SEQUENCE[ConstructionPhase.PHASE_0_SKELETON].gate_checks)
     p1_gates = set(PHASE_SEQUENCE[ConstructionPhase.PHASE_1_FUNCTIONAL].gate_checks)
     p2_gates = set(PHASE_SEQUENCE[ConstructionPhase.PHASE_2_E2E].gate_checks)
@@ -244,33 +198,6 @@ def phase_resolver(completed_gates: set[str]) -> ConstructionPhase:
 
 
 def session_startup(quick: bool = True) -> dict:
-    """AI Session 冷启动门禁 — 进入项目后 MUST 调用的第一个函数.
-
-    对标: K8s Pod Init Container — 主容器启动前必须完成初始化检查.
-    对标: 航空 pre-flight checklist — 起飞前逐项打勾.
-
-    本函数执行 Phase 0 骨架检查的快速子集 (quick=True, ~3s)
-    或全量子集 (quick=False, ~15s, 包含子进程调用).
-
-    返回 dict:
-        {
-            "ready": bool,          # True = 可以开工
-            "phase": str,           # 当前施工阶段
-            "green": int,           # GREEN 检查数
-            "yellow": int,          # YELLOW 警告数
-            "red": int,             # RED 阻断数
-            "checks": [             # 每项检查结果
-                {"name": str, "status": str, "message": str}
-            ],
-            "next_action": str,     # 下一步建议
-        }
-
-    Usage:
-        # import session_startup from this module directly
-        result = session_startup()
-        if not result["ready"]:
-            print(f"Session : {result['next_action']}")
-    """
     from zephyr.governance.phase_check_registry import (
         check_session_manager, check_session_continuity,
         check_lock_protocol, check_blueprint_mandatory,
@@ -280,7 +207,6 @@ def session_startup(quick: bool = True) -> dict:
         check_registry_consistency, check_encoding_safety,
         check_secret_leak_scan, check_shell_dangerous,
         check_audit_trail_context,
-        check_budget_enforcer,
     )
 
     _FAST_CHECKS = [
@@ -293,7 +219,6 @@ def session_startup(quick: bool = True) -> dict:
         ("Python环境", check_env_vars),
         ("Pre-commit配置", check_precommit_config),
         ("审计上下文", check_audit_trail_context),
-        ("预算执行器", check_budget_enforcer),
     ]
 
     _SLOW_CHECKS = [

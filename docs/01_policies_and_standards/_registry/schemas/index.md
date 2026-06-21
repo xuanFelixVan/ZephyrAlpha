@@ -1,11 +1,11 @@
 ---
-
-doc_type: index
-title: "_registry/schemas/ 目录索引"
-status: active
-version: "1.0.0"
-generated: '2026-05-02'
 blueprint_id: DOM-GOV-001
+doc_type: index
+generated: '2026-05-02'
+module_id: GOV-006
+status: Active
+title: _registry/schemas/ 目录索引
+version: 1.0.0
 ---
 
 

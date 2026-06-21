@@ -1,3 +1,4 @@
+# [A_test] module_id: SRC-TST-0189 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
 # [MODULE] tests.llm_security.test_isolation
 # [STABILITY] evolving
@@ -6,7 +7,7 @@
 # [TESTS] —
 import pytest
 
-from zephyr.llm_security.self_protection.isolation import (
+from zephyr.security.llm_defense.llm_security.self_protection.isolation import (
     AccessPattern,
     IsolationLevel,
     IsolationPolicy,
@@ -31,7 +32,7 @@ class TestLSGIsolationInit:
 class TestFileAccess:
     def test_llm_security_dir_allowed(self):
         iso = LSGIsolation()
-        result = iso.check_file_access("src/zephyr/llm_security/layers/l1_input.py", AccessPattern.FILE_READ)
+        result = iso.check_file_access("src/zephyr/llm-security/layers/l1_input.py", AccessPattern.FILE_READ)
         assert result is True
 
     def test_tmp_dir_allowed(self):
@@ -92,7 +93,7 @@ class TestModuleImport:
 
     def test_llm_security_submodule_allowed(self):
         iso = LSGIsolation()
-        result = iso.check_module_import("src.zephyr.llm_security.layers.l1_input")
+        result = iso.check_module_import("src.zephyr.security.llm_defense.llm_security.layers.l1_input")
         assert result is True
 
     def test_forbidden_module_blocked(self):
@@ -128,6 +129,6 @@ class TestAuditLog:
 
     def test_audit_log_records_file_access(self):
         iso = LSGIsolation()
-        iso.check_file_access("src/zephyr/llm_security/test.py", AccessPattern.FILE_READ)
+        iso.check_file_access("src/zephyr/llm-security/test.py", AccessPattern.FILE_READ)
         log = iso.audit_log
         assert len(log) >= 1

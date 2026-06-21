@@ -1,0 +1,27 @@
+{
+  "task_id": "DM-100100",
+  "source_file": "docs/01_policies_and_standards/governance/document/document_discovery_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_029_doc_operation_security.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "doc_010": {
+      "title": "文档可发现性策略 (GOV-DOC-010)",
+      "conditions_count": 7,
+      "actions_count": 2,
+      "prohibitions_count": 4
+    }
+  },
+  "summary": {
+    "total_rules": 13,
+    "COVERED": 13,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    {
+      "action": "YAML_UPDATE",
+      "target": "trae_029_doc_operation_security.yaml section doc_010",
+      "detail": "从空壳更新为包含7个conditions+2个actions+4个prohibitions的完整规则提取:三种发现路径+4条不可协商原则+三级不存在判定+发现效率约束+缓存规则"
+    }
+  ]
+}

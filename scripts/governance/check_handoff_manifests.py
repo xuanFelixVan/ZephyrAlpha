@@ -14,6 +14,14 @@ check_handoff_manifests.py — AI Session Handoff Manifest 完整性校验.
 exit: 0=CLEAN, 1=WARNINGS, 2=ERRORS
 """
 from __future__ import annotations
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 
@@ -138,7 +146,7 @@ def check_manifest(manifest_path: Path) -> dict:
 def get_expected_contracts() -> list[str]:
     """get_expected_contracts implementation."""
     try:
-        from zephyr.orchestrator.contract_registry import ContractRegistry
+        from zephyr.orchestration.runtime_core.orchestrator.contract_registry import ContractRegistry
         cr = ContractRegistry()
         return [c.contract_id for c in cr.list_all()]
     except Exception:
@@ -159,7 +167,7 @@ def check_missing_manifests() -> list[dict]:
     for ct_id in expected:
         if ct_id not in existing_ct_ids:
             try:
-                from zephyr.orchestrator.contract_registry import ContractRegistry, AIReadOnlyHint
+                from zephyr.orchestration.runtime_core.orchestrator.contract_registry import ContractRegistry, AIReadOnlyHint
                 cr = ContractRegistry()
                 contract = cr.get(ct_id)
                 hint = contract.ai_read_only_hint if contract else None

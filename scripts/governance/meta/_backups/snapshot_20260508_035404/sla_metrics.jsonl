@@ -1,3 +1,0 @@
-# SLA Metrics — 每次 run_all.py 扫描后自动追加
-# 格式: 每行一个 JSON 对象 (JSONL)
-# 字段: timestamp / scan_type / total_findings / critical_count / high_count / scan_duration_s / exit_code

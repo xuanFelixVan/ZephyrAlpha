@@ -1,5 +1,6 @@
 ---
-module_id: "MOD-INF-009"
+module_id: MOD-INF-009
+submodule_path: src/zephyr/pipeline
 title: "Pipeline 蓝图 — 管线编排器·M1-M11门控流水线"
 doc_type: blueprint
 status: Active
@@ -21,6 +22,7 @@ functional_domain: execution
 summary: "Pipeline管线编排器——M1-M11双管线架构(A区生产+B区审计)+三层模型路由+容量升级至1500模块/10K脚本/100AI并发"
 tags: [pipeline, m1-m11, dual-pipeline, model-routing, pipeline-orchestrator, backpressure, capacity-upgrade, incremental-scan, circuit-breaker, dead-letter-queue, blind-review, fallback-chain, pipeline-lock, agent-bridge, zone-crossing, artifact-manifest, preemption, lsg, cost-tracking, data-lineage]
 priority: P0
+runtime_plane: hot
 belongs_to: "MOD-MASTER-001"
 parent_module: ""
 rule_form: structural
@@ -54,7 +56,7 @@ references:
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
-> - AI 压缩工作流标准：[compression-workflow-standard.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/compression-workflow-standard.md)
+> - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
 > - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
@@ -68,6 +70,11 @@ references:
 > **位置说明**：§0 放在概述之后——AI 进入蓝图先建立心理模型（概述），再确认文件现状（§0），再理解设计（§1-§15）。
 
 ### §0.1 代码文件清单
+
+> **架构归属SSoT**：`data/databases/depgraph.db`
+> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
+
+> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules MOD-INF-009`
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|-------------------|
@@ -87,8 +94,8 @@ references:
 | 14 | `layer_router.py` | §3 | 层级路由 | 已实现 | |
 | 15 | `model_router.py` | §3 | 模型路由 + 版本锁定 + 限流 | 已实现 | |
 | 16 | `preemption_manager.py` | §3 | 优先级抢占 + resume | 已实现 | |
-| 17 | `route_manifest.yaml` | §3 | 路由清单 | 已实现 | |
-| 18 | `model_profiler/` | §3 | 已提升为顶层包 `src/zephyr/model_profiler/`，详见 MOD-INF-034 蓝图 | 已迁移 | |
+| 17 | `routemanifest.yaml` | §3 | 路由清单 | 已实现 | |
+| 18 | `model_profiler/` | §3 | 已提升为顶层包 `src/zephyr/model-profiler/`，详见 MOD-INF-034 蓝图 | 已迁移 | |
 | 19 | `model_profiler/benchmark_suite.py` | §3 | 已迁移至 `zephyr.model_profiler.benchmark_suite` | 已迁移 | |
 | 20 | `model_profiler/cli.py` | §3 | 已迁移至 `zephyr.model_profiler.cli` | 已迁移 | |
 | 21 | `model_profiler/deepseek_v4_chat.py` | §3 | 已迁移至 `zephyr.model_profiler.deepseek_v4_chat` | 已迁移 | |
@@ -96,6 +103,11 @@ references:
 | 23 | `model_profiler/profiler.py` | §3 | 已迁移至 `zephyr.model_profiler.profiler` | 已迁移 | |
 | 24 | `model_profiler/results_writer.py` | §3 | 已迁移至 `zephyr.model_profiler.results_writer` | 已迁移 | |
 | 25 | `model_profiler/task_model_learner.py` | §3 | 已迁移至 `zephyr.model_profiler.task_model_learner` | 已迁移 | |
+| `backpressure_types.py` | § — | — | 已实现 | | 本模块 |
+| `llm_gateway.py` | § — | — | 已实现 | | 本模块 |
+| `model_profiler/capability_passport.py` | § — | — | 已实现 | | 本模块 |
+| `model_profiler/exam_orchestrator.py` | § — | — | 已实现 | | 本模块 |
+| `model_profiler/exam_test_cases.py` | § — | — | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
 
@@ -110,7 +122,7 @@ references:
 | 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
 |---------|------------|---------|---------|
 | v0.37.0 (基线) | dispatch/route/fallback/lock/blind_review/telemetry/lifecycle/zone_crossing/lsg/lineage/circuit_breaker/cost_tracking/dead_letter | — | — |
-| v0.38.0 (容量升级) | backpressure_manager/circuit_breaker_manager/cost_tracker/dead_letter_queue/model_router/layer_router/preemption_manager/model_profiler/ | IncrementalScanOrchestrator, ScriptImpactMap, ShardRouter 4→16, CapacityCalibrator | 待施工（Phase B/C） |
+| v0.38.0 (容量升级) | backpressure_manager/circuit_breaker_manager/cost_tracker/dead_letter_queue/model_router/layer_router/preemption_manager/model-profiler/ | IncrementalScanOrchestrator, ScriptImpactMap, ShardRouter 4→16, CapacityCalibrator | 待施工（Phase B/C） |
 
 ---
 
@@ -192,7 +204,7 @@ ZephyrAlpha 的 AI 任务需要从创建到审计全链路受控执行。当前 
 | 9 | ModelRouter | 模型路由 + 版本锁定 + 限流 | model_router.py | 同步调用 |
 | 10 | LayerRouter | 层级路由 + 消费者注册 | layer_router.py, layer_consumer_registry.py | 同步调用 |
 | 11 | PreemptionManager | 优先级抢占 + resume | preemption_manager.py | 同步调用 |
-| 12 | ModelProfiler | 模型性能评测 + 基准套件 | model_profiler/ 子模块 | 异步 |
+| 12 | ModelProfiler | 模型性能评测 + 基准套件 | model-profiler/ 子模块 | 异步 |
 
 ### 3.2 数据流
 
@@ -326,7 +338,7 @@ class ArtifactClassification(str, Enum):
 
 | # | 约束 | 值 |
 |---|------|-----|
-| 1 | Python 3.12+ + Pydantic V2 | ADR-0040 |
+| 1 | Python 3.12+ + Pydantic V2 | KBG-0040 |
 | 2 | Windows NTFS 原子写入 | os.replace() |
 | 3 | 跨进程锁用 os.makedirs(exist_ok=False) | 多 IDE 共存 |
 | 4 | ProcessPoolExecutor 替代 ThreadPoolExecutor | subprocess I/O 释放 GIL |
@@ -349,7 +361,7 @@ class ArtifactClassification(str, Enum):
 
 | # | 废弃/迁移对象 | 当前位置 | 目标位置 | 处理方式 | 引用更新方案 |
 |---|-------------|---------|---------|---------|------------|
-| 1 | route-manifest.yaml | `D:\ZephyrAlpha\src\zephyr\pipeline\route-manifest.yaml` | `D:\ZephyrAlpha\src\zephyr\pipeline\route_manifest.yaml` | 重复文件→保留 snake_case 版本 | Grep 全项目引用并更新 |
+| 1 | route-manifest.yaml | `D:\ZephyrAlpha\src\zephyr\pipeline\route-manifest.yaml` | `D:\ZephyrAlpha\src\zephyr\pipeline\routemanifest.yaml` | 重复文件→保留 snake_case 版本 | Grep 全项目引用并更新 |
 
 ---
 
@@ -400,12 +412,12 @@ class ArtifactClassification(str, Enum):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| MOD-INF-006 | 必须 | TaskCard → dispatch() → PipelineResult | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\task_system\blueprint.md` |
-| MOD-INF-003 | 必须 | Orc.create_task() → Pipeline.dispatch() | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\orchestrator\blueprint.md` |
-| MOD-INF-016 | 必须 | LifecycleAware/EventBus/TelemetryEmitter/MetricsRegistry | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\shared_infrastructure\blueprint.md` |
-| MOD-INF-014 | 必须 | LSG L1+L3 输入输出检测 | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\llm_security_gateway\blueprint.md` |
-| MOD-INF-007 | 可选 | G6 检查——AI 是否已读蓝图 | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\gate_engine\blueprint.md` |
-| MOD-INF-012 | 可选 | DeferredQueue LOCKED→auto-retry | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\deferred_queue\blueprint.md` |
+| MOD-INF-006 | 必须 | TaskCard → dispatch() → PipelineResult | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task_system\blueprint.md` |
+| MOD-INF-003 | 必须 | Orc.create_task() → Pipeline.dispatch() | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\orchestrator\blueprint.md` |
+| MOD-INF-016 | 必须 | LifecycleAware/EventBus/TelemetryEmitter/MetricsRegistry | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared_infrastructure\blueprint.md` |
+| MOD-INF-014 | 必须 | LSG L1+L3 输入输出检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\llm_security_gateway\blueprint.md` |
+| MOD-INF-007 | 可选 | G6 检查——AI 是否已读蓝图 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate_engine\blueprint.md` |
+| MOD-INF-012 | 可选 | DeferredQueue LOCKED→auto-retry | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\deferred_queue\blueprint.md` |
 | GOV-AI-002 | 必须 | 模型路由策略决策树 | v2.0.0 | `D:\ZephyrAlpha\docs\01_policies_and_standards\policies\ai-model-routing-policy.md` |
 
 ### 10.2 依赖图对齐声明
@@ -423,7 +435,7 @@ class ArtifactClassification(str, Enum):
 | 上游脚本 | 下游脚本 | 依赖内容 | 验证方式 |
 |---------|---------|---------|---------|
 | pipeline_orchestrator.py | pipeline_agent_bridge.py | PipelineOrchestrator 实例是桥接的前置条件 | 检查 PipelineOrchestrator 初始化 |
-| model_router.py | model_profiler/profiler.py | ModelRouter 使用 ModelProfiler 的评测结果 | 检查 profiler 产出物 |
+| model_router.py | model-profiler/profiler.py | ModelRouter 使用 ModelProfiler 的评测结果 | 检查 profiler 产出物 |
 | backpressure_manager.py | circuit_breaker_manager.py | 背压 L3 触发熔断器 | 检查熔断器状态 |
 
 #### 数据流依赖
@@ -432,7 +444,7 @@ class ArtifactClassification(str, Enum):
 |--------|--------|---------|---------|
 | pipeline_orchestrator.py | dead_letter_queue.py | 失败的 PipelineResult | 队列 |
 | cost_tracker.py | pipeline_orchestrator.py | CostRecord | 函数调用 |
-| model_profiler/profiler.py | model_router.py | ModelBenchmark | YAML 文件 |
+| model-profiler/profiler.py | model_router.py | ModelBenchmark | YAML 文件 |
 
 ### 10.4 自动化规格
 
@@ -449,7 +461,7 @@ class ArtifactClassification(str, Enum):
 
 | # | 自动化项 | 实现方式 | 现有工具/脚本 | 缺口 |
 |---|---------|---------|-------------|------|
-| 1 | 依赖图自动生成 | AST解析import + manifest字段 | asset_inventory/dependency.py | 不覆盖scripts/目录 |
+| 1 | 依赖图自动生成 | AST解析import + manifest字段 | asset-inventory/dependency.py | 不覆盖scripts/目录 |
 | 2 | 依赖对齐自动验证 | CI门禁 | validate_path_alignment.py | 无 |
 | 3 | 临时时态内容自动清理 | 压缩工作流脚本 | 无 | 需新建 |
 | 4 | 施工步骤完成度自动检测 | pytest+mypy+ruff + 产出物存在性检查 | 部分有 | 需整合 |
@@ -470,7 +482,7 @@ class ArtifactClassification(str, Enum):
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\pipeline\blueprint.md` | 本文件 |
-| 业务代码 | `D:\ZephyrAlpha\src\zephyr\pipeline\` | Python 源码（18 .py + 2 .yaml + model_profiler/ 子模块 8 文件） |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\pipeline\` | Python 源码（18 .py + 2 .yaml + model-profiler/ 子模块 8 文件） |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\test_pipeline_orchestrator.py` | 单元测试 |
 | 配置文件 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` | 19 条蓝图路由表 |
 | 容量参数 | `D:\ZephyrAlpha\config\capacity_params.yaml` | 并发/容量参数 SSoT |
@@ -494,8 +506,8 @@ class ArtifactClassification(str, Enum):
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本→0.39.0 + status→Active | 蓝图升级 |
-| 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | construction_progress 更新 | 代码状态变更 |
-| 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index.yaml` | 版本更新 | 蓝图升级 |
+| 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | construction_progress 更新 | 代码状态变更 |
+| 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 版本更新 | 蓝图升级 |
 
 ---
 
@@ -638,8 +650,8 @@ class ArtifactClassification(str, Enum):
 
 | 资源 | 当前基线 | 测量方式 |
 |------|---------|---------|
-| 模块数 | 51 | module-id-registry.yaml |
-| 脚本数 | 268 | script_manifest.yaml |
+| 模块数 | 51 | module_id_registry.yaml |
+| 脚本数 | 268 | script-manifest.yaml |
 | AI 并发 | 0 | AISessionPool |
 | 并发 worker | 24 (BulkheadExecutor 四池) | 代码硬编码 |
 | 全量扫描耗时 | ~3.5h | 实测 |
@@ -708,7 +720,7 @@ class ArtifactClassification(str, Enum):
 | 节点 | 职责 | 模型 | Sandbox | Gate |
 |:---:|------|------|:---:|:---:|
 | **M1** | 任务卡解析→结构化执行计划 | DeepSeek V4 Pro | full | full_g0_g7 |
-| **M2** | 上下文装配→调用 context_engine | DeepSeek V4 Pro | standard | pre_commit_only |
+| **M2** | 上下文装配→调用 context-engine | DeepSeek V4 Pro | standard | pre_commit_only |
 | **M3** | 代码/文档生成——核心生产 | DeepSeek V4 Pro | full | full_g0_g7 |
 | **M4** | 格式校验 | DeepSeek V4 Pro | standard | pre_commit_only |
 | **M5** | 产物打包 | GLM-5.1 | standard | post_exec_only |
@@ -719,7 +731,7 @@ class ArtifactClassification(str, Enum):
 |:---:|------|------|:---:|:---:|
 | **M6** | 差异检测——产出 vs 期望（AP2边界标记） | DeepSeek V4 Pro | standard | pre_commit_only |
 | **M7** | 深度审查——逐个文件逻辑/合规 | GLM-5.1 | audit | full_g0_g7 |
-| **M8** | 标准合规——PS/GOV/ADR | DeepSeek V4 Pro | standard | post_exec_only |
+| **M8** | 标准合规——PS/GOV/KB 决策记录 | DeepSeek V4 Pro | standard | post_exec_only |
 | **M9** | 风险评估——OWASP LLM Top 10 | DeepSeek V4 Pro | standard | post_exec_only |
 | **M10** | 审计报告→Finding 格式 | DeepSeek V4 Pro | standard | post_exec_only |
 | **M11** | 门禁裁决——G5/G6 | DeepSeek V4 Pro | restricted | none |
@@ -918,7 +930,7 @@ STEP 3: 拆分后验证
 
 | # | 待删除/废弃文件 | 完整绝对路径 | 删除类型 | 安全删除方案 |
 |---|---------------|------------|---------|------------|
-| 1 | route-manifest.yaml（重复） | `D:\ZephyrAlpha\src\zephyr\pipeline\route-manifest.yaml` | 废弃型 | 保留 route_manifest.yaml→交叉验证→标记 deprecated→物理删除 |
+| 1 | route-manifest.yaml（重复） | `D:\ZephyrAlpha\src\zephyr\pipeline\route-manifest.yaml` | 废弃型 | 保留 routemanifest.yaml→交叉验证→标记 deprecated→物理删除 |
 
 ### 删除铁律
 
@@ -939,12 +951,12 @@ STEP 3: 拆分后验证
 | # | 文件 | module_id | 完整绝对路径 | 编写时用途 |
 |---|------|-----------|------------|----------|
 | 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则、doc_type 词表 |
-| 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\directory-structure-standard.md` | 路径映射 |
+| 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` | MTH-012/MTH-013 |
-| 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\file-naming-standard.md` | 命名规则 |
-| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | 编号注册 |
+| 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 命名规则 |
+| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
 | 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
-| 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index.yaml` | 现有规则索引 |
+| 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md` | AI 操作权限 |
 
 ---
@@ -978,34 +990,34 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/pipeline/backpressure_manager.py` | ✅ 已实现 | |
-| `src/zephyr/pipeline/circuit_breaker_manager.py` | ✅ 已实现 | |
-| `src/zephyr/pipeline/cost_tracker.py` | ✅ 已实现 | |
-| `src/zephyr/pipeline/ct_pipe_routing.py` | ✅ 已实现 | |
-| `src/zephyr/pipeline/dead_letter_queue.py` | ✅ 已实现 | |
-| `src/zephyr/pipeline/layer_consumer_registry.py` | ✅ 已实现 | |
-| `src/zephyr/pipeline/layer_router.py` | ✅ 已实现 | |
-| `src/zephyr/pipeline/llm_gateway.py` | ✅ 已实现 | |
-| `src/zephyr/model_profiler/benchmark_suite.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/model_profiler/capability_passport.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/model_profiler/cli.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/model_profiler/deepseek_v4_chat.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/model_profiler/exam_orchestrator.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/model_profiler/exam_test_cases.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/model_profiler/model_discovery.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/model_profiler/profiler.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/model_profiler/results_writer.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/model_profiler/task_model_learner.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/pipeline/model_router.py` | ✅ 已实现 | |
-| `src/zephyr/pipeline/models.py` | ✅ 已实现 | |
-| `src/zephyr/pipeline/pipeline_agent_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/pipeline/pipeline_lock.py` | ✅ 已实现 | |
-| `src/zephyr/pipeline/pipeline_orchestrator.py` | ✅ 已实现 | |
-| `src/zephyr/pipeline/pipeline_roadmap.py` | ✅ 已实现 | |
-| `src/zephyr/pipeline/preemption_manager.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime_integration/pipeline/backpressure_manager.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime_integration/pipeline/circuit_breaker_manager.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime_integration/pipeline/cost_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime_integration/pipeline/ct_pipe_routing.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime_integration/pipeline/dead_letter_queue.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime_integration/pipeline/layer_consumer_registry.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime_integration/pipeline/layer_router.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime_integration/pipeline/llm_gateway.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime_integration/model-profiler/benchmark_suite.py` | ✅ 已迁移至顶层包 | |
+| `src/zephyr/infrastructure/runtime_integration/model-profiler/capability_passport.py` | ✅ 已迁移至顶层包 | |
+| `src/zephyr/infrastructure/runtime_integration/model-profiler/cli.py` | ✅ 已迁移至顶层包 | |
+| `src/zephyr/infrastructure/runtime_integration/model-profiler/deepseek_v4_chat.py` | ✅ 已迁移至顶层包 | |
+| `src/zephyr/infrastructure/runtime_integration/model-profiler/exam_orchestrator.py` | ✅ 已迁移至顶层包 | |
+| `src/zephyr/infrastructure/runtime_integration/model-profiler/exam_test_cases.py` | ✅ 已迁移至顶层包 | |
+| `src/zephyr/infrastructure/runtime_integration/model-profiler/model_discovery.py` | ✅ 已迁移至顶层包 | |
+| `src/zephyr/infrastructure/runtime_integration/model-profiler/profiler.py` | ✅ 已迁移至顶层包 | |
+| `src/zephyr/infrastructure/runtime_integration/model-profiler/results_writer.py` | ✅ 已迁移至顶层包 | |
+| `src/zephyr/infrastructure/runtime_integration/model-profiler/task_model_learner.py` | ✅ 已迁移至顶层包 | |
+| `src/zephyr/infrastructure/runtime_integration/pipeline/model_router.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime_integration/pipeline/models.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_agent_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_lock.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_orchestrator.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_roadmap.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime_integration/pipeline/preemption_manager.py` | ✅ 已实现 | |
 | `src/zephyr/pipeline/route-manifest.yaml` | ✅ 已实现 | |
-| `src/zephyr/pipeline/route_manifest.yaml` | ✅ 已实现 | |
-| `src/zephyr/pipeline/routing_plugins.py` | ✅ 已实现 | |
+| `src/zephyr/pipeline/routemanifest.yaml` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime_integration/pipeline/routing_plugins.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
@@ -1106,5 +1118,5 @@ descheduler:
 | Conditional Execution | M6.diff() → has_changes==false | 跳过 M7/M8/M9→直达 M11 |
 | Dispatch Cancellation | 运行时中断信号 | cancel / modify_priority / switch_model |
 | Saga Rollback | 部分模块失败 | 补偿回滚→delete artifacts + restore files |
-| Decision Log | 每次路由决策 | audit_trail 持久化（含 policy_version + affinity_violations） |
+| Decision Log | 每次路由决策 | audit-trail 持久化（含 policy_version + affinity_violations） |
 | Policy Testing | 路由策略变更 | 断言路由 + affinity 约束 |

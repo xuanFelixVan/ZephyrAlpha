@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0063 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-221 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.architecture.test_cross_module_contracts
 # [STABILITY] evolving
 # [SAFETY] L
@@ -28,7 +29,7 @@ REQUIRED_DEPENDENCIES = [
 
 MCP_BLUEPRINT = REPO_ROOT / "docs/03_modules/_cross_layer/mcp-servers/blueprint.md"
 B_MCP_YAML = REPO_ROOT / "architecture-model/layers/b_mcp.yaml"
-TOOL_CONTRACTS = REPO_ROOT / "src/zephyr/mcp/tool_contracts.yaml"
+TOOL_CONTRACTS = REPO_ROOT / "src/zephyr/mcp/tool-contracts.yaml"
 
 
 def _read_frontmatter(path: Path) -> dict:
@@ -75,13 +76,13 @@ class TestUpstreamDependencyReachability:
                 assert "files" in mod or "id" in mod
 
     def test_tool_contracts_yaml_valid(self):
-        assert TOOL_CONTRACTS.exists(), "tool_contracts.yaml must exist"
+        assert TOOL_CONTRACTS.exists(), "tool-contracts.yaml must exist"
         with open(TOOL_CONTRACTS, encoding="utf-8") as fh:
             data = yaml.safe_load(fh)
-        assert isinstance(data, dict), "tool_contracts.yaml must be a dict"
+        assert isinstance(data, dict), "tool-contracts.yaml must be a dict"
         expected_servers = ["task_manager", "knowledge_base", "gate_engine", "session_handoff", "intent_router", "blueprint_search"]
         for s in expected_servers:
-            assert s in data, f"Missing server in tool_contracts.yaml: {s}"
+            assert s in data, f"Missing server in tool-contracts.yaml: {s}"
 
     def test_b_mcp_all_servers_listed(self):
         with open(B_MCP_YAML, encoding="utf-8") as fh:
@@ -99,7 +100,7 @@ class TestUpstreamDependencyReachability:
             "sandbox_server.py",
             "sentinel_server.py",
             "task_manager_server.py",
-            "tool_contracts.yaml",
+            "tool-contracts.yaml",
         ]
         for f in expected:
             assert f in all_files, f"b_mcp.yaml missing file: {f}"
@@ -119,7 +120,7 @@ class TestUpstreamDependencyReachability:
             "gateway_server.py",
             "handoff_auto_loader.py",
             "__init__.py",
-            "tool_contracts.yaml",
+            "tool-contracts.yaml",
         ]
         mcp_dir = REPO_ROOT / "src/zephyr/mcp"
         for f in server_files:

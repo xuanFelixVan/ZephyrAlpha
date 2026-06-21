@@ -1,9 +1,11 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-2042 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-659 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_l08_interface
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """
 L08 — Human-AI Interface Phase D 覆盖
 ========================================
@@ -14,15 +16,14 @@ ABC 子类化模式、DashboardApp 无依赖实例化。
 Phase D | Safety: LOW（框架验证，无副作用）
 """
 
-from __future__ import annotations
 
 from datetime import datetime
 from typing import Any
 
 import pytest
 
-from zephyr.l08_human_ai_interface.dashboard.app import DashboardApp, create_app
-from zephyr.l08_human_ai_interface.interface_base import (
+from zephyr.frontend.dashboard.app import DashboardApp, create_app
+from zephyr.frontend.interface_base import (
     ApprovalAction,
     ApprovalGatewayBase,
     ApprovalRequest,

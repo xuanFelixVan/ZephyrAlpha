@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_dependency_graph_template.py | §
 """
-[BLUEPRINT] MOD-INF-005 | 03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+[BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 [MODULE] scripts.governance.d5_architecture.validators.validate_dependency_graph_template
 [INVARIANTS] 治理脚本执行正确
 [MODIFY-GUARD] __init__.py;script_manifest.yaml
@@ -39,7 +39,7 @@ REQUIRED_SECTIONS = [
     "graph_id", "nodes", "edges", "adjacency", "properties", "compositions", "constraints"
 ]
 
-NODE_REQUIRED_FIELDS = ["node_id", "type", "layer", "stability", "safety_level"]
+NODE_REQUIRED_FIELDS = ["node_id", "type", "layer", "change_policy", "impact_level"]
 
 EDGE_REQUIRED_FIELDS = ["edge_id", "from", "to", "dep_type", "strength", "direction"]
 
@@ -69,7 +69,7 @@ COMPLETENESS_VALUES = {
 }
 
 DEPENDENCY_GRAPH_PATHS = [
-    REPO_ROOT / "data" / "asset_index" / "dependency_graph.json",
+    REPO_ROOT / "data" / "asset_index" / "dependency-graph.json",
     REPO_ROOT / "docs" / "02_enterprise_architecture" / "system-dependency-map.md",
     REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "cross-module-dependency-registry.yaml",
 ]
@@ -212,7 +212,7 @@ def validate_cross_module_registry(path: Path) -> list[dict]:
     if data is None:
         return [{"rule": "MAD-004-R1", "severity": "ERROR", "message": f"无法加载 YAML: {path}", "source": str(path)}]
 
-    dep_graph = data.get("dependency_graph") or {}
+    dep_graph = data.get("dependency-graph") or {}
     forward = dep_graph.get("forward") or {}
     reverse = dep_graph.get("reverse") or {}
 
@@ -220,14 +220,14 @@ def validate_cross_module_registry(path: Path) -> list[dict]:
         findings.append({
             "rule": "MAD-004-R4",
             "severity": "WARN",
-            "message": "cross-module-dependency-registry: dependency_graph.forward 为空",
+            "message": "cross-module-dependency-registry: dependency-graph.forward 为空",
             "source": str(path)
         })
     if not reverse:
         findings.append({
             "rule": "MAD-004-R4",
             "severity": "WARN",
-            "message": "cross-module-dependency-registry: dependency_graph.reverse 为空",
+            "message": "cross-module-dependency-registry: dependency-graph.reverse 为空",
             "source": str(path)
         })
 
@@ -246,7 +246,7 @@ def validate_cross_module_registry(path: Path) -> list[dict]:
 def main() -> int:
     all_findings = []
 
-    dep_graph_json = REPO_ROOT / "data" / "asset_index" / "dependency_graph.json"
+    dep_graph_json = REPO_ROOT / "data" / "asset_index" / "dependency-graph.json"
     if dep_graph_json.exists():
         try:
             import json
@@ -275,7 +275,7 @@ def main() -> int:
             all_findings.append({
                 "rule": "MAD-005-R1",
                 "severity": "ERROR",
-                "message": f"无法加载 dependency_graph.json: {e}",
+                "message": f"无法加载 dependency-graph.json: {e}",
                 "source": str(dep_graph_json)
             })
 

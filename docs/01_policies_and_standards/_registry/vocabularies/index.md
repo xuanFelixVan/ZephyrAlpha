@@ -1,9 +1,9 @@
 ---
 doc_type: index
 title: "_registry/vocabularies/ 目录索引"
-status: active
+status: Active
 version: "1.0.1"
-module_id: REG-VOC-IDX
+module_id: GOV-007
 generated: '2026-05-02'
 ---
 
@@ -28,6 +28,19 @@ generated: '2026-05-02'
 | scope-vocabulary.yaml | 规则作用范围受控词表（4 值） |
 | stability-vocabulary.yaml | 规则稳定性受控词表（4 值） |
 | verifiability-vocabulary.yaml | 规则可验证性受控词表（3 值） |
+| ai-autonomy-vocabulary.yaml | AI 自治级别受控词表 |
+| ai-autonomy-level-planned-vocabulary.yaml | AI 自治规划级别受控词表 |
+| ai-capability-slot-vocabulary.yaml | AI 能力槽位受控词表 |
+| blueprint-refs-status-vocabulary.yaml | 蓝图引用状态受控词表 |
+| category-vocabulary.yaml | 分类受控词表 |
+| compliance-tags-vocabulary.yaml | 合规标签受控词表 |
+| derived-from-relationship-vocabulary.yaml | 派生关系受控词表 |
+| domain-vocabulary.yaml | 领域受控词表 |
+| evolution-policy-vocabulary.yaml | 演化策略受控词表 |
+| governance-family-vocabulary.yaml | 治理族受控词表 |
+| provenance-audit-chain-verdict-vocabulary.yaml | 溯源审计链判定受控词表 |
+| review-status-vocabulary.yaml | 审查状态受控词表 |
+| safety-level-vocabulary.yaml | 安全级别受控词表 |
 
 ## 排除规则（不应放入本目录的内容）
 

@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0142 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-299 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.governance.test_phase_gates
 # [STABILITY] evolving
 # [SAFETY] L
@@ -8,8 +9,8 @@
 from __future__ import annotations
 
 import pytest
-from zephyr.agent_rbac.bootstrap_superadmin import BootstrapSuperadmin
-from zephyr.l01_infrastructure.a2a_protocol import Phase4Hold
+from zephyr.security.access_control.bootstrap_superadmin import BootstrapSuperadmin
+from zephyr.infrastructure.a2a_protocol.phase_hold import Phase4Hold
 
 
 class TestPhase1GateCheck:
@@ -49,7 +50,7 @@ class TestPhase3GateCheck:
 class TestCycleDependencyAuditIsolation:
     def test_no_cycle_in_imports(self):
         try:
-            from zephyr.escalation_engine.contracts import EscalationContracts
+            from zephyr.governance.contracts import EscalationContracts
             contracts = EscalationContracts()
             assert contracts is not None
         except ImportError as e:
@@ -73,37 +74,37 @@ class TestA2APhase4Hold:
 
 class TestP0ContractSmoke:
     def test_rollback_result_types_smoke(self):
-        from zephyr.rollback.result_types import RollbackResult as RR
+        from zephyr.governance.result_types import RollbackResult as RR
         rr = RR(rollback_id="SMOKE-1", target="test")
         assert rr.rollback_id == "SMOKE-1"
 
     def test_budget_alert_smoke(self):
-        from zephyr.budget_enforcer.alerts import BudgetAlert
+        from zephyr.governance.alerts import BudgetAlert
         alert = BudgetAlert(alert_id="SMOKE-1", burn_rate=0.5)
         assert alert.burn_rate == 0.5
 
     def test_a2a_comm_smoke(self):
-        from zephyr.l01_infrastructure.a2a_protocol import A2ACommunication
+        from zephyr.infrastructure.a2a_protocol import A2ACommunication
         comm = A2ACommunication(a2a_id="SMOKE", from_agent_id="a", to_agent_id="b")
         assert comm.a2a_id == "SMOKE"
 
     def test_registry_smoke(self):
-        from zephyr.agent_spec.registry import AgentCapability
+        from zephyr.autonomy_core.registry import AgentCapability
         cap = AgentCapability(agent_id="test", claimed_capabilities=["read"])
         assert cap.agent_id == "test"
 
 
 class TestP0InputValidation:
     def test_rollback_result_status_enum(self):
-        from zephyr.rollback.result_types import RollbackStatus
+        from zephyr.governance.result_types import RollbackStatus
         assert RollbackStatus.SUCCESS.value == "SUCCESS"
         assert RollbackStatus.FAILED.value == "FAILED"
 
     def test_drift_type_enum(self):
-        from zephyr.behavioral_auditor.events import DriftType
+        from zephyr.shared.shared_services.events import DriftType
         assert DriftType.CODE_DIVERGENCE.value == "CODE_DIVERGENCE"
 
     def test_budget_alert_from_burn_rate_validation(self):
-        from zephyr.budget_enforcer.alerts import BudgetAlert, BudgetSeverity
+        from zephyr.governance.alerts import BudgetAlert, BudgetSeverity
         alert = BudgetAlert.from_burn_rate("B-1", burn_rate=1.5, threshold=0.8, remaining=-100)
         assert alert.severity == BudgetSeverity.CRITICAL

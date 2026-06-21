@@ -72,4 +72,4 @@ python scripts/governance/meta/manage_script_retirement.py --retire <script_path
 
 ## 给新 AI session 看什么
 
-让它先读 `scripts/governance/QUICKSTART.md`（≤500 tokens），再让它 `python scripts/governance/run_all.py --list` 看全貌。
+让它先读 `scripts/governance/quickstart.md`（≤500 tokens），再让它 `python scripts/governance/run_all.py --list` 看全貌。

@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-PRT_money | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.contracts.portfolio.money
 
@@ -50,8 +51,17 @@ ZephyrAlpha — shared/contracts/money.py
 
 from dataclasses import dataclass
 from decimal import ROUND_HALF_EVEN, Decimal, getcontext
+import importlib
 
-from zephyr.trading_contracts.market.instrument import CurrencyCode
+# Lazy import for CurrencyCode (upward dependency from L0 shared → L3 trading)
+_TARGET_MODULE = "zephyr.execution.trading.trading_contracts.market.instrument"
+
+
+def __getattr__(name):
+    if name == "CurrencyCode":
+        mod = importlib.import_module(_TARGET_MODULE)
+        return getattr(mod, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 # 全局 Decimal 精度（28 位有效数字，足够金融计算，含复利/开方等）
 getcontext().prec = 28

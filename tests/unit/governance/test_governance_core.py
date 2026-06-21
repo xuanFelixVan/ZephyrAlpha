@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1891 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-510 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.governance.test_governance_core
 # [STABILITY] evolving
 # [SAFETY] L
@@ -15,7 +16,7 @@ from zephyr.governance.phase_check_registry import (
     _CHECK_MAP,
     run_check,
 )
-from zephyr.governance.architecture_contracts import (
+from zephyr.behavioral_audit.architecture_contracts import (
     ARCH_BASE_CONTRACTS,
     CircuitBreaker,
     CircuitBreakerState,

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-005 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 # [MODULE] scripts.construction._e2e_check
 # [INVARIANTS] 
 # [MODIFY-GUARD] 

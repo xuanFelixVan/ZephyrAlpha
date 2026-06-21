@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_outbox | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.infra.outbox
 
@@ -56,6 +57,7 @@ from enum import Enum, unique
 from typing import Any, Protocol
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
+from zephyr.shared.contracts.core.base_event import BaseEvent as _BaseEvent, generate_idempotency_key as _generate_idempotency_key
 
 __all__ = [
     "OutboxStatus",

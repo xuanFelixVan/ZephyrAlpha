@@ -1,0 +1,890 @@
+rule_id: TRAE-051
+title: 域策略-风控与盘后层
+aliases:
+- DOM-L04-001
+- DOM-L07-001
+layer: L2
+severity: warning
+scope: domain_risk_analytics
+domain: TRAE
+triggers:
+- operation: domain_risk_analytics
+sections:
+  dom_l04_001:
+    section_type: rule
+    title: 风控限额策略
+    original_rules:
+    - DOM-L04-001-ABS-001
+    - DOM-L04-001-ABS-002
+    - DOM-L04-001-ABS-003
+    - DOM-L04-001-ABS-004
+    - DOM-L04-001-COND-001
+    conditions:
+    - type: constraint
+      check: 止损限额：单策略最大亏损≤5%(减仓50%) / 止损线≤8%(清仓) / 组合最大亏损≤3%(减仓70%) / 组合止损线≤5%(清仓)
+        / 全局最大亏损≤2%(kill switch)
+      pass: 止损限额合规
+      fail: 禁止无止损运行
+    - type: constraint
+      check: 敞口限制：单标的≤总资产5% / 单行业≤总资产20% / 多空净敞口≤总资产30% / 隔夜持仓≤日内峰值80%
+      pass: 敞口限制合规
+      fail: 敞口超限
+    - type: constraint
+      check: 杠杆限制：总杠杆≤3倍 / 单策略杠杆≤2倍
+      pass: 杠杆合规
+      fail: 杠杆超限
+    - type: constraint
+      check: 策略间相关性：任意两策略收益相关系数≤0.7 / 高相关策略组(>0.7)合计仓位≤20%
+      pass: 相关性合规
+      fail: 相关性超限
+    - type: constraint
+      check: 限额例外条件：书面申请+更严格止损(超限比例50%)+Owner批准+有效期≤30天+90天内例外≤3次
+      pass: 例外审批通过
+      fail: 禁止超限运行
+    actions:
+    - type: mandatory
+      step: ABS-001：所有运行中策略必须设置止损限额，禁止无止损运行
+    - type: mandatory
+      step: ABS-002：敞口限制必须执行（单标的/单行业/多空净敞口/隔夜）
+    - type: mandatory
+      step: ABS-003：杠杆倍率必须设置上限（总≤3倍，单策略≤2倍）
+    - type: mandatory
+      step: ABS-004：策略间相关性必须设置限制（≤0.7，高相关组合≤20%）
+    - type: mandatory
+      step: COND-001：限额例外必须Owner审批，有效期≤30天，90天内≤3次
+    - type: mandatory
+      step: §4：所有限额必须实时监控（延迟≤1秒），触发时自动执行对应动作，记录审计日志
+    prohibitions:
+    - 禁止策略无止损运行
+    - 禁止单标的仓位超过总资产5%
+    - 禁止总杠杆超过3倍
+    - 禁止两个高相关策略(>0.7)合计仓位超过20%
+    - 禁止绕过Owner审批自行超限运行
+    - 禁止限额触发时人工延迟自动动作
+  dom_l04_002:
+    section_type: rule
+    title: 止损配置操作手册
+    original_rules:
+    - DOM-L04-002
+    conditions:
+    - type: constraint
+      check: 边界值防御：max_drawdown=0→拒绝(必须设止损) / max_drawdown=1.0→拒绝(止损无意义) / hard_stop≤trailing_stop→拒绝(追踪止损不能严于硬止损)
+      pass: 参数边界检查通过
+      fail: 返回Step2重新设置参数
+    - type: constraint
+      check: Kill Switch配置：全局回撤触发线(默认2%) / 连续止损触发次数上限(默认3次) / 恢复需Owner手动解除 / 交易所接口联通确认
+      pass: Kill Switch配置完整
+      fail: Kill Switch配置缺失
+    actions:
+    - type: mandatory
+      step: Step1：确认策略ID/类型/当前持仓和敞口/历史最大回撤
+    - type: mandatory
+      step: Step2：参照DOM-L04-001 §2在risk-config.yaml中配置止损参数
+    - type: mandatory
+      step: Step3：参数验证——不超过DOM-L04-001阈值+触发动作可执行+计算逻辑正确+边界值防御
+    - type: mandatory
+      step: Step3.5：确认Kill Switch配置（全局回撤线/连续触发上限/恢复流程/交易所接口联通）
+    - type: mandatory
+      step: Step4：回测确认——历史数据模拟止损触发场景+确认触发时间点+确认止损后持仓
+    - type: mandatory
+      step: Step5：上线监控——dev环境5个交易日+监控触发事件+确认无误触发+Owner审批后切prod
+    prohibitions:
+    - max_drawdown=0时拒绝配置（必须设止损）
+    - max_drawdown=1.0时拒绝配置（止损无实际意义）
+    - hard_stop≤trailing_stop时拒绝配置
+    - 回滚涉及生产风控配置，禁止AI自动执行（必须Owner手动）
+  l04_ssot_declarations:
+    section_type: context
+    title: 风控限额SSoT声明
+    original_rules:
+    - DOM-L04-001-§5
+    summary: 本文件是策略止损限额规则、敞口限制规则、杠杆倍率上限、策略间相关性约束、限额例外审批流程的唯一真源
+    impact_on_rules:
+    - 全局审计追踪与日志留存→GOV-CMP-002
+    key_decisions:
+    - 任何与本文件冲突的定义以本文件为准
+    - 发现冲突时应提KB决策记录记录并修正冲突方
+  l04_consumer_registry:
+    section_type: examples
+    title: 风控限额消费者注册表
+    original_rules:
+    - DOM-L04-001-§6
+    items:
+    - title: DOM-L04-002 stop-loss-config-runbook.md
+      code: 'tier: 1
+
+        consumption: 引用ABS-001~004/COND-001作为操作前置条件'
+      language: yaml
+      note: Tier1消费者
+    - title: DOM-L00-001 data-source-connection-policy.md
+      code: 'tier: 2
+
+        consumption: 断线时触发本文件风控动作'
+      language: yaml
+      note: Tier2消费者
+    - title: DOM-L02-002 factor-onboarding-runbook.md
+      code: 'tier: 2
+
+        consumption: 灰度发布异常时引用本文件风控规则'
+      language: yaml
+      note: Tier2消费者
+    - title: src/zephyr/risk/ 风控引擎模块
+      code: 'tier: 1
+
+        consumption: 实现所有限额计算与触发逻辑'
+      language: yaml
+      note: Tier1消费者
+    - title: risk-config.yaml
+      code: 'tier: 1
+
+        consumption: 存储限额参数'
+      language: yaml
+      note: Tier1消费者
+  l04_normative_references:
+    section_type: context
+    title: 风控限额标准间引用
+    original_rules:
+    - DOM-L04-001-§7
+    summary: Normative引用(GOV-CMP-002审计日志)和Informative引用(PS-STD-001/PS-STD-003/DOM-L00-001/DOM-L02-001)
+    impact_on_rules:
+    - GOV-CMP-002→限额触发事件的审计日志以此为准
+    - DOM-L00-001→断线处理触发风控动作
+    - DOM-L02-001→因子衰减信号触发风控策略调整
+    key_decisions: []
+  l04_ai_consumability:
+    section_type: context
+    title: 风控限额AI可消费性声明
+    original_rules:
+    - DOM-L04-001-§8
+    summary: 本文件规则格式和AI自治声明
+    impact_on_rules:
+    - 所有规则以### ABS-NNN/### COND-NNN格式声明，AI可通过正则自动提取
+    - 所有限额阈值以Markdown表格定义（含计算方法/默认阈值/触发动作），AI可解析为自动化风控逻辑
+    - ai_autonomy: human_gated——AI可提议修改限额参数，需Owner审批后执行
+    - stability: evolving——内容可能频繁变更，AI每次session应重新读取
+    - verifiability: automated——限额计算和触发动作可通过自动化测试验证
+    key_decisions: []
+  l04_change_sync_rules:
+    section_type: context
+    title: 风控限额变更同步规则
+    original_rules:
+    - DOM-L04-001-§10
+    summary: 变更本文件时必须同步Tier1/Tier2消费者
+    impact_on_rules:
+    - 修改止损限额阈值→同步DOM-L04-002+风控引擎代码+通知策略团队
+    - 修改敞口限制→同步DOM-L04-002+risk-config.yaml
+    - 修改杠杆倍率上限→同步风控引擎代码
+    - 新增ABS/COND→同步DOM-L04-002
+    key_decisions: []
+  l04_modification_conditions:
+    section_type: context
+    title: 风控限额修改条件
+    original_rules:
+    - DOM-L04-001-§11
+    summary: 不同修改类型有不同审批和同步要求
+    impact_on_rules:
+    - 修改限额阈值→Owner批准+同步Tier1+风控引擎代码
+    - 新增ABS→Owner批准+更新+同步DOM-L04-002
+    - 新增COND→Owner批准
+    - 编辑性→AI可自主+记录
+    key_decisions: []
+  l04_deprecation_procedure:
+    section_type: procedure
+    title: 风控限额策略废弃流程
+    original_rules:
+    - DOM-L04-001-§12
+    steps:
+    - order: 1
+      action: Owner明确批准废弃
+      pre_condition: 策略需废弃
+      expected_result: Owner书面批准
+      on_failure: 禁止废弃
+    - order: 2
+      action: 创建KB决策记录，记录废弃原因和替代方案
+      pre_condition: Owner已批准
+      expected_result: KB决策记录已创建
+      on_failure: 补充决策记录
+    - order: 3
+      action: 更新所有Tier1消费者的depends_on移除对本文件的引用
+      pre_condition: 决策记录已创建
+      expected_result: 所有消费者已更新
+      on_failure: 逐一确认消费者
+    - order: 4
+      action: 本文件状态改为deprecated，填写superseded_by
+      pre_condition: 消费者已更新
+      expected_result: 文件状态已更新
+      on_failure: 手动更新状态
+    - order: 5
+      action: 保留90天后可归档删除
+      pre_condition: deprecated状态已持续90天
+      expected_result: 文件已归档
+      on_failure: 等待90天期满
+  l04_review_cycles:
+    section_type: context
+    title: 风控限额审查周期
+    original_rules:
+    - DOM-L04-001-§13
+    summary: 三项定期审查
+    impact_on_rules: []
+    key_decisions:
+    - 止损阈值是否需根据市场波动调整→每30天→Owner
+    - 敞口限制是否仍合理→每90天→Owner
+    - ABS/COND规则是否覆盖所有风控场景→每90天→Owner
+  l04_change_history:
+    section_type: examples
+    title: 风控限额变更记录
+    original_rules:
+    - DOM-L04-001-§14
+    items:
+    - title: v0.1.0
+      code: 'date: 2026-04-30
+
+        change: 初始草案——创建风控限额框架，4个ABS+1个COND规则'
+      language: yaml
+      note: 初始版本
+    - title: v0.1.1
+      code: 'date: 2026-05-01
+
+        change: 元规则合规对齐——frontmatter补字段+补齐PS-STD-002 L1模板缺失章节'
+      language: yaml
+      note: 合规对齐
+  l04_self_check_checklist:
+    section_type: verification
+    title: 风控限额完整性自检清单
+    original_rules:
+    - DOM-L04-001-§15
+    checks:
+    - step: §1目的与范围
+      command: 检查文件包含目的与范围章节
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §2限额类型(ABS-001~004)
+      command: 检查文件包含限额类型章节
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §3例外审批(COND-001)
+      command: 检查文件包含例外审批章节
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §4限额监控
+      command: 检查文件包含限额监控章节
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §5-§15完整性章节
+      command: 检查SSoT/消费者/引用/AI声明/禁止/同步/修改/废弃/审查章节
+      expected_exit: 全部存在
+      on_fail: 补充缺失章节
+  l04_stop_loss_procedure:
+    section_type: procedure
+    title: 止损配置操作步骤
+    original_rules:
+    - DOM-L04-002-§2
+    steps:
+    - order: 1
+      action: 确认策略ID/类型/当前持仓和敞口/历史最大回撤
+      pre_condition: 止损配置需求已确认
+      expected_result: 策略信息已确认
+      on_failure: 补充策略信息
+    - order: 2
+      action: 参照DOM-L04-001 §2在risk-config.yaml中配置止损参数
+      pre_condition: 策略信息已确认
+      expected_result: 止损参数已配置
+      on_failure: 检查参数格式
+    - order: 3
+      action: 参数验证——不超过DOM-L04-001阈值+触发动作可执行+计算逻辑正确+边界值防御(max_drawdown≠0/≠1.0/hard_stop>trailing_stop)
+      pre_condition: 参数已配置
+      expected_result: 所有验证通过
+      on_failure: 返回Step2重新设置
+    - order: 4
+      action: 确认Kill Switch配置——全局回撤触发线(默认2%)/连续触发上限(默认3次)/恢复需Owner手动/交易所接口联通
+      pre_condition: 参数验证通过
+      expected_result: Kill Switch配置完整
+      on_failure: 补充Kill Switch配置
+    - order: 5
+      action: 回测确认——历史数据模拟止损触发场景+确认触发时间点+确认止损后持仓
+      pre_condition: Kill Switch已确认
+      expected_result: 回测无异常
+      on_failure: 调整参数返回Step2
+    - order: 6
+      action: 上线监控——dev环境5个交易日+监控触发事件+确认无误触发+Owner审批后切prod
+      pre_condition: 回测通过
+      expected_result: dev无误触发+Owner已审批
+      on_failure: 继续dev验证
+  l04_stop_loss_verification:
+    section_type: verification
+    title: 止损配置验证清单
+    original_rules:
+    - DOM-L04-002-§3
+    checks:
+    - step: 止损参数在限额范围内
+      command: 对比risk-config.yaml与DOM-L04-001 §2阈值
+      expected_exit: 所有参数≤阈值
+      on_fail: 返回Step2调整参数
+    - step: 止损触发动作可执行
+      command: 模拟测试减仓/清仓/kill switch动作
+      expected_exit: 所有动作可执行
+      on_fail: 检查交易接口
+    - step: 回测无异常
+      command: 检查回测结果
+      expected_exit: 止损在预期时间点触发
+      on_fail: 调整参数
+    - step: dev环境无误触发
+      command: 检查5个交易日监控日志
+      expected_exit: 无异常触发
+      on_fail: 排查误触发原因
+  l04_stop_loss_rollback:
+    section_type: rollback
+    title: 止损配置回滚方案
+    original_rules:
+    - DOM-L04-002-§4
+    steps:
+    - order: 1
+      action: 立即恢复为默认止损参数
+      verify: risk-config.yaml已恢复默认值
+      on_fail: 手动编辑配置文件
+    - order: 2
+      action: 通知Owner——Kill Switch已激活，风控系统已介入
+      verify: Owner确认收到通知
+      on_fail: 升级通知渠道
+  l04_stop_loss_ai_autonomy:
+    section_type: examples
+    title: 止损配置AI自治权限标注
+    original_rules:
+    - DOM-L04-002-§5
+    items:
+    - title: Step1确定止损策略类型
+      code: 'ai_permission: needs_confirmation
+
+        action: AI展示策略选项，Owner选择'
+      language: yaml
+      note: 需确认
+    - title: Step2生成YAML配置
+      code: 'ai_permission: auto
+
+        action: AI根据Owner指定参数生成配置'
+      language: yaml
+      note: 可自动
+    - title: Step2.5边界值防御
+      code: 'ai_permission: auto
+
+        action: 自动校验并添加防御层'
+      language: yaml
+      note: 可自动
+    - title: Step3部署+沙箱回放
+      code: 'ai_permission: needs_confirmation
+
+        action: AI部署到staging执行回放，Owner确认结果'
+      language: yaml
+      note: 需确认
+    - title: Step3.5 Kill Switch配置
+      code: 'ai_permission: needs_confirmation
+
+        action: AI生成配置，Owner确认触发阈值'
+      language: yaml
+      note: 需确认
+    - title: Step4上线监控
+      code: 'ai_permission: needs_confirmation
+
+        action: AI配置监控，Owner确认上线'
+      language: yaml
+      note: 需确认
+    - title: 回滚方案
+      code: 'ai_permission: prohibited
+
+        action: 涉及生产风控配置，必须Owner手动执行'
+      language: yaml
+      note: 禁止自动
+  l04_stop_loss_ttl_lifecycle:
+    section_type: context
+    title: 止损配置TTL与生命周期
+    original_rules:
+    - DOM-L04-002-§6
+    summary: 止损配置手册的有效期和生命周期管理
+    impact_on_rules:
+    - 有效期至2026-07-30
+    - 失效条件：风控限额策略重大变更/风控引擎升级导致配置格式不兼容/新增止损策略类型需要新步骤
+    - 过期后动作：标记status:deprecated+superseded_by指向新版，旧版保留90天后归档
+    - 审查触发：每次创建新止损配置时审查步骤是否仍适用；每60天例行审查；止损事件触发后回溯审查
+    key_decisions: []
+  l04_stop_loss_change_history:
+    section_type: examples
+    title: 止损配置变更记录
+    original_rules:
+    - DOM-L04-002-§7
+    items:
+    - title: v0.1.0
+      code: 'date: 2026-04-30
+
+        change: 初始草案——创建止损配置流程'
+      language: yaml
+      note: 初始版本
+    - title: v0.1.1
+      code: 'date: 2026-05-01
+
+        change: 元规则合规对齐——frontmatter补ai_autonomy+补齐PS-STD-002 L3模板缺失章节'
+      language: yaml
+      note: 合规对齐
+  dom_l07_001:
+    section_type: rule
+    title: 盘后报告策略
+    original_rules:
+    - DOM-L07-001-ABS-001
+    - DOM-L07-001-ABS-002
+    - DOM-L07-001-ABS-003
+    - DOM-L07-001-COND-001
+    - DOM-L07-001-COND-002
+    conditions:
+    - type: constraint
+      check: 报告产出时限：交易执行日报T+0 18:00前 / 策略绩效日报T+0 19:00前 / 风控合规日报T+0 19:30前 / 数据质量日报T+0
+        17:30前 / 周度综合周五20:00前 / 月度审计T+3月初
+      pass: 报告按时产出
+      fail: 违反ABS-001时限SLA
+    - type: constraint
+      check: 超常规事件30分钟内产出即时报告：Kill Switch触发(P0) / 单日回撤>5%(P1) / 策略跌停无法平仓(P1) / 数据源核心级故障(P1)
+      pass: 即时报告按时产出
+      fail: 违反ABS-003
+    - type: constraint
+      check: 报告数据可追溯：每个数字标注数据来源+数据血缘链路完整(GOV-DATA-002)+生成时间戳精确到秒+追溯粒度到原始订单ID/行情tick/风控事件ID
+      pass: 数据可追溯
+      fail: 违反COND-001
+    - type: constraint
+      check: 分发最小权限：Owner全部 / 策略团队仅所管策略绩效 / 数据团队仅数据质量报告 / 合规审计仅风控合规+月度审计
+      pass: 分发权限合规
+      fail: 违反COND-002
+    actions:
+    - type: mandatory
+      step: ABS-001：盘后报告必须在规定时限内产出（6类报告各有SLA）
+    - type: mandatory
+      step: ABS-002：报告必须包含关键指标，禁止省略（交易执行/策略绩效/风控合规/数据质量各有必含指标）
+    - type: mandatory
+      step: ABS-003：超常规事件必须在30分钟内产出即时报告
+    - type: mandatory
+      step: COND-001：报告数据必须可追溯到原始数据源
+    - type: mandatory
+      step: COND-002：报告分发必须遵循最小权限原则，权限通过report-access-control.yaml管理
+    prohibitions:
+    - 禁止延迟产出定期报告（日/周/季报告）
+    - 禁止报告数据缺失率>5%
+    - 禁止超常规事件发生后30分钟内未产出即时报告
+    - 禁止未经权限审批分发给非授权收件人
+    - 禁止连续2次报告质量不合格不清退管道
+  dom_l07_002:
+    section_type: rule
+    title: 分析管线操作手册
+    original_rules:
+    - DOM-L07-002
+    conditions:
+    - type: constraint
+      check: 数据质量：缺失率<0.1% / 延迟<5分钟
+      pass: 数据质量达标
+      fail: 标记不可信，通知数据团队
+    - type: constraint
+      check: 数据源就绪：行情数据已入库+交易日志已同步+风控数据已更新 / 未就绪→30分钟重试→超1小时升级P2
+      pass: 数据源就绪
+      fail: 等待或升级事故
+    actions:
+    - type: mandatory
+      step: Step1：确认数据就绪——行情/交易日志/风控数据，未就绪30分钟重试，超1小时升级P2通知Owner+数据团队
+    - type: mandatory
+      step: Step2：数据质量检查——运行GOV-DATA-001脚本，确认缺失率<0.1%+延迟<5分钟
+    - type: mandatory
+      step: Step3：运行分析管线——交易执行/策略绩效/风控合规分析，部分失败时成功步骤正常产出，失败步骤标记FAILED
+    - type: mandatory
+      step: Step3.5：幂等性检查——检查pipeline_run_log，重跑覆盖+更新时间戳，重复触发拒绝+记录警告+通知Owner
+    - type: mandatory
+      step: Step4：生成报告——按report-templates/模板生成+验证指标完整性+验证数据可追溯性
+    - type: mandatory
+      step: Step5：分发报告——按DOM-L07-001 §4分发+确认收到+异常指标额外告警
+    prohibitions:
+    - 管线超时>30分钟必须中断并通知Owner
+    - 重复触发管线时禁止执行（拒绝+记录警告+通知Owner）
+  l07_ssot_declarations:
+    section_type: context
+    title: 盘后报告SSoT声明
+    original_rules:
+    - DOM-L07-001-§5
+    summary: 本文件是报告类型与产出时限、质量标准与完整度要求、分发规则与权限、超常规事件即时报告规则的唯一真源
+    impact_on_rules:
+    - 全局审计追踪与日志留存→GOV-CMP-002
+    - 报告配置模板→report-templates/目录
+    key_decisions:
+    - 任何与本文件冲突的定义以本文件为准
+    - 发现冲突时应提KB决策记录记录并修正冲突方
+  l07_consumer_registry:
+    section_type: examples
+    title: 盘后报告消费者注册表
+    original_rules:
+    - DOM-L07-001-§6
+    items:
+    - title: DOM-L07-002 analytics-pipeline-runbook.md
+      code: 'tier: 1
+
+        consumption: 引用ABS-001~003/COND-001~002作为操作前置条件'
+      language: yaml
+      note: Tier1消费者
+    - title: DOM-L04-001 risk-limits-policy.md
+      code: 'tier: 1
+
+        consumption: 超限事件触发即时报告(ABS-003)→通知风控系统'
+      language: yaml
+      note: Tier1消费者
+    - title: Owner（人工审阅）
+      code: 'tier: 1
+
+        consumption: 接收定期报告进行审查'
+      language: yaml
+      note: Tier1消费者
+    - title: report-access-control.yaml
+      code: 'tier: 1
+
+        consumption: 存储分发权限规则'
+      language: yaml
+      note: Tier1消费者
+  l07_normative_references:
+    section_type: context
+    title: 盘后报告标准间引用
+    original_rules:
+    - DOM-L07-001-§7
+    summary: Normative引用(GOV-CMP-002审计日志/GOV-SEC-001访问控制)和Informative引用(PS-STD-001/PS-STD-003/DOM-L04-001)
+    impact_on_rules:
+    - GOV-CMP-002→报告生成和分发的审计日志以此为基
+    - GOV-SEC-001→分发规则的权限以report-access-control.yaml为准
+    - DOM-L04-001→超限事件与ABS-003联动
+    key_decisions: []
+  l07_ai_consumability:
+    section_type: context
+    title: 盘后报告AI可消费性声明
+    original_rules:
+    - DOM-L07-001-§8
+    summary: 本文件规则格式和AI自治声明
+    impact_on_rules:
+    - 所有规则以### ABS-NNN/### COND-NNN格式声明，AI可通过正则自动提取
+    - 所有时限和质量标准以Markdown表格定义，AI可解析为自动化管线配置
+    - ai_autonomy: human_gated——AI可提议修改报告策略，需Owner审批后执行
+    - stability: evolving——内容可能频繁变更，AI每次session应重新读取
+    - verifiability: manual——报告质量的最终验收由Owner人工完成
+    key_decisions: []
+  l07_change_sync_rules:
+    section_type: context
+    title: 盘后报告变更同步规则
+    original_rules:
+    - DOM-L07-001-§10
+    summary: 变更本文件时必须同步Tier1/Tier2消费者
+    impact_on_rules:
+    - 修改时限SLA→同步DOM-L07-002管线配置
+    - 修改质量标准→同步DOM-L07-002
+    - 新增ABS/COND→同步DOM-L07-002
+    - 修改分发权限→同步report-access-control.yaml+通知收件人
+    key_decisions: []
+  l07_modification_conditions:
+    section_type: context
+    title: 盘后报告修改条件
+    original_rules:
+    - DOM-L07-001-§11
+    summary: 不同修改类型有不同审批和同步要求
+    impact_on_rules:
+    - 修改时限SLA→Owner批准+同步Tier1
+    - 新增ABS→Owner批准+更新+同步DOM-L07-002
+    - 新增COND→Owner批准
+    - 编辑性→AI可自主+记录
+    key_decisions: []
+  l07_deprecation_procedure:
+    section_type: procedure
+    title: 盘后报告策略废弃流程
+    original_rules:
+    - DOM-L07-001-§12
+    steps:
+    - order: 1
+      action: Owner明确批准废弃
+      pre_condition: 策略需废弃
+      expected_result: Owner书面批准
+      on_failure: 禁止废弃
+    - order: 2
+      action: 创建KB决策记录，记录废弃原因和替代方案
+      pre_condition: Owner已批准
+      expected_result: KB决策记录已创建
+      on_failure: 补充决策记录
+    - order: 3
+      action: 更新所有Tier1消费者的depends_on移除对本文件的引用
+      pre_condition: 决策记录已创建
+      expected_result: 所有消费者已更新
+      on_failure: 逐一确认消费者
+    - order: 4
+      action: 本文件状态改为deprecated，填写superseded_by
+      pre_condition: 消费者已更新
+      expected_result: 文件状态已更新
+      on_failure: 手动更新状态
+    - order: 5
+      action: 保留90天后可归档删除
+      pre_condition: deprecated状态已持续90天
+      expected_result: 文件已归档
+      on_failure: 等待90天期满
+  l07_review_cycles:
+    section_type: context
+    title: 盘后报告审查周期
+    original_rules:
+    - DOM-L07-001-§13
+    summary: 三项定期审查
+    impact_on_rules: []
+    key_decisions:
+    - 时限SLA是否合理→每90天→Owner
+    - 质量标准是否需要调整→每90天→Owner
+    - 超常规事件触发阈值是否需要调整→每30天→Owner
+  l07_change_history:
+    section_type: examples
+    title: 盘后报告变更记录
+    original_rules:
+    - DOM-L07-001-§14
+    items:
+    - title: v0.1.0
+      code: 'date: 2026-04-30
+
+        change: 初始草案——创建报告策略框架，3个ABS+2个COND规则'
+      language: yaml
+      note: 初始版本
+    - title: v0.1.1
+      code: 'date: 2026-05-01
+
+        change: 元规则合规对齐——frontmatter补字段+补齐PS-STD-002 L1模板缺失章节'
+      language: yaml
+      note: 合规对齐
+  l07_self_check_checklist:
+    section_type: verification
+    title: 盘后报告完整性自检清单
+    original_rules:
+    - DOM-L07-001-§15
+    checks:
+    - step: §1目的与范围
+      command: 检查文件包含目的与范围章节
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §2报告类型与产出时限(ABS-001~003)
+      command: 检查文件包含报告类型章节
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §3质量标准(COND-001)
+      command: 检查文件包含质量标准章节
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §4分发规则(COND-002)
+      command: 检查文件包含分发规则章节
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §5-§15完整性章节
+      command: 检查SSoT/消费者/引用/AI声明/禁止/同步/修改/废弃/审查章节
+      expected_exit: 全部存在
+      on_fail: 补充缺失章节
+  l07_pipeline_procedure:
+    section_type: procedure
+    title: 分析管线操作步骤
+    original_rules:
+    - DOM-L07-002-§2
+    steps:
+    - order: 1
+      action: 确认数据就绪——行情/交易日志/风控数据，未就绪30分钟重试，超1小时升级P2
+      pre_condition: 盘后分析需求已确认
+      expected_result: 所有数据源已就绪
+      on_failure: 等待重试或升级P2
+    - order: 2
+      action: 数据质量检查——运行GOV-DATA-001脚本，确认缺失率<0.1%+延迟<5分钟
+      pre_condition: 数据已就绪
+      expected_result: 数据质量达标
+      on_failure: 标记不可信，通知数据团队
+    - order: 3
+      action: 运行分析管线——交易执行/策略绩效/风控合规分析，部分失败时成功步骤正常产出
+      pre_condition: 数据质量达标
+      expected_result: 分析完成
+      on_failure: 失败步骤标记FAILED，全部失败则重新调度
+    - order: 4
+      action: 幂等性检查——检查pipeline_run_log，重跑覆盖+更新时间戳，重复触发拒绝+记录警告
+      pre_condition: 分析完成
+      expected_result: 幂等性确认
+      on_failure: 重复触发拒绝执行
+    - order: 5
+      action: 生成报告——按report-templates/模板生成+验证指标完整性+验证数据可追溯性
+      pre_condition: 幂等性确认
+      expected_result: 报告已生成
+      on_failure: 检查模板和数据
+    - order: 6
+      action: 分发报告——按DOM-L07-001 §4分发+确认收到+异常指标额外告警
+      pre_condition: 报告已生成
+      expected_result: 分发完成
+      on_failure: 重试分发通道
+  l07_pipeline_error_patterns:
+    section_type: error_patterns
+    title: 分析管线异常处理
+    original_rules:
+    - DOM-L07-002-§3
+    items:
+    - title: 数据源未就绪
+      code: 'detection: 数据源状态检查
+
+        action: 等待30分钟重试，超1小时升级P2'
+      language: yaml
+      note: 可自动重试
+    - title: 数据质量不达标
+      code: 'detection: GOV-DATA-001脚本
+
+        action: 标记不可信+通知数据团队+部分报告标注数据质量警告'
+      language: yaml
+      note: 部分产出
+    - title: 分析管线报错
+      code: 'detection: 步骤执行日志
+
+        action: 检查日志定位错误+修复后重跑失败步骤'
+      language: yaml
+      note: 仅重跑失败步骤
+    - title: 报告生成失败
+      code: 'detection: 模板渲染错误
+
+        action: 检查模板和数据+修复后重新生成'
+      language: yaml
+      note: 模板问题
+    - title: 管线OOM
+      code: 'detection: 系统OOM日志
+
+        action: 检查数据量+必要时分批处理+修复后重跑'
+      language: yaml
+      note: 内存溢出
+    - title: 管线超时(>30min)
+      code: 'detection: 超时监控
+
+        action: 中断当前运行+通知Owner'
+      language: yaml
+      note: 必须中断
+    - title: 进程被kill
+      code: 'detection: 系统日志(OOM Killer/手动)
+
+        action: 确认kill原因+修复后重跑'
+      language: yaml
+      note: 需确认原因
+  l07_pipeline_verification:
+    section_type: verification
+    title: 分析管线验证清单
+    original_rules:
+    - DOM-L07-002-§4
+    checks:
+    - step: 所有数据源已就绪
+      command: 运行数据质量检查脚本
+      expected_exit: 数据质量检查通过
+      on_fail: 等待或升级P2
+    - step: 4类报告全部产出
+      command: 检查报告目录
+      expected_exit: 交易执行/策略绩效/风控合规/数据质量报告均存在
+      on_fail: 重跑失败步骤
+    - step: 报告在时限内产出
+      command: 检查报告时间戳
+      expected_exit: 符合DOM-L07-001 §2 SLA
+      on_fail: 排查延迟原因
+    - step: 报告数据可追溯
+      command: 检查报告中数据来源标注
+      expected_exit: 每个数字有数据来源
+      on_fail: 补充数据来源标注
+    - step: 分发完成
+      command: 检查分发确认记录
+      expected_exit: 所有对象已收到
+      on_fail: 重试分发
+  l07_pipeline_ai_autonomy:
+    section_type: examples
+    title: 分析管线AI自治权限标注
+    original_rules:
+    - DOM-L07-002-§5
+    items:
+    - title: Step1数据接入
+      code: 'ai_permission: auto
+
+        action: AI检查数据源是否就绪+schema是否匹配'
+      language: yaml
+      note: 可自动
+    - title: Step2计算配置
+      code: 'ai_permission: auto
+
+        action: AI根据策略定义生成标准配置'
+      language: yaml
+      note: 可自动
+    - title: Step3质量校验
+      code: 'ai_permission: needs_confirmation
+
+        action: AI执行并输出报告，Owner确认质量达标'
+      language: yaml
+      note: 需确认
+    - title: Step3.5幂等性检查
+      code: 'ai_permission: auto
+
+        action: 连续3次执行，比较md5校验值'
+      language: yaml
+      note: 可自动
+    - title: Step4报告生成
+      code: 'ai_permission: auto
+
+        action: AI调用report-templates/模板生成'
+      language: yaml
+      note: 可自动
+    - title: Step5分发验证
+      code: 'ai_permission: needs_confirmation
+
+        action: AI配置测试分发，Owner确认收到'
+      language: yaml
+      note: 需确认
+    - title: 异常处理
+      code: 'ai_permission: needs_confirmation
+
+        action: AI可按文档步骤操作，Owner确认最终决策'
+      language: yaml
+      note: 需确认
+  l07_pipeline_ttl_lifecycle:
+    section_type: context
+    title: 分析管线TTL与生命周期
+    original_rules:
+    - DOM-L07-002-§6
+    summary: 分析管线手册的有效期和生命周期管理
+    impact_on_rules:
+    - 有效期至2026-07-30
+    - 失效条件：报告策略重大变更/报告模板格式升级/新增必需的质量检查步骤
+    - 过期后动作：标记status:deprecated+superseded_by指向新版，旧版保留90天后归档
+    - 审查触发：每次创建新报告管线时审查步骤是否仍适用；每60天例行审查；报告质量连续不合格时回溯审查
+    key_decisions: []
+  l07_pipeline_change_history:
+    section_type: examples
+    title: 分析管线变更记录
+    original_rules:
+    - DOM-L07-002-§7
+    items:
+    - title: v0.1.0
+      code: 'date: 2026-04-30
+
+        change: 初始草案——创建分析管线操作流程'
+      language: yaml
+      note: 初始版本
+    - title: v0.1.1
+      code: 'date: 2026-05-01
+
+        change: 元规则合规对齐——frontmatter补ai_autonomy+补齐PS-STD-002 L3模板缺失章节'
+      language: yaml
+      note: 合规对齐
+references:
+  rule_ids:
+  - TRAE-049
+  - TRAE-050
+  scripts: []
+  modules: []
+  blueprints: []
+enforcement:
+  type: doc
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: evolving
+  impact_level: L
+  modification_permission: ai_modifiable
+  superseded_by: null
+change_history:
+- version: 0.1.0
+  date: '2026-06-13'
+  change: 初始创建——placeholder sections（dom_l04_001/dom_l07_001）
+- version: 0.2.0
+  date: '2026-06-19'
+  change: RQ审查修复——从trae_050合并L04(风控)+L07(盘后)完整sections（852行）；references补充TRAE-049/050；provenance重建只保留L04+L07源文件并标记deprecated(D56裁定SSoT)；新增change_history
+provenance:
+  extracted_at: '2026-06-19T00:00:00'
+  extracted_by: session-20260619-001

@@ -21,7 +21,7 @@ AGENTS.md §6.10 双层对齐闸门 + §6.14 漂移免疫架构原则 Level 2 �
   DIM-5: contract.source_layer 归属 —— contracts.source_layer → _index.yaml partitions
   DIM-6: 聚合根 events_published → events/ 事件清单
   DIM-7: 反向扫描 —— contracts/ 合同中未被任何 layer 引用的孤儿合同
-  DIM-8: module_id 注册链 —— layers 模块 id → module-id-registry.yaml 登记
+  DIM-8: module_id 注册链 —— layers 模块 id → module_id_registry.yaml 登记
   DIM-9: 废弃文件引用检测 —— 所有 .md/.yaml 中引用已废弃文件（status: deprecated）
   DIM-10: 断裂路径引用检测 —— 所有 .md/.yaml 中的文件路径引用 → 目标文件存在性
 
@@ -127,9 +127,9 @@ def _get_invariants(data: dict) -> list[dict]:
 
 
 def _build_contract_registry() -> set[str]:
-    """从 cross-layer-contracts.yaml 构建合同 ID 集合"""
+    """从 cross_layer_contracts.yaml 构建合同 ID 集合"""
     contract_ids: set[str] = set()
-    contracts_path = ARCH_MODEL / "contracts" / "cross-layer-contracts.yaml"
+    contracts_path = ARCH_MODEL / "contracts" / "cross_layer_contracts.yaml"
     if not contracts_path.exists():
         _err(f"DIM-1 合同源文件不存在: {contracts_path}")
         return contract_ids
@@ -165,7 +165,7 @@ def check_dim1_contract_refs() -> None:
                     continue
                 if cid not in contract_ids:
                     _err(
-                        f"DIM-1 [{fname}] 模块 {module_id} 引用的 contract_id='{cid}' 在 cross-layer-contracts.yaml 中不存在"
+                        f"DIM-1 [{fname}] 模块 {module_id} 引用的 contract_id='{cid}' 在 cross_layer_contracts.yaml 中不存在"
                     )
 
 
@@ -255,14 +255,14 @@ def _collect_all_adr_refs() -> list[tuple[str, str, str]]:
                 refs.append(("invariants.yaml", iv.get("id", "?"), adr))
 
     # contracts
-    ct_path = ARCH_MODEL / "contracts" / "cross-layer-contracts.yaml"
+    ct_path = ARCH_MODEL / "contracts" / "cross_layer_contracts.yaml"
     if ct_path.exists():
         data = load_yaml(ct_path)
         for section in data.get("contracts", []):
             if isinstance(section, dict):
                 adrs = section.get("related_adrs", [])
                 for a in adrs:
-                    refs.append(("cross-layer-contracts.yaml", section.get("id", "?"), a))
+                    refs.append(("cross_layer_contracts.yaml", section.get("id", "?"), a))
 
     return refs
 
@@ -285,9 +285,9 @@ def check_dim3_adr_refs() -> None:
 
 def _build_partition_registry() -> set[str]:
     """_build_partition_registry implementation."""
-    idx_path = ARCH_MODEL / "_index.yaml"
+    idx_path = ARCH_MODEL / "index.yaml"
     if not idx_path.exists():
-        _err(f"DIM-4 _index.yaml 不存在: {idx_path}")
+        _err(f"DIM-4 index.yaml 不存在: {idx_path}")
         return set()
     data = load_yaml(idx_path)
     pids: set[str] = set()
@@ -331,7 +331,7 @@ def check_dim5_contract_source_layer() -> None:
     if not partition_ids:
         return
 
-    ct_path = ARCH_MODEL / "contracts" / "cross-layer-contracts.yaml"
+    ct_path = ARCH_MODEL / "contracts" / "cross_layer_contracts.yaml"
     if not ct_path.exists():
         return
     data = load_yaml(ct_path)
@@ -347,13 +347,13 @@ def check_dim5_contract_source_layer() -> None:
 
 
 # =============================================================================
-# DIM-6: 聚合根 events_published → domain-events.yaml
+# DIM-6: 聚合根 events_published → domain_events.yaml
 # =============================================================================
 
 
 def _build_event_registry() -> set[str]:
     """_build_event_registry implementation."""
-    ev_path = ARCH_MODEL / "events" / "domain-events.yaml"
+    ev_path = ARCH_MODEL / "events" / "domain_events.yaml"
     if not ev_path.exists():
         _warn(f"DIM-6 事件源文件不存在: {ev_path}")
         return set()
@@ -362,12 +362,12 @@ def _build_event_registry() -> set[str]:
 
 
 def check_dim6_aggregate_events() -> None:
-    """DIM-6: 聚合根 events_published → domain-events.yaml 中的事件 ID"""
+    """DIM-6: 聚合根 events_published → domain_events.yaml 中的事件 ID"""
     event_ids = _build_event_registry()
     if not event_ids:
         return
 
-    ddd_path = ARCH_MODEL / "domain" / "ddd-model.yaml"
+    ddd_path = ARCH_MODEL / "domain" / "ddd_model.yaml"
     if not ddd_path.exists():
         return
     data = load_yaml(ddd_path)
@@ -375,7 +375,7 @@ def check_dim6_aggregate_events() -> None:
         agg_id = agg.get("id", "?")
         for ep in agg.get("events_published", []):
             if ep not in event_ids:
-                _err(f"DIM-6 [{agg_id}] events_published='{ep}' 不在 domain-events.yaml 中")
+                _err(f"DIM-6 [{agg_id}] events_published='{ep}' 不在 domain_events.yaml 中")
 
 
 # =============================================================================
@@ -397,7 +397,7 @@ def _collect_all_referenced_contract_ids() -> set[str]:
 
 
 def check_dim7_orphan_contracts() -> None:
-    """DIM-7: cross-layer-contracts.yaml 中未被任何层引用的合同（P1 级别警告，P0 报错）"""
+    """DIM-7: cross_layer_contracts.yaml 中未被任何层引用的合同（P1 级别警告，P0 报错）"""
     contract_ids = _build_contract_registry()
     referenced = _collect_all_referenced_contract_ids()
     if not contract_ids:
@@ -418,16 +418,16 @@ def check_dim7_orphan_contracts() -> None:
 
 def _build_module_id_registry() -> set[str]:
     """_build_module_id_registry implementation."""
-    reg_path = ARCH_MODEL / "module-id-registry.yaml"
+    reg_path = ARCH_MODEL / "module_id_registry.yaml"
     if not reg_path.exists():
-        _warn(f"DIM-8 module-id-registry.yaml 不存在: {reg_path}")
+        _warn(f"DIM-8 module_id_registry.yaml 不存在: {reg_path}")
         return set()
     data = load_yaml(reg_path)
     return {entry["module_id"] for entry in data.get("registered_ids", [])}
 
 
 def check_dim8_module_id_registry() -> None:
-    """DIM-8: layers 模块 id 是否在 module-id-registry.yaml 中登记（P1 警告）"""
+    """DIM-8: layers 模块 id 是否在 module_id_registry.yaml 中登记（P1 警告）"""
     registered = _build_module_id_registry()
     if not registered:
         return
@@ -441,7 +441,7 @@ def check_dim8_module_id_registry() -> None:
             if mid.startswith(("MOD-", "infra-", "core-", "l", "fe-", "shared-", "scripts-")):
                 continue
             if mid not in registered:
-                _warn(f"DIM-8 [{fname}] 模块 id='{mid}' 未在 module-id-registry.yaml 登记（可能是新模块待注册）")
+                _warn(f"DIM-8 [{fname}] 模块 id='{mid}' 未在 module_id_registry.yaml 登记（可能是新模块待注册）")
 
 
 # =============================================================================
@@ -449,7 +449,7 @@ def check_dim8_module_id_registry() -> None:
 # =============================================================================
 
 _DEPRECATED_FILE_NAMES = [
-    "master-document-inventory.yaml",
+    "master-document-inventory-registry.md",
     "governance-rules-master-registry.yaml",
 ]
 
@@ -466,7 +466,8 @@ def _build_deprecated_file_set() -> dict[str, Path]:
     if not GOV_DOCS_DIR.exists():
         return deprecated
     for f in iter_files(GOV_DOCS_DIR, {".md", ".yaml", ".yml"}, EXCLUDE_DIRS):
-        fm = parse_frontmatter_from_file(f)
+        fm_raw = parse_frontmatter_from_file(f)
+        fm = fm_raw[0] if isinstance(fm_raw, tuple) else fm_raw
         if fm and fm.get("status") == "deprecated":
             deprecated[f.name] = f
     for name in _DEPRECATED_FILE_NAMES:
@@ -484,7 +485,7 @@ def check_dim9_deprecated_refs() -> None:
     1. 扫描 01_policies_and_standards/ 下所有 .md/.yaml 文件
     2. 在文件内容中搜索废弃文件名
     3. 排除自身引用（废弃文件引用自己）和桩文件的重定向提示
-    4. 排除 document-metadata-index.yaml（auto-generated，含历史路径记录）
+    4. 排除 document-metadata-index-registry.yaml（auto-generated，含历史路径记录）
     5. 每个源文件+废弃文件对只报告一次
     """
     deprecated = _build_deprecated_file_set()
@@ -496,7 +497,7 @@ def check_dim9_deprecated_refs() -> None:
     scan_files = iter_files(GOV_DOCS_DIR, {".md", ".yaml", ".yml"}, EXCLUDE_DIRS)
 
     for f in scan_files:
-        if f.name in ("document-metadata-index.yaml",):
+        if f.name in ("document-metadata-index-registry.yaml",):
             continue
 
         try:
@@ -504,7 +505,8 @@ def check_dim9_deprecated_refs() -> None:
         except Exception:
             continue
 
-        fm = parse_frontmatter_from_file(f)
+        fm_raw = parse_frontmatter_from_file(f)
+        fm = fm_raw[0] if isinstance(fm_raw, tuple) else fm_raw
         if fm and fm.get("status") == "deprecated":
             continue
 
@@ -602,7 +604,8 @@ def check_dim10_broken_path_refs() -> None:
         except Exception:
             continue
 
-        fm = parse_frontmatter_from_file(f)
+        fm_raw = parse_frontmatter_from_file(f)
+        fm = fm_raw[0] if isinstance(fm_raw, tuple) else fm_raw
         if fm and fm.get("status") == "deprecated":
             continue
 

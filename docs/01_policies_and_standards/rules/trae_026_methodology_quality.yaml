@@ -1,0 +1,135 @@
+rule_id: TRAE-026
+title: 方法论-质量与度量
+aliases:
+- MTH-010
+- MTH-011
+- MTH-014
+layer: L2
+severity: warning
+scope: methodology_quality
+domain: TRAE
+triggers:
+- operation: methodology_quality
+sections:
+  mth_014:
+    title: 补漏与终止双检
+    section_type: rule
+    original_rules:
+    - MTH-014
+    conditions:
+    - type: pre_condition
+      check: 每次审查结束时
+      pass: 补漏检查和够用检查均通过
+      fail: 项目节奏失控(过度审查或审查不足)
+    actions:
+    - type: mandatory
+      step: 1.补漏检查(按专业框架标准框架逐条过，标记已覆盖/当前不适用/进Backlog)→2.够用检查(现有规则能否覆盖下一阶段已知需求？是→停止)→3.双检记录MUST(已覆盖/进Backlog+预计Phase/当前不适用+原因)
+    prohibitions: []
+  mth_010:
+    title: 规则体系架构审查原则
+    section_type: rule
+    original_rules:
+    - MTH-010
+    conditions:
+    - type: trigger
+      check: 规则体系变动后(新增/合并/重命名/重组)
+      pass: 四步审查全部通过
+      fail: 变动后体系结构不一致
+    actions:
+    - type: mandatory
+      step: Step1名字=责任检查(文件名一眼看出责任/后缀统一/与title一致)→Step2责任声明检查(有§1.2正向声明/有§1.3负向边界/指向正确)→Step3文件夹职责检查(有责任声明/只装一种类型/命名规范)→Step4专业机构对标(文件划分/命名/差异论证)；Step1-3不合格→修复后重新审查
+    prohibitions:
+    - 跳过MTH-010直接提交
+    - Step1-3不合格时标记"通过"
+    - 以"将来再修"跳过重命名
+    - 选择性对标
+  mth_010_checklist:
+    title: MTH-010 四步审查详细清单
+    section_type: rule
+    original_rules:
+    - MTH-010 详细清单
+    conditions:
+    - type: constraint
+      check: Step1名字=责任检查
+      pass: 文件名一眼看出责任+后缀统一+文件名与title一致
+      fail: 重命名/统一后缀/修正不一致一方
+    - type: constraint
+      check: Step2责任声明检查
+      pass: 有§1.2正向责任声明+有§1.3负向责任边界+责任边界指向正确文件
+      fail: 补写§1.2/补写§1.3/修正指向
+    - type: constraint
+      check: Step3文件夹职责检查
+      pass: 每个文件夹有责任声明+只装一种类型+命名遵循规范
+      fail: 写入index.md/迁移异类文件/重命名
+    - type: constraint
+      check: Step4专业机构对标
+      pass: 文件划分与对标机构一致+命名一致+差异有正当理由
+      fail: 补充差距分析/修正命名/补写论证或修正
+    actions:
+    - type: mandatory
+      step: 审查频率：变更触发(新增/合并/重命名→受影响目录立即执行)+定期审计(全部01_policies_and_standards/每90天或Phase转换时)；完成标准：输出审查报告{Step1结果+Step2结果+Step3结果+Step4结果}，Step1-3有不合格→修复后重新审查，Step4有差距但已论证正当理由→记录为已知差距
+    prohibitions: []
+  mth_011:
+    title: 内容冗余审计三分类法
+    section_type: rule
+    original_rules:
+    - MTH-011
+    conditions:
+    - type: trigger
+      check: 审计文件内容冗余时
+      pass: 冗余内容被识别和处理
+      fail: 项目堆积重复和废话内容
+    actions:
+    - type: mandatory
+      step: 三分类：🔴重复(已在其他文件权威定义→删除改为引用)/🟡废话(过度设计/很快过时/没人执行→删除)/🟢有价值(本文独有不可推导→保留)；量化：🔴+🟡>80%考虑废除整个文件；快速判定：1.独有吗？2.有人用吗？3.指的路对吗？
+    prohibitions:
+    - 把退役文件改名当备份(XXX_old/XXX_deprecated)
+    - 提取内容后原件不删
+  ps_std_009_reference:
+    title: PS-STD-009规则生命周期与变更标准引用
+    section_type: context
+    original_rules:
+    - PS-STD-009
+    summary: "PS-STD-009(规则生命周期与变更标准)的scope/normative_refs/change_history已迁移至权威文件trae_042_meta_rule_standard.yaml(ps_std_009_scope/ps_std_009_normative_refs/ps_std_009_change_history章节)。本文件仅保留MTH-010/011/014方法论规则。"
+    authoritative_source: trae_042_meta_rule_standard.yaml
+references:
+  rule_ids:
+  - TRAE-024
+  - TRAE-025
+  scripts: []
+  modules: []
+  blueprints: []
+enforcement:
+  type: doc
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: evolving
+  impact_level: L
+  modification_permission: ai_modifiable
+  superseded_by: null
+  version: "1.0.5"
+  last_modified: "2026-06-21"
+  change_history:
+  - version: "1.0.0"
+    date: "2026-06-13"
+    change: "初始创建——从governance_methodology_standard.md提取MTH-009/010/011规则"
+  - version: "1.0.1"
+    date: "2026-06-19"
+    change: "RQ-14合规：metadata新增version/last_modified/change_history字段记录文件级修改历史"
+  - version: "1.0.2"
+    date: "2026-06-19"
+    change: "RQ-03散布标注：rlc_scope新增dispersion_note标注PS-STD-009散布内容，权威文件为trae_042"
+  - version: "1.0.3"
+    date: "2026-06-19"
+    change: "RQ-03散布根治：rlc_scope/rlc_normative_refs/rlc_change_history章节已迁移至trae_042(ps_std_009_scope/normative_refs/change_history)，本文件替换为ps_std_009_reference引用章节"
+  - version: "1.0.4"
+    date: "2026-06-21"
+    change: "循环审查修复（Owner批准）：aliases移除MTH-009添加MTH-014，mth_009 section重编号为mth_014（MTH-009归属trae_025，本文件的补漏与终止双检重编号为MTH-014）；summary更新MTH-009/010/011→MTH-010/011/014"
+  - version: "1.0.5"
+    date: "2026-06-21"
+    author: "AI-Assistant"
+    change: "审查修复：metadata.version对齐change_history最新版本(1.0.3→1.0.5)；last_modified对齐v1.0.4日期(2026-06-19→2026-06-21)；change_history按版本号升序排列(1.0.4移至末尾)"
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

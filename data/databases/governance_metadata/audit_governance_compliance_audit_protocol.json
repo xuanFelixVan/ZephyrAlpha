@@ -1,0 +1,27 @@
+{
+  "task_id": "DM-100100",
+  "source_file": "docs/01_policies_and_standards/governance/compliance/audit_protocol.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_044_compliance_audit.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "gov_cmp_003": {
+      "title": "审计执行协议 (GOV-CMP-003)",
+      "conditions_count": 8,
+      "actions_count": 5,
+      "prohibitions_count": 4
+    }
+  },
+  "summary": {
+    "total_rules": 17,
+    "COVERED": 17,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    {
+      "action": "YAML_UPDATE",
+      "target": "trae_044_compliance_audit.yaml section gov_cmp_003",
+      "detail": "从空壳更新为包含8个conditions+5个actions+4个prohibitions的完整规则提取"
+    }
+  ]
+}

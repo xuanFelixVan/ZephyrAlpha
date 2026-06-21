@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_model_serving_response | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.contracts.experiment.model_serving_response
 
@@ -27,7 +28,7 @@ from dataclasses import dataclass
 # category: data_contract
 # status: auto_generated
 # created: "2026-05-04"
-# generated_by: codegen from cross-layer-contracts.yaml
+# generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
 ZephyrAlpha — shared/contracts/model_serving_response.py
@@ -36,7 +37,7 @@ CTR-P1-005: ModelServingResponse / 模型推理响应
 
 跨层模型推理响应契约。L11 ML Platform 返回推理结果给 L03/L05。
 
-SSoT: cross-layer-contracts.yaml → CTR-P1-005
+SSoT: cross_layer_contracts.yaml → CTR-P1-005
 Version: 1.0
 Status: AUTO-GENERATED — DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.

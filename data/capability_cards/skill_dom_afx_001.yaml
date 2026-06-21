@@ -5,6 +5,7 @@
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
+module_id: MOD-INF-035
 capability_id: skill-dom-afx-001
 category: infra
 description: Auto-Fix Engine (MOD-CROSS-001) 九层修复L1规则引擎+L2 LLM桥接+L3 Agent OODA自愈),

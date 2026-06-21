@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/audit_agent_spec.py | §
 """
-[BLUEPRINT] MOD-INF-005 | 03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+[BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 [MODULE] scripts.governance.d5_architecture.audit_agent_spec
 [INVARIANTS] agent-spec 审计完整性
 [MODIFY-GUARD] __init__.py;script_manifest.yaml
@@ -16,8 +16,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from zephyr.agent_spec.engine import SpecEngine
-from zephyr.agent_spec.skill_loader import SkillLoader
+from zephyr.autonomy_core.agent_lifecycle.engine import SpecEngine
+from zephyr.autonomy_core.agent_lifecycle.skill_loader import SkillLoader
 
 e = SpecEngine()
 r = e.drift_check()

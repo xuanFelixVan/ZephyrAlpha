@@ -1,6 +1,6 @@
 ---
 doc_type: index
-module_id: AUDIT-REPORTS-IDX-001
+module_id: GOV-055
 title: "审计报告目录索引"
 layer: cross_layer
 status: Active
@@ -20,7 +20,7 @@ ttl: permanent
 
 | 文件 | 说明 |
 |------|------|
-| architecture-alignment-audit.md | 架构对齐审计报告 — 文档体系全局合规检查（2026-04-25） |
+| architecture_alignment_audit.md | 架构对齐审计报告 — 文档体系全局合规检查（2026-04-25） |
 | ssot-validation-LATEST.md | SSoT 矛盾扫描报告 — frontmatter 字段一致性自动化扫描（2026-05-02） |
 
 ## 排除规则（不应放入本目录的内容）

@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [A_test] module_id: SRC-TST-0034 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §
 # [MODULE] tests.agent_rbac.test_enhanced_security
 # [STABILITY] evolving
 # [SAFETY] L
@@ -8,13 +9,13 @@
 from __future__ import annotations
 
 import pytest
-from zephyr.agent_rbac.cross_session_detector import CrossSessionDetector
-from zephyr.agent_rbac.permission_hooks import PermissionHooks
-from zephyr.agent_rbac.agent_creation_policy import AgentCreationPolicy, CreationPolicy
-from zephyr.agent_rbac.cache_invalidation import CacheInvalidation
-from zephyr.agent_rbac.emergency_override import EmergencyOverride
-from zephyr.agent_rbac.auto_maintenance import AutoMaintenance
-from zephyr.agent_rbac.identity import AgentIdentity, MaturityLevel
+from zephyr.security.access_control.cross_session_detector import CrossSessionDetector
+from zephyr.security.access_control.permission_hooks import PermissionHooks
+from zephyr.security.access_control.agent_creation_policy import AgentCreationPolicy, CreationPolicy
+from zephyr.security.access_control.cache_invalidation import CacheInvalidation
+from zephyr.security.access_control.emergency_override import EmergencyOverride
+from zephyr.security.access_control.auto_maintenance import AutoMaintenance
+from zephyr.security.access_control.identity import AgentIdentity, MaturityLevel
 
 
 class TestEnhancedSecurity:

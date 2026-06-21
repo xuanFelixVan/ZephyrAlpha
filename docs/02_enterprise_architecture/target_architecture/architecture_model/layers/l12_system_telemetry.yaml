@@ -1,0 +1,108 @@
+# [A_config] module_id=CFG-l12-system-telemetry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+module_id: DOM-GOV-001
+schema_version: '2.0'
+partition:
+  id: l12
+  name: System Telemetry
+  layer_position: 12
+  runtime_plane: warm
+  view_file: 03-application_architecture.md
+  view_section: §4.1 system-telemetry/
+modules:
+- id: l12-metrics-warm
+  name: Metrics Collection & Aggregation
+  submodule_path: src/zephyr/system-telemetry/metrics/
+  status: planned
+  priority: P1
+  runtime_plane: warm
+  description: 结构化指标采集与聚合（Prometheus 兼容）；标准 Warm 采集路径
+  interfaces:
+  - contract_id: CTR-004
+    role: consumer
+    description: 消费 Order 事件用于交易指标采集与聚�?
+  - contract_id: CTR-005
+    role: consumer
+    description: 消费 Fill 成交事件用于执行质量指标采集
+  - contract_id: CTR-P1-013
+    role: producer
+    description: 生产 TelemetryEmitter 契约，提供结构化指标发射接口
+  kb_ref: []
+  plane_note: 标准采集 Warm；T3 阶段低延迟指标路径扩展走 Hot（l12-metrics-hot�?
+- id: l12-logs
+  name: Structured Log Pipeline
+  submodule_path: src/zephyr/system-telemetry/logs/
+  status: planned
+  priority: P1
+  runtime_plane: warm
+  description: 结构化日志流水线（关�?ID、分层标签）；correlation ID 注入，对�?L01 logging
+  interfaces:
+  - contract_id: CTR-P1-013
+    role: both
+    description: 消费 TelemetryEmitter 契约中的日志数据；生产结构化日志输出，包含关联ID和分层标�?
+  kb_ref: []
+- id: l12-traces
+  name: Distributed Tracing
+  submodule_path: src/zephyr/system-telemetry/traces/
+  status: planned
+  priority: P1
+  runtime_plane: warm
+  description: 分布式追�?span（OpenTelemetry SDK）；Warm 实时追踪，历史长期归档走 Cold（l12-traces-archive�?
+  interfaces:
+  - contract_id: CTR-P1-013
+    role: both
+    description: 消费 TelemetryEmitter 契约中的追踪数据；生产分布式追踪 span，包�?trace_id、span_id、parent_span_id
+  kb_ref: []
+  plane_note: 实时追踪 Warm；历史归�?Cold（l12-traces-archive�?
+- id: l12-ai-behavior
+  name: AI Behavior Observability
+  submodule_path: src/zephyr/system-telemetry/ai_behavior/
+  status: planned
+  priority: P1
+  runtime_plane: warm
+  description: AI Operator 行为日志、决策溯源链；Warm 实时监控，历史回溯分析走 Cold（l12-ai-behavior-history�?
+  interfaces:
+  - contract_id: CTR-P1-013
+    role: both
+    description: 消费 TelemetryEmitter 契约中的AI行为数据；生产AI行为审计日志，包含决策溯源链
+  kb_ref:
+  - KBG-0010
+  plane_note: 实时监控 Warm；历史回溯分�?Cold（l12-ai-behavior-history�?
+- id: l12-archive
+  name: Telemetry Data Archive
+  submodule_path: src/zephyr/system-telemetry/archive/
+  status: planned
+  priority: P1
+  runtime_plane: cold
+  description: 遥测数据归档与长期存储；归档 metrics、logs、traces、AI行为数据到冷存储
+  interfaces:
+  - contract_id: CTR-P1-013
+    role: both
+    description: 消费 TelemetryEmitter 契约中的遥测数据进行归档；生产归档元数据和检索接�?
+  kb_ref: []
+  plane_note: 冷存储归档，支持历史数据检�?
+summary:
+  total: 5
+  by_status:
+    planned: 5
+    active: 0
+    deferred: 0
+    deprecated: 0
+  by_priority:
+    P0: 0
+    P1: 5
+    P2: 0
+    P3: 0
+  by_runtime_plane:
+    hot: 0
+    warm: 4
+    cold: 1
+  naming_note: 'system-telemetry �?observability 更精确——强�?结构化指标流�?AI �?（机器消�?metrics/traces）， �?L07 给人看的业务报告明确区分；对�?Google SRE / Netflix OSS 命名惯例（OQ-030 / R31）�?
+
+    '

@@ -5,6 +5,7 @@
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
+module_id: MOD-INF-010
 confidence: 0.6
 pattern: Recurring ambiguity in M8
 proposal_id: PROP-20260508200404

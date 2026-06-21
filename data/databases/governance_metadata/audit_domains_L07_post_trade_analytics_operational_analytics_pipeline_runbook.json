@@ -1,0 +1,69 @@
+{
+  "task_id": "DM-100069",
+  "source_file": "docs/01_policies_and_standards/domains/L07_post_trade_analytics/operational/analytics_pipeline_runbook.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_050_domain_policy_data_factor.yaml",
+  "yaml_section": "dom_l07_002",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "Step1_确认数据就绪": {
+      "content": "确认数据就绪——行情/交易日志/风控数据，未就绪30分钟重试，超1小时升级P2通知Owner+数据团队",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l07_002.actions[0] + conditions[1]"
+    },
+    "Step2_数据质量检查": {
+      "content": "数据质量检查——运行GOV-DATA-001脚本，确认缺失率<0.1%+延迟<5分钟",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l07_002.actions[1] + conditions[0]"
+    },
+    "Step3_运行分析管线": {
+      "content": "运行分析管线——交易执行/策略绩效/风控合规分析，部分失败时成功步骤正常产出，失败步骤标记FAILED",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l07_002.actions[2]"
+    },
+    "Step3.5_幂等性检查": {
+      "content": "幂等性检查——检查pipeline_run_log，重跑覆盖+更新时间戳，重复触发拒绝+记录警告+通知Owner",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l07_002.actions[3]"
+    },
+    "Step4_生成报告": {
+      "content": "生成报告——按report-templates/模板生成+验证指标完整性+验证数据可追溯性",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l07_002.actions[4]"
+    },
+    "Step5_分发报告": {
+      "content": "分发报告——按DOM-L07-001 §4分发+确认收到+异常指标额外告警",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l07_002.actions[5]"
+    },
+    "禁止管线超时不中断": {
+      "content": "管线超时>30分钟必须中断并通知Owner",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l07_002.prohibitions[0]"
+    },
+    "禁止重复触发执行": {
+      "content": "重复触发管线时禁止执行（拒绝+记录警告+通知Owner）",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l07_002.prohibitions[1]"
+    }
+  },
+  "summary": {
+    "total_rules": 8,
+    "COVERED": 8,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "YAML中原本无dom_l07_002 section，已新增完整section",
+    "新增2个conditions（数据质量约束+数据源就绪约束）",
+    "新增6个actions（Step1~5 + Step3.5幂等性检查）",
+    "新增2个prohibitions（管线超时中断+重复触发拒绝）"
+  ]
+}

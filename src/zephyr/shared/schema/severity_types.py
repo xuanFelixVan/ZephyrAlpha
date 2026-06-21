@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_severity_types | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 # [MODULE] zephyr.shared.schema.severity_types
 # [INVARIANTS] Priority P0-P4 MUST align with GOV-TASK-004 §2.2; AuditSeverity MUST be backward-compatible alias for Priority P0-P2
 # [MODIFY-GUARD] GOV-TASK-004; ADR-0030
@@ -11,8 +12,6 @@
 from __future__ import annotations
 
 from enum import Enum
-
-from zephyr.db.circuit_breaker_types import CircuitBreakerState
 
 __all__ = [
     "SafetyLevel",
@@ -40,3 +39,11 @@ class Priority(str, Enum):
     P2 = "P2"
     P3 = "P3"
     P4 = "P4"
+
+
+class CircuitBreakerState(str, Enum):
+    """Circuit breaker states — re-homed from infrastructure.runtime_integration.db.circuit_breaker_types
+    to eliminate shared->infrastructure circular import."""
+    CLOSED = "CLOSED"
+    OPEN = "OPEN"
+    HALF_OPEN = "HALF_OPEN"

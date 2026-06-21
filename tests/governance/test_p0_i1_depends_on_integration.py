@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0136 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-293 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.governance.test_p0_i1_depends_on_integration
 # [STABILITY] evolving
 # [SAFETY] L

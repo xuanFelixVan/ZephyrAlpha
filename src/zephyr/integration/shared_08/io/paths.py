@@ -1,0 +1,93 @@
+# [A_module] module_id=MOD-INT_paths | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
+
+# [MODULE] zephyr.integration.shared_08.io.paths
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] stable
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] human_gated
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+"""
+paths.py — 项目路径常量 SSoT（Single Source of Truth）
+
+对标 AGENTS.md §6.4（最有利于 AI 施工的选择）
+         AGENTS.md §6.9（架构数据 Canonical SSoT 铁律）
+
+根因修复：此前 7 个文件各自通过 Path(__file__).parents[N] 独立计算
+REPO_ROOT，导致：
+  1. 目录层级调整需改 7 处
+  2. DB_PATH 大小写冲突（state vs STATE）因无 SSoT 未被发现
+  3. 路径常量分散定义，漂移风险极高
+
+本文件是 src/zephyr/ 下所有路径常量的唯一真源。
+任何需要 REPO_ROOT / DB_PATH / 路径常量的模块，必须从此处导入。
+
+对标：
+  - scripts/governance/_shared/constants.py（治理脚本侧的路径 SSoT）
+  - Google Style Guide: "Define constants in one place"（常量只在一处定义）
+  - Terraform: provider 配置集中定义，模块引用而非重定义
+"""
+
+
+from pathlib import Path
+
+
+def find_repo_root() -> Path:
+    """从当前文件向上查找项目根目录（包含 src/zephyr/ 的目录）。
+
+    比 parents[N] 或 .parent 链更健壮——不依赖文件深度，
+    任何位置的模块都能正确定位项目根。
+
+    Returns:
+        Path: 项目根目录的绝对路径。
+
+    Raises:
+        FileNotFoundError: 向上遍历到文件系统根仍未找到标记。
+    """
+    current = Path(__file__).resolve()
+    for parent in current.parents:
+        if (parent / "src" / "zephyr" / "__init__.py").exists():
+            return parent
+    raise FileNotFoundError(f"Cannot find project root (no src/zephyr/integration/zephyr/__init__.py found) from {current}")
+
+
+REPO_ROOT: Path = find_repo_root()
+
+DB_DIR: Path = REPO_ROOT / "data"
+
+import importlib as _il
+_mod = _il.import_module("zephyr.data.persistence.sqlite_schema")
+DB_PATH = _mod.DB_PATH
+
+GATES_DIR: Path = REPO_ROOT / "src" / "zephyr" / "gates"
+SNAPSHOTS_DIR: Path = REPO_ROOT / ".runtime" / "snapshots"
+RATIONALE_LOG_PATH: Path = (
+    REPO_ROOT / "docs" / "02_enterprise_architecture" / "architecture-rationale-log.md"
+)
+
+VECTOR_INDEX_DIR: Path = REPO_ROOT / ".audit_cache" / "vector_index"
+MODELS_CACHE_DIR: Path = REPO_ROOT / ".audit_cache" / "models"
+
+__all__ = [
+    "find_repo_root",
+    "REPO_ROOT",
+    "DB_DIR",
+    "DB_PATH",
+    "GATES_DIR",
+    "SNAPSHOTS_DIR",
+    "RATIONALE_LOG_PATH",
+    "VECTOR_INDEX_DIR",
+    "MODELS_CACHE_DIR",
+]

@@ -1,8 +1,8 @@
 ---
-module_id: REG-IDX-001
+module_id: GOV-005
 title: 登记表体系目录索引
 doc_type: index
-status: active
+status: Active
 version: "3.0.2"
 date: "2026-05-06"
 summary: "_registry/ 目录导航。v3.0.2：子目录文件数与 **不含各子目录 index.md** 的体系文件合计 **34** 对账。"

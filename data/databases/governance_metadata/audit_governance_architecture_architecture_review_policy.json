@@ -1,0 +1,47 @@
+{
+  "task_id": "DM-100086",
+  "source_file": "docs/01_policies_and_standards/governance/architecture/architecture_review_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_036_arch_gate_transition.yaml",
+  "yaml_section": "gov_arch_002",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "ARG-001": {
+      "type": "mandatory",
+      "content": "触发条件内的变更必须经过架构评审（新增模块、删除模块、修改模块间接口、更换核心技术栈、修改数据流方向）",
+      "status": "COVERED"
+    },
+    "ARG-002": {
+      "type": "mandatory",
+      "content": "架构评审必须逐项检查评审清单（6项），不可跳过",
+      "status": "COVERED"
+    },
+    "ARG-003": {
+      "type": "constraint",
+      "content": "评审否决条件7项：违反KB决策记录、引入循环依赖、降低可观测性、影响数据一致性无补偿、无回滚方案、性能退化无优化、需更新文档未列清单",
+      "status": "COVERED"
+    },
+    "ARG-004": {
+      "type": "mandatory+prohibition",
+      "content": "架构评审必须由Owner或书面委托人执行，AI不得单独执行",
+      "status": "COVERED"
+    },
+    "ARG-005": {
+      "type": "mandatory",
+      "content": "评审记录必须包含ISO 8601 UTC日期、评审人ID、变更描述、清单逐项结果、否决/通过决定、理由，存放于docs/09_audit/architecture-reviews/",
+      "status": "COVERED"
+    }
+  },
+  "summary": {
+    "total_rules": 5,
+    "COVERED": 5,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "原YAML section gov_arch_002仅有占位action'遵守GOV-ARCH-002'，无具体规则",
+    "补充ARG-001~ARG-005到original_rules",
+    "补充8条conditions（1条trigger+7条否决条件constraint）",
+    "补充5条actions（5条mandatory）",
+    "补充3条prohibitions"
+  ]
+}

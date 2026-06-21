@@ -1,0 +1,55 @@
+# [A_config] module_id=CFG-business-streams | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# 治理锚定
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: CFG-business-streams
+# stability: stable
+# safety_level: L
+# ai_autonomy: human_gated
+# 治理锚定结束
+module_id: CFG-business-streams
+schema_version: "1.0.0"
+doc_type: register
+title: 业务流定义登记表
+status: active
+owner: ZephyrAlpha-Owner
+created: "2026-06-18"
+last_updated: "2026-06-18"
+ai_autonomy: human_gated
+ttl: permanent
+description: "业务流定义——跨域分析的基础。对标 ITIL Value Stream。"
+
+streams:
+  - id: BS-001
+    name: "行情数据接入流"
+    goal: "从外部数据源接入行情数据并存储"
+    input: ["外部行情API", "tick/orderbook数据"]
+    output: ["NormalizedMarketData", "存储到时序DB"]
+    runtime_plane: data_plane
+
+  - id: BS-002
+    name: "因子计算流"
+    goal: "基于行情数据计算因子"
+    input: ["NormalizedMarketData", "因子配置"]
+    output: ["因子DataFrame", "因子元数据"]
+    runtime_plane: data_plane
+
+  - id: BS-003
+    name: "信号生成流"
+    goal: "基于因子生成交易信号"
+    input: ["因子DataFrame", "信号模型"]
+    output: ["SignalDataFrame", "信号质量指标"]
+    runtime_plane: data_plane
+
+  - id: BS-004
+    name: "回测流"
+    goal: "对交易策略进行历史回测"
+    input: ["SignalDataFrame", "回测配置"]
+    output: ["回测报告", "绩效指标"]
+    runtime_plane: data_plane
+
+  - id: BS-005
+    name: "治理门禁流"
+    goal: "执行质量门禁和合规检查"
+    input: ["代码变更", "配置变更"]
+    output: ["门禁结果", "审计日志"]
+    runtime_plane: control_plane

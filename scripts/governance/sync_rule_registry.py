@@ -7,6 +7,14 @@ Exit codes: 0 = synced, 1 = drift detected, 2 = error
 """
 
 from __future__ import annotations
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
@@ -45,9 +53,9 @@ def extract_rules_from_project() -> dict[str, str]:
     content = PROJECT_RULES.read_text(encoding="utf-8")
     rules: dict[str, str] = {}
 
-    # Match: ## 🔴 RULE-xxx：title
+    # Match: ## RULE-xxx：title  (supports merged entries like "## RULE-SIX + RULE-ZERO-TASK：title")
     pattern = re.compile(
-        r"^##\s+🔴\s+(RULE-\w+)[：:]\s*(.+)$",
+        r"^##\s+(RULE-[\w-]+)(?:\s*\+\s*RULE-[\w-]+)?[：:]\s*(.+)$",
         re.MULTILINE,
     )
     for m in pattern.finditer(content):
@@ -79,26 +87,20 @@ def extract_trae_from_registry() -> dict[str, str]:
     return entries
 
 
-def build_mapping(rules: dict[str, str]) -> dict[str, str]:
-    """Map RULE-ZERO → TRAE-001, RULE-ONE → TRAE-002, ..."""
+def build_mapping(rules: dict[str, str], trae_entries: dict[str, str]) -> dict[str, str]:
+    """Build {RULE-XXX: TRAE-NNN} mapping by parsing TRAE descriptions.
+
+    Parses each TRAE entry's description to extract the corresponding RULE-XXX,
+    rather than assuming a fixed RULE-N → TRAE-(N+1) mapping. This handles
+    non-sequential registrations (e.g., TRAE-012 = RULE-SEVENTEEN).
+    """
     mapping: dict[str, str] = {}
-    number_words = {
-        "ZERO": "001", "ONE": "002", "TWO": "003", "THREE": "004",
-        "FOUR": "005", "FIVE": "006", "SIX": "007", "SEVEN": "008",
-        "EIGHT": "009", "NINE": "010", "TEN": "011",
-    }
-    for rule_id in rules:
-        suffix = rule_id.replace("RULE-", "")
-        trae_num = number_words.get(suffix)
-        if trae_num:
-            mapping[rule_id] = f"TRAE-{trae_num}"
-        else:
-            # Try numeric: RULE-10 → TRAE-010, RULE-11 → TRAE-011
-            try:
-                num = int(suffix)
-                mapping[rule_id] = f"TRAE-{num:03d}"
-            except ValueError:
-                print(f"  WARN: Cannot map {rule_id} to TRAE-* (non-standard suffix: {suffix})")
+    rule_pattern = re.compile(r"\b(RULE-[\w-]+)\b")
+    for trae_id, desc in trae_entries.items():
+        m = rule_pattern.search(desc)
+        if m:
+            rule_id = m.group(1)
+            mapping[rule_id] = trae_id
     return mapping
 
 
@@ -106,7 +108,7 @@ def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     rules = extract_rules_from_project()
     trae_entries = extract_trae_from_registry()
-    mapping = build_mapping(rules)
+    mapping = build_mapping(rules, trae_entries)
 
     if not rules:
         print("[WARN] No RULE-* entries found in project_rules.md")

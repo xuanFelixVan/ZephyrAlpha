@@ -1,15 +1,16 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1982 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-599 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_can_i_deploy
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """Can-I-Deploy 预部署门禁单元测试。"""
 
-from __future__ import annotations
 
 import pytest
-from zephyr.gates.can_i_deploy import CanIDeploy
+from zephyr.governance.rule_enforcement.can_i_deploy import CanIDeploy
 
 
 @pytest.fixture

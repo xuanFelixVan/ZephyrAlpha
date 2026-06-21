@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0007 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-202 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_agent_spec_adversarial
 # [STABILITY] evolving
 # [SAFETY] L
@@ -22,7 +23,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from zephyr.agent_spec.skill_loader import SkillLoader, _count_tokens
+from zephyr.autonomy_core.skill_loader import SkillLoader, _count_tokens
 
 
 class TestNonExistentSkill:
@@ -122,8 +123,8 @@ class TestRegistryIntegrity:
             )
 
     def test_skill_registry_yaml_valid(self):
-        """skill_registry.yaml 应是合法 YAML."""
-        reg_path = Path(__file__).parents[2] / "src" / "zephyr" / "agent_spec" / "skill_registry.yaml"
+        """skill-registry.yaml 应是合法 YAML."""
+        reg_path = Path(__file__).parents[2] / "src" / "zephyr" / "agent-spec" / "skill-registry.yaml"
         assert reg_path.exists(), f"Registry not found at {reg_path}"
         data = yaml.safe_load(reg_path.read_text(encoding="utf-8"))
         assert "skills" in data

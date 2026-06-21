@@ -1,0 +1,23 @@
+# [A_config] module_id=CFG-a2a-anomaly | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# MOD-INF-025 A2A异常规则
+module_id: DOM-GOV-001
+anomaly_rules:
+  - id: ANM-001
+    metric: "response_time"
+    threshold_high: 30
+    action: alert
+  - id: ANM-002
+    metric: "retry_rate"
+    threshold_high: 0.5
+    action: quarantine
+  - id: ANM-003
+    metric: "message_flood"
+    threshold_high: 100
+    action: rate_limit

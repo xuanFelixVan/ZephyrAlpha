@@ -20,7 +20,7 @@ def main() -> int:
     print("=" * 60)
 
     self_check_path = str(
-        PROJECT_ROOT / "src" / "zephyr" / "drift_detector" / "self_check.py"
+        PROJECT_ROOT / "src" / "zephyr" / "drift-detector" / "self_check.py"
     )
 
     result = subprocess.run(

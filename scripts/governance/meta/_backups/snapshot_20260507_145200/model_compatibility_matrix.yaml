@@ -2,7 +2,7 @@
 # 不同 AI 模型需要不同提示工程调整
 
 generated_at: "2026-05-07T00:00:00Z"
-source: "docs/03_modules/l01_infrastructure/script-system/blueprint.md §29 + §30"
+source: "docs/03_modules/l01-infrastructure/script-system/blueprint.md §29 + §30"
 
 models:
   claude_opus_4:

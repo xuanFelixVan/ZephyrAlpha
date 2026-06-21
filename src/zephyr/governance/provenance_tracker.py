@@ -1,37 +1,27 @@
-# [BLUEPRINT] DOM-GOV-001 | 03_modules/_domain-governance/blueprint.md | §
-
-# [MODULE] zephyr.governance.provenance_tracker
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
-# [CONSUMERS]
-
-# [STABILITY] evolving
-
-# [SAFETY] L
-
-# [AI_AUTONOMY] ai_modifiable
-
-# [ERROR_CONTRACT]
-
-# [TESTS]
-
+# [A_module] module_id=MOD-UNK_provenance_tracker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
+
+# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md
+# [MODULE] zephyr.governance.audit_trail
+# [INVARIANTS] 不可变审计记录;密码学完整性;只追加
+# [MODIFY-GUARD] docs/03_modules/_domain-governance/audit-trail/blueprint.md;src/zephyr/audit-trail/__init__.py
+# [CONSUMERS] MOD-INF-027;MOD-INF-015;MOD-INF-010
+# [STABILITY] stable
+# [SAFETY] H
+# [AI_AUTONOMY] immutable_core
+# [ERROR_CONTRACT] IntegrityError;WriteError
+# [TESTS] tests/test_audit_trail/
 
 from datetime import datetime, timezone
 from typing import Optional
 
 from pydantic import BaseModel
 
-
 class ProvenanceRecord(BaseModel):
     module_id: str
     source_section: str
     agent_session_id: str
     generated_at: str
-
 
 def generate_provenance(
     module_id: str,
@@ -45,7 +35,6 @@ def generate_provenance(
         generated_at=datetime.now(timezone.utc).isoformat(),
     )
 
-
 def embed_provenance(target_dict: dict[str, object], record: ProvenanceRecord) -> dict[str, object]:
     target_dict["__provenance__"] = {
         "module_id": record.module_id,
@@ -54,7 +43,6 @@ def embed_provenance(target_dict: dict[str, object], record: ProvenanceRecord) -
         "generated_at": record.generated_at,
     }
     return target_dict
-
 
 def extract_provenance(obj: object) -> Optional[ProvenanceRecord]:
     prov = getattr(obj, "_zephyr_provenance", None) or getattr(obj, "__provenance__", None)
@@ -67,10 +55,8 @@ def extract_provenance(obj: object) -> Optional[ProvenanceRecord]:
         )
     return None
 
-
 def is_session_owned(prov: ProvenanceRecord, session_id: str) -> bool:
     return prov.agent_session_id == session_id
-
 
 def provenance_key(prov: ProvenanceRecord) -> str:
     return f"{prov.module_id}/{prov.source_section}"

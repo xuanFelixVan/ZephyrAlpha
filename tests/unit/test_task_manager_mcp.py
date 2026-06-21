@@ -1,21 +1,22 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-2076 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-693 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_task_manager_mcp
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """TaskManagerMCP（FastMCP）协议与 BlueprintDecomposer 绑定单测。"""
 
-from __future__ import annotations
 
 import json
 
 import pytest
 
-from zephyr.core.blueprint_decomposer import BlueprintDecomposer
-from zephyr.core.models import DecompositionResult
-from zephyr.db.task_repo import TaskRepository
-from zephyr.mcp.task_manager_server import TaskManagerMCP
+from zephyr.shared.shared_services.blueprint_decomposer import BlueprintDecomposer
+from zephyr.shared.shared_services.models import DecompositionResult
+from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.infrastructure.task_manager_server import TaskManagerMCP
 
 
 @pytest.fixture()

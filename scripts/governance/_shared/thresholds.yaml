@@ -11,7 +11,7 @@
 # doc_type: config
 # status: active
 # version: "1.0.0"
-# layer: l01_infrastructure
+# layer: infrastructure
 # owner: ZephyrAlpha-Owner
 # classification: confidential
 # language: zh
@@ -32,6 +32,7 @@
 # 一、扫描与发现相关阈值
 # ═══════════════════════════════════════════════════════════════════
 
+module_id: MOD-INF-005
 scanning:
   # 全局硬超时（秒）——L 级（10000 脚本）下全量扫描可能需要 60 分钟
   global_hard_timeout_seconds: 3600

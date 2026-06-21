@@ -1,0 +1,189 @@
+rule_id: TRAE-039
+title: AI治理-幻觉检测与自检
+aliases:
+- GOV-AI-003
+- GOV-AI-009
+layer: L1
+severity: error
+scope: ai_hallucination
+domain: TRAE
+triggers:
+- operation: ai_hallucination
+sections:
+  gov_ai_003_self_check:
+    section_type: rule
+    title: AI幻觉自检清单（GOV-AI-003）
+    original_rules:
+    - GOV-AI-003
+    conditions:
+    - type: trigger
+      check: AI Session 开始前
+      pass: 逐项确认10项自检清单
+      fail: 禁止开始操作，必须先完成自检
+    - type: trigger
+      check: Context 用量达 60%
+      pass: 执行5项二次自检
+      fail: 立即停止剩余操作
+    actions:
+    - type: mandatory
+      step: 检查项1-文件路径验证：引用任何文件路径前，必须通过 Glob/LS/Read 确认文件实际存在
+    - type: mandatory
+      step: 检查项2-模块ID验证：使用的所有模块ID必须在 docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml 或 docs/01_policies_and_standards/_registry/catalogs/document_metadata_index_registry.yaml 中确认存在
+    - type: mandatory
+      step: 检查项3-接口定义验证：引用的接口必须在 src/zephyr/shared/contracts/ 中确认存在，禁止幻觉补全参数类型/超时值/异常类型
+    - type: mandatory
+      step: 检查项4-依赖关系验证：依赖方向必须符合项目分层架构，禁止创建循环依赖
+    - type: mandatory
+      step: 检查项5-SSoT验证：修改字段前确认权威来源在 docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml §2.5，只在权威来源文件中修改
+    - type: mandatory
+      step: 检查项6-编号规范验证：模块ID使用 GOV-XXX/PS-XXX/OPS-XXX/META-XXX 格式，编号引用使用 module_id
+        精确引用
+    - type: mandatory
+      step: 检查项7-操作权限验证：操作路径在 docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml 允许列表中，新建文件≤5个
+    - type: mandatory
+      step: 检查项8-编码安全验证：编辑器编码设置为UTF-8，files.autoGuessEncoding=false，无两个编辑器同时打开同一文件
+    - type: mandatory
+      step: 检查项9-任务范围验证：任务在 docs/01_policies_and_standards/_registry/catalogs/document_metadata_index_registry.yaml 中有对应，前置条件已满足
+    - type: mandatory
+      step: 检查项10-引用出处验证：能指出信息的具体来源文件和行号，禁止从"记忆"中引用
+    - type: mandatory
+      step: 自检失败处理：停止操作→说明原因→幻觉类失败走OPS-VC-006→其他请求Owner→禁止用"合理推断"替代验证
+    - type: mandatory
+      step: 二次自检（context 60%时）：重跑检查项1/2/5/7/10，失败则停止+走OPS-VC-006
+    prohibitions:
+    - 禁止在无完整上下文时幻觉补全路径/接口/依赖
+    - 禁止编造任何文件路径（即使路径"看起来合理"）
+    - 禁止自行发明模块ID
+    - 禁止幻觉补全接口的参数类型、超时值、异常类型
+    - 禁止创建循环依赖
+    - 禁止在非权威文件中修改权威字段
+    - 禁止操作禁止路径（.cursor/rules/、AGENTS.md、.roomodes）
+    - 禁止用"合理推断"替代实际验证
+    - 禁止从"记忆"中引用（每次session都是全新的，没有跨session记忆）
+    - 禁止在文件不存在时假装它存在
+  gov_ai_009_detection_rules:
+    section_type: rule
+    title: AI幻觉自动检测规则（GOV-AI-009）
+    original_rules:
+    - GOV-AI-009
+    conditions:
+    - type: trigger
+      check: 代码提交时（pre-commit/CI gate）
+      pass: 12条HC规则全部通过（HC-1~HC-10+HC-6b+HC-7b）
+      fail: ERROR级=阻断提交 / WARNING级=标注不阻断
+    - type: constraint
+      check: WARNING 累计超过 5 条
+      pass: WARNING ≤ 5
+      fail: 禁止 commit
+    actions:
+    - type: mandatory
+      step: HC-1：新增类/接口必须在 module_id_registry.yaml 中登记（AST解析+注册表比对，ERROR级阻断提交）
+    - type: mandatory
+      step: HC-2：代码引入的依赖必须在 technology_landscape.yaml 的 Adopt/Assess 象限（import解析+Tech
+        Radar比对，WARNING级标注）
+    - type: mandatory
+      step: HC-3：禁止跨层直接调用（绕过 shared/contracts/），依赖图分析，ERROR级阻断提交，资金执行安全红线
+    - type: mandatory
+      step: HC-4：禁止修改 frozen 契约（cross_layer_contracts.yaml 中 status=frozen），契约文件diff，ERROR级阻断提交
+    - type: mandatory
+      step: HC-5：新增配置项必须在 system-configuration.yaml 登记（配置diff+注册表比对，WARNING级标注）。注：system-configuration.yaml尚未创建，本规则为前瞻性约束
+    - type: mandatory
+      step: HC-6：AI生成代码不得违反架构不变量（scripts/arch_guard/run_all.py，ERROR级阻断提交）
+    - type: mandatory
+      step: HC-7：禁止将 Cold Path 逻辑写入 Hot Path 模块（运行平面标签比对，ERROR级阻断提交）
+    - type: mandatory
+      step: HC-8：禁止违反 L00→L02→L03 单向数据流（依赖方向分析，ERROR级阻断提交）
+    - type: mandatory
+      step: HC-9：L06执行层代码必须包含幂等Key（AST解析+层标签比对，WARNING级标注）
+    - type: mandatory
+      step: HC-10：回测代码禁止访问未来数据（PIT合规检查，ERROR级阻断提交）
+    - type: mandatory
+      step: HC-6b：关键子类（FactorBase/StrategyBase/BrokerInterface）必须附带属性测试（WARNING级）
+    - type: mandatory
+      step: HC-7b：同一commit禁止跨2层修改契约文件（WARNING级）
+    prohibitions:
+    - 禁止新增类/接口未在 module_id_registry.json 中登记
+    - 禁止跨层直接调用（绕过 shared/contracts/）
+    - 禁止修改 frozen 契约
+    - 禁止AI生成代码违反架构不变量
+    - 禁止将 Cold Path 逻辑写入 Hot Path 模块
+    - 禁止违反 L00→L02→L03 单向数据流
+    - 禁止L06执行层代码缺少幂等Key
+    - 禁止回测代码访问未来数据
+    - 禁止同一commit跨2层修改契约文件
+  gov_ai_009_human_confirmation:
+    section_type: rule
+    title: 人工确认机制（GOV-AI-009 §五）
+    original_rules:
+    - GOV-AI-009
+    conditions:
+    - type: trigger
+      check: HC-3/HC-4/HC-10 触发时
+      pass: Owner确认
+      fail: 阻断提交
+    - type: trigger
+      check: HC-1新增类属于L04/L06层 或 HC-2引入技术不在Adopt象限
+      pass: Owner确认
+      fail: 阻断提交
+    actions:
+    - type: mandatory
+      step: HC-3跨层直接调用必须强制人工确认（资金执行安全红线）
+    - type: mandatory
+      step: HC-4修改frozen契约必须强制人工确认（架构稳定性保护）
+    - type: mandatory
+      step: HC-10 PIT铁律绕过必须强制人工确认（回测有效性红线）
+    - type: mandatory
+      step: HC-1条件确认：新增类属于L04/L06层时需Owner确认
+    - type: mandatory
+      step: HC-2条件确认：引入技术不在Tech Radar Adopt象限时需Owner确认
+    - type: mandatory
+      step: SLA：max_delay_hours=24，escalation=block_further_work，reminder_after_hours=12
+    - type: mandatory
+      step: 'Owner在Session Log的confirmation_section签字，Git commit message包含Confirmed-By:
+        Owner'
+    - type: mandatory
+      step: 每次commit前必须展示WARNING清单，强制AI阅读并确认
+    - type: mandatory
+      step: Owner必须在Session Log中确认已审阅WARNING，作为DoD的一部分
+    prohibitions:
+    - 禁止HC-3/HC-4/HC-10触发时未经Owner确认就提交
+  gov_ai_change_history:
+    title: AI幻觉检测与自检修订记录
+    section_type: examples
+    original_rules:
+    - GOV-AI-003
+    - GOV-AI-009
+    items:
+    - description: v1.0.0 2026-05-01
+      details: 初始版本。定义GOV-AI-003自检清单10项+二次自检5项、GOV-AI-009自动检测HC-1~HC-10+HC-6b+HC-7b、人工确认机制。
+    - description: v1.1.0 2026-06-19
+      details: RQ审查修复——修复内部矛盾(10条→12条HC规则)、HC-1 module_id_registry.json→.yaml、HC-6 invariant_check.py→arch_guard/run_all.py、references.modules使用完整路径+移除不存在的system-configuration.yaml、provenance迁移状态标记(RQ-04/RQ-09)、补充change_history(RQ-14)。
+    - description: v1.2.0 2026-06-19
+      details: RQ全量审查修复——kebab-case文件名引用改为snake_case+完整路径(metadata-registry.md→frontmatter_field_registry.yaml、document-metadata-index-registry.yaml→document_metadata_index_registry.yaml、model-capability-contract.yaml→model_capability_contract.yaml)，落地§2.2命名裁定(RQ-05)。
+references:
+  rule_ids:
+  - GOV-AI-003
+  - GOV-AI-009
+  scripts:
+  - scripts/governance/d11_compliance/
+  - scripts/arch_guard/run_all.py
+  modules:
+  - docs/02_enterprise_architecture/target_architecture/architecture_model/module_id_registry.yaml
+  - docs/02_enterprise_architecture/target_architecture/architecture_model/technology/technology_landscape.yaml
+  - docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/cross_layer_contracts.yaml
+  blueprints: []
+enforcement:
+  type: code
+  executors:
+  - pre-commit hook
+  - CI gate
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+provenance:
+  migration_note: 源文件已迁移为trae_039.yaml格式，本文件现为SSoT。源文件hash为迁移前历史记录。
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

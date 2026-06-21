@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0151 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-308 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.infrastructure.test_drift_extended_e2e
 # [STABILITY] evolving
 # [SAFETY] L
@@ -24,18 +25,18 @@ from datetime import UTC, datetime
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from zephyr.behavioral_auditor.ai_construction_detectors import AIConstructionDetectors
-from zephyr.behavioral_auditor.drift_engine import (
+from zephyr.behavioral_audit.ai_construction_detectors import AIConstructionDetectors
+from zephyr.behavioral_audit.drift_engine import (
     _create_bulk_event,
     _detect_expected_storm,
     load_detector_registry,
 )
-from zephyr.behavioral_auditor.drift_infrastructure import (
+from zephyr.behavioral_audit.drift_infrastructure import (
     check_budget_for_gate,
     declare_maintenance_window,
     get_maintenance_window,
 )
-from zephyr.behavioral_auditor.drift_models import DriftEvent, DriftState
+from zephyr.behavioral_audit.drift_models import DriftEvent, DriftState
 
 
 def _make_event(
@@ -174,21 +175,21 @@ class TestHotfixBypass:
     """验证 [HOTFIX]/[EMERGENCY] commit 旁路逻辑。"""
 
     def test_hotfix_commit_detected(self):
-        from zephyr.behavioral_auditor.drift_hotfix_bypass import HotfixBypass
+        from zephyr.behavioral_audit.drift_hotfix_bypass import HotfixBypass
 
         bypass = HotfixBypass(project_root=tempfile.gettempdir())
         assert bypass.is_hotfix_commit("[HOTFIX] critical production fix") is True
         assert bypass.is_hotfix_commit("[EMERGENCY] data loss prevention") is True
 
     def test_normal_commit_not_bypassed(self):
-        from zephyr.behavioral_auditor.drift_hotfix_bypass import HotfixBypass
+        from zephyr.behavioral_audit.drift_hotfix_bypass import HotfixBypass
 
         bypass = HotfixBypass(project_root=tempfile.gettempdir())
         assert bypass.is_hotfix_commit("fix: minor typo") is False
         assert bypass.is_hotfix_commit("feat: add new feature") is False
 
     def test_hotfix_bypass_in_trigger_recovery(self):
-        from zephyr.gates.drift_detector import trigger_recovery
+        from zephyr.governance.drift_detector import trigger_recovery
 
         payload = {
             "module_id": "MOD-INF-023",
@@ -196,7 +197,7 @@ class TestHotfixBypass:
             "changed_files": [],
         }
         with patch(
-            "zephyr.behavioral_auditor.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
+            "zephyr.behavioral_audit.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
             return_value=True,
         ):
             result = trigger_recovery(payload)
@@ -234,7 +235,7 @@ class TestNoDeprecationWarning:
     """验证 _fallback_to_rollback_handler 不触发 DeprecationWarning。"""
 
     def test_fallback_no_deprecation_warning(self):
-        from zephyr.gates.drift_detector import _fallback_to_rollback_handler
+        from zephyr.governance.drift_detector import _fallback_to_rollback_handler
 
         mock_event = MagicMock()
         mock_event.event_id = uuid.uuid4()
@@ -244,7 +245,7 @@ class TestNoDeprecationWarning:
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
             with patch(
-                "zephyr.rollback.drift_fix",
+                "zephyr.infrastructure.rollback.drift_fix",
                 create=True,
             ) as mock_mod:
                 mock_mod.DriftFixHandler.side_effect = ImportError("test")
@@ -263,7 +264,7 @@ class TestDeepDetectorInterfaces:
     """验证深度检测器可正常调用并返回结果。"""
 
     def test_semantic_drift_concept_cardinality(self):
-        from zephyr.behavioral_auditor.drift_result_types import detect_concept_cardinality
+        from zephyr.behavioral_audit.drift_result_types import detect_concept_cardinality
 
         tmp = tempfile.mkdtemp(prefix="drift_semantic_")
         try:
@@ -277,7 +278,7 @@ class TestDeepDetectorInterfaces:
             shutil.rmtree(tmp, ignore_errors=True)
 
     def test_semantic_drift_enum_value_sync(self):
-        from zephyr.behavioral_auditor.drift_result_types import detect_enum_value_sync
+        from zephyr.behavioral_audit.drift_result_types import detect_enum_value_sync
 
         tmp = tempfile.mkdtemp(prefix="drift_enum_")
         try:

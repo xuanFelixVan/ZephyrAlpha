@@ -5,6 +5,7 @@
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
+module_id: MOD-INF-035
 capability_id: skill-dom-bgt-001
 category: governance
 description: Budget Enforcer (MOD-INF-024) Token/Cost/Time 三维预算强制执行，七级预算体+ 六级降级(NORMAL→NOTIFY→WARNING→MODEL_SWITCH→COMPRESS→MINIMAL→HALT)

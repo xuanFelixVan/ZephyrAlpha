@@ -14,7 +14,7 @@ AGENTS.md §6.14 漂移免疫架构原则 Level 3：
         OpenAPI code generators（spec → 类型自动生成）
 
 派生链：
-  1. vocabularies/{field}-vocabulary.yaml → frontmatter-field-registry.yaml (allowed_values)
+  1. vocabularies/{field}-vocabulary.yaml → frontmatter-field-registry.md (allowed_values)
   2. vocabularies/{field}-vocabulary.yaml → architecture-contract.yaml (allowed_values)
   3. vocabularies/{field}-vocabulary.yaml → frontmatter-schema.json (enum)
 
@@ -65,7 +65,7 @@ CATALOGS_DIR = GOV_DOCS_DIR / "_registry" / "catalogs"
 CONTRACTS_DIR = GOV_DOCS_DIR / "_registry" / "contracts"
 SCHEMAS_DIR = GOV_DOCS_DIR / "_registry" / "schemas"
 
-FIELD_REGISTRY_PATH = CATALOGS_DIR / "frontmatter-field-registry.yaml"
+FIELD_REGISTRY_PATH = CATALOGS_DIR / "frontmatter-field-registry.md"
 ARCH_CONTRACT_PATH = CONTRACTS_DIR / "architecture-contract.yaml"
 SCHEMA_JSON_PATH = SCHEMAS_DIR / "frontmatter-schema.json"
 
@@ -116,7 +116,7 @@ def _load_vocab_values(vocab_name: str) -> tuple[list[str], list[str]]:
     return valid, deprecated
 
 def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) -> bool:
-    """同步 frontmatter-field-registry.yaml 中的 allowed_values
+    """同步 frontmatter-field-registry.md 中的 allowed_values
 
     field_registry 有两种枚举表示：
     - allowed_values: 简单值列表（部分字段）

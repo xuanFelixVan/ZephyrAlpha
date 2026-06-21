@@ -1,0 +1,43 @@
+# [A_module] module_id=MOD-GOV_risk_ssot | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+from __future__ import annotations
+
+# [BLUEPRINT] MOD-INF-007 | docs/03_modules/_cross_layer/gate-engine/blueprint.md
+
+# [MODULE] zephyr.governance.rule_enforcement.risk_ssot
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] human_gated
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+"""
+risk_ssot — 从 ``config/risk_params.yaml`` 加载风险真源（INV-002 等）
+
+供 G10–G12 交易类门禁在 **Orc 任务路径** 上做参数与 SSoT 一致性校验；
+不涉及组合持仓运行时数据。
+"""
+
+from pathlib import Path
+from typing import Any
+
+import yaml
+
+def load_risk_params_ssot(project_root: Path) -> dict[str, Any]:
+    path = project_root / "config" / "risk_params.yaml"
+    if not path.is_file():
+        return {}
+    try:
+        return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    except Exception:
+        return {}

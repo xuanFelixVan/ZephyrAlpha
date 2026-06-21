@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0015 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-210 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_mcp_red_team
 # [STABILITY] evolving
 # [SAFETY] L
@@ -35,20 +36,20 @@ sys.path.insert(0, str(_PROJECT_ROOT))
 def test_00_imports_all_mcp_modules():
     """测试 8 Server + Gateway + 支撑模块全部可导入"""
     modules = [
-        ("_base_server", "zephyr.mcp._base_server"),
-        ("gateway_server", "zephyr.mcp.gateway_server"),
-        ("task_manager_server", "zephyr.mcp.task_manager_server"),
-        ("knowledge_base_server", "zephyr.mcp.knowledge_base_server"),
-        ("gate_engine_server", "zephyr.mcp.gate_engine_server"),
-        ("doc_guard_server", "zephyr.mcp.doc_guard_server"),
-        ("sentinel_server", "zephyr.mcp.sentinel_server"),
-        ("blueprint_search_server", "zephyr.mcp.blueprint_search_server"),
-        ("sandbox_server", "zephyr.mcp.sandbox_server"),
-        ("governance_server", "zephyr.mcp.governance_server"),
-        ("telemetry_server", "zephyr.mcp.telemetry_server"),
-        ("rate_limiter", "zephyr.mcp.rate_limiter"),
-        ("audit_logger", "zephyr.mcp.audit_logger"),
-        ("error_codes", "zephyr.mcp.error_codes"),
+        ("_base_server", "zephyr.infrastructure._base_server"),
+        ("gateway_server", "zephyr.infrastructure.gateway_server"),
+        ("task_manager_server", "zephyr.infrastructure.task_manager_server"),
+        ("knowledge_base_server", "zephyr.infrastructure.knowledge_base_server"),
+        ("gate_engine_server", "zephyr.infrastructure.gate_engine_server"),
+        ("doc_guard_server", "zephyr.infrastructure.doc_guard_server"),
+        ("sentinel_server", "zephyr.infrastructure.sentinel_server"),
+        ("blueprint_search_server", "zephyr.infrastructure.blueprint_search_server"),
+        ("sandbox_server", "zephyr.infrastructure.sandbox_server"),
+        ("governance_server", "zephyr.infrastructure.governance_server"),
+        ("telemetry_server", "zephyr.infrastructure.telemetry_server"),
+        ("rate_limiter", "zephyr.infrastructure.rate_limiter"),
+        ("audit_logger", "zephyr.infrastructure.audit_logger"),
+        ("error_codes", "zephyr.infrastructure.error_codes"),
     ]
 
     failures = []
@@ -67,7 +68,7 @@ def test_00_imports_all_mcp_modules():
 
 def test_01_gateway_initializes_all_routes():
     """Gateway 初始化后 8 Server 路由表 + self 全部存在"""
-    from zephyr.mcp.gateway_server import create_gateway
+    from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
     routes = gw._routes
@@ -85,7 +86,7 @@ def test_01_gateway_initializes_all_routes():
 
 def test_02_gateway_registered_tools():
     """Gateway 自身工具注册（health_status / list_servers / audit_stats）"""
-    from zephyr.mcp.gateway_server import create_gateway
+    from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
     assert "mcp_gateway.health_status" in gw._tools
@@ -99,7 +100,7 @@ def test_02_gateway_registered_tools():
 
 def test_03_initialize():
     """Gateway initialize 返回协议版本 + serverInfo"""
-    from zephyr.mcp.gateway_server import create_gateway
+    from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
     resp = gw.handle_request({
@@ -112,7 +113,7 @@ def test_03_initialize():
 
 def test_04_ping():
     """Gateway ping"""
-    from zephyr.mcp.gateway_server import create_gateway
+    from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
     resp = gw.handle_request({"jsonrpc": "2.0", "id": 2, "method": "ping"})
@@ -122,7 +123,7 @@ def test_04_ping():
 
 def test_05_tools_list_aggregation():
     """tools/list 聚合所有就绪 Server 工具"""
-    from zephyr.mcp.gateway_server import create_gateway
+    from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
     resp = gw.handle_request({"jsonrpc": "2.0", "id": 3, "method": "tools/list"})
@@ -135,8 +136,8 @@ def test_05_tools_list_aggregation():
 
 def test_06_tool_call_not_found():
     """调用不存在的 tool 返回 ERR_TOOL_NOT_FOUND"""
-    from zephyr.mcp.gateway_server import create_gateway
-    from zephyr.mcp.error_codes import ERR_TOOL_NOT_FOUND
+    from zephyr.infrastructure.gateway_server import create_gateway
+    from zephyr.infrastructure.error_codes import ERR_TOOL_NOT_FOUND
 
     gw = create_gateway()
     resp = gw.handle_request({
@@ -150,8 +151,8 @@ def test_06_tool_call_not_found():
 
 def test_07_tool_call_missing_name():
     """tools/call 无 name 参数返回 ERR_INVALID_PARAMS"""
-    from zephyr.mcp.gateway_server import create_gateway
-    from zephyr.mcp.error_codes import ERR_INVALID_PARAMS
+    from zephyr.infrastructure.gateway_server import create_gateway
+    from zephyr.infrastructure.error_codes import ERR_INVALID_PARAMS
 
     gw = create_gateway()
     resp = gw.handle_request({
@@ -169,8 +170,8 @@ def test_07_tool_call_missing_name():
 
 def test_08_sql_injection_in_tool_name():
     """SQL 注入 payload 在 tool_name 中——应被路由拒绝"""
-    from zephyr.mcp.gateway_server import create_gateway
-    from zephyr.mcp.error_codes import ERR_TOOL_NOT_FOUND
+    from zephyr.infrastructure.gateway_server import create_gateway
+    from zephyr.infrastructure.error_codes import ERR_TOOL_NOT_FOUND
 
     gw = create_gateway()
     payloads = [
@@ -190,7 +191,7 @@ def test_08_sql_injection_in_tool_name():
 
 def test_09_xss_in_arguments():
     """XSS/HTML 注入在 arguments 中——不应导致崩溃"""
-    from zephyr.mcp.gateway_server import create_gateway
+    from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
     resp = gw.handle_request({
@@ -207,7 +208,7 @@ def test_09_xss_in_arguments():
 
 def test_10_command_injection_in_arguments():
     """命令注入 payload 在 arguments 中——不应执行，应返回错误或被安全处理"""
-    from zephyr.mcp.gateway_server import create_gateway
+    from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
     payloads = [
@@ -232,7 +233,7 @@ def test_10_command_injection_in_arguments():
 
 def test_11_oversized_payload():
     """超大型 arguments payload——Gateway 拒绝或正常处理，不应 OOM/崩溃"""
-    from zephyr.mcp.gateway_server import create_gateway
+    from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
     huge_string = "A" * 100_000
@@ -250,7 +251,7 @@ def test_11_oversized_payload():
 
 def test_12_deeply_nested_arguments():
     """深度嵌套 JSON——Gateway 拒绝或正常处理，不应导致递归溢出"""
-    from zephyr.mcp.gateway_server import create_gateway
+    from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
     nested = {}
@@ -277,8 +278,8 @@ def test_12_deeply_nested_arguments():
 
 def test_13_rate_limit_burst():
     """连续 35 次快速有效调用（超过 burst=30）——应触发限流"""
-    from zephyr.mcp.gateway_server import create_gateway
-    from zephyr.mcp.rate_limiter import RATE_LIMITED_KEY
+    from zephyr.infrastructure.gateway_server import create_gateway
+    from zephyr.infrastructure.rate_limiter import RATE_LIMITED_KEY
 
     gw = create_gateway()
     rejections = 0
@@ -300,7 +301,7 @@ def test_13_rate_limit_burst():
 
 def test_14_circuit_breaker_open_after_failures():
     """连续 3 次对不存在 tool 的调用——circuit breaker 应进入 OPEN"""
-    from zephyr.mcp.gateway_server import create_gateway
+    from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
     for i in range(4):
@@ -317,8 +318,8 @@ def test_14_circuit_breaker_open_after_failures():
 
 def test_15_circuit_breaker_recovery():
     """OPEN 后等待 recovery → HALF_OPEN → 成功后 CLOSED"""
-    from zephyr.mcp.gateway_server import create_gateway
-    from zephyr.mcp.gateway_server import CircuitBreaker
+    from zephyr.infrastructure.gateway_server import create_gateway
+    from zephyr.infrastructure.gateway_server import CircuitBreaker
 
     cb = CircuitBreaker("test_recovery", failure_threshold=2, recovery_timeout_seconds=0.1)
     cb.failure()
@@ -337,7 +338,7 @@ def test_15_circuit_breaker_recovery():
 
 def test_16_audit_log_call_records():
     """每次 tools/call 都会记录审计日志"""
-    from zephyr.mcp.gateway_server import create_gateway
+    from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
     initial = gw._audit.stats("audit-test-client").get("total_calls", 0)
@@ -357,7 +358,7 @@ def test_16_audit_log_call_records():
 
 def test_17_knowledge_base_server_instance():
     """KnowledgeBaseServer 实例化 + tools/list 有内容"""
-    from zephyr.mcp.knowledge_base_server import KnowledgeBaseServer
+    from zephyr.infrastructure.knowledge_base_server import KnowledgeBaseServer
 
     kb = KnowledgeBaseServer()
     assert kb.server_id == "knowledge_base"
@@ -367,7 +368,7 @@ def test_17_knowledge_base_server_instance():
 
 def test_18_gate_engine_server_instance():
     """GateEngineServer 实例化 + tools/list"""
-    from zephyr.mcp.gate_engine_server import GateEngineServer
+    from zephyr.infrastructure.gate_engine_server import GateEngineServer
 
     ge = GateEngineServer()
     assert ge.server_id == "gate_engine"
@@ -377,7 +378,7 @@ def test_18_gate_engine_server_instance():
 
 def test_19_doc_guard_server_instance():
     """DocGuardServer 实例化 + server_id 为 session_handoff"""
-    from zephyr.mcp.doc_guard_server import DocGuardServer
+    from zephyr.infrastructure.doc_guard_server import DocGuardServer
 
     dg = DocGuardServer()
     assert dg.server_id == "session_handoff"
@@ -385,7 +386,7 @@ def test_19_doc_guard_server_instance():
 
 def test_20_sentinel_server_instance():
     """SentinelServer 实例化 + server_id 为 intent_router"""
-    from zephyr.mcp.sentinel_server import SentinelServer
+    from zephyr.infrastructure.sentinel_server import SentinelServer
 
     ss = SentinelServer()
     assert ss.server_id == "intent_router"
@@ -393,7 +394,7 @@ def test_20_sentinel_server_instance():
 
 def test_21_governance_server_instance():
     """GovernanceServer 实例化 + tools/list 包含 5 个工具"""
-    from zephyr.mcp.governance_server import GovernanceServer
+    from zephyr.infrastructure.governance_server import GovernanceServer
 
     gs = GovernanceServer()
     assert gs.server_id == "governance"
@@ -417,7 +418,7 @@ def test_21_governance_server_instance():
 
 def test_22_sandbox_server_planning_does_not_crash_gateway():
     """sandbox 状态为 planning 时 Gateway 仍可正常启动"""
-    from zephyr.mcp.gateway_server import create_gateway
+    from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
     sandbox_route = gw._routes.get("sandbox")
@@ -431,7 +432,7 @@ def test_22_sandbox_server_planning_does_not_crash_gateway():
 
 def test_23_aggregated_list_includes_governance():
     """tools/list 聚合结果应包含 governance.* 工具（telemetry 使用 FastMCP 独立运行）"""
-    from zephyr.mcp.gateway_server import create_gateway
+    from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
     resp = gw.handle_request({"jsonrpc": "2.0", "id": 500, "method": "tools/list"})
@@ -444,7 +445,7 @@ def test_23_aggregated_list_includes_governance():
 
 def test_23b_telemetry_is_standalone_fastmcp():
     """TelemetryMCP 使用 FastMCP（非 BaseMCPServer），为独立 stdio 服务，不经过 Gateway 路由"""
-    from zephyr.mcp.telemetry_server import TelemetryMCP
+    from zephyr.infrastructure.telemetry_server import TelemetryMCP
 
     tm = TelemetryMCP()
     has_tools = hasattr(tm, '_tools') or hasattr(tm, '_tool_manager')
@@ -458,7 +459,7 @@ def test_23b_telemetry_is_standalone_fastmcp():
 
 def test_24_route_prefix_accuracy():
     """所有 Server prefix 精确无歧义路由"""
-    from zephyr.mcp.gateway_server import create_gateway
+    from zephyr.infrastructure.gateway_server import create_gateway
 
     gw = create_gateway()
 

@@ -11,7 +11,7 @@
 # doc_type: compliance_mapping
 # status: active
 # version: "1.0.0"
-# layer: l01_infrastructure
+# layer: infrastructure
 # owner: ZephyrAlpha-Owner
 # classification: confidential
 # language: zh
@@ -27,6 +27,7 @@
 # tags: [compliance, iso27001, soc2, owasp-agentic-ai, b57]
 # ---
 
+module_id: MOD-INF-005
 frameworks:
   OWASP_AGENTIC_AI_2026:
     name: "OWASP Agentic AI Top 10 (2026)"

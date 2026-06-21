@@ -1,0 +1,92 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+module_id: MOD-INF-007
+schema_version: "1.0"
+doc_type: gate
+title: "G_asset_inventory Gate"
+status: active
+ttl: permanent
+
+gate_id: G_asset_inventory
+gate_name: asset-inventory
+description: "资产盘点系统健康门禁 — 验证 unified-asset-index.yaml 存在且健康评分达标，确保项目资产可追溯性与全量注册（MOD-INF-026 §3.3）"
+rule_ids:
+  - TRAE-002
+
+entry_conditions:
+  - id: AI-C00
+    name: index_exists
+    type: condition
+    description: "unified-asset-index.yaml 必须存在"
+    check: "Path('data/asset_index/unified-asset-index.yaml').exists()"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "删除索引文件后运行 gate check"
+    rule_ids:
+      - TRAE-002
+
+  - id: AI-C01
+    name: health_score_adequate
+    type: threshold
+    description: "健康评分必须 ≥ C (numeric ≥ 60)"
+    check: "health_score in ('A','B','C') and health_numeric >= 60"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "修改索引 health_score 为 D 后运行 gate check"
+    rule_ids:
+      - TRAE-002
+
+  - id: AI-C02
+    name: orphan_rate_acceptable
+    type: threshold
+    description: "孤儿率必须 < 5%"
+    check: "orphan_rate_pct < 5.0"
+    severity: warning
+    on_failure: warn
+    verifiable: true
+    verification_method: "修改索引 orphan_rate_pct 为 10 后运行 gate check"
+    rule_ids:
+      - TRAE-002
+
+  - id: AI-C03
+    name: total_assets_reasonable
+    type: threshold
+    description: "总资产数必须 > 0"
+    check: "total_assets > 0"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "设置 total_assets 为 0 后运行 gate check"
+    rule_ids:
+      - TRAE-002
+
+  - id: AI-C04
+    name: index_freshness
+    type: threshold
+    description: "索引生成时间必须在 7 天内"
+    check: "datetime.now(timezone.utc) - parse(generated_at) < timedelta(days=7)"
+    severity: warning
+    on_failure: warn
+    verifiable: true
+    verification_method: "修改索引 generated_at 为 30 天前后运行 gate check"
+    rule_ids:
+      - TRAE-002
+
+  - id: AI-C05
+    name: schema_version_valid
+    type: condition
+    description: "schema_version 必须是已知版本"
+    check: "schema_version in ('1.0.0','1.1.0','2.0.0')"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "修改索引 schema_version 为未知值后运行 gate check"
+    rule_ids:
+      - TRAE-002

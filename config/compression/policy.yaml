@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: GOV-DOC-011 | docs/01_policies_and_standards/governance/document/compression-workflow-standard.md | §
+# blueprint: GOV-DOC-011 | docs/01_policies_and_standards/rules/compression_workflow_standard.md | §
 # module_id: GOV-DOC-011
 # stability: evolving
 # safety_level: M
@@ -9,7 +9,7 @@
 # ============================================================
 # 任务编号 : T-V2-006（experimental CL-018）
 # 权限层级 : Immutable Core（不变量字段禁止 AI 自主修改）
-# 真源声明 : ai-autonomy-authority-registry.md §2.11 (CL-018)
+# 真源声明 : ai_autonomy_authority_registry.md §2.11 (CL-018)
 # 关联决策 : rationale-log R83（CL-018 升级为 RI 扩展模式）
 # CBAC 注册 : capabilities.yaml allow: config/compression/policy.yaml
 # 创建日期 : 2026-04-27
@@ -18,7 +18,7 @@
 # 子目录预留：beta 扩展 algorithms / providers / multi_pass_rules 三文件
 #
 # 重要约束（Human-Gated）
-# ----------------------
+# ______________________
 # 以下字段属于 Immutable Core，AI 不可自主修改：
 #   - min_chars
 #   - max_chars
@@ -30,9 +30,10 @@
 # 为 AI-Modifiable。
 #
 # beta 扩展触发条件
-# --------------------
+# ____________________
 # 当压缩失败率 > 5% 时由 Owner 发起策略审查。
 
+module_id: GOV-DOC-011
 version: "1.0.1"
 schema_version: "1.0.0"
 doc_type: rule

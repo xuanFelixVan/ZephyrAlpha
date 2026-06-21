@@ -18,7 +18,7 @@ args:
 - {flag: --check-cross-layer, type: str, description: "检查指定 module_id 的跨层依赖方向"}
 description: >
   依赖方向校验（INJ-002/008）——依赖可解析性 + 跨层依赖方向。
-  对标 GOV-MOD-001 module-injection-rules.yaml。
+  对标 GOV-MOD-001 module-injection-rules-policy.md。
 dimensions:
 - D5
 priority: P1
@@ -45,15 +45,15 @@ POLICIES_ROOT = REPO_ROOT / "docs" / "01_policies_and_standards"
 MODULES_ROOT = REPO_ROOT / "docs" / "03_modules"
 
 LAYER_ORDER = {
-    "l00_data_source": 0,
-    "l01_infrastructure": 1,
-    "l02_alpha_factor": 2,
-    "l03_signal_generation": 3,
-    "l04_risk_management": 4,
-    "l05_portfolio_construction": 5,
-    "l06_trade_execution": 6,
-    "l07_post_trade_analytics": 7,
-    "l08_human_ai_interface": 8,
+    "data": 0,
+    "infrastructure.runtime_integration": 1,
+    "factor": 2,
+    "signal": 3,
+    "risk": 4,
+    "pf_core": 5,
+    "ex_core": 6,
+    "pf_core": 7,
+    "frontend": 8,
 }
 
 ALLOWED_CROSS_LAYER = {
@@ -150,7 +150,7 @@ def check_tech_radar(module_id: str = None) -> list[str]:
     import ast as ast_mod
     import yaml
     findings = []
-    tech_landscape = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "architecture-model" / "technology" / "technology-landscape.yaml"
+    tech_landscape = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "architecture-model" / "technology" / "technology_landscape.yaml"
     if not tech_landscape.exists():
         return findings
     with open(tech_landscape, "r", encoding="utf-8") as f:

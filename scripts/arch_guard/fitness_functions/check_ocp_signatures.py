@@ -2,8 +2,8 @@
 """
 check_ocp_signatures.py — OCP 冻结契约指纹校验 (INV-009)
 
-  - 读取 src/zephyr/shared/contracts/_frozen_signatures/ocp_manifest.json
-  - 对 cross-layer-contracts.yaml 中 frozen=true 且路径在 shared/contracts 下的文件重算 sha256
+  - 读取 src/zephyr/shared/contracts/_frozen_signatures/ocp-manifest.json
+  - 对 cross_layer_contracts.yaml 中 frozen=true 且路径在 shared/contracts 下的文件重算 sha256
 
 exit: 0=pass, 1=drift, 2=missing manifest
 """
@@ -24,7 +24,7 @@ from _arch_ssot import CONTRACTS_PATH, OCP_MANIFEST_PATH, REPO_ROOT, load_yaml  
 def main() -> int:
     if not OCP_MANIFEST_PATH.is_file():
         print(
-            "FAIL: 缺少 ocp_manifest.json — 运行: "
+            "FAIL: 缺少 ocp-manifest.json — 运行: "
             "python scripts/arch_guard/_tools/build_ocp_manifest.py"
         )
         return 2

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-005 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 # [MODULE] scripts.construction.start_brain
 # [INVARIANTS] 
 # [MODIFY-GUARD] 
@@ -29,9 +29,9 @@ import sys
 import time
 from pathlib import Path
 
-from zephyr.runtime.auto_runtime_core import AutoRuntimeCore
-from zephyr.runtime.auto_task_generator import AutoTaskGenerator
-from zephyr.runtime.runtime_config import RuntimeConfig
+from zephyr.infrastructure.runtime.auto_runtime_core import AutoRuntimeCore
+from zephyr.infrastructure.runtime.auto_task_generator import AutoTaskGenerator
+from zephyr.infrastructure.config.runtime_config import RuntimeConfig
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 

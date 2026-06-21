@@ -1,4 +1,4 @@
-# --- 治理锚定 ---
+﻿# --- 治理锚定 ---
 # blueprint: MOD-INF-005 | docs/03_modules/_cross_layer/governance-automation/blueprint.md | §
 # module_id: MOD-INF-005
 # stability: evolving
@@ -229,7 +229,7 @@ scripts:
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: 依赖版本锁定验证 — 对比环境版本与 frozen-versions.txt
+  description: 依赖版本锁定验证 — 对比环境版本与 frozen_versions.txt
   tags:
   - Security
 - name: d11_compliance/validate_manifest_admission.py
@@ -409,7 +409,7 @@ scripts:
   timeout_seconds: 15
   args: []
   warn_only: true
-  description: config/ 格式/注释/边界快速扫描（F1-F4轻量版，CI pre-commit适用）
+  description: config/ 格式/注释/边界快速扫描（F1-F4轻量版，CI pre_commit适用）
   tags:
   - Periodic
   - Quick
@@ -1773,7 +1773,7 @@ scripts:
   args:
   - flag: --check
     type: bool
-    description: only detect drift (pre-commit mode)
+    description: only detect drift (pre_commit mode)
   warn_only: false
   description: run all generators --check, hard-block any drift between auto-generated
     vs disk. Anchored to AGENTS.md section 6.16
@@ -2462,7 +2462,7 @@ scripts:
     type: str
     description: 输出路径
   warn_only: false
-  description: '从 .pre-commit-config.yaml 自动派生 gate-registry.yaml。 对标 §6.16 静态清单自动生成铁律。
+  description: '从 .pre_commit-config.yaml 自动派生 gate-registry.yaml。 对标 §6.16 静态清单自动生成铁律。
 
     '
   tags:
@@ -3027,7 +3027,7 @@ scripts:
   timeout_seconds: 15
   args: []
   warn_only: false
-  description: '阈值变更审计——每次阈值文件被修改时，记录 old→new 的 diff 到 append-only 审计日志， 由 pre-commit
+  description: '阈值变更审计——每次阈值文件被修改时，记录 old→new 的 diff 到 append-only 审计日志， 由 pre_commit
     钩子自动触发。
 
     '
@@ -3399,3 +3399,13 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+
+- name: phase_a_backup.py
+  owner: governance
+  description: phase_a_backup
+  dimensions: []
+  priority: P1
+  timeout_seconds: 600
+  args: [--tier0, --tier1]
+  warn_only: false
+  tags: []

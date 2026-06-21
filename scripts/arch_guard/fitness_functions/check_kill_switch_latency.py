@@ -48,7 +48,7 @@ def main() -> int:
         return 1
 
     if os.environ.get("ZEPHYR_T1_KILL_SWITCH_PROBE") == "1":
-        sim_path = REPO_ROOT / "src" / "zephyr" / "l01_infrastructure" / "kill_switch_sim.py"
+        sim_path = REPO_ROOT / "src" / "zephyr" / "infrastructure.runtime_integration" / "kill_switch_sim.py"
         if not sim_path.exists():
             print("WARN: ZEPHYR_T1_KILL_SWITCH_PROBE=1 但 kill_switch_sim.py 不存在")
             return 0

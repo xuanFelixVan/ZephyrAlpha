@@ -1,8 +1,20 @@
 # ZephyrAlpha — AI Agent 接入宪法
 
-> **硬规则入口**: [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md)（IDE 自动注入，50 行以内全读完再开工）
+> **硬规则入口**: [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md)（IDE 自动注入，全读完再开工）
 > **施工指导**: [`.trae/rules/onboarding_detail.md`](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)（详细规则/冷启动序列/方法论索引）
-> **内部 Agent 系统**: [`src/zephyr/agent_spec/AGENTS.md`](file:///d:/ZephyrAlpha/src/zephyr/agent_spec/AGENTS.md)（L0/L1/L2/L3 渐进披露，Pipeline 自动注入，非 IDE AI 使用）
+> **内部 Agent 系统**: [`data/capability_cards/`](file:///d:/ZephyrAlpha/data/capability_cards/)（22 个 skill_*.yaml，L0/L1/L2/L3 渐进披露，非 IDE AI 使用）
+
+## RULE-GUARDIAN：第一件事
+
+> **进入本项目的第一个命令（任何平台：Cursor/RooCode/Claude Code/Trae/VS Code）**：
+> ```
+> python scripts/lock_files.py cleanup && python scripts/ide_health_service.py --status
+> ```
+> running=false → `python scripts/ide_health_service.py --start`
+> running=true → 继续
+>
+> 守护进程启动 ResourceOptimizationEngine（CPU/内存/进程自动监控+分级防御）+ IdeHealthDaemon（僵尸窗口自动清理）。
+> **守护进程未运行 = 禁止任何写操作。**
 
 ## 1. 项目概述
 
@@ -18,16 +30,20 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 
 | 系统 | 入口 | 职责 |
 |------|------|------|
-| AutoRuntime Core | `python -m zephyr.runtime` | 系统大脑，调度所有 AI 运行时 |
-| PipelineOrchestrator | `zephyr.pipeline` | 管线编排（M1-M11） |
-| AgentOrchestrator | `zephyr.orchestrator` | Agent 生命周期管理 |
-| TaskRepository | `zephyr.db.task_repo` | 任务状态机（10 状态） |
-| A2A Protocol | `zephyr.l01_infrastructure.a2a_protocol` | Agent 间通信与冲突解决（MOD-INF-025） |
+| AutoRuntime Core | `python -m zephyr.trading` | 系统大脑，调度所有 AI 运行时 |
+| PipelineOrchestrator | `zephyr.integration.pipeline_orchestrator` | 管线编排（M1-M11） |
+| AgentOrchestrator | `zephyr.trading.orchestrator` | Agent 生命周期管理 |
+| TaskRepository | `zephyr.governance.task_repo` | 任务状态机（10 状态） |
+| A2A Protocol | `zephyr.infra_runtime.a2a_protocol` | Agent 间通信与冲突解决（MOD-INF-025） |
+| MCP Servers（10 个） | [`config/mcp.json`](file:///d:/ZephyrAlpha/config/mcp.json) | MCP 服务器注册表（含工具列表/安全等级/ACL/限流） |
+| Trigger Router（6 触发器） | [`config/trigger_router.yaml`](file:///d:/ZephyrAlpha/config/trigger_router.yaml) | 事件驱动路由表（含 handler/优先级/重试策略） |
+
+> MCP 服务器完整定义（工具清单/角色权限/熔断配置）见 [`config/mcp.json`](file:///d:/ZephyrAlpha/config/mcp.json)。触发器路由表（6 触发器+处理器+安全等级）见 [`config/trigger_router.yaml`](file:///d:/ZephyrAlpha/config/trigger_router.yaml)。
 
 ## 4. 发现可用服务
 
 ```python
-from zephyr.runtime.capability_registry import CapabilityRegistry
+from zephyr.trading.capability_registry import CapabilityRegistry
 registry = CapabilityRegistry()
 all_capabilities = registry.list_all()
 inference_caps = registry.find_by_tags(["inference", "text"])
@@ -37,14 +53,14 @@ a2a_caps = registry.find_by_tags(["a2a", "coordination"])
 ### 4.1 Agent 间通信（A2A Protocol）
 
 ```python
-from zephyr.l01_infrastructure.a2a_protocol import card_registry
-agents = card_registry.discover(capability="write")
+from zephyr.infra_runtime.a2a_protocol import a2a_card_registry
+agents = a2a_card_registry.discover(capability="write")
 
-from zephyr.l01_infrastructure.a2a_protocol.layer2_communication.a2a_schemas import A2AMessage, A2AMessagePart, PartType
+from zephyr.infra_runtime.a2a_protocol.layer2_communication.a2a_schemas import A2AMessage, A2AMessagePart, PartType
 msg = A2AMessage(from_agent="your-id", to_agent="target-id", task_id="t-1")
 
-from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.conflict_detector import ConflictDetector, ChangeSet
-from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.arbitrator import Arbitrator, AgentMeta, AgentRole
+from zephyr.infra_runtime.a2a_protocol.layer3_coordination.conflict_detector import ConflictDetector, ChangeSet
+from zephyr.infra_runtime.a2a_protocol.layer3_coordination.arbitrator import Arbitrator, AgentMeta, AgentRole
 ```
 
 ## 5. 三层 AI 工作分配
@@ -55,22 +71,22 @@ from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.arbitrator impor
 
 ## 6. 关键路径
 
-- `specs/auto-runtime-core/`: AutoRuntime Core 蓝图规范
-- `src/zephyr/runtime/`: AutoRuntime Core 实现
+- `specs/auto_runtime_core/`: AutoRuntime Core 蓝图规范
+- `src/zephyr/trading/`: AutoRuntime Core 实现
 - `data/audit_logs/`: AI 行为审计日志
 - `data/capability_cards/`: 能力卡片定义
-- `data/work_dags/`: 工作 DAG 定义
-- `architecture-model/`: 全部蓝图 YAML
+- `data/work_dags/`: 工作 DAG 定义（待创建）
+- `architecture_model/`: 全部蓝图 YAML
 
 ## 7. 代码规范
 
-- Python 3.11+, ruff lint, pydantic v2
+- Python >=3.11, ruff lint, pydantic v2
 - 所有新组件**必须**注册 CapabilityCard 到 CapabilityRegistry
 - 所有 AI 行为**必须**写入 AiAuditLogger
-- 详细编码约束见 [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md)（四条铁律 + 写代码三条）和 [`code-construction-standards.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)（GOV-ENG-001）
-- 治理决策方法论见 [`governance-methodology-standard.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/meta/governance-methodology-standard.md)（PS-STD-011）——含MTH-006诊断反转验证：深挖后MUST回溯初始诊断，不一致时追问"为什么初始诊断错了？"
-- 审计脚本质量见 [`quality-standard.md`](file:///d:/ZephyrAlpha/scripts/governance/quality-standard.md)（SCRIPT-QUALITY-001）
-- 产出物规格化见 [`compression-workflow-standard.md`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/compression-workflow-standard.md)（GOV-DOC-011）
+- 详细编码约束见 [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md)（四条铁律 + 写代码三条）和 [`trae_010_code_naming_organization.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml)（GOV-ENG-001）
+- 治理决策方法论见 [`trae_024_methodology_diagnosis.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml)（PS-STD-011）——含MTH-006诊断反转验证：深挖后MUST回溯初始诊断，不一致时追问"为什么初始诊断错了？"
+- 审计脚本质量见 [`quality_standard.md`](file:///d:/ZephyrAlpha/scripts/governance/quality_standard.md)（SCRIPT-QUALITY-001）
+- 产出物规格化见 [`trae_030_doc_numbering_metadata.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)（GOV-DOC-011）
 
 ## 8. 永远不要做的事
 

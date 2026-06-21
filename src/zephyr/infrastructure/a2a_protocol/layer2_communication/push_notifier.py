@@ -1,0 +1,43 @@
+# [A_module] module_id=MOD-INF_push_notifier | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain-infra_ops/a2a-protocol/blueprint.md
+
+# [MODULE] zephyr.infrastructure.a2a_protocol.layer2_communication.push_notifier
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] stable
+
+# [SAFETY] M
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+"""Push Notifier — A2A 推送通知"""
+
+
+from typing import Dict, Callable, List
+
+
+class PushNotifier:
+    def __init__(self):
+        self._subscribers: Dict[str, List[Callable]] = {}
+
+    def subscribe(self, agent_id: str, callback: Callable):
+        self._subscribers.setdefault(agent_id, []).append(callback)
+
+    def unsubscribe(self, agent_id: str, callback: Callable):
+        if agent_id in self._subscribers:
+            self._subscribers[agent_id].remove(callback)
+
+    def notify(self, agent_id: str, event: str, data: dict = None) -> int:
+        callbacks = self._subscribers.get(agent_id, [])
+        for cb in callbacks:
+            cb(event, data or {})
+        return len(callbacks)

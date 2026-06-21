@@ -1,20 +1,21 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-2082 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-699 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_truth_source_validator
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """单元测试——真源优先级裁决器（Truth Source Validator）
 
 验证 5 级优先级链裁决正确性：Tier 0 > Tier 1 > Tier 2 > Tier 3 > Tier 4。
 至少 10 个测试用例覆盖全部排列组合。
 """
 
-from __future__ import annotations
 
 import pytest
 
-from zephyr.gates.truth_source_validator import (
+from zephyr.governance.rule_enforcement.truth_source_validator import (
     AuditLogEntry,
     TruthClaim,
     TruthConflict,
@@ -40,7 +41,7 @@ class TestClassifySource:
         assert tier == TruthTier.TIER_1
 
     def test_tier2_module_blueprint(self, validator):
-        tier = validator.classify_source("docs/03_modules/l01_infrastructure/escalation-protocol/blueprint.md")
+        tier = validator.classify_source("docs/03_modules/_domain-infra_ops/escalation-protocol/blueprint.md")
         assert tier == TruthTier.TIER_2
 
     def test_tier3_policies(self, validator):
@@ -105,7 +106,7 @@ class TestConflictResolution:
             TruthClaim(
                 fact_id="module.files",
                 value=["a.py", "b.py", "c.py"],
-                source_path="docs/03_modules/l01_infrastructure/blueprint.md",
+                source_path="docs/03_modules/_domain-infra_ops/blueprint.md",
                 tier=TruthTier.TIER_2,
             ),
         ]
@@ -118,7 +119,7 @@ class TestConflictResolution:
             TruthClaim(
                 fact_id="naming.convention",
                 value="snake_case",
-                source_path="docs/03_modules/l01_infrastructure/blueprint.md",
+                source_path="docs/03_modules/_domain-infra_ops/blueprint.md",
                 tier=TruthTier.TIER_2,
             ),
             TruthClaim(

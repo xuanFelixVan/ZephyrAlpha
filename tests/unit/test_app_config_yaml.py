@@ -1,19 +1,20 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1974 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-591 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_app_config_yaml
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """l01 infrastructure config.load_config — YAML + 环境变量覆盖。"""
 
-from __future__ import annotations
 
 from pathlib import Path
 
 import pytest
 import yaml
 
-from zephyr.l01_infrastructure.config import AppConfig, load_config, reload_config
+from zephyr.governance.config import AppConfig, load_config, reload_config
 
 
 def test_load_config_default_when_missing_file(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, caplog) -> None:

@@ -16,6 +16,14 @@
 """
 
 from __future__ import annotations
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.constants import EXIT_PASS
 
 
@@ -102,10 +110,10 @@ def analyze() -> list[dict]:
         mod_id = mod.get("module_id", "?")
         mod_name = mod.get("name", "?")
         bp_dir = _PROJECT_ROOT / "docs" / "03_modules" / (
-            mod.get("layer", "") or "l01_infrastructure"
+            mod.get("layer", "") or "infrastructure.runtime_integration"
         )
         name = mod.get("path", "").split("/")[-1] if mod.get("path") else mod_name
-        blueprint_dir = _PROJECT_ROOT / "docs" / "03_modules" / "l01_infrastructure" / name
+        blueprint_dir = _PROJECT_ROOT / "docs" / "03_modules" / "infrastructure.runtime_integration" / name
 
         expected = "Active" if cp_status in ("phase_2_complete", "completed") or (
             isinstance(cp_status, str) and cp_status.startswith("phase_") and cp_status.endswith("_complete")

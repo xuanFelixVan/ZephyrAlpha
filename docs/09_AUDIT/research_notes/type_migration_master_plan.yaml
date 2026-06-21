@@ -1,0 +1,71 @@
+# [A_config] module_id=CFG-type-migration-master-plan | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# ============================================================================
+# ZephyrAlpha 老旧类型系统迁移总图 — 临时文件
+# ============================================================================
+# 版本: 1.1.0 | 创建: 2026-05-04 | 关闭: 2026-05-06
+#
+# 性质: 一次性迁移工作的跟踪文件。
+#       本文件不入 master-blueprint，不入永久蓝图，不入 governance 标准。
+#
+# 背景: 项目从旧版本升级至 2.0，多个模块存在类型/模型/数据结构不兼容的情况。
+#       各模块的 upgrade plan 分散在各自蓝图内，本文件汇总为一张总表。
+#
+# AUDIT-10 终审结论 (2026-05-06):
+#   5 项迁移已全部核实完成。本文件使命结束，随临时工作区整体归档。
+# ============================================================================
+
+module_id: DOM-GOV-001
+registry:
+  version: "1.1.0"
+  created: "2026-05-04"
+  closed: "2026-05-06"
+  status: closed
+  lifespan: "migration_complete → ARCHIVE"
+
+migrations:
+  - item: "TaskCard v0.2.0 → v0.3.0"
+    owner: "MOD-INF-006 task-system"
+    target: "继承 shared/schema/schemas.py Task (31字段)"
+    phase: "stable"
+    status: completed
+    acceptance: "所有已注册 TaskCard 通过新 Schema 校验"
+    note: "AUDIT-10 核实: src/zephyr/shared/schema/schemas.py Task(BaseModel) 31字段已落地，core/models.py TaskCard 继承 Task"
+
+  - item: "core/models.py → v0.3.0"
+    owner: "MOD-INF-016 shared-core"
+    target: "对齐 schemas.py Task 31字段 + Pydantic v2 full"
+    phase: "stable"
+    status: completed
+    acceptance: "mypy strict 通过，无 Any 残留"
+    note: "AUDIT-10 核实: core/models.py v0.3.0 已落地，Pydantic v2 BaseModel 全链路贯通"
+
+  - item: "ContractBus 44份文件 → Pydantic v2"
+    owner: "MOD-INF-001 capacity-assurance"
+    target: "分三批: Batch1(15) → Batch2(15) → Batch3(14)"
+    phase: "stable"
+    status: completed
+    acceptance: "全部 44 份通过 pydantic_v2_migrator.py 检查"
+    note: "AUDIT-10 核实: src/zephyr/shared/contracts/ 下全部使用 Pydantic v2 BaseModel，无 v1 残留"
+
+  - item: "MOD-INF-003 KMS 蓝图 → 废弃"
+    owner: "MOD-INF-006 task-system"
+    target: "已 mark deprecated，待 stable 物理删除"
+    phase: "stable"
+    status: completed
+    acceptance: "docs/03_modules/ 下无 MOD-INF-003 目录"
+    note: "AUDIT-10 核实: MOD-INF-003 内容已合并至 MOD-INF-006，目录已删除。blueprint-registry.yaml 已记录"
+
+  - item: "MOD-INF-004 vibe-coding-pipelines → 退役"
+    owner: "已退役"
+    target: "设计已迁入 MOD-INF-006 task-system"
+    phase: "stable"
+    status: completed
+    acceptance: "蓝图已标记 retired"
+    note: "AUDIT-10 核实: 蓝图已标记 retired。遗留空目录 docs/03_modules/_domain-infra_ops/vibe-coding-pipelines/ 待清理 (P2)"

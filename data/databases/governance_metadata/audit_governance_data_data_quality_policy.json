@@ -1,0 +1,27 @@
+{
+  "task_id": "DM-100100",
+  "source_file": "docs/01_policies_and_standards/governance/data/data_quality_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_045_data_quality_lineage.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "gov_data_001": {
+      "title": "数据质量策略 (GOV-DATA-001)",
+      "conditions_count": 7,
+      "actions_count": 4,
+      "prohibitions_count": 5
+    }
+  },
+  "summary": {
+    "total_rules": 16,
+    "COVERED": 16,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    {
+      "action": "YAML_UPDATE",
+      "target": "trae_045_data_quality_lineage.yaml section gov_data_001",
+      "detail": "从空壳更新为包含7个conditions+4个actions+5个prohibitions的完整规则提取(DQA-001~003+5质量维度+告警阈值)"
+    }
+  ]
+}

@@ -16,7 +16,7 @@ YAML_PATH = (
     / "target-architecture"
     / "architecture-model"
     / "contracts"
-    / "cross-layer-contracts.yaml"
+    / "cross_layer_contracts.yaml"
 )
 
 PATH_MAP: dict[str, str] = {

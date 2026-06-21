@@ -1,0 +1,38 @@
+{
+  "task_id": "DM-100132",
+  "source_file": "docs/01_policies_and_standards/governance/engineering/code_restructuring_safety_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_046_engineering_code_restructure.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "GOV-ENG-004_安全搬家铁律9条": {
+      "source_section": "§1 安全搬家铁律",
+      "type": "mandatory+prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_046_engineering_code_restructure.yaml:gov_eng_004_s1",
+      "details": "9条铁律：执行前扫描import+逐条价值分析+合并后验证完整性+import全量验证+一次只搬一个+搬完验证+每步提交+安全优先+做完更新蓝图+3条禁止"
+    },
+    "GOV-ENG-004_重复文件价值分析5步": {
+      "source_section": "§2 重复文件价值分析方法论",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_046_engineering_code_restructure.yaml:gov_eng_004_s2",
+      "details": "5步流程：diff对比→分类判定→价值提取→归并决策→验证"
+    },
+    "GOV-ENG-004_强制安全协议": {
+      "source_section": "§3 强制安全协议",
+      "type": "mandatory+prohibition+pre_condition",
+      "status": "COVERED",
+      "yaml_section": "trae_046_engineering_code_restructure.yaml:gov_eng_004_s3",
+      "details": "Pre-flight 3项+执行中3约束+Post-merge 3验证+2条禁止"
+    }
+  },
+  "summary": {
+    "total_rules": 3,
+    "COVERED": 3,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "trae_046_engineering_code_restructure.yaml: 从占位符扩展为3个详细section——gov_eng_004_s1(9条铁律+2条pre_conditions+9条actions+3条prohibitions); gov_eng_004_s2(5步方法论+1条condition+5条actions); gov_eng_004_s3(安全协议+1条pre_condition+3条actions+2条prohibitions)"
+  ]
+}

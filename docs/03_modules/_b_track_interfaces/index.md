@@ -1,8 +1,8 @@
 ---
-module_id: BTRACK-IFACE-INDEX-001
+module_id: MOD-005
 title: B 轨接口规范 — 目录索引
 doc_type: index
-status: active
+status: Active
 version: "2.2.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
@@ -14,7 +14,7 @@ ttl: permanent
 summary: "B 轨 6 大核心服务接口索引。v2.2.0：truth_source 统一指向各 MOD-INF 蓝图 + architecture-model b_*.yaml；目录说明对齐 Phase 5（l01 + _cross_layer）。"
 tags: [b-track, service-interface, index, ai-engineering, interface-spec]
 depends_on:
-  - {target: GOV-DOC-002, at: "§一", why: "目录定位——接口在此目录；对应模块蓝图在 docs/03_modules/l01_infrastructure/ 与 docs/03_modules/_cross_layer/（以 module-registry path 为准）"}
+  - {target: GOV-DOC-002, at: "§一", why: "目录定位——接口在此目录；对应模块蓝图在 docs/03_modules/_domain-infra_ops/ 与 docs/03_modules/_cross_layer/（以 module-registry path 为准）"}
 ---
 
 # B 轨接口规范 — 目录索引
@@ -22,7 +22,7 @@ depends_on:
 > **目录定位**：`03_modules/_b_track_interfaces/` — 6 大 B 轨核心服务的接口合同存放处。
 >
 > **v2.0.0 迁移**：原位于 `docs/07_ai_engineering/`，2026-05-03 迁移至此。
-> 迁移理由见 [GOV-DOC-002 §一](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/directory-structure-standard.md)。
+> 迁移理由见 [GOV-DOC-002 §一](file:///D:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml)。
 
 ---
 
@@ -30,7 +30,7 @@ depends_on:
 
 | Yes（本目录管） | No（不管 → 正确位置） |
 |:--|:--|
-| 6 大 B 轨核心服务的接口合同（Protocol + Pydantic Schemas + API 签名） | 模块蓝图 → `docs/03_modules/l01_infrastructure/{module}/blueprint.md` **或** `docs/03_modules/_cross_layer/{module}/blueprint.md`（见 `module-registry.yaml` 的 path） |
+| 6 大 B 轨核心服务的接口合同（Protocol + Pydantic Schemas + API 签名） | 模块蓝图 → `docs/03_modules/_domain-infra_ops/{module}/blueprint.md` **或** `docs/03_modules/_cross_layer/{module}/blueprint.md`（见 `module-registry.yaml` 的 path） |
 | 跨服务依赖拓扑声明 | 施工计划 → 同上模块目录 |
 | 渐进路线（scaffold→4）与 SLO | 具体实现代码 → `src/zephyr/` |
 | 错误码与降级策略 | 部署/CI/CD → `04_automation/` |

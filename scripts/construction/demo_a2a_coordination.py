@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-005 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 # [MODULE] scripts.construction.demo_a2a_coordination
 # [INVARIANTS] 
 # [MODIFY-GUARD] 
@@ -17,13 +17,13 @@ A2A 协议协调任务演示
 - Supervisor 协调分配任务
 """
 
-from zephyr.l01_infrastructure.a2a_protocol.layer1_discovery import (
+from zephyr.integration.agent_communication.layer1_discovery import (
     AgentCard, AgentCapability, A2ARegistry
 )
-from zephyr.l01_infrastructure.a2a_protocol.layer2_communication import (
+from zephyr.integration.agent_communication.layer2_communication import (
     A2ATask, A2ATaskStatus, A2AStateMachine, ContextPackage
 )
-from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination import (
+from zephyr.integration.agent_communication.layer3_coordination import (
     Supervisor, DeadlockGuard
 )
 

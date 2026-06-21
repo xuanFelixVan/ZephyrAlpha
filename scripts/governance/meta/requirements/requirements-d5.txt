@@ -1,2 +1,0 @@
-# requirements-d5.txt — D5 架构合规维度
-PyYAML>=6.0

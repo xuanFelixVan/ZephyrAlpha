@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0173 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-330 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.integration.test_phase_e_layers
 # [STABILITY] evolving
 # [SAFETY] L
@@ -22,30 +23,30 @@ class TestL01Infrastructure:
     """L01 Infrastructure — config + kill switch"""
 
     def test_appconfig_default_creation(self):
-        from zephyr.l01_infrastructure.config import AppConfig
+        from zephyr.governance.config import AppConfig
         cfg = AppConfig()
         assert cfg.env == "dev"
         assert cfg.log_level == "INFO"
         assert "akshare" in cfg.data_source_priority
 
     def test_appconfig_frozen(self):
-        from zephyr.l01_infrastructure.config import AppConfig
+        from zephyr.governance.config import AppConfig
         cfg = AppConfig(env="prod", log_level="WARN")
         with pytest.raises(Exception):
             cfg.env = "dev"  # type: ignore[misc]
 
     def test_load_config_returns_appconfig(self):
-        from zephyr.l01_infrastructure.config import AppConfig, load_config
+        from zephyr.governance.config import AppConfig, load_config
         cfg = load_config()
         assert isinstance(cfg, AppConfig)
 
     def test_reload_config_returns_appconfig(self):
-        from zephyr.l01_infrastructure.config import AppConfig, reload_config
+        from zephyr.governance.config import AppConfig, reload_config
         cfg = reload_config()
         assert isinstance(cfg, AppConfig)
 
     def test_kill_switch_simulator_trigger(self):
-        from zephyr.l01_infrastructure.kill_switch_sim import KillSwitchSimulator
+        from zephyr.infrastructure.kill_switch_sim import KillSwitchSimulator
         sim = KillSwitchSimulator(target_ms=1.0)
         probe = sim.trigger()
         assert probe is not None
@@ -53,13 +54,13 @@ class TestL01Infrastructure:
         assert probe.hardware_model == "T0_SIMULATOR"
 
     def test_kill_switch_simulator_health_check(self):
-        from zephyr.l01_infrastructure.kill_switch_sim import KillSwitchSimulator
+        from zephyr.infrastructure.kill_switch_sim import KillSwitchSimulator
         sim = KillSwitchSimulator(target_ms=1000.0)
         ok = sim.health_check()
         assert ok is True
 
     def test_kill_switch_simulator_ack_callback(self):
-        from zephyr.l01_infrastructure.kill_switch_sim import KillSwitchSimulator
+        from zephyr.infrastructure.kill_switch_sim import KillSwitchSimulator
         sim = KillSwitchSimulator()
 
         called = []
@@ -72,7 +73,7 @@ class TestL02AlphaFactor:
     """L02 Alpha Factor — registry + meta + autodiscover"""
 
     def test_factor_meta_creation(self):
-        from zephyr.l02_alpha_factor.factor_base import FactorMeta
+        from zephyr.factor.factor_base import FactorMeta
         meta = FactorMeta(
             factor_id="test_momentum",
             name="Test Momentum",
@@ -84,7 +85,7 @@ class TestL02AlphaFactor:
         assert isinstance(meta.tags, list)
 
     def test_factor_registry_register_and_get(self):
-        from zephyr.l02_alpha_factor.factor_base import (
+        from zephyr.factor.factor_base import (
             FactorBase,
             FactorMeta,
             FactorRegistry,
@@ -109,7 +110,7 @@ class TestL02AlphaFactor:
         FactorRegistry.clear()
 
     def test_factor_registry_list_all(self):
-        from zephyr.l02_alpha_factor.factor_base import (
+        from zephyr.factor.factor_base import (
             FactorBase,
             FactorMeta,
             FactorRegistry,
@@ -140,7 +141,7 @@ class TestL02AlphaFactor:
         FactorRegistry.clear()
 
     def test_factor_registry_duplicate_raises(self):
-        from zephyr.l02_alpha_factor.factor_base import (
+        from zephyr.factor.factor_base import (
             FactorBase,
             FactorMeta,
             FactorRegistry,
@@ -165,7 +166,7 @@ class TestL02AlphaFactor:
         FactorRegistry.clear()
 
     def test_factor_registry_missing_meta_raises(self):
-        from zephyr.l02_alpha_factor.factor_base import FactorBase, FactorRegistry
+        from zephyr.factor.factor_base import FactorBase, FactorRegistry
         FactorRegistry.clear()
 
         with pytest.raises(AttributeError):
@@ -178,7 +179,7 @@ class TestL02AlphaFactor:
         FactorRegistry.clear()
 
     def test_autodiscover_factors_runs(self):
-        from zephyr.l02_alpha_factor.factor_base import autodiscover_factors
+        from zephyr.factor.factor_base import autodiscover_factors
         autodiscover_factors()
 
 
@@ -186,21 +187,21 @@ class TestL08HumanAIInterface:
     """L08 Human-AI Interface — notifications + approvals"""
 
     def test_notification_level_enum(self):
-        from zephyr.l08_human_ai_interface.interface_base import NotificationLevel
+        from zephyr.frontend.interface_base import NotificationLevel
         assert NotificationLevel.INFO.value == "info"
         assert NotificationLevel.WARNING.value == "warning"
         assert NotificationLevel.ERROR.value == "error"
         assert NotificationLevel.CRITICAL.value == "critical"
 
     def test_approval_action_enum(self):
-        from zephyr.l08_human_ai_interface.interface_base import ApprovalAction
+        from zephyr.frontend.interface_base import ApprovalAction
         assert ApprovalAction.APPROVE.value == "approve"
         assert ApprovalAction.REJECT.value == "reject"
         assert ApprovalAction.DELEGATE.value == "delegate"
         assert ApprovalAction.ESCALATE.value == "escalate"
 
     def test_notification_creation(self):
-        from zephyr.l08_human_ai_interface.interface_base import (
+        from zephyr.frontend.interface_base import (
             Notification,
             NotificationLevel,
         )
@@ -216,7 +217,7 @@ class TestL08HumanAIInterface:
         assert notif.source_layer == "L04"
 
     def test_approval_request_creation(self):
-        from zephyr.l08_human_ai_interface.interface_base import ApprovalRequest
+        from zephyr.frontend.interface_base import ApprovalRequest
         req = ApprovalRequest(
             request_id="req-001",
             action="override_position_limit",
@@ -230,7 +231,7 @@ class TestL08HumanAIInterface:
         assert "symbol" in req.context
 
     def test_approval_request_expiry(self):
-        from zephyr.l08_human_ai_interface.interface_base import ApprovalRequest
+        from zephyr.frontend.interface_base import ApprovalRequest
         expiry = datetime.now(timezone.utc) + timedelta(hours=1)
         req = ApprovalRequest(
             request_id="req-002",
@@ -248,7 +249,7 @@ class TestL12SystemTelemetry:
     """L12 System Telemetry — contract metrics collector"""
 
     def test_sla_record_creation(self):
-        from zephyr.l01_infrastructure.system_telemetry.contract_metrics import SlaRecord
+        from zephyr.infrastructure.system_telemetry.contract_metrics import SlaRecord
         record = SlaRecord(
             contract_id="CTR-001",
             trace_id="trace-abc123",
@@ -263,7 +264,7 @@ class TestL12SystemTelemetry:
         assert record.recorded_at is not None
 
     def test_drift_alert_creation(self):
-        from zephyr.l01_infrastructure.system_telemetry.contract_metrics import DriftAlert
+        from zephyr.infrastructure.system_telemetry.contract_metrics import DriftAlert
         alert = DriftAlert(
             contract_id="CTR-002",
             field_name="signal_value",
@@ -278,7 +279,7 @@ class TestL12SystemTelemetry:
         assert alert.detected_at is not None
 
     def test_collector_measure_sla_passed(self):
-        from zephyr.l01_infrastructure.system_telemetry.contract_metrics import (
+        from zephyr.infrastructure.system_telemetry.contract_metrics import (
             ContractMetricsCollector,
         )
         collector = ContractMetricsCollector()
@@ -293,7 +294,7 @@ class TestL12SystemTelemetry:
         assert record.contract_id == "CTR-004"
 
     def test_collector_measure_sla_failed(self):
-        from zephyr.l01_infrastructure.system_telemetry.contract_metrics import (
+        from zephyr.infrastructure.system_telemetry.contract_metrics import (
             ContractMetricsCollector,
         )
         collector = ContractMetricsCollector()
@@ -307,7 +308,7 @@ class TestL12SystemTelemetry:
         assert record.passed is False
 
     def test_collector_record_violation(self):
-        from zephyr.l01_infrastructure.system_telemetry.contract_metrics import (
+        from zephyr.infrastructure.system_telemetry.contract_metrics import (
             ContractMetricsCollector,
         )
         collector = ContractMetricsCollector()
@@ -317,7 +318,7 @@ class TestL12SystemTelemetry:
         assert stats["total_violations"] == 2
 
     def test_collector_detect_drift_with_explicit_baseline(self):
-        from zephyr.l01_infrastructure.system_telemetry.contract_metrics import (
+        from zephyr.infrastructure.system_telemetry.contract_metrics import (
             ContractMetricsCollector,
         )
         collector = ContractMetricsCollector()
@@ -334,7 +335,7 @@ class TestL12SystemTelemetry:
         assert alert.deviation_pct > 100
 
     def test_collector_get_stats_defaults(self):
-        from zephyr.l01_infrastructure.system_telemetry.contract_metrics import get_contract_metrics
+        from zephyr.infrastructure.system_telemetry.contract_metrics import get_contract_metrics
         collector = get_contract_metrics()
         stats = collector.get_stats()
         assert "sla_p99_pass_rate_100" in stats
@@ -343,7 +344,7 @@ class TestL12SystemTelemetry:
         assert "tracked_contracts" in stats
 
     def test_get_contract_metrics_singleton(self):
-        from zephyr.l01_infrastructure.system_telemetry.contract_metrics import get_contract_metrics
+        from zephyr.infrastructure.system_telemetry.contract_metrics import get_contract_metrics
         c1 = get_contract_metrics()
         c2 = get_contract_metrics()
         assert c1 is c2

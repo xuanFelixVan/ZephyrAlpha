@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1868 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-492 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.escalation_engine.test_escalation_core
 # [STABILITY] evolving
 # [SAFETY] L
@@ -13,10 +14,10 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.escalation_engine.circuit_breaker import CircuitBreaker, CircuitBreakerConfig, CircuitState
-from zephyr.escalation_engine.delegation_engine import DelegationEngine
-from zephyr.escalation_engine.escalation_engine import EscalationEngine
-from zephyr.escalation_engine.escalation_models import (
+from zephyr.ops.circuit_breaker import CircuitBreaker, CircuitBreakerConfig, CircuitState
+from zephyr.governance.delegation_engine import DelegationEngine
+from zephyr.governance.escalation_engine import EscalationEngine
+from zephyr.governance.escalation_models import (
     DEFAULT_ESCALATION_RULES,
     DelegationRecord,
     DelegationStrategy,

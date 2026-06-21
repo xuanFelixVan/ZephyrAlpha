@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0120 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-277 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.governance.test_budget_enforcer_smoke
 # [STABILITY] evolving
 # [SAFETY] L
@@ -6,7 +7,7 @@
 # [TESTS] —
 import pytest
 
-from zephyr.budget_enforcer import (
+from zephyr.governance.budget_enforcement import (
     BudgetEngine,
     BurnRateMonitor,
     BudgetTracker,
@@ -98,7 +99,7 @@ class TestDegradationManagerSmoke:
 
 class TestModelRouterSmoke:
     def test_route_free_for_simple(self):
-        from zephyr.budget_enforcer.model_router import TaskComplexity
+        from zephyr.governance.model_router import TaskComplexity
         mr = ModelRouter()
         d = mr.route(complexity=TaskComplexity.SIMPLE)
         assert d.tier is not None

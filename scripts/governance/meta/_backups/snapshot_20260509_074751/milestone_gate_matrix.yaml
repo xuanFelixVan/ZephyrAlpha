@@ -3,7 +3,7 @@
 # 每个门禁定义：触发时机、需通过的脚本清单、不通过后果
 
 generated_at: "2026-05-07T00:00:00Z"
-source: "docs/03_modules/l01_infrastructure/script-system/blueprint.md §10"
+source: "docs/03_modules/l01-infrastructure/script-system/blueprint.md §10"
 standard: "NASA-STD-8739.8B"
 version: "1.0.0"
 

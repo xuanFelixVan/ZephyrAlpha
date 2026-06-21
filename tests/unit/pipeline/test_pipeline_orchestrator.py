@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1926 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-545 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.pipeline.test_pipeline_orchestrator
 # [STABILITY] evolving
 # [SAFETY] L
@@ -11,8 +12,8 @@ import sys
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 
-from zephyr.core.models import TaskCard
-from zephyr.pipeline import (
+from zephyr.shared.shared_services.models import TaskCard
+from zephyr.integration.pipeline_routing import (
     M_MODULE_SPECS,
     M_MODULES,
     PipelineOrchestrator,
@@ -21,8 +22,8 @@ from zephyr.pipeline import (
 
 
 def _make_task(task_id: str, **overrides) -> TaskCard:
-    from zephyr.gates.task_types import TaskNamespace
-    from zephyr.shared.schema.severity_types import Priority
+    from zephyr.governance.rule_enforcement.task_types import TaskNamespace
+    from zephyr.integration.shared.schema.severity_types import Priority
 
     parts = task_id.split("-", 2)
     ns_name = parts[0] if len(parts) >= 2 else "TASK"
@@ -42,14 +43,14 @@ def _make_task(task_id: str, **overrides) -> TaskCard:
         phase=1,
         execution_model="deepseek",
         safety_level="L",
-        upstream_files=["D:\\ZephyrAlpha\\\\docs\\03_modules\\l01_infrastructure\\task-system\\blueprint.md"],
+        upstream_files=["D:\\ZephyrAlpha\\\\docs\\03_modules\\l01-infrastructure\\task-system\\blueprint.md"],
         downstream_outputs=[{"path": "D:\\test\\output.py", "description": "test"}],
         allowed_touch=["D:\\test\\"],
         forbidden_touch=["D:\\system\\"],
         applicable_rules=[{"module_id": "ADR-0040", "section": "test", "reason": "test"}],
         context_assembly_manifest=[
             {
-                "file_path": "D:\\ZephyrAlpha\\\\docs\\03_modules\\l01_infrastructure\\task-system\\blueprint.md",
+                "file_path": "D:\\ZephyrAlpha\\\\docs\\03_modules\\l01-infrastructure\\task-system\\blueprint.md",
                 "reason": "test",
             }
         ],
@@ -57,7 +58,7 @@ def _make_task(task_id: str, **overrides) -> TaskCard:
         timeout_minutes=5,
         rollback_instructions="所有产出均为临时文件，删除 D:\\test\\ 目录即可完全撤销所有修改",
         acceptance=["管线产出 ModuleResult"],
-        tags=["test", "l01_infrastructure", "deepseek", "MOD-INF-006"],
+        tags=["test", "l01-infrastructure", "deepseek", "MOD-INF-006"],
         assigned_pipeline="A",
         created_at="2026-05-02T00:00:00",
         updated_at="2026-05-02T00:00:00",
@@ -107,13 +108,13 @@ class TestPipelineDispatch:
         assert m7.model == "glm"
 
     def test_experimental_triggers_claude_rescue(self) -> None:
-        task = _make_task("CP-0097", tags=["test", "l01_infrastructure", "deepseek", "MOD-INF-006", "experimental"])
+        task = _make_task("CP-0097", tags=["test", "l01-infrastructure", "deepseek", "MOD-INF-006", "experimental"])
         o = PipelineOrchestrator()
         r = o.dispatch(task)
         assert r.needs_claude_rescue is True
 
     def test_security_triggers_claude_rescue(self) -> None:
-        task = _make_task("CP-0096", tags=["test", "l01_infrastructure", "deepseek", "MOD-INF-006", "security"])
+        task = _make_task("CP-0096", tags=["test", "l01-infrastructure", "deepseek", "MOD-INF-006", "security"])
         o = PipelineOrchestrator()
         r = o.dispatch(task)
         assert r.needs_claude_rescue is True
@@ -123,7 +124,7 @@ class TestPipelineDispatch:
             "CP-0101",
             tags=[
                 "test",
-                "l01_infrastructure",
+                "l01-infrastructure",
                 "deepseek",
                 "MOD-INF-006",
                 "ct_pipe.task_type=OPS",
@@ -136,7 +137,7 @@ class TestPipelineDispatch:
         assert mids == ["M2", "M3", "M4", "M5"]
 
     def test_ct_pipe_audit_p0_vs_assigned_pipeline_b_warns(self) -> None:
-        from zephyr.shared.schema.severity_types import Priority
+        from zephyr.integration.shared.schema.severity_types import Priority
 
         task = _make_task(
             "CP-0102",
@@ -162,7 +163,7 @@ class TestPipelineDispatch:
             "CP-0104",
             tags=[
                 "test",
-                "l01_infrastructure",
+                "l01-infrastructure",
                 "MOD-INF-006",
                 "ct_pipe.task_type=MODEL_BUILD",
                 "ct_pipe.complexity=HIGH",
@@ -313,18 +314,18 @@ class TestModelCollapseIntegration:
     """B132+B158: 模型崩塌 + 置信度 集成"""
 
     def test_dispatch_includes_collapse_field(self) -> None:
-        task = _make_task("CP-0038", tags=["l01_infrastructure", "test"])
+        task = _make_task("CP-0038", tags=["l01-infrastructure", "test"])
         o = PipelineOrchestrator()
         r = o.dispatch(task)
         assert r.model_collapse is None
 
     def test_text_similarity_on_identical(self) -> None:
-        from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator as PO
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator as PO
 
         assert PO._text_similarity("hello world", "hello world") == 1.0
 
     def test_text_similarity_on_different(self) -> None:
-        from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator as PO
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator as PO
 
         sim = PO._text_similarity("hello world", "foo bar baz")
         assert sim < 0.5

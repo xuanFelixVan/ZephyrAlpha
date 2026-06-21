@@ -1,0 +1,35 @@
+# [A_module] module_id=MOD-SHR_adaptive_sampler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+from __future__ import annotations
+
+from dataclasses import dataclass
+import random
+
+
+@dataclass
+class SamplingDecision:
+    should_sample: bool
+    sample_rate: float
+    reason: str
+
+
+class AdaptiveSampler:
+    def __init__(self, base_rate: float = 0.1, error_boost: float = 0.9, max_rate: float = 1.0):
+        self._base_rate = base_rate
+        self._error_boost = error_boost
+        self._max_rate = max_rate
+        self._error_count = 0
+        self._total_count = 0
+
+    def decide(self, is_error: bool = False) -> SamplingDecision:
+        self._total_count += 1
+        if is_error:
+            self._error_count += 1
+            rate = min(self._error_boost, self._max_rate)
+            return SamplingDecision(True, rate, "error_boosted")
+        error_ratio = self._error_count / max(self._total_count, 1)
+        rate = min(self._base_rate + error_ratio * 0.5, self._max_rate)
+        should = random.random() < rate
+        return SamplingDecision(should, rate, f"adaptive_rate={rate:.3f}")
+
+    def update_base_rate(self, new_rate: float) -> None:
+        self._base_rate = max(0.0, min(new_rate, self._max_rate))

@@ -5,6 +5,7 @@
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
+module_id: MOD-INF-035
 capability_id: skill-dom-lsg-001
 category: security
 description: LLM Security Gateway (LSG) L0-L8 nine-layer defense-in-depth. Covers

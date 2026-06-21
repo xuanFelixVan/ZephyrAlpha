@@ -1,8 +1,8 @@
 ---
-module_id: "REG-LLM-001"
+module_id: GOV-001
 title: "前沿大模型综合能力排名登记表"
-doc_type: reference
-status: active
+doc_type: catalog
+status: Active
 version: "1.0.0"
 schema_version: "1.1.0"
 layer: cross_layer

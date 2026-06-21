@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-005 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 # [MODULE] scripts.construction.local_layer_daemon
 # [INVARIANTS] 
 # [MODIFY-GUARD] 
@@ -20,8 +20,8 @@ local_layer_daemon.py — L2 本地模型层守护进程（薄包装）
     python local_layer_daemon.py --interval 30
 
 新方式（推荐）:
-    python -m zephyr.runtime                  # 完整 AutoRuntime Core
-    python -m zephyr.runtime --once           # 单次调和
+    python -m zephyr.autonomy_core.runtime                  # 完整 AutoRuntime Core
+    python -m zephyr.autonomy_core.runtime --once           # 单次调和
 """
 
 from __future__ import annotations
@@ -31,8 +31,8 @@ import sys
 
 def main() -> None:
     try:
-        from zephyr.runtime.auto_runtime_core import AutoRuntimeCore
-        from zephyr.runtime.runtime_config import RuntimeConfig
+        from zephyr.infrastructure.runtime.auto_runtime_core import AutoRuntimeCore
+        from zephyr.infrastructure.config.runtime_config import RuntimeConfig
     except ImportError:
         _fallback()
         return
@@ -57,7 +57,7 @@ def main() -> None:
 
     if not args.no_demo:
         try:
-            from zephyr.vector_memory.local_model_scheduler import LocalModelScheduler
+            from zephyr.governance.knowledge_management.vector_memory.local_model_scheduler import LocalModelScheduler
             scheduler = LocalModelScheduler()
             scheduler.ensure_models()
             scheduler.start()
@@ -89,7 +89,7 @@ def main() -> None:
 
 
 def _fallback() -> None:
-    from zephyr.vector_memory.local_model_scheduler import LocalModelScheduler
+    from zephyr.governance.knowledge_management.vector_memory.local_model_scheduler import LocalModelScheduler
     import time
     import signal
 

@@ -19,7 +19,7 @@ from collections import defaultdict
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-DEPGRAPH_PATH = PROJECT_ROOT / "data" / "asset_index" / "project-entity-depgraph.yaml"
+DEPGRAPH_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
 
 LAYER_MAP = {
     "L00": 0, "L01": 1, "L02": 2, "L03": 3, "L04": 4,
@@ -33,9 +33,30 @@ ORPHAN_EXEMPT_TYPES = {"doc", "diagram", "infra", "policy", "standard", "templat
 
 
 def load_depgraph():
-    import yaml
-    with open(DEPGRAPH_PATH, "r", encoding="utf-8") as f:
-        return yaml.unsafe_load(f)
+    import sqlite3
+    conn = sqlite3.connect(str(DEPGRAPH_PATH))
+    conn.row_factory = sqlite3.Row
+    data = {"nodes": {}, "edges": [], "adjacency_lists": {"forward": {}, "reverse": {}}, "metadata": {}}
+    for row in conn.execute("SELECT * FROM nodes"):
+        node = dict(row)
+        nid = node.pop("node_id")
+        node["type"] = node.pop("node_type", "")
+        data["nodes"][nid] = node
+    for row in conn.execute("SELECT * FROM edges"):
+        edge = dict(row)
+        edge["from"] = edge.pop("from_node", "")
+        edge["to"] = edge.pop("to_node", "")
+        data["edges"].append(edge)
+    # Build adjacency lists from edges
+    fwd = defaultdict(list)
+    rev = defaultdict(list)
+    for e in data["edges"]:
+        fwd[e["from"]].append(e["to"])
+        rev[e["to"]].append(e["from"])
+    data["adjacency_lists"]["forward"] = dict(fwd)
+    data["adjacency_lists"]["reverse"] = dict(rev)
+    conn.close()
+    return data
 
 
 def extract_layer(path, blueprint_id):
@@ -72,17 +93,16 @@ def find_cycles(adjacency, max_depth=10):
         stack = [(start, [start], {start})]
         while stack:
             node, path, path_set = stack.pop()
-            for neighbor_info in adjacency.get(node, []):
-                nb = neighbor_info["to"]
-                if nb in path_set:
-                    idx = path.index(nb)
+            for neighbor in adjacency.get(node, []):
+                if neighbor in path_set:
+                    idx = path.index(neighbor)
                     cycle = path[idx:]
                     cycle_key = tuple(sorted(cycle))
                     if cycle_key not in seen_cycle_keys:
                         seen_cycle_keys.add(cycle_key)
                         cycles.append(cycle)
                 elif len(path) < max_depth:
-                    stack.append((nb, path + [nb], path_set | {nb}))
+                    stack.append((neighbor, path + [neighbor], path_set | {neighbor}))
 
     for node in adjacency:
         dfs(node)
@@ -94,7 +114,7 @@ def verify_cycles(cycles, edges, nodes):
     verified = []
     edge_type_map = defaultdict(lambda: defaultdict(set))
     for e in edges:
-        edge_type_map[e["from"]][e["to"]].add(e.get("type", "unknown"))
+        edge_type_map[e["from"]][e["to"]].add(e.get("dep_type", "unknown"))
 
     for cycle in cycles:
         if len(cycle) != 2:
@@ -110,19 +130,19 @@ def verify_cycles(cycles, edges, nodes):
         a_to_b_types = edge_type_map[a][b]
         b_to_a_types = edge_type_map[b][a]
 
-        if a_to_b_types == {"imports"} and b_to_a_types == {"imports"}:
+        if a_to_b_types == {"import_depends"} and b_to_a_types == {"import_depends"}:
             classification = "true_cycle"
             reason = "Both directions are hard imports"
-        elif a_to_b_types & {"imports"} and b_to_a_types & {"imports"}:
+        elif a_to_b_types & {"import_depends"} and b_to_a_types & {"import_depends"}:
             classification = "bidirectional_import"
             reason = "Both import each other but may have additional edge types"
-        elif a_to_b_types & {"imports"} and b_to_a_types & {"produces", "consumes", "events", "data_flow"}:
+        elif a_to_b_types & {"import_depends"} and b_to_a_types & {"produces", "consumes", "events", "data_flow"}:
             classification = "event_driven"
             reason = "One direction is import, other is event/data flow — NOT a circular dependency"
         elif a_to_b_types & {"produces", "consumes", "events", "data_flow"} and b_to_a_types & {"produces", "consumes", "events", "data_flow"}:
             classification = "event_driven"
             reason = "Both directions are event/data flow — NOT a circular dependency"
-        elif a_to_b_types & {"imports"} and not b_to_a_types & {"imports"}:
+        elif a_to_b_types & {"import_depends"} and not b_to_a_types & {"import_depends"}:
             classification = "false_positive"
             reason = "Only one direction is import; reverse is %s — NOT a circular dependency" % (",".join(b_to_a_types) or "none")
         else:
@@ -144,7 +164,7 @@ def verify_cycles(cycles, edges, nodes):
 def find_cross_layer_refs(nodes, edges, node_layers):
     refs = []
     for edge in edges:
-        if edge["type"] != "imports":
+        if edge["dep_type"] != "import_depends":
             continue
         from_id = edge["from"]
         to_id = edge["to"]
@@ -171,7 +191,7 @@ def find_deep_chains(adjacency, max_depth=20):
         stack.append((start, [start], {start}))
     while stack:
         node, path, visited = stack.pop()
-        neighbors = [e["to"] for e in adjacency.get(node, []) if e["type"] == "imports"]
+        neighbors = adjacency.get(node, [])
         if not neighbors:
             if len(path) >= 4:
                 chains.append(path[:])
@@ -186,17 +206,13 @@ def find_deep_chains(adjacency, max_depth=20):
     return sorted(chains, key=lambda x: -len(x))[:30]
 
 
-def find_god_modules(nodes, adjacency_forward, adjacency_reverse, threshold=15):
+def find_god_modules(nodes, edges, threshold=15):
     fan_out = defaultdict(int)
     fan_in = defaultdict(int)
-    for nid, neighbors in adjacency_forward.items():
-        for e in neighbors:
-            if e["type"] == "imports":
-                fan_out[nid] += 1
-    for nid, neighbors in adjacency_reverse.items():
-        for e in neighbors:
-            if e["type"] == "imports":
-                fan_in[nid] += 1
+    for e in edges:
+        if e["dep_type"] == "import_depends":
+            fan_out[e["from"]] += 1
+            fan_in[e["to"]] += 1
 
     god_out = []
     for nid, count in sorted(fan_out.items(), key=lambda x: -x[1]):
@@ -216,7 +232,7 @@ def find_god_modules(nodes, adjacency_forward, adjacency_reverse, threshold=15):
 def find_boundary_violations(nodes, edges):
     violations = []
     for edge in edges:
-        if edge["type"] != "imports":
+        if edge["dep_type"] != "import_depends":
             continue
         from_id = edge["from"]
         to_id = edge["to"]
@@ -254,11 +270,11 @@ def find_orphan_nodes(nodes, adjacency_forward, adjacency_reverse):
         ntype = nodes[nid].get("type", "")
         if ntype in ORPHAN_EXEMPT_TYPES:
             continue
-        has_out = any(e.get("type") == "imports" for e in adjacency_forward.get(nid, []))
-        has_in = any(e.get("type") == "imports" for e in adjacency_reverse.get(nid, []))
-        has_owned = any(e.get("type") == "owned_by" for e in adjacency_forward.get(nid, []))
-        has_ref = any(e.get("type") == "references" for e in adjacency_forward.get(nid, []))
-        if not has_out and not has_in and not has_owned and not has_ref:
+        fwd_neighbors = adjacency_forward.get(nid, [])
+        rev_neighbors = adjacency_reverse.get(nid, [])
+        has_out = len(fwd_neighbors) > 0
+        has_in = len(rev_neighbors) > 0
+        if not has_out and not has_in:
             node = nodes[nid]
             orphans.append({"path": node.get("path", nid), "type": ntype, "blueprint_id": node.get("blueprint_id", "")})
     return orphans
@@ -273,10 +289,10 @@ def find_test_coverage_gaps(nodes, edges):
     modules_with_tests = set()
     test_files = set()
     for nid, node in nodes.items():
-        if node.get("type") == "test":
+        if node.get("dep_type") == "test":
             test_files.add(nid)
     for edge in edges:
-        if edge["type"] == "imports":
+        if edge["dep_type"] == "import_depends":
             from_id = edge["from"]
             to_id = edge["to"]
             from_type = nodes.get(from_id, {}).get("type", "")
@@ -285,7 +301,7 @@ def find_test_coverage_gaps(nodes, edges):
                 modules_with_tests.add(to_id)
     untested = []
     for nid, node in nodes.items():
-        if node.get("type") == "module" and nid not in modules_with_tests:
+        if node.get("dep_type") == "module" and nid not in modules_with_tests:
             untested.append({"path": node.get("path", nid), "type": "module"})
     return untested
 
@@ -293,12 +309,12 @@ def find_test_coverage_gaps(nodes, edges):
 def find_stability_violations(nodes, edges):
     violations = []
     for edge in edges:
-        if edge["type"] != "imports":
+        if edge["dep_type"] != "import_depends":
             continue
         from_id = edge["from"]
         to_id = edge["to"]
-        from_stability = nodes.get(from_id, {}).get("stability", "")
-        to_stability = nodes.get(to_id, {}).get("stability", "")
+        from_stability = nodes.get(from_id, {}).get("change_policy", "") or nodes.get(from_id, {}).get("stability", "")
+        to_stability = nodes.get(to_id, {}).get("change_policy", "") or nodes.get(to_id, {}).get("stability", "")
         if from_stability and to_stability:
             from_rank = STABILITY_ORDER.get(from_stability)
             to_rank = STABILITY_ORDER.get(to_stability)
@@ -307,8 +323,8 @@ def find_stability_violations(nodes, edges):
                     violations.append({
                         "from": nodes.get(from_id, {}).get("path", from_id),
                         "to": nodes.get(to_id, {}).get("path", to_id),
-                        "from_stability": from_stability,
-                        "to_stability": to_stability,
+                        "from_change_policy": from_stability,
+                        "to_change_policy": to_stability,
                         "violation": "%s depends on %s" % (from_stability, to_stability),
                     })
     return violations
@@ -317,12 +333,12 @@ def find_stability_violations(nodes, edges):
 def find_autonomy_violations(nodes, edges):
     violations = []
     for edge in edges:
-        if edge["type"] != "imports":
+        if edge["dep_type"] != "import_depends":
             continue
         from_id = edge["from"]
         to_id = edge["to"]
-        from_autonomy = nodes.get(from_id, {}).get("ai_autonomy", "")
-        to_autonomy = nodes.get(to_id, {}).get("ai_autonomy", "")
+        from_autonomy = nodes.get(from_id, {}).get("modification_permission", "")
+        to_autonomy = nodes.get(to_id, {}).get("modification_permission", "")
         if from_autonomy and to_autonomy:
             from_rank = AUTONOMY_ORDER.get(from_autonomy)
             to_rank = AUTONOMY_ORDER.get(to_autonomy)
@@ -331,11 +347,55 @@ def find_autonomy_violations(nodes, edges):
                     violations.append({
                         "from": nodes.get(from_id, {}).get("path", from_id),
                         "to": nodes.get(to_id, {}).get("path", to_id),
-                        "from_autonomy": from_autonomy,
-                        "to_autonomy": to_autonomy,
+                        "from_modification_permission": from_autonomy,
+                        "to_modification_permission": to_autonomy,
                         "violation": "%s depends on %s" % (from_autonomy, to_autonomy),
                     })
     return violations
+
+
+def find_semantic_field_gaps(nodes, edges):
+    """Check for missing or invalid semantic fields on edges and nodes (v3.1.0)."""
+    VALID_SEMANTIC_TYPES = {"runtime", "data", "build", "contract"}
+    VALID_SEMANTIC_DIRECTIONS = {"upstream", "downstream", "peer"}
+    VALID_DECISIONS = {"NEW", "MODIFY", "KEEP", "DEPRECATE"}
+
+    edge_gaps = []
+    for edge in edges:
+        issues = []
+        st = edge.get("semantic_type", "")
+        sd = edge.get("semantic_direction", "")
+        if not st:
+            issues.append("missing semantic_type")
+        elif st not in VALID_SEMANTIC_TYPES:
+            issues.append("invalid semantic_type: %s" % st)
+        if not sd:
+            issues.append("missing semantic_direction")
+        elif sd not in VALID_SEMANTIC_DIRECTIONS:
+            issues.append("invalid semantic_direction: %s" % sd)
+        if issues:
+            edge_gaps.append({"from": edge.get("from", ""), "to": edge.get("to", ""), "issues": issues})
+
+    node_gaps = []
+    for nid, node in nodes.items():
+        dec = node.get("decision", "")
+        if not dec:
+            node_gaps.append({"node": nid, "issue": "missing decision"})
+        elif dec not in VALID_DECISIONS:
+            node_gaps.append({"node": nid, "issue": "invalid decision: %s" % dec})
+
+    # Critical edges without contract_anchor or failure_mode
+    critical_no_ca = sum(1 for e in edges if e.get("coupling_strength") == "critical" and not e.get("contract_anchor"))
+    critical_no_fm = sum(1 for e in edges if e.get("coupling_strength") == "critical" and not e.get("failure_mode"))
+
+    return {
+        "edge_field_gaps": len(edge_gaps),
+        "node_field_gaps": len(node_gaps),
+        "critical_no_contract_anchor": critical_no_ca,
+        "critical_no_failure_mode": critical_no_fm,
+        "edge_sample": edge_gaps[:10],
+        "node_sample": node_gaps[:10],
+    }
 
 
 def main():
@@ -347,8 +407,9 @@ def main():
     dg = load_depgraph()
     nodes = dg["nodes"]
     edges = dg["edges"]
-    adj_fwd = dg.get("adjacency_forward", {})
-    adj_rev = dg.get("adjacency_reverse", {})
+    adj_lists = dg.get("adjacency_lists", {})
+    adj_fwd = adj_lists.get("forward", dg.get("adjacency_forward", {}))
+    adj_rev = adj_lists.get("reverse", dg.get("adjacency_reverse", {}))
 
     print("[DIAG] Nodes: %d | Edges: %d" % (len(nodes), len(edges)))
 
@@ -372,8 +433,8 @@ def main():
     print("[DIAG] 3/10 Finding circular dependencies...")
     import_edges_fwd = defaultdict(list)
     for e in edges:
-        if e["type"] == "imports":
-            import_edges_fwd[e["from"]].append({"to": e["to"], "type": "imports"})
+        if e["dep_type"] == "import_depends":
+            import_edges_fwd[e["from"]].append(e["to"])
     cycles = find_cycles(import_edges_fwd, max_depth=8)
     print("[DIAG]   Found %d circular dependency chains" % len(cycles))
 
@@ -396,7 +457,7 @@ def main():
     print("[DIAG]   Found %d deep chains (depth>=4)" % len(deep_chains))
 
     print("[DIAG] 6/10 Finding God modules...")
-    god_out, god_in = find_god_modules(nodes, adj_fwd, adj_rev, threshold=15)
+    god_out, god_in = find_god_modules(nodes, edges, threshold=15)
     print("[DIAG]   God modules (fan_out>=15): %d" % len(god_out))
     print("[DIAG]   God modules (fan_in>=15): %d" % len(god_in))
 
@@ -416,13 +477,18 @@ def main():
     stability_violations = find_stability_violations(nodes, edges)
     print("[DIAG]   Found %d stability violations" % len(stability_violations))
 
-    print("[DIAG] 10/10 Finding AI_AUTONOMY violations...")
+    print("[DIAG] 10/11 Finding AI_AUTONOMY violations...")
     autonomy_violations = find_autonomy_violations(nodes, edges)
     print("[DIAG]   Found %d AI_AUTONOMY violations" % len(autonomy_violations))
 
+    print("[DIAG] 11/11 Checking semantic field gaps (v3.1.0)...")
+    semantic_gaps = find_semantic_field_gaps(nodes, edges)
+    print("[DIAG]   Edge field gaps: %d | Node field gaps: %d" % (semantic_gaps["edge_field_gaps"], semantic_gaps["node_field_gaps"]))
+    print("[DIAG]   Critical edges without contract_anchor: %d | without failure_mode: %d" % (semantic_gaps["critical_no_contract_anchor"], semantic_gaps["critical_no_failure_mode"]))
+
     report = {
         "metadata": {
-            "diagnosis_version": "2.1.0",
+            "diagnosis_version": "3.1.0",
             "total_nodes": len(nodes),
             "total_edges": len(edges),
             "layer_distribution": dict(sorted(layer_dist.items())),
@@ -470,8 +536,9 @@ def main():
         },
         "quality_gates": {
             "test_coverage_gaps": {"count": len(test_gaps), "sample": test_gaps[:30]},
-            "stability_violations": {"count": len(stability_violations), "sample": stability_violations[:30]},
-            "autonomy_violations": {"count": len(autonomy_violations), "sample": autonomy_violations[:30]},
+            "change_policy_violations": {"count": len(stability_violations), "sample": stability_violations[:30]},
+            "modification_permission_violations": {"count": len(autonomy_violations), "sample": autonomy_violations[:30]},
+            "semantic_field_gaps": semantic_gaps,
         },
     }
 
@@ -486,7 +553,7 @@ def main():
 
     print()
     print("=" * 60)
-    print("DIAGNOSIS SUMMARY (v2.2.0)")
+    print("DIAGNOSIS SUMMARY (v3.1.0)")
     print("=" * 60)
     print("  Empty blueprint_id:     %d" % len(empty_bp))
     print("  Orphan nodes:           %d" % len(orphans))
@@ -501,6 +568,8 @@ def main():
     print("  Test coverage gaps:     %d" % len(test_gaps))
     print("  Stability violations:   %d" % len(stability_violations))
     print("  Autonomy violations:    %d" % len(autonomy_violations))
+    print("  Semantic field gaps:    %d edges / %d nodes" % (semantic_gaps["edge_field_gaps"], semantic_gaps["node_field_gaps"]))
+    print("  Critical no contract:   %d | Critical no failure_mode: %d" % (semantic_gaps["critical_no_contract_anchor"], semantic_gaps["critical_no_failure_mode"]))
     print()
     print("TOP 10 CROSS-PACKAGE PAIRS:")
     for pair, count in sorted(pkg_pairs.items(), key=lambda x: -x[1])[:10]:

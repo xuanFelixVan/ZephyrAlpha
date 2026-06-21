@@ -24,7 +24,7 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-L02_DIR = REPO_ROOT / "src" / "zephyr" / "l02_alpha_factor"
+L02_DIR = REPO_ROOT / "src" / "zephyr" / "factor"
 
 PIT_SUSPECT_PATTERNS = [
     (re.compile(r"\.shift\(\s*\+?\d+"), "正向 shift（+N）可能存在未来信息泄露——应使用 shift(-N) 引用历史数据"),

@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0171 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-328 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.integration.test_mcp_e2e
 # [STABILITY] evolving
 # [SAFETY] L
@@ -39,7 +40,7 @@ import pytest
 
 pytestmark = pytest.mark.e2e
 
-from zephyr.mcp._base_server import (
+from zephyr.infrastructure._base_server import (
     ERR_INVALID_REQUEST,
     ERR_METHOD_NOT_FOUND,
     ERR_PARSE_ERROR,
@@ -47,10 +48,10 @@ from zephyr.mcp._base_server import (
     JSONRPC_VERSION,
     BaseMCPServer,
 )
-from zephyr.mcp.doc_guard_server import DocGuardServer
-from zephyr.mcp.gate_engine_server import GateEngineServer
-from zephyr.mcp.knowledge_base_server import KnowledgeBaseServer
-from zephyr.mcp.sentinel_server import SentinelServer
+from zephyr.infrastructure.doc_guard_server import DocGuardServer
+from zephyr.infrastructure.gate_engine_server import GateEngineServer
+from zephyr.infrastructure.knowledge_base_server import KnowledgeBaseServer
+from zephyr.infrastructure.sentinel_server import SentinelServer
 
 # ---------------------------------------------------------------------------
 # 辅助：JSON-RPC 请求构造 + 结果解析
@@ -314,7 +315,7 @@ class TestLifecycleGateEngine:
                 self.server,
                 "gate_engine.run_g1_write",
                 {
-                    "target_path": "src/zephyr/feedback_loop/fitness_functions.py",
+                    "target_path": "src/zephyr/feedback-loop/fitness_functions.py",
                     "content_preview": "# clean python file content",
                 },
             )
@@ -397,7 +398,7 @@ class TestLifecycleDocGuard:
                     "to_model": "claude-sonnet-4-6",
                     "completed_tasks": ["T-0-001", "T-0-002"],
                     "next_tasks": ["T-1-001"],
-                    "open_files": ["src/zephyr/feedback_loop/fitness_functions.py"],
+                    "open_files": ["src/zephyr/feedback-loop/fitness_functions.py"],
                     "decisions_log": ["chose DuckDB for OLAP"],
                 },
             )

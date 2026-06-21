@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1918 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-537 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.orchestrator.test_orchestrator_core
 # [STABILITY] evolving
 # [SAFETY] L
@@ -12,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.orchestrator.trigger_router import (
+from zephyr.trading.orchestrator.trigger_router import (
     PHASE1D_TRIGGER_TYPES,
     RouterDispatchResult,
     TriggerHandlerSpec,
@@ -21,7 +22,7 @@ from zephyr.orchestrator.trigger_router import (
     TriggerSafety,
     load_router_config,
 )
-from zephyr.orchestrator.contract_registry import (
+from zephyr.trading.orchestrator.contract_registry import (
     AIReadOnlyHint,
     CONTRACTS,
     Contract,
@@ -40,27 +41,27 @@ def good_yaml(tmp_path: Path) -> Path:
             version: "1.0.0"
             triggers:
               onboarding:
-                handler: "zephyr.orchestrator.trigger_router.handle_onboarding_stub"
+                handler: "zephyr.trading.orchestrator.trigger_router.handle_onboarding_stub"
                 description: "test onboarding"
                 safety: "M"
                 enabled: true
               drift_detected:
-                handler: "zephyr.orchestrator.trigger_router.handle_drift_stub"
+                handler: "zephyr.trading.orchestrator.trigger_router.handle_drift_stub"
                 description: "test drift"
                 safety: "H"
                 enabled: true
               cleanup_due:
-                handler: "zephyr.orchestrator.trigger_router.handle_cleanup_stub"
+                handler: "zephyr.trading.orchestrator.trigger_router.handle_cleanup_stub"
                 description: "test cleanup"
                 safety: "L"
                 enabled: true
               disabled_one:
-                handler: "zephyr.orchestrator.trigger_router.handle_cleanup_stub"
+                handler: "zephyr.trading.orchestrator.trigger_router.handle_cleanup_stub"
                 description: "disabled trigger"
                 safety: "L"
                 enabled: false
               broken_handler:
-                handler: "zephyr.orchestrator.nonexistent.module.func"
+                handler: "zephyr.trading.orchestrator.nonexistent.module.func"
                 description: "import will fail"
                 safety: "L"
                 enabled: true
@@ -208,7 +209,7 @@ class TestTriggerRouterRouting:
                 version: "1.0.0"
                 triggers:
                   cleanup_due:
-                    handler: "zephyr.orchestrator.trigger_router.handle_cleanup_stub"
+                    handler: "zephyr.trading.orchestrator.trigger_router.handle_cleanup_stub"
                     safety: "L"
                     enabled: true
                 """

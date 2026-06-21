@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0133 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-290 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.governance.test_gct_integration
 # [STABILITY] evolving
 # [SAFETY] L
@@ -8,10 +9,10 @@
 from __future__ import annotations
 
 import pytest
-from zephyr.rollback.result_types import RollbackResult, RollbackStatus, ValidationResult
-from zephyr.escalation_engine.contracts import EscalationContracts
-from zephyr.budget_enforcer.alerts import BudgetAlert, BudgetSeverity
-from zephyr.l01_infrastructure.a2a_protocol import A2ACommunication, MessageType
+from zephyr.governance.result_types import RollbackResult, RollbackStatus, ValidationResult
+from zephyr.governance.contracts import EscalationContracts
+from zephyr.governance.alerts import BudgetAlert, BudgetSeverity
+from zephyr.infrastructure.a2a_protocol import A2ACommunication, MessageType
 
 
 class TestGCT003RollbackToEscalation:
@@ -56,12 +57,12 @@ class TestGCT004EscalationToRBAC:
 
 class TestGCT005DriftToRollback:
     def test_drift_event_importable(self):
-        from zephyr.behavioral_auditor.events import DriftEvent
+        from zephyr.shared.shared_services.events import DriftEvent
         assert DriftEvent is not None
 
     def test_drift_fix_handler(self):
-        from zephyr.behavioral_auditor.events import DriftEvent
-        from zephyr.rollback.drift_fix import DriftFixHandler
+        from zephyr.shared.shared_services.events import DriftEvent
+        from zephyr.governance.drift_fix import DriftFixHandler
 
         event = DriftEvent(drift_id="DR-001", target="module_a", auto_fixable=True, fix_suggestion="revert to baseline")
         handler = DriftFixHandler()
@@ -92,15 +93,15 @@ class TestGCT006BudgetToEscalation:
 
 class TestGCT007SpecToRBACAudit:
     def test_agent_spec_registry(self):
-        from zephyr.agent_spec.registry import SpecRegistry, AgentCapability
+        from zephyr.autonomy_core.registry import SpecRegistry, AgentCapability
         registry = SpecRegistry()
         cap = AgentCapability(agent_id="agent_007", capabilities=["read", "write"])
         registry.register(cap)
         assert cap.agent_id == "agent_007"
 
     def test_capability_scope_restricted(self):
-        from zephyr.agent_rbac.capability_check import verify_capability_scope
-        from zephyr.agent_spec.registry import AgentCapability
+        from zephyr.security.access_control.capability_check import verify_capability_scope
+        from zephyr.autonomy_core.registry import AgentCapability
 
         cap = AgentCapability(agent_id="rogue", capabilities=["destroy"])
         result = verify_capability_scope(cap)
@@ -119,11 +120,11 @@ class TestGCT008A2AToRBACEscalation:
         assert comm.status == "PENDING"
 
     def test_verify_a2a_pair_allowed(self):
-        from zephyr.agent_rbac.a2a_check import verify_a2a_pair
+        from zephyr.security.access_control.a2a_check import verify_a2a_pair
         result = verify_a2a_pair("orchestrator", "worker")
         assert result["approved"] is True
 
     def test_verify_a2a_pair_blocked(self):
-        from zephyr.agent_rbac.a2a_check import verify_a2a_pair
+        from zephyr.security.access_control.a2a_check import verify_a2a_pair
         result = verify_a2a_pair("rogue_agent", "worker")
         assert result["approved"] is False

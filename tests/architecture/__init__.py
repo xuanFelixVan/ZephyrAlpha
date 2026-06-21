@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | tests/architecture/__init__.py | §
+# [A_test] module_id: SRC-TST-0061 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable | error_contract=ImportError→skip
+# [BLUEPRINT] SRC-219 | tests/architecture/__init__.py | §
 """
 tests/architecture/ — 架构适应度函数（Architectural Fitness Functions）
 
@@ -19,7 +20,7 @@ tests/architecture/ — 架构适应度函数（Architectural Fitness Functions�
 - test_document_frontmatter_completeness — 所有模块文件有完整的 frontmatter 元数据
 - test_governance_document_links  — 治理文档之间的交叉引用不存在死链
 
-SSoT: ADR-0009, cross-layer-contracts.yaml, 架构盲点补全分析
+SSoT: ADR-0009, cross_layer_contracts.yaml, 架构盲点补全分析
 """
 
 from __future__ import annotations

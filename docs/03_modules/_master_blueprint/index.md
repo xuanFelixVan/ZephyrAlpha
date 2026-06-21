@@ -1,0 +1,28 @@
+---
+created: '2026-05-22'
+doc_type: index
+module_id: MOD-INF-063
+status: Active
+title: _master-blueprint — 目录索引
+updated: '2026-05-22'
+version: 1.0.0
+---
+
+# _master-blueprint
+
+> 本文件由 `generate_missing_index_md.py` 自动生成
+> 生成日期：2026-05-22
+
+## 目录内容
+
+| 文件/目录 | 类型 | 说明 |
+|-----------|------|------|
+| [blueprint_agent_spec.md](blueprint_agent_spec.md) | Markdown | Agent Spec 蓝图 — CBAC能力矩阵·Skill路由 |
+| [blueprint_baseline.md](blueprint_baseline.md) | Markdown | Baseline 蓝图 — 集成闭环总蓝图基线（§零~§三十七 12系统拓扑+63条CT-*契约） |
+| [blueprint_capacity.md](blueprint_capacity.md) | Markdown | Capacity 蓝图 — 容量升级设计·十个升级章+12缺口审计 |
+| [blueprint.md](blueprint.md) | Markdown | Master Blueprint Index 蓝图 — 集成闭环总蓝图索引·指向3个拆分蓝图 |
+
+## 导航
+
+- [上级目录](../index.md)
+- [项目根](../../index.md)

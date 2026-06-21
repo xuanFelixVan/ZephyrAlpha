@@ -1,6 +1,7 @@
 ---
 blueprint_id: DOM-GOV-001
----
+title: Governance.Manifest
+module_id: MOD-058---
 
 # governance/ 文件清单（自动生成 2026-05-09）
 
@@ -90,29 +91,29 @@ blueprint_id: DOM-GOV-001
 - a2a/auditor.py
 - a2a/phase_hold.py
 - a2a/protocol.py
-- agent_rbac/__init__.py
-- agent_rbac/a2a_check.py
-- agent_rbac/approver_check.py
-- agent_rbac/bootstrap_superadmin.py
-- agent_rbac/capability_check.py
-- agent_rbac/contracts.py
-- agent_spec/__init__.py
-- agent_spec/registry.py
-- audit_trail/__init__.py
-- audit_trail/anomaly.py
-- audit_trail/contracts.py
-- audit_trail/delegation_bridge.py
-- audit_trail/drift_bridge.py
-- audit_trail/feedback_bridge.py
-- audit_trail/spec_auditor.py
-- audit_trail/tiered_storage_bridge.py
-- audit_trail/trust_bridge.py
-- budget_enforcer/__init__.py
-- budget_enforcer/alerts.py
-- budget_enforcer/rbac_bridge.py
-- behavioral_auditor/__init__.py
-- behavioral_auditor/events.py
-- behavioral_auditor/rollback_bridge.py
+- agent-rbac/__init__.py
+- agent-rbac/a2a_check.py
+- agent-rbac/approver_check.py
+- agent-rbac/bootstrap_superadmin.py
+- agent-rbac/capability_check.py
+- agent-rbac/contracts.py
+- agent-spec/__init__.py
+- agent-spec/registry.py
+- audit-trail/__init__.py
+- audit-trail/anomaly.py
+- audit-trail/contracts.py
+- audit-trail/delegation_bridge.py
+- audit-trail/drift_bridge.py
+- audit-trail/feedback_bridge.py
+- audit-trail/spec_auditor.py
+- audit-trail/tiered_storage_bridge.py
+- audit-trail/trust_bridge.py
+- budget-enforcer/__init__.py
+- budget-enforcer/alerts.py
+- budget-enforcer/rbac_bridge.py
+- behavioral-auditor/__init__.py
+- behavioral-auditor/events.py
+- behavioral-auditor/rollback_bridge.py
 - escalation/__init__.py
 - escalation/a2a_failure.py
 - escalation/approval.py

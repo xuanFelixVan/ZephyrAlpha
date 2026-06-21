@@ -1,25 +1,25 @@
 ---
-module_id: ""
-title: ""
-doc_type: register
-status: Draft
-version: "0.1.0"
-layer: cross_layer
-owner: ZephyrAlpha-Owner
 classification: confidential
-language: zh
+completeness: unknown
 created_by: human_plus_agent
-date: ""
-ttl: permanent
-summary: "注册表文档创建模板——结构化数据清单，新建 register 类文档时使用此模板"
-completeness: "unknown"
-template_for: register
-tags: []
+date: ''
+depends_on: []
+doc_type: template
+language: zh
+layer: cross_layer
+module_id: GOV-032
+owner: ZephyrAlpha-Owner
 rule_form: data
 scope: global
 stability: evolving
+status: Draft
+summary: 注册表文档创建模板——结构化数据清单，新建 register 类文档时使用此模板
+tags: []
+template_for: register
+title: Register Template
+ttl: permanent
 verifiability: manual
-depends_on: []
+version: 0.1.0
 ---
 
 <!--

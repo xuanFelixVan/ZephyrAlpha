@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [A_test] module_id: SRC-TST-0028 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §
 # [MODULE] tests.agent_rbac.test_cybersec_2026
 # [STABILITY] evolving
 # [SAFETY] L
@@ -8,7 +9,7 @@
 from __future__ import annotations
 
 import pytest
-from zephyr.agent_rbac.cybersec_2026_guard import Cybersec2026Guard
+from zephyr.security.access_control.cybersec_2026_guard import Cybersec2026Guard
 
 
 class TestCybersec2026:

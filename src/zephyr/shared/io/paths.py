@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_paths | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.io.paths
 
@@ -65,12 +66,14 @@ REPO_ROOT: Path = find_repo_root()
 
 DB_DIR: Path = REPO_ROOT / "data"
 
-from zephyr.db.sqlite_schema import DB_PATH  # noqa: E402
+# DB_PATH — computed locally to avoid circular import from zephyr.governance.persistence
+# Previously: from zephyr.governance.persistence.sqlite_schema import DB_PATH
+DB_PATH: Path = REPO_ROOT / "data" / "databases" / "governance.db"
 
 GATES_DIR: Path = REPO_ROOT / "src" / "zephyr" / "gates"
 SNAPSHOTS_DIR: Path = REPO_ROOT / ".runtime" / "snapshots"
 RATIONALE_LOG_PATH: Path = (
-    REPO_ROOT / "docs" / "19_development_workspace" / "structure-and-mapping" / "architecture-rationale-log.md"
+    REPO_ROOT / "docs" / "02_enterprise_architecture" / "architecture-rationale-log.md"
 )
 
 VECTOR_INDEX_DIR: Path = REPO_ROOT / ".audit_cache" / "vector_index"

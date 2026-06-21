@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_warm_cold_async.py | §
 """check_warm_cold_async.py — INV-019 Warm→Cold 异步通信检查
 
-对标 runtime-planes.yaml WARM_COLD_ASYNC_ONLY + invariants.yaml INV-019。
+对标 runtime_planes.yaml WARM_COLD_ASYNC_ONLY + invariants.yaml INV-019。
 检查 Warm→Cold 调用是否使用异步机制（Parquet/Redis Streams），而非同步阻塞。
 
 当前状态：L2-static-scan——扫描同步调用 pattern。
@@ -16,8 +16,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 
-WARM_MODULES = {"l02_alpha_factor", "l03_signal_generation", "l05_portfolio_construction", "l10_compliance", "l11_ml_platform", "system_telemetry"}
-COLD_MODULES = {"l00_data_source", "l07_post_trade_analytics", "l09_research_innovation", "l13_experimentation"}
+WARM_MODULES = {"factor", "signal", "pf_core", "compliance", "ml_train", "observability"}
+COLD_MODULES = {"data", "pf_core", "research", "integration"}
 
 BLOCKING_PATTERNS = ["requests.get", "requests.post", "urllib.request", "subprocess.run", "subprocess.call"]
 

@@ -2,7 +2,7 @@
 """
 task_summary.py — 任务系统全局摘要 CLI
 =======================================
-Blueprint: MOD-INF-006 (l01_infrastructure/task-system) OPS-003
+Blueprint: MOD-INF-006 (infrastructure.runtime_integration/task-system) OPS-003
 依赖: TaskRepository + SQLite metadata DB
 
 
@@ -41,8 +41,8 @@ _SRC_DIR = str(_PROJECT_ROOT / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-from zephyr.db.task_repo import TaskRepository
-from zephyr.db.sqlite_schema import init_db
+from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.governance.persistence.sqlite_schema import init_db
 
 _STATUS_ICON: dict[str, str] = {
     "pending": "⬜", "ready": "🟡", "in_progress": "🔵",
@@ -206,6 +206,67 @@ def render_quiet(cards: list) -> None:
     print(f"tasks: {total} total | {done} done | {active} active | {failed} failed | {blocked} blocked")
 
 
+def render_drift_check(repo: TaskRepository) -> int:
+    """DM-362: 依赖漂移检测。返回漂移数（0=无漂移）。"""
+    result = repo.drift_check()
+    should_be_ready = result["should_be_ready"]
+    should_be_blocked = result["should_be_blocked"]
+    auto_promoted = result["auto_promoted_history"]
+    total_drift = len(should_be_ready) + len(should_be_blocked)
+
+    print(f"\n{'=' * 60}")
+    print(f"  依赖漂移检测 (DM-362)")
+    print(f"{'=' * 60}")
+
+    if should_be_ready:
+        print(f"\n-- 应提升为READY的任务 ({len(should_be_ready)} 个) --")
+        for item in should_be_ready:
+            print(f"  {item['task_id']}: {item['current_status']} → {item['expected_status']} | {item['details']}")
+    else:
+        print(f"\n-- 应提升为READY的任务: 无 --")
+
+    if should_be_blocked:
+        print(f"\n-- 应降为BLOCKED的任务 ({len(should_be_blocked)} 个) --")
+        for item in should_be_blocked:
+            print(f"  {item['task_id']}: {item['current_status']} → {item['expected_status']} | {item['details']}")
+    else:
+        print(f"\n-- 应降为BLOCKED的任务: 无 --")
+
+    if auto_promoted:
+        print(f"\n-- 最近auto_promoted事件 ({len(auto_promoted)} 条) --")
+        for item in auto_promoted[:10]:
+            payload = item.get("payload", {})
+            print(f"  {item['task_id']}: {payload.get('from_status','?')} → {payload.get('to_status','?')} (触发: {payload.get('trigger_task','?')}) @ {item['created_at'][:19]}")
+    else:
+        print(f"\n-- 最近auto_promoted事件: 无 --")
+
+    print(f"\n  漂移总计: {total_drift}")
+    print(f"{'─' * 60}\n")
+    return total_drift
+
+
+def render_auto_close_dry_run(repo: TaskRepository) -> int:
+    """DM-363: 已完成候选检测（dry-run）。返回候选数。"""
+    candidates = repo.detect_completed_candidates()
+
+    print(f"\n{'=' * 60}")
+    print(f"  已完成候选检测 (DM-363 dry-run)")
+    print(f"{'=' * 60}")
+
+    if candidates:
+        print(f"\n-- deliverables已存在但未关闭的任务 ({len(candidates)} 个) --")
+        for item in candidates:
+            print(f"  {item['task_id']}: status={item['status']}")
+            for f in item["existing_files"]:
+                print(f"    ✅ {f}")
+    else:
+        print(f"\n-- 无已完成未关闭的任务 --")
+
+    print(f"\n  候选总计: {len(candidates)}")
+    print(f"{'─' * 60}\n")
+    return len(candidates)
+
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="任务系统全局进度摘要")
@@ -213,10 +274,23 @@ def main() -> int:
     parser.add_argument("--quiet", "-q", action="store_true", help="安静模式")
     parser.add_argument("--warn-only", action="store_true",
                         help="警告模式——不因未完成任务返回非零 exit code")
+    parser.add_argument("--drift-check", action="store_true",
+                        help="DM-362: 依赖漂移检测")
+    parser.add_argument("--auto-close-dry-run", action="store_true",
+                        help="DM-363: 已完成候选检测(dry-run)")
     args = parser.parse_args()
 
     init_db()
     repo = TaskRepository()
+
+    if args.drift_check:
+        drift_count = render_drift_check(repo)
+        return EXIT_PASS if args.warn_only or drift_count == 0 else EXIT_ERROR
+
+    if args.auto_close_dry_run:
+        render_auto_close_dry_run(repo)
+        return EXIT_PASS
+
     cards = repo.list_by_namespace("OPS")
     cards.sort(key=lambda c: c.seq)
 

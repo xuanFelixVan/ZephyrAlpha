@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0068 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-226 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.asset_inventory.test_concurrent
 # [STABILITY] evolving
 # [SAFETY] L
@@ -9,8 +10,8 @@
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.asset_inventory.models import RawFileEntry, ScanResult
-from zephyr.asset_inventory.scanner import ConcurrentScanner, merge_scans
+from zephyr.infrastructure.asset_inventory.models import RawFileEntry, ScanResult
+from zephyr.infrastructure.asset_inventory.scanner import ConcurrentScanner, merge_scans
 
 
 class TestConcurrentScanner:
@@ -88,7 +89,7 @@ class TestMergeScans:
     def test_merge_disjoint(self) -> None:
         from datetime import datetime
 
-        from zephyr.asset_inventory.models import ScanResult
+        from zephyr.infrastructure.asset_inventory.models import ScanResult
 
         now = datetime.now(UTC)
         a = ScanResult(
@@ -114,7 +115,7 @@ class TestMergeScans:
     def test_merge_overlap_same_sha(self) -> None:
         from datetime import datetime
 
-        from zephyr.asset_inventory.models import ScanResult
+        from zephyr.infrastructure.asset_inventory.models import ScanResult
 
         now = datetime.now(UTC)
         a = ScanResult(

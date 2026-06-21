@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0159 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-316 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.infrastructure.test_rebound_detector
 # [STABILITY] evolving
 # [SAFETY] L
@@ -10,7 +11,7 @@ from __future__ import annotations
 import time
 import pytest
 
-from zephyr.escalation_engine.reward_hacking_rebound_detector import (
+from zephyr.governance.reward_hacking_rebound_detector import (
     BehaviorRecord,
     ReboundDetector,
     ReboundDetection,
@@ -164,14 +165,16 @@ class TestReboundDetectorMultipleAgents:
 
 class TestReboundDetectorIntegration:
     def test_engine_hook_with_rebound_detector(self):
-        from zephyr.escalation_engine import EscalationEngine, RuleCategory
+        from zephyr.governance.escalation_engine import EscalationEngine
+from zephyr.governance.escalation_models import RuleCategory
 
         engine = EscalationEngine("rebound-test", hooks_enabled=True)
         rd = engine._extension_detectors.get("ReboundDetector")
         assert rd is not None, "ReboundDetector should be loaded as extension detector"
 
     def test_rebound_category_triggers_l4(self):
-        from zephyr.escalation_engine import EscalationEngine, RuleCategory
+        from zephyr.governance.escalation_engine import EscalationEngine
+from zephyr.governance.escalation_models import RuleCategory
 
         engine = EscalationEngine("rebound-test", hooks_enabled=False)
         event = engine.evaluate(RuleCategory.REWARD_HACKING_REBOUND, "reward hacking rebound detected")

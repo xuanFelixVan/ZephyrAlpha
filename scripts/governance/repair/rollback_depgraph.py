@@ -1,0 +1,72 @@
+# -*- coding: utf-8 -*-
+"""
+[BLUEPRINT] MOD-ARCH-002 | scripts/governance/repair/rollback_depgraph.py | §8.2
+[MODULE] 无（独立脚本）
+[INVARIANTS] 仅接受depgraph.db.backup.*路径; 回滚前自动备份当前depgraph.db
+[MODIFY-GUARD] 本脚本由autopilot执行
+[CONSUMERS] autopilot session-20260618-001; §8.2回滚脚本
+[STABILITY] stable
+[SAFETY] H
+[AI_AUTONOMY] human_gated
+[ERROR_CONTRACT] 参数缺失→exit 1; 备份路径不存在→exit 1; 回滚前备份失败→exit 1; 成功→exit 0
+[TESTS] 执行后验证depgraph.db大小==备份文件大小
+
+P1-2 从备份回滚depgraph.db
+根因：§8.2要求回滚脚本，原脚本缺失
+治根：落盘回滚脚本确保可从任意备份恢复
+
+用法:
+    python rollback_depgraph.py <备份路径>
+    python rollback_depgraph.py D:\\ZephyrAlpha\\data\\databases\\depgraph.db.backup.pre_migration
+"""
+import shutil
+import os
+import sys
+
+DST = r"D:\ZephyrAlpha\data\databases\depgraph.db"
+PRE_ROLLBACK_BACKUP = r"D:\ZephyrAlpha\data\databases\depgraph.db.backup.pre_rollback"
+
+
+def main():
+    if len(sys.argv) < 2:
+        print("[ERROR] 用法: python rollback_depgraph.py <备份路径>")
+        print("示例: python rollback_depgraph.py D:\\ZephyrAlpha\\data\\databases\\depgraph.db.backup.pre_migration")
+        return 1
+
+    src_backup = sys.argv[1]
+
+    if not os.path.exists(src_backup):
+        print(f"[ERROR] 备份文件不存在: {src_backup}")
+        return 1
+
+    src_size = os.path.getsize(src_backup)
+    if src_size == 0:
+        print(f"[ERROR] 备份文件大小为0: {src_backup}")
+        return 1
+
+    print(f"[INFO] 回滚源: {src_backup}")
+    print(f"[INFO] 回滚源大小: {src_size} bytes")
+    print(f"[INFO] 回滚目标: {DST}")
+
+    if os.path.exists(DST):
+        print(f"[INFO] 回滚前备份当前depgraph.db到: {PRE_ROLLBACK_BACKUP}")
+        shutil.copy2(DST, PRE_ROLLBACK_BACKUP)
+        pre_size = os.path.getsize(PRE_ROLLBACK_BACKUP)
+        print(f"[OK] 回滚前备份完成: {pre_size} bytes")
+
+    print(f"[INFO] 执行回滚: {src_backup} -> {DST}")
+    shutil.copy2(src_backup, DST)
+
+    dst_size = os.path.getsize(DST)
+    print(f"[OK] 回滚后depgraph.db大小: {dst_size} bytes")
+
+    if dst_size != src_size:
+        print(f"[FAIL] 回滚后大小({dst_size})与备份({src_size})不一致")
+        return 1
+
+    print(f"[PASS] 回滚成功，大小一致: {src_size} == {dst_size}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

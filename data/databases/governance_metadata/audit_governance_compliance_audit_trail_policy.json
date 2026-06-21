@@ -1,0 +1,27 @@
+{
+  "task_id": "DM-100100",
+  "source_file": "docs/01_policies_and_standards/governance/compliance/audit_trail_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_044_compliance_audit.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "gov_cmp_002": {
+      "title": "审计追踪策略 (GOV-CMP-002)",
+      "conditions_count": 6,
+      "actions_count": 4,
+      "prohibitions_count": 5
+    }
+  },
+  "summary": {
+    "total_rules": 15,
+    "COVERED": 15,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    {
+      "action": "YAML_UPDATE",
+      "target": "trae_044_compliance_audit.yaml section gov_cmp_002",
+      "detail": "从空壳更新为包含6个conditions+4个actions+5个prohibitions的完整规则提取(AUD-001~004)"
+    }
+  ]
+}

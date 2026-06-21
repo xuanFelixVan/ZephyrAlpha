@@ -1,7 +1,7 @@
 {
   "$schema": "./mcp.schema.json",
   "version": "1.0.0",
-  "description": "MCP Gateway + 9 Server 集中式配置（MOD-INF-013 §12 SSoT）",
+  "description": "MCP Gateway + 10 Server 集中式配置（MOD_INF_013 §12 SSoT）",
 
   "gateway": {
     "server_id": "mcp_gateway",
@@ -98,6 +98,30 @@
       "rate_limit": { "default_qps": 10, "burst": 30 },
       "status": "implemented",
       "note": "VMS 向量记忆 MCP Server——search/write/recall/list_collections/health_check 五工具 (MOD-INF-011 v0.7.0)"
+    },
+    "red_blue_validator": {
+      "module": "zephyr.autonomy_perm.red_blue_validator.mcp_endpoints",
+      "server_id": "red_blue_validator",
+      "transport": "stdio",
+      "tool_prefix": "red_blue_validator.",
+      "tool_count": 4,
+      "safety_level": ["L", "M", "H"],
+      "rate_limit": { "default_qps": 5, "burst": 15 },
+      "circuit_breaker": { "failure_threshold": 3, "recovery_seconds": 60 },
+      "audit": { "level": "full", "param_hash": "sha256" },
+      "rbac": {
+        "reader": ["list_scenarios", "get_report", "check_convergence"],
+        "operator": ["run_adversarial", "list_scenarios", "get_report", "check_convergence"],
+        "admin": ["run_adversarial", "list_scenarios", "get_report", "check_convergence"]
+      },
+      "tools": [
+        {"name": "run_adversarial", "description": "Run adversarial security test", "safety": "H"},
+        {"name": "list_scenarios", "description": "List attack scenarios", "safety": "L"},
+        {"name": "get_report", "description": "Get red-blue test report", "safety": "L"},
+        {"name": "check_convergence", "description": "Check defense convergence", "safety": "M"}
+      ],
+      "status": "implemented",
+      "note": "Red-Blue Adversarial Validator MCP Server——对抗性安全测试四工具"
     }
   },
 

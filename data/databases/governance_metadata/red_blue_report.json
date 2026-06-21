@@ -1,0 +1,83 @@
+{
+  "report_type": "red_blue_adversarial",
+  "generated_at": "2026-06-12T20:12:30.087475+00:00",
+  "total_rules_tested": 9,
+  "green_detected": 8,
+  "yellow_partial": 1,
+  "red_undetected": 0,
+  "detection_rate": 0.8889,
+  "results": [
+    {
+      "rule_id": "TRAE-001",
+      "title": "文件操作安全协议",
+      "violation_type": "create_file_without_lock",
+      "detection_status": "GREEN",
+      "detection_detail": "audit_registration.py detected violation",
+      "timestamp": "2026-06-12T20:12:28.608442+00:00"
+    },
+    {
+      "rule_id": "TRAE-002",
+      "title": "反孤儿与搜索先行协议",
+      "violation_type": "create_py_without_register",
+      "detection_status": "GREEN",
+      "detection_detail": "audit_registration.py detected orphan",
+      "timestamp": "2026-06-12T20:12:29.820003+00:00"
+    },
+    {
+      "rule_id": "TRAE-003",
+      "title": "任务粒度与完成门槛协议",
+      "violation_type": "task_card_over_granularity",
+      "detection_status": "YELLOW",
+      "detection_detail": "TaskRepository not usable: Migration v3 FK integrity violation: 25 row(s) — ('gate_decisions', 1, 'gates', 0); ('tasks', 289, 'domains', 0); ('tasks', 290, 'domains', 0); ('tasks', 291, 'domains', 0); ('tasks', 292, 'domains', 0)",
+      "timestamp": "2026-06-12T20:12:29.828123+00:00"
+    },
+    {
+      "rule_id": "TRAE-004",
+      "title": "并行执行与原子事务协议",
+      "violation_type": "serial_subprocess_loop",
+      "detection_status": "GREEN",
+      "detection_detail": "Static pattern check detected for+subprocess without ThreadPoolExecutor",
+      "timestamp": "2026-06-12T20:12:29.828640+00:00"
+    },
+    {
+      "rule_id": "TRAE-005",
+      "title": "修改原则与治理施工协议",
+      "violation_type": "skip_depgraph_simulation",
+      "detection_status": "GREEN",
+      "detection_detail": "diagnose_depgraph.py can detect cycles",
+      "timestamp": "2026-06-12T20:12:30.082423+00:00"
+    },
+    {
+      "rule_id": "TRAE-006",
+      "title": "防幻觉-结构追溯层",
+      "violation_type": "missing_ten_field_header",
+      "detection_status": "GREEN",
+      "detection_detail": "Static check detected missing required header fields",
+      "timestamp": "2026-06-12T20:12:30.083936+00:00"
+    },
+    {
+      "rule_id": "TRAE-007",
+      "title": "防幻觉-行为约束层",
+      "violation_type": "placeholder_in_code",
+      "detection_status": "GREEN",
+      "detection_detail": "Static check detected TODO/pass placeholder",
+      "timestamp": "2026-06-12T20:12:30.084956+00:00"
+    },
+    {
+      "rule_id": "TRAE-008",
+      "title": "防幻觉-输出验证层",
+      "violation_type": "import_without_verify",
+      "detection_status": "GREEN",
+      "detection_detail": "ImportError raised for nonexistent module (runtime guard)",
+      "timestamp": "2026-06-12T20:12:30.085460+00:00"
+    },
+    {
+      "rule_id": "TRAE-009",
+      "title": "防幻觉-安全防护层",
+      "violation_type": "sql_string_concatenation",
+      "detection_status": "GREEN",
+      "detection_detail": "Static check detected SQL string concatenation",
+      "timestamp": "2026-06-12T20:12:30.086466+00:00"
+    }
+  ]
+}

@@ -1,9 +1,9 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/checkers/check_bvb_compliance.py | §
-"""对标 architecture-principles.md §3 BvB 五维评分法：
+"""对标 architecture_principles.md §3 BvB 五维评分法：
   新引入的 OSS 依赖必须通过五维评估（License/Security/Maintenance/Community/Ecosystem）。
 
 检查内容：
-  1. technology-landscape.yaml 中 Build/Adopt/Trial 类别的技术条目
+  1. technology_landscape.yaml 中 Build/Adopt/Trial 类别的技术条目
      是否有 bvb_score 字段
   2. bvb_score 是否包含全部 5 个维度（license/security/maintenance/community/ecosystem）
   3. 每个维度分数是否在 1-5 范围内
@@ -43,7 +43,7 @@ TECH_LANDSCAPE = (
     / "target-architecture"
     / "architecture-model"
     / "technology"
-    / "technology-landscape.yaml"
+    / "technology_landscape.yaml"
 )
 
 BVB_DIMENSIONS = {"license", "security", "maintenance", "community", "ecosystem"}
@@ -57,13 +57,13 @@ def main() -> int:
     import yaml
 
     if not TECH_LANDSCAPE.is_file():
-        print(f"technology-landscape.yaml 不存在: {TECH_LANDSCAPE}")
+        print(f"technology_landscape.yaml 不存在: {TECH_LANDSCAPE}")
         return EXIT_ERROR
     data = yaml.safe_load(TECH_LANDSCAPE.read_text(encoding="utf-8"))
     entries = data.get("technologies") or data.get("technology_landscape") or data.get("entries") or []
 
     if not entries:
-        print("technology-landscape.yaml 无技术条目")
+        print("technology_landscape.yaml 无技术条目")
         return EXIT_PASS
     missing_score = []
     incomplete_dims = []

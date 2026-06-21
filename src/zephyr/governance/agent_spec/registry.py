@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-019 | 03_modules/l01_infrastructure/agent-spec/blueprint.md | §
+# [A_module] module_id=MOD-GOV_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md | §
 
 # [MODULE] zephyr.governance.agent_spec.registry
 
@@ -21,7 +22,7 @@
 """G-CT-003 契约：Agent Spec → RBAC 能力检查.
 
 双向桥接：
-  1. 通过 SkillRouter API 查询 agent_spec/skill_registry.yaml 中注册的技能
+  1. 通过 SkillRouter API 查询 agent-spec/skill-registry.yaml 中注册的技能
   2. 提供统一的查询接口给 governance gate 使用
 """
 
@@ -49,8 +50,8 @@ class SpecRegistry:
 
     def _load_via_skill_router(self) -> None:
         try:
-            from zephyr.agent_spec.skill_router import SkillRouter
-            router = SkillRouter(registry_path=self._registry_path)
+            from zephyr.shared.contracts.skill_protocol import create_skill_router
+            router = create_skill_router(registry_path=self._registry_path)
             for skill_id, info in router.list_registered_skills().items():
                 self._entries[skill_id] = AgentCapability(
                     agent_id=skill_id,
@@ -67,7 +68,7 @@ class SpecRegistry:
             with self._registry_path.open(encoding="utf-8") as f:
                 raw = yaml.safe_load(f)
         else:
-            _default_path = Path(__file__).resolve().parent.parent.parent / "agent_spec" / "skill_registry.yaml"
+            _default_path = Path(__file__).resolve().parent.parent.parent / "agent-spec" / "skill-registry.yaml"
             if not _default_path.exists():
                 return
             with _default_path.open(encoding="utf-8") as f:

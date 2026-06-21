@@ -8,18 +8,18 @@ print("=" * 70)
 
 errors = []
 
-print("\n[1/7] zephyr._cross_layer lazy load via zephyr.__init__")
+print("\n[1/7] zephyr.shared._cross_layer lazy load via zephyr.__init__")
 try:
     import zephyr
-    cl = zephyr._cross_layer
-    print(f"  OK: zephyr._cross_layer = {cl}")
+    cl = zephyr.shared._cross_layer
+    print(f"  OK: zephyr.shared._cross_layer = {cl}")
 except Exception as e:
     errors.append(f"[1] _cross_layer lazy load: {e}")
     print(f"  FAIL: {e}")
 
 print("\n[2/7] AlphaSignalPipeline + MLExperimentPipeline instantiation")
 try:
-    from zephyr._cross_layer import AlphaSignalPipeline, MLExperimentPipeline
+    from zephyr.shared._cross_layer import AlphaSignalPipeline, MLExperimentPipeline
     ap = AlphaSignalPipeline()
     mp = MLExperimentPipeline()
     print(f"  OK: AlphaSignalPipeline={ap}, MLExperimentPipeline={mp}")
@@ -43,7 +43,7 @@ except Exception as e:
 
 print("\n[4/7] GovernanceServer MCP tools")
 try:
-    from zephyr.mcp.governance_server import GovernanceServer
+    from zephyr.infrastructure.governance_server import GovernanceServer
     gs = GovernanceServer()
     tools = list(gs._tools.keys())
     print(f"  OK: {len(tools)} tools: {tools[:5]}...")
@@ -53,7 +53,7 @@ except Exception as e:
 
 print("\n[5/7] FeedbackLoopScheduler FLE gate dispatch")
 try:
-    from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
+    from zephyr.ops.feedback_loop.scheduler import FeedbackLoopScheduler
     s = FeedbackLoopScheduler()
     has_dispatch = hasattr(s, '_dispatch_fle_gates')
     has_invoke = hasattr(s, '_invoke_fle_gate')
@@ -66,7 +66,7 @@ except Exception as e:
 
 print("\n[6/7] GateEngine fle_gate check_type")
 try:
-    from zephyr.gates.gate_engine import GateEngine
+    from zephyr.governance.rule_enforcement.gate_engine import GateEngine
     ge = GateEngine()
     print(f"  OK: GateEngine instantiated")
 except Exception as e:

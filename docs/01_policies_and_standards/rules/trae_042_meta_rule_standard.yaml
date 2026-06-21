@@ -1,0 +1,616 @@
+rule_id: TRAE-042
+title: 元规则-标准体系与模板
+aliases:
+- PS-STD-002
+- PS-STD-005
+- STD-009
+layer: L2
+severity: warning
+scope: meta_standard_template
+domain: TRAE
+triggers:
+- operation: meta_standard_template
+sections:
+  ps_std_002_template_hierarchy:
+    title: 三层模板体系
+    section_type: context
+    original_rules:
+    - PS-STD-002 §3.1
+    conditions:
+    - type: trigger
+      check: 创建或修改标准文档时
+      pass: 文档章节与doc_type层级匹配
+      fail: 层级与章节不匹配
+    actions:
+    - type: mandatory
+      step: L1治理模板(policy/standard/ai_governance)使用MUST/SHOULD/MAY；L2设计模板(blueprint/design/service_spec)使用SHOULD/MAY禁止MUST；L3基础模板(adr等)禁止规范性语言
+    prohibitions:
+    - L3文档使用MUST/SHOULD
+    - L2文档使用MUST
+  ps_std_002_common_core:
+    title: L1标准通用核心6章
+    section_type: context
+    original_rules:
+    - PS-STD-002 §3.2.1
+    conditions:
+    - type: trigger
+      check: 创建L1治理标准文档时
+      pass: 包含6个Common Core章节
+      fail: 缺少必含章节
+    actions:
+    - type: mandatory
+      step: 所有L1标准必须包含：§1目的与范围(含责任范围+责任边界)、§2 SSoT声明、§5主体内容、§9标准间引用规范(normative/informative)、§15
+        AI可消费性声明、§19变更记录
+    prohibitions:
+    - 创建不含责任范围+责任边界声明的L1标准文档
+    - 创建不含SSoT声明的L1标准文档
+    - 创建不含normative/informative引用分类的L1标准文档
+  ps_std_002_subtypes:
+    title: L1标准四种子类型
+    section_type: context
+    original_rules:
+    - PS-STD-002 §3.2.4
+    conditions:
+    - type: trigger
+      check: 判定L1标准子类型时
+      pass: 子类型与标准内容匹配
+      fail: 子类型判定错误导致章节要求错误
+    actions:
+    - type: mandatory
+      step: 按子类型推导表判定：行为规则型(10~15章)、数据注册表型(8~13章)、宪法原则型(6~9章)、格式定义型(9~12章)；跨类型取更严格子类型归类
+    prohibitions: []
+  ps_std_002_frontmatter_dedup:
+    title: frontmatter字段不重复声明
+    section_type: rule
+    original_rules:
+    - PS-STD-002 §3.2.3
+    - PS-STD-002 §13
+    conditions:
+    - type: trigger
+      check: 编写标准文档body时
+      pass: body不重复frontmatter已声明信息
+      fail: body中prose重复frontmatter字段导致漂移风险
+    actions:
+    - type: mandatory
+      step: §16(AI自治权限标注)和§17(可验证性标注)不再作为独立MUST章节，由frontmatter ai_autonomy/verifiability字段替代；禁止body中prose重复frontmatter已声明信息
+    prohibitions:
+    - 在标准文档中重复定义PS-STD-001(metadata-registry.md)已定义的字段
+    - 在body中用prose重复frontmatter已声明的ai_autonomy/verifiability信息
+  ps_std_002_prohibitions:
+    title: 文档模板禁止行为
+    section_type: rule
+    original_rules:
+    - PS-STD-002 §19
+    conditions:
+    - type: trigger
+      check: 创建或修改标准文档时
+      pass: 文档符合模板规范
+      fail: 文档违反模板规范
+    actions:
+    - type: mandatory
+      step: 标准文档必须包含消费者注册表、SSoT声明、变更同步规则、AI自治权限标注(frontmatter)、可验证性标注(frontmatter)；使用MUST/SHOULD/MAY而非模糊词汇；废弃流程走完五步
+    prohibitions:
+    - 创建不含消费者注册表的标准文档
+    - 创建不含变更同步规则的标准文档
+    - 创建不含AI自治权限标注的标准文档
+    - 创建不含可验证性标注的标准文档
+    - 标准文档使用模糊词汇（尽量/建议/最好）
+    - 跳过废弃流程直接删除Active标准
+    - 永久豁免某条规则
+  ps_std_005_pyramid:
+    title: 蓝图三级金字塔结构
+    section_type: context
+    original_rules:
+    - PS-STD-005 §3
+    conditions:
+    - type: trigger
+      check: 创建或修改蓝图时
+      pass: 蓝图层级归属正确
+      fail: 蓝图层级归属错误或缺失
+    actions:
+    - type: mandatory
+      step: Level 0全系统总蓝图(SYSTEM, ID前缀SYS-MASTER)；Level 1功能域集成蓝图(DOMAIN, ID前缀MOD-DOMAIN)；Level
+        2单模块蓝图(MODULE, ID前缀MOD-{LAYER/DOMAIN})；每份蓝图必须声明blueprint_level
+    prohibitions: []
+  ps_std_005_belongs_to:
+    title: 蓝图归属声明belongs_to
+    section_type: context
+    original_rules:
+    - PS-STD-005 §6
+    conditions:
+    - type: trigger
+      check: 创建蓝图文件时
+      pass: frontmatter包含belongs_to字段
+      fail: 蓝图无归属声明
+    actions:
+    - type: mandatory
+      step: Level 2模块蓝图MUST在frontmatter声明belongs_to指向上级域蓝图；Level 1域蓝图MUST声明belongs_to指向Level
+        0总蓝图
+    prohibitions:
+    - 创建蓝图时不声明belongs_to字段
+  ps_std_005_directory:
+    title: 蓝图目录结构约定
+    section_type: context
+    original_rules:
+    - PS-STD-005 §4
+    conditions:
+    - type: trigger
+      check: 创建蓝图目录时
+      pass: 目录结构符合蓝图层级约定(命名规则真源见trae_028_doc_structure_naming.yaml gov_doc_003_naming_ssot)
+      fail: 目录结构违反蓝图层级约定
+    actions:
+    - type: mandatory
+      step: Level 0/1目录用_前缀(_system_master/,_domain_{layer_range}/);Level 2模块目录用层级编号(l{NN}_{name}/);Level 2蓝图文件名统一blueprint.md
+    prohibitions:
+    - 将Level 2模块蓝图混放在Level 0/1的_前缀目录下
+    - Level 2模块蓝图文件名用{module}_blueprint.md
+  ps_std_005_prohibitions:
+    title: 蓝图体系禁止行为
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §10
+    conditions:
+    - type: trigger
+      check: 创建或修改蓝图时
+      pass: 蓝图符合体系规范
+      fail: 蓝图违反体系规范
+    actions:
+    - type: mandatory
+      step: AI新session按§7.1逐级下钻定位蓝图；CT-*合同定义放Level 1域蓝图或Level 0总蓝图；既存蓝图加belongs_to时不改module_id或status
+    prohibitions:
+    - 在Level 2模块蓝图中定义跨系统的CT-*合同
+    - AI新session跳过Level 0直接读Level 2
+    - 为已被覆盖的功能域创建平行蓝图（需升级原蓝图而非创建同级新蓝图）
+    - 在既存蓝图frontmatter中加入belongs_to时改module_id或status
+  ps_std_005_cold_start:
+    title: AI蓝图冷启动定位
+    section_type: rule
+    original_rules:
+    - PS-STD-005 §7
+    conditions:
+    - type: trigger
+      check: AI新session冷启动时
+      pass: 按层级逐级下钻
+      fail: 跳级读取蓝图
+    actions:
+    - type: mandatory
+      step: Step1读AGENTS.md→Step2跳转PS-STD-005→Step3定位Level 0总蓝图→Step4分派到Level 1域蓝图→Step5定位Level
+        2模块蓝图→Step6实现任务开发
+    prohibitions:
+    - 跳过Level 0/1直接读Level 2蓝图
+  std_009_state_machine:
+    title: 规则生命周期状态机
+    section_type: context
+    original_rules:
+    - PS-STD-009 §2
+    conditions:
+    - type: trigger
+      check: 规则文件状态变更时
+      pass: 状态迁移符合状态机定义
+      fail: 非法状态迁移
+    actions:
+    - type: mandatory
+      step: draft→active需Owner签收+PS-STD-001必填字段齐全；active→deprecated需Owner批准+superseded_by已填+依赖方已迁移；archived不是独立状态(是文件操作)
+    prohibitions:
+    - 跨级降格文档状态(draft→deprecated)
+  std_009_change_levels:
+    title: 变更分级P0-P3
+    section_type: context
+    original_rules:
+    - PS-STD-009 §3~§4
+    conditions:
+    - type: trigger
+      check: 修改规则文件时
+      pass: 变更级别与审批流程匹配
+      fail: 变更级别错误导致审批缺失
+    actions:
+    - type: mandatory
+      step: P0(stability=frozen)Owner必须手动执行AI禁止操作；P1(stability=stable+scope=global)Owner明确批准后AI可执行；P2(stable非global或evolving)AI可执行Session
+        Log记录；P3(新增)AI可执行Session Log记录
+    prohibitions:
+    - AI执行P0变更(即使Owner口头要求)
+    - AI无Owner批准修改P1条款
+    - AI修改后不更新Session Log
+    - AI修改后不更新version和date
+    - AI绕过推导链声称优先级
+    - AI基于记忆判断文件属性(不读frontmatter)
+  std_009_retirement:
+    title: 退役流程与级联
+    section_type: rule
+    original_rules:
+    - PS-STD-009 §5~§7
+    conditions:
+    - type: trigger
+      check: 规则文件退役时
+      pass: 退役流程完整
+      fail: 退役流程不完整
+    actions:
+    - type: mandatory
+      step: LFC-001退役前必须完成依赖迁移(搜索引用→逐个确认→先迁移再退役)；LFC-002退役必须填写superseded_by；LFC-003级联影响≥5个文件时需Owner批准；deprecated满6个月git
+        mv移入archive/
+    prohibitions: []
+  std_009_emergency:
+    title: 紧急变更流程
+    section_type: rule
+    original_rules:
+    - PS-STD-009 §8
+    conditions:
+    - type: trigger
+      check: 发现需要紧急修复的问题时
+      pass: 按紧急变更流程执行
+      fail: AI自行判断紧急并绕过审批
+    actions:
+    - type: mandatory
+      step: AI立即停止当前操作→Session Log记录问题和建议修复方案→等待Owner确认后执行修复
+    prohibitions:
+    - AI自行判断紧急并绕过审批流程
+  std_009_rule_file_quality:
+    title: 规则文件质量管理元规则
+    section_type: rule
+    original_rules:
+    - PS-STD-009 §9
+    summary: 管理规则文件本身的质量——矛盾检测、去重、散布检查、引用完整性、裁定落地、执行脚本对齐
+    applies_to: docs/01_policies_and_standards/rules/ 下所有 trae_XXX.yaml 规则文件
+    conditions:
+    - type: constraint
+      check: RQ-01 规则矛盾检测
+      pass: 同一主题的规则在所有文件中一致（无kebab-case vs snake_case类矛盾）
+      fail: 同一主题规则在不同文件中矛盾（规则文档之间/规则文档与执行脚本/规则文档与架构裁定/文件内部自相矛盾）
+      detection: Grep同一关键词跨文件搜索+人工比对pass/fail判定
+    - type: constraint
+      check: RQ-02 规则去重
+      pass: 每条规则有唯一权威来源（SSoT），其他文件引用而非重复定义
+      fail: 同一规则在多个文件重复定义（如命名规则散布在trae_028/010/022/030/042等多个文件）
+      detection: 按主题Grep全项目+标记权威来源+其余文件改为引用
+    - type: constraint
+      check: RQ-03 规则散布检查
+      pass: 同一主题规则集中在权威文件中，其他文件仅引用
+      fail: 同一主题规则散布在3+文件中且无明确权威来源
+      detection: 按主题汇总所有包含该规则的文件清单
+    - type: constraint
+      check: RQ-04 引用完整性
+      pass: 所有引用（provenance/references/enforcement.executors/跨规则引用）指向存在的文件
+      fail: 引用指向不存在的文件（如onboarding_detail.md引用code-construction-standards.md但文件已迁移到trae_010_code_naming_organization.yaml）
+      detection: 逐条验证引用路径是否存在
+    - type: constraint
+      check: RQ-05 裁定落地检测
+      pass: 架构裁定（如architecture_upgrade_discussion.md §2.2）已在对应规则文件中落地
+      fail: 架构裁定未在规则文件中落地（如§2.2裁定snake_case但规则文件仍写kebab-case——历史案例C-1~C-12已于2026-06-19修复）
+      detection: 比对架构裁定文档与规则文件的一致性
+    - type: constraint
+      check: RQ-06 执行脚本对齐
+      pass: 执行脚本（如check_naming_convention.py）与规则文档一致
+      fail: 执行脚本与规则文档不一致（如脚本强制snake_case但规则文档写kebab-case）
+      detection: 比对执行脚本的检测逻辑与规则文档的pass/fail条件
+    - type: constraint
+      check: RQ-07 frontmatter字段完整性
+      pass: frontmatter包含所有必填字段（rule_id/title/layer/severity/scope/domain/triggers/sections/references/enforcement/metadata/provenance）
+      fail: 缺少必填字段
+      detection: 逐文件检查frontmatter字段完整性
+    - type: constraint
+      check: RQ-08 section结构完整性
+      pass: 每个section包含title/section_type/original_rules/conditions/actions/prohibitions
+      fail: section缺少必填子字段
+      detection: 逐section检查结构完整性
+    - type: constraint
+      check: RQ-09 provenance存在性验证
+      pass: provenance字段存在且包含extracted_at/extracted_by（迁移历史保留）
+      fail: provenance字段缺失或无迁移历史
+      detection: 检查每个规则文件的provenance字段是否包含extracted_at或extracted_by
+      note: D56裁定后source_files已删除（YAML为唯一SSoT），hash验证改为YAML内容哈希
+    - type: constraint
+      check: RQ-10 aliases冲突检测
+      pass: 每个alias全局唯一
+      fail: 多个规则文件使用相同alias
+      detection: 汇总所有规则文件的aliases字段检查重复
+    - type: constraint
+      check: RQ-11 scope重叠检测
+      pass: 规则文件的scope无重叠或重叠部分有明确的主从关系
+      fail: 多个规则文件scope重叠且无主从关系
+      detection: 汇总所有规则文件的scope字段检查重叠
+    - type: constraint
+      check: RQ-12 severity一致性
+      pass: 同一问题在所有文件中severity一致
+      fail: 同一问题在不同文件中severity不同
+      detection: 按问题主题汇总所有文件的severity
+    - type: constraint
+      check: RQ-13 superseded_by更新
+      pass: 被取代的规则已标记superseded_by且新规则已标记supersedes
+      fail: 被取代的规则未标记或新规则未标记
+      detection: 检查metadata.superseded_by和supersedes字段
+    - type: constraint
+      check: RQ-14 change_history完整性
+      pass: 每次修改有change_history记录（version/date/change）
+      fail: 修改未记录
+      detection: 比对git log与change_history记录
+    actions:
+    - type: mandatory
+      step: 新建规则文件时MUST检查RQ-01~RQ-14全部通过
+    - type: mandatory
+      step: 修改规则文件时MUST重新检查RQ-01~RQ-14
+    - type: mandatory
+      step: 发现矛盾时MUST以架构裁定为最高权威→执行脚本为次→规则文档为末，向上兼容
+    - type: mandatory
+      step: 发现散布时MUST确定唯一权威来源文件，其余文件改为引用（如"命名规则见trae_028_doc_structure_naming.yaml"）
+    - type: mandatory
+      step: 发现引用断裂时MUST立即修复（更新引用路径或恢复被引用文件）
+    - type: mandatory
+      step: 架构裁定发布后MUST在7天内同步到对应规则文件（裁定落地）
+    - type: mandatory
+      step: 执行脚本修改后MUST同步更新对应规则文件的conditions
+    prohibitions:
+    - 同一主题规则在多个文件中矛盾定义（违反RQ-01）
+    - 同一规则在多个文件重复定义而非引用（违反RQ-02）
+    - 同一主题规则散布在3+文件中且无权威来源（违反RQ-03）
+    - 引用指向不存在的文件（违反RQ-04）
+    - 架构裁定发布后7天内未同步到规则文件（违反RQ-05）
+    - 执行脚本与规则文档不一致（违反RQ-06）
+    - 规则文件缺少必填frontmatter字段（违反RQ-07）
+    - 规则文件缺少必填section子字段（违反RQ-08）
+    - provenance字段缺失或无迁移历史（违反RQ-09）
+    - 多个规则文件使用相同alias（违反RQ-10）
+  std_009_audit_checklist:
+    title: 规则文件审查清单（逐文件检查用）
+    section_type: verification
+    original_rules:
+    - PS-STD-009 §9.1
+    summary: 逐文件检查清单+全量检查清单，循环审查直到连续两次零问题
+    applies_to: docs/01_policies_and_standards/rules/ 下所有 trae_XXX.yaml 规则文件
+    steps:
+    - step: 单文件审查——frontmatter完整性
+      command: 检查rule_id/title/layer/severity/scope/domain/triggers/sections/references/enforcement/metadata/provenance是否齐全
+      expected_exit: 所有必填字段存在
+      on_fail: 补充缺失字段
+    - step: 单文件审查——section结构完整性
+      command: 检查每个section是否包含title/section_type/original_rules/conditions/actions/prohibitions
+      expected_exit: 所有section结构完整
+      on_fail: 补充缺失子字段
+    - step: 单文件审查——内部矛盾检测
+      command: 检查文件内部是否有自相矛盾（如同一文件某行写kebab-case但另一行禁止kebab-case——历史案例C-1~C-12已于2026-06-19修复）
+      expected_exit: 无内部矛盾
+      on_fail: 修复内部矛盾
+    - step: 单文件审查——provenance验证
+      command: 验证provenance字段存在且包含extracted_at/extracted_by（迁移历史）
+      expected_exit: provenance存在且包含迁移历史字段
+      on_fail: 补充provenance或迁移历史字段
+      note: D56裁定后source_files已删除，不再验证源文件路径和hash
+    - step: 单文件审查——references验证
+      command: 验证references.rule_ids/scripts/modules/blueprints引用是否存在
+      expected_exit: 所有引用存在
+      on_fail: 更新或删除无效引用
+    - step: 单文件审查——enforcement验证
+      command: 验证enforcement.executors引用的脚本是否存在
+      expected_exit: 所有executor脚本存在
+      on_fail: 更新或删除无效executor
+    - step: 单文件审查——aliases冲突
+      command: 检查本文件aliases是否与其他文件aliases冲突
+      expected_exit: 无冲突
+      on_fail: 修改aliases
+    - step: 单文件审查——change_history完整性
+      command: 检查change_history是否记录了所有修改
+      expected_exit: change_history完整
+      on_fail: 补充change_history记录
+    - step: 全量审查——跨文件矛盾检测
+      command: 按主题（命名/路径/ID/编码等）Grep全项目+比对所有文件的pass/fail条件
+      expected_exit: 同一主题规则在所有文件中一致
+      on_fail: 确定权威来源+其余文件改为引用
+    - step: 全量审查——规则散布检查
+      command: 按主题汇总所有包含该规则的文件清单
+      expected_exit: 每个主题有唯一权威来源+其余文件引用
+      on_fail: 确定权威来源+其余文件改为引用
+    - step: 全量审查——裁定落地检测
+      command: 比对architecture_upgrade_discussion.md中的裁定与规则文件的一致性
+      expected_exit: 所有裁定已落地
+      on_fail: 同步裁定到规则文件
+    - step: 全量审查——执行脚本对齐
+      command: 比对check_naming_convention.py等执行脚本的检测逻辑与规则文档的pass/fail条件
+      expected_exit: 执行脚本与规则文档一致
+      on_fail: 同步执行脚本或规则文档
+    - step: 全量审查——引用断裂扫描
+      command: 扫描所有规则文件的引用是否指向存在的文件
+      expected_exit: 无断裂引用
+      on_fail: 修复断裂引用
+    - step: 循环审查——连续两次零问题
+      command: 重复执行单文件审查+全量审查
+      expected_exit: 连续两次审查问题=0
+      on_fail: 修复问题后重新审查
+  std_010_rule_review_simulation:
+    title: 规则审查模拟新AI测试（规则文件修改后强制执行）
+    section_type: verification
+    original_rules:
+    - PS-STD-009 §9.2
+    summary: 任何规则文件（trae_XXX.yaml）被修改后，MUST模拟新AI冷启动视角审查规则是否产生幻觉或漂移
+    applies_to: docs/01_policies_and_standards/rules/ 下所有 trae_XXX.yaml 文件修改后
+    triggers:
+    - 任何规则文件被修改（新增章节/修改条件/修改动作/修改禁止项）
+    - 规则文件合并/拆分/迁移
+    - 规则文件 frontmatter 字段变更
+    steps:
+    - step: 冷启动模拟——假装新AI第一次进项目
+      command: 按Session冷启动序列读规则文件，不假设有任何先验知识
+      expected_exit: 新AI能无歧义理解规则含义
+      on_fail: 修复歧义表述
+    - step: 幻觉检测——检查规则是否可能导致AI产生幻觉
+      command: 检查规则是否有歧义/矛盾/缺失/模糊表述，列出可能导致AI幻觉的具体位置
+      expected_exit: 无幻觉风险点
+      on_fail: 修复幻觉风险点
+      check_items:
+      - 规则中的路径/ID/命令是否真实存在（Grep验证）
+      - 规则中的数字/版本号是否与当前系统一致
+      - 规则中的条件判定是否机械可执行（无主观判断）
+      - 规则中的引用是否指向存在的文件
+      - 规则是否有自相矛盾的表述
+    - step: 漂移检测——检查规则是否可能导致AI偏离正确行为
+      command: 检查规则是否可能导致AI做出错误决策或偏离架构原则
+      expected_exit: 无漂移风险点
+      on_fail: 修复漂移风险点
+      check_items:
+      - 规则是否与上层原则（ARCH-CAP/GOV-DOC等）一致
+      - 规则是否与相关规则文件冲突
+      - 规则的执行顺序是否明确
+      - 规则的例外条件是否清晰
+      - 规则的边界情况是否覆盖
+    - step: 模拟新AI执行——假装新AI按规则执行一次典型任务
+      command: 选择一个典型任务，模拟新AI按规则执行，检查是否产生错误
+      expected_exit: 模拟执行无错误
+      on_fail: 修复规则缺陷
+    - step: 循环模拟——连续两次模拟零问题
+      command: 重复执行冷启动模拟+幻觉检测+漂移检测+模拟执行
+      expected_exit: 连续两次模拟问题=0
+      on_fail: 修复问题后重新模拟
+    prohibitions:
+    - 修改规则文件后跳过模拟新AI测试
+    - 模拟测试发现问题但不修复
+    - 仅模拟一次就声明通过（必须连续两次零问题）
+    - 模拟时使用先验知识（必须假装新AI第一次进项目）
+  std_011_dual_review_protocol:
+    title: 连续两次审查零问题通用协议（所有文件变更强制执行）
+    section_type: verification
+    original_rules:
+    - PS-STD-009 §9.3
+    summary: 任何文件变更声明完成前，MUST连续两次审查零问题。适用于任务卡施工、代码修改、文档更新、规则修改、配置变更等所有文件变更场景
+    applies_to: 项目所有文件变更（src/zephyr/ + scripts/ + docs/ + tests/ + 配置文件 + 规则文件）
+    triggers:
+    - 任何"声明完成"前（任务COMPLETED、session关门、交付代码、关闭任务卡、规则修改、文档更新）
+    - 纯只读操作豁免（搜索、查询、审查本身）
+    steps:
+    - step: 第一次审查——按文件类型的审查清单执行
+      command: 根据文件类型选择对应审查清单（代码/规则/文档/配置/任务卡），逐项审查
+      expected_exit: 问题数=0
+      on_fail: 修复问题后重新审查
+      review_checklists:
+        code: 代码审查清单（功能完整/边界处理/错误路径/类型一致/导入完整/安全检查）
+        rule: 规则审查清单（std_009_audit_checklist + std_010_rule_review_simulation）
+        doc: 文档审查清单（路径准确/数字一致/引用完整/格式规范/无否定陈述）
+        config: 配置审查清单（字段完整/值合法/引用存在/格式正确）
+        taskcard: 任务卡审查清单（18字段完整/R1-R6粒度/验收命令/回滚方案）
+    - step: 第二次审查——确认第一次修复未引入新问题
+      command: 重新执行完整审查清单（不是只查第一次的问题）
+      expected_exit: 问题数=0
+      on_fail: 修复问题后重新从第一次开始
+    - step: 连续两次零问题判定
+      command: 检查最近两次审查的问题数
+      expected_exit: 连续两次问题数=0
+      on_fail: 有问题则修复后重新计数（不累计，从零开始）
+    counting_rules:
+    - 连续两次中间不能有任何问题，有问题就重新计数
+    - 第一次有问题→修复→第二次审查（重审全部，非仅查修复点）→第二次零问题→第三次审查确认→通过
+    - 第二次有问题→修复→重新从第一次开始
+    - 审查必须完整执行（不能只查变更部分）
+    prohibitions:
+    - 声明完成但未执行连续两次审查
+    - 仅审查一次就声明通过
+    - 第二次审查只查第一次的问题点（必须完整审查）
+    - 审查发现问题但不修复就声明通过
+    - 伪造审查结果（未实际执行审查就声明零问题）
+  ps_std_009_scope:
+    title: 规则生命周期与变更标准的目的与范围
+    section_type: context
+    original_rules:
+    - PS-STD-009 §1
+    summary: "ZephyrAlpha规则体系生命周期状态机和变更门控审批体系的唯一真源。定义draft→active→deprecated状态转换规则、P0-P3四级变更审批流程、退役级联、自动归档。v3.0.0合并原PS-STD-010（rule_lifecycle_and_change_standard.md）。"
+    applies_to:
+    - "01_policies_and_standards/下所有doc_type文件"
+    - "domains/下所有治理/操作规则文件"
+    - "meta/下所有元标准文件"
+    impact_on_rules:
+    - "变更分级基于声明属性（stability+scope）推导，属性来源PS-STD-004"
+    - "P0变更（frozen文件）Owner必须手动执行，AI禁止操作"
+    - "废弃级联影响≥5个文件时需Owner批准"
+    key_decisions:
+    - "archived不是独立状态——deprecated满6个月后执行文件物理迁移，status字段保持deprecated不变"
+    - "P0-P3分级基于stability+scope声明属性推导，非人工判定"
+    - "v3.0.0合并PS-STD-010——生命周期定义+变更门控是数据和算子的供需关系"
+  ps_std_009_normative_refs:
+    title: 规则生命周期与变更标准规范性引用
+    section_type: context
+    original_rules:
+    - PS-STD-009 §0
+    summary: "规则生命周期与变更标准依赖的规范性文件和标准"
+    depends_on:
+    - target: PS-STD-001
+      at: "§2~§3"
+      why: "字段定义+受控词表——变更门控字段合法性依据"
+    - target: PS-STD-004
+      at: "§5~§7"
+      why: "stability/scope维度定义——变更分级推导的数据源"
+    impact_on_rules:
+    - "P0-P3变更分级公式直接引用PS-STD-004的stability和scope维度"
+    - "与GOV-DOC-006（trae_028_doc_structure_naming.yaml doc_006）冲突时以本标准为准（规则文件有特殊治理机制）"
+    key_decisions:
+    - "变更分级基于声明属性推导而非人工判定——消除灰色地带"
+    - "规则文件生命周期与文档生命周期分离管理——规则文件有状态机+变更门控+退役级联"
+  ps_std_009_change_history:
+    title: 规则生命周期与变更标准修订记录
+    section_type: examples
+    original_rules:
+    - PS-STD-009
+    items:
+    - version: "3.0.4"
+      date: "2026-06-21"
+      change: "新增std_010_rule_review_simulation（规则审查模拟新AI测试）+ std_011_dual_review_protocol（连续两次审查零问题通用协议）。std_010适用于规则文件修改后强制模拟新AI冷启动视角审查幻觉/漂移。std_011适用于所有文件变更声明完成前连续两次审查零问题。配合project_rules.md RULE-EIGHTEEN使用。"
+    - version: "3.0.3"
+      date: "2026-06-19"
+      change: "RQ审查修复：更新std_009_rule_file_quality RQ-05和std_009_audit_checklist中的过时举例（原引用trae_028 L147/L151已修复的kebab-case矛盾，改为通用举例+标注历史案例C-1~C-12已于2026-06-19修复）"
+    - version: "3.0.2"
+      date: "2026-05-01"
+      change: "规则治理标准当前版本。定义状态机+变更门控分级+退役级联+自动归档。v3.0.0合并原PS-STD-010。"
+  mr2_scope:
+    title: 元数据注册表(续)的目的与范围
+    section_type: context
+    summary: "覆盖标准体系模板(PS-STD-002)、蓝图架构标准(PS-STD-005)、规则生命周期(PS-STD-009)的规则提取"
+    applies_to: "标准文档模板、蓝图体系、规则生命周期管理"
+    impact_on_rules: "所有L1标准必须包含通用核心6章；蓝图必须按三级金字塔结构组织；规则状态迁移必须符合状态机定义"
+    key_decisions:
+    - "L1/L2/L3模板层级决定MUST/SHOULD/MAY使用权限"
+    - "蓝图三级金字塔(SYSTEM/DOMAIN/MODULE)"
+    - "变更分级P0-P3决定审批流程"
+  mr2_change_history:
+    title: 元数据注册表(续)修订记录
+    section_type: examples
+    items:
+    - version: "6.2.0"
+      date: "2026-06-19"
+      change: "RQ-03散布修复——从trae_026迁入ps_std_009_scope/normative_refs/change_history(PS-STD-009 scope/history)；历史kebab-case文件名rule_lifecycle_standard.md snake_case化"
+    - version: "6.1.0"
+      date: "2026-06-19"
+      change: "新增std_009_rule_file_quality（RQ-01~RQ-14规则文件质量管理元规则）+std_009_audit_checklist（逐文件审查清单）——管理规则文件本身的矛盾/去重/散布/引用/裁定落地/脚本对齐"
+    - version: "6.0.1"
+      date: "2026-05-06"
+      change: "§14.1：新增META-V21——index.md清单条目与实际指向文件的frontmatter status不一致"
+    - version: "5.9.0"
+      date: "2026-05-02"
+      change: "SSoT根治——单层真源：§3.2完整表→速查引用；§3.3移除2个已废弃类型行；§3.4移除4个已废弃类型行新增operational_rule等行；§3.5流程简化"
+    - version: "5.8.0"
+      date: "2026-05-02"
+      change: "vocabulary YAML对齐：§3.2完整词表25→23种；新增YAML优先声明"
+    - version: "5.7.0"
+      date: "2026-05-02"
+      change: "生命周期引用约束：§2.1.1新增LRC-001~005规则——draft文件不可被active文件通过depends_on引用"
+    - version: "5.6.0"
+      date: "2026-05-02"
+      change: "§3.2拆分design为architecture_view+design，消除一个词两种文档歧义"
+    - version: "5.5.0"
+      date: "2026-05-01"
+      change: "§3.2拆分plan为plan(任务书)+roadmap(路线图)，消除三合一歧义"
+references:
+  rule_ids:
+  - TRAE-018
+  - TRAE-019
+  - TRAE-020
+  - TRAE-021
+  scripts: []
+  modules: []
+  blueprints: []
+enforcement:
+  type: doc
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: evolving
+  impact_level: L
+  modification_permission: ai_modifiable
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

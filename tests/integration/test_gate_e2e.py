@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0169 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-326 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.integration.test_gate_e2e
 # [STABILITY] evolving
 # [SAFETY] L
@@ -29,18 +30,18 @@ import pytest
 
 pytestmark = pytest.mark.e2e
 
-from zephyr.db.sqlite_schema import init_db
-from zephyr.db.task_repo import (
+from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.persistence.task_repo import (
     GateViolationError,
     TaskRepository,
 )
-from zephyr.gates.gate_engine import (
+from zephyr.governance.rule_enforcement.gate_engine import (
     GateEngine,
     GateEngineError,
     GateResult,
 )
-from zephyr.core.models import TaskCard
-from zephyr.gates.task_types import TaskStatus
+from zephyr.shared.shared_services.models import TaskCard
+from zephyr.governance.rule_enforcement.task_types import TaskStatus
 
 # ---------------------------------------------------------------------------
 # 常量
@@ -54,7 +55,7 @@ GATES_DIR = Path(__file__).parent.parent.parent / "src" / "zephyr" / "gates"
 
 
 def _make_task(
-    task_id: str = "ADR-001",
+    task_id: str = "SRC-001",
     deliverables: list[str] | None = None,
     status: str = "PENDING",
 ) -> TaskCard:
@@ -138,46 +139,46 @@ class TestFullPipeline:
     def test_pending_to_in_progress_via_g1_pass(self, tmp_path: Path) -> None:
         """G1 通过：PENDING → IN_PROGRESS 状态正确更新。"""
         repo = _make_repo(tmp_path, "pp_ip.db")
-        task = _make_task("ADR-100", deliverables=["src/zephyr/output.py"])
+        task = _make_task("SRC-100", deliverables=["src/zephyr/output.py"])
         repo.create(task)
-        updated = repo.transition("ADR-100", TaskStatus.IN_PROGRESS)
+        updated = repo.transition("SRC-100", TaskStatus.IN_PROGRESS)
         assert updated.status == TaskStatus.IN_PROGRESS
         repo.close()
 
     def test_in_progress_to_completed_no_gate(self, tmp_path: Path) -> None:
         """IN_PROGRESS → COMPLETED 不触发门禁，状态正确更新。"""
         repo = _make_repo(tmp_path, "ip_co.db")
-        task = _make_task("ADR-101")
+        task = _make_task("SRC-101")
         repo.create(task)
         repo._enable_gate = False
-        repo.transition("ADR-101", TaskStatus.IN_PROGRESS)
+        repo.transition("SRC-101", TaskStatus.IN_PROGRESS)
         repo._enable_gate = True
-        completed = repo.transition("ADR-101", TaskStatus.COMPLETED)
+        completed = repo.transition("SRC-101", TaskStatus.COMPLETED)
         assert completed.status == TaskStatus.COMPLETED
         repo.close()
 
     def test_completed_to_verified_no_gate(self, tmp_path: Path) -> None:
         """COMPLETED → VERIFIED 不触发门禁，状态正确更新。"""
         repo = _make_repo(tmp_path, "co_ve.db")
-        task = _make_task("ADR-102")
+        task = _make_task("SRC-102")
         repo.create(task)
         repo._enable_gate = False
-        repo.transition("ADR-102", TaskStatus.IN_PROGRESS)
-        repo.transition("ADR-102", TaskStatus.COMPLETED)
+        repo.transition("SRC-102", TaskStatus.IN_PROGRESS)
+        repo.transition("SRC-102", TaskStatus.COMPLETED)
         repo._enable_gate = True
-        verified = repo.transition("ADR-102", TaskStatus.VERIFIED)
+        verified = repo.transition("SRC-102", TaskStatus.VERIFIED)
         assert verified.status == TaskStatus.VERIFIED
         repo.close()
 
     def test_full_lifecycle_pending_to_verified(self, tmp_path: Path) -> None:
         """完整生命周期：PENDING → IN_PROGRESS → COMPLETED → VERIFIED。"""
         repo = _make_repo(tmp_path, "full_lc.db")
-        task = _make_task("ADR-103")
+        task = _make_task("SRC-103")
         repo.create(task)
         repo._enable_gate = False
         for s in [TaskStatus.IN_PROGRESS, TaskStatus.COMPLETED, TaskStatus.VERIFIED]:
-            repo.transition("ADR-103", s)
-        final = repo.get("ADR-103")
+            repo.transition("SRC-103", s)
+        final = repo.get("SRC-103")
         assert final is not None
         assert final.status == TaskStatus.VERIFIED
         repo.close()
@@ -194,10 +195,10 @@ class TestGateBlockingE2E:
     def test_g1_blocks_deprecated_path_e2e(self, tmp_path: Path) -> None:
         """G1-C00 path_blacklist: _legacy/ 路径被拦截，抛 GateViolationError。"""
         repo = _make_repo(tmp_path, "dep_block.db")
-        task = _make_task("ADR-104", deliverables=["_legacy/module.md"])
+        task = _make_task("SRC-104", deliverables=["_legacy/module.md"])
         repo.create(task)
         with pytest.raises(GateViolationError) as exc_info:
-            repo.transition("ADR-104", TaskStatus.IN_PROGRESS)
+            repo.transition("SRC-104", TaskStatus.IN_PROGRESS)
         assert exc_info.value.result.passed is False
         assert exc_info.value.result.has_p0
         repo.close()
@@ -207,10 +208,10 @@ class TestGateBlockingE2E:
         bom_file = tmp_path / "bom_module.md"
         bom_file.write_bytes(b"\xef\xbb\xbf# BOM\n")
         repo = _make_repo(tmp_path, "bom_block.db")
-        task = _make_task("ADR-105", deliverables=["bom_module.md"])
+        task = _make_task("SRC-105", deliverables=["bom_module.md"])
         repo.create(task)
         with pytest.raises(GateViolationError) as exc_info:
-            repo.transition("ADR-105", TaskStatus.IN_PROGRESS)
+            repo.transition("SRC-105", TaskStatus.IN_PROGRESS)
         assert not exc_info.value.result.passed
         repo.close()
 
@@ -219,33 +220,33 @@ class TestGateBlockingE2E:
         bad_file = tmp_path / "corrupt.md"
         bad_file.write_bytes(b"\xff\xfeCorrupted content\n")
         repo = _make_repo(tmp_path, "corrupt_block.db")
-        task = _make_task("ADR-106", deliverables=["corrupt.md"])
+        task = _make_task("SRC-106", deliverables=["corrupt.md"])
         repo.create(task)
         with pytest.raises(GateViolationError):
-            repo.transition("ADR-106", TaskStatus.IN_PROGRESS)
+            repo.transition("SRC-106", TaskStatus.IN_PROGRESS)
         repo.close()
 
     def test_gate_violation_error_carries_result(self, tmp_path: Path) -> None:
         """GateViolationError 携带完整 GateResult 对象。"""
         repo = _make_repo(tmp_path, "ve_result.db")
-        task = _make_task("ADR-107", deliverables=["ARCHIVE/old.md"])
+        task = _make_task("SRC-107", deliverables=["ARCHIVE/old.md"])
         repo.create(task)
         with pytest.raises(GateViolationError) as exc_info:
-            repo.transition("ADR-107", TaskStatus.IN_PROGRESS)
+            repo.transition("SRC-107", TaskStatus.IN_PROGRESS)
         result = exc_info.value.result
         assert isinstance(result, GateResult)
         assert result.gate_id == "G1"
-        assert result.task_id == "ADR-107"
+        assert result.task_id == "SRC-107"
         assert len(result.violations) > 0
         repo.close()
 
     def test_gate_result_summary_contains_fail_tag(self, tmp_path: Path) -> None:
         """GateResult.summary() 对阻断情况以 [FAIL] 开头。"""
         repo = _make_repo(tmp_path, "summary_fail.db")
-        task = _make_task("ADR-108", deliverables=["deprecated/module.py"])
+        task = _make_task("SRC-108", deliverables=["deprecated/module.py"])
         repo.create(task)
         with pytest.raises(GateViolationError) as exc_info:
-            repo.transition("ADR-108", TaskStatus.IN_PROGRESS)
+            repo.transition("SRC-108", TaskStatus.IN_PROGRESS)
         assert exc_info.value.result.summary().startswith("[FAIL]")
         repo.close()
 
@@ -253,12 +254,12 @@ class TestGateBlockingE2E:
         """多个废弃路径交付物时，所有违规均被记录。"""
         repo = _make_repo(tmp_path, "multi_dep.db")
         task = _make_task(
-            "ADR-109",
+            "SRC-109",
             deliverables=["_legacy/a.md", "_trash/b.md", "src/valid.py"],
         )
         repo.create(task)
         with pytest.raises(GateViolationError) as exc_info:
-            repo.transition("ADR-109", TaskStatus.IN_PROGRESS)
+            repo.transition("SRC-109", TaskStatus.IN_PROGRESS)
         p0s = exc_info.value.result.p0_violations
         assert len(p0s) >= 2
         repo.close()
@@ -286,9 +287,9 @@ class TestGateDegradation:
         crlf_file.write_bytes((frontmatter + body).encode("utf-8"))
 
         repo = _make_repo(tmp_path, "crlf_pass.db")
-        task = _make_task("ADR-110", deliverables=["crlf_output.md"])
+        task = _make_task("SRC-110", deliverables=["crlf_output.md"])
         repo.create(task)
-        updated = repo.transition("ADR-110", TaskStatus.IN_PROGRESS)
+        updated = repo.transition("SRC-110", TaskStatus.IN_PROGRESS)
         assert updated.status == TaskStatus.IN_PROGRESS
         repo.close()
 
@@ -300,7 +301,7 @@ class TestGateDegradation:
         body = b"# Header\r\n\r\n" + b"Content line here. " * 8  # ~152 chars > 100
         crlf_file.write_bytes(frontmatter + body)
         engine._project_root = tmp_path
-        task = _make_task("ADR-111", deliverables=["crlf_check.md"])
+        task = _make_task("SRC-111", deliverables=["crlf_check.md"])
         result = engine.evaluate(task, "G1")
         assert result.passed is True
         assert any(v.severity == "P1" for v in result.violations)
@@ -309,13 +310,13 @@ class TestGateDegradation:
     def test_only_p0_causes_gate_failure(self, engine: GateEngine, tmp_path: Path) -> None:
         """有 P1/P2 违规时 passed=True；只有 P0 违规时 passed=False。"""
         engine._project_root = tmp_path
-        task = _make_task("ADR-112", deliverables=["nonexistent_file.md"])
+        task = _make_task("SRC-112", deliverables=["nonexistent_file.md"])
         result = engine.evaluate(task, "G1")
         assert result.passed is True
 
     def test_gate_result_summary_pass_tag(self, engine: GateEngine) -> None:
         """G1 evaluate：无 P0 违规时 summary() 以 [PASS] 开头。"""
-        task = _make_task("ADR-113")
+        task = _make_task("SRC-113")
         result = engine.evaluate(task, "G1")
         assert result.summary().startswith("[PASS]")
 
@@ -330,7 +331,7 @@ class TestG1ToG5ViaEngine:
 
     def test_g1_evaluate_returns_gate_result(self, engine: GateEngine) -> None:
         """G1 evaluate 返回 GateResult，gate_id 正确。"""
-        result = engine.evaluate(_make_task("ADR-114"), "G1")
+        result = engine.evaluate(_make_task("SRC-114"), "G1")
         assert isinstance(result, GateResult)
         assert result.gate_id == "G1"
 
@@ -339,7 +340,7 @@ class TestG1ToG5ViaEngine:
         empty = tmp_path / "empty.md"
         empty.write_bytes(b"")
         engine._project_root = tmp_path
-        result = engine.evaluate(_make_task("ADR-115", ["empty.md"]), "G2")
+        result = engine.evaluate(_make_task("SRC-115", ["empty.md"]), "G2")
         assert result.passed is False
 
     def test_g2_evaluate_rich_content_passes(self, engine: GateEngine, tmp_path: Path) -> None:
@@ -347,31 +348,31 @@ class TestG1ToG5ViaEngine:
         rich = tmp_path / "rich.md"
         rich.write_bytes(("# Title\n\n" + "内容。" * 30).encode("utf-8"))
         engine._project_root = tmp_path
-        result = engine.evaluate(_make_task("ADR-116", ["rich.md"]), "G2")
+        result = engine.evaluate(_make_task("SRC-116", ["rich.md"]), "G2")
         assert result.passed is True
 
     def test_g3_evaluate_returns_result(self, engine: GateEngine) -> None:
         """G3 evaluate：空交付物任务，返回有效 GateResult。"""
-        result = engine.evaluate(_make_task("ADR-117"), "G3")
+        result = engine.evaluate(_make_task("SRC-117"), "G3")
         assert isinstance(result, GateResult)
         assert result.gate_id == "G3"
 
     def test_g4_evaluate_returns_result(self, engine: GateEngine) -> None:
         """G4 evaluate：空交付物任务，返回有效 GateResult。"""
-        result = engine.evaluate(_make_task("ADR-118"), "G4")
+        result = engine.evaluate(_make_task("SRC-118"), "G4")
         assert isinstance(result, GateResult)
         assert result.gate_id == "G4"
 
     def test_g5_evaluate_returns_result(self, engine: GateEngine) -> None:
         """G5 evaluate：空交付物任务，返回有效 GateResult。"""
-        result = engine.evaluate(_make_task("ADR-119"), "G5")
+        result = engine.evaluate(_make_task("SRC-119"), "G5")
         assert isinstance(result, GateResult)
         assert result.gate_id == "G5"
 
     def test_unknown_gate_raises_engine_error(self, engine: GateEngine) -> None:
         """非法 gate_id 抛出 GateEngineError。"""
         with pytest.raises(GateEngineError, match="未知 gate_id"):
-            engine.evaluate(_make_task("ADR-120"), "G99")
+            engine.evaluate(_make_task("SRC-120"), "G99")
 
 
 # ===========================================================================
@@ -385,11 +386,11 @@ class TestRollbackAndIntegration:
     def test_task_status_stays_pending_after_gate_failure(self, tmp_path: Path) -> None:
         """G1 失败后，task 状态仍为 PENDING（未发生状态机写入）。"""
         repo = _make_repo(tmp_path, "rb_pending.db")
-        task = _make_task("ADR-121", deliverables=["_legacy/bad.md"])
+        task = _make_task("SRC-121", deliverables=["_legacy/bad.md"])
         repo.create(task)
         with pytest.raises(GateViolationError):
-            repo.transition("ADR-121", TaskStatus.IN_PROGRESS)
-        task_after = repo.get("ADR-121")
+            repo.transition("SRC-121", TaskStatus.IN_PROGRESS)
+        task_after = repo.get("SRC-121")
         assert task_after is not None
         assert task_after.status == TaskStatus.PENDING
         repo.close()
@@ -404,10 +405,10 @@ class TestRollbackAndIntegration:
             project_root=tmp_path,
             enable_gate=True,
         )
-        task = _make_task("ADR-122", deliverables=["deprecated/module.py"])
+        task = _make_task("SRC-122", deliverables=["deprecated/module.py"])
         repo.create(task)
         with pytest.raises(GateViolationError):
-            repo.transition("ADR-122", TaskStatus.IN_PROGRESS)
+            repo.transition("SRC-122", TaskStatus.IN_PROGRESS)
         conn = sqlite3.connect(str(db_path))
         conn.row_factory = sqlite3.Row
         rows = conn.execute("SELECT * FROM gates").fetchall()
@@ -426,9 +427,9 @@ class TestRollbackAndIntegration:
             project_root=tmp_path,
             enable_gate=True,
         )
-        task = _make_task("ADR-123", deliverables=["src/valid_output.py"])
+        task = _make_task("SRC-123", deliverables=["src/valid_output.py"])
         repo.create(task)
-        repo.transition("ADR-123", TaskStatus.IN_PROGRESS)
+        repo.transition("SRC-123", TaskStatus.IN_PROGRESS)
         conn = sqlite3.connect(str(db_path))
         rows = conn.execute("SELECT * FROM gates").fetchall()
         conn.close()
@@ -440,32 +441,32 @@ class TestRollbackAndIntegration:
         repo = _make_repo(tmp_path, "ready_ip.db")
         bom_file = tmp_path / "bom_ready.md"
         bom_file.write_bytes(b"\xef\xbb\xbf# BOM\n")
-        task = _make_task("ADR-124", deliverables=["bom_ready.md"], status="PENDING")
+        task = _make_task("SRC-124", deliverables=["bom_ready.md"], status="PENDING")
         repo.create(task)
         repo._enable_gate = False
-        repo.transition("ADR-124", TaskStatus.BLOCKED)
-        repo.transition("ADR-124", TaskStatus.READY)
+        repo.transition("SRC-124", TaskStatus.BLOCKED)
+        repo.transition("SRC-124", TaskStatus.READY)
         repo._enable_gate = True
         with pytest.raises(GateViolationError) as exc_info:
-            repo.transition("ADR-124", TaskStatus.IN_PROGRESS)
+            repo.transition("SRC-124", TaskStatus.IN_PROGRESS)
         assert exc_info.value.result.passed is False
         repo.close()
 
     def test_multiple_tasks_independent_gate_checks(self, tmp_path: Path) -> None:
         """多个 task 独立执行 G1 检查，互不影响。"""
         repo = _make_repo(tmp_path, "multi_ind.db")
-        clean_task = _make_task("ADR-125", deliverables=["src/clean.py"])
-        bad_task = _make_task("ADR-126", deliverables=["_trash/bad.md"])
+        clean_task = _make_task("SRC-125", deliverables=["src/clean.py"])
+        bad_task = _make_task("SRC-126", deliverables=["_trash/bad.md"])
         repo.create(clean_task)
         repo.create(bad_task)
 
-        updated_clean = repo.transition("ADR-125", TaskStatus.IN_PROGRESS)
+        updated_clean = repo.transition("SRC-125", TaskStatus.IN_PROGRESS)
         assert updated_clean.status == TaskStatus.IN_PROGRESS
 
         with pytest.raises(GateViolationError):
-            repo.transition("ADR-126", TaskStatus.IN_PROGRESS)
+            repo.transition("SRC-126", TaskStatus.IN_PROGRESS)
 
-        c125_after = repo.get("ADR-125")
+        c125_after = repo.get("SRC-125")
         assert c125_after is not None
         assert c125_after.status == TaskStatus.IN_PROGRESS
         repo.close()
@@ -480,7 +481,7 @@ class TestRollbackAndIntegration:
             project_root=tmp_path,
             enable_gate=True,
         )
-        task = _make_task("ADR-127", deliverables=["ARCHIVE/gone.md"])
+        task = _make_task("SRC-127", deliverables=["ARCHIVE/gone.md"])
         repo.create(task)
 
         before_conn = sqlite3.connect(str(db_path))
@@ -491,7 +492,7 @@ class TestRollbackAndIntegration:
         before_conn.close()
 
         with pytest.raises(GateViolationError):
-            repo.transition("ADR-127", TaskStatus.IN_PROGRESS)
+            repo.transition("SRC-127", TaskStatus.IN_PROGRESS)
 
         after_conn = sqlite3.connect(str(db_path))
         after_conn.row_factory = sqlite3.Row

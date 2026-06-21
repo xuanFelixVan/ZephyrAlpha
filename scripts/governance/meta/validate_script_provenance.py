@@ -14,7 +14,7 @@ validate_script_provenance.py — 脚本 Provenance 溯源链
 - 关联的 PR/Commit
 
 元数据存储在 meta/script_provenance_db.json 中，
-每次脚本变更时由 pre-commit 钩子自动更新。
+每次脚本变更时由 pre_commit 钩子自动更新。
 
 Usage:
     python scripts/governance/meta/validate_script_provenance.py --register-all

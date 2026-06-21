@@ -1,26 +1,27 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-2044 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-661 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_mcp_gateway
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """MCP Gateway 单元测试（MOD-INF-013 §12 Phase 5）。"""
 
-from __future__ import annotations
 
 import json
 import time
 
 import pytest
 
-from zephyr.mcp._base_server import (
+from zephyr.infrastructure._base_server import (
     ERR_GATE_FAILED,
     ERR_RBAC_DENIED,
     ERR_TOOL_EXECUTION,
     ERR_TOOL_NOT_FOUND,
 )
-from zephyr.mcp.gateway_server import MCPGateway, create_gateway
-from zephyr.mcp.rate_limiter import PerToolRateLimiter, RateLimiter
+from zephyr.infrastructure.gateway_server import MCPGateway, create_gateway
+from zephyr.infrastructure.rate_limiter import PerToolRateLimiter, RateLimiter
 
 
 @pytest.fixture

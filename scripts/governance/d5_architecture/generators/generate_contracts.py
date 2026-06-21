@@ -2,7 +2,7 @@
 """
 generate_contracts.py -- SSoT to Codegen pipeline
 
-Auto-generate Python dataclass files from cross-layer-contracts.yaml.
+Auto-generate Python dataclass files from cross_layer_contracts.yaml.
 """
 from __future__ import annotations
 
@@ -39,7 +39,7 @@ import yaml
 import re
 
 CONTRACTS_YAML = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target-architecture/" "architecture-model/contracts/cross-layer-contracts.yaml"
+    "docs/02_enterprise_architecture/target-architecture/" "architecture-model/contracts/cross_layer_contracts.yaml"
 )
 
 _TYPE_IMPORTS: dict[str, str] = {
@@ -50,10 +50,10 @@ _TYPE_IMPORTS: dict[str, str] = {
     "List": "from typing import List",
     "Dict": "from typing import Dict",
     "Any": "from typing import Any",
-    "TraceContext": "from zephyr.shared.contracts.core.trace_context import TraceContext",
-    "OrderSide": "from zephyr.shared.contracts.execution.order import OrderSide",
-    "OrderType": "from zephyr.shared.contracts.execution.order import OrderType",
-    "OrderStatus": "from zephyr.shared.contracts.execution.order import OrderStatus",
+    "TraceContext": "from zephyr.integration.events.trace_context import TraceContext",
+    "OrderSide": "from zephyr.integration.contracts.execution.order import OrderSide",
+    "OrderType": "from zephyr.integration.contracts.execution.order import OrderType",
+    "OrderStatus": "from zephyr.integration.contracts.execution.order import OrderStatus",
 }
 
 _STANDARD_IMPORTS = [
@@ -241,7 +241,7 @@ def _generate_file_header(
         "# category: data_contract",
         "# status: auto_generated",
         f'# created: "{datetime.now(UTC).strftime("%Y-%m-%d")}"',
-        "# generated_by: codegen from cross-layer-contracts.yaml",
+        "# generated_by: codegen from cross_layer_contracts.yaml",
         "# ---",
         '"""',
         f"ZephyrAlpha — shared/contracts/{filename}",
@@ -250,7 +250,7 @@ def _generate_file_header(
         "",
         description,
         "",
-        f"SSoT: cross-layer-contracts.yaml -> {contract_id}",
+        f"SSoT: cross_layer_contracts.yaml -> {contract_id}",
         f"Version: {schema_version}",
         "Status: AUTO-GENERATED -- DO NOT EDIT BY HAND",
         "       Any manual changes will be overwritten by codegen.",

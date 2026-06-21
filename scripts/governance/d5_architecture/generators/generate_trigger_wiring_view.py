@@ -7,7 +7,7 @@
      OpenAPI（spec.yaml → Swagger UI 自动渲染）
      Terraform（state → plan 自动派生）
 
-读取 declarative-contract-tracker.yaml CT-005 的 wiring 字段，
+读取 declarative-contract-tracker-registry.md CT-005 的 wiring 字段，
 自动生成/更新 trigger_router.yaml 中的接线状态表区块。
 
 使用方式: python scripts/governance/d5_architecture/generate_trigger_wiring_view.py
@@ -44,7 +44,7 @@ from _shared.constants import REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
-CT_TRACKER_PATH = REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker.yaml"
+CT_TRACKER_PATH = REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker-registry.md"
 TRIGGER_ROUTER_PATH = REPO_ROOT / "config/trigger_router.yaml"
 MARKER_START = "# --- AUTO-GENERATED WIRING STATUS START ---"
 MARKER_END = "# --- AUTO-GENERATED WIRING STATUS END ---"

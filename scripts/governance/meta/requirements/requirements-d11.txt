@@ -1,2 +1,0 @@
-# requirements-d11.txt — D11 合规完整性维度
-PyYAML>=6.0

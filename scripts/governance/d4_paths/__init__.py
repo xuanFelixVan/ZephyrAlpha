@@ -7,3 +7,4 @@
 - 蓝图路径来源校验（provenance validation）
 - 废弃级联影响度量
 """
+__all__ = ['detect_deprecated_path_writes', 'detect_excessive_file_moves', 'detect_ruins_references', 'detect_split_delete_ref_commit']

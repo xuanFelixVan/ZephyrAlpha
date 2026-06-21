@@ -14,7 +14,7 @@ AGENTS.md §6.13 枚举自动派生铁律 + §6.14 漂移免疫架构原则 Leve
           vocabulary YAML → 检测标注了但枚举值与 vocabulary 不一致。
 
 检查维度：
-  DIM-1: frontmatter-field-registry.yaml 中 enum 类型字段必须有 derived_from
+  DIM-1: frontmatter-field-registry.md 中 enum 类型字段必须有 derived_from
   DIM-2: architecture-contract.yaml 中 allowed_values 字段必须有 derived_from
   DIM-3: frontmatter-schema.json 中 enum 属性应能追溯到 vocabulary（通过字段名映射）
   DIM-4: derived_from 指向的 vocabulary YAML 文件必须存在
@@ -63,7 +63,7 @@ CATALOGS_DIR = GOV_DOCS_DIR / "_registry" / "catalogs"
 CONTRACTS_DIR = GOV_DOCS_DIR / "_registry" / "contracts"
 SCHEMAS_DIR = GOV_DOCS_DIR / "_registry" / "schemas"
 
-FIELD_REGISTRY_PATH = CATALOGS_DIR / "frontmatter-field-registry.yaml"
+FIELD_REGISTRY_PATH = CATALOGS_DIR / "frontmatter-field-registry.md"
 ARCH_CONTRACT_PATH = CONTRACTS_DIR / "architecture-contract.yaml"
 SCHEMA_JSON_PATH = SCHEMAS_DIR / "frontmatter-schema.json"
 
@@ -87,14 +87,14 @@ def _warn(msg: str) -> None:
     _warnings.append(msg)
 
 def check_dim1_field_registry() -> None:
-    """DIM-1: frontmatter-field-registry.yaml 中 enum 类型字段必须有 derived_from"""
+    """DIM-1: frontmatter-field-registry.md 中 enum 类型字段必须有 derived_from"""
     if not FIELD_REGISTRY_PATH.exists():
-        _warn("DIM-1: frontmatter-field-registry.yaml 不存在")
+        _warn("DIM-1: frontmatter-field-registry.md 不存在")
         return
     try:
         data = load_yaml(FIELD_REGISTRY_PATH)
     except Exception as e:
-        _err(f"DIM-1: 无法加载 frontmatter-field-registry.yaml: {e}")
+        _err(f"DIM-1: 无法加载 frontmatter-field-registry.md: {e}")
         return
     if not isinstance(data, dict):
         return

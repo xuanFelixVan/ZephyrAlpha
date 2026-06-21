@@ -1,29 +1,30 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1883 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-503 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.gates.test_gate_check_types
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 
+from __future__ import annotations
 """Test suite: gate check type system"""
 
-from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
 
 import pytest
 
-from zephyr.gates.check_types.check_type_registry import (
+from zephyr.governance.rule_enforcement.check_types.check_type_registry import (
     CheckTypeHandler,
     get_check_type,
     list_check_types,
     register_check_type,
 )
-from zephyr.gates.gate_engine import CheckConfig, GateEngine, GateResult
-from zephyr.gates.gate_types import GateEngineError, GateViolation
-from zephyr.gates.task_types import Task, TaskNamespace, TaskStatus
-from zephyr.shared.schema.severity_types import Priority, SafetyLevel
+from zephyr.governance.rule_enforcement.gate_engine import CheckConfig, GateEngine, GateResult
+from zephyr.governance.rule_enforcement.gate_types import GateEngineError, GateViolation
+from zephyr.governance.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
+from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 
 GATES_DIR = Path(__file__).resolve().parents[3] / "src" / "zephyr" / "gates"
 

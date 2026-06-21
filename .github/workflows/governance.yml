@@ -25,11 +25,11 @@ on:
       - "docs/**"
       - "src/zephyr/**"
       - "config/**"
-      - "architecture-model/**"
+      - "architecture_model/**"
       - "tests/**"
       - "data/**"
       - "infra/**"
-      - ".pre-commit-config.yaml"
+      - ".pre_commit_config.yaml"
       - "pyproject.toml"
       - "requirements.txt"
       - "requirements-dev.txt"
@@ -54,11 +54,11 @@ on:
       - "docs/**"
       - "src/zephyr/**"
       - "config/**"
-      - "architecture-model/**"
+      - "architecture_model/**"
       - "tests/**"
       - "data/**"
       - "infra/**"
-      - ".pre-commit-config.yaml"
+      - ".pre_commit_config.yaml"
       - "pyproject.toml"
       - "requirements.txt"
       - "requirements-dev.txt"
@@ -128,13 +128,17 @@ jobs:
         run: python scripts/governance/generate_project_path_tree.py --check
         continue-on-error: false
 
+      - name: Naming Convention Full Scan (GATE-11)
+        run: python scripts/governance/d3_metadata/check_naming_convention.py
+        continue-on-error: false
+
       # ============================================================
       # Tier 3: 架构层 — SSoT + Gate + Contract + Manifest Drift
       # ============================================================
       - name: Architecture Gates (GATE-01~08+A+B+SC)
         run: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
 
-      - name: SSoT Validator (ADR-0001/0021 enforced)
+      - name: SSoT Validator (KBG-0001/0021 enforced)
         run: python scripts/governance/d5_architecture/validators/validate_ssot.py --ci
         continue-on-error: false
 

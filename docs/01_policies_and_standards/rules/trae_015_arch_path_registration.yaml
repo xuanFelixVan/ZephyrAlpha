@@ -1,0 +1,170 @@
+rule_id: TRAE-015
+title: 架构约束-路径与注册
+aliases:
+- ARCH-013
+- ARCH-014
+- ARCH-015
+- ARCH-016
+- ARCH-017
+- ARCH-018
+layer: L1
+severity: error
+scope: architecture_path_registry
+domain: TRAE
+triggers:
+- operation: architecture_path_registry
+sections:
+  arch_013:
+    section_type: rule
+    title: 路径规范(7区域路径设计)
+    original_rules:
+    - ARCH-013
+    conditions:
+    - type: trigger
+      check: 创建或修改文件路径时
+      pass: 路径符合7区域路径设计规则
+      fail: 路径违反7区域设计
+    actions:
+    - type: mandatory
+      step: 文件路径MUST遵循7区域路径设计规则；创建/删除/移动文件后MUST运行python scripts/governance/generate_project_path_tree.py --write刷新路径树；路径树过时=禁止关闭任务
+    prohibitions:
+    - 路径不符合7区域设计
+    - 创建/删除/移动文件后不运行generate_project_path_tree.py
+    - 路径树过时状态下关闭任务
+  arch_014:
+    section_type: rule
+    title: 注册表完整性
+    original_rules:
+    - ARCH-014
+    conditions:
+    - type: trigger
+      check: 创建或修改文件时
+      pass: 文件已注册到对应注册表(manifest/registry/__init__.py)
+      fail: 文件未注册(孤儿)
+    actions:
+    - type: mandatory
+      step: 新建文件MUST通过scaffold.py注册(创建入口规则见TRAE-001)；任何文件变更后MUST运行python scripts/governance/audit_registration.py检查孤儿；exit 0=CLEAN，exit 1=有孤儿
+    prohibitions:
+    - 创建未注册的孤儿文件
+    - audit_registration.py exit≠0时关闭任务
+    - 绕过scaffold.py直接创建文件(见TRAE-001创建入口规则)
+  arch_015:
+    section_type: rule
+    title: 注册表同步(多表一致性)
+    original_rules:
+    - ARCH-015
+    conditions:
+    - type: trigger
+      check: 修改注册表时
+      pass: 所有相关注册表同步更新
+      fail: 注册表间不一致
+    actions:
+    - type: mandatory
+      step: 修改一个注册表时MUST同步更新所有关联注册表；注册表间通过引用而非复制保持一致；YAML文件是规则数据唯一真源，DB为只读缓存
+    prohibitions:
+    - 只更新一个注册表不更新相关注册表
+    - 直接修改DB规则表而非通过YAML同步
+    - 注册表间数据不一致
+  arch_016:
+    section_type: rule
+    title: 目录结构合规
+    original_rules:
+    - ARCH-016
+    conditions:
+    - type: trigger
+      check: 创建目录时
+      pass: 目录结构符合项目规范(7区域+层级编号)
+      fail: 目录结构违规
+    actions:
+    - type: mandatory
+      step: 目录结构MUST遵循7区域路径设计+层级编号规则；Level 0/1目录用_前缀(_system_master/,_domain_{layer_range}/)；Level 2模块目录用层级编号(l{NN}_{name}/)；命名规则真源见trae_028_doc_structure_naming.yaml
+    prohibitions:
+    - 创建不合规的目录结构
+    - Level 2模块目录混放在Level 0/1的_前缀目录下
+    - 目录命名违反snake_case规则
+  arch_017:
+    section_type: rule
+    title: 文件位置归属正确
+    original_rules:
+    - ARCH-017
+    conditions:
+    - type: trigger
+      check: 创建文件时
+      pass: 文件放在正确的目录归属下(按功能域+层级)
+      fail: 文件位置错误导致归属不清
+    actions:
+    - type: mandatory
+      step: 文件MUST放在对应功能域和层级的目录下；src/zephyr/下按包归属；scripts/下按治理域归属；docs/下按标准/模块/架构归属；创建前MUST确认目录归属正确
+    prohibitions:
+    - 文件放在错误目录
+    - 在不归属的目录下创建文件
+    - 文件归属不清导致下一个AI session无法发现
+  arch_018:
+    section_type: rule
+    title: 导入路径与物理路径一致
+    original_rules:
+    - ARCH-018
+    conditions:
+    - type: trigger
+      check: 修改模块路径时
+      pass: import路径与物理路径一致
+      fail: import路径与物理路径不一致
+    actions:
+    - type: mandatory
+      step: 移动模块后MUST更新所有import语句；import路径MUST与物理路径严格一致；验证命令python scripts/governance/generate_project_depgraph.py重新生成依赖图确认无ImportError
+    prohibitions:
+    - import路径与物理路径不一致
+    - 移动模块后不更新import语句
+    - 不重新生成depgraph就关闭任务
+  arch_scope:
+    title: 路径与注册约束的目的与范围
+    section_type: context
+    summary: 管理ZephyrAlpha项目7区域路径设计、注册表完整性、多表同步、目录结构合规、文件位置归属、导入路径与物理路径一致性
+    applies_to:
+    - 全项目文件路径设计
+    - 注册表(manifest/registry/__init__.py)的完整性与同步
+    - 目录结构与文件归属
+    - import路径与物理路径一致性
+    impact_on_rules:
+    - 文件路径必须遵循7区域路径设计
+    - 所有文件必须注册到对应注册表(无孤儿)
+    - 结构变更后必须刷新path-tree+depgraph
+    key_decisions:
+    - YAML是规则数据唯一真源，DB为只读缓存
+    - scaffold.py是唯一文件创建入口(自动注册)
+    - 命名规则真源在trae_028_doc_structure_naming.yaml
+  arch_change_history:
+    title: 修订记录
+    section_type: examples
+    items:
+    - version: "1.2.0"
+      date: "2026-06-20"
+      change: "RQ-03修复: arch_014创建入口规则散布——改为引用TRAE-001(创建入口规则权威来源L0层RULE-FOUR)，消除规则散布"
+    - version: "1.1.0"
+      date: "2026-06-19"
+      change: "RQ-01~RQ-14审查修复：补充6个section的conditions/prohibitions实质内容(基于onboarding_detail.md §十五+强制集成对照表)；更新provenance hash；补充references引用generate_project_path_tree.py/audit_registration.py/generate_project_depgraph.py；补充enforcement.executors；新增change_history和scope"
+    - version: "1.0.0"
+      date: "2026-06-13"
+      change: "从onboarding_detail.md §十五和project_rules.md RULE-TEN提取为TRAE-015规则YAML"
+references:
+  rule_ids: []
+  scripts:
+  - scripts/governance/generate_project_path_tree.py
+  - scripts/governance/audit_registration.py
+  - scripts/governance/generate_project_depgraph.py
+  modules: []
+  blueprints: []
+enforcement:
+  type: code
+  executors:
+  - scripts/governance/generate_project_path_tree.py
+  - scripts/governance/audit_registration.py
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

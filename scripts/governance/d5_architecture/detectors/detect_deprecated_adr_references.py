@@ -47,7 +47,7 @@ ADR_REF_PATTERN = re.compile("(?:ADR|adr)[-_]?\\d{1,4}", re.IGNORECASE)
 def build_adr_status_map() -> dict[str, str]:
     """构建 KB 决策记录状态映射——优先从 KB SQLite 读取，回退到物理目录"""
     status_map = {}
-    db_path = REPO_ROOT / "data" / "zalpha_metadata.db"
+    db_path = REPO_ROOT / "data" / "databases" / "governance.db"
     if db_path.exists():
         try:
             import sqlite3

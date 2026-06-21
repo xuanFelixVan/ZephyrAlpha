@@ -1,3 +1,12 @@
+# [A_config] module_id=CFG-frontmatter-field-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+module_id: PS-REG-012
+blueprint_id: GOV-INF-001
+# 治理锚定
+# blueprint: PS-REG-012 | docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.md
+# stability: stable
+# safety_level: M
+# ai_autonomy: immutable_core
+# 治理锚定结束
 # ============================================================================
 # ZephyrAlpha Frontmatter 字段定义登记表（Frontmatter Field Registry）— 唯一真源
 # ============================================================================
@@ -63,7 +72,7 @@ depends_on:
 #   enum_values[]      枚举值列表（type=enum 时），含中文描述
 #   applicable_docs[]  适用哪些 doc_type（空 = 所有类型）
 #   description        字段说明
-#   source             定义来源: PS-STD-001 §X.Y / ADR-NNNN / vocabulary
+#   source             定义来源: PS-STD-001 §X.Y / KBG-NNNN / vocabulary
 #   note               补充说明
 # ============================================================================
 
@@ -169,20 +178,20 @@ fields:
     required: optional
     stage: null
     enum_values:
-      - {value: "l00_data_source", description: "L00 数据源"}
-      - {value: "l01_infrastructure", description: "L01 基础设施"}
-      - {value: "l02_alpha_factor", description: "L02 Alpha 因子"}
-      - {value: "l03_signal_generation", description: "L03 信号生成"}
-      - {value: "l04_risk_management", description: "L04 风险管理"}
-      - {value: "l05_portfolio_construction", description: "L05 组合构建"}
-      - {value: "l06_trade_execution", description: "L06 交易执行"}
-      - {value: "l07_post_trade_analytics", description: "L07 盘后分析"}
-      - {value: "l08_human_ai_interface", description: "L08 人机交互"}
-      - {value: "l09_research_innovation", description: "L09 研究创新"}
-      - {value: "l10_governance_compliance", description: "L10 治理合规"}
-      - {value: "l11_ml_platform", description: "L11 机器学习平台"}
-      - {value: "system_telemetry", description: "L12 系统遥测"}
-      - {value: "l13_experiment_pipeline", description: "L13 实验管道"}
+      - {value: "data", description: "L00 数据源"}
+      - {value: "infra_ops", description: "L01 基础设施"}
+      - {value: "factor", description: "L02 Alpha 因子"}
+      - {value: "signal", description: "L03 信号生成"}
+      - {value: "risk", description: "L04 风险管理"}
+      - {value: "pf_core", description: "L05 组合构建"}
+      - {value: "ex_core", description: "L06 交易执行"}
+      - {value: "reporting", description: "L07 盘后分析"}
+      - {value: "frontend", description: "L08 人机交互"}
+      - {value: "research", description: "L09 研究创新"}
+      - {value: "compliance", description: "L10 治理合规"}
+      - {value: "ml_train", description: "L11 机器学习平台"}
+      - {value: "system-telemetry", description: "L12 系统遥测"}
+      - {value: "simulation", description: "L13 实验管道"}
       - {value: "shared", description: "跨层共享组件"}
       - {value: "cross_layer", description: "跨层治理"}
     applicable_docs: []
@@ -426,7 +435,7 @@ fields:
     stage: null
     enum_values: []
     applicable_docs: []
-    description: "关联的 KB 决策记录编号（如 [ADR-0011, ADR-0030]）"
+    description: "关联的 KB 决策记录编号（如 [KBG-0011, KBG-0030]）"
     source: "PS-STD-001 §10.9"
     note: ""
 
@@ -813,7 +822,7 @@ fields:
       - {value: "code", description: "生产代码——src/zephyr/**/*.py"}
       - {value: "script", description: "治理/工具脚本——scripts/**/*.py"}
       - {value: "gate", description: "门禁定义——src/zephyr/gates/*.yaml"}
-      - {value: "registry", description: "注册表——*_registry.yaml, *_manifest.yaml"}
+      - {value: "registry", description: "注册表——*_registry.yaml, *manifest.yaml"}
       - {value: "contract", description: "契约定义——shared/contracts/*.py, contracts/*.yaml"}
       - {value: "config", description: "配置文件——config/*.yaml"}
       - {value: "data", description: "运行时数据——data/**/*.yaml"}

@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0018 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-213 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_rollback_adversarial
 # [STABILITY] evolving
 # [SAFETY] L
@@ -35,14 +36,14 @@ class TestAdversarialB121_SandboxEscape:
     """B121: Agent sandbox enforcement — enforce / status"""
 
     def test_sandbox_enforce_not_in_sandbox_blocked(self):
-        from zephyr.rollback.sandbox_enforcer import SandboxEnforcer, SandboxMode
+        from zephyr.governance.sandbox_enforcer import SandboxEnforcer, SandboxMode
         enforcer = SandboxEnforcer(project_root=Path(tempfile.mkdtemp()), mode=SandboxMode.STRICT)
         result = enforcer.enforce()
         assert result.breached
         assert result.exit_code == 39
 
     def test_sandbox_activated_ok(self):
-        from zephyr.rollback.sandbox_enforcer import SandboxEnforcer, SandboxMode
+        from zephyr.governance.sandbox_enforcer import SandboxEnforcer, SandboxMode
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             enforcer = SandboxEnforcer(project_root=root, mode=SandboxMode.STRICT)
@@ -52,14 +53,14 @@ class TestAdversarialB121_SandboxEscape:
             assert not result.breached
 
     def test_sandbox_mode_none_disables(self):
-        from zephyr.rollback.sandbox_enforcer import SandboxEnforcer, SandboxMode
+        from zephyr.governance.sandbox_enforcer import SandboxEnforcer, SandboxMode
         enforcer = SandboxEnforcer(project_root=Path(tempfile.mkdtemp()), mode=SandboxMode.NONE)
         result = enforcer.enforce()
         assert not result.breached
         assert "disabled" in result.reason.lower()
 
     def test_sandbox_status(self):
-        from zephyr.rollback.sandbox_enforcer import SandboxEnforcer, SandboxMode
+        from zephyr.governance.sandbox_enforcer import SandboxEnforcer, SandboxMode
         enforcer = SandboxEnforcer(project_root=Path(tempfile.mkdtemp()), mode=SandboxMode.STRICT)
         status = enforcer.status()
         assert status.mode == SandboxMode.STRICT
@@ -70,7 +71,7 @@ class TestAdversarialB122_SecuritySabotage:
     """B122: validate_file_access for security-sensitive files"""
 
     def test_sandbox_blocks_sensitive_file_access(self):
-        from zephyr.rollback.sandbox_enforcer import SandboxEnforcer, SandboxMode
+        from zephyr.governance.sandbox_enforcer import SandboxEnforcer, SandboxMode
         enforcer = SandboxEnforcer(project_root=Path(tempfile.mkdtemp()), mode=SandboxMode.STRICT)
         result = enforcer.validate_file_access(Path(".env.local"))
         assert not result
@@ -80,7 +81,7 @@ class TestAdversarialB123_KnowGoodStateTampering:
     """B123: KnowngoodstateLedger — declare / verify"""
 
     def test_ledger_declare_and_find(self):
-        from zephyr.rollback.knowngoodstate_ledger import KnowngoodstateLedger
+        from zephyr.governance.knowngoodstate_ledger import KnowngoodstateLedger
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             ledger = KnowngoodstateLedger(project_root=root)
@@ -95,14 +96,14 @@ class TestAdversarialB123_KnowGoodStateTampering:
             assert ledger.is_known_good("abc123")
 
     def test_ledger_not_found_for_unknown(self):
-        from zephyr.rollback.knowngoodstate_ledger import KnowngoodstateLedger
+        from zephyr.governance.knowngoodstate_ledger import KnowngoodstateLedger
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             ledger = KnowngoodstateLedger(project_root=root)
             assert not ledger.is_known_good("nonexistent")
 
     def test_ledger_get_latest(self):
-        from zephyr.rollback.knowngoodstate_ledger import KnowngoodstateLedger
+        from zephyr.governance.knowngoodstate_ledger import KnowngoodstateLedger
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             ledger = KnowngoodstateLedger(project_root=root)
@@ -117,7 +118,7 @@ class TestAdversarialB124_CredentialLeakBypass:
     """B124: CredentialRotationTrigger — scan_and_rotate"""
 
     def test_scan_sensitive_files_no_leak(self):
-        from zephyr.rollback.credential_rotation_trigger import CredentialRotationTrigger
+        from zephyr.governance.credential_rotation_trigger import CredentialRotationTrigger
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             trigger = CredentialRotationTrigger(project_root=root)
@@ -125,7 +126,7 @@ class TestAdversarialB124_CredentialLeakBypass:
             assert result.leaks_detected == 0
 
     def test_notify_rotation_needed(self):
-        from zephyr.rollback.credential_rotation_trigger import CredentialRotationTrigger
+        from zephyr.governance.credential_rotation_trigger import CredentialRotationTrigger
         msg = CredentialRotationTrigger.notify_rotation_needed("GitHub token leaked")
         assert msg["action"] == "CREDENTIAL_ROTATION_REQUIRED"
 
@@ -134,7 +135,7 @@ class TestAdversarialB125_WALForgery:
     """B125: RollbackWAL — write_ahead / check_incomplete"""
 
     def test_wal_write_ahead(self):
-        from zephyr.rollback.rollback_wal import RollbackWAL
+        from zephyr.governance.rollback_wal import RollbackWAL
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             wal = RollbackWAL(project_root=root)
@@ -143,7 +144,7 @@ class TestAdversarialB125_WALForgery:
             assert entry.status == "PENDING"
 
     def test_wal_mark_complete(self):
-        from zephyr.rollback.rollback_wal import RollbackWAL
+        from zephyr.governance.rollback_wal import RollbackWAL
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             wal = RollbackWAL(project_root=root)
@@ -152,7 +153,7 @@ class TestAdversarialB125_WALForgery:
             assert marked
 
     def test_wal_check_incomplete(self):
-        from zephyr.rollback.rollback_wal import RollbackWAL
+        from zephyr.governance.rollback_wal import RollbackWAL
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             wal = RollbackWAL(project_root=root)
@@ -166,7 +167,7 @@ class TestAdversarialB126_CrossAgentConflict:
     """B126: CrossAgentConflictDetector — detect_conflicts"""
 
     def test_conflict_detector_no_uncommitted(self):
-        from zephyr.rollback.cross_agent_conflict_detector import CrossAgentConflictDetector
+        from zephyr.governance.cross_agent_conflict_detector import CrossAgentConflictDetector
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             detector = CrossAgentConflictDetector(project_root=root)
@@ -179,7 +180,7 @@ class TestAdversarialB127_IntentReplayAttack:
     """B127: IntentArchiver — archive / verify_integrity"""
 
     def test_intent_archiver_archive(self):
-        from zephyr.rollback.intent_archiver import IntentArchiver
+        from zephyr.governance.intent_archiver import IntentArchiver
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             archiver = IntentArchiver(project_root=root)
@@ -192,7 +193,7 @@ class TestAdversarialB127_IntentReplayAttack:
             assert record.content_hash
 
     def test_intent_archiver_get_intent(self):
-        from zephyr.rollback.intent_archiver import IntentArchiver
+        from zephyr.governance.intent_archiver import IntentArchiver
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             archiver = IntentArchiver(project_root=root)
@@ -202,7 +203,7 @@ class TestAdversarialB127_IntentReplayAttack:
             assert "Rollback for safety" in intent
 
     def test_intent_archiver_verify_integrity(self):
-        from zephyr.rollback.intent_archiver import IntentArchiver
+        from zephyr.governance.intent_archiver import IntentArchiver
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             archiver = IntentArchiver(project_root=root)
@@ -215,7 +216,7 @@ class TestAdversarialB128_RollbackAbuse:
     """B128: RollbackAbuseDetector — check_abuse"""
 
     def test_abuse_detector_no_audit_log(self):
-        from zephyr.rollback.rollback_abuse_detector import RollbackAbuseDetector
+        from zephyr.governance.rollback_abuse_detector import RollbackAbuseDetector
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             detector = RollbackAbuseDetector(project_root=root)
@@ -227,7 +228,7 @@ class TestAdversarialB129_AuditLogTruncation:
     """B129: HallucinationGuard — verify_round / run_full_verification"""
 
     def test_hallucination_guard_verify_round(self):
-        from zephyr.rollback.hallucination_guard import HallucinationGuard
+        from zephyr.governance.hallucination_guard import HallucinationGuard
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             py_file = root / "test.py"
@@ -248,7 +249,7 @@ class TestAdversarialB129_AuditLogTruncation:
             assert result.passed
 
     def test_hallucination_guard_detects_mismatch(self):
-        from zephyr.rollback.hallucination_guard import HallucinationGuard
+        from zephyr.governance.hallucination_guard import HallucinationGuard
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             py_file = root / "test.py"
@@ -271,7 +272,7 @@ class TestAdversarialB130_SignalClassificationBypass:
     """B130: AutoRollbackTrigger — classify / process_guard_result"""
 
     def test_auto_rollback_trigger_classify_passed_is_soft(self):
-        from zephyr.rollback.auto_rollback_trigger import AutoRollbackTrigger
+        from zephyr.governance.auto_rollback_trigger import AutoRollbackTrigger
         from dataclasses import dataclass
         @dataclass
         class FakeAutoGuardResult:
@@ -287,12 +288,12 @@ class TestAdversarialB130_SignalClassificationBypass:
         assert decision.category.value == "soft_failure"
 
     def test_auto_rollback_trigger_classify_hard_failure(self):
-        from zephyr.rollback.auto_rollback_trigger import AutoRollbackTrigger
+        from zephyr.governance.auto_rollback_trigger import AutoRollbackTrigger
         from dataclasses import dataclass
         @dataclass
         class FakeAutoGuardResult:
             passed: bool = False
-            source: str = "drift_detector"
+            source: str = "drift-detector"
             error_message: str = "drift detected: schema mismatch in module X"
             task_id: str = "TASK-001"
             gate_id: str = "GATE-001"
@@ -304,7 +305,7 @@ class TestAdversarialB130_SignalClassificationBypass:
         assert decision.should_rollback
 
     def test_transient_retries_exhausted_upgrades(self):
-        from zephyr.rollback.auto_rollback_trigger import AutoRollbackTrigger
+        from zephyr.governance.auto_rollback_trigger import AutoRollbackTrigger
         from dataclasses import dataclass
         @dataclass
         class FakeAutoGuardResult:

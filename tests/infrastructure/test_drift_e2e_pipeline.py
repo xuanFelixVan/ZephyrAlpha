@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0150 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-307 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.infrastructure.test_drift_e2e_pipeline
 # [STABILITY] evolving
 # [SAFETY] L
@@ -19,13 +20,13 @@ import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.behavioral_auditor.ai_construction_detectors import AIConstructionDetectors
-from zephyr.behavioral_auditor.drift_engine import (
+from zephyr.behavioral_audit.ai_construction_detectors import AIConstructionDetectors
+from zephyr.behavioral_audit.drift_engine import (
     _write_drift_events,
     load_detector_registry,
 )
-from zephyr.behavioral_auditor.drift_infrastructure import check_budget_for_gate
-from zephyr.behavioral_auditor.self_test_verifier import SelfTestVerifier
+from zephyr.behavioral_audit.drift_infrastructure import check_budget_for_gate
+from zephyr.behavioral_audit.self_test_verifier import SelfTestVerifier
 
 
 def _setup_project(tmp: str) -> list[Path]:
@@ -142,8 +143,8 @@ def test_e2e_gate_engine_drift_budget():
     """
     E2E STEP 4: Gate Engine 执行 drift_budget check
     """
-    from zephyr.core.models import TaskCard
-    from zephyr.gates.gate_engine import (
+    from zephyr.shared.shared_services.models import TaskCard
+    from zephyr.governance.rule_enforcement.gate_engine import (
         CheckConfig,
         _run_check,
     )
@@ -162,7 +163,7 @@ def test_e2e_gate_engine_drift_budget():
         description="E2E drift budget test",
         created_at=datetime.now(UTC),
         updated_at=datetime.now(UTC),
-        deliverables=["src/zephyr/drift_detector/drift_engine.py"],
+        deliverables=["src/zephyr/drift-detector/drift_engine.py"],
     )
     check = CheckConfig(
         check_id="TEST-DB-001",

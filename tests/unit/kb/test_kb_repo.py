@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1904 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-523 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.kb.test_kb_repo
 # [STABILITY] evolving
 # [SAFETY] L
@@ -11,9 +12,9 @@ Unit tests for kb_repo.py (T-2-11-A)
 from pathlib import Path
 
 import pytest
-from zephyr.db.sqlite_schema import init_db
-from zephyr.kb.storage.chromadb_init import init_chromadb
-from zephyr.kb.storage.kb_repo import KbRepo, KeStatus
+from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.kb.chromadb_init import init_chromadb
+from zephyr.intelligence.model_evaluation.kb_repo import KbRepo, KeStatus
 
 
 @pytest.fixture

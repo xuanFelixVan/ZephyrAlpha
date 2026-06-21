@@ -1,0 +1,33 @@
+{
+  "task_id": "DM-100100",
+  "source_file": "docs/01_policies_and_standards/governance/document/unified_numbering_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "doc_001": {
+      "title": "统一编号规范 (GOV-DOC-001)",
+      "conditions_count": 10,
+      "actions_count": 4,
+      "prohibitions_count": 5
+    },
+    "doc_014": {
+      "title": "统一编号规范-违规检测与迁移",
+      "conditions_count": 6,
+      "actions_count": 2,
+      "prohibitions_count": 1
+    }
+  },
+  "summary": {
+    "total_rules": 28,
+    "COVERED": 28,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    {
+      "action": "YAML_UPDATE",
+      "target": "trae_028_doc_structure_naming.yaml section doc_001 + trae_030_doc_numbering_metadata.yaml section doc_014",
+      "detail": "从空壳更新为包含完整规则提取:层编号格式+docs编号使用范围+编号空间预留+NUM-V01~V06违规检测+NUM-R01~R03人工审查+迁移原则+迁移检查清单"
+    }
+  ]
+}

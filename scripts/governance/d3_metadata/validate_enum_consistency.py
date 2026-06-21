@@ -14,7 +14,7 @@ AGENTS.md §6.13 枚举自动派生铁律 + §6.14 漂移免疫架构原则 Leve
           → 不一致即报错。"vocabulary 改了，派生文件必须同步。"
 
 检查维度：
-  DIM-1: vocabulary YAML 枚举值 ↔ frontmatter-field-registry.yaml 中 derived_from 字段的枚举列表
+  DIM-1: vocabulary YAML 枚举值 ↔ frontmatter-field-registry.md 中 derived_from 字段的枚举列表
   DIM-2: vocabulary YAML 枚举值 ↔ architecture-contract.yaml 中 derived_from 字段的枚举列表
   DIM-3: vocabulary YAML 枚举值 ↔ frontmatter-schema.json 中对应 enum 数组
   DIM-4: 派生文件中有枚举列表但缺少 derived_from 标注（漏标检测）
@@ -77,7 +77,7 @@ CATALOGS_DIR = GOV_DOCS_DIR / "_registry" / "catalogs"
 CONTRACTS_DIR = GOV_DOCS_DIR / "_registry" / "contracts"
 SCHEMAS_DIR = GOV_DOCS_DIR / "_registry" / "schemas"
 
-FIELD_REGISTRY_PATH = CATALOGS_DIR / "frontmatter-field-registry.yaml"
+FIELD_REGISTRY_PATH = CATALOGS_DIR / "frontmatter-field-registry.md"
 ARCH_CONTRACT_PATH = CONTRACTS_DIR / "architecture-contract.yaml"
 SCHEMA_JSON_PATH = SCHEMAS_DIR / "frontmatter-schema.json"
 REGISTRY_MASTER_INDEX_PATH = CATALOGS_DIR / "registry-master-index.yaml"
@@ -135,7 +135,7 @@ def _load_vocabularies() -> dict[str, dict]:
     return vocabs
 
 def _extract_enum_from_field_registry(field_name: str) -> tuple[set[str], str | None]:
-    """从 frontmatter-field-registry.yaml 提取指定字段的枚举值和 derived_from
+    """从 frontmatter-field-registry.md 提取指定字段的枚举值和 derived_from
     支持 allowed_values（简单列表）和 enum_values（对象列表）两种格式"""
     if not FIELD_REGISTRY_PATH.exists():
         return set(), None
@@ -207,7 +207,7 @@ def _extract_enum_from_schema_json(field_name: str) -> set[str]:
 SUBSET_VOCABS = {"doc_type", "layer", "ttl"}
 
 def check_dim1_field_registry(vocabs: dict[str, dict]) -> None:
-    """DIM-1: vocabulary YAML ↔ frontmatter-field-registry.yaml
+    """DIM-1: vocabulary YAML ↔ frontmatter-field-registry.md
 
     For SUBSET_VOCABS (doc_type, layer, ttl), the field-registry only contains
     the 01_policies_and_standards/ subset — missing values are warnings, not errors.
@@ -407,7 +407,7 @@ def main() -> None:
     print()
 
     checks = [
-        ("DIM-1: vocabulary ↔ frontmatter-field-registry.yaml", check_dim1_field_registry),
+        ("DIM-1: vocabulary ↔ frontmatter-field-registry.md", check_dim1_field_registry),
         ("DIM-2: vocabulary ↔ architecture-contract.yaml", check_dim2_arch_contract),
         ("DIM-3: vocabulary ↔ frontmatter-schema.json", check_dim3_schema_json),
         ("DIM-4: 派生文件 derived_from 标注完整性", check_dim4_missing_derived_from),

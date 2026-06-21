@@ -1,0 +1,67 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# MAD-001 Architecture Necessity Gate
+# 架构必要性门禁 —— 新模块创建前的架构必要性质询
+# SSoT: src/zephyr/autonomy_core/gates/_registry.yaml → MAD-001
+
+module_id: MOD-INF-007
+gate_id: MAD-001
+gate_name: architecture_necessity
+title: "MAD-001 Architecture Necessity"
+category: admission
+scope: global
+execution_plane: warm
+status: active
+version: "1.0"
+created: "2026-05-04"
+rule_ids:
+  - TRAE-013
+  - TRAE-015
+
+description: >
+  对标：Architecture Decision Records (KB 决策记录) + YAGNI principle。
+  任何新模块在创建前 MUST 通过此门禁证明其架构必要性。
+  防止过度工程化和模块蔓延 (module sprawl)。
+
+rules:
+  - rule_id: MAD-001-R1
+    name: problem_statement_required
+    description: "新模块 MUST 附问题陈述：解决什么问题？不创建有什么后果？"
+    enforcement: REJECT
+    rule_ids:
+      - TRAE-013
+      - TRAE-015
+    check: proposal must include problem_statement, impact_if_not_created
+
+  - rule_id: MAD-001-R2
+    name: existing_capability_check
+    description: "MUST 检查是否已有模块/组件可以满足需求（复用优先）"
+    enforcement: REJECT
+    rule_ids:
+      - TRAE-013
+      - TRAE-015
+    check: >
+      扫描现有 _registry 中的模块列表，确认无功能重叠
+
+  - rule_id: MAD-001-R3
+    name: layer_assignment_valid
+    description: "模块 MUST 归入已定义的架构层（L00-L13）或证明需要新层"
+    enforcement: REJECT
+    rule_ids:
+      - TRAE-013
+      - TRAE-015
+    check: assigned_layer in REGISTERED_LAYERS or new_layer_has_adr
+
+  - rule_id: MAD-001-R4
+    name: phase_relevance_check
+    description: "MUST 先通过 MAD-002 检查——确认模块与当前阶段的战略相关性"
+    enforcement: REJECT
+    rule_ids:
+      - TRAE-013
+      - TRAE-015
+    check: MAD-002 must pass first (dependency gate)

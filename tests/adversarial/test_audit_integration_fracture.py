@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0010 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-205 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_audit_integration_fracture
 # [STABILITY] evolving
 # [SAFETY] L
@@ -34,7 +35,7 @@ import pytest
 
 @pytest.fixture
 def audit_env(tmp_path):
-    data_dir = tmp_path / "audit_trail"
+    data_dir = tmp_path / "audit-trail"
     data_dir.mkdir(parents=True, exist_ok=True)
     yield tmp_path, data_dir
     shutil.rmtree(tmp_path, ignore_errors=True)
@@ -44,9 +45,9 @@ class TestGovernanceContractsIntegration:
     """I1: 治理层桩AuditWriter必须写入核心链."""
 
     def test_contracts_writes_to_core_chain(self, audit_env):
-        from zephyr.audit_trail.writer import AuditWriter
-        from zephyr.audit_trail.contracts import AuditWriter as GovAuditWriter
-        import zephyr.audit_trail.writer as writer_mod
+        from zephyr.governance.audit_trail.writer import AuditWriter
+        from zephyr.governance.audit_trail.contracts import AuditWriter as GovAuditWriter
+        import zephyr.governance.audit_trail.writer as writer_mod
 
         tmp_path, data_dir = audit_env
         writer = AuditWriter(data_dir=data_dir)
@@ -86,8 +87,8 @@ class TestRollbackExecutorIntegration:
 
     def test_rollback_executor_writes_to_core(self, audit_env):
         tmp_path, data_dir = audit_env
-        from zephyr.audit_trail.writer import AuditWriter
-        from zephyr.rollback.rollback_executor import RollbackExecutor, DiscardDecision
+        from zephyr.governance.audit_trail.writer import AuditWriter
+        from zephyr.governance.rollback_executor import RollbackExecutor, DiscardDecision
 
         writer = AuditWriter(data_dir=data_dir)
         executor = RollbackExecutor(project_root=tmp_path)
@@ -118,8 +119,8 @@ class TestRollbackAuditNexusIntegration:
 
     def test_nexus_writes_to_core(self, audit_env):
         tmp_path, data_dir = audit_env
-        from zephyr.audit_trail.writer import AuditWriter
-        from zephyr.rollback.rollback_audit_nexus import RollbackAuditNexus, AuditEvent
+        from zephyr.governance.audit_trail.writer import AuditWriter
+        from zephyr.governance.rollback_audit_nexus import RollbackAuditNexus, AuditEvent
 
         writer = AuditWriter(data_dir=data_dir)
         nexus = RollbackAuditNexus(project_root=tmp_path)
@@ -154,8 +155,8 @@ class TestDriftHotfixBypassIntegration:
 
     def test_hotfix_writes_to_core(self, audit_env):
         tmp_path, data_dir = audit_env
-        from zephyr.audit_trail.writer import AuditWriter
-        from zephyr.behavioral_auditor.drift_hotfix_bypass import HotfixBypass
+        from zephyr.governance.audit_trail.writer import AuditWriter
+        from zephyr.behavioral_audit.drift_hotfix_bypass import HotfixBypass
 
         writer = AuditWriter(data_dir=data_dir)
         bypass = HotfixBypass(project_root=str(tmp_path))
@@ -185,8 +186,8 @@ class TestMCPAuditLoggerIntegration:
 
     def test_mcp_audit_writes_to_core(self, audit_env):
         tmp_path, data_dir = audit_env
-        from zephyr.audit_trail.writer import AuditWriter
-        from zephyr.mcp.audit_logger import AuditLogger
+        from zephyr.governance.audit_trail.writer import AuditWriter
+        from zephyr.infrastructure.audit_logger import AuditLogger
 
         writer = AuditWriter(data_dir=data_dir)
         logger = AuditLogger(log_dir=tmp_path / "logs" / "mcp_audit")
@@ -215,9 +216,9 @@ class TestGatesAuditChainVerifierIntegration:
 
     def test_gate_verifier_writes_to_core(self, audit_env):
         tmp_path, data_dir = audit_env
-        from zephyr.audit_trail.writer import AuditWriter
-        from zephyr.gates.audit_chain_verifier import AuditChainVerifier
-        from zephyr.gates.gate_context import GateResult, GateStatus
+        from zephyr.governance.audit_trail.writer import AuditWriter
+        from zephyr.governance.rule_enforcement.audit_chain_verifier import AuditChainVerifier
+        from zephyr.governance.rule_enforcement.gate_context import GateResult, GateStatus
         import datetime
 
         writer = AuditWriter(data_dir=data_dir)
@@ -248,8 +249,8 @@ class TestSkillExecutorIntegration:
 
     def test_skill_executor_persists_audit(self, audit_env):
         tmp_path, data_dir = audit_env
-        from zephyr.audit_trail.writer import AuditWriter
-        from zephyr.agent_spec.skill_executor import SkillExecutor
+        from zephyr.governance.audit_trail.writer import AuditWriter
+        from zephyr.autonomy_core.skill_executor import SkillExecutor
 
         writer = AuditWriter(data_dir=data_dir)
         executor = SkillExecutor()
@@ -276,7 +277,7 @@ class TestAuditWriterWriteFailureProtection:
 
     def test_readonly_after_consecutive_failures(self, audit_env):
         tmp_path, data_dir = audit_env
-        from zephyr.audit_trail.writer import AuditWriter
+        from zephyr.governance.audit_trail.writer import AuditWriter
 
         writer = AuditWriter(data_dir=data_dir)
         writer._event_log_path = data_dir / "nonexistent" / "deep" / "events.jsonl"
@@ -298,7 +299,7 @@ class TestCoreModelEnforcement:
 
     def test_event_type_validation(self, audit_env):
         tmp_path, data_dir = audit_env
-        from zephyr.audit_trail.writer import AuditWriter
+        from zephyr.governance.audit_trail.writer import AuditWriter
 
         writer = AuditWriter(data_dir=data_dir)
         writer.write({"event_type": "file_write", "agent_id": "test"})
@@ -312,7 +313,7 @@ class TestCoreModelEnforcement:
 
     def test_unknown_event_type_normalized(self, audit_env):
         tmp_path, data_dir = audit_env
-        from zephyr.audit_trail.writer import AuditWriter
+        from zephyr.governance.audit_trail.writer import AuditWriter
 
         writer = AuditWriter(data_dir=data_dir)
         writer.write({"event_type": "completely_invalid_type", "agent_id": "test"})
@@ -329,8 +330,8 @@ class TestCrossModuleAuditConsistency:
 
     def test_all_modules_share_same_chain(self, audit_env):
         tmp_path, data_dir = audit_env
-        from zephyr.audit_trail.writer import AuditWriter
-        from zephyr.audit_trail.integrity import IntegrityVerifier
+        from zephyr.governance.audit_trail.writer import AuditWriter
+        from zephyr.governance.integrity import IntegrityVerifier
 
         writer = AuditWriter(data_dir=data_dir)
 

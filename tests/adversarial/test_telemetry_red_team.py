@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0020 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-215 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_telemetry_red_team
 # [STABILITY] evolving
 # [SAFETY] L
@@ -19,7 +20,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 
 
 def _init_t(module_id: str = "red_team") -> object:
-    from zephyr.l01_infrastructure.system_telemetry import Telemetry
+    from zephyr.infrastructure.system_telemetry import Telemetry
     return Telemetry(module_id, test_mode=True)
 
 
@@ -27,7 +28,7 @@ class TestBoundaryAttacks:
     """边界攻击：空字符串、None、极端数值"""
 
     def test_empty_module_id_does_not_crash(self):
-        from zephyr.l01_infrastructure.system_telemetry import Telemetry
+        from zephyr.infrastructure.system_telemetry import Telemetry
         t = Telemetry("", test_mode=True)
         r = t.metrics.gauge("cpu", 1.0)
         assert r["name"] == "cpu"
@@ -97,7 +98,7 @@ class TestDeepNesting:
         assert r["tags"]["nested"] == nested
 
     def test_long_module_id(self):
-        from zephyr.l01_infrastructure.system_telemetry import Telemetry
+        from zephyr.infrastructure.system_telemetry import Telemetry
         long_id = "m" * 10000
         t = Telemetry(long_id, test_mode=True)
         r = t.metrics.gauge("test", 1.0)
@@ -303,7 +304,7 @@ class TestAllSubsystemsAfterAttacks:
     """全攻击后验证所有子系统仍存活"""
 
     def test_all_subsystems_survive_attack(self):
-        from zephyr.l01_infrastructure.system_telemetry import Telemetry
+        from zephyr.infrastructure.system_telemetry import Telemetry
         t = Telemetry("survival", test_mode=True)
         for _ in range(100):
             t.metrics.gauge("g", 1.0)

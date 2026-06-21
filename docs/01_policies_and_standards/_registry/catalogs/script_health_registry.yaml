@@ -1,3 +1,4 @@
+# [A_config] module_id=CFG-script-health-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: DOM-GOV-001
@@ -18,15 +19,16 @@
 #
 # v3.0.0 更新（2026-05-02）：
 #   - scripts/audit/ 与 scripts/governance/ 合并为单一 scripts/governance/ 目录
-#   - 从 script_manifest.yaml（SSoT）同步全部 39 个维度脚本
+#   - 从 script-manifest.yaml（SSoT）同步全部 39 个维度脚本
 #   - 补全 D1/D3/D5/D7 维度共 15 个缺失脚本登记
 #   - 修正 detect_keywords_in_logs.py 优先级 P1→P0（与 manifest 对齐）
 #
-# 与 script_manifest.yaml 的关系:
-#   - script_manifest.yaml 是执行真源（39 个脚本）
+# 与 script-manifest.yaml 的关系:
+#   - script-manifest.yaml 是执行真源（39 个脚本）
 #   - 本登记表为独立 YAML 镜像——供 status.py 仪表盘和快速查询
 # ============================================================================
 
+module_id: DOM-GOV-001
 schema_version: "1.0.0"
 doc_type: register
 title: "脚本健康与清单登记表"
@@ -37,7 +39,7 @@ last_updated: "2026-05-02"
 ai_autonomy: ai_modifiable
 ttl: permanent
 total_scripts: 39
-source_of_truth: "scripts/governance/script_manifest.yaml（39 scripts）"
+source_of_truth: "scripts/governance/script-manifest.yaml（39 scripts）"
 depends_on:
   - target: MOD-INF-005
     at: "blueprint.md §4.4"
@@ -134,7 +136,7 @@ scripts:
 
   - script_id: "d3_metadata/check_naming_convention.py"
     dimensions: ["D3"]
-    description: "文件命名规范检查（kebab-case / module_id namespace / ADR铁律）"
+    description: "文件命名规范检查（kebab-case / module_id namespace / KBG铁律）"
     priority: P0
     timeout_seconds: 30
     exit_code_mapping: {0: pass, 1: findings, 2: error}
@@ -441,7 +443,7 @@ changelog:
     author: "AI-GLM-5.1"
     changes:
       - "v3.0.0：scripts/audit/ 与 scripts/governance/ 合并为单一 scripts/governance/ 目录"
-      - "从 script_manifest.yaml（SSoT）同步全部 39 个维度脚本登记"
+      - "从 script-manifest.yaml（SSoT）同步全部 39 个维度脚本登记"
       - "补全 D1/D3/D5/D7 维度共 15 个缺失脚本"
       - "修正 detect_keywords_in_logs.py 优先级 P1→P0（与 manifest 对齐）"
       - "维度覆盖率 8/8（100%），P0 脚本 15 个"

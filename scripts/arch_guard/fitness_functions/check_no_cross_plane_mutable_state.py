@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/fitness_functions/check_no_cross_plane_mutable_state.py | §
 """check_no_cross_plane_mutable_state.py — INV-020 跨平面共享可变状态检查
 
-对标 runtime-planes.yaml NO_SHARED_MUTABLE_STATE + invariants.yaml INV-020。
+对标 runtime_planes.yaml NO_SHARED_MUTABLE_STATE + invariants.yaml INV-020。
 检查是否存在跨运行时平面的共享可变全局状态（如 global dict/list）。
 
 当前状态：L2-static-scan——扫描 global 可变声明。

@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0132 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-289 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.governance.test_gct_024_hard_checks
 # [STABILITY] evolving
 # [SAFETY] L
@@ -8,7 +9,7 @@ import yaml
 import pytest
 from pathlib import Path
 
-from zephyr.budget_enforcer import BudgetEngine
+from zephyr.governance.budget_engine import BudgetEngine
 
 
 class TestGCT024HardChecks:
@@ -31,20 +32,20 @@ class TestGCT024HardChecks:
         assert p["budget_levels"]["session_level"]["hard_limit"] == 12000
 
     def test_escalation_bridge_importable(self):
-        from zephyr.escalation_engine.budget_handler import on_budget_alert
-        from zephyr.budget_enforcer.alerts import BudgetAlert
+        from zephyr.governance.budget_handler import on_budget_alert
+        from zephyr.governance.alerts import BudgetAlert
         a = BudgetAlert(alert_id="B001")
         r = on_budget_alert(a)
         assert r is not None
 
     def test_rbac_bridge_importable(self):
-        from zephyr.budget_enforcer.rbac_bridge import BudgetRBACBridge
+        from zephyr.governance.rbac_bridge import BudgetRBACBridge
         b = BudgetRBACBridge()
         r = b.check_budget("a1", 500, 1000)
         assert r["action"] == "ALLOW"
 
     def test_burn_rate_monitor_normal(self):
-        from zephyr.budget_enforcer import BurnRateMonitor
+        from zephyr.governance.budget_enforcement import BurnRateMonitor
         bm = BurnRateMonitor()
         bm.record_consumption(100)
         bm.compute_burn_rates(1_000_000)

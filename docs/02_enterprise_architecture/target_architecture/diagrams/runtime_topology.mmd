@@ -1,0 +1,40 @@
+﻿%% Source: technology_architecture.md §3.2
+%% 升级记录：2026-05-04 — 显式标注 P0 跨层数据契约 CTR-001~CTR-006 作为架构承重墙
+%% 契约真源：architecture-model/contracts/cross_layer_contracts.yaml
+%% 图例：🔒 = frozen (不可变契约)  |  🔓 = mutable (可变契约，状态机)
+graph TD
+    subgraph HOST["Host Machine（当前：Windows / 计划：Linux）"]
+        subgraph MAIN["ZephyrAlpha Main Process (Python)"]
+            direction TB
+            L00["L00 Data Source"] -->|"🔒 CTR-001<br/>NormalizedMarketData"| L02["L02 Alpha Factor"]
+            L02 -->|"🔒 CTR-002<br/>FactorSignal"| L03["L03 Signal Gen."]
+            L02 -->|"🔒 CTR-002<br/>FactorSignal"| L04["L04 Risk Mgmt."]
+            L02 -->|"🔒 CTR-002<br/>FactorSignal"| L05["L05 Portfolio"]
+            L04 -->|"🔒 CTR-003<br/>RiskLimits"| L05
+            L05 -->|"🔓 CTR-004<br/>Order"| L06["L06 Execution"]
+            L06 -->|"🔒 CTR-005<br/>Fill + 🔒 CTR-006<br/>PositionSnapshot"| L07["L07 Post-Trade"]
+            L07 -->|"Report"| L08["L08 Human-AI"]
+        end
+        subgraph STORAGE["Local Storage"]
+            DB["Data Store (Parquet / DuckDB · 待定)"]
+            DOCS["docs/ (Git + Markdown)"]
+        end
+        MAIN -->|"写入"| DB
+        MAIN -->|"读写"| DOCS
+    end
+    subgraph EXT["External Systems"]
+        MKT["Market Data (REST/WS)"]
+        BRK["Broker API (REST/FIX)"]
+        LLM["LLM Providers (REST)"]
+        FEISHU["Feishu (Webhook)"]
+    end
+    MKT -->|"行情"| L00
+    L06 -->|"委托"| BRK
+    BRK -->|"成交回报"| L06
+    L08 -->|"AI 推理"| LLM
+    L08 -->|"通知"| FEISHU
+
+    style MAIN fill:#eff6ff,stroke:#3b82f6
+    style HOST fill:#f8fafc,stroke:#94a3b8
+    style EXT fill:#fef2f2,stroke:#ef4444
+    style STORAGE fill:#fefce8,stroke:#eab308

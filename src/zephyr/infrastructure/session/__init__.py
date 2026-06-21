@@ -1,0 +1,17 @@
+# [A_module] module_id=MOD-INF_session | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-137 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+# [MODULE] zephyr.infrastructure.shared_services.session
+# [INVARIANTS] pending_review
+# [MODIFY-GUARD] no structural changes without owner approval
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [CONSUMERS] 
+# [ERROR_CONTRACT] 
+# [TESTS] 
+"""core.session — auto-generated package init."""
+from . import session_boundary
+from . import session_continuity
+
+__all__ = ['session_boundary', 'session_continuity']
+

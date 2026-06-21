@@ -1,15 +1,16 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1987 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-604 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_cdc_broker
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """CDC 经纪人单元测试。"""
 
-from __future__ import annotations
 
 import pytest
-from zephyr.gates.cdc_broker import CdcBroker
+from zephyr.governance.rule_enforcement.cdc_broker import CdcBroker
 
 
 @pytest.fixture

@@ -1,3 +1,4 @@
+# [A_test] module_id: SRC-TST-0183 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
 # [MODULE] tests.llm_security.test_code_integrity
 # [STABILITY] evolving
@@ -10,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.llm_security.self_protection.code_integrity import (
+from zephyr.security.llm_defense.llm_security.self_protection.code_integrity import (
     CodeIntegrityGuard,
     FileIntegrityRecord,
     IntegrityStatus,
@@ -41,7 +42,7 @@ class TestCodeIntegrityGuardInit:
 class TestComputeBaseline:
     def test_compute_baseline_for_existing_dir(self):
         guard = CodeIntegrityGuard(project_root=PROJECT_ROOT)
-        records = guard.compute_baseline_for_directory("src/zephyr/llm_security/layers")
+        records = guard.compute_baseline_for_directory("src/zephyr/llm-security/layers")
         assert isinstance(records, list)
         assert len(records) > 0
         for r in records:
@@ -61,7 +62,7 @@ class TestComputeBaseline:
 
     def test_compute_baseline_for_nonexistent_dir(self):
         guard = CodeIntegrityGuard(project_root="/nonexistent")
-        records = guard.compute_baseline_for_directory("src/zephyr/llm_security/layers")
+        records = guard.compute_baseline_for_directory("src/zephyr/llm-security/layers")
         assert isinstance(records, list)
         assert len(records) == 0
 

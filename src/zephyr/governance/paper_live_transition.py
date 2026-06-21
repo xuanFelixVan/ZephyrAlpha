@@ -1,22 +1,14 @@
-# [BLUEPRINT] DOM-GOV-001 | 03_modules/_domain-governance/blueprint.md | §
-
-# [MODULE] zephyr.governance.paper_live_transition
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
-# [CONSUMERS]
-
-# [STABILITY] evolving
-
-# [SAFETY] L
-
-# [AI_AUTONOMY] ai_modifiable
-
-# [ERROR_CONTRACT]
-
-# [TESTS]
+# [A_module] module_id=MOD-RES_paper_live_transition | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
+# [MODULE] zephyr.infrastructure.rollback.paper_live_transition
+# [INVARIANTS] Git-native回滚;SQLite Dump Checkpoint;自动回滚
+# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md;src/zephyr/rollback/__init__.py
+# [CONSUMERS] MOD-INF-020;MOD-INF-007;MOD-INF-022
+# [STABILITY] stable
+# [SAFETY] H
+# [AI_AUTONOMY] human_gated
+# [ERROR_CONTRACT] RollbackError;CheckpointError;VerificationError
+# [TESTS] tests/test_rollback/
 
 from __future__ import annotations
 
@@ -77,7 +69,6 @@ def get_phase_spec(phase: TransitionPhase) -> Optional[PhaseSpec]:
 
 
 def valid_transition(from_phase: TransitionPhase, to_phase: TransitionPhase) -> bool:
-    """检查是否可跳Phase——不可跳, 只允许顺序next。"""
     from_idx = PHASE_ORDER.get(from_phase, -1)
     to_idx = PHASE_ORDER.get(to_phase, -1)
     return to_idx == from_idx + 1

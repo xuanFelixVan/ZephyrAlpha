@@ -1,6 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/generate_manifest.py | §
 """Generate complete script_manifest.yaml from scripts/ tree scan."""
 import os, sys, yaml
+from datetime import date
 from pathlib import Path
 
 SCRIPTS_ROOT = Path("scripts")
@@ -84,7 +85,7 @@ for root, dirs, files in os.walk(SCRIPTS_ROOT):
 manifest = {
     "manifest_version": "2.0.0",
     "generated_by": "generate_manifest.py (auto-scan)",
-    "generated_at": "2026-05-07",
+    "generated_at": date.today().isoformat(),
     "total_scripts": len(scripts),
     "scripts": scripts,
 }

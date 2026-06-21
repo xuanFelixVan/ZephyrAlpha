@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_upgrade_strategy | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.events.upgrade_strategy
 
@@ -20,10 +21,10 @@
 
 """EventBus 升级策略引擎
 
-从 l01_infrastructure.event_bus_upgrade 迁移至此。
+从 infrastructure.runtime_integration.event_bus_upgrade 迁移至此。
 原始路径保留为 compat shim，新代码应从此处导入。
 
-模块 ID: M-16 EventBusUpgrade（曾用名: l01_infrastructure/event_bus_upgrade.py）
+模块 ID: M-16 EventBusUpgrade（曾用名: infrastructure.runtime_integration/event_bus_upgrade.py）
 # SRC-0037: 版本分叉→独立命名 — 升级策略（非事件版本化）
 """
 
@@ -257,17 +258,18 @@ class EventBusUpgrade:
         return self._upgrade_history
 
     def validate_current_state(self) -> dict[str, Any]:
+        import importlib.util
+
         result: dict[str, Any] = {
             "event_bus_type": "shared.observer",
             "is_upgraded": False,
             "issues": [],
         }
 
-        try:
-            from zephyr.l01_infrastructure.event_store import EventStore
-
+        # Use importlib.util.find_spec to avoid shared->infrastructure circular import
+        if importlib.util.find_spec("zephyr.infrastructure.event_store") is not None:
             result["event_store_available"] = True
-        except ImportError:
+        else:
             result["event_store_available"] = False
             result["issues"].append("EventStore 不可用——升级未完成")
 

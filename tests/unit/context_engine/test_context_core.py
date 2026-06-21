@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1832 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-460 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.context_engine.test_context_core
 # [STABILITY] evolving
 # [SAFETY] L
@@ -12,16 +13,16 @@ import os
 import tempfile
 import shutil
 
-from zephyr.context_engine.token_budget import (
+from zephyr.autonomy_core.token_budget import (
     DEFAULT_CONTEXT_TOKEN_BUDGET,
     estimate_tokens,
 )
-from zephyr.context_engine.context_pipeline import (
+from zephyr.autonomy_core.context_pipeline import (
     ContextFourStageResult,
     run_context_four_stage,
     run_context_four_stage_or_raise,
 )
-from zephyr.context_engine.context_assembler import (
+from zephyr.autonomy_core.context_assembler import (
     AssembledContext,
     AssemblyError,
     ContextAssembler,

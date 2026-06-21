@@ -1,14 +1,15 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1970 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-587 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_aisg_sandbox
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """AISGSandbox — 危险模式拦截与安全样本放行。"""
 
-from __future__ import annotations
 
-from zephyr.l10_compliance.aisg_sandbox import AISGSandbox
+from zephyr.governance.aisg_sandbox import AISGSandbox
 
 
 def test_aisg_dangerous_patterns_blocked() -> None:

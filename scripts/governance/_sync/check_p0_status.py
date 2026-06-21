@@ -9,7 +9,7 @@ warn_only: false
 """
 
 import sqlite3
-conn = sqlite3.connect(r"D:\ZephyrAlpha\data\zalpha_metadata.db")
+conn = sqlite3.connect(r"D:\ZephyrAlpha\data\databases\governance.db")
 cur = conn.execute("SELECT status, count(1) FROM tasks WHERE tags LIKE '%auto-bridged%' AND priority='P0' AND is_deleted=0 GROUP BY status")
 print("auto-bridged P0 by status:")
 for r in cur.fetchall():

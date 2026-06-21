@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_session_audit | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.session_audit
 
@@ -287,7 +288,7 @@ class SessionAuditTrail:
             with open(filepath, "a", encoding="utf-8") as f:
                 f.write(json.dumps(record_dict, ensure_ascii=False) + "\n")
         try:
-            from zephyr.audit_trail.writer import get_audit_writer
+            from zephyr.governance.audit_trail.writer import get_audit_writer
             get_audit_writer().write({
                 "event_type": "session_record",
                 "action_type": "session_record",

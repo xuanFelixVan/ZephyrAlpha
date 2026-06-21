@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_event_schemas | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.events.event_schemas
 
@@ -6,7 +7,7 @@
 
 # [MODIFY-GUARD] none
 
-# [CONSUMERS]
+# [CONSUMERS] orchestration.context_management.context_budget_tracker
 
 # [STABILITY] evolving
 
@@ -49,14 +50,25 @@ Version: 0.1.0
 
 from __future__ import annotations
 
+import importlib
 from datetime import datetime
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from zephyr.shared.infra.observer import EventType
-from zephyr.gates.task_types import TaskStatus
 from zephyr.shared.schema.base_config import BASE_CONFIG
+
+_TASK_TYPES_NAMES = {"TaskStatus"}
+
+
+def __getattr__(name):
+    if name in _TASK_TYPES_NAMES:
+        _mod = importlib.import_module("zephyr.governance.rule_enforcement.task_types")
+        _val = getattr(_mod, name)
+        globals()[name] = _val
+        return _val
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 __all__ = [
     "FileEventPayload",

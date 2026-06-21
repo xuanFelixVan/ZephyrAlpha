@@ -1,0 +1,67 @@
+{
+  "task_id": "DM-100164",
+  "source_file": "docs/01_policies_and_standards/meta/document_structure_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "ps_std_002_template_hierarchy": {
+      "title": "三层模板体系",
+      "rules": [
+        "L1 治理模板：蓝图+施工图模板，定义治理框架",
+        "L2 设计模板：接口+数据模型模板，定义设计规范",
+        "L3 基础模板：脚本+配置模板，定义基础结构",
+        "禁止：L3 模板包含治理约束",
+        "禁止：L1 模板包含实现细节"
+      ]
+    },
+    "ps_std_002_common_core": {
+      "title": "L1 通用核心6章",
+      "rules": [
+        "所有 L1 模板必须包含6个通用核心章节：frontmatter/概述/约束/流程/验证/变更",
+        "禁止：L1 模板缺少任一核心章节"
+      ]
+    },
+    "ps_std_002_subtypes": {
+      "title": "四种子类型",
+      "rules": [
+        "蓝图模板子类型：system/domain/module",
+        "施工图模板子类型：task/phase",
+        "策略模板子类型：policy/standard/guideline",
+        "标准模板子类型：naming/structure/process"
+      ]
+    },
+    "ps_std_002_frontmatter_dedup": {
+      "title": "frontmatter 去重",
+      "rules": [
+        "frontmatter 字段不得与正文内容重复",
+        "禁止：frontmatter 中出现描述性段落"
+      ]
+    },
+    "ps_std_002_prohibitions": {
+      "title": "文档模板禁止行为",
+      "rules": [
+        "禁止：模板缺少 version 字段",
+        "禁止：模板缺少 layer 字段",
+        "禁止：模板缺少 depends_on 字段",
+        "禁止：L2 模板包含 L1 治理约束",
+        "禁止：L3 模板包含 L2 设计规范",
+        "禁止：模板子类型不在规定枚举内",
+        "禁止：模板 frontmatter 与正文重复",
+        "禁止：模板变更不经审批",
+        "禁止：新建模板不注册",
+        "禁止：模板引用不存在的依赖",
+        "禁止：模板与蓝图体系不一致"
+      ]
+    }
+  },
+  "summary": {
+    "total_rules": 25,
+    "COVERED": 25,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "TRAE-042 enriched in current session: added ps_std_002_template_hierarchy(5 rules), ps_std_002_common_core(2 rules), ps_std_002_subtypes(4 rules), ps_std_002_frontmatter_dedup(2 rules), ps_std_002_prohibitions(11 rules)",
+    "All PS-STD-002 rules from MD now covered in YAML sections"
+  ]
+}

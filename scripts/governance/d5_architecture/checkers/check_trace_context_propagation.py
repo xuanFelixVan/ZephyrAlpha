@@ -18,7 +18,7 @@
 
 exit codes: 0=pass, 1=findings, 2=error
 
-SSoT: cross-layer-contracts.yaml → CTR-TRACE-001
+SSoT: cross_layer_contracts.yaml → CTR-TRACE-001
 """
 
 from __future__ import annotations
@@ -53,21 +53,21 @@ ensure_utf8_stdout()
 import argparse
 
 PRODUCER_LAYERS = {
-    "l00_data_source",
-    "l02_alpha_factor",
-    "l03_signal_generation",
-    "l05_portfolio_construction",
-    "l06_trade_execution",
+    "data",
+    "factor",
+    "signal",
+    "pf_core",
+    "ex_core",
 }
 
 CONSUMER_LAYERS = {
-    "l00_data_source",
-    "l02_alpha_factor",
-    "l03_signal_generation",
-    "l04_risk_management",
-    "l05_portfolio_construction",
-    "l06_trade_execution",
-    "l07_post_trade_analytics",
+    "data",
+    "factor",
+    "signal",
+    "risk",
+    "pf_core",
+    "ex_core",
+    "pf_core",
 }
 
 ALL_LAYERS = sorted(PRODUCER_LAYERS | CONSUMER_LAYERS)

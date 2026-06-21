@@ -1,3 +1,0 @@
-# 阈值变更审计日志 — validate_threshold_changes.py 自动追加
-# 格式: 每行一个 JSON 对象 (JSONL)
-# 字段: timestamp / user / old_value / new_value / threshold_path / reason

@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-002 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# blueprint: MOD-INF-002 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: M
@@ -8,20 +8,21 @@
 # AI 能力边界矩阵 — SSoT 定义文件
 #
 # 定义每个模块/目录的 AI 自治等级和操作边界。配合 @require_capability
-# 装饰器与 scripts/governance/d7_code/check_ai_capability_boundary.py（IMMUTABLE + git diff）使用。
+# 装饰器与 scripts/governance/d7_code/check_ai_capability_boundary.py (IMMUTABLE + git diff) 使用。
 #
 # 与 CBAC 的关系
-# ---------------
+# ______________-
 # 自动化写入 allow/deny 以 config/capabilities.yaml 为准。
 # 本文件的 IMMUTABLE 路径由 CapabilityGuard 在 CI 中对「变更文件」做额外约束；
 # FULL / EXTEND 表示意图分级，若与 capabilities.yaml 冲突，以 CBAC 为准。
 #
 # 自治等级
-# --------
+# _______-
 # - IMMUTABLE : AI 只读；变更须 Owner 审批。CI 对触及这些路径的 git diff 报错。
 # - EXTEND    : AI 可追加新内容，不可削弱已有约束（叙述意图，细则见专项规范）。
 # - FULL      : 与 capabilities.yaml write_src allow 对齐的主要业务工作区。
 
+module_id: MOD-INF-002
 matrix:
   version: "1.1"
   created: "2026-05-04"
@@ -35,18 +36,14 @@ matrix:
       rationale: "CTR 是承重墙，变动会影响所有下游消费者"
       enforcement: "CI: check_ai_capability_boundary.py"
 
-    - scope: "docs/02_enterprise_architecture/adr/**/*.md"
-      level: IMMUTABLE
-      description: "已冻结的 KB 决策记录文档"
-      rationale: "ADR 体系已冻结并迁移至 KB，不再新增独立 ADR 文件"
-      enforcement: "CI build-block"
+
 
     - scope: "docs/01_policies_and_standards/governance/ai/**/*.md"
       level: IMMUTABLE
       description: "AI 行为铁律 IRN-001~010"
       rationale: "铁律是系统最高安全约束"
 
-    - scope: "src/zephyr/gates/_registry.yaml"
+    - scope: "src/zephyr/governance/rule_enforcement/_registry.yaml"
       level: IMMUTABLE
       description: "门禁注册表（机器可读）"
       rationale: "注册表定义了所有安全门禁的入口"
@@ -66,48 +63,60 @@ matrix:
       description: "ContractEnforcer 单元测试"
       rationale: "可添加用例，不删除或弱化现有用例"
 
-    - scope: "src/zephyr/l02_alpha_factor/**/factor_registry*.py"
+    - scope: "src/zephyr/factor/**/factor_base*.py"
       level: EXTEND
-      description: "因子注册表（若存在此类文件）"
+      description: "因子基类（若存在此类文件）"
       rationale: "可注册新因子，不删除已有因子"
 
-    - scope: "src/zephyr/l02_alpha_factor/**/*.py"
+    - scope: "src/zephyr/factor/**/*.py"
       level: FULL
       description: "因子层 — CBAC allow"
-    - scope: "src/zephyr/l03_signal_generation/**/*.py"
+    - scope: "src/zephyr/signal_gen/**/*.py"
       level: FULL
-      description: "信号层 — CBAC allow"
-    - scope: "src/zephyr/l05_portfolio_construction/**/*.py"
+      description: "信号生成层 — CBAC allow"
+    - scope: "src/zephyr/signal_ashare/**/*.py"
+      level: FULL
+      description: "A股信号层 — CBAC allow"
+    - scope: "src/zephyr/signal_quality/**/*.py"
+      level: FULL
+      description: "信号质量层 — CBAC allow"
+    - scope: "src/zephyr/signal_strategy/**/*.py"
+      level: FULL
+      description: "信号策略层 — CBAC allow"
+    - scope: "src/zephyr/signal_synth/**/*.py"
+      level: FULL
+      description: "信号合成层 — CBAC allow"
+    - scope: "src/zephyr/pf_core/**/*.py"
       level: FULL
       description: "组合构建 — CBAC allow"
-    - scope: "src/zephyr/l08_human_ai_interface/**/*.py"
+    - scope: "src/zephyr/frontend/**/*.py"
       level: FULL
       description: "人机界面 — CBAC allow"
-    - scope: "src/zephyr/l09_research_innovation/**/*.py"
+    - scope: "src/zephyr/research/**/*.py"
       level: FULL
       description: "研究创新 — CBAC allow"
-    - scope: "src/zephyr/l11_ml_platform/**/*.py"
+    - scope: "src/zephyr/ml_train/**/*.py"
       level: FULL
       description: "ML 平台 — CBAC allow"
-    - scope: "src/zephyr/system_telemetry/**/*.py"
+    - scope: "src/zephyr/infrastructure/runtime_integration/system_telemetry/**/*.py"
       level: FULL
       description: "系统遥测层 — CBAC allow"
-    - scope: "src/zephyr/l13_experimentation/**/*.py"
+    - scope: "src/zephyr/simulation/**/*.py"
       level: FULL
       description: "实验层 — CBAC allow"
-    - scope: "src/zephyr/kb/activate.py"
+    - scope: "src/zephyr/data/knowledge_management/kb/activate.py"
       level: FULL
-    - scope: "src/zephyr/kb/analyze.py"
+    - scope: "src/zephyr/data/knowledge_management/kb/analyze.py"
       level: FULL
-    - scope: "src/zephyr/kb/batch_ingest.py"
+    - scope: "src/zephyr/data/storage/batch_ingest.py"
       level: FULL
-    - scope: "src/zephyr/kb/embedding_migrate.py"
+    - scope: "src/zephyr/data/knowledge_management/kb/embedding_migrate.py"
       level: FULL
-    - scope: "src/zephyr/kb/extract.py"
+    - scope: "src/zephyr/data/knowledge_management/kb/extract.py"
       level: FULL
-    - scope: "src/zephyr/kb/graph_validator.py"
+    - scope: "src/zephyr/data/knowledge_management/kb/graph_validator.py"
       level: FULL
-    - scope: "src/zephyr/kb/ingest.py"
+    - scope: "src/zephyr/data/storage/ingest.py"
       level: FULL
-    - scope: "src/zephyr/kb/triage.py"
+    - scope: "src/zephyr/data/storage/triage.py"
       level: FULL

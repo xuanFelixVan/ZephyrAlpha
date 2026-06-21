@@ -1,0 +1,57 @@
+{
+  "task_id": "DM-100086",
+  "source_file": "docs/01_policies_and_standards/governance/architecture/ctr_injection_rules_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_038_arch_ctr_injection.yaml",
+  "yaml_section": "gov_arc_ctr_001",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "CTR-INJ-001": {
+      "type": "mandatory+prohibition",
+      "content": "L00层产出MUST是NormalizedMarketData，价格MUST使用Decimal禁止float，时间MUST使用Timestamp禁止datetime.datetime裸用，标的MUST使用Instrument禁止裸str",
+      "status": "COVERED"
+    },
+    "CTR-INJ-002": {
+      "type": "mandatory",
+      "content": "L02层消费NormalizedMarketData产出FactorSignal，每个因子必须有唯一factor_id，因子版本变更时必须递增factor_version并同步FactorRegistry",
+      "status": "COVERED"
+    },
+    "CTR-INJ-003": {
+      "type": "mandatory",
+      "content": "L03层消费FactorSignal产出Order，信号合成时必须处理is_valid=False的因子，信号方向必须有明确置信度阈值",
+      "status": "COVERED"
+    },
+    "CTR-INJ-004": {
+      "type": "mandatory",
+      "content": "L04层消费FactorSignal产出RiskLimits，风控触发时必须有明确的熔断/降级策略",
+      "status": "COVERED"
+    },
+    "CTR-INJ-005": {
+      "type": "mandatory+prohibition",
+      "content": "L05层消费FactorSignal+RiskLimits产出Order，quantity使用Decimal禁止float，limit_price仅LIMIT单必填",
+      "status": "COVERED"
+    },
+    "CTR-INJ-006": {
+      "type": "mandatory",
+      "content": "L06层消费Order产出Fill+PositionSnapshot，Fill不可变(frozen=True)，Order.filled_quantity=ΣFill.filled_quantity，commission默认0在TCA分析时必须包含真实佣金",
+      "status": "COVERED"
+    },
+    "CTR-INJ-007": {
+      "type": "mandatory",
+      "content": "L07层消费Fill+PositionSnapshot，PnL归因必须区分alpha收益和beta收益，TCA分析维度含滑点/佣金/时机成本",
+      "status": "COVERED"
+    }
+  },
+  "summary": {
+    "total_rules": 7,
+    "COVERED": 7,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "原YAML section gov_arc_ctr_001仅有占位action'遵守GOV-ARC-CTR-001'，无具体规则",
+    "补充CTR-INJ-001~CTR-INJ-007到original_rules",
+    "补充7条conditions（7条trigger，按层域触发）",
+    "补充7条actions（7条mandatory，每层一条）",
+    "补充5条prohibitions（L00层4条+L05层1条禁止float）"
+  ]
+}

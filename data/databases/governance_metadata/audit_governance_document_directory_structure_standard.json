@@ -1,0 +1,27 @@
+{
+  "task_id": "DM-100100",
+  "source_file": "docs/01_policies_and_standards/governance/document/directory_structure_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "doc_002": {
+      "title": "目录结构规范 (GOV-DOC-002)",
+      "conditions_count": 7,
+      "actions_count": 3,
+      "prohibitions_count": 15
+    }
+  },
+  "summary": {
+    "total_rules": 25,
+    "COVERED": 25,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    {
+      "action": "YAML_UPDATE",
+      "target": "trae_028_doc_structure_naming.yaml section doc_002",
+      "detail": "从空壳更新为包含7个conditions+3个actions+15个prohibitions的完整规则提取:LPC双轨架构+governance/operational边界判据+防幻觉验证五步+禁止操作表"
+    }
+  ]
+}

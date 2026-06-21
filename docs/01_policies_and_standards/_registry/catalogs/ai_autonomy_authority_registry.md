@@ -1,8 +1,8 @@
----
+﻿---
 module_id: GOV-AI-001
 title: AI 自治权限登记表（全模块权限终表）
 doc_type: register
-status: active
+status: Active
 version: 1.3.0
 layer: cross_layer
 owner: ZephyrAlpha-Owner
@@ -20,8 +20,8 @@ supersedes:
     version: "1.2.2"
     reason: "文件从 governance/ai/ 迁移至 _registry/catalogs/（物理位置变更，内容不变）"
 depends_on:
-  - "governance/module/ai-behavior-iron-policy.md"
-  - "governance/module/module-admission-policy.md"
+  - {target: governance/module/ai-behavior-iron-policy.md, at: "$TODO", why: "TODO -- auto-converted"}
+  - {target: governance/module/module-admission-policy.md, at: "$TODO", why: "TODO -- auto-converted"}
 provenance:
   version: 1.0.0
   origin_drafts:
@@ -60,11 +60,11 @@ related_rationale:
 
 ---
 
-## 一、三层权限模型（来自 ADR-0010）
+## 一、三层权限模型（来自 KBG-0010）
 
 | 层级 | 语义 | AI 自主修改权限 | 修改流程 |
 |------|------|----------------|---------|
-| **Immutable Core** | 系统宪法层 / 风控核心 / 审计基础设施 | 禁止 AI 自主修改 | Owner 直接审批 + ADR/rationale-log 记录 |
+| **Immutable Core** | 系统宪法层 / 风控核心 / 审计基础设施 | 禁止 AI 自主修改 | Owner 直接审批 + KB 决策记录/rationale-log 记录 |
 | **Human-Gated** | 业务规则 / 阈值 / 评估标准 / 治理参数 | 修改前必须 Owner 审批 | request_change() + approve_change() + Provenance Chain |
 | **AI-Modifiable** | 算法实现 / 性能优化 / 日志级别 | AI 可自主修改 | 每次修改写入 Provenance Chain，可被回溯 |
 
@@ -76,32 +76,32 @@ related_rationale:
 
 | 模块 | 路径 | 权限 | 判定理由 | 审批要求 |
 |------|------|------|---------|---------|
-| L00 数据接入 | `src/zephyr/l00_data_source/` | Human-Gated | 数据源连接参数影响数据完整性 | Owner 审批连接配置 |
-| L01 基础设施 | `src/zephyr/l01_infrastructure/` | Human-Gated | 基础设施变更影响所有上层 | Owner 审批 |
-| L02 Alpha 因子 | `src/zephyr/l02_alpha_factor/` | AI-Modifiable | 因子算法可自主优化 | 写 Provenance |
-| L03 信号生成 | `src/zephyr/l03_signal_generation/` | AI-Modifiable | 信号生成算法 | 写 Provenance |
-| **L04 风险管理** | `src/zephyr/l04_risk_management/` | **Immutable Core** | 风控是量化系统不可变层 | Owner + ADR |
-| L05 组合构建 | `src/zephyr/l05_portfolio_construction/` | Human-Gated | 组合策略影响资金分配 | Owner 审批策略修改 |
-| L06 交易执行 | `src/zephyr/l06_trade_execution/` | Human-Gated | 执行参数影响成交质量 | Owner 审批 |
-| **L06 风控参数（限额）** | 同上 子模块 | **Immutable Core** | 限额参数不可 AI 改 | Owner + ADR |
-| L07 归因分析 | `src/zephyr/l07_post_trade_analytics/` | Human-Gated（**修正**：原 GLM 标 AI-Modifiable 偏松） | L7 风控关联 | Owner 审批 |
-| L08 人机界面 | `src/zephyr/l08_human_ai_interface/` | AI-Modifiable | UI 实现 | 写 Provenance |
-| L09 研究创新 | `src/zephyr/l09_research_innovation/` | AI-Modifiable | 实验性研究 | 写 Provenance |
-| **L10 合规** | `src/zephyr/l10_compliance/` | **Immutable Core** | 合规规则刚性 | Owner + ADR |
-| L11 ML 平台 | `src/zephyr/l11_ml_platform/` | AI-Modifiable | 模型训练实现 | 写 Provenance |
-| L12 系统遥测 | `src/zephyr/system_telemetry/` | AI-Modifiable | 日志实现 | 写 Provenance |
+| L00 数据接入 | `src/zephyr/data/` | Human-Gated | 数据源连接参数影响数据完整性 | Owner 审批连接配置 |
+| L01 基础设施 | `src/zephyr/infra_ops/` | Human-Gated | 基础设施变更影响所有上层 | Owner 审批 |
+| L02 Alpha 因子 | `src/zephyr/factor/` | AI-Modifiable | 因子算法可自主优化 | 写 Provenance |
+| L03 信号生成 | `src/zephyr/signal/` | AI-Modifiable | 信号生成算法 | 写 Provenance |
+| **L04 风险管理** | `src/zephyr/risk/` | **Immutable Core** | 风控是量化系统不可变层 | Owner + KB 决策记录 |
+| L05 组合构建 | `src/zephyr/pf_core/` | Human-Gated | 组合策略影响资金分配 | Owner 审批策略修改 |
+| L06 交易执行 | `src/zephyr/ex_core/` | Human-Gated | 执行参数影响成交质量 | Owner 审批 |
+| **L06 风控参数（限额）** | 同上 子模块 | **Immutable Core** | 限额参数不可 AI 改 | Owner + KB 决策记录 |
+| L07 归因分析 | `src/zephyr/reporting/` | Human-Gated（**修正**：原 GLM 标 AI-Modifiable 偏松） | L7 风控关联 | Owner 审批 |
+| L08 人机界面 | `src/zephyr/frontend/` | AI-Modifiable | UI 实现 | 写 Provenance |
+| L09 研究创新 | `src/zephyr/research/` | AI-Modifiable | 实验性研究 | 写 Provenance |
+| **L10 合规** | `src/zephyr/compliance/` | **Immutable Core** | 合规规则刚性 | Owner + KB 决策记录 |
+| L11 ML 平台 | `src/zephyr/ml_train/` | AI-Modifiable | 模型训练实现 | 写 Provenance |
+| L12 系统遥测 | `src/zephyr/system-telemetry/` | AI-Modifiable | 日志实现 | 写 Provenance |
 | L12 采样率 | 同上 子模块 | Human-Gated（**修正**） | 采样率影响审计完整性 | Owner 审批 |
-| L13 实验平台 | `src/zephyr/l13_experimentation/` | AI-Modifiable | 实验框架 | 写 Provenance |
+| L13 实验平台 | `src/zephyr/simulation/` | AI-Modifiable | 实验框架 | 写 Provenance |
 
 ### 2.2 平台能力层（B 轨横切）
 
 | 模块 | 路径 | 权限 | 判定理由 |
 |------|------|------|---------|
-| llm_security | `src/zephyr/llm_security/` | Immutable Core | 安全网关核心 |
-| vector_memory | `src/zephyr/vector_memory/` | Human-Gated | 检索阈值影响召回 |
-| context_engine | `src/zephyr/context_engine/` | Human-Gated | 上下文预算影响所有 AI 调用 |
+| llm-security | `src/zephyr/llm-security/` | Immutable Core | 安全网关核心 |
+| vector-memory | `src/zephyr/vector-memory/` | Human-Gated | 检索阈值影响召回 |
+| context-engine | `src/zephyr/context-engine/` | Human-Gated | 上下文预算影响所有 AI 调用 |
 | orchestrator | `src/zephyr/orchestrator/` | Human-Gated | 路由策略影响 Agent 行为 |
-| feedback_loop | `src/zephyr/feedback_loop/` | Human-Gated | 进化策略影响系统演化方向 |
+| feedback-loop | `src/zephyr/feedback-loop/` | Human-Gated | 进化策略影响系统演化方向 |
 | gates | `src/zephyr/gates/` | Immutable Core | 合规门禁不可由 AI 禁用 |
 | db | `src/zephyr/db/` | Human-Gated | Schema 修改需审批 |
 | mcp | `src/zephyr/mcp/` | Human-Gated | 协议版本锁定 |
@@ -112,17 +112,17 @@ related_rationale:
 | 模块 | 组件 | 权限 | 判定理由 |
 |------|------|------|---------|
 | **M1 上下文引擎** | context_budget_tracker / prompt_registry | Human-Gated | 预算变更影响所有 AI 调用 |
-| **M2 记忆系统** | vector_memory / decisions store | Human-Gated | 检索影响 Agent 决策质量 |
+| **M2 记忆系统** | vector-memory / decisions store | Human-Gated | 检索影响 Agent 决策质量 |
 | **M2 kb 基础设施** | kb/kb_repo.py / kb/chromadb_init.py | Human-Gated | 存储层与 Schema 影响记忆完整性 |
 | **M2 kb 加工链** | kb/（ingest / extract / analyze / triage / activate / batch_ingest / graph_validator / embedding_migrate） | AI-Modifiable | 数据加工流水线可 AI 优化 |
 | **M2 Provenance Chain** | provenance_logger.py | **Immutable Core** | 审计记录不可被 AI 修改 |
 | **M3 Agent 编排** | orchestrator / AgentRouter | Human-Gated | 路由策略 |
 | **M4-A 反馈闭环 决策引擎** | evolution_engine.py | Human-Gated | 评估标准影响所有质量门禁 |
 | **M4-B 自动修复执行器** | auto_fixer.py | **Immutable Core**（**修正**：原 Human-Gated 偏低） | 执行器直接改代码，核心逻辑不可 AI 自主决策 |
-| **M5 LLM 安全网关** | llm_security / input_sanitizer | Immutable Core | 安全网关 |
+| **M5 LLM 安全网关** | llm-security / input_sanitizer | Immutable Core | 安全网关 |
 | **M5 Provenance Chain** | （集成 M2）| Immutable Core | 审计记录 |
 | **M6 Session 接力** | session_carryover.py | Human-Gated | 必须含 agent_role + task_id |
-| **M7 漂移检测算法** | drift_detector.py | AI-Modifiable | 算法可优化 |
+| **M7 漂移检测算法** | drift-detector.py | AI-Modifiable | 算法可优化 |
 | **M7 漂移检测阈值** | drift_thresholds.yaml | Human-Gated（**修正**） | 阈值影响审计 |
 | **M8 代码健康度验证器** | code_health_validator.py | AI-Modifiable | 评分算法可 AI 优化 |
 | **M8 代码健康度阈值** | health_thresholds.yaml | Human-Gated | 阈值变更需审批 |
@@ -188,16 +188,16 @@ related_rationale:
 
 | 模块 | 路径 | 权限 | 判定理由 | 审批要求 |
 |------|------|------|---------|---------|
-| RI-01 ContextEngineRuntime | `src/zephyr/context_engine/runtime_integration.py` | Human-Gated | 上下文预算影响所有 AI 调用 | Owner 审批 |
+| RI-01 ContextEngineRuntime | `src/zephyr/context-engine/runtime_integration.py` | Human-Gated | 上下文预算影响所有 AI 调用 | Owner 审批 |
 | **RI-02 UnifiedMemoryAPI** | `src/zephyr/kb/unified_memory_api.py` | **Human-Gated**（**Wave 1 修正**：原草稿 AI-Modifiable 偏松）| 检索阈值影响 Agent 决策质量 | Owner 审批 |
 | **RI-03 FileWatchRouter** | `src/zephyr/orchestrator/trigger_router.py` | **Human-Gated**（**Wave 1 修正**：原草稿 AI-Modifiable 偏松）| 路由策略影响 Agent 行为 | Owner 审批 |
-| RI-04 FeedbackEngine M4-A decide | `src/zephyr/feedback_loop/decision_engine.py` | Human-Gated | 评估标准影响所有质量门禁 | Owner 审批 |
-| **RI-04 FeedbackEngine M4-B auto_repair** | `src/zephyr/feedback_loop/auto_repair.py` | **Immutable Core**（Wave 0 R76 已锁，Wave 1 维持）| Self-Modification 递归风险 | Owner + R-XXX |
-| RI-05 ProcessSandbox（L2a）| `src/zephyr/llm_security/process_sandbox.py` | Immutable Core | 安全核心 | Owner + R-XXX |
-| RI-05 OutputValidator（L3 schema）| `src/zephyr/llm_security/output_validator.py` | Human-Gated | schema 可演进 | Owner 审批 |
-| RI-05 EditorConfigGate（CL-021）| `src/zephyr/llm_security/editor_config_gate.py` | Immutable Core | 编码规则核心 | Owner + R-XXX |
+| RI-04 FeedbackEngine M4-A decide | `src/zephyr/feedback-loop/decision_engine.py` | Human-Gated | 评估标准影响所有质量门禁 | Owner 审批 |
+| **RI-04 FeedbackEngine M4-B auto_repair** | `src/zephyr/feedback-loop/auto_repair.py` | **Immutable Core**（Wave 0 R76 已锁，Wave 1 维持）| Self-Modification 递归风险 | Owner + R-XXX |
+| RI-05 ProcessSandbox（L2a）| `src/zephyr/llm-security/process_sandbox.py` | Immutable Core | 安全核心 | Owner + R-XXX |
+| RI-05 OutputValidator（L3 schema）| `src/zephyr/llm-security/output_validator.py` | Human-Gated | schema 可演进 | Owner 审批 |
+| RI-05 EditorConfigGate（CL-021）| `src/zephyr/llm-security/editor_config_gate.py` | Immutable Core | 编码规则核心 | Owner + R-XXX |
 | RI-06 HandoffAutoLoader | `src/zephyr/mcp/handoff_auto_loader.py` | Human-Gated | Session 状态管理 | Owner 审批 |
-| **RI-07 DriftDetector 算法** | `src/zephyr/gates/drift_detector.py` | AI-Modifiable（**Wave 1 修正**：原整体 Human-Gated 偏紧，需拆分） | 算法可优化 | 写 Provenance |
+| **RI-07 DriftDetector 算法** | `src/zephyr/gates/drift-detector.py` | AI-Modifiable（**Wave 1 修正**：原整体 Human-Gated 偏紧，需拆分） | 算法可优化 | 写 Provenance |
 | **RI-07 DriftDetector 阈值** | `config/drift_thresholds.yaml` | Human-Gated（**Wave 1 修正**） | 阈值影响审计 | Owner 审批 |
 
 ### 2.10 三件套新组件（CBAC / CBG / AlignmentMonitor，**Wave 1 R83/R84 增补**）
@@ -208,15 +208,15 @@ related_rationale:
 | CapabilityChecker | `src/zephyr/shared/capability.py` | Immutable Core | 校验逻辑核心 | Owner + R-XXX |
 | CircuitBreakerGateway | `src/zephyr/gates/circuit_breaker.py` | Immutable Core | 熔断不可由 AI 禁用 | Owner + R-XXX |
 | circuit_breaker_state 表 | `data/circuit_breaker.db` | Immutable Core（追加专用） | 状态历史不可改写 | Owner |
-| AlignmentMonitor| `src/zephyr/feedback_loop/alignment_monitor.py` | Human-Gated | 评估算法可演进，阈值需审批 | Owner 审批 |
-| L2b 沙箱 ACL（ADR-0018）| 项目外 OS 级 | Immutable Core | OS 级 ACL 不由 RI 改（**Wave 1 C-03 裁决**）| Owner |
+| AlignmentMonitor| `src/zephyr/feedback-loop/alignment_monitor.py` | Human-Gated | 评估算法可演进，阈值需审批 | Owner 审批 |
+| L2b 沙箱 ACL（KBG-0018）| 项目外 OS 级 | Immutable Core | OS 级 ACL 不由 RI 改（**Wave 1 C-03 裁决**）| Owner |
 
 ### 2.11 基础设施缺口组件（CL-017~021，**Wave 1 R83/R84 增补**）
 
 | 组件 | 路径 | 权限 | 判定理由 |
 |------|------|------|---------|
-| CL-017 system_snapshot() | `src/zephyr/context_engine/system_snapshot.py` | Human-Gated | snapshot 输出影响 AI 决策起点 |
-| CL-018 DocCompressor | `src/zephyr/context_engine/doc_compressor.py` | Human-Gated | 压缩规则需审批 |
+| CL-017 system_snapshot() | `src/zephyr/context-engine/system_snapshot.py` | Human-Gated | snapshot 输出影响 AI 决策起点 |
+| CL-018 DocCompressor | `src/zephyr/context-engine/doc_compressor.py` | Human-Gated | 压缩规则需审批 |
 | **CL-018 CompressionPolicy YAML** | `config/compression/policy.yaml` | **Immutable Core**（**Wave 1 V-14 兜底**：防 Self-Modification）| 规则不可由 AI 改 |
 | CL-019 ai-onboarding-guide.md 核心思想章 | `docs/01_policies_and_standards/ai-onboarding-guide.md` | Human-Gated | 文档可演进 |
 | CL-020 master-registry-index| `docs/01_policies_and_standards/master-registry-index.md` | Human-Gated | 注册表 schema 演进 |
@@ -233,7 +233,7 @@ related_rationale:
 | capacity-assurance 施工图 | Human-Gated（**修正**：原 Immutable Core） | 施工图可演进非"宪法" |
 | handoff-protocol.md | Immutable Core | Session 交接协议宪法 |
 | ai-autonomy-authority-registry.md（本文件）| Immutable Core | 权限注册表，自身变更需 Owner |
-| directory-structure-standard.md | Human-Gated | 可演进 |
+| trae_028_doc_structure_naming.yaml doc_002 | Human-Gated | 可演进 |
 | architecture-rationale-log.md | Immutable Core（追加专用） | 历史记录不可改写 |
 
 ---
@@ -271,8 +271,8 @@ related_rationale:
 
 ## 五、与已有规范的关系
 
-- ADR-0010：定义三层权限语义（本表是其执行层）
-- ADR-0022：LPC 双轨治理
+- KBG-0010：定义三层权限语义（本表是其执行层）
+- KBG-0022：LPC 双轨治理
 
 ---
 
@@ -281,7 +281,7 @@ related_rationale:
 - v1.0.0（2026-04-27）：Wave 0 终审兜底缺口 V-11 产出，覆盖全 60+ 模块/组件，修正 13 处权限错误
 - **v1.1.0（2026-04-27 Wave 1 R84）**：增补 §2.9 RI-01~07 运行时集成模块（11 行）+ §2.10 CBAC/CBG/AlignmentMonitor 三件套（6 行）+ §2.11 CL-017~021 基础设施缺口组件（9 行）；修正 4 处 Wave 1 草稿权限误标（RI-02 偏松→Human-Gated / RI-03 偏松→Human-Gated / RI-04 拆分缺失→M4-A/M4-B 分层 / RI-07 偏紧→算法/阈值拆分）；引入 Wave 1 兜底 V-14/V-15/V-16 三个治理组件权限。frontmatter 同步追加 arbitration_wave1 块（Claude-Opus-4.7 / R-84）。
 - **v1.2.0（2026-04-30 beta）**：新增 §七 dev/prod 双模式权限表，区分开发环境与生产环境的 AI 自治权限差异。
-- **v1.2.1（2026-05-01 Phase 5）**：date/valid_from→2026-05-01；depends_on 补 ADR-0010（三层权限语义来源）。
+- **v1.2.1（2026-05-01 Phase 5）**：date/valid_from→2026-05-01；depends_on 补 KBG-0010（三层权限语义来源）。
 - **v1.2.2（2026-05-02）**：修复 F-A5 注册表内部冲突——kb 模块在 §2.2（AI-Modifiable）与 §2.3 M2（Human-Gated）权限矛盾。§2.2 删除 kb 行（过渡期知识库实现 → 已收敛至 §2.3 M2）；§2.3 M2 按子模块拆分 kb（基础设施 Human-Gated / 加工链 AI-Modifiable）；§4.3 新增路径唯一性约束（对标 ITIL SACM CMDB corruption → 同一路径双重登记 = 腐败）。
 
 ---

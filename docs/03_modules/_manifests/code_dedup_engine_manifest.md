@@ -1,0 +1,10 @@
+---
+blueprint_id: DOM-GOV-001
+title: Code Dedup Engine.Manifest
+module_id: MOD-049---
+
+# code_dedup_engine/ 文件清单（自动生成 2026-05-09）
+
+总计: 1 个文件
+
+- __init__.py

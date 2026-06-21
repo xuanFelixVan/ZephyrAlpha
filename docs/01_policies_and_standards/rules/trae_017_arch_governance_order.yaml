@@ -1,0 +1,94 @@
+rule_id: TRAE-017
+title: 架构约束-治理顺序
+aliases:
+- ARCH-025
+- ARCH-026
+- ARCH-027
+layer: L1
+severity: error
+scope: architecture_governance_order
+domain: TRAE
+triggers:
+- operation: architecture_governance_order
+sections:
+  arch_025:
+    section_type: rule
+    title: 治理按因果链执行(不按数量)
+    original_rules:
+    - ARCH-025
+    conditions:
+    - type: constraint
+      check: 执行治理施工时
+      pass: 按因果链从根到叶执行（架构决定→结构重构→元数据对齐→质量补全）
+      fail: 按数量从大到小执行（跳过因果链）
+    actions:
+    - type: mandatory
+      step: 治理项按因果链排序执行——第1层架构决定→第2层结构重构→第3层元数据对齐→第4层质量补全；前层决定后层问题是否还需做
+    prohibitions:
+    - 按数量从大到小治理（前面的决定可能让后面的问题消失，白做）
+    - 跳过架构决定直接做结构重构
+  arch_026:
+    section_type: rule
+    title: 先架构后测试(重构改代码测试白写)
+    original_rules:
+    - ARCH-026
+    conditions:
+    - type: constraint
+      check: 规划治理施工顺序时
+      pass: 测试覆盖排在架构重构之后
+      fail: 先补测试再重构（重构改代码，测试白写）
+    actions:
+    - type: mandatory
+      step: 治理顺序中测试覆盖必须排在最后——前面重构会改代码，先重构再写测试
+    prohibitions:
+    - 先补测试再重构（重构改代码导致测试白写）
+    - 在架构未稳定时编写测试
+  arch_027:
+    section_type: rule
+    title: 价值判定原则(零消费者≠无价值)
+    original_rules:
+    - ARCH-027
+    conditions:
+    - type: constraint
+      check: 判定模块是否该删除/移动时
+      pass: 按功能价值判定（独立功能价值/客观原因/重建成本任一为YES则保留）
+      fail: 按"零消费者"判定删除（误删有价值的安全/治理组件）
+    actions:
+    - type: mandatory
+      step: 删除前执行三步审判——3a独立功能价值/3b客观原因(管线未接通)/3c重建成本；ANY为YES则保留并接通，不删除
+    prohibitions:
+    - 用"零消费者"判定删除模块（误删安全/治理组件）
+    - 删除前未执行三步审判
+references:
+  rule_ids:
+  - TRAE-016
+  scripts:
+  - scripts/governance/generate_project_depgraph.py
+  - scripts/governance/diagnose_depgraph.py
+  - scripts/governance/generate_project_path_tree.py
+  - scripts/governance/audit_registration.py
+  modules: []
+  blueprints: []
+enforcement:
+  type: code
+  executors:
+  - scripts/governance/generate_project_depgraph.py
+  - scripts/governance/diagnose_depgraph.py
+  - scripts/governance/generate_project_path_tree.py
+  - scripts/governance/audit_registration.py
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+  change_history:
+  - version: "1.1.0"
+    date: "2026-06-19"
+    change: "RQ审查修复——补充3个section的conditions/prohibitions实际内容(RQ-08)；补充references.scripts和enforcement.executors实际脚本(RQ-04/RQ-06)；更新provenance哈希(RQ-09)；新增change_history(RQ-14)"
+  - version: "1.0.0"
+    date: "2026-06-13"
+    change: "初始提取——从onboarding_detail.md §十五和project_rules.md RULE-TEN提取ARCH-025~027治理顺序规则"
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

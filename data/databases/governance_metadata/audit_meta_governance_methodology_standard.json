@@ -1,0 +1,129 @@
+{
+  "task_id": "DM-100164",
+  "source_file": "docs/01_policies_and_standards/meta/governance_methodology_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml, trae_025_methodology_decision.yaml, trae_026_methodology_quality.yaml, trae_027_methodology_collaboration.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "MTH-001": {
+      "title": "标准先行原则",
+      "rules": [
+        "四步流程：1.先写标准 2.按标准实现 3.验证合规 4.迭代改进",
+        "禁止：先实现后补标准"
+      ]
+    },
+    "MTH-002": {
+      "title": "架构上下文自检",
+      "rules": [
+        "任何变更前必须检查架构上下文：依赖图/蓝图归属/导入路径",
+        "禁止：不检查架构上下文就执行变更"
+      ]
+    },
+    "MTH-003": {
+      "title": "目标优先原则",
+      "rules": [
+        "先定义目标再选择手段",
+        "禁止：手段驱动目标（先选技术再定需求）",
+        "禁止：跳过目标定义直接实施",
+        "禁止：目标模糊不可验证"
+      ]
+    },
+    "MTH-004": {
+      "title": "对标=架构标准非机构冗余",
+      "rules": [
+        "对标是提取架构标准，不是复制机构冗余",
+        "对标结果必须转化为项目规则，不是保留外部原文"
+      ]
+    },
+    "MTH-005": {
+      "title": "模块天花板与自治预留",
+      "rules": [
+        "每个模块有功能天花板，超过天花板必须拆分",
+        "模块自治预留：每个模块预留独立运行能力"
+      ]
+    },
+    "MTH-006": {
+      "title": "根源分析原则",
+      "rules": [
+        "追问到底直到找到根因",
+        "修复根因+修复路上发现的所有中间问题",
+        "禁止：只治标不治根",
+        "禁止：忽略中间问题",
+        "禁止：同类问题修复后仍重现"
+      ]
+    },
+    "MTH-007": {
+      "title": "决策质量四问",
+      "rules": [
+        "四问：1.是否有先例 2.是否有替代方案 3.后果是否可逆 4.是否影响他人",
+        "反模式1：无先例不搜索",
+        "反模式2：不考虑替代方案",
+        "反模式3：不评估可逆性"
+      ]
+    },
+    "MTH-008": {
+      "title": "SSoT冲突裁决协议",
+      "rules": [
+        "冲突裁决推导链：stability→layer→scope→Owner",
+        "禁止：跳过推导链直接裁决",
+        "禁止：低层覆盖高层（L2不能覆盖L0）",
+        "禁止：scope=local覆盖scope=global"
+      ]
+    },
+    "MTH-009": {
+      "title": "补漏与终止双检",
+      "rules": [
+        "补漏检查：变更后检查是否引入新问题",
+        "终止检查：变更是否达到终止条件",
+        "两项检查必须同时通过"
+      ]
+    },
+    "MTH-010": {
+      "title": "规则体系架构审查原则",
+      "rules": [
+        "审查规则体系时必须检查：完整性/一致性/无冗余/可执行性",
+        "禁止：规则与实现不一致",
+        "禁止：规则无法机械判定",
+        "禁止：规则之间存在矛盾",
+        "禁止：规则缺少触发条件"
+      ]
+    },
+    "MTH-011": {
+      "title": "内容冗余审计三分类法",
+      "rules": [
+        "三分类：1.必要冗余（安全防护）2.可优化冗余 3.必须删除冗余",
+        "禁止：将必要冗余标记为可删除",
+        "禁止：不分类直接删除"
+      ]
+    },
+    "MTH-012": {
+      "title": "涌现式设计原则",
+      "rules": [
+        "设计从实践中涌现，不从理论中推导",
+        "先有3个以上实例再抽象模式"
+      ]
+    },
+    "MTH-013": {
+      "title": "路径架构合规创建原则",
+      "rules": [
+        "创建新路径必须符合架构约束",
+        "禁止：路径与已有路径功能重叠",
+        "禁止：路径跨越多个域边界",
+        "禁止：路径不注册到路径树",
+        "禁止：路径变更不更新依赖图"
+      ]
+    }
+  },
+  "summary": {
+    "total_rules": 37,
+    "COVERED": 37,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "TRAE-024 enriched in current session: added mth_001(2 rules), mth_002(2 rules), mth_003(4 rules), mth_006(5 rules), general_principles(1 rule), clean_project(4 rules) = 18 rules",
+    "TRAE-025 created in current session: added mth_004(2 rules), mth_005(2 rules), mth_007(4 rules), mth_008(4 rules) = 12 rules",
+    "TRAE-026 created in current session: added mth_009(3 rules), mth_010(5 rules), mth_011(3 rules) = 11 rules (note: some rules overlap with MTH-006 prohibitions)",
+    "TRAE-027 created in current session: added mth_012(2 rules), mth_013(5 rules) = 7 rules",
+    "Total unique rules across 4 YAML files: 37 (after dedup of overlapping prohibitions)"
+  ]
+}

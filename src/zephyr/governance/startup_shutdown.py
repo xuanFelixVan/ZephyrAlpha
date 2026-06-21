@@ -1,22 +1,14 @@
-# [BLUEPRINT] DOM-GOV-001 | 03_modules/_domain-governance/blueprint.md | §
-
-# [MODULE] zephyr.governance.startup_shutdown
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
-# [CONSUMERS]
-
-# [STABILITY] evolving
-
-# [SAFETY] L
-
-# [AI_AUTONOMY] ai_modifiable
-
-# [ERROR_CONTRACT]
-
-# [TESTS]
+# [A_module] module_id=MOD-RES_startup_shutdown | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
+# [MODULE] zephyr.infrastructure.rollback.startup_shutdown
+# [INVARIANTS] Git-native回滚;SQLite Dump Checkpoint;自动回滚
+# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md;src/zephyr/rollback/__init__.py
+# [CONSUMERS] MOD-INF-020;MOD-INF-007;MOD-INF-022
+# [STABILITY] stable
+# [SAFETY] H
+# [AI_AUTONOMY] human_gated
+# [ERROR_CONTRACT] RollbackError;CheckpointError;VerificationError
+# [TESTS] tests/test_rollback/
 
 from __future__ import annotations
 

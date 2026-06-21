@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0168 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-325 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.integration.test_evolution_e2e
 # [STABILITY] evolving
 # [SAFETY] L
@@ -21,13 +22,13 @@ import pytest
 
 pytestmark = pytest.mark.e2e
 
-from zephyr.feedback_loop.evolution_engine import (
+from zephyr.ops.evolution_engine import (
     EvolutionEngine,
     EvolutionSignal,
     FeedbackLayer,
     evolve,
 )
-from zephyr.feedback_loop.feedback_collector import FeedbackCollector
+from zephyr.ops.feedback_collector import FeedbackCollector
 
 
 def _fixed_now() -> datetime:

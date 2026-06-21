@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1938 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-555 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.runtime.test_runtime_core
 # [STABILITY] evolving
 # [SAFETY] L
@@ -12,7 +13,7 @@ import threading
 import time
 from unittest.mock import MagicMock, patch
 
-from zephyr.runtime.resource_optimization import (
+from zephyr.trading.resource_optimization import (
     CircuitBreaker,
     CircuitBreakerState,
     PressureLevel,
@@ -169,30 +170,30 @@ class TestResourceOptimizationEngine:
 
 
 class TestAutoRuntimeCoreInit:
-    @patch("zephyr.runtime.auto_runtime_core.AiAuditLogger")
-    @patch("zephyr.runtime.auto_runtime_core.CapabilityRegistry")
-    @patch("zephyr.runtime.auto_runtime_core.NightShiftQueue")
-    @patch("zephyr.runtime.auto_runtime_core.StopGate")
-    @patch("zephyr.runtime.auto_runtime_core.DreamCycle")
-    @patch("zephyr.runtime.auto_runtime_core.FeedbackLoop")
-    @patch("zephyr.runtime.auto_runtime_core.HealthMonitor")
-    @patch("zephyr.runtime.auto_runtime_core.IntegrationRegistry")
-    @patch("zephyr.runtime.auto_runtime_core.WorkOrchestrator")
-    @patch("zephyr.runtime.auto_runtime_core.CircadianScheduler")
-    @patch("zephyr.runtime.auto_runtime_core.Finalizer")
-    @patch("zephyr.runtime.auto_runtime_core.LifecycleManager")
-    @patch("zephyr.runtime.auto_runtime_core.ModuleOnboardingScanner")
-    @patch("zephyr.runtime.auto_runtime_core.AutoIntegrator")
-    @patch("zephyr.runtime.auto_runtime_core.OrphanDetector")
-    @patch("zephyr.runtime.auto_runtime_core.StatusDashboard")
-    @patch("zephyr.runtime.auto_runtime_core.RuntimeConfig")
+    @patch("zephyr.trading.auto_runtime_core.AiAuditLogger")
+    @patch("zephyr.trading.auto_runtime_core.CapabilityRegistry")
+    @patch("zephyr.trading.auto_runtime_core.NightShiftQueue")
+    @patch("zephyr.trading.auto_runtime_core.StopGate")
+    @patch("zephyr.trading.auto_runtime_core.DreamCycle")
+    @patch("zephyr.trading.auto_runtime_core.FeedbackLoop")
+    @patch("zephyr.trading.auto_runtime_core.HealthMonitor")
+    @patch("zephyr.trading.auto_runtime_core.IntegrationRegistry")
+    @patch("zephyr.trading.auto_runtime_core.WorkOrchestrator")
+    @patch("zephyr.trading.auto_runtime_core.CircadianScheduler")
+    @patch("zephyr.trading.auto_runtime_core.Finalizer")
+    @patch("zephyr.trading.auto_runtime_core.LifecycleManager")
+    @patch("zephyr.trading.auto_runtime_core.ModuleOnboardingScanner")
+    @patch("zephyr.trading.auto_runtime_core.AutoIntegrator")
+    @patch("zephyr.trading.auto_runtime_core.OrphanDetector")
+    @patch("zephyr.trading.auto_runtime_core.StatusDashboard")
+    @patch("zephyr.trading.auto_runtime_core.RuntimeConfig")
     def test_init_creates_components(
         self, mock_cfg_cls, mock_dashboard, mock_orphan, mock_auto_int,
         mock_scanner, mock_lifecycle, mock_finalizer, mock_circadian,
         mock_work_orch, mock_int_reg, mock_health, mock_feedback,
         mock_dream, mock_stop, mock_night, mock_cap_reg, mock_audit,
     ):
-        from zephyr.runtime.auto_runtime_core import AutoRuntimeCore
+        from zephyr.trading.auto_runtime_core import AutoRuntimeCore
         mock_cfg = MagicMock()
         mock_cfg.audit_log_dir = "/tmp/test_audit"
         mock_cfg.capability_card_dir = MagicMock()
@@ -216,30 +217,30 @@ class TestAutoRuntimeCoreInit:
         assert core.work_orchestrator is not None
         assert core.stop_gate is not None
 
-    @patch("zephyr.runtime.auto_runtime_core.AiAuditLogger")
-    @patch("zephyr.runtime.auto_runtime_core.CapabilityRegistry")
-    @patch("zephyr.runtime.auto_runtime_core.NightShiftQueue")
-    @patch("zephyr.runtime.auto_runtime_core.StopGate")
-    @patch("zephyr.runtime.auto_runtime_core.DreamCycle")
-    @patch("zephyr.runtime.auto_runtime_core.FeedbackLoop")
-    @patch("zephyr.runtime.auto_runtime_core.HealthMonitor")
-    @patch("zephyr.runtime.auto_runtime_core.IntegrationRegistry")
-    @patch("zephyr.runtime.auto_runtime_core.WorkOrchestrator")
-    @patch("zephyr.runtime.auto_runtime_core.CircadianScheduler")
-    @patch("zephyr.runtime.auto_runtime_core.Finalizer")
-    @patch("zephyr.runtime.auto_runtime_core.LifecycleManager")
-    @patch("zephyr.runtime.auto_runtime_core.ModuleOnboardingScanner")
-    @patch("zephyr.runtime.auto_runtime_core.AutoIntegrator")
-    @patch("zephyr.runtime.auto_runtime_core.OrphanDetector")
-    @patch("zephyr.runtime.auto_runtime_core.StatusDashboard")
-    @patch("zephyr.runtime.auto_runtime_core.RuntimeConfig")
+    @patch("zephyr.trading.auto_runtime_core.AiAuditLogger")
+    @patch("zephyr.trading.auto_runtime_core.CapabilityRegistry")
+    @patch("zephyr.trading.auto_runtime_core.NightShiftQueue")
+    @patch("zephyr.trading.auto_runtime_core.StopGate")
+    @patch("zephyr.trading.auto_runtime_core.DreamCycle")
+    @patch("zephyr.trading.auto_runtime_core.FeedbackLoop")
+    @patch("zephyr.trading.auto_runtime_core.HealthMonitor")
+    @patch("zephyr.trading.auto_runtime_core.IntegrationRegistry")
+    @patch("zephyr.trading.auto_runtime_core.WorkOrchestrator")
+    @patch("zephyr.trading.auto_runtime_core.CircadianScheduler")
+    @patch("zephyr.trading.auto_runtime_core.Finalizer")
+    @patch("zephyr.trading.auto_runtime_core.LifecycleManager")
+    @patch("zephyr.trading.auto_runtime_core.ModuleOnboardingScanner")
+    @patch("zephyr.trading.auto_runtime_core.AutoIntegrator")
+    @patch("zephyr.trading.auto_runtime_core.OrphanDetector")
+    @patch("zephyr.trading.auto_runtime_core.StatusDashboard")
+    @patch("zephyr.trading.auto_runtime_core.RuntimeConfig")
     def test_learner_summary_when_not_initialized(
         self, mock_cfg_cls, mock_dashboard, mock_orphan, mock_auto_int,
         mock_scanner, mock_lifecycle, mock_finalizer, mock_circadian,
         mock_work_orch, mock_int_reg, mock_health, mock_feedback,
         mock_dream, mock_stop, mock_night, mock_cap_reg, mock_audit,
     ):
-        from zephyr.runtime.auto_runtime_core import AutoRuntimeCore
+        from zephyr.trading.auto_runtime_core import AutoRuntimeCore
         mock_cfg = MagicMock()
         mock_cfg.audit_log_dir = "/tmp/test_audit"
         mock_cfg.capability_card_dir = MagicMock()
@@ -260,30 +261,30 @@ class TestAutoRuntimeCoreInit:
         summary = core.learner_summary()
         assert "not initialized" in summary
 
-    @patch("zephyr.runtime.auto_runtime_core.AiAuditLogger")
-    @patch("zephyr.runtime.auto_runtime_core.CapabilityRegistry")
-    @patch("zephyr.runtime.auto_runtime_core.NightShiftQueue")
-    @patch("zephyr.runtime.auto_runtime_core.StopGate")
-    @patch("zephyr.runtime.auto_runtime_core.DreamCycle")
-    @patch("zephyr.runtime.auto_runtime_core.FeedbackLoop")
-    @patch("zephyr.runtime.auto_runtime_core.HealthMonitor")
-    @patch("zephyr.runtime.auto_runtime_core.IntegrationRegistry")
-    @patch("zephyr.runtime.auto_runtime_core.WorkOrchestrator")
-    @patch("zephyr.runtime.auto_runtime_core.CircadianScheduler")
-    @patch("zephyr.runtime.auto_runtime_core.Finalizer")
-    @patch("zephyr.runtime.auto_runtime_core.LifecycleManager")
-    @patch("zephyr.runtime.auto_runtime_core.ModuleOnboardingScanner")
-    @patch("zephyr.runtime.auto_runtime_core.AutoIntegrator")
-    @patch("zephyr.runtime.auto_runtime_core.OrphanDetector")
-    @patch("zephyr.runtime.auto_runtime_core.StatusDashboard")
-    @patch("zephyr.runtime.auto_runtime_core.RuntimeConfig")
+    @patch("zephyr.trading.auto_runtime_core.AiAuditLogger")
+    @patch("zephyr.trading.auto_runtime_core.CapabilityRegistry")
+    @patch("zephyr.trading.auto_runtime_core.NightShiftQueue")
+    @patch("zephyr.trading.auto_runtime_core.StopGate")
+    @patch("zephyr.trading.auto_runtime_core.DreamCycle")
+    @patch("zephyr.trading.auto_runtime_core.FeedbackLoop")
+    @patch("zephyr.trading.auto_runtime_core.HealthMonitor")
+    @patch("zephyr.trading.auto_runtime_core.IntegrationRegistry")
+    @patch("zephyr.trading.auto_runtime_core.WorkOrchestrator")
+    @patch("zephyr.trading.auto_runtime_core.CircadianScheduler")
+    @patch("zephyr.trading.auto_runtime_core.Finalizer")
+    @patch("zephyr.trading.auto_runtime_core.LifecycleManager")
+    @patch("zephyr.trading.auto_runtime_core.ModuleOnboardingScanner")
+    @patch("zephyr.trading.auto_runtime_core.AutoIntegrator")
+    @patch("zephyr.trading.auto_runtime_core.OrphanDetector")
+    @patch("zephyr.trading.auto_runtime_core.StatusDashboard")
+    @patch("zephyr.trading.auto_runtime_core.RuntimeConfig")
     def test_get_task_model_recommendations_empty(
         self, mock_cfg_cls, mock_dashboard, mock_orphan, mock_auto_int,
         mock_scanner, mock_lifecycle, mock_finalizer, mock_circadian,
         mock_work_orch, mock_int_reg, mock_health, mock_feedback,
         mock_dream, mock_stop, mock_night, mock_cap_reg, mock_audit,
     ):
-        from zephyr.runtime.auto_runtime_core import AutoRuntimeCore
+        from zephyr.trading.auto_runtime_core import AutoRuntimeCore
         mock_cfg = MagicMock()
         mock_cfg.audit_log_dir = "/tmp/test_audit"
         mock_cfg.capability_card_dir = MagicMock()

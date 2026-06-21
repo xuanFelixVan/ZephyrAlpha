@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0017 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-212 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_rbac_adversarial
 # [STABILITY] evolving
 # [SAFETY] L
@@ -21,18 +22,18 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.agent_rbac.identity import (
+from zephyr.security.access_control.identity import (
     AgentIdentity,
     AgentRole,
     IDESource,
     MaturityLevel,
 )
-from zephyr.agent_rbac.permission_guard import (
+from zephyr.security.access_control.permission_guard import (
     GuardDecision,
     PermissionGuard,
 )
-from zephyr.agent_rbac.rbac_guard import RBACGuard
-from zephyr.agent_rbac.immutable_core import get_immutable_core
+from zephyr.security.access_control.rbac_guard import RBACGuard
+from zephyr.security.access_control.immutable_core import get_immutable_core
 
 
 class TestIdentitySpoofing:
@@ -175,7 +176,7 @@ class TestRoleEnumeration:
         assert identity.has_permission("superuser:delete_everything") is False
 
 
-from zephyr.agent_rbac.identity import ROLE_DEFAULT_PERMISSIONS
+from zephyr.security.access_control.identity import ROLE_DEFAULT_PERMISSIONS
 
 
 class TestPermissionModel:

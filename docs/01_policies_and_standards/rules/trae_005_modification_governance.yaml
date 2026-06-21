@@ -1,0 +1,97 @@
+rule_id: TRAE-005
+title: 修改原则与治理施工协议
+aliases:
+- RULE-NINE
+- RULE-TEN
+- 修改原则
+- 治理施工
+layer: L0
+severity: critical
+scope: code_modification
+domain: TRAE
+triggers:
+- operation: code_modify
+- operation: structure_change
+sections:
+  modification_principles:
+    section_type: rule
+    title: 修改原则
+    original_rules:
+    - RULE-NINE
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 发现事实错误→直接修正数字/名称/路径/状态
+    - type: mandatory
+      step: 文档中所有数字/版本号/计数必须是当前唯一真实值
+    - type: mandatory
+      step: 单个real number原则：一个事实在所有蓝图中只能有一个数字
+    prohibitions:
+    - 添加'之前为什么是错的'解释段
+    - 保留'之前是X现在改为Y'的过渡文本
+    - N处出现同一事实但数字不一致
+  governance_construction:
+    section_type: procedure
+    title: 治理施工流程
+    original_rules:
+    - RULE-TEN
+    conditions:
+    - type: pre_condition
+      check: 对项目结构做非平凡变更
+      pass: 触发五步流程
+      fail: 不触发
+    actions:
+    - type: mandatory
+      step: 'STEP 1: 依赖图推演 → STEP 2: 蓝图归属 → STEP 3: 导入路径映射 → STEP 4: 执行 → STEP 5:
+        验证'
+    - type: mandatory
+      step: 治理按因果链从根到叶执行，不按数量从大到小
+    - type: mandatory
+      step: 价值判定：零消费者≠无价值，看功能价值不看消费者数量
+    - type: mandatory
+      step: 'STEP 5 验证时：架构升级期间（阶段0-4）禁止运行 generate_project_depgraph.py（会覆盖 depgraph.db），用 extract_depgraph.py --summary 替代；正常期可运行 generate_project_depgraph.py'
+    prohibitions:
+    - 不推演直接移动模块
+    - 按数量从大到小治理
+    - 用零消费者判定删除
+    - 先补测试再重构
+    - 新建功能域/子域未经Owner审批
+    - 架构升级期间运行 generate_project_depgraph.py（会覆盖 depgraph.db 设计态数据）
+  change_history:
+    title: 变更历史
+    section_type: context
+    original_rules:
+    - RULE-NINE
+    - RULE-TEN
+    items:
+    - version: "1.2.0"
+      date: "2026-06-21"
+      change: "std_009/std_011审查修复：governance_construction补充STEP5验证时架构升级期间禁止运行generate_project_depgraph.py的说明（std_010漂移检测——规则未提及限制会导致AI运行禁用脚本）"
+    - version: "1.1.0"
+      date: "2026-06-19"
+      change: "RQ-09修复：更新provenance哈希至当前源文件实际值；RQ-14修复：新增change_history章节"
+    - version: "1.0.0"
+      date: "2026-06-13"
+      change: "从project_rules.md(RULE-NINE/RULE-TEN)与onboarding_detail.md(§九/§十五)提取规则"
+references:
+  rule_ids: []
+  scripts:
+  - scripts/governance/generate_project_depgraph.py
+  - scripts/governance/generate_project_path_tree.py
+  - scripts/governance/diagnose_depgraph.py
+  modules: []
+  blueprints: []
+enforcement:
+  type: hook
+  executors:
+  - generate_project_depgraph.py
+  - diagnose_depgraph.py
+  bypass_allowed: false
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

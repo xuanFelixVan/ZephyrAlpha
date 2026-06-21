@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [A_test] module_id: SRC-TST-0022 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §
 # [MODULE] tests.agent_rbac.conftest
 # [STABILITY] evolving
 # [SAFETY] L

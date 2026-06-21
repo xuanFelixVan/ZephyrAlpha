@@ -40,12 +40,12 @@ ensure_utf8_stdout()
 import argparse
 
 ANCHOR_FILES = [
-    "docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml",
+    "docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml",
     "docs/01_policies_and_standards/meta/rule-classification-and-arbitration-standard.md",
-    "docs/01_policies_and_standards/_registry/catalogs/architecture-model/_index.yaml",
+    "docs/01_policies_and_standards/_registry/catalogs/architecture-model/index.yaml",
     "docs/01_policies_and_standards/governance/architecture/adr/index.md",
     "AGENTS.md",
-    ".pre-commit-config.yaml",
+    ".pre_commit-config.yaml",
     ".roomodes",
 ]
 

@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_api_index | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.api.api_index
 
@@ -98,7 +99,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # token_utils.py — Token 估算 SSoT
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.shared.observability.token_utils import ...
+# from zephyr.ops.observability.token_utils import ...
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -393,7 +394,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # logging.py — 结构化日志系统（Phase 4 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.shared.observability.logging import get_logger, TraceContext, configure_root_logger
+# from zephyr.ops.observability.logging import get_logger, TraceContext, configure_root_logger
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
@@ -509,7 +510,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # health.py — 聚合健康检查（Phase 6 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.shared.observability.health import AggregateHealth, collect_health
+# from zephyr.ops.observability.health import AggregateHealth, collect_health
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │

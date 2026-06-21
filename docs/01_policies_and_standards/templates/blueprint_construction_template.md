@@ -1,35 +1,35 @@
 ---
-module_id: ""           # MOD-INF-XXX / MOD-LXX-XXX / DOM-XXX-XXX
-title: ""               # 蓝图标题
-doc_type: blueprint     # blueprint / sub_blueprint / domain_blueprint
-status: Draft           # Draft / Active / Deprecated
-version: "0.8.0"        # 语义版本号 X.Y.Z
-layer: cross_layer      # l00~l13 / cross_layer / meta / domain / module
+actual_disk_path: ''
+belongs_to: ''
+classification: confidential
+construction_progress: not_started
+created_by: human_plus_agent
+date: ''
+depends_on: []
+doc_type: template
+functional_domain: ''
+generation: 1
+language: zh
+last_updated: ''
+last_verified: ''
+layer: cross_layer
+module_id: GOV-028
 owner: ZephyrAlpha-Owner
-classification: confidential  # confidential / internal / public
-language: zh            # zh / en
-created_by: human_plus_agent  # human / agent / human_plus_agent
-date: ""
-ttl: permanent          # permanent / temporary
-construction_progress: not_started  # not_started→design_only→scaffold→partially_implemented→completed / blocked（MUST在§16.2声明解除条件）
-actual_disk_path: ""    # src/zephyr/{pkg}/ — MUST与§11一致
-last_updated: ""        # YYYY-MM-DD — 每次修改MUST更新
-last_verified: ""       # YYYY-MM-DD — 超90天未验证=过期，AI MUST重新验证
-generation: 1           # 1=初版 / 2=容量升级版 / 3+=重大重构版
-functional_domain: ""   # governance / intelligence / execution / operations / data / research
-summary: ""             # ≤80字
-template_for: blueprint
+parent_module: ''
+priority: P2
+references: []
+rule_form: structural
+scope: global
+ssot_claims: []
+stability: evolving
+status: Draft
+summary: ''
 tags: []
-priority: P2            # P0 / P1 / P2 / P3
-belongs_to: ""          # 父蓝图module_id，顶层填MOD-MASTER-001
-parent_module: ""       # 子蓝图必填
-rule_form: structural   # structural / procedural / declarative
-scope: global           # global / module / local
-stability: evolving     # stable / evolving / volatile
-verifiability: manual   # manual / automated / hybrid
-depends_on: []          # [{target: MOD-XXX, at: §N, why: 原因}] 或 [MOD-XXX]
-references: []          # [{path: 路径（相对优先）, section: §N, why: 原因}]
-ssot_claims: []         # [{claim: "SSoT声明描述", scope: "global|layer|module"}]——跨蓝图扫描时检测两个蓝图是否claim了相同scope
+template_for: blueprint
+title: Blueprint Construction Template
+ttl: permanent
+verifiability: manual
+version: 0.8.0
 ---
 
 <!--
@@ -113,7 +113,7 @@ END_REQUIRED_SECTIONS
 <!-- H1 格式: # {English Module Name} 蓝图+施工图 — {中文一句话描述}。中文描述MUST与frontmatter.title一致 -->
 # {English Name} 蓝图+施工图 — {中文一句话描述}
 
-> module_id: {XXX-NNN} | version: {X.Y.Z} | status: {draft/active/deprecated} | layer: {l{xx}_{name}/cross_layer}
+> module_id: {XXX-NNN} | version: {X.Y.Z} | status: {draft/active/deprecated} | layer: {{domain_name}/cross_layer}
 > actual_disk_path: {src/zephyr/{pkg}/} | generation: {N} | construction_progress: {not_started~completed}
 
 ## 概述
@@ -126,7 +126,7 @@ END_REQUIRED_SECTIONS
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图+施工图模板：[blueprint-construction-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-construction-template.md)
-> - AI 压缩工作流标准：[compression-workflow-standard.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/compression-workflow-standard.md)
+> - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
 > - 依赖图：{填写本蓝图所属的依赖图路径，如 [system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)}
 > - 优化规则：先 Layer 1（蓝图模板合规）→ 后 Layer 2（规格化砍削）
@@ -293,7 +293,7 @@ END_REQUIRED_SECTIONS
 
 ## §4 接口契约
 
-> 强制 **Pydantic V2 BaseModel**（ADR-0040），禁止 `@dataclass`。
+> 强制 **Pydantic V2 BaseModel**（KBG-0040），禁止 `@dataclass`。
 
 ### 4.1 公共 API
 
@@ -611,9 +611,9 @@ class {DataModel}(BaseModel):
 
 | # | 需更新的文件 | 完整路径（相对优先） | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 模块 ID 注册表 | `docs/02_enterprise_architecture/target-architecture/architecture-model/module-id-registry.yaml` | {新增/修改什么} | {为什么} |
+| 1 | 模块 ID 注册表 | `docs/02_enterprise_architecture/target-architecture/architecture-model/module_id_registry.yaml` | {新增/修改什么} | {为什么} |
 | 2 | 蓝图注册表 | `docs/03_modules/blueprint-registry.yaml` | {新增/修改什么} | {为什么} |
-| 3 | 治理资产清单 | `docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml` | {新增/修改什么} | {为什么} |
+| 3 | 治理资产清单 | `docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml` | {新增/修改什么} | {为什么} |
 | 4 | 依赖图 | `docs/02_enterprise_architecture/system-dependency-map.md` | {新增/修改什么} | {为什么} |
 
 ---
@@ -631,7 +631,7 @@ class {DataModel}(BaseModel):
 
 ## §16 施工指引
 
-> 蓝图+施工指引合并，无需独立施工图文件。
+> 蓝图 §16 只写设计级施工指引（做什么、为什么）。具体施工细节（改哪个文件哪行改成什么）写在任务卡 description 里，详见 GOV-TASK-001 §6。任务卡永久保留——COMPLETED/CANCELLED 的卡是审计链唯一真源，禁止删除。
 
 ### ⚠️ AI 施工前检查清单
 
@@ -976,8 +976,8 @@ class {DataModel}(BaseModel):
 | # | 文件 | module_id | 完整路径（相对优先） | 编写时用途 |
 |---|------|-----------|------------|----------|
 | 1 | 元数据注册表 | PS-STD-001 | `docs/01_policies_and_standards/meta/metadata-registry.md` | 编号规则、doc_type词表 |
-| 2 | 目录结构标准 | GOV-DOC-002 | `docs/01_policies_and_standards/governance/document/directory-structure-standard.md` | 路径映射 |
-| 3 | 模块ID注册表 | — | `docs/02_enterprise_architecture/target-architecture/architecture-model/module-id-registry.yaml` | 编号注册 |
+| 2 | 目录结构标准 | GOV-DOC-002 | `docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml doc_002` | 路径映射 |
+| 3 | 模块ID注册表 | — | `docs/02_enterprise_architecture/target-architecture/architecture-model/module_id_registry.yaml` | 编号注册 |
 | 4 | AI自治权限注册表 | GOV-AI-001 | `docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md` | AI操作权限 |
 | 5 | {按项目实际补充} | {—} | `docs/...` | {用途} |
 

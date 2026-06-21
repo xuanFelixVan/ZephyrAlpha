@@ -20,7 +20,8 @@
 # `python scripts/governance/generators/generate_script_manifest.py`。
 # -----------------------------------------------------------------------------
 
+module_id: MOD-INF-005
 manifest_root: scripts/governance
 referenced_by:
   - CT-SCRIPT-GATE-001
-  - docs/03_modules/l01_infrastructure/script-system/blueprint.md
+  - docs/03_modules/infrastructure/script-system/blueprint.md

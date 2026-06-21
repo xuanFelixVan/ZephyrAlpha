@@ -1,0 +1,84 @@
+rule_id: TRAE-004
+title: 并行执行与原子事务协议
+aliases:
+- RULE-SEVEN
+- 并行执行
+- ThreadPoolExecutor
+- 原子事务
+layer: L0
+severity: critical
+scope: script_execution
+domain: TRAE
+triggers:
+- operation: script_write
+- operation: subprocess_call
+sections:
+  parallel_execution:
+    section_type: rule
+    title: 强制ThreadPoolExecutor
+    original_rules:
+    - RULE-SEVEN
+    conditions:
+    - type: pre_condition
+      check: for循环中调用subprocess/多文件独立读写/多URL网络请求？
+      pass: 任一YES→MUST ThreadPoolExecutor
+      fail: 全NO→可串行
+    actions:
+    - type: mandatory
+      step: ThreadPoolExecutor(max_workers=8) + as_completed
+    - type: mandatory
+      step: 只用ThreadPoolExecutor，不用multiprocessing（I/O密集型GIL无影响）
+    prohibitions:
+    - 新建脚本用for循环串行跑子进程
+    - 用multiprocessing而非ThreadPoolExecutor
+    - 创建脚本后不跑--warn-only自测
+    - 自测发现问题但不修
+  atomic_transaction:
+    section_type: rule
+    title: 原子事务
+    original_rules:
+    - RULE-ONE
+    conditions:
+    - type: pre_condition
+      check: 关联修改同一批文件
+      pass: 同一批完成
+      fail: 分批=事务断裂
+    actions:
+    - type: mandatory
+      step: 关联修改同一批完成，不留中间状态
+    prohibitions:
+    - 关联修改分多次提交
+  change_history:
+    title: 变更历史
+    section_type: context
+    original_rules:
+    - RULE-SEVEN
+    - RULE-ONE
+    items:
+    - version: "1.1.0"
+      date: "2026-06-19"
+      change: "RQ-09修复：更新provenance哈希至当前源文件实际值；RQ-14修复：新增change_history章节"
+    - version: "1.0.0"
+      date: "2026-06-13"
+      change: "从project_rules.md(RULE-SEVEN/RULE-ONE)与onboarding_detail.md(§二)提取规则"
+references:
+  rule_ids:
+  - TRAE-001
+  scripts: []
+  modules: []
+  blueprints: []
+enforcement:
+  type: code
+  executors:
+  - ruff
+  - mypy
+  - pre-commit
+  bypass_allowed: false
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

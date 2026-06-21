@@ -1,0 +1,39 @@
+{
+  "task_id": "DM-100164",
+  "source_file": "docs/01_policies_and_standards/meta/rule_verification_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_041_meta_rule_classification.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "ps_std_012_v1_v4": {
+      "title": "验证分级V1-V4",
+      "rules": [
+        "V1: 语法验证（YAML可解析/字段完整）",
+        "V2: 语义验证（枚举值合规/引用存在）",
+        "V3: 逻辑验证（条件-动作完整/无矛盾）",
+        "V4: 集成验证（跨规则无冲突/注册完整）",
+        "禁止：跳过V1直接执行V2+",
+        "禁止：V1不通过时继续验证",
+        "禁止：验证结果不记录",
+        "禁止：验证脚本exit≠0时关闭任务"
+      ]
+    },
+    "ps_std_012_v5": {
+      "title": "V5深度内容审计",
+      "rules": [
+        "V5四步法：1.内容完整性 2.与源文档对齐 3.跨规则一致性 4.可执行性验证",
+        "V5必须由人工或Owner审批后执行",
+        "V5结果必须记录到审计链"
+      ]
+    }
+  },
+  "summary": {
+    "total_rules": 11,
+    "COVERED": 11,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "TRAE-041 enriched in current session: added ps_std_012_v1_v4(8 rules), ps_std_012_v5(3 rules)",
+    "All PS-STD-012 rules from MD now covered in YAML sections"
+  ]
+}

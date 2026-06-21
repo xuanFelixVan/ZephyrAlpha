@@ -1,0 +1,59 @@
+{
+  "task_id": "DM-100132",
+  "source_file": "docs/01_policies_and_standards/governance/module/module_lifecycle_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_032_module_lifecycle.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "MLC-001_阶段转换前置条件": {
+      "source_section": "§5 MLC-001",
+      "type": "mandatory+constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_003",
+      "details": "8阶段严格按序转换+7条转换前置条件"
+    },
+    "MLC-002_逆向转换限制": {
+      "source_section": "§5 MLC-002",
+      "type": "prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_003",
+      "details": "仅允许suspended→active和testing→in_dev(非破坏性bug)→其他逆向禁止"
+    },
+    "MLC-003_退役7步": {
+      "source_section": "§7 MLC-003",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_003",
+      "details": "确认迁移→搜索无断链→标记deprecated→设置superseded_by→保留90天→Owner批准→触发IFC-007契约级联"
+    },
+    "P0模块特殊约束": {
+      "source_section": "§8 P0模块特殊生命周期约束",
+      "type": "mandatory+prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_003",
+      "details": "in_dev需契约frozen+testing→active需GOV-ARCH-002+KB决策记录+禁止suspended+禁止退役(需P1+等效替代active≥30天)"
+    },
+    "ID永不回收原则": {
+      "source_section": "§6 archived",
+      "type": "prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_003",
+      "details": "archived模块module_id在注册表中永恒保留+禁止重新分配"
+    },
+    "status受控枚举8阶段": {
+      "source_section": "§3 受控枚举定义",
+      "type": "constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_003",
+      "details": "planned/in_design/in_dev/testing/active/suspended/deprecated/archived"
+    }
+  },
+  "summary": {
+    "total_rules": 6,
+    "COVERED": 6,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "trae_032_module_lifecycle.yaml: 新增mod_003 section覆盖module_lifecycle_policy.md全部MLC规则+2条conditions+4条actions+7条prohibitions"
+  ]
+}

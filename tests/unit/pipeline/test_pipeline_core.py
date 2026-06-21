@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1925 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-544 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.pipeline.test_pipeline_core
 # [STABILITY] evolving
 # [SAFETY] L
@@ -10,7 +11,7 @@
 import pytest
 import time
 
-from zephyr.pipeline.backpressure_manager import (
+from zephyr.integration.backpressure_manager import (
     BackpressureManager,
     BpState,
     BpSymbolState,
@@ -18,12 +19,12 @@ from zephyr.pipeline.backpressure_manager import (
     emit_resume,
     emit_throttle,
 )
-from zephyr.pipeline.backpressure_types import (
+from zephyr.integration.backpressure_types import (
     BackpressurePause,
     BackpressureResume,
     BackpressureThrottle,
 )
-from zephyr.pipeline.models import PipelineOrchestratorConfig
+from zephyr.integration.models import PipelineOrchestratorConfig
 
 
 class TestBackpressureManager:
@@ -232,20 +233,20 @@ class TestPipelineOrchestratorConfig:
 
 class TestPipelineOrchestratorInit:
     def test_init_with_defaults(self):
-        from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
         orc = PipelineOrchestrator()
         assert orc._cfg is not None
         assert orc._failure_log == {}
         assert orc._active_dispatches == set()
 
     def test_init_with_custom_config(self):
-        from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
         cfg = PipelineOrchestratorConfig(max_retries=7)
         orc = PipelineOrchestrator(config=cfg)
         assert orc._cfg.max_retries == 7
 
     def test_health_check_returns_dict(self):
-        from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
         orc = PipelineOrchestrator()
         hc = orc.health_check()
         assert isinstance(hc, dict)
@@ -253,7 +254,7 @@ class TestPipelineOrchestratorInit:
         assert "status" in hc
 
     def test_save_and_load_state(self):
-        from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
         orc = PipelineOrchestrator()
         orc._failure_log["test"] = 3
         state = orc.save_state()
@@ -261,42 +262,42 @@ class TestPipelineOrchestratorInit:
         assert state["failure_log"]["test"] == 3
 
     def test_get_telemetry_snapshot(self):
-        from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
         orc = PipelineOrchestrator()
         snap = orc.get_telemetry_snapshot()
         assert "metrics" in snap
         assert "latency_samples" in snap
 
     def test_get_cost_summary(self):
-        from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
         orc = PipelineOrchestrator()
         summary = orc.get_cost_summary()
         assert isinstance(summary, dict)
 
     def test_set_token_budget(self):
-        from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
         orc = PipelineOrchestrator()
         orc.set_token_budget(500_000)
         assert orc._token_budget_total == 500_000
 
     def test_text_similarity(self):
-        from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
         sim = PipelineOrchestrator._text_similarity("hello world foo", "hello world bar")
         assert 0.0 < sim < 1.0
 
     def test_text_similarity_identical(self):
-        from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
         sim = PipelineOrchestrator._text_similarity("hello world test", "hello world test")
         assert sim == 1.0
 
     def test_text_similarity_empty(self):
-        from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
         assert PipelineOrchestrator._text_similarity("", "hello") == 0.0
         assert PipelineOrchestrator._text_similarity("hello", "") == 0.0
 
     def test_determine_status_all_success(self):
-        from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator
-        from zephyr.pipeline.models import ModuleResult, ModuleStatus, PipelineStatus
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+        from zephyr.integration.models import ModuleResult, ModuleStatus, PipelineStatus
         results = [
             ModuleResult(module_id="M1", pipeline="A", model="deepseek",
                          status=ModuleStatus.SUCCESS, output={},
@@ -305,8 +306,8 @@ class TestPipelineOrchestratorInit:
         assert PipelineOrchestrator._determine_status(results) == PipelineStatus.SUCCESS
 
     def test_determine_status_all_failure(self):
-        from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator
-        from zephyr.pipeline.models import ModuleResult, ModuleStatus, PipelineStatus
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+        from zephyr.integration.models import ModuleResult, ModuleStatus, PipelineStatus
         results = [
             ModuleResult(module_id="M1", pipeline="A", model="deepseek",
                          status=ModuleStatus.FAILURE, output={},
@@ -315,6 +316,6 @@ class TestPipelineOrchestratorInit:
         assert PipelineOrchestrator._determine_status(results) == PipelineStatus.FAILURE
 
     def test_determine_status_empty(self):
-        from zephyr.pipeline.pipeline_orchestrator import PipelineOrchestrator
-        from zephyr.pipeline.models import PipelineStatus
+        from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+        from zephyr.integration.models import PipelineStatus
         assert PipelineOrchestrator._determine_status([]) == PipelineStatus.FAILURE

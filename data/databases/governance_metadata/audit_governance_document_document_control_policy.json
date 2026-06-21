@@ -1,0 +1,33 @@
+{
+  "task_id": "DM-100100",
+  "source_file": "docs/01_policies_and_standards/governance/document/document_control_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_029_doc_operation_security.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "doc_008": {
+      "title": "文档控制原则-DOC-001~DOC-004",
+      "conditions_count": 4,
+      "actions_count": 1,
+      "prohibitions_count": 4
+    },
+    "doc_009": {
+      "title": "文档控制原则-DOC-005~DOC-009",
+      "conditions_count": 6,
+      "actions_count": 2,
+      "prohibitions_count": 7
+    }
+  },
+  "summary": {
+    "total_rules": 24,
+    "COVERED": 24,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    {
+      "action": "YAML_UPDATE",
+      "target": "trae_029_doc_operation_security.yaml sections doc_008/doc_009",
+      "detail": "从空壳更新为包含9条DOC原则的完整规则提取:DOC-001 SSoT唯一/DOC-002责任二选一/DOC-003安全删除/DOC-004完整路径引用/DOC-005创建前必查/DOC-006先读后改/DOC-007引用不复制/DOC-008上下文预算/DOC-009引用链完整性+depends_on结构化格式"
+    }
+  ]
+}

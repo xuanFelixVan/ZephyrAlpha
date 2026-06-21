@@ -1,0 +1,57 @@
+# [A_config] module_id=CFG-blind-spot-matrix | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# MOD-INF-025 盲点矩阵 (v0.10.0)
+# 重分类盲点: 100+ → 11 核心概念
+
+module_id: DOM-GOV-001
+reclassified_blind_spots:
+  - id: A2A-BS-01
+    original_count: 12
+    mapped_to: "Saga补偿原子性"
+    severity: critical
+  - id: A2A-BS-02
+    original_count: 9
+    mapped_to: "投票串通检测"
+    severity: high
+  - id: A2A-BS-03
+    original_count: 8
+    mapped_to: "上下文污染扩散"
+    severity: high
+  - id: A2A-BS-04
+    original_count: 7
+    mapped_to: "假阳性安全告警"
+    severity: medium
+  - id: A2A-BS-05
+    original_count: 6
+    mapped_to: "级联Agent失败"
+    severity: critical
+  - id: A2A-BS-06
+    original_count: 6
+    mapped_to: "语义歧义累积"
+    severity: medium
+  - id: A2A-BS-07
+    original_count: 5
+    mapped_to: "Agent遗忘偏差"
+    severity: low
+  - id: A2A-BS-08
+    original_count: 9
+    mapped_to: "跨模型行为不一致"
+    severity: high
+  - id: A2A-BS-09
+    original_count: 6
+    mapped_to: "资源争抢死锁"
+    severity: critical
+  - id: A2A-BS-10
+    original_count: 5
+    mapped_to: "协议脆弱性利用"
+    severity: critical
+  - id: A2A-BS-11
+    original_count: 4
+    mapped_to: "Agent不诚信行为"
+    severity: high

@@ -11,6 +11,7 @@
 # 对标：PS-STD-003 ABS-44（禁止引用废墟目录）
 
 # src/zephyr/gates/gate_engine.py 用（简单子串匹配，用于 PENDING→IN_PROGRESS 门禁阻断）
+module_id: MOD-INF-005
 blacklist_patterns:
   - "_legacy/"
   - "ARCHIVE/"
@@ -31,7 +32,7 @@ ruins_regex_patterns:
   - pattern: "\\\\"
     label: "路径双重嵌套（旧脚本残留 bug）"
   - pattern: "docs/09_audit/state[/\\\\]"
-    label: "v2.0 废弃——DB 已迁移至 data/zalpha_metadata.db（ADR-0030 §4.1）"
+    label: "v2.0 废弃——DB 已迁移至 data/databases/governance.db（ADR-0030 §4.1）"
 
 # 废弃跳转占位符检测
 obsolete_markers:

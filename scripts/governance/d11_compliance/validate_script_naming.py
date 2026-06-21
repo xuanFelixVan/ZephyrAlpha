@@ -88,7 +88,7 @@ EXCEPTIONS = frozenset({
     "cbg_reset.py",
     "drafts_zone_archiver.py",
     "deep_content_scanner.py",
-    "dependency_graph.py",
+    "dependency-graph.py",
     "g9_compliance_check.py",
     "backup_runtime_state.py",
     "compute_sla_metrics.py",

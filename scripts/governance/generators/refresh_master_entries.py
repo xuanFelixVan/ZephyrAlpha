@@ -8,7 +8,7 @@ refresh_master_entries.py — 登记表总索引 entries 自动刷新器
 
 对标 §6.16 静态清单自动生成铁律。
 此脚本解决根因：master-index 的 entries 字段为手工维护快照，随各子注册表
-独立滚动后自然过时。接入 pre-commit 后每次 commit 自动校准。
+独立滚动后自然过时。接入 pre_commit 后每次 commit 自动校准。
 
 Usage:
     python scripts/governance/generators/refresh_master_entries.py

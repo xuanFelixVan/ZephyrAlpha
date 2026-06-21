@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_contracts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 # CODEGEN-GUARD: CTR-declarations-manual
 # Phase D — codegen auto-override disabled.
 # All exports below are manually maintained.
@@ -7,15 +8,12 @@
 ZephyrAlpha — shared/contracts/
 
 Backward-compat re-export facade. Canonical trading-domain types now live in
-zephyr.trading_contracts. This module re-exports them so existing imports
+zephyr.trading.trading_contracts. This module re-exports them so existing imports
 continue to work.
 """
 
-from zephyr.shared.contracts.backpressure import (
-    BackpressurePause,
-    BackpressureResume,
-    BackpressureThrottle,
-)
+import importlib
+
 from zephyr.shared.contracts.core.enforcer import (
     ContractViolationError,
     EnforcementMode,
@@ -26,39 +24,13 @@ from zephyr.shared.contracts.core.enforcer import (
 from zephyr.shared.contracts.errors import (
     ContractViolationError as ContractErrViolationError,
     DataQualityError,
-    ExecutionRejectionError,
     FactorComputationError,
-    RiskLimitViolationError,
-    SignalDegradationWarning,
 )
-from zephyr.trading_contracts.market.factor_signal import FactorSignal
-from zephyr.trading_contracts.execution.fill import Fill
-from zephyr.trading_contracts.market.instrument import (
-    ETF,
-    FX,
-    AssetClass,
-    Bond,
-    Country,
-    Crypto,
-    CryptoContractType,
-    CurrencyCode,
-    Exchange,
-    Future,
-    Instrument,
-    Jurisdiction,
-    Option,
-    OptionType,
-    Stock,
-    TradingCalendarName,
-)
-from zephyr.trading_contracts.market.market_data import NormalizedMarketData
 from zephyr.shared.contracts.portfolio.money import (
     Money,
     MoneyCurrencyMismatchError,
     MoneyPrecisionError,
 )
-from zephyr.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
-from zephyr.trading_contracts.execution.position import PositionSnapshot
 from zephyr.shared.contracts.core.registry import (
     ContractMeta,
     ContractRegistry,
@@ -67,7 +39,6 @@ from zephyr.shared.contracts.core.registry import (
     get_registry,
     reset_registry,
 )
-from zephyr.trading_contracts.risk.risk_limits import RiskLimits
 from zephyr.shared.contracts.core.runtime_plane_tag import (
     COLD_PATH_LATENCY_BUDGET_MS,
     COLD_PATH_PARTIAL_ACTIVATED,
@@ -83,17 +54,10 @@ from zephyr.shared.contracts.core.timestamp import (
     utcnow,
 )
 from zephyr.shared.contracts.core.trace_context import TraceContext
-from zephyr.trading_contracts.market.synthesized_signal import SynthesizedSignal
-from zephyr.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
 from zephyr.shared.contracts.portfolio.performance_attribution_report import PerformanceAttributionReport
 from zephyr.shared.contracts.core.system_configuration import SystemConfiguration
-from zephyr.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
-from zephyr.trading_contracts.risk.risk_metrics import RiskMetricsReport
 from zephyr.shared.contracts.experiment.experiment_result import ExperimentResult
-from zephyr.trading_contracts.risk.compliance_rule import ComplianceRule
 from zephyr.shared.contracts.portfolio.strategy_lifecycle_event import StrategyLifecycleEvent
-from zephyr.trading_contracts.execution.execution_report import ExecutionReport
-from zephyr.trading_contracts.execution.model_serving_request import ModelServingRequest
 from zephyr.shared.contracts.experiment.model_serving_response import ModelServingResponse
 from zephyr.shared.contracts.core.telemetry_emitter import TelemetryEmitter
 from zephyr.shared.contracts.core.factories import (
@@ -104,6 +68,26 @@ from zephyr.shared.contracts.core.factories import (
     make_risk_metrics_report,
     make_synthesized_signal,
 )
+from zephyr.shared.contracts.llm_gateway_protocol import (
+    LLMGatewayProtocol,
+    LLMResponse,
+    ProviderConfig,
+)
+from zephyr.shared.contracts.skill_protocol import (
+    SkillLoaderProtocol,
+    SkillRouterProtocol,
+)
+from zephyr.shared.contracts.task_repository_protocol import (
+    TaskRepositoryProtocol,
+)
+from zephyr.shared.contracts.orchestration_protocol import (
+    BatchOrchestratorProtocol,
+    ChaosEngineProtocol,
+    ShadowCanaryProtocol,
+)
+
+# DM-367: re-export module names for audit registration
+from . import llm_gateway_protocol, orchestration_protocol, skill_protocol  # noqa: F401
 from zephyr.shared.contracts.escalation import BudgetAlert, BudgetSeverity, BudgetType
 from zephyr.shared.contracts.identity import (
     AgentIdentity,
@@ -114,6 +98,65 @@ from zephyr.shared.contracts.identity import (
     IDESource,
     MaturityLevel,
 )
+
+# Lazy imports for trading-domain symbols (upward dependency from L0 shared → L3 trading)
+_TRADING_SYMBOLS = {
+    "FactorSignal": "zephyr.execution_core.trading.trading_contracts.market.factor_signal",
+    "Fill": "zephyr.execution_core.trading.trading_contracts.execution.fill",
+    "ETF": "zephyr.execution_core.trading.trading_contracts.market.instrument",
+    "FX": "zephyr.execution_core.trading.trading_contracts.market.instrument",
+    "AssetClass": "zephyr.execution_core.trading.trading_contracts.market.instrument",
+    "Bond": "zephyr.execution_core.trading.trading_contracts.market.instrument",
+    "Country": "zephyr.execution_core.trading.trading_contracts.market.instrument",
+    "Crypto": "zephyr.execution_core.trading.trading_contracts.market.instrument",
+    "CryptoContractType": "zephyr.execution_core.trading.trading_contracts.market.instrument",
+    "CurrencyCode": "zephyr.execution_core.trading.trading_contracts.market.instrument",
+    "Exchange": "zephyr.execution_core.trading.trading_contracts.market.instrument",
+    "Future": "zephyr.execution_core.trading.trading_contracts.market.instrument",
+    "Instrument": "zephyr.execution_core.trading.trading_contracts.market.instrument",
+    "Jurisdiction": "zephyr.execution_core.trading.trading_contracts.market.instrument",
+    "Option": "zephyr.execution_core.trading.trading_contracts.market.instrument",
+    "OptionType": "zephyr.execution_core.trading.trading_contracts.market.instrument",
+    "Stock": "zephyr.execution_core.trading.trading_contracts.market.instrument",
+    "TradingCalendarName": "zephyr.execution_core.trading.trading_contracts.market.instrument",
+    "NormalizedMarketData": "zephyr.execution_core.trading.trading_contracts.market.market_data",
+    "Order": "zephyr.execution_core.trading.trading_contracts.execution.order",
+    "OrderSide": "zephyr.execution_core.trading.trading_contracts.execution.order",
+    "OrderStatus": "zephyr.execution_core.trading.trading_contracts.execution.order",
+    "OrderType": "zephyr.execution_core.trading.trading_contracts.execution.order",
+    "PositionSnapshot": "zephyr.execution_core.trading.trading_contracts.execution.position",
+    "RiskLimits": "zephyr.execution_core.trading.trading_contracts.risk.risk_limits",
+    "SynthesizedSignal": "zephyr.execution_core.trading.trading_contracts.market.synthesized_signal",
+    "CapitalAllocationResult": "zephyr.execution_core.trading.trading_contracts.execution.capital_allocation_result",
+    "RiskDashboardSnapshot": "zephyr.execution_core.trading.trading_contracts.risk.risk_dashboard_snapshot",
+    "RiskMetricsReport": "zephyr.execution_core.trading.trading_contracts.risk.risk_metrics",
+    "ComplianceRule": "zephyr.execution_core.trading.trading_contracts.risk.compliance_rule",
+    "ExecutionReport": "zephyr.execution_core.trading.trading_contracts.execution.execution_report",
+    "ModelServingRequest": "zephyr.execution_core.trading.trading_contracts.execution.model_serving_request",
+    "ExecutionRejectionError": "zephyr.execution_core.trading.trading_contracts.execution.execution_rejection_error",
+    "RiskLimitViolationError": "zephyr.execution_core.trading.trading_contracts.risk.risk_limit_violation_error",
+    "SignalDegradationWarning": "zephyr.execution_core.trading.trading_contracts.market.signal_degradation_warning",
+}
+
+_BACKPRESSURE_SYMBOLS = {
+    "BackpressurePause",
+    "BackpressureThrottle",
+    "BackpressureResume",
+}
+
+
+def __getattr__(name):
+    if name in _TRADING_SYMBOLS:
+        mod = importlib.import_module(_TRADING_SYMBOLS[name])
+        return getattr(mod, name)
+    if name in _BACKPRESSURE_SYMBOLS:
+        from zephyr.shared.contracts.backpressure import (
+            BackpressurePause,
+            BackpressureThrottle,
+            BackpressureResume,
+        )
+        return locals()[name]
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 __all__ = [
     "NormalizedMarketData",
@@ -204,4 +247,21 @@ __all__ = [
     "GuardResult",
     "IDESource",
     "MaturityLevel",
+    # DM-381: LLM Gateway Protocol
+    "LLMGatewayProtocol",
+    "LLMResponse",
+    "ProviderConfig",
+    # DM-382: Skill Protocol
+    "SkillLoaderProtocol",
+    "SkillRouterProtocol",
+    # DM-383: Task Repository Protocol
+    "TaskRepositoryProtocol",
+    # DM-385: Orchestration Protocol
+    "ShadowCanaryProtocol",
+    "ChaosEngineProtocol",
+    "BatchOrchestratorProtocol",
+    # DM-367: module names for audit registration
+    "llm_gateway_protocol",
+    "orchestration_protocol",
+    "skill_protocol",
 ]

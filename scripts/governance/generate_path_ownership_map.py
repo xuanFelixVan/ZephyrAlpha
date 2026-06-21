@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-037 | docs/03_modules/l01_infrastructure/registry-governance/blueprint.md | §
+# [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain-governance/registry-governance/blueprint.md | §
 # [MODULE] scripts.governance.generate_path_ownership_map
 # [INVARIANTS] 
 # [MODIFY-GUARD] 

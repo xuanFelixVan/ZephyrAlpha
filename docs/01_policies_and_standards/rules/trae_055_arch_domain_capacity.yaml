@@ -1,0 +1,413 @@
+rule_id: TRAE-055
+title: 架构容量与域治理规则
+aliases:
+- ARCH-CAP-000
+- ARCH-CAP-001
+- ARCH-CAP-002
+- ARCH-CAP-003
+- ARCH-CAP-004
+- ARCH-CAP-005
+- ARCH-CAP-006
+- ARCH-CAP-007
+- ARCH-CAP-008
+- ARCH-CAP-009
+- 域容量上限
+- 模块定义
+- 平行域原则
+- 路径平铺原则
+- 抽屉式扩展
+- 拆分审批
+- 第一性原理
+- 架构命名第一性原理
+layer: L0
+severity: critical
+scope: arch_domain_capacity_governance
+domain: TRAE
+triggers:
+- operation: domain_capacity_check
+- operation: domain_split
+- operation: domain_create
+- operation: module_count_check
+- operation: generator_modify
+- operation: max_modules_set
+- operation: domain_naming
+- operation: path_design
+sections:
+  arch_cap_000_first_principles:
+    section_type: principles
+    title: 架构命名第一性原理 (ARCH-CAP-000)
+    original_rules:
+    - ARCH-CAP-000
+    conditions:
+    - type: constraint
+      check: 适用范围
+      pass: 新建域/拆分域/迁移模块/设计路径时 MUST 遵循本节5条标准
+      fail: 未遵循第一性原理的命名或路径设计
+    principles:
+    - id: FP-1
+      name: AI可发现性
+      statement: AI通过路径名就能理解模块职责，无需读蓝图
+      derivation: 100%AI开发项目中AI是主要消费者，路径名是AI的第一信息源
+    - id: FP-2
+      name: 路径=功能域
+      statement: 物理路径层级等于功能域层级。功能域平级则路径平级
+      derivation: 路径层级与功能域层级1:1映射，避免物理结构与逻辑结构不一致
+    - id: FP-3
+      name: 单一真源
+      statement: 每个功能只有一个真源路径，零副本零shim
+      derivation: SSoT原则+DRY原则，副本和shim导致AI困惑更新目标
+    - id: FP-4
+      name: 命名=未来方向
+      statement: 命名反映模块未来发展方向，不是当前子集
+      derivation: 命名是长期资产，当前子集会扩展，命名须覆盖未来职责
+    - id: FP-5
+      name: 最小嵌套
+      statement: 能平铺绝不嵌套。每多一层嵌套等于AI多一次理解成本
+      derivation: AI上下文预算有限，嵌套层级与理解成本正相关
+    rationale:
+      source: 量化社区（SSoT原则/DRY原则）+ 氛围编程社区（AI可导航性优先）+ 项目已有规则（ARCH-CAP-004平行域原则）
+      applicability: 本节5条标准是ARCH-CAP-001~009的上层基础，所有域治理规则MUST符合本节标准
+  arch_cap_001_module_definition:
+    section_type: rule
+    title: 模块定义裁定 (ARCH-CAP-001)
+    original_rules:
+    - ARCH-CAP-001
+    conditions:
+    - type: constraint
+      check: 模块定义口径
+      pass: 模块 = production 节点（真实代码文件，design_maturity=production）
+      fail: 将 design 节点（逻辑路径）或 prototype 节点（自动派生）计入模块数
+    - type: constraint
+      check: 当前模块总数
+      pass: 通过 extract_depgraph.py --summary 查询 total_production_nodes 字段获取当前值（每域 production_nodes 字段）
+      fail: 使用 60 个蓝图级模块或全节点数作为模块数
+    actions:
+    - type: mandatory
+      step: 统计模块数时 MUST 使用 extract_depgraph.py --summary 输出的 total_production_nodes 字段（顶层总数）或 production_nodes 字段（每域），禁止使用 current_modules（含 design+prototype）或全节点数
+    - type: mandatory
+      step: 容量判定（ARCH-CAP-002）的分子是 production_nodes（每域），不是 current_modules
+    prohibitions:
+    - 将 design 节点（逻辑路径，尚未落地）计入模块容量
+    - 将 prototype 节点（自动派生）计入模块容量
+    - 使用 current_modules 字段做容量判定（该字段含三态节点）
+    - 使用 60 个蓝图级模块作为模块数
+    rationale:
+      why_production_only: design 节点是逻辑路径，尚未落地为代码；prototype 节点是自动派生，非独立功能单元。只有 production 节点（真实代码文件）才是 AI 需要维护的功能单元。按全节点数判定容量 = AI 上下文装不下 = 幻觉温床。
+  arch_cap_002_domain_capacity_limit:
+    section_type: rule
+    title: 域容量上限裁定 (ARCH-CAP-002)
+    original_rules:
+    - ARCH-CAP-002
+    conditions:
+    - type: constraint
+      check: 单域 production 节点数
+      pass: 80-150（默认安全区间）
+      fail: "<80（域过小，考虑合并）或 >200（必须拆分）"
+    - type: constraint
+      check: 高度耦合域放宽
+      pass: 150-200（需满足"高度耦合"判定标准，见 ARCH-CAP-003）
+      fail: ">200 任何情况都必须拆分"
+    - type: constraint
+      check: 拆分硬上限
+      pass: 单域 production 节点 ≤200
+      fail: 单域 production 节点 >200 禁止继续分配，MUST 立即拆分
+    actions:
+    - type: mandatory
+      step: 新增模块前 MUST 检查目标域 production 节点数；>150 时评估是否高度耦合；>200 时 MUST 先拆分再分配
+    - type: mandatory
+      step: 容量检查命令 python scripts/governance/extract_depgraph.py --summary 输出各域 production_nodes 字段（每域 production 节点数）
+    - type: mandatory
+      step: 单域达 150 时 MUST 提交 KB 决策记录评估是否需要拆分；达 200 时 MUST 立即启动拆分流程（ARCH-CAP-006）
+    prohibitions:
+    - 单域 production 节点 >200 继续分配模块
+    - 不评估耦合度直接按 80 硬拆（违反 ARCH-CAP-003 二元规则）
+    - 使用 current_modules（含三态）做容量判定
+    rationale:
+      why_80_150: 基于 AI 单次上下文可导航极限。80-150 个 production 节点 = AI 一次装入后能完整理解域内全部模块关系，幻觉率低。>150 时 AI 开始丢失细节，>200 时幻觉率显著上升。
+      why_200_hard_limit: 200 是 AI 可维护性的硬上限。超过 200 = AI 无法在一次会话中完整审查该域 = 漂移和幻觉不可避免。
+  arch_cap_003_binary_rule:
+    section_type: rule
+    title: 二元规则-默认拆分与耦合放宽 (ARCH-CAP-003)
+    original_rules:
+    - ARCH-CAP-003
+    conditions:
+    - type: decision
+      check: 选 A（默认 80-150 拆分）
+      pass: 不同功能域够数就拆（80+ 即可考虑拆分）
+      fail: 高度耦合但强行拆分 → 上下文断裂 → 幻觉
+    - type: decision
+      check: 选 B（150-200 高度耦合放宽）
+      pass: 域内模块高度耦合（共享状态/频繁互调/共同不变量），拆分会破坏内聚
+      fail: 非高度耦合但放宽到 200 → 域过大 → 幻觉
+    actions:
+    - type: mandatory
+      step: 评估域是否高度耦合四标准（任一满足即认定高度耦合）：1.域内模块共享核心不变量 2.域内模块频繁互调（日均调用>10次/对）3.拆分后需跨域传递大量上下文 4.共同实现单一业务能力
+    - type: mandatory
+      step: 选 B（150-200）MUST 提交 KB 决策记录说明高度耦合理由；选 A（80-150）无需额外理由
+    prohibitions:
+    - 非高度耦合域放宽到 200（违反二元规则）
+    - 高度耦合域强行拆分到 80（破坏内聚，制造跨域上下文传递负担）
+    - 不评估耦合度直接套用任一区间
+    rationale:
+      design_intent: 二元规则平衡"防幻觉"（A：小域）与"防上下文断裂"（B：大域保持内聚）。一刀切任一极端都会产生反效果。
+  arch_cap_004_parallel_domain_principle:
+    section_type: rule
+    title: 平行域原则与路径平铺 (ARCH-CAP-004)
+    original_rules:
+    - ARCH-CAP-004
+    conditions:
+    - type: constraint
+      check: 域间关系
+      pass: 所有域平级，无父子关系，无子域概念
+      fail: 存在父子域关系或子域概念
+    - type: constraint
+      check: 物理路径层级
+      pass: 物理路径层级等于功能域层级（路径=功能域，FP-2）。域根目录下直接放模块文件，不冗余嵌套同名子目录
+      fail: 域根目录下再套一层同名子目录（如 src/zephyr/behavioral_audit/behavioral_auditor/）
+    - type: constraint
+      check: 域命名与路径命名一致性
+      pass: domain_id 语义与 ssot_path 语义1:1映射（如 D-BEHAVIORAL_AUDIT ↔ src/zephyr/behavioral_audit/）
+      fail: domain_id 与 ssot_path 语义不一致
+    actions:
+    - type: mandatory
+      step: 拆分大域时 MUST 拆成平行域（如 D-GOVERNANCE 拆成 D-GOV_AUDIT/D-GOV_DRIFT/D-GOV_RULE/D-GOVERNANCE 四个平级域），禁止拆成子域（如 D-GOVERNANCE/AUDIT）
+    - type: mandatory
+      step: 新域 MUST 独立注册到 domains 表，有自己的 domain_id、domain_name、domain_group、layer_id、ssot_path、max_modules
+    - type: mandatory
+      step: 平行域之间依赖关系 MUST 遵循 ARCH-001 跨包向下依赖规则（专用域→共享基础层）
+    - type: mandatory
+      step: 新域 ssot_path MUST 平铺到 src/zephyr/{domain_snake_case}/，禁止在域根目录下再套同名子目录。模块文件直接放在域根目录下
+    - type: mandatory
+      step: 域命名 MUST 遵循 FP-4（命名=未来方向），根据模块未来发展方向推导命名，不根据当前子集命名
+    prohibitions:
+    - 创建子域（如 D-GOVERNANCE/AUDIT 形式）
+    - 使用父子域命名（如 D-GOV_PARENT/D-GOV_CHILD）
+    - 拆分后保留"父域"概念（拆分后所有域平级，无父域）
+    - 在域根目录下创建同名子目录再放模块（如 src/zephyr/foo/foo/）——违反 FP-5 最小嵌套
+    - 用当前子集命名域（如用"drift"命名包含未来 verdict_engine 的域）——违反 FP-4 命名=未来方向
+    rationale:
+      why_parallel: 子域概念会导致域层级无限嵌套 → AI 难以判断模块属于哪一层 → 漂移。平行域保持单层结构，AI 一次理解全部域关系。
+      why_path_flat: 物理路径是AI的第一信息源（FP-1）。路径层级与功能域层级1:1映射（FP-2），功能域平级则路径平级。冗余嵌套增加AI理解成本（FP-5）且无信息增量。
+  arch_cap_005_drawer_extension:
+    section_type: rule
+    title: 抽屉式扩展机制 (ARCH-CAP-005)
+    original_rules:
+    - ARCH-CAP-005
+    conditions:
+    - type: constraint
+      check: 新增域操作
+      pass: INSERT 到 depgraph.db domains 表，不修改生成器代码
+      fail: 修改 generate_project_depgraph.py 的 DOMAIN_NAME_TO_LAYER / NON_SRC_DOMAIN_MAP / UNREGISTERED_SRC_MAP 等硬编码
+    actions:
+    - type: mandatory
+      step: 新增域流程：1. Owner 审批（ARCH-CAP-006）→ 2. INSERT 到 domains 表（domain_id/domain_name/domain_group/ssot_path/layer_id/max_modules/lifecycle/build_status/created_at/updated_at，覆盖所有 NOT NULL 字段）→ 3. 运行 extract_depgraph.py --summary 验证 → 4. 更新 _index.yaml 域清单
+    - type: mandatory
+      step: 生成器 MUST 从 domains 表动态加载域映射，禁止硬编码域列表
+    - type: mandatory
+      step: 现有硬编码 MUST 重构为动态加载——DOMAIN_NAME_TO_LAYER 从 domains 表动态加载；NON_SRC_DOMAIN_MAP/UNREGISTERED_SRC_MAP 从 domain_mapping 表动态加载（见 ARCH-CAP-009）
+    prohibitions:
+    - 在生成器代码中硬编码域列表（违反抽屉式扩展）
+    - 新增域时修改生成器代码（应只操作 domains 表）
+    - 在生成器中维护域→层映射的静态字典
+    rationale:
+      why_drawer: 抽屉式扩展 = 新增域只需"插入一行"（INSERT domains 表），不修改任何代码。类比 K8s 新增 namespace 只需 kubectl create，不修改 kube-controller-manager 代码。硬编码域列表 = 每次新增域都要改代码 = 维护成本指数增长 = AI 容易遗漏更新。
+      current_violation: generate_project_depgraph.py 当前存在硬编码（DOMAIN_NAME_TO_LAYER / NON_SRC_DOMAIN_MAP / UNREGISTERED_SRC_MAP，条目数以代码实际为准），违反抽屉式扩展。MUST 重构。
+  arch_cap_006_split_approval:
+    section_type: rule
+    title: 拆分审批协议 (ARCH-CAP-006)
+    original_rules:
+    - ARCH-CAP-006
+    conditions:
+    - type: pre_condition
+      check: 拆分发起方
+      pass: Owner 主动发起或 Owner 批准 AI 提议
+      fail: AI 自主拆分（越权）
+    - type: pre_condition
+      check: 拆分方案审批
+      pass: Owner 详细讨论并同意拆分方案（含新域命名/模块归属/依赖迁移）
+      fail: AI 自行决定拆分方案
+    actions:
+    - type: mandatory
+      step: 拆分流程：1. AI 提议拆分方案（含新域清单/模块归属/依赖迁移计划）→ 2. Owner 审查并讨论 → 3. Owner 明确同意 → 4. AI 执行拆分（加锁/迁移/更新注册表）→ 5. 验证（extract_depgraph.py --summary + diagnose_depgraph.py）
+    - type: mandatory
+      step: 拆分方案 MUST 包含：新域 domain_id 清单、原域模块归属映射、跨域依赖迁移清单、回滚方案
+    - type: mandatory
+      step: 拆分后 MUST 执行：1. 重新生成 depgraph（正常期）或 extract_depgraph --summary（架构升级期）→ 2. diagnose_depgraph.py 确认无循环 → 3. generate_project_path_tree.py --write → 4. audit_registration.py
+    - type: mandatory
+      step: 验证失败（diagnose_depgraph.py 发现循环依赖或 audit_registration.py 发现孤儿）MUST 立即执行回滚方案，恢复拆分前状态，重新评估拆分方案
+    prohibitions:
+    - AI 自主拆分任何域（无论大小）
+    - AI 自行决定新域命名或模块归属
+    - 未提交拆分方案直接执行拆分
+    - 拆分后不验证 depgraph 完整性
+    rationale:
+      why_owner_approval: 拆分是结构性变更，影响多个模块归属和依赖关系。AI 自主拆分 = 无监督的结构变更 = 高漂移风险。Owner 审批确保拆分方案符合业务逻辑。
+  arch_cap_007_project_capacity:
+    section_type: rule
+    title: 项目总容量裁定 (ARCH-CAP-007)
+    original_rules:
+    - ARCH-CAP-007
+    conditions:
+    - type: constraint
+      check: 项目总容量上限
+      pass: 无固定上限（总容量 = 域数 × 单域上限，域数可无限拓展）
+      fail: 设置固定总容量上限（如 1500、3000、10000）
+    - type: constraint
+      check: 实际约束
+      pass: 实际约束是硬件资源（CPU/内存/磁盘）+ AI 可维护性（单域≤200）
+      fail: 设置固定软件总容量上限
+    - type: constraint
+      check: 下限
+      pass: 1500 是下限（项目完整后预计 1500+ 模块）
+      fail: 将 1500 作为上限
+    actions:
+    - type: mandatory
+      step: 项目总容量计算公式：总容量 = 域数 × 单域硬上限(200)。域数通过 extract_depgraph.py --summary 查询；新增域即扩展总容量
+    - type: mandatory
+      step: 新增域只需 INSERT domains 表（ARCH-CAP-005），总容量自动扩展
+    - type: mandatory
+      step: 硬件资源监控：当 depgraph.db > 500MB 或节点数 > 50000 时评估硬件升级
+    prohibitions:
+    - 设置固定项目总容量上限（违反抽屉式扩展）
+    - 将 1500 作为上限（1500 是下限）
+    - 限制新增域数量（域数受硬件约束，不受软件约束）
+    rationale:
+      why_no_fixed_limit: 域是功能单元，功能可以无限细分。抽屉式扩展（ARCH-CAP-005）保证新增域不修改代码，因此域数无软件上限。硬件资源在可预见未来不是约束（具体硬件容量通过运行时查询获取，不固化数字）。真实约束是 AI 可维护性（单域 ≤200），已由 ARCH-CAP-002 约束。
+      why_1500_floor: 1500 是基于预计功能完善的增长预估下限。项目完整后预计 1500+ 模块。
+      why_hardware_threshold: 50000 节点阈值基于 SQLite 单表 B+树索引性能基准（百万行级前查询性能线性）+ depgraph 当前增长速率推算。500MB 基于 SQLite 内存映射读取的合理工作集上限（超过后 mmap 效率下降）。两者均为评估触发线，非硬阻断。
+  arch_cap_008_integration_sync:
+    section_type: procedure
+    title: 集成同步流程 (ARCH-CAP-008)
+    original_rules:
+    - ARCH-CAP-008
+    steps:
+    - order: 1
+      action: 更新 trae_028 gov_doc_001_1500_module_naming section 为新规则
+      pre_condition: trae_028 中该 section
+      expected_result: 拆分阈值改为 80-150 默认 + 150-200 高度耦合 + 200 硬上限；模块定义改为 production 节点口径；总容量改为无限大
+      on_failure: 修复后重新验证 YAML 格式
+    - order: 2
+      action: 更新 architecture_upgrade_discussion.md 为新规则
+      pre_condition: 该文档 D43/§17.5/§17.6/§1.5/D1 条目
+      expected_result: D43 容量标准改为 80-150/150-200/200 硬上限；§17.5 容量标准改为新规则；§17.6 域方案标注域数可无限拓展；§1.5 设计上限改为无固定上限；D1 模块容量目标改为无固定上限
+      on_failure: 修复后重新验证
+    - order: 3
+      action: 同步 _index.yaml
+      pre_condition: trae_055 创建后
+      expected_result: _index.yaml 添加 TRAE-055 条目，total_rules 更新为 55
+      on_failure: 手动添加 _index.yaml 条目
+    - order: 4
+      action: 运行 sync_rule_registry.py 校验
+      pre_condition: _index.yaml 更新后
+      expected_result: exit 0，无冲突
+      on_failure: 修复冲突后重新运行
+    prohibitions:
+    - 保留已过时的规则原文（历史在 git log，不在正文）
+    - 添加"已废止"/"已取代"标注（直接更新为新规则）
+    - 不更新冲突文件就关闭 trae_055 创建任务
+    - 跳过 sync_rule_registry.py 校验
+    rationale:
+      why_direct_update: 规则文档只包含当前有效规则。否定陈述句（"已废止"/"旧定义"）增加 AI 上下文字符、降低效率、制造漂移风险。历史版本差异通过 git log 追踪，不在正文中保留过渡文本。
+  arch_cap_009_generator_dynamic_refactor:
+    section_type: procedure
+    title: 生成器动态化重构流程 (ARCH-CAP-009)
+    original_rules:
+    - ARCH-CAP-009
+    steps:
+    - order: 1
+      action: 提取 DOMAIN_NAME_TO_LAYER 硬编码为 domains 表查询
+      pre_condition: generate_project_depgraph.py 中 DOMAIN_NAME_TO_LAYER 字典
+      expected_result: 生成器从 domains 表动态加载 domain→layer 映射
+      on_failure: 保留硬编码 + 添加 TODO（违反 ARCH-CAP-005，需 Owner 审批延期）
+    - order: 2
+      action: 创建 domain_mapping 表并迁移 NON_SRC_DOMAIN_MAP 硬编码
+      pre_condition: generate_project_depgraph.py 中 NON_SRC_DOMAIN_MAP 字典（全部条目，以代码实际为准）
+      expected_result: 创建 domain_mapping(old_domain_id/new_domain_id/mapping_type/mapped_at/mapped_by/note) 表，全部映射 INSERT，生成器从 domain_mapping 表动态加载
+      on_failure: 同上
+    - order: 3
+      action: 迁移 UNREGISTERED_SRC_MAP 硬编码到 domain_mapping 表
+      pre_condition: generate_project_depgraph.py 中 UNREGISTERED_SRC_MAP 字典（全部条目，以代码实际为准）
+      expected_result: 全部映射 INSERT 到 domain_mapping 表，生成器从 domain_mapping 表动态加载
+      on_failure: 同上
+    - order: 4
+      action: 验证重构后生成器输出一致
+      pre_condition: 重构完成
+      expected_result: 运行 generate_project_depgraph.py --max-workers 8（正常期）或 extract_depgraph.py --summary（架构升级期），输出与重构前一致
+      on_failure: 回滚重构，排查 domains 表数据缺失
+    - order: 5
+      action: 新增测试域验证抽屉式扩展
+      pre_condition: 重构验证通过
+      expected_result: INSERT 一个测试域到 domains 表 → 运行生成器 → 测试域被正确识别 → DELETE 测试域
+      on_failure: 修复动态加载逻辑
+    prohibitions:
+    - 重构期间不备份 generate_project_depgraph.py
+    - 重构后不验证输出一致性
+    - 保留任何硬编码域列表作为"fallback"（违反抽屉式扩展）
+    rationale:
+      why_full_refactor: 上述硬编码是抽屉式扩展的唯一障碍。部分重构（保留部分硬编码）= 新增域时仍需改代码 = 抽屉式扩展未实现。必须全部重构。
+      backup_requirement: 重构前 MUST 备份 generate_project_depgraph.py 到 .aidrafts/ 或 git stash，确保可回滚。
+  change_history:
+    section_type: examples
+    title: 架构容量与域治理规则修订记录
+    items:
+    - version: '1.0.0'
+      date: '2026-06-21'
+      by: session-20260621-001
+      changes: '初始创建——9 条裁定（ARCH-CAP-001~009）。模块=production 节点（通过 extract_depgraph.py --summary 的 total_production_nodes 字段查询当前值）；80-150默认+150-200高度耦合+200硬上限；平行域原则；抽屉式扩展；拆分需Owner审批；项目总容量无固定上限（1500是下限）；生成器动态化重构流程。'
+    - version: '1.0.1'
+      date: '2026-06-21'
+      by: session-20260621-001
+      changes: '去除否定陈述句——删除所有 conflict_resolution/conflict_resolution_trae_028 字段；ARCH-CAP-008 从"冲突处理"改为"集成同步流程"（直接更新为新规则，不保留废止标注）；修正"电脑能设计多少就装多少"口述表述为专业表述；新增 rationale.why_direct_update 说明纯陈述原则。'
+    - version: '1.0.2'
+      date: '2026-06-21'
+      by: session-20260621-001
+      changes: '审查修复——P1: extract_depgraph.py cmd_summary 增加 total_production_nodes/production_nodes 字段；ARCH-CAP-005 domains 表 schema 字段修正为 domain_id/domain_name/domain_group/ssot_path/layer_id/max_modules（删除不存在的 blueprint_id，layer 改为 layer_id）；change_history 删除写死的 804 数字改为动态查询。P2: ARCH-CAP-005 区分 domains 表与 domain_mapping 表；ARCH-CAP-006 增加验证失败回滚触发条件；ARCH-CAP-007 增加 why_hardware_threshold 量化依据；ARCH-CAP-009 硬编码条数改为"以代码实际为准"。'
+    - version: '1.0.3'
+      date: '2026-06-21'
+      by: session-20260621-001
+      changes: '修复未来日期——v1.0.2的date从2026-06-22(未来日期)修正为2026-06-21(当天日期)'
+references:
+  rule_ids:
+  - TRAE-055
+  scripts:
+  - scripts/governance/extract_depgraph.py
+  - scripts/governance/apply_depgraph.py
+  - scripts/governance/generate_project_depgraph.py
+  - scripts/governance/diagnose_depgraph.py
+  modules: []
+  blueprints: []
+enforcement:
+  type: doc
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: H
+  modification_permission: human_gated
+  superseded_by: null
+  change_history:
+  - version: 1.0.7
+    date: '2026-06-21'
+    by: AI-Assistant
+    changes:
+    - P2修复——arch_cap_009 why_full_refactor删除"3处"和"1-2处"硬编码数字（改为"上述硬编码"和"保留部分硬编码"）
+  - version: 1.0.6
+    date: '2026-06-21'
+    by: AI-Assistant
+    changes:
+    - P2修复——arch_cap_005 current_violation删除"3处"硬编码数字（改为"当前存在硬编码，条目数以代码实际为准"）
+    - P2修复——sections.change_history items统一为changes字段并补充by字段（v1.0.0~v1.0.3原使用change字段且无by字段）
+  - version: 1.0.5
+    date: '2026-06-21'
+    by: AI-Assistant
+    changes:
+    - P2修复——metadata删除额外字段version和last_modified（版本信息已在change_history中记录）
+  - version: 1.0.4
+    date: '2026-06-21'
+    by: session-20260621-fix4
+    changes:
+    - P1修复——补充4个缺失顶层字段(references/enforcement/metadata/provenance)
+    - P1修复——change_history版本顺序修正(v1.0.0→v1.0.1→v1.0.3→v1.0.2 改为 v1.0.0→v1.0.1→v1.0.2→v1.0.3)
+provenance:
+  extracted_at: '2026-06-21T00:00:00'
+  extracted_by: session-20260621-001

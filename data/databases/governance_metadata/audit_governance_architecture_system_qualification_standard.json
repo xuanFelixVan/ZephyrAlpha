@@ -1,0 +1,42 @@
+{
+  "task_id": "DM-100086",
+  "source_file": "docs/01_policies_and_standards/governance/architecture/system_qualification_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_037_arch_qualification_versioning.yaml",
+  "yaml_section": "gov_arch_004",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "SQS-001": {
+      "type": "mandatory",
+      "content": "工程层6项基础检查必须全部满足：模块边界清晰、统一日志/Tracing、回测&实盘一致性、异常处理机制、数据质量校验、延迟监控与SLI。任何一项不满足=系统尚未达到工程级门槛",
+      "status": "COVERED"
+    },
+    "SQS-002": {
+      "type": "mandatory",
+      "content": "架构层5项核心能力满足至少4项=专业级系统：数据流标准化、统一消息/数据总线、可扩展性、统一风控层、回放&仿真",
+      "status": "COVERED"
+    },
+    "SQS-003": {
+      "type": "mandatory",
+      "content": "机构级7问全部满足=接近机构级系统：无人值守一周、100%决策回放、1天接入新策略、100+策略并行、统一风险敞口控制、交易成本可控(<收益20%)、合规审计要求",
+      "status": "COVERED"
+    },
+    "SQS-004": {
+      "type": "mandatory+prohibition",
+      "content": "系统水平综合公式=架构成熟度×策略质量×风控能力×执行稳定性，模块数量≠系统水平",
+      "status": "COVERED"
+    }
+  },
+  "summary": {
+    "total_rules": 4,
+    "COVERED": 4,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "原YAML section gov_arch_004仅有占位action'遵守GOV-ARCH-004'，无具体规则",
+    "补充SQS-001~SQS-004到original_rules",
+    "补充3条conditions（3条constraint：工程层6项/架构层5项/机构级7问）",
+    "补充4条actions（4条mandatory）",
+    "补充1条prohibition（不得以模块数量作为系统水平判定依据）"
+  ]
+}

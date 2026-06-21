@@ -1,0 +1,113 @@
+# CT-TELE-FLE-001: System Telemetry → Feedback Loop 数据管道契约
+# 蓝图: MOD-MASTER-001 | blueprint_baseline.md
+# 状态: IMPLEMENTED (OPS-11)
+
+contract:
+  id: CT-TELE-FLE-001
+  title: "System Telemetry → Feedback Loop 全链路"
+  direction: "telemetry → feedback-loop"
+  phase: 1
+  status: IMPLEMENTED
+
+protocol:
+  data_unit: MetricPoint
+  transport: SQLite WAL INSERT + 内存广播队列
+  aggregation:
+    day:
+      interval_minutes: 15
+      functions: [window_avg, window_p99, window_count]
+    night:
+      interval_minutes: 60
+      functions: [window_avg, window_p99, window_count]
+
+  schema:
+    MetricPoint:
+      timestamp:
+        type: str
+        format: ISO8601
+        required: true
+      source_system:
+        type: str
+        enum:
+          - orchestrator
+          - gate_engine
+          - pipeline
+          - script_system
+          - context-engine
+          - knowledge_base
+          - vector-memory
+          - mcp
+          - llm-security
+          - telemetry
+          - feedback-loop
+        required: true
+      metric_name:
+        type: str
+        required: true
+        examples:
+          - task_latency_ms
+          - gate_pass_rate
+          - script_exit_code_distribution
+          - task_count
+          - failure_rate
+      value:
+        type: float
+        required: true
+      unit:
+        type: str
+        enum: [ms, count, rate, bytes]
+        default: count
+      tags:
+        type: dict
+        required: false
+    CollectedMetrics:
+      by_source:
+        type: dict
+        description: "source_system -> [MetricPoint dict]"
+      total_count:
+        type: int
+      window_aggregates:
+        avg:
+          type: float
+        p99:
+          type: float
+        count:
+          type: int
+
+producer:
+  module: zephyr.l01_infrastructure.system_telemetry.metrics_bridge
+  interface:
+    emit_metrics:
+      params: "metrics: list[MetricPoint]"
+      returns: "int (written count)"
+      errors: [TelemetryWriteError, ValueError]
+  trigger:
+    - circadian_scheduler: periodic_telemetry_collect(day=15min, night=60min)
+    - health_monitor: alert_telemetry_lag(delay > 30s)
+
+consumer:
+  module: zephyr.feedback_loop.metrics_collector
+  interface:
+    collect_from_telemetry:
+      params: "since: str|None, until: str|None, sources: list[str]|None"
+      returns: "CollectedMetrics dict"
+
+verification:
+  cli: scripts/connect/tele_fle.py
+  commands:
+    - python scripts/connect/tele_fle.py --verify
+    - python scripts/connect/tele_fle.py --trigger
+    - python scripts/connect/tele_fle.py --status
+    - python scripts/connect/tele_fle.py --warn-only
+  acceptance:
+    - "--verify → exit 0, 'TELE→FLE: OK'"
+    - "--trigger → exit 0, emitted==collected (gap≤10% or gap≤10)"
+
+database:
+  table: telemetry_metrics
+  indices: [idx_telemetry_ts, idx_telemetry_source]
+  retention_sec: 86400  # 24h TTL
+
+downstream_contracts:
+  - CT-FLE-ORC-001  # OPS-12
+  - CT-FLE-DB-001   # OPS-13

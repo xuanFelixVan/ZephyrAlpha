@@ -1,0 +1,102 @@
+rule_id: TRAE-027
+title: 方法论-协作与演进
+aliases:
+- MTH-012
+- MTH-013
+layer: L2
+severity: warning
+scope: methodology_collaboration
+domain: TRAE
+triggers:
+- operation: methodology_collaboration
+sections:
+  mth_012:
+    title: 涌现式设计原则
+    section_type: rule
+    original_rules:
+    - MTH-012
+    conditions:
+    - type: trigger
+      check: 创建/完善结构化文档时
+      pass: 模板保下限+草稿血肉不浪费
+      fail: 模板空洞或草稿内容丢失
+    actions:
+    - type: mandatory
+      step: Step1模板填空(保下限：每个必填节填满不跳节)→Step2草稿差异识别(模板外内容/模板内不足)→Step3差异分析三问(结构性还是装饰性？未来AI会做不同决策吗？属于当前文件还是应迁移？)→Step4反向修正模板(实例比模板多≥2个完整节/某节深度≥3倍/KB决策记录裁定字段格式升级时触发)
+    prohibitions: []
+  mth_013:
+    title: 路径架构合规创建原则
+    section_type: rule
+    original_rules:
+    - MTH-013
+    conditions:
+    - type: pre_condition
+      check: 所有文件/目录创建操作
+      pass: 路径经过索引授权或Owner批准
+      fail: AI自行决定目录层级导致结构混乱
+    actions:
+    - type: mandatory
+      step: 三步决策：1.目标路径已存在？→按现有路径写入(零决策)→2.不存在则查索引(GOV-DOC-002 §5.1.2+registry_master_index.yaml)→3.索引无定义→标记新路径结构提交Owner讨论(临时存放sketches_and_drafts/)；批准后更新索引→创建目录→写入文件
+    prohibitions:
+    - 使用os.makedirs创建未在索引中定义的目录层级
+    - 在项目根目录创建临时文件
+    - '"我觉得应该放这"决定路径'
+    - 新增目录创建后不更新索引文件
+  mth_013_index_checklist:
+    title: MTH-013 索引查询清单
+    section_type: verification
+    original_rules:
+    - MTH-013 索引查询
+    conditions:
+    - type: pre_condition
+      check: 创建文件时需确定路径
+      pass: 按顺序查询索引，任一有定义即可行动
+      fail: 跳过索引查询直接创建
+    actions:
+    - type: mandatory
+      step: 按顺序查询4个索引：1.GOV-DOC-002 §5.1.2路径映射表(该文件类型的标准存放路径)→2.registry_master_index.yaml(类似模块的目录结构先例)→3.document_metadata_index_registry.yaml(类似文件类型的存放路径先例)→4.module_id_registry.yaml(新目录对应新模块时module_id是否已注册)；任一有定义→按索引创建
+    prohibitions:
+    - 跳过索引查询直接mkdir
+    - 目录存在性前置检查未执行就写入
+  ps_std_012_reference:
+    title: PS-STD-012规则验证标准引用
+    section_type: context
+    original_rules:
+    - PS-STD-012
+    summary: "PS-STD-012(规则验证标准)的scope/normative_refs/change_history已迁移至权威文件trae_041_meta_rule_classification.yaml(ps_std_012_scope/ps_std_012_normative_refs/ps_std_012_change_history章节)。本文件仅保留MTH-012/013方法论规则。"
+    authoritative_source: trae_041_meta_rule_classification.yaml
+references:
+  rule_ids:
+  - TRAE-024
+  - TRAE-025
+  - TRAE-026
+  scripts: []
+  modules: []
+  blueprints: []
+enforcement:
+  type: doc
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: evolving
+  impact_level: L
+  modification_permission: ai_modifiable
+  superseded_by: null
+  version: "1.0.3"
+  last_modified: "2026-06-19"
+  change_history:
+  - version: "1.0.0"
+    date: "2026-06-13"
+    change: "初始创建——从governance_methodology_standard.md提取MTH-012/013规则"
+  - version: "1.0.1"
+    date: "2026-06-19"
+    change: "RQ-14合规：metadata新增version/last_modified/change_history字段记录文件级修改历史"
+  - version: "1.0.2"
+    date: "2026-06-19"
+    change: "RQ-04/RQ-05修复：mth_013章节2处索引文件引用snake_case化(§2.2裁定落地)；RQ-03散布标注：rv_scope新增dispersion_note标注PS-STD-012散布内容"
+  - version: "1.0.3"
+    date: "2026-06-19"
+    change: "RQ-03散布根治：rv_scope/rv_normative_refs/rv_change_history章节已迁移至trae_041(ps_std_012_scope/normative_refs/change_history)，本文件替换为ps_std_012_reference引用章节"
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

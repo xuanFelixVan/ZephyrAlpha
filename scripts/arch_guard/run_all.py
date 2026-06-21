@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/run_all.py | §
 """Architecture Guard 编排器
 
-读取 _manifest.yaml，执行所有 status=active 的 fitness function。
+读取 manifest.yaml，执行所有 status=active 的 fitness function。
 对标 Google Tricorder Presubmit——在 CI Pipeline 中调用。
 
 用法: python scripts/arch_guard/run_all.py [--strict]
@@ -20,7 +20,7 @@ from pathlib import Path
 import yaml
 
 ARCH_GUARD_ROOT = Path(__file__).resolve().parent
-MANIFEST_PATH = ARCH_GUARD_ROOT / "_manifest.yaml"
+MANIFEST_PATH = ARCH_GUARD_ROOT / "manifest.yaml"
 
 
 def load_manifest() -> dict:

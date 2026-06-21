@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0085 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-243 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.benchmarks.benchmark_vms_e2e
 # [STABILITY] evolving
 # [SAFETY] L
@@ -115,8 +116,8 @@ def main():
         shutil.rmtree(TEST_DB_DIR)
     TEST_DB_DIR.mkdir(parents=True, exist_ok=True)
 
-    from zephyr.vector_memory.faiss_collection_manager import FAISSCollectionManager
-    from zephyr.vector_memory.sqlite_metadata_store import SQLiteMetadataStore
+    from zephyr.governance.vector_memory.faiss_collection_manager import FAISSCollectionManager
+    from zephyr.governance.vector_memory.sqlite_metadata_store import SQLiteMetadataStore
 
     import faiss
     print(f"\n  FAISS GPU: {faiss.get_num_gpus()}")

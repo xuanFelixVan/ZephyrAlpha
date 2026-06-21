@@ -123,7 +123,7 @@ RESPONSIBILITY_MAP = {
         ],
     ),
     "02_enterprise_architecture/target-architecture": (
-        "目标架构视图（TOGAF）— 00-overview 到 12-dimension-audit-matrix + architecture-model/ + diagrams/（正文已收口，已无 by-domain/）",
+        "目标架构视图（TOGAF）— 00-overview 到 dimension-audit-matrix + architecture-model/ + diagrams/（正文已收口，已无 by-domain/）",
         [
             ("治理规范", "01_policies_and_standards/"),
             ("ADR", "02_enterprise_architecture/adr/"),
@@ -138,9 +138,9 @@ RESPONSIBILITY_MAP = {
         ],
     ),
     "09_audit/findings": (
-        "安全与合规 Finding、事件响应初稿 Markdown（对齐 target-architecture/06-security-architecture.md）",
+        "安全与合规 Finding、事件响应初稿 Markdown（对齐 target-architecture/06-security_architecture.md）",
         [
-            ("审计总控", "09_audit/INDEX.md"),
+            ("审计总控", "09_audit/index.md"),
             ("审计报告", "09_audit/reports/"),
         ],
     ),
@@ -154,7 +154,7 @@ RESPONSIBILITY_MAP = {
     ),
     # === Level 3 ===
     "01_policies_and_standards/_registry/catalogs": (
-        "脚本自动生成的 YAML 注册表（document-metadata-index.yaml / master-document-inventory.yaml / task-card-meta-registry.yaml）",
+        "脚本自动生成的 YAML 注册表（document-metadata-index-registry.yaml / master-document-inventory-registry.md / task-card-meta-registry.md）",
         [
             ("手动编辑的文件", "governance/ 对应子域"),
             (".md 文件", "governance/ 或 operational/"),
@@ -185,7 +185,7 @@ RESPONSIBILITY_MAP = {
         ],
     ),
     "01_policies_and_standards/operational/devops": (
-        "DevOps 操作 — pre-commit/CI/部署流程",
+        "DevOps 操作 — pre_commit/CI/部署流程",
         [
             ("声明式 DevOps 策略", "governance/module/ 或 governance/security/"),
         ],
@@ -280,20 +280,20 @@ DOMAIN_LAYER_MAP = {
 }
 
 MODULE_LAYER_MAP = {
-    "l00_data_source": "L00 数据接入层 — 数据源连接器 / 行情 / 基本面 / 另类数据",
-    "l01_infrastructure": "L01 基础设施层 — AI 基础设施（容量保障 / 运行时集成 / KMS / Vibe Coding 管线 / 触发器路由）",
-    "l02_alpha_factor": "L02 因子层 — 多频段因子计算 / 衍生因子",
-    "l03_signal_generation": "L03 信号生成层 — 因子融合 / 信号聚合 / Alpha 组合优化",
-    "l04_risk_management": "L04 风控层 — 头寸限额 / 组合风控 / 实时止损",
-    "l05_portfolio_construction": "L05 组合构建层 — 优化器 / 权重再平衡 / 交易指令生成",
-    "l06_trade_execution": "L06 交易执行层 — 算法交易 / Order Management / EMS 连接",
-    "l07_post_trade_analytics": "L07 归因分析层 — 绩效归因 / 交易成本分析 / 盘后报表",
-    "l08_human_ai_interface": "L08 人机界面层 — Dashboard / 可视化 / 告警通知 / 决策控制台",
-    "l09_research_innovation": "L09 研究创新层 — 策略回测 / 因子研究 / 研究管理",
-    "l10_compliance": "L10 合规层 — 交易前合规 / 持仓合规 / 监管报送",
-    "l11_ml_platform": "L11 ML 平台层 — 模型训练 / 推理服务 / 特征存储 / 模型注册",
-    "system_telemetry": "L12 系统可观测层 — 指标 / 日志 / 链路追踪 / AI 行为遥测",
-    "l13_experimentation": "L13 实验管线层 — A/B 测试 / 实验管理 / 参数优化",
+    "data": "L00 数据接入层 — 数据源连接器 / 行情 / 基本面 / 另类数据",
+    "infrastructure.runtime_integration": "L01 基础设施层 — AI 基础设施（容量保障 / 运行时集成 / KMS / Vibe Coding 管线 / 触发器路由）",
+    "factor": "L02 因子层 — 多频段因子计算 / 衍生因子",
+    "signal": "L03 信号生成层 — 因子融合 / 信号聚合 / Alpha 组合优化",
+    "risk": "L04 风控层 — 头寸限额 / 组合风控 / 实时止损",
+    "pf_core": "L05 组合构建层 — 优化器 / 权重再平衡 / 交易指令生成",
+    "ex_core": "L06 交易执行层 — 算法交易 / Order Management / EMS 连接",
+    "pf_core": "L07 归因分析层 — 绩效归因 / 交易成本分析 / 盘后报表",
+    "frontend": "L08 人机界面层 — Dashboard / 可视化 / 告警通知 / 决策控制台",
+    "research": "L09 研究创新层 — 策略回测 / 因子研究 / 研究管理",
+    "compliance": "L10 合规层 — 交易前合规 / 持仓合规 / 监管报送",
+    "ml_train": "L11 ML 平台层 — 模型训练 / 推理服务 / 特征存储 / 模型注册",
+    "observability": "L12 系统可观测层 — 指标 / 日志 / 链路追踪 / AI 行为遥测",
+    "integration": "L13 实验管线层 — A/B 测试 / 实验管理 / 参数优化",
 }
 
 BOOTSTRAP_LAYER_MAP = {

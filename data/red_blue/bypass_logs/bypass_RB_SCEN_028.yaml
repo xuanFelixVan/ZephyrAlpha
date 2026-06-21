@@ -1,0 +1,20 @@
+- attack_payload: ''
+  count: 1
+  defense_response: 'BLOCKED by credential_rotation_trigger.scan_and_rotate: credential_rotation_trigger.scan_and_rotate'
+  entry_id: BY-a41c20dd
+  escalated: false
+  gate_id: credential_rotation_trigger.scan_and_rotate
+  occurred_at: '2026-05-23T14:30:34.295757+00:00'
+  root_cause: 'BLOCKED by credential_rotation_trigger.scan_and_rotate: credential_rotation_trigger.scan_and_rotate'
+  scenario_id: RB-SCEN-028
+  tier: TIER_1
+- attack_payload: ''
+  count: 1
+  defense_response: 'BLOCKED by credential_rotation_trigger.scan_and_rotate: credential_rotation_trigger.scan_and_rotate'
+  entry_id: BY-efc1fb44
+  escalated: false
+  gate_id: credential_rotation_trigger.scan_and_rotate
+  occurred_at: '2026-05-23T14:30:52.941885+00:00'
+  root_cause: 'BLOCKED by credential_rotation_trigger.scan_and_rotate: credential_rotation_trigger.scan_and_rotate'
+  scenario_id: RB-SCEN-028
+  tier: TIER_1

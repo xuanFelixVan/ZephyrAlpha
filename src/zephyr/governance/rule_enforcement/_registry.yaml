@@ -1,0 +1,427 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+module_id: MOD-INF-007
+schema_version: '1.0'
+doc_type: registry
+ttl: permanent
+last_updated: '2026-05-17'
+gates:
+- gate_id: G1
+  gate_name: ingest
+  title: G1 Ingest Gate
+  category: kms
+  file: g1-ingest.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+- gate_id: G2
+  gate_name: triage
+  title: G2 Triage Gate
+  category: kms
+  file: g2-triage.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+- gate_id: G3
+  gate_name: evaluate
+  title: G3 Evaluate Gate
+  category: kms
+  file: g3-evaluate.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+- gate_id: G4
+  gate_name: activate
+  title: G4 Activate Gate
+  category: kms
+  file: g4-activate.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+- gate_id: G5
+  gate_name: extract
+  title: G5 Extract Gate
+  category: kms
+  file: g5-extract.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+- gate_id: G6
+  gate_name: ctr_compliance
+  title: G6 CTR Compliance Gate
+  category: compliance
+  file: g6-ctr-compliance.yaml
+  status: implemented
+  scope: global
+  execution_plane: warm
+  note: 2026-05-04 执行引擎落地 — scripts/governance/d5_architecture/check_g6_ctr_compliance.py
+- gate_id: G6_BP
+  gate_name: blueprint_compliance
+  title: G6 Blueprint Compliance Gate
+  category: compliance
+  file: g6-blueprint-compliance.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: beta hard compliance — AI MUST read blueprint BEFORE any code change
+- gate_id: GATE-18
+  gate_name: precommit
+  title: GATE-18 Pre-Commit Gate
+  category: lifecycle
+  file: ''
+  status: active
+  scope: global
+  execution_plane: hot
+  note: pre-commit钩子定义——非独立YAML，file字段为空（避免zombie检测误判）
+- gate_id: G10
+  gate_name: position_limits
+  title: G10 Position Limits Gate
+  category: trading
+  file: g7-position-limits.yaml
+  status: active
+  scope: trading
+  execution_plane: warm
+  note: 2026-05-05 落地 — 3 条仓位/集中度/流动性限制。activation_stage=shadow（先记录不阻断）
+- gate_id: G11
+  gate_name: leverage_limits
+  title: G11 Leverage Limits Gate
+  category: trading
+  file: g8-leverage.yaml
+  status: active
+  scope: trading
+  execution_plane: warm
+  note: 2026-05-05 落地 — 3 条杠杆/衍生品/日内限制。activation_stage=shadow
+- gate_id: G12
+  gate_name: strategy_correlation
+  title: G12 Strategy Correlation Gate
+  category: trading
+  file: g9-strategy-correlation.yaml
+  status: active
+  scope: trading
+  execution_plane: warm
+  note: 2026-05-05 落地 — 3 条相关性/因子重叠/股票池集中度。activation_stage=shadow
+- gate_id: ZERO-RESIDUE
+  gate_name: zero_residue
+  title: ZERO-RESIDUE Zero Residue Principle
+  category: residue
+  file: zero-residue.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-05-05 落地 — 7 条零残留规则（ZR-001~007）：临时文件/孤儿文件/废墟引用/残留学债/文件闭环/文件准入
+- gate_id: G8
+  gate_name: g8
+  title: SSoT 一致性门禁  frontmatter  registry construction_progress 自动校验
+  category: infrastructure
+  file: g8.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+- gate_id: SYS-MASTER-CMP
+  gate_name: sys_master_compliance
+  title: SYS-MASTER-CMP SYS-MASTER-001 Compliance Gate
+  category: infrastructure
+  file: sys-master-compliance.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-05-07 落地 — 7 条检查：蓝图存在/冷启动引用/依赖完整性/进度一致性/AI规则数量/注册表登记/crosscheck健康
+- gate_id: GATE-DEDUP
+  gate_name: code_dedup
+  title: GATE-DEDUP Code Deduplication Gate
+  category: infrastructure
+  file: gate-dedup.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 'MOD-INF-017 代码去重引擎 pre-commit 门禁。实现位于 infra_ops/code_dedup_engine/integration_hub.py。pre-commit/verify_dedup.py
+    自动触发。覆盖 MinHash+LSH 扫描/BRS 单体文化评分/决策审计链/自我扫描。exit code: PASS/WARN/ERROR/TOOL-ERROR/DEGRADED'
+- gate_id: VMS-HEALTH
+  gate_name: vms_health
+  title: VMS-HEALTH Vector Memory Service Health Gate
+  category: infrastructure
+  file: ''
+  status: active
+  scope: vector-memory
+  execution_plane: warm
+  note: MOD-INF-011 Phase 4 运维自动化 — IndexHealthMonitor.check_all() 全面健康扫描（8 Collection
+    存在性/漂移检测/TTL过期/完整性校验）。实现位于 phase_check_registry.check_vms_health()。Phase 1 阶段门控自动执行。
+- gate_id: G9
+  gate_name: g9
+  title: Four-Blueprint Cross-Module Integration Compliance
+  category: governance
+  file: g9.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+- gate_id: GCT-016-SHARED-CORE
+  gate_name: shared_core_integration
+  title: GCT-016-Shared-Core Integration Gate — MOD-INF-016 · v0.14.0 · 跨层共享基础设施 (Shared
+    59+Core 2=61已跟踪+~43orphan待分类)
+  category: governance
+  file: ''
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 61 tracked files in src/zephyr/{shared,core}/ — schemas (Task 31字段)/errors(14异常)/serialization/cache(TTL+LRU)/logging(结构化+trace_id)/metrics/capability/content_fingerprint/contracts
+    + 10 early-bird(Phase 11-14)。201 tests pass。34 divergent copy pairs部分已修复(6 re-exports)。TD-SHARED-001进行中。冷启动
+    FIRST-READ依赖。
+- gate_id: GCT-018-RBAC
+  gate_name: rbac_integrity
+  title: GCT-018-RBAC RBAC Integrity Gate — MOD-INF-018 · v0.14.0 · 七层纵深防御+六横切面权限完整性
+  category: governance
+  file: ''
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 67 files in src/zephyr/agent-rbac/ — PermissionGuard(七层编排)/ImmutableCore(L0)/KillSwitch(L0)/RBACGuard(L1)/ABACGuard(L2)/InputGuard(L3)/SequenceGuard(L4)/OutputGuard(L5)/Observability(L6)/DryRun(L7)+横切面A-F。276
+    tests pass。冷启动锁+身份注册+自动后验。对标 K8s RBAC + OPA Gatekeeper + Claude Code hooks。
+- gate_id: GCT-021
+  gate_name: rollback_system_integration
+  title: GCT-021 Rollback System — MOD-INF-021 · v0.10.0 · Git-native+SQLite Checkpoint
+  category: governance
+  file: ''
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 52 files in src/zephyr/rollback/ — rollback_executor, state_machine, forensic_snapshot,
+    WAL, abuse_detector
+- gate_id: GCT-022
+  gate_name: escalation_protocol_integration
+  title: GCT-022 Escalation Protocol — MOD-INF-022 · v0.14.0 · Rule-driven+Auto-delegate+Economic
+    Guard+Deadlock Protection
+  category: governance
+  file: ''
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 4 core files — escalation-engine, delegation_engine, circuit_breaker, escalation_models
+- gate_id: GCT-024
+  gate_name: budget_enforcer_integration
+  title: GCT-024 Budget Enforcer — MOD-INF-024 · v0.7.0 · Token/Cost/Time 3D Seven-Level
+    Budget
+  category: governance
+  file: ''
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 3 core files — budget_engine (pre_flight gate), burn_rate_monitor (4-window
+    Wasserstein), budget_models
+- gate_id: GATE-OBSERVABILITY
+  gate_name: observability_baseline
+  title: GATE-OBSERVABILITY Observability Baseline Gate — System Telemetry MOD-INF-015
+    v0.9.0
+  category: infrastructure
+  file: observability-baseline.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: '10检查项: Telemetry facade导入/9子系统可访问/metrics gauge可写/health注册/traces span创建/三闭环文档化/shutdown优雅/fail-closed韧性/alerts发布/schema校验'
+- gate_id: GCT-025
+  gate_name: a2a_protocol_integration
+  title: GCT-025 A2A Protocol — MOD-INF-025 · v0.10.0 · HOLD (R81-C04)
+  category: governance
+  file: ''
+  status: draft
+  scope: global
+  execution_plane: cold
+  note: 49 files in infra_ops/a2a_protocol/ — ON HOLD pending Agent>=3 +
+    conflict>=5/day trigger
+- gate_id: GCT-026
+  gate_name: lsg_security_integration
+  title: GCT-026 LSG Security Gateway — MOD-INF-014 · v1.0.0 · L0-L8 Nine-Layer Defense-in-Depth
+  category: governance
+  file: ''
+  status: active
+  scope: global
+  execution_plane: warm
+  note: '27 files in src/zephyr/llm-security/ — LSGSecurityGateway(4 scan modes)/L0
+    Supply Chain/L1 Input Defense/L2 Prompt Protection/L2a Process Sandbox/L3 Output
+    Security/L4 Agent Security/L5 Resource Protection/L6 Observability/L7 Validation/L8
+    Multi-Agent。12 test files。Red Team 200+ payloads。fail-closed principle。Pipeline
+    integrated via _lsg_sanitize_input/output。Skill: SKILL-DOM-LSG-001。'
+- gate_id: gct_024_budget_enforcer
+  gate_name: gct_024_budget_enforcer
+  title: GCT-024 Budget Enforcer MOD-INF-024
+  category: governance
+  file: gct-024-budget-enforcer.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+- gate_id: G_ASSET_INVENTORY
+  gate_name: asset-inventory
+  title: G_asset_inventory Asset Inventory Health Gate
+  category: infrastructure
+  file: g-asset-inventory.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: MOD-INF-026 asset inventory health gate - verifies unified-asset-index.yaml
+    exists and health score meets threshold
+- gate_id: G-RES-001
+  gate_name: resource_memory_check
+  title: G-RES-001 Resource Memory Check Gate
+  category: infrastructure
+  file: ''
+  status: active
+  scope: global
+  execution_plane: warm
+  note: MOD-INF-032 资源优化引擎门禁——memory_percent > 90% 时阻断非必要操作，提示"系统资源不足"。实现于 ResourceOptimizationEngine.get_pressure_state()。
+- gate_id: G-RES-002
+  gate_name: resource_process_check
+  title: G-RES-002 Resource Process Count Check Gate
+  category: infrastructure
+  file: ''
+  status: active
+  scope: global
+  execution_plane: warm
+  note: MOD-INF-032 资源优化引擎门禁——process_count > 100 时阻断新进程创建。实现于 ResourceOptimizationEngine.snapshot()。
+- gate_id: G-RES-003
+  gate_name: resource_optimization_verify
+  title: G-RES-003 Resource Optimization Verification Gate
+  category: infrastructure
+  file: ''
+  status: active
+  scope: global
+  execution_plane: warm
+  note: MOD-INF-032 资源优化引擎门禁——优化后 memory 未降低时告警 + 升级到 EMERGENCY。实现于 ResourceOptimizationEngine.optimize()
+    后置检查。
+- gate_id: G0
+  gate_name: task_entry
+  title: G0 Task Entry Gate
+  category: task
+  file: task/g0-entry.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 人读 rules 入口；GateEngine 可执行配置见 task/g0-orc-gate-engine.yaml
+- gate_id: G0-ORC
+  gate_name: task_entry_orc
+  title: G0 Task Entry Gate（Orc 最小硬校验）
+  category: task
+  file: task/g0-orc-gate-engine.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: GateEngine 可执行配置（checks）；人读 rules 见 task/g0-entry.yaml
+- gate_id: G7
+  gate_name: task_delivery_orc
+  title: G7 Task Delivery Gate（Orc 最小硬校验）
+  category: task
+  file: task/g7-orc-gate-engine.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: GateEngine 入口（verification + audit_findings）；残余目录扫描见 task_completion_gate.py
+- gate_id: EN-001
+  gate_name: circular_dependency
+  title: EN-001 Circular Dependency Scanner
+  category: invariants
+  file: invariants/en-001-circular-dependency.yaml
+  status: implemented
+  scope: global
+  execution_plane: warm
+  note: Phase D — Kahn algorithm topological sort over 15-node layer import DAG
+- gate_id: EN-002
+  gate_name: enforcement_validator
+  title: EN-002 Enforcement Mode Validator
+  category: invariants
+  file: invariants/en-002-enforcement-validator.yaml
+  status: implemented
+  scope: global
+  execution_plane: warm
+  note: Phase D — validates enforcement_mode declared for all P0 contracts
+- gate_id: EN-003
+  gate_name: contract_compatibility
+  title: EN-003 Contract Compatibility Checker
+  category: invariants
+  file: invariants/en-003-contract-compatibility.yaml
+  status: implemented
+  scope: global
+  execution_plane: warm
+  note: Phase D — diffs dataclass fields against cross_layer_contracts.yaml spec
+- gate_id: MAD-001
+  gate_name: architecture_necessity
+  title: MAD-001 Architecture Necessity
+  category: admission
+  file: admission/mad-001-architecture-necessity.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-05-04 落地 — 4 条准入规则（problem_statement/existing_capability/layer_assignment/phase_relevance）
+- gate_id: MAD-002
+  gate_name: phase_relevance
+  title: MAD-002 Phase Relevance
+  category: admission
+  file: admission/mad-002-phase-relevance.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-05-04 落地 — 4 条准入规则（phase_match/load_bearing/deferred_not_rejected/context）
+- gate_id: MAD-003
+  gate_name: dependency_compliance
+  title: MAD-003 Dependency Compliance
+  category: admission
+  file: admission/mad-003-dependency-compliance.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-05-04 落地 — 5 条准入规则（downward/contracts/versioned/no_circular/version_check）
+- gate_id: MAD-004
+  gate_name: interface_definability
+  title: MAD-004 Interface Definability
+  category: admission
+  file: admission/mad-004-interface-definability.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-05-04 落地 — 6 条准入规则（public_api/input/output/error/config/extension_points）
+- gate_id: MAD-005
+  gate_name: dependency_graph_template
+  title: MAD-005 Dependency Graph Template Compliance
+  category: admission
+  file: admission/mad_005_dependency_graph_template.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-05-12 落地 — 7 条依赖图模板合规规则（required_sections/node_fields/edge_fields/adjacency/completeness/vocabularies/alignment）
+- gate_id: G6_PT
+  gate_name: path_tree_freshness
+  title: G6 Path Tree Freshness Gate
+  category: compliance
+  file: g6-path-tree-freshness.yaml
+  status: active
+  scope: global
+  execution_plane: warm
+  note: MOD-INF-037 GOV-DOC-004 §四-A 强制门禁 — 文件创建/删除/移动后必须刷新路径树+归属图，Session关门前必须 --check 通过
+- gate_id: G-TRIPLE-ALIGN
+  gate_name: triple_alignment
+  title: G-TRIPLE-ALIGN Blueprint-Code-DependencyMap Triple Alignment
+  category: compliance
+  file: triple_alignment.py
+  status: active
+  scope: global
+  execution_plane: warm
+  note: 2026-05-16 落地 — 7 条三方对齐规则（module_id/dep_map/属性/stale_progress/blueprint_missing/code_missing/orphan），蓝图↔代码↔依赖图三方必须同步
+summary:
+  total: 44
+  by_category:
+    kms: 5
+    compliance: 4
+    lifecycle: 1
+    trading: 3
+    residue: 1
+    infrastructure: 9
+    governance: 9
+    task: 3
+    invariants: 4
+    admission: 5
+  by_status:
+    active: 38
+    implemented: 4
+    draft: 1

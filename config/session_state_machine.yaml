@@ -1,17 +1,18 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-002 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# blueprint: MOD-INF-002 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
+module_id: MOD-INF-002
 version: "1.0.0"
 schema_version: "1.0.0"
 doc_type: rule
 title: "Session State Machine"
 status: active
 ttl: permanent
-implementation_status: "operational — consumed by src/zephyr/orchestrator/session_manager.py (SessionManager v1.1 — CT-003)"
+implementation_status: "operational — consumed by src/zephyr/orchestration/runtime_core/orchestrator/session_manager.py (SessionManager v1.1 — CT-003)"
 
 description: "Defines the lifecycle states and transitions for AI agent sessions in the ZephyrAlpha pipeline"
 

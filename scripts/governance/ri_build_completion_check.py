@@ -19,7 +19,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 RI_MODULES = [
     ("RI-01", "Event Bus", "zephyr.shared.event_bus"),
-    ("RI-02", "Memory Trio", "zephyr.vector_memory"),
+    ("RI-02", "Memory Trio", "zephyr.integration.vector_memory"),
     ("RI-03", "Structured Concurrency", "zephyr.shared.concurrency"),
     ("RI-04", "Bulkhead", "zephyr.shared.bulkhead"),
     ("RI-05", "Graceful Shutdown", "zephyr.shared.shutdown"),
@@ -36,11 +36,11 @@ RI_MODULES = [
 ]
 
 CROSS_LAYER_CHECKS = [
-    ("VMS ↔ CE", "src/zephyr/vector_memory/vector_bridge.py"),
-    ("VMS ↔ KB", "src/zephyr/vector_memory/bridge_layer.py"),
-    ("Audit ↔ Writer", "src/zephyr/audit_trail/writer.py"),
-    ("Audit ↔ Signer", "src/zephyr/audit_trail/agent_signer.py"),
-    ("Audit ↔ Integrity", "src/zephyr/audit_trail/integrity.py"),
+    ("VMS ↔ CE", "src/zephyr/vector-memory/vector_bridge.py"),
+    ("VMS ↔ KB", "src/zephyr/vector-memory/bridge_layer.py"),
+    ("Audit ↔ Writer", "src/zephyr/audit-trail/writer.py"),
+    ("Audit ↔ Signer", "src/zephyr/audit-trail/agent_signer.py"),
+    ("Audit ↔ Integrity", "src/zephyr/audit-trail/integrity.py"),
 ]
 
 

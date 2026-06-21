@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0134 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-291 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.governance.test_gov_5system_integration
 # [STABILITY] evolving
 # [SAFETY] L
@@ -32,7 +33,7 @@ MODULE_VERSIONS = {
 
 class TestFiveSystemDiscovery:
     def test_all_modules_importable(self):
-        from zephyr.governance import (
+        from zephyr.governance.governance import (
             escalation_protocol,
             budget_enforcer_mod,
             drift_detector_mod,
@@ -52,7 +53,7 @@ class TestFiveSystemDiscovery:
         ("rollback_mod", "0.10.0"),
     ])
     def test_versions_match_blueprint(self, mod_name, expected_version):
-        from zephyr.governance import (
+        from zephyr.governance.governance import (
             escalation_protocol,
             budget_enforcer_mod,
             drift_detector_mod,
@@ -68,7 +69,7 @@ class TestFiveSystemDiscovery:
             f"{mod_name}: expected {expected_version}, got {mods[mod_name].__version__}"
 
     def test_escalation_engine_functional(self):
-        from zephyr.escalation_engine import EscalationEngine, RuleCategory
+        from zephyr.governance.escalation_engine import EscalationEngine, RuleCategory
         e = EscalationEngine("gct009-test")
         ev = e.evaluate(RuleCategory.AUTO_GUARD_FAILURE, "test guard failure")
         assert ev.level.value <= 4
@@ -76,15 +77,15 @@ class TestFiveSystemDiscovery:
         assert len(e._rules) >= 9
 
     def test_budget_engine_functional(self):
-        from zephyr.budget_enforcer import BudgetEngine
+        from zephyr.governance.budget_engine import BudgetEngine
         be = BudgetEngine()
         r = be.pre_flight_check("gct009-req", 1000, 0.1)
         assert r.decision.name == "ALLOW"
         assert r.budget_level.name == "L0_NORMAL"
 
     def test_cross_system_escalation_chain(self):
-        from zephyr.escalation_engine import EscalationEngine, RuleCategory
-        from zephyr.budget_enforcer import BudgetEngine
+        from zephyr.governance.escalation_engine import EscalationEngine, RuleCategory
+        from zephyr.governance.budget_engine import BudgetEngine
         e = EscalationEngine("chain-test")
         be = BudgetEngine()
         r = be.pre_flight_check("chain-req", 1000, 0.1)
@@ -94,5 +95,5 @@ class TestFiveSystemDiscovery:
         assert result.escalated
 
     def test_a2a_hold_status(self):
-        import zephyr.l01_infrastructure.a2a_protocol as a2a
+        import zephyr.infrastructure.a2a_protocol as a2a
         assert a2a is not None

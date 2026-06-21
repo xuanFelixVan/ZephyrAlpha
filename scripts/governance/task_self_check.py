@@ -43,8 +43,8 @@ _SRC_DIR = str(_PROJECT_ROOT / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-from zephyr.db.task_repo import TaskRepository
-from zephyr.shared.paths import DB_PATH
+from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.governance.persistence.sqlite_schema import DB_PATH
 
 _CHECK_ICON = {"PASS": "✅", "WARN": "⚠️", "FAIL": "❌", "FIXED": "🔧"}
 
@@ -177,7 +177,7 @@ def check_hook_registry(repo: TaskRepository) -> CheckResult:
     """Check compliance and report findings."""
     cr = CheckResult()
     try:
-        from zephyr.hooks.event_hook import hook_registry
+        from zephyr.integration.zephyr.event_hook import hook_registry
         hooks = hook_registry.get_all()
         if hooks:
             cr.ok(f"已注册 {len(hooks)} 个钩子: {', '.join(hooks[:5])}")
@@ -204,7 +204,7 @@ def main() -> int:
         print("   请先初始化: python scripts/construction/d_init_task_system.py", file=sys.stderr)
         return EXIT_FINDINGS
 
-    from zephyr.db.sqlite_schema import init_db
+    from zephyr.governance.persistence.sqlite_schema import init_db
     init_db()
     repo = TaskRepository()
 

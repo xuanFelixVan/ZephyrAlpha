@@ -1,0 +1,296 @@
+# [A_module] module_id=MOD-DAT_graph_validator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
+
+# [MODULE] zephyr.data.vector_storage.kb.graph_validator
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] M
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+"""
+知识图谱完整性校验器（T-2-11-C）
+=================================
+依据： §4.2（4 Collection）、
+
+校验项
+------
+1. 孤儿节点：KE 在 knowledge 表但不在 ChromaDB 向量索引中（或反之）
+2. 断链引用：KE 正文中引用了不存在的 ke_id
+3. 状态不一致：knowledge 表 status 与 events 表最新状态不匹配
+4. 重复指纹：不同 ke_id 但 fingerprint_sha256 相同
+5. 向量状态违规：非 VECTOR_VISIBLE 状态的 KE 仍存在于向量索引中
+
+Safety  : L（只读校验，不修改任何数据）
+
+用法
+----
+    from zephyr.governance.kb.graph_validator import GraphValidator
+
+    validator = GraphValidator()
+    report = validator.validate()
+    for issue in report.issues:
+        print(f"[{issue.severity}] {issue.check_id}: {issue.description}")
+"""
+
+from __future__ import annotations
+
+
+import json
+import re
+from datetime import UTC, datetime
+from enum import Enum
+from pathlib import Path
+from typing import Any
+
+from pydantic import BaseModel, Field
+
+from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+
+
+class ValidationSeverity(str, Enum):
+    ERROR = "ERROR"
+    WARNING = "WARNING"
+    INFO = "INFO"
+
+
+class ValidationIssue(BaseModel):
+    model_config = BASE_CONFIG
+
+    check_id: str
+    severity: ValidationSeverity
+    description: str
+    ke_id: str | None = None
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class ValidationReport(BaseModel):
+    model_config = BASE_CONFIG
+
+    total_checked: int = 0
+    error_count: int = 0
+    warning_count: int = 0
+    info_count: int = 0
+    issues: list[ValidationIssue] = Field(default_factory=list)
+    passed: bool = True
+    validated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class GraphValidator:
+    def __init__(
+        self,
+        db_path: Path | str | None = None,
+        vector_dir: Path | str | None = None,
+    ) -> None:
+        from zephyr.integration.shared_08.utils.db_utils import get_db_connection
+
+        self._conn = get_db_connection(db_path)
+        self._vector_dir = vector_dir
+
+    def validate(self) -> Self:
+        issues: list[ValidationIssue] = []
+
+        issues.extend(self._check_orphan_nodes())
+        issues.extend(self._check_broken_references())
+        issues.extend(self._check_status_consistency())
+        issues.extend(self._check_duplicate_fingerprints())
+        issues.extend(self._check_vector_status_violations())
+
+        error_count = sum(1 for i in issues if i.severity == ValidationSeverity.ERROR)
+        warning_count = sum(1 for i in issues if i.severity == ValidationSeverity.WARNING)
+        info_count = sum(1 for i in issues if i.severity == ValidationSeverity.INFO)
+
+        cursor = self._conn.execute("SELECT COUNT(*) FROM knowledge")
+        total = cursor.fetchone()[0]
+
+        return ValidationReport(
+            total_checked=total,
+            error_count=error_count,
+            warning_count=warning_count,
+            info_count=info_count,
+            issues=issues,
+            passed=error_count == 0,
+        )
+
+    def _check_orphan_nodes(self) -> list[ValidationIssue]:
+        issues: list[ValidationIssue] = []
+        cursor = self._conn.execute("SELECT ke_id, status FROM knowledge")
+        db_records = {row["ke_id"]: row["status"] for row in cursor.fetchall()}
+
+        vector_ke_ids: set[str] = set()
+        try:
+            from zephyr.governance.kb.chromadb_init import get_chroma_client
+
+            client = get_chroma_client(self._vector_dir)
+            col = client.get_collection(name="ke_entries")
+            all_records = col.get(include=["metadatas"])
+            for meta in all_records["metadatas"]:
+                ke_id = meta.get("ke_id")
+                if ke_id:
+                    vector_ke_ids.add(ke_id)
+        except Exception:
+            return issues
+
+        for ke_id in db_records:
+            if ke_id not in vector_ke_ids and db_records[ke_id] in ("INDEXED", "VERIFIED", "DEPRECATED", "SUPERSEDED"):
+                issues.append(
+                    ValidationIssue(
+                        check_id="GV-001",
+                        severity=ValidationSeverity.WARNING,
+                        description=f"KE {ke_id} has status {db_records[ke_id]} but missing from vector index",
+                        ke_id=ke_id,
+                    )
+                )
+
+        for ke_id in vector_ke_ids:
+            if ke_id not in db_records:
+                issues.append(
+                    ValidationIssue(
+                        check_id="GV-002",
+                        severity=ValidationSeverity.ERROR,
+                        description=f"KE {ke_id} exists in vector index but not in knowledge table",
+                        ke_id=ke_id,
+                    )
+                )
+
+        return issues
+
+    def _check_broken_references(self) -> list[ValidationIssue]:
+        issues: list[ValidationIssue] = []
+        cursor = self._conn.execute("SELECT ke_id, source_file FROM knowledge")
+        records = cursor.fetchall()
+
+        all_ke_ids = {row["ke_id"] for row in records}
+
+        ke_ref_pattern = re.compile(r"KE-\d{3,}")
+
+        for row in records:
+            ke_id = row["ke_id"]
+            source_file = row["source_file"]
+            try:
+                repo_root = Path(__file__).resolve().parents[3]
+                full_path = repo_root / source_file
+                if not full_path.exists():
+                    continue
+                content = full_path.read_text(encoding="utf-8")
+            except Exception:
+                continue
+
+            referenced = set(ke_ref_pattern.findall(content))
+            referenced.discard(ke_id)
+            broken = referenced - all_ke_ids
+            for broken_id in broken:
+                issues.append(
+                    ValidationIssue(
+                        check_id="GV-003",
+                        severity=ValidationSeverity.WARNING,
+                        description=f"KE {ke_id} references non-existent {broken_id}",
+                        ke_id=ke_id,
+                        details={"referenced_ke": broken_id},
+                    )
+                )
+
+        return issues
+
+    def _check_status_consistency(self) -> list[ValidationIssue]:
+        issues: list[ValidationIssue] = []
+        cursor = self._conn.execute("SELECT ke_id, status FROM knowledge")
+        records = cursor.fetchall()
+
+        for row in records:
+            ke_id = row["ke_id"]
+            db_status = row["status"]
+            event_cursor = self._conn.execute(
+                "SELECT payload FROM events "
+                "WHERE event_type = 'state_transition' "
+                "ORDER BY created_at DESC LIMIT 100"
+            )
+            latest_event_status: str | None = None
+            for erow in event_cursor.fetchall():
+                try:
+                    payload = json.loads(erow["payload"])
+                    if payload.get("ke_id") == ke_id:
+                        latest_event_status = payload.get("to_status")
+                        break
+                except Exception:
+                    continue
+
+            if latest_event_status and latest_event_status != db_status:
+                issues.append(
+                    ValidationIssue(
+                        check_id="GV-004",
+                        severity=ValidationSeverity.ERROR,
+                        description=f"KE {ke_id} status mismatch: DB={db_status}, latest event={latest_event_status}",
+                        ke_id=ke_id,
+                        details={"db_status": db_status, "event_status": latest_event_status},
+                    )
+                )
+
+        return issues
+
+    def _check_duplicate_fingerprints(self) -> list[ValidationIssue]:
+        issues: list[ValidationIssue] = []
+        cursor = self._conn.execute(
+            "SELECT fingerprint_sha256, GROUP_CONCAT(ke_id) AS ke_ids "
+            "FROM knowledge "
+            "WHERE fingerprint_sha256 IS NOT NULL "
+            "GROUP BY fingerprint_sha256 "
+            "HAVING COUNT(*) > 1"
+        )
+        for row in cursor.fetchall():
+            ke_ids = row["ke_ids"].split(",")
+            issues.append(
+                ValidationIssue(
+                    check_id="GV-005",
+                    severity=ValidationSeverity.WARNING,
+                    description=f"Duplicate fingerprint: {', '.join(ke_ids)}",
+                    details={"fingerprint": row["fingerprint_sha256"], "ke_ids": ke_ids},
+                )
+            )
+
+        return issues
+
+    def _check_vector_status_violations(self) -> list[ValidationIssue]:
+        issues: list[ValidationIssue] = []
+
+        cursor = self._conn.execute("SELECT ke_id, status FROM knowledge")
+        records = {row["ke_id"]: row["status"] for row in cursor.fetchall()}
+
+        try:
+            from zephyr.governance.kb.chromadb_init import get_chroma_client
+
+            client = get_chroma_client(self._vector_dir)
+            col = client.get_collection(name="ke_entries")
+            all_records = col.get(include=["metadatas"])
+        except Exception:
+            return issues
+
+        for meta in all_records["metadatas"]:
+            ke_id = meta.get("ke_id")
+            if not ke_id:
+                continue
+            vector_status = meta.get("status", "")
+            db_status = records.get(ke_id)
+            if db_status and vector_status != db_status:
+                issues.append(
+                    ValidationIssue(
+                        check_id="GV-006",
+                        severity=ValidationSeverity.WARNING,
+                        description=f"KE {ke_id} vector metadata status={vector_status} differs from DB status={db_status}",
+                        ke_id=ke_id,
+                        details={"vector_status": vector_status, "db_status": db_status},
+                    )
+                )
+
+        return issues

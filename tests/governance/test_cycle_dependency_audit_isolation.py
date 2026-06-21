@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0122 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-279 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.governance.test_cycle_dependency_audit_isolation
 # [STABILITY] evolving
 # [SAFETY] L
@@ -38,7 +39,7 @@ def scan_imports(filepath: Path) -> list[str]:
 class TestAuditRBACIsolation:
 
     def test_audit_no_rbac_import(self):
-        audit_dir = GOVERNANCE_ROOT / "audit_trail"
+        audit_dir = GOVERNANCE_ROOT / "audit-trail"
         if not audit_dir.exists():
             return
         violations = []
@@ -46,7 +47,7 @@ class TestAuditRBACIsolation:
             if py_file.name == "__init__.py":
                 continue
             for imp in scan_imports(py_file):
-                if "rbac" in imp.lower() or "agent_rbac" in imp:
+                if "rbac" in imp.lower() or "agent-rbac" in imp:
                     rel = py_file.relative_to(GOVERNANCE_ROOT.parent.parent)
                     violations.append(f"{rel}: imports {imp}")
         assert not violations, (
@@ -55,7 +56,7 @@ class TestAuditRBACIsolation:
 
     def test_audit_can_run_independently(self):
         try:
-            from zephyr.audit_trail.contracts import AuditContract
+            from zephyr.governance.audit_trail.contracts import AuditContract
             assert AuditContract is not None
         except ImportError as e:
             assert "rbac" not in str(e).lower(), (

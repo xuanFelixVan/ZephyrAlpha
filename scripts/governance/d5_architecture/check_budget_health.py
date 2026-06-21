@@ -1,9 +1,9 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/check_budget_health.py | §
 """
-[BLUEPRINT] MOD-INF-024 | docs/03_modules/l01_infrastructure/budget-enforcer/blueprint.md | §16.8
+[BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md | §16.8
 [MODULE] scripts.governance.d5_architecture.check_budget_health
 [INVARIANTS] 预算健康检查不可跳过;检查结果必须可机器解析
-[MODIFY-GUARD] docs/03_modules/l01_infrastructure/budget-enforcer/blueprint.md
+[MODIFY-GUARD] docs/03_modules/infrastructure.runtime_integration/budget-enforcer/blueprint.md
 [CONSUMERS] CI pipeline; AutoRuntime Core
 [STABILITY] evolving
 [SAFETY] L
@@ -25,7 +25,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
 def check_engine_instantiation() -> dict:
     try:
-        from zephyr.budget_enforcer import BudgetEngine
+        from zephyr.governance.budget_enforcement import BudgetEngine
         engine = BudgetEngine()
         return {"check": "engine_instantiation", "status": "PASS", "detail": str(type(engine))}
     except Exception as e:
@@ -34,8 +34,8 @@ def check_engine_instantiation() -> dict:
 
 def check_pre_flight() -> dict:
     try:
-        from zephyr.budget_enforcer import BudgetEngine
-        from zephyr.budget_enforcer.budget_models import GateDecision
+        from zephyr.governance.budget_enforcement import BudgetEngine
+        from zephyr.governance.budget_enforcement.budget_models import GateDecision
         engine = BudgetEngine()
         result = engine.pre_flight_check("health-check", 100, 0.001)
         if result.decision == GateDecision.DENY:
@@ -47,7 +47,7 @@ def check_pre_flight() -> dict:
 
 def check_dimensions() -> dict:
     try:
-        from zephyr.budget_enforcer.budget_models import BudgetDimension
+        from zephyr.governance.budget_enforcement.budget_models import BudgetDimension
         dims = set(d.value.lower() for d in BudgetDimension)
         required = {"token", "cost", "time"}
         missing = required - dims
@@ -73,22 +73,22 @@ def check_policy_file() -> dict:
 
 def check_escalation_bridge() -> dict:
     try:
-        from zephyr.escalation_engine.budget_handler import on_budget_alert
-        from zephyr.budget_enforcer.alerts import BudgetAlert
+        from zephyr.governance.escalation.budget_handler import on_budget_alert
+        from zephyr.governance.budget_enforcement.alerts import BudgetAlert
         alert = BudgetAlert(alert_id="health-check")
         result = on_budget_alert(alert)
         if result is not None:
             return {"check": "escalation_bridge", "status": "PASS", "detail": "G-CT-006 OK"}
         return {"check": "escalation_bridge", "status": "WARN", "detail": "returned None"}
     except ImportError:
-        return {"check": "escalation_bridge", "status": "WARN", "detail": "escalation_engine not available"}
+        return {"check": "escalation_bridge", "status": "WARN", "detail": "escalation-engine not available"}
     except Exception as e:
         return {"check": "escalation_bridge", "status": "WARN", "detail": str(e)}
 
 
 def check_degradation_manager() -> dict:
     try:
-        from zephyr.budget_enforcer.degradation_manager import DegradationManager
+        from zephyr.governance.budget_enforcement.degradation_manager import DegradationManager
         dm = DegradationManager()
         level = dm.state.current_level
         cb_open = dm.circuit_breaker_open
@@ -99,7 +99,7 @@ def check_degradation_manager() -> dict:
 
 def check_tamper_log() -> dict:
     try:
-        from zephyr.budget_enforcer.tamper_evident_log import TamperEvidentLog
+        from zephyr.governance.budget_enforcement.tamper_evident_log import TamperEvidentLog
         log = TamperEvidentLog()
         log.append("health-check", "test-data")
         valid, pos = log.verify()
@@ -112,7 +112,7 @@ def check_tamper_log() -> dict:
 
 def check_burn_rate_monitor() -> dict:
     try:
-        from zephyr.budget_enforcer.burn_rate_monitor import BurnRateMonitor
+        from zephyr.governance.budget_enforcement.burn_rate_monitor import BurnRateMonitor
         monitor = BurnRateMonitor()
         summary = monitor.get_burn_summary()
         return {"check": "burn_rate_monitor", "status": "PASS", "detail": f"windows={len(summary)}"}

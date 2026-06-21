@@ -1,0 +1,20 @@
+- attack_payload: ''
+  count: 1
+  defense_response: 'BLOCKED by G1-RBAC-001: immutable_core.verify'
+  entry_id: BY-f34b1b34
+  escalated: false
+  gate_id: G1-RBAC-001
+  occurred_at: '2026-05-23T14:30:34.288073+00:00'
+  root_cause: 'BLOCKED by G1-RBAC-001: immutable_core.verify'
+  scenario_id: RB-SCEN-006
+  tier: TIER_1
+- attack_payload: ''
+  count: 1
+  defense_response: 'BLOCKED by G1-RBAC-001: immutable_core.verify'
+  entry_id: BY-66d27930
+  escalated: false
+  gate_id: G1-RBAC-001
+  occurred_at: '2026-05-23T14:30:52.931731+00:00'
+  root_cause: 'BLOCKED by G1-RBAC-001: immutable_core.verify'
+  scenario_id: RB-SCEN-006
+  tier: TIER_1

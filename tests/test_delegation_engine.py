@@ -1,0 +1,156 @@
+# [A_test] module_id: SRC-TST-0731 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md | §
+# [MODULE] tests.test_delegation_engine
+# [INVARIANTS] must test all public classes and methods of delegation_engine
+# [MODIFY-GUARD] delegation_engine.py changes require sync
+# [CONSUMERS] pytest
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] pytest exit 0 on pass, non-zero on fail
+# [TESTS] tests/test_delegation_engine.py
+
+import pytest
+from unittest.mock import patch
+from zephyr.governance.delegation_engine import DelegationEngine
+from zephyr.governance.escalation_models import (
+    DelegationStrategy,
+    EscalationEvent,
+    RuleCategory,
+    EscalationLevel,
+    EscalationState,
+)
+
+
+def _make_event(owner_id="owner1", description="test event"):
+    return EscalationEvent(
+        owner_id=owner_id,
+        description=description,
+        category=RuleCategory.TIMEOUT,
+        level=EscalationLevel.L2_HUMAN_REVIEW,
+    )
+
+
+@pytest.fixture(autouse=True)
+def _mock_lsg():
+    with patch.object(DelegationEngine, "_lsg_verify_delegation"):
+        yield
+
+
+class TestDelegationEngine:
+    def test_instantiation(self):
+        engine = DelegationEngine()
+        assert engine.MAX_LOAD_PER_DELEGATE == 5
+        assert engine.DELEGATION_TIMEOUT_HOURS == 24
+
+    def test_register_delegate(self):
+        engine = DelegationEngine()
+        engine.register_delegate("d1", expertise=["operational"])
+        assert engine.get_load("d1") == 0
+
+    def test_unregister_delegate(self):
+        engine = DelegationEngine()
+        engine.register_delegate("d1")
+        engine.unregister_delegate("d1")
+        assert engine.get_load("d1") == 0
+
+    def test_delegate_load_balanced(self):
+        engine = DelegationEngine()
+        engine.register_delegate("d1")
+        engine.register_delegate("d2")
+        event = _make_event()
+        record = engine.delegate(event, strategy=DelegationStrategy.LOAD_BALANCED)
+        assert record.to_delegate in ("d1", "d2")
+        assert engine.get_load(record.to_delegate) == 1
+
+    def test_delegate_round_robin(self):
+        engine = DelegationEngine()
+        engine.register_delegate("d1")
+        engine.register_delegate("d2")
+        event1 = _make_event()
+        event2 = _make_event()
+        r1 = engine.delegate(event1, strategy=DelegationStrategy.ROUND_ROBIN)
+        r2 = engine.delegate(event2, strategy=DelegationStrategy.ROUND_ROBIN)
+        assert r1.to_delegate != r2.to_delegate
+
+    def test_delegate_expertise_match(self):
+        engine = DelegationEngine()
+        engine.register_delegate("d1", expertise=["operational"])
+        engine.register_delegate("d2", expertise=["security"])
+        event = _make_event()
+        record = engine.delegate(event, strategy=DelegationStrategy.EXPERTISE_MATCH)
+        assert record.to_delegate == "d1"
+
+    def test_delegate_no_available(self):
+        engine = DelegationEngine()
+        event = _make_event()
+        record = engine.delegate(event)
+        assert record.to_delegate == ""
+
+    def test_delegate_self_delegation_prevented(self):
+        engine = DelegationEngine()
+        engine.register_delegate("owner1")
+        event = _make_event(owner_id="owner1")
+        record = engine.delegate(event)
+        assert record.to_delegate == ""
+
+    def test_accept_delegation(self):
+        engine = DelegationEngine()
+        engine.register_delegate("d1")
+        event = _make_event()
+        record = engine.delegate(event)
+        result = engine.accept_delegation(record.delegation_id)
+        assert result is True
+
+    def test_accept_delegation_not_found(self):
+        engine = DelegationEngine()
+        result = engine.accept_delegation("nonexistent")
+        assert result is False
+
+    def test_complete_delegation(self):
+        engine = DelegationEngine()
+        engine.register_delegate("d1")
+        event = _make_event()
+        record = engine.delegate(event)
+        result = engine.complete_delegation(record.delegation_id)
+        assert result is True
+        assert engine.get_load("d1") == 0
+
+    def test_complete_delegation_not_found(self):
+        engine = DelegationEngine()
+        result = engine.complete_delegation("nonexistent")
+        assert result is False
+
+    def test_reject_delegation(self):
+        engine = DelegationEngine()
+        engine.register_delegate("d1")
+        event = _make_event()
+        record = engine.delegate(event)
+        result = engine.reject_delegation(record.delegation_id)
+        assert result is True
+        assert engine.get_load("d1") == 0
+
+    def test_get_available_delegates(self):
+        engine = DelegationEngine()
+        engine.register_delegate("d1")
+        assert "d1" in engine.get_available_delegates()
+
+    def test_get_available_delegates_overloaded(self):
+        engine = DelegationEngine()
+        engine.register_delegate("d1")
+        for _ in range(5):
+            engine._delegate_load["d1"] += 1
+        assert "d1" not in engine.get_available_delegates()
+
+    def test_get_pending_delegations(self):
+        engine = DelegationEngine()
+        engine.register_delegate("d1")
+        event = _make_event()
+        engine.delegate(event)
+        pending = engine.get_pending_delegations()
+        assert len(pending) == 1
+
+    def test_cleanup_expired(self):
+        engine = DelegationEngine()
+        count = engine.cleanup_expired()
+        assert count == 0

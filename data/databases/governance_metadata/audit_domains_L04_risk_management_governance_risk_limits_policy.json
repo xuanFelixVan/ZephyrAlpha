@@ -1,0 +1,93 @@
+{
+  "task_id": "DM-100066",
+  "source_file": "docs/01_policies_and_standards/domains/L04_risk_management/governance/risk_limits_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_050_domain_policy_data_factor.yaml",
+  "yaml_section": "dom_l04_001",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "ABS-001_止损限额": {
+      "content": "所有策略必须设置止损限额（单策略≤5%/止损线≤8%/组合≤3%/组合止损≤5%/全局≤2%）",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_001.conditions[0] + actions[0]"
+    },
+    "ABS-002_敞口限制": {
+      "content": "敞口限制必须执行（单标的≤5%/单行业≤20%/多空净敞口≤30%/隔夜≤80%）",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_001.conditions[1] + actions[1]"
+    },
+    "ABS-003_杠杆上限": {
+      "content": "杠杆倍率必须设置上限（总≤3倍/单策略≤2倍）",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_001.conditions[2] + actions[2]"
+    },
+    "ABS-004_策略间相关性": {
+      "content": "策略间相关性必须设置限制（≤0.7/高相关组合≤20%）",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_001.conditions[3] + actions[3]"
+    },
+    "COND-001_例外审批": {
+      "content": "限额例外必须Owner审批（书面申请+更严格止损+Owner批准+有效期≤30天+90天内≤3次）",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_001.conditions[4] + actions[4]"
+    },
+    "§4_限额监控": {
+      "content": "所有限额必须实时监控（延迟≤1秒），触发时自动执行对应动作，记录审计日志",
+      "type": "mandatory",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_001.actions[5]"
+    },
+    "禁止行为1": {
+      "content": "禁止策略无止损运行",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_001.prohibitions[0]"
+    },
+    "禁止行为2": {
+      "content": "禁止单标的仓位超过总资产5%",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_001.prohibitions[1]"
+    },
+    "禁止行为3": {
+      "content": "禁止总杠杆超过3倍",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_001.prohibitions[2]"
+    },
+    "禁止行为4": {
+      "content": "禁止两个高相关策略(>0.7)合计仓位超过20%",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_001.prohibitions[3]"
+    },
+    "禁止行为5": {
+      "content": "禁止绕过Owner审批自行超限运行",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_001.prohibitions[4]"
+    },
+    "禁止行为6": {
+      "content": "禁止限额触发时人工延迟自动动作",
+      "type": "prohibition",
+      "yaml_status": "COVERED",
+      "yaml_location": "dom_l04_001.prohibitions[5]"
+    }
+  },
+  "summary": {
+    "total_rules": 12,
+    "COVERED": 12,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "YAML中原本无dom_l04_001 section，已新增完整section",
+    "新增5个conditions（止损限额/敞口限制/杠杆限制/策略间相关性/例外审批条件）",
+    "新增6个actions（ABS-001~004 + COND-001 + §4监控）",
+    "新增6个prohibitions（对应§9禁止行为表6条）"
+  ]
+}

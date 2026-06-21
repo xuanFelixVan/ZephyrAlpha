@@ -1,7 +1,7 @@
 ---
-module_id: DW-ROADMAP-TEMPLATE
+module_id: GOV-034
 title: <季度或主题> 路线图
-doc_type: plan
+doc_type: template
 status: Draft
 version: 1.0.0
 layer: cross_layer

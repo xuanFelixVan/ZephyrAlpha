@@ -1,0 +1,107 @@
+# [A_module] module_id=MOD-INF_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-120 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+
+# [MODULE] zephyr.infrastructure.shared_services.models
+
+# [INVARIANTS] TaskCard = Task (PURE ALIAS — NOT a second model. SSoT: gates/task_types.py Task 70 fields. DO NOT add fields here.)
+
+# [MODIFY-GUARD] gates/task_types.py (SSoT for Task/GateLevel/TaskAuditFinding)
+
+# [CONSUMERS] db.task_repo; core.blueprint_decomposer; pipeline.*; orchestrator.*
+
+# [STABILITY] frozen
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] human_gated
+
+# [ERROR_CONTRACT]
+
+# [TESTS] tests/unit/test_schemas.py; tests/unit/db/test_task_repo.py; tests/unit/gates/test_gate_engine.py
+
+"""
+ZephyrAlpha 任务系统核心数据模型
+================================
+Task/GateLevel/TaskAuditFinding  SSoT: gates/task_types.py（70字段，2026-05-28合并）
+DecompositionResult/GateCheckResult: 本模块本地定义
+
+⚠️  AI SESSION NOTICE — 防漂移标识 ⚠️
+TaskCard = Task 是纯别名，不是第二个模型。禁止对 TaskCard 做任何修改。
+SSoT 唯一入口: from zephyr.governance.rule_enforcement.task_types import Task
+若需修改任务卡字段 → 改 gates/task_types.py Task 模型 → 同步 migration + INSERT + TEMPLATE_REQUIRED_FIELDS
+"""
+
+
+from __future__ import annotations
+
+from datetime import datetime
+
+from pydantic import BaseModel, Field
+
+__all__ = [
+    "TaskStatus",
+    "TaskNamespace",
+    "GateLevel",
+    "TaskAuditFinding",
+    "Task",
+    "TaskCard",
+    "DecompositionResult",
+    "GateCheckResult",
+]
+
+_LAZY_GOVERNANCE_ATTRS: dict[str, str] = {
+    "TaskStatus": "TaskStatus",
+    "TaskNamespace": "TaskNamespace",
+    "GateLevel": "GateLevel",
+    "TaskAuditFinding": "TaskAuditFinding",
+    "Task": "Task",
+}
+
+
+import importlib
+
+
+def _lazy_import_governance(name: str):
+    _tt = importlib.import_module("zephyr.governance.rule_enforcement.task_types")
+    return getattr(_tt, name)
+
+
+class DecompositionResult(BaseModel):
+    """蓝图拆解结果——蓝图 MOD-INF-006 §3.2.2"""
+
+    model_config = BaseModel.model_config
+
+    total_tasks: int = Field(ge=0)
+    tasks: list["TaskCard"]
+    dependency_graph: dict[str, list[str]] = Field(default_factory=dict)
+    unassigned_items: list[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+
+
+class GateCheckResult(BaseModel):
+    """门禁检查结果——蓝图 MOD-INF-006 §3.2.2"""
+
+    model_config = BaseModel.model_config
+
+    gate_id: "GateLevel"
+    task_id: str
+    passed: bool
+    violations: list[str] = Field(default_factory=list)
+    checked_at: str = Field(default_factory=lambda: datetime.now().isoformat())
+
+
+_STABILITY_FROZEN = True
+_FROZEN_PUBLIC_API = frozenset(__all__)
+
+
+def __getattr__(name: str):
+    if name in _LAZY_GOVERNANCE_ATTRS:
+        return _lazy_import_governance(name)
+    if name == "TaskCard":
+        return _lazy_import_governance("Task")
+    if name in _FROZEN_PUBLIC_API:
+        import logging
+        logging.getLogger("zephyr.stability_guard").warning(
+            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.infrastructure.shared_services.models", name
+        )
+    raise AttributeError(f"module 'zephyr.infrastructure.shared_services.models' has no attribute {name!r}")

@@ -1,0 +1,40 @@
+# [A_module] module_id=MOD-ORC_task_queue | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
+
+# [MODULE] zephyr.trading.orchestrator.task_queue
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+"""
+ActiveTaskQueue — 后台任务轮询与自动分发
+==========================================
+Blueprint: MOD-INF-006 盲点#9
+
+线程安全的后台调度器：定期扫描 READY 任务，自动 dispatch。
+
+NOTE: 此模块已迁移至 zephyr.trading.orchestrator.core.task_queue，
+      本文件仅保留向后兼容的 re-export。
+      修复: 消除双重 TaskQueue 实例导致的重复轮询问题。
+"""
+
+from __future__ import annotations
+
+from zephyr.trading.orchestrator.core.task_queue import (  # noqa: F401
+    PipelineDispatcher,
+    TaskQueue,
+    get_queue,
+)

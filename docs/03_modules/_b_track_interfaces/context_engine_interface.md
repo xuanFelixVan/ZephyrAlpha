@@ -1,5 +1,5 @@
 ---
-module_id: AI-ENG-CTX-001
+module_id: MOD-003
 title: Context Engine Interface / 上下文引擎接口规范
 doc_type: service_interface_spec
 status: Active
@@ -18,8 +18,8 @@ truth_source:
   - "architecture-model/layers/b_context_engine.yaml（Context Engine YAML SSoT）"
 supersedes:
   - "docs/03_modules/_b_track_interfaces/context-interface-contract.md (will archive in B-b)"
-related_adrs:
-  - "ADR-0015 Context Engine 架构与技术选型（pending B-e）"
+related_kb:
+  - "KBG-0015 Context Engine 架构与技术选型（pending B-e）"
 integration_points:
   - "Vector Memory Service (upstream, 主数据源)"
   - "Agent Orchestrator (downstream consumer)"
@@ -84,7 +84,7 @@ mod_master_contracts:
 
 ### 1.1 缺口 → 原因 → 解法
 
-**缺口**：AI Agent 执行任务时，或者上下文爆炸（token 超限、延迟飙升、hallucination 增加），或者上下文饥饿（找不到相关 ADR/接口/教训），两难症导致编码质量不稳定。
+**缺口**：AI Agent 执行任务时，或者上下文爆炸（token 超限、延迟飙升、hallucination 增加），或者上下文饥饿（找不到相关 KB 决策记录/接口/教训），两难症导致编码质量不稳定。
 
 **原因**：
 1. 老方案让人工维护 `context-spec.md` 预拼上下文——规模一旦超过 10 个任务就不可维护
@@ -112,7 +112,7 @@ mod_master_contracts:
 ### 1.3 实施策略：Protocol + 双实现（库化优先，按需服务化）
 
 ```python
-# src/zephyr/context_engine/protocol.py (experimental 产出)
+# src/zephyr/infrastructure/runtime_integration/a2a_protocol/governance/protocol.py (experimental 产出)
 
 from typing import Protocol, Literal
 
@@ -150,14 +150,14 @@ class RemoteContextEngine:
 
 ## 2. 技术选型表（真源锁定）
 
-| 组件 | 首选 | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 ADR |
+| 组件 | 首选 | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 KB 决策记录 |
 |------|----------------|------|-------|---------|---------|----------|
-| entity-graph 存储 | **NetworkX + JSON** | Neo4j 社区版 | Neptune / Dgraph | 纯 Python、节点 < 10k 场景内存足够 | 节点 > 10k 或需多进程共享 | ADR-0015 |
-| 向量检索入口 | **VMS `multi_search`（ChromaDB 后端）** | - | 直接调 ChromaDB（破坏分层） | 分层合约，VMS 降级时本层自动感知 | - | ADR-0015 / 0016 |
-| 文本压缩引擎 | **本地 LLM (llama.cpp + Qwen2.5-3B-Instruct)** | 规则-based 摘要（fallback） | OpenAI API（外部依赖） | 零外部依赖，Qwen2.5-3B 中文摘要够用 | 压缩质量不足 → Qwen2.5-7B | ADR-0015 |
-| 压缩降级 | **规则-based 摘要（LLM 挂时自动启用）** | 简单截断 | 丢弃 | LLM 挂也能产可用上下文 | - | ADR-0015 |
+| entity-graph 存储 | **NetworkX + JSON** | Neo4j 社区版 | Neptune / Dgraph | 纯 Python、节点 < 10k 场景内存足够 | 节点 > 10k 或需多进程共享 | KBG-0015 |
+| 向量检索入口 | **VMS `multi_search`（ChromaDB 后端）** | - | 直接调 ChromaDB（破坏分层） | 分层合约，VMS 降级时本层自动感知 | - | KBG-0015 / 0016 |
+| 文本压缩引擎 | **本地 LLM (llama.cpp + Qwen2.5-3B-Instruct)** | 规则-based 摘要（fallback） | OpenAI API（外部依赖） | 零外部依赖，Qwen2.5-3B 中文摘要够用 | 压缩质量不足 → Qwen2.5-7B | KBG-0015 |
+| 压缩降级 | **规则-based 摘要（LLM 挂时自动启用）** | 简单截断 | 丢弃 | LLM 挂也能产可用上下文 | - | KBG-0015 |
 | token 计数 | **tiktoken（cl100k_base）** | transformers 本地 tokenizer | 字符数粗估 | tiktoken 对 GPT / Claude 近似度高 | 目标模型非 OpenAI/Anthropic 系时换 transformers | - |
-| MCP 通道路由 | **能力矩阵 + 多通道并发注入** | 单 prompts 通道 | 硬编码 Cursor | 三家 IDE 能力不一，能力探测后按需注入 | 新增 IDE 直接加一行矩阵 | ADR-0015 |
+| MCP 通道路由 | **能力矩阵 + 多通道并发注入** | 单 prompts 通道 | 硬编码 Cursor | 三家 IDE 能力不一，能力探测后按需注入 | 新增 IDE 直接加一行矩阵 | KBG-0015 |
 | 进程内并发 | **`asyncio.Lock`** | - | `threading.Lock`（阻塞事件循环） | 项目全异步栈 | 服务化后废除 | - |
 | 跨进程并发 | **`filelock.FileLock`** | - | 全局单例 | pytest 并发 + 多 Agent | 服务化后废除 | - |
 
@@ -172,7 +172,7 @@ class RemoteContextEngine:
 | Slot | 含义 | 典型内容来源 | 默认 token 预算占比 |
 |------|------|-------------|---------------------|
 | `task_spec` | 任务本身规格 | task card yaml 渲染 | 10% |
-| `architecture` | 架构决策 / ADR / 接口契约 | VMS `decisions` collection | 25% |
+| `architecture` | 架构决策 / KB 决策记录 / 接口契约 | VMS `decisions` collection | 25% |
 | `code_refs` | 相关代码片段 / blueprints | VMS `code_context` + 文件系统兜底 | 30% |
 | `task_history` | 历史相似任务执行记录 | VMS `task_history` | 15% |
 | `lessons` | 经验教训 / 反模式 | VMS `lessons` | 10% |
@@ -184,7 +184,7 @@ class RemoteContextEngine:
 ### 3.2 IDE 能力矩阵
 
 ```python
-# src/zephyr/context_engine/ide_capabilities.py (experimental 产出)
+# src/zephyr/orchestration/context_management/ide_capabilities.py (experimental 产出)
 
 from enum import Enum
 
@@ -239,7 +239,7 @@ IDE_CAPABILITY_MATRIX: dict[IDEID, dict[IDEChannel, str]] = {
 ### 3.3 Pydantic Schemas
 
 ```python
-# src/zephyr/context_engine/schemas.py (experimental 产出)
+# src/zephyr/integration/shared/schema/schemas.py (experimental 产出)
 
 from pydantic import BaseModel, Field
 from typing import Optional, Literal
@@ -260,7 +260,7 @@ class SlotContent(BaseModel):
     slot: str
     items: list[dict]
     token_count: int
-    source_traces: list[str] = Field(description="可追溯源，如 ['vms://decisions/ADR-0016', 'file://src/...']")
+    source_traces: list[str] = Field(description="可追溯源，如 ['vms://decisions/KBG-0016', 'file://src/...']")
     degraded_sources: list[str] = Field(default_factory=list, description="本 slot 遇到的降级源")
 
 class ContextBundle(BaseModel):
@@ -323,7 +323,7 @@ class AdjustResult(BaseModel):
 ### 4.1 Python 库 API（experimental 主用，`InProcessContextEngine`）
 
 ```python
-# src/zephyr/context_engine/in_process.py (experimental 产出)
+# src/zephyr/orchestration/context_management/in_process.py (experimental 产出)
 
 class InProcessContextEngine:  # implements ContextEngineProtocol
     """所有方法均为 async。依赖 VectorMemoryProtocol + NetworkX + tiktoken + llama.cpp。"""
@@ -364,7 +364,7 @@ class InProcessContextEngine:  # implements ContextEngineProtocol
         验证：
           - token_count ≤ budget
           - 所有 source_traces 可解析（vms:// 可 get_by_id，file:// 存在）
-          - 无 stale references（超过 updated_at 阈值的 ADR 标 stale）
+          - 无 stale references（超过 updated_at 阈值的 KB 决策记录 标 stale）
         失败时 violations 列出具体原因，不修正。
         """
 
@@ -440,7 +440,7 @@ slot 优先级 = 内容价值密度 × 通道稳定性
 | Slot | Cursor 首选 | Trae 首选 | Claude-Desktop 首选 | 通用 fallback |
 |------|------------|----------|---------------------|---------------|
 | `task_spec` | prompts | prompts | prompts | prompts |
-| `architecture` | tools (read ADR tool) | resources (adr-graph) | resources + prompts | prompts |
+| `architecture` | tools (read KB 决策记录 tool) | resources (adr-graph) | resources + prompts | prompts |
 | `code_refs` | resources (read_only) | resources | resources | prompts（截断到 2000 tok） |
 | `task_history` | prompts | resources | prompts | prompts |
 | `lessons` | prompts | prompts | prompts | prompts |
@@ -469,11 +469,11 @@ IDE 能力未知 / 探测失败
 
 | 前置项 | 状态 | 所在任务 |
 |-------|:----:|---------|
-| `src/zephyr/vector_memory/` 包 | ⏳ 待建 | VMS experimental T-1-XX |
-| `src/zephyr/context_engine/` 包创建 | ⏳ 待建 | experimental T-1-XX |
+| `src/zephyr/vector-memory/` 包 | ⏳ 待建 | VMS experimental T-1-XX |
+| `src/zephyr/context-engine/` 包创建 | ⏳ 待建 | experimental T-1-XX |
 | Qwen2.5-3B-Instruct GGUF 下载到 `.models/qwen2.5-3b/` | ⏳ 待建 | experimental T-1-XX |
 | llama.cpp Python 绑定（`llama-cpp-python`） | ⏳ 待建 | experimental T-1-XX |
-| ADR-0015 批准 | ⏳ pending | B-e 阶段 |
+| KBG-0015 批准 | ⏳ pending | B-e 阶段 |
 
 ### 6.2 Python 依赖
 
@@ -501,7 +501,7 @@ context-engine = [
 ```
 
 ├── src/zephyr/
-│   ├── context_engine/                             # ⏳ experimental 新建
+│   ├── context-engine/                             # ⏳ experimental 新建
 │   │   ├── __init__.py                             # 导出 get_ce() 工厂
 │   │   ├── protocol.py                             # ContextEngineProtocol 抽象
 │   │   ├── in_process.py                           # experimental 实现
@@ -525,10 +525,10 @@ context-engine = [
 │   │   ├── entity_graph.py                         # NetworkX 加载 + 查询 + 增量更新
 │   │   └── config.py                               # CEConfig
 │   └── config/
-│       └── context_engine.yaml                     # ⏳ 新建
+│       └── context-engine.yaml                     # ⏳ 新建
 │
 ├── .runtime/
-│   ├── context_engine/
+│   ├── context-engine/
 │   │   ├── entity_graph.json                       # NetworkX 持久化
 │   │   ├── cache/                                  # build 结果缓存（bundle_hash key）
 │   │   └── adjust_state.json                       # adjust_strategy 动态权重状态
@@ -539,7 +539,7 @@ context-engine = [
 ├── .models/
 │   └── qwen2.5-3b/                                 # GGUF (~2GB)
 │
-├── tests/unit/context_engine/
+├── tests/unit/context-engine/
 │   ├── test_build.py
 │   ├── test_compress_llm.py
 │   ├── test_compress_rule_based.py
@@ -563,7 +563,7 @@ context-engine = [
 | 上游 | 关系 | 调用 |
 |------|------|------|
 | **VMS**（主数据源） | 必须 | `await vm.multi_search(query, [decisions, code_context, task_history, lessons], merge_strategy='rrf')` |
-| NetworkX entity-graph | 必须 | 本地加载 `.runtime/context_engine/entity_graph.json` |
+| NetworkX entity-graph | 必须 | 本地加载 `.runtime/context-engine/entity_graph.json` |
 | **Feedback Loop Engine** | 可选（通过 Protocol） | FLE 调 `await ce.adjust_strategy(task_id, signal)` |
 | 文件系统（降级源） | 必须（DEGRADE-001） | `rg`/`grep` 在项目根扫描 |
 
@@ -578,7 +578,7 @@ context-engine = [
 ### 8.3 Feedback Loop 单向依赖（Protocol 引用，不硬编码）
 
 ```python
-# src/zephyr/feedback_loop/actions.py（FLE 侧，不在本文档实现）
+# src/zephyr/observability/feedback-loop/actions.py（FLE 侧，不在本文档实现）
 
 from typing import Protocol
 
@@ -598,7 +598,7 @@ class ContextAdjustAction(Protocol):
 
 | Phase | 范围 | 验收标准 |
 |:-:|------|---------|
-| **scaffold**（当前） | 接口规范定稿 | ADR-0015 Active + 本规范 Active |
+| **scaffold**（当前） | 接口规范定稿 | KBG-0015 Active + 本规范 Active |
 | **experimental** | `InProcessContextEngine` 实现 + 默认权重 + Cursor 注入 | ① §12 P0 用例通过<br>② build 端到端 ≤ 1.5s（VMS 稳态）<br>③ Cursor 下 inject 成功率 ≥ 99% |
 | **beta** | Trae / Claude-Desktop 通道适配 + Feedback Loop 接入 | 多 IDE 切换零重写 + `adjust_strategy` 动态生效 |
 | **beta** | 服务化 `RemoteContextEngine` | 多 IDE 实例并发 build ≥ 3 时触发 |
@@ -639,7 +639,7 @@ if vms_result.degraded:
     # 降级到 filesystem_fallback.py
     fs_hits = await rg_search(
         pattern=derive_regex(request.tags + request.target_files),
-        scopes=["docs/02_enterprise_architecture", "src/", "docs/03_modules/l01_infrastructure/task-system/changes"],
+        scopes=["docs/02_enterprise_architecture", "src/", "docs/03_modules/_domain-infra_ops/task-system/changes"],
         max_results_per_slot=20,
     )
     bundle.degraded = True
@@ -761,7 +761,7 @@ except (CECompressionError, asyncio.TimeoutError):
 | # | 用例 | 前置 | 动作 | 预期 |
 |:-:|------|------|------|------|
 | P0-V1 | token 超 budget 时 violations | 手构造超限 bundle | validate | passed=False, violations 含 "token_overflow" |
-| P0-V2 | stale reference 检测 | bundle 含 30 天前 ADR source_trace | validate | violations 含 "stale_reference:..." |
+| P0-V2 | stale reference 检测 | bundle 含 30 天前 KB 决策记录 source_trace | validate | violations 含 "stale_reference:..." |
 | P0-I1 | Cursor 多通道注入 | ide_id=CURSOR | inject | channels_used 含 prompts + tools + resources |
 | P0-I2 | Trae 偏 resources | ide_id=TRAE | inject | channels_used 优先 resources + prompts |
 | P0-I3 | Claude-Desktop 全通道 | ide_id=CLAUDE_DESKTOP | inject | channels_used 含 prompts + tools + resources + sampling |

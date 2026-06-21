@@ -1,0 +1,562 @@
+# [A_module] module_id=MOD-ORC_staging_area | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md
+
+# [MODULE] zephyr.trading.staging_area
+
+# [INVARIANTS] draft files live under .aidrafts/; commit is atomic via os.replace; conflict detection via mtime+hash
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS] zephyr.infrastructure.task_manager_server; scripts/lock_files.py
+
+# [STABILITY] evolving
+
+# [SAFETY] M
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT] StagingError on all failures; CONFLICT raised when file modified by another session
+
+# [TESTS] tests/test_staging_area.py
+"""
+StagingArea — 多AI并发草稿写入+提交+冲突检测模块（CT-SESSION-CONFLICT-002）
+
+设计原则
+--------
+- 草稿隔离：每个 AI session 写到 .aidrafts/{session_id}/ 下，互不干扰
+- 提交时锁：草稿阶段不需要排他锁，提交时才获取锁+搬入
+- 冲突检测：提交前对比原文件 mtime+hash，若已被其他 session 修改则返回 CONFLICT
+- 自动合并：简单冲突（非重叠区域修改）自动 rebase；复杂冲突返回 CONFLICT_NEEDS_OWNER
+- 原子写入：提交使用 temp-file + os.replace() 保证原子性
+
+Usage::
+
+    from zephyr.trading.staging_area import StagingArea
+
+    sa = StagingArea(project_root="/path/to/project")
+    sa.write_draft("session-001", "src/zephyr/foo.py", "new content")
+    result = sa.commit("session-001", "src/zephyr/foo.py")
+    if result.status == CommitStatus.OK:
+        print("committed")
+    elif result.status == CommitStatus.CONFLICT:
+        print("conflict detected")
+"""
+
+
+from __future__ import annotations
+
+__all__ = [
+    "CommitStatus",
+    "StagingError",
+    "ConflictInfo",
+    "CommitResult",
+    "StagingArea",
+]
+
+import hashlib
+import os
+import random
+import shutil
+import time
+import threading
+import uuid
+from dataclasses import dataclass, field
+from enum import Enum
+from pathlib import Path
+from typing import Sequence
+
+_COMMIT_LOCK = threading.Lock()
+
+
+def _atomic_replace(tmp: Path, target: Path, max_retries: int = 5) -> None:
+    base_delay = 0.01
+    for attempt in range(max_retries):
+        try:
+            os.replace(tmp, target)
+            return
+        except PermissionError:
+            if attempt == max_retries - 1:
+                raise
+            delay = base_delay * (2 ** attempt) + random.uniform(0, 0.01)
+            time.sleep(delay)
+
+
+class CommitStatus(str, Enum):
+    OK = "OK"
+    CONFLICT = "CONFLICT"
+    CONFLICT_NEEDS_OWNER = "CONFLICT_NEEDS_OWNER"
+    NO_DRAFT = "NO_DRAFT"
+    MERGED = "MERGED"
+
+
+class StagingError(RuntimeError):
+    pass
+
+
+@dataclass
+class ConflictInfo:
+    file_path: str
+    draft_mtime: str
+    current_mtime: str
+    draft_hash: str
+    current_hash: str
+    diff_lines: list[str] = field(default_factory=list)
+
+
+@dataclass
+class CommitResult:
+    status: CommitStatus
+    file_path: str
+    conflict: ConflictInfo | None = None
+    message: str = ""
+
+
+def _read_file_robust(path: Path, mode: str = "r", max_retries: int = 5) -> str:
+    base_delay = 0.01
+    for attempt in range(max_retries):
+        try:
+            with open(path, mode, encoding="utf-8") as f:
+                return f.read()
+        except PermissionError:
+            if attempt == max_retries - 1:
+                raise
+            delay = base_delay * (2 ** attempt) + random.uniform(0, 0.01)
+            time.sleep(delay)
+    raise PermissionError(f"Cannot read {path} after {max_retries} retries")
+
+
+def _file_hash(path: Path) -> str:
+    h = hashlib.sha256()
+    try:
+        with open(path, "rb") as f:
+            for chunk in iter(lambda: f.read(8192), b""):
+                h.update(chunk)
+    except FileNotFoundError:
+        return ""
+    except PermissionError:
+        return _file_hash_retry(path)
+    return h.hexdigest()
+
+
+def _file_hash_retry(path: Path, max_retries: int = 5) -> str:
+    base_delay = 0.01
+    for attempt in range(max_retries):
+        try:
+            h = hashlib.sha256()
+            with open(path, "rb") as f:
+                for chunk in iter(lambda: f.read(8192), b""):
+                    h.update(chunk)
+            return h.hexdigest()
+        except PermissionError:
+            if attempt == max_retries - 1:
+                return ""
+            delay = base_delay * (2 ** attempt) + random.uniform(0, 0.01)
+            time.sleep(delay)
+    return ""
+
+
+def _file_mtime(path: Path) -> str:
+    try:
+        return str(os.path.getmtime(path))
+    except OSError:
+        return "0"
+
+
+def _compute_diff_lines(old_lines: Sequence[str], new_lines: Sequence[str]) -> list[str]:
+    from difflib import SequenceMatcher
+
+    sm = SequenceMatcher(None, old_lines, new_lines)
+    diff: list[str] = []
+    for op, i1, i2, j1, j2 in sm.get_opcodes():
+        if op == "equal":
+            continue
+        elif op == "replace":
+            for i in range(i1, i2):
+                diff.append(f"- {old_lines[i].rstrip()}")
+            for j in range(j1, j2):
+                diff.append(f"+ {new_lines[j].rstrip()}")
+        elif op == "delete":
+            for i in range(i1, i2):
+                diff.append(f"- {old_lines[i].rstrip()}")
+        elif op == "insert":
+            for j in range(j1, j2):
+                diff.append(f"+ {new_lines[j].rstrip()}")
+    return diff
+
+
+def _check_overlap(old_lines: Sequence[str], new_lines: Sequence[str]) -> bool:
+    from difflib import SequenceMatcher
+
+    sm = SequenceMatcher(None, old_lines, new_lines)
+    for op, i1, i2, j1, j2 in sm.get_opcodes():
+        if op == "replace":
+            return True
+    return False
+
+
+class StagingArea:
+    """多AI并发草稿写入+提交+冲突检测模块。"""
+
+    DRAFTS_DIR = ".aidrafts"
+
+    def __init__(self, project_root: str | Path) -> None:
+        self._root = Path(project_root).resolve()
+        self._drafts_root = self._root / self.DRAFTS_DIR
+
+    def _draft_path(self, session_id: str, file_path: str) -> Path:
+        safe_session = session_id.replace("/", "_").replace("\\", "_")
+        return self._drafts_root / safe_session / file_path
+
+    def _target_path(self, file_path: str) -> Path:
+        return self._root / file_path
+
+    def write_draft(self, session_id: str, file_path: str, content: str, baseline_content: str | None = None) -> Path:
+        """将内容写到草稿区 .aidrafts/{session_id}/{file_path}。
+
+        同时记录原文件的 mtime+hash 作为基线，用于提交时冲突检测。
+        若提供 baseline_content，用它作为基线内容（避免重新读取文件时状态已变化）；
+        否则从目标文件读取当前内容作为基线。
+        """
+        draft = self._draft_path(session_id, file_path)
+        draft.parent.mkdir(parents=True, exist_ok=True)
+
+        target = self._target_path(file_path)
+        if baseline_content is not None:
+            original_text = baseline_content
+            mtime = _file_mtime(target)
+            fhash = hashlib.sha256(original_text.encode("utf-8")).hexdigest()
+        elif target.exists():
+            original_text = _read_file_robust(target)
+            mtime = _file_mtime(target)
+            fhash = hashlib.sha256(original_text.encode("utf-8")).hexdigest()
+        else:
+            original_text = ""
+            mtime = "0"
+            fhash = ""
+
+        tmp = draft.with_suffix(draft.suffix + f".{uuid.uuid4().hex}.tmp")
+        try:
+            with open(tmp, "w", encoding="utf-8") as f:
+                f.write(content)
+            _atomic_replace(tmp, draft)
+        except PermissionError:
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
+            raise StagingError(f"Cannot write draft to {draft}")
+
+        baseline = draft.with_suffix(draft.suffix + ".baseline")
+        baseline_data = f"{mtime}\n{fhash}\n"
+        baseline_tmp = baseline.with_suffix(baseline.suffix + f".{uuid.uuid4().hex}.tmp")
+        try:
+            with open(baseline_tmp, "w", encoding="utf-8") as f:
+                f.write(baseline_data)
+            _atomic_replace(baseline_tmp, baseline)
+        except PermissionError:
+            try:
+                os.remove(baseline_tmp)
+            except OSError:
+                pass
+            raise StagingError(f"Cannot write baseline to {baseline}")
+
+        baseline_content_file = draft.with_suffix(draft.suffix + ".baseline_content")
+        baseline_content_tmp = baseline_content_file.with_suffix(
+            baseline_content_file.suffix + f".{uuid.uuid4().hex}.tmp"
+        )
+        try:
+            with open(baseline_content_tmp, "w", encoding="utf-8") as f:
+                f.write(original_text)
+            _atomic_replace(baseline_content_tmp, baseline_content_file)
+        except PermissionError:
+            try:
+                os.remove(baseline_content_tmp)
+            except OSError:
+                pass
+            raise StagingError(f"Cannot write baseline content to {baseline_content_file}")
+
+        return draft
+
+    def commit(self, session_id: str, file_path: str) -> CommitResult:
+        """将草稿搬入最终位置（原子写入）。
+
+        提交前检查原文件 mtime+hash——若已被修改则返回 CONFLICT。
+        """
+        draft = self._draft_path(session_id, file_path)
+        if not draft.exists():
+            return CommitResult(status=CommitStatus.NO_DRAFT, file_path=file_path, message="draft not found")
+
+        target = self._target_path(file_path)
+        baseline = draft.with_suffix(draft.suffix + ".baseline")
+
+        _orig_mtime: str | None = None
+        _orig_hash: str | None = None
+
+        if baseline.exists():
+            baseline_data = baseline.read_text(encoding="utf-8").strip().split("\n")
+            if len(baseline_data) >= 2:
+                _orig_mtime, _orig_hash = baseline_data[0], baseline_data[1]
+                curr_mtime = _file_mtime(target)
+                curr_hash = _file_hash(target)
+                if curr_mtime != _orig_mtime or curr_hash != _orig_hash:
+                    draft_lines = draft.read_text(encoding="utf-8").splitlines(keepends=True)
+                    current_lines = (
+                        target.read_text(encoding="utf-8").splitlines(keepends=True)
+                        if target.exists()
+                        else []
+                    )
+                    diff_lines = _compute_diff_lines(current_lines, draft_lines)
+                    return CommitResult(
+                        status=CommitStatus.CONFLICT,
+                        file_path=file_path,
+                        conflict=ConflictInfo(
+                            file_path=file_path,
+                            draft_mtime=_file_mtime(draft),
+                            current_mtime=curr_mtime,
+                            draft_hash=_file_hash(draft),
+                            current_hash=curr_hash,
+                            diff_lines=diff_lines,
+                        ),
+                        message="file modified by another session since draft was created",
+                    )
+
+        target.parent.mkdir(parents=True, exist_ok=True)
+        draft_content = _read_file_robust(draft)
+
+        with _COMMIT_LOCK:
+            if _orig_mtime is not None:
+                pre_replace_mtime = _file_mtime(target)
+                pre_replace_hash = _file_hash(target)
+                if pre_replace_mtime != _orig_mtime or pre_replace_hash != _orig_hash:
+                    return CommitResult(
+                        status=CommitStatus.CONFLICT,
+                        file_path=file_path,
+                        message="file changed between check and commit by another session",
+                    )
+
+            tmp = target.with_suffix(target.suffix + f".{uuid.uuid4().hex}.tmp")
+            try:
+                with open(tmp, "w", encoding="utf-8") as f:
+                    f.write(draft_content)
+                _atomic_replace(tmp, target)
+            except PermissionError:
+                try:
+                    os.remove(tmp)
+                except OSError:
+                    pass
+                raise StagingError(f"Cannot commit draft to {target}")
+
+        self._cleanup_draft(session_id, file_path)
+        return CommitResult(status=CommitStatus.OK, file_path=file_path, message="committed successfully")
+
+    def try_auto_merge(self, session_id: str, file_path: str) -> CommitResult:
+        """尝试自动合并草稿与当前文件。
+
+        简单冲突（非重叠区域修改）自动 rebase 成功。
+        复杂冲突（重叠区域修改）返回 CONFLICT_NEEDS_OWNER。
+        """
+        draft = self._draft_path(session_id, file_path)
+        if not draft.exists():
+            return CommitResult(status=CommitStatus.NO_DRAFT, file_path=file_path, message="draft not found")
+
+        target = self._target_path(file_path)
+        baseline = draft.with_suffix(draft.suffix + ".baseline")
+
+        if not baseline.exists():
+            return self.commit(session_id, file_path)
+
+        baseline_data = baseline.read_text(encoding="utf-8").strip().split("\n")
+        if len(baseline_data) < 2:
+            return self.commit(session_id, file_path)
+
+        orig_mtime, orig_hash = baseline_data[0], baseline_data[1]
+        curr_mtime = _file_mtime(target)
+        curr_hash = _file_hash(target)
+
+        if curr_mtime == orig_mtime and curr_hash == orig_hash:
+            return self.commit(session_id, file_path)
+
+        if not target.exists():
+            return self.commit(session_id, file_path)
+
+        baseline_content = self._read_baseline_content(draft, orig_hash)
+        draft_lines = draft.read_text(encoding="utf-8").splitlines(keepends=True)
+
+        from difflib import SequenceMatcher
+
+        with _COMMIT_LOCK:
+            current_lines = _read_file_robust(target).splitlines(keepends=True)
+
+            locked_mtime = _file_mtime(target)
+            locked_hash = _file_hash(target)
+            if locked_mtime == orig_mtime and locked_hash == orig_hash:
+                draft_text = draft.read_text(encoding="utf-8")
+                tmp = target.with_suffix(target.suffix + f".{uuid.uuid4().hex}.tmp")
+                try:
+                    with open(tmp, "w", encoding="utf-8") as f:
+                        f.write(draft_text)
+                    _atomic_replace(tmp, target)
+                except PermissionError:
+                    try:
+                        os.remove(tmp)
+                    except OSError:
+                        pass
+                    raise StagingError(f"Cannot auto-merge to {target}")
+                self._cleanup_draft(session_id, file_path)
+                return CommitResult(status=CommitStatus.OK, file_path=file_path, message="committed successfully")
+
+            local_baseline = baseline_content
+            if local_baseline is None:
+                local_baseline = current_lines
+
+            draft_vs_baseline_overlap = _check_overlap(local_baseline, draft_lines)
+            current_vs_baseline_overlap = _check_overlap(local_baseline, current_lines)
+
+            if draft_vs_baseline_overlap and current_vs_baseline_overlap:
+                diff_lines = _compute_diff_lines(current_lines, draft_lines)
+                return CommitResult(
+                    status=CommitStatus.CONFLICT_NEEDS_OWNER,
+                    file_path=file_path,
+                    conflict=ConflictInfo(
+                        file_path=file_path,
+                        draft_mtime=_file_mtime(draft),
+                        current_mtime=locked_mtime,
+                        draft_hash=_file_hash(draft),
+                        current_hash=locked_hash,
+                        diff_lines=diff_lines,
+                    ),
+                    message="overlapping changes — needs owner resolution",
+                )
+
+            sm = SequenceMatcher(None, local_baseline, draft_lines)
+            merged: list[str] = list(current_lines)
+            offset = 0
+            for op, i1, i2, j1, j2 in sm.get_opcodes():
+                if op == "equal":
+                    continue
+                elif op == "insert":
+                    insert_pos = i1 + offset
+                    for j in range(j1, j2):
+                        merged.insert(insert_pos, draft_lines[j])
+                        offset += 1
+                elif op == "delete":
+                    del merged[i1 + offset : i2 + offset]
+                    offset -= i2 - i1
+                elif op == "replace":
+                    if current_vs_baseline_overlap:
+                        return CommitResult(
+                            status=CommitStatus.CONFLICT_NEEDS_OWNER,
+                            file_path=file_path,
+                            conflict=ConflictInfo(
+                                file_path=file_path,
+                                draft_mtime=_file_mtime(draft),
+                                current_mtime=locked_mtime,
+                                draft_hash=_file_hash(draft),
+                                current_hash=locked_hash,
+                                diff_lines=_compute_diff_lines(current_lines, draft_lines),
+                            ),
+                            message="overlapping replace — needs owner resolution",
+                        )
+                    replace_pos = i1 + offset
+                    del merged[replace_pos : i2 + offset]
+                    for j in range(j1, j2):
+                        merged.insert(replace_pos, draft_lines[j])
+                        replace_pos += 1
+                    offset += j2 - j1 - (i2 - i1)
+
+            merged_content = "".join(merged)
+            tmp = target.with_suffix(target.suffix + f".{uuid.uuid4().hex}.tmp")
+            try:
+                with open(tmp, "w", encoding="utf-8") as f:
+                    f.write(merged_content)
+                _atomic_replace(tmp, target)
+            except PermissionError:
+                try:
+                    os.remove(tmp)
+                except OSError:
+                    pass
+                raise StagingError(f"Cannot auto-merge to {target}")
+
+        self._cleanup_draft(session_id, file_path)
+        return CommitResult(status=CommitStatus.MERGED, file_path=file_path, message="auto-merged successfully")
+
+    def _read_baseline_content(self, draft: Path, orig_hash: str) -> list[str] | None:
+        content_file = draft.with_suffix(draft.suffix + ".baseline_content")
+        if content_file.exists():
+            return _read_file_robust(content_file).splitlines(keepends=True)
+        return None
+
+    def list_drafts(self, session_id: str) -> list[str]:
+        """列出当前会话的所有草稿文件路径。"""
+        safe_session = session_id.replace("/", "_").replace("\\", "_")
+        session_dir = self._drafts_root / safe_session
+        if not session_dir.exists():
+            return []
+        drafts: list[str] = []
+        for f in session_dir.rglob("*"):
+            if f.is_file() and not f.name.endswith((".baseline", ".baseline_content")):
+                rel = f.relative_to(session_dir)
+                drafts.append(str(rel).replace("\\", "/"))
+        return sorted(drafts)
+
+    def discard(self, session_id: str, file_path: str) -> bool:
+        """丢弃草稿。返回 True 表示成功，False 表示草稿不存在。"""
+        draft = self._draft_path(session_id, file_path)
+        baseline = draft.with_suffix(draft.suffix + ".baseline")
+        baseline_content = draft.with_suffix(draft.suffix + ".baseline_content")
+        removed = False
+        for p in (draft, baseline, baseline_content):
+            if p.exists():
+                p.unlink()
+                removed = True
+        return removed
+
+    def get_conflict(self, session_id: str, file_path: str) -> ConflictInfo | None:
+        """返回冲突详情（如果存在）。"""
+        draft = self._draft_path(session_id, file_path)
+        if not draft.exists():
+            return None
+        baseline = draft.with_suffix(draft.suffix + ".baseline")
+        target = self._target_path(file_path)
+        if not baseline.exists():
+            return None
+        baseline_data = baseline.read_text(encoding="utf-8").strip().split("\n")
+        if len(baseline_data) < 2:
+            return None
+        orig_mtime, orig_hash = baseline_data[0], baseline_data[1]
+        curr_mtime = _file_mtime(target)
+        curr_hash = _file_hash(target)
+        if curr_mtime == orig_mtime and curr_hash == orig_hash:
+            return None
+        draft_lines = draft.read_text(encoding="utf-8").splitlines(keepends=True)
+        current_lines = (
+            target.read_text(encoding="utf-8").splitlines(keepends=True)
+            if target.exists()
+            else []
+        )
+        diff_lines = _compute_diff_lines(current_lines, draft_lines)
+        return ConflictInfo(
+            file_path=file_path,
+            draft_mtime=_file_mtime(draft),
+            current_mtime=curr_mtime,
+            draft_hash=_file_hash(draft),
+            current_hash=curr_hash,
+            diff_lines=diff_lines,
+        )
+
+    def _cleanup_draft(self, session_id: str, file_path: str) -> None:
+        draft = self._draft_path(session_id, file_path)
+        baseline = draft.with_suffix(draft.suffix + ".baseline")
+        baseline_content = draft.with_suffix(draft.suffix + ".baseline_content")
+        for p in (draft, baseline, baseline_content):
+            try:
+                if p.exists():
+                    p.unlink()
+            except OSError:
+                pass
+        session_dir = self._draft_path(session_id, "").parent
+        try:
+            if session_dir.exists() and not any(session_dir.iterdir()):
+                session_dir.rmdir()
+        except OSError:
+            pass

@@ -1,0 +1,12 @@
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED error_budget_tracker.enforce: error_budget_tracker.enforce
+    failed to block slo_override'
+  entry_id: BY-548eb6c2
+  escalated: false
+  gate_id: error_budget_tracker.enforce
+  occurred_at: '2026-05-23T14:42:24.554597+00:00'
+  root_cause: 'BYPASSED error_budget_tracker.enforce: error_budget_tracker.enforce
+    failed to block slo_override'
+  scenario_id: RB-SCEN-023
+  tier: TIER_3

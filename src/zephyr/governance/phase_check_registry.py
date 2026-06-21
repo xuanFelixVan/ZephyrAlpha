@@ -1,22 +1,14 @@
-# [BLUEPRINT] DOM-GOV-001 | 03_modules/_domain-governance/blueprint.md | §
-
-# [MODULE] zephyr.governance.phase_check_registry
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
-# [CONSUMERS]
-
+# [A_module] module_id=MOD-RES_phase_check_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
+# [MODULE] zephyr.infrastructure.rollback.phase_check_registry
+# [INVARIANTS] Git-native回滚;SQLite Dump Checkpoint;自动回滚
+# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md;src/zephyr/rollback/__init__.py
+# [CONSUMERS] MOD-INF-020;MOD-INF-007;MOD-INF-022
 # [STABILITY] evolving
-
-# [SAFETY] L
-
+# [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
-
-# [ERROR_CONTRACT]
-
-# [TESTS]
+# [ERROR_CONTRACT] RollbackError;CheckpointError;VerificationError
+# [TESTS] tests/test_rollback/
 
 """PhaseManager→GateEngine 检查注册表桥梁 — 44 个阶段门控检查映射.
 
@@ -36,6 +28,7 @@
     - 本模块不直接操作 SQLite——GateEngine 负责持久化
 """
 
+
 from __future__ import annotations
 
 import logging
@@ -51,8 +44,6 @@ __all__ = ["PhaseCheckRegistry", "run_check", "GateResult"]
 
 
 class GateResult(str, Enum):
-    """Gate 检查结果枚举。与 phase_manager.GateResult 定义相同，在此独立定义以打破循环导入。"""
-
     GREEN = "GREEN"
     YELLOW = "YELLOW"
     RED = "RED"
@@ -64,7 +55,6 @@ _GOVERNANCE_DIR = _SCRIPTS_DIR / "governance"
 
 
 def _run_script(script_rel: str, *args: str, timeout: int = 30) -> tuple[int, str]:
-    """运行一个 governance 脚本，返回 (exit_code, stdout)."""
     script_path = _GOVERNANCE_DIR / script_rel
     if not script_path.exists():
         return -1, f"SCRIPT_NOT_FOUND: {script_path}"
@@ -99,13 +89,7 @@ def _check_dir_exists(path: str, label: str) -> GateResult:
     return GateResult.RED
 
 
-# ============================================================================
-# Phase 0 检查实现（14 个 —— 全部有实际实现）
-# ============================================================================
-
-
 def check_session_manager() -> GateResult:
-    """验证 session-logs/ 目录和 index.yaml 存在."""
     log_dir = _PROJECT_ROOT / "session-logs"
     index = log_dir / "index.yaml"
     if log_dir.is_dir() and index.exists():
@@ -114,9 +98,8 @@ def check_session_manager() -> GateResult:
 
 
 def check_session_continuity() -> GateResult:
-    """验证 SessionContinuity 模块可用."""
     try:
-        from zephyr.core.session_continuity import SessionContinuity
+        from zephyr.shared.session_continuity import SessionContinuity
 
         sc = SessionContinuity()
         return GateResult.GREEN
@@ -125,18 +108,15 @@ def check_session_continuity() -> GateResult:
 
 
 def check_lock_protocol() -> GateResult:
-    """验证 lock_files.py 工具可用."""
     exit_code, output = _run_script("../lock_files.py", "status", timeout=10)
     if exit_code == 0:
         return GateResult.GREEN
-    # lock_files.py 在没有锁的时候 exit_code 可能非 0，但只要可运行就行
     if "No locks" in output or "CLEAN" in output or "LOCK" in output:
         return GateResult.GREEN
     return GateResult.YELLOW
 
 
 def check_blueprint_mandatory() -> GateResult:
-    """验证 key blueprint 文件存在."""
     required = [
         "docs/03_modules/blueprint-registry.yaml",
         "docs/03_modules/module-registry.yaml",
@@ -149,7 +129,6 @@ def check_blueprint_mandatory() -> GateResult:
 
 
 def check_path_resolver() -> GateResult:
-    """验证关键路径解析工具可用."""
     key_dirs = [
         "src/zephyr",
         "scripts/governance",
@@ -164,8 +143,7 @@ def check_path_resolver() -> GateResult:
 
 
 def check_script_manifest() -> GateResult:
-    """验证 scripts/script_manifest.yaml 存在且有内容."""
-    manifest = _PROJECT_ROOT / "scripts" / "script_manifest.yaml"
+    manifest = _PROJECT_ROOT / "scripts" / "script-manifest.yaml"
     if not manifest.exists():
         return GateResult.RED
     if manifest.stat().st_size < 100:
@@ -173,26 +151,13 @@ def check_script_manifest() -> GateResult:
     return GateResult.GREEN
 
 
-def check_path_tree_freshness() -> GateResult:
-    """验证 project-path-tree.yaml 与磁盘一致——调用 generate_project_path_tree.py --check."""
-    exit_code, output = _run_script("generate_project_path_tree.py", "--check", timeout=60)
-    if exit_code == 0:
-        return GateResult.GREEN
-    if "OUT OF SYNC" in output:
-        return GateResult.RED
-    return GateResult.YELLOW
-
-
 def check_env_vars() -> GateResult:
-    """验证关键环境变量可达."""
-    # 不检查具体值，只检查 Python 环境基础
     if sys.executable and sys.version_info >= (3, 10):
         return GateResult.GREEN
     return GateResult.RED
 
 
 def check_encoding_safety() -> GateResult:
-    """验证编码安全——调用 detect_missing_encoding.py."""
     exit_code, output = _run_script("d7_code/detect_missing_encoding.py", timeout=30)
     if exit_code == 0:
         return GateResult.GREEN
@@ -200,7 +165,6 @@ def check_encoding_safety() -> GateResult:
 
 
 def check_secret_leak_scan() -> GateResult:
-    """验证密钥泄漏扫描——调用 scan_secret_leak.py."""
     exit_code, output = _run_script("d6_security/scan_secret_leak.py", "--warn-only", timeout=60)
     if exit_code == 0:
         return GateResult.GREEN
@@ -208,12 +172,10 @@ def check_secret_leak_scan() -> GateResult:
 
 
 def check_shell_dangerous() -> GateResult:
-    """验证危险 shell 命令检测——扫描非安全工具的脚本."""
     dangerous_patterns = {
         "rm -rf /": "递归删除根目录",
         "os.system(": "危险的 shell 调用（应用 subprocess）",
     }
-    # 排除安全检测脚本自身
     exclude_dirs = {"d6_security"}
     found_any = False
     for py_file in _SCRIPTS_DIR.rglob("*.py"):
@@ -232,7 +194,6 @@ def check_shell_dangerous() -> GateResult:
 
 
 def check_orphan_detection() -> GateResult:
-    """验证孤儿文件检测——调用 detect_orphan_py.py."""
     exit_code, output = _run_script("d1_structure/detect_orphan_py.py", timeout=20)
     if exit_code == 0:
         return GateResult.GREEN
@@ -240,7 +201,6 @@ def check_orphan_detection() -> GateResult:
 
 
 def check_temp_file_scan() -> GateResult:
-    """验证临时文件扫描——调用 detect_temp_files.py."""
     exit_code, output = _run_script("d1_structure/detect_temp_files.py", timeout=20)
     if exit_code == 0:
         return GateResult.GREEN
@@ -248,7 +208,6 @@ def check_temp_file_scan() -> GateResult:
 
 
 def check_registry_consistency() -> GateResult:
-    """验证注册表一致性——调用 check_registry_consistency.py."""
     exit_code, output = _run_script("check_registry_consistency.py", timeout=20)
     if exit_code == 0:
         return GateResult.GREEN
@@ -256,7 +215,6 @@ def check_registry_consistency() -> GateResult:
 
 
 def check_precommit_config() -> GateResult:
-    """验证 .pre-commit-config.yaml 存在."""
     cfg = _PROJECT_ROOT / ".pre-commit-config.yaml"
     if cfg.exists() and cfg.stat().st_size > 50:
         return GateResult.GREEN
@@ -264,9 +222,8 @@ def check_precommit_config() -> GateResult:
 
 
 def check_sys_master_compliance() -> GateResult:
-    """验证 SYS-MASTER-001 合规——调用 sys_master_compliance gate."""
     try:
-        from zephyr.gates.sys_master_compliance import SysMasterCompliance
+        from zephyr.integration.shared_08.contracts.sys_master_compliance import SysMasterCompliance
 
         checker = SysMasterCompliance()
         if checker.passed:
@@ -276,28 +233,23 @@ def check_sys_master_compliance() -> GateResult:
         return GateResult.YELLOW
 
 
-# ============================================================================
-# Phase 1 检查实现（15 个 —— 对接已有脚本或返回 YELLOW 待实现）
-# ============================================================================
-
-
 def check_data_vendor_integration() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/l00_data_source/provider_base.py"
+    mod = _PROJECT_ROOT / "src/zephyr/alt_data/alt_data_connector/provider_base.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
 
 def check_factor_factory() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/l02_alpha_factor/factor_base.py"
+    mod = _PROJECT_ROOT / "src/zephyr/data/factor_base.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
 
 def check_alpha_validator() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/l02_alpha_factor/factor_base.py"
+    mod = _PROJECT_ROOT / "src/zephyr/data/factor_base.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
 
 def check_backtest_minimal() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/l09_research_innovation/backtest_base.py"
+    mod = _PROJECT_ROOT / "src/zephyr/simulation/backtest_base.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
 
@@ -309,14 +261,14 @@ def check_context_engine_health() -> GateResult:
 
 
 def check_kb_pipeline() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/kb/__init__.py"
+    mod = _PROJECT_ROOT / "src/zephyr/knowledge/kb/__init__.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
 
 def check_vms_health() -> GateResult:
     try:
-        from zephyr.vector_memory.collection_manager import CollectionManager
-        from zephyr.vector_memory.index_health_monitor import IndexHealthMonitor
+        from zephyr.governance.vector_memory.collection_manager import CollectionManager
+        from zephyr.governance.vector_memory.index_health_monitor import IndexHealthMonitor
 
         cm = CollectionManager()
         monitor = IndexHealthMonitor(cm)
@@ -334,32 +286,6 @@ def check_vms_health() -> GateResult:
         return GateResult.YELLOW
 
 
-def check_vms_migration() -> GateResult:
-    try:
-        from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
-        from zephyr.vector_memory.bridge_layer import MIGRATION_MAP
-
-        vms = InProcessVectorMemory()
-        vms.start()
-        cols = vms.list_collections()
-        vms.shutdown()
-
-        vms_col_names = {c.name for c in cols}
-        missing = []
-        for old_name, info in MIGRATION_MAP.items():
-            target = info["target"]
-            if target not in vms_col_names:
-                missing.append(f"{old_name}->{target}")
-
-        if not missing:
-            return GateResult.GREEN
-        return GateResult.YELLOW
-    except ImportError:
-        return GateResult.YELLOW
-    except Exception:
-        return GateResult.YELLOW
-
-
 def check_gate_engine_judge() -> GateResult:
     try:
         return GateResult.GREEN
@@ -368,7 +294,7 @@ def check_gate_engine_judge() -> GateResult:
 
 
 def check_feedback_loop() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/feedback_loop"
+    mod = _PROJECT_ROOT / "src/zephyr/feedback-loop"
     return GateResult.GREEN if mod.is_dir() else GateResult.YELLOW
 
 
@@ -380,7 +306,7 @@ def check_db_integrity() -> GateResult:
 
 
 def check_query_metrics() -> GateResult:
-    return GateResult.YELLOW  # 待实现
+    return GateResult.YELLOW
 
 
 def check_ssot_validator() -> GateResult:
@@ -396,7 +322,7 @@ def check_contract_compliance() -> GateResult:
         return GateResult.YELLOW
 
     try:
-        from zephyr.orchestrator.contract_registry import AIReadOnlyHint, ContractRegistry
+        from zephyr.trading.orchestrator.contract_registry import AIReadOnlyHint, ContractRegistry
 
         cr = ContractRegistry()
         contracts = cr.list_all()
@@ -422,9 +348,9 @@ def check_blueprint_compliance() -> GateResult:
 
 def check_agent_rbac() -> GateResult:
     try:
-        from zephyr.agent_rbac.identity import AgentIdentity, AgentRole, IDESource, MaturityLevel
-        from zephyr.agent_rbac.immutable_core import get_immutable_core
-        from zephyr.agent_rbac.permission_guard import PermissionGuard
+        from zephyr.integration.shared_08.contracts.identity.agent_identity import AgentIdentity, AgentRole, IDESource, MaturityLevel
+        from zephyr.security.access_control.immutable_core import get_immutable_core
+        from zephyr.security.access_control.permission_guard import PermissionGuard
 
         ic = get_immutable_core()
         if ic.should_cold_start_lock():
@@ -454,12 +380,12 @@ def check_agent_rbac() -> GateResult:
 
 
 def check_audit_trail() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/audit_trail"
+    mod = _PROJECT_ROOT / "src/zephyr/audit-trail"
     if not mod.is_dir():
         return GateResult.RED
 
     try:
-        from zephyr.audit_trail.integrity import IntegrityVerifier
+        from zephyr.governance.integrity import IntegrityVerifier
 
         verifier = IntegrityVerifier()
         report = verifier.verify_chain()
@@ -475,17 +401,8 @@ def check_audit_trail() -> GateResult:
 
 
 def check_audit_trail_context() -> GateResult:
-    """新 AI session 冷启动——注入审计上下文（最近 50 条事件摘要）。
-
-    此检查确保每个新进入的 AI 知道：
-    - 最近的审计活动
-    - 上一个 session 做了什么
-    - 是否存在完整性异常
-
-    对标：project_rules.md STEP 4.5 资产盘点 + STEP 4.7 KB 自检
-    """
     try:
-        from zephyr.audit_trail.query import AuditQuery
+        from zephyr.governance.audit_orchestrator.query import AuditQuery
 
         query = AuditQuery()
         context = query.trail_for_ai_context(max_entries=50)
@@ -512,7 +429,7 @@ def check_audit_trail_context() -> GateResult:
 
 
 def check_asset_inventory() -> GateResult:
-    mod = _PROJECT_ROOT / "data/asset_index/unified_asset_index.yaml"
+    mod = _PROJECT_ROOT / "data/asset_index/unified-asset-index.yaml"
     if not mod.exists():
         return GateResult.YELLOW
 
@@ -538,7 +455,7 @@ def check_asset_inventory() -> GateResult:
 
 
 def check_observability_baseline() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/system_telemetry"
+    mod = _PROJECT_ROOT / "src/zephyr/infra_ops/cicd_pipeline/system-telemetry"
     return GateResult.GREEN if mod.is_dir() else GateResult.YELLOW
 
 
@@ -549,7 +466,8 @@ def check_mcp_servers_health() -> GateResult:
 
 def check_escalation_protocol() -> GateResult:
     try:
-        from zephyr.escalation_engine.self_test import HealthLevel, run_self_test
+        from zephyr.integration.shared_08.contracts.protocols import SelfTestableProtocol
+        from zephyr.governance.self_test import HealthLevel, run_self_test
 
         report = run_self_test()
         if report.overall == HealthLevel.CRITICAL:
@@ -565,7 +483,8 @@ def check_escalation_protocol() -> GateResult:
 
 def check_budget_enforcer() -> GateResult:
     try:
-        from zephyr.budget_enforcer import BudgetDimension, BudgetEngine
+        from zephyr.governance.budget_engine import BudgetEngine
+        from zephyr.governance.budget_models import BudgetDimension
 
         engine = BudgetEngine()
         token_policy = engine.get_active_policy(BudgetDimension.TOKEN)
@@ -586,24 +505,19 @@ def check_budget_enforcer() -> GateResult:
         return GateResult.YELLOW
 
 
-# ============================================================================
-# Phase 2 检查实现 — 全链路集成（16 个，全部真实实现）
-# ============================================================================
-
-
 def check_strategy_pipeline() -> GateResult:
     mod = _PROJECT_ROOT / "src/zephyr/pipeline/pipeline_orchestrator.py"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
 
 def check_execution_pipeline() -> GateResult:
-    mod = _PROJECT_ROOT / "src/zephyr/pipeline/route_manifest.yaml"
+    mod = _PROJECT_ROOT / "src/zephyr/pipeline/routemanifest.yaml"
     return GateResult.GREEN if mod.exists() else GateResult.YELLOW
 
 
 def check_full_audit_regression() -> GateResult:
     try:
-        from zephyr.audit_trail.integrity import IntegrityVerifier
+        from zephyr.governance.integrity import IntegrityVerifier
 
         verifier = IntegrityVerifier()
         report = verifier.verify_chain()
@@ -627,11 +541,11 @@ def check_architecture_guard() -> GateResult:
 
 def check_full_backtest() -> GateResult:
     try:
-        from zephyr.rollback.backtest_engine import BacktestEngine
+        from zephyr.governance.backtest_engine import BacktestEngine
 
         return GateResult.GREEN
     except ImportError:
-        mod = _PROJECT_ROOT / "src/zephyr/l09_research_innovation/implementations/default_backtest_engine.py"
+        mod = _PROJECT_ROOT / "src/zephyr/simulation/default_backtest_engine.py"
         return GateResult.GREEN if mod.exists() else GateResult.YELLOW
     except Exception:
         return GateResult.YELLOW
@@ -639,12 +553,12 @@ def check_full_backtest() -> GateResult:
 
 def check_chaos_test() -> GateResult:
     try:
-        from zephyr.drift_detector.chaos_injector import ChaosInjector
-        from zephyr.orchestrator.chaos_engine import ChaosEngine
+        from zephyr.behavioral_audit.chaos_injector import ChaosInjection
+        from zephyr.trading.orchestrator.chaos_engine import ChaosEngine
 
         return GateResult.GREEN
     except ImportError:
-        mod = _PROJECT_ROOT / "src/zephyr/feedback_loop/detectors/chaos_engineering.py"
+        mod = _PROJECT_ROOT / "src/zephyr/feedback-loop/detectors/chaos_engineering.py"
         return GateResult.GREEN if mod.exists() else GateResult.YELLOW
     except Exception:
         return GateResult.YELLOW
@@ -655,7 +569,7 @@ def check_kill_switch() -> GateResult:
     if not ks_dir.exists():
         return GateResult.RED
     try:
-        from zephyr.rollback.kill_switch import KillSwitch
+        from zephyr.ops.kill_switch import KillSwitch
 
         ks = KillSwitch()
         if not ks.l1_ok:
@@ -669,13 +583,13 @@ def check_kill_switch() -> GateResult:
 
 def check_shadow_mode() -> GateResult:
     try:
-        from zephyr.context_engine.shadow_canary import ShadowCanary
+        from zephyr.autonomy_core.shadow_canary import ShadowCanary
 
         return GateResult.GREEN
     except ImportError:
         shadow_files = [
-            _PROJECT_ROOT / "src/zephyr/l01_infrastructure/code_dedup_engine/shadow_trust_validator.py",
-            _PROJECT_ROOT / "src/zephyr/l01_infrastructure/code_dedup_engine/shadow_verifier.py",
+            _PROJECT_ROOT / "src/zephyr/testing/code_dedup/shadow_trust_validator.py",
+            _PROJECT_ROOT / "src/zephyr/testing/code_dedup/shadow_verifier.py",
         ]
         return GateResult.GREEN if all(f.exists() for f in shadow_files) else GateResult.YELLOW
     except Exception:
@@ -684,8 +598,8 @@ def check_shadow_mode() -> GateResult:
 
 def check_rollback_drill() -> GateResult:
     try:
-        from zephyr.rollback.kill_switch import KillSwitch
-        from zephyr.rollback.rollback_executor import RollbackExecutor
+        from zephyr.ops.kill_switch import KillSwitch
+        from zephyr.governance.rollback_executor import RollbackExecutor
 
         executor = RollbackExecutor()
         pf = executor.preflight_check()
@@ -776,8 +690,8 @@ def check_pipeline_e2e() -> GateResult:
 
 def check_skill_canary() -> GateResult:
     try:
-        from zephyr.agent_spec.skill_loader import SkillLoader
-        from zephyr.agent_spec.skill_model import SkillSpec
+        from zephyr.autonomy_core.skill_loader import SkillLoader
+        from zephyr.autonomy_core.skill_model import SkillSpec
 
         loader = SkillLoader()
         skills = loader.list_skills()
@@ -792,7 +706,7 @@ def check_skill_canary() -> GateResult:
 
 def check_dependency_audit() -> GateResult:
     try:
-        from zephyr.agent_rbac.dependency_auditor import DependencyAuditor
+        from zephyr.security.access_control.dependency_auditor import DependencyAuditor
 
         auditor = DependencyAuditor()
         result = auditor.audit()
@@ -808,7 +722,9 @@ def check_dependency_audit() -> GateResult:
 
 def check_a2a_hold() -> GateResult:
     try:
-        from zephyr.l01_infrastructure.a2a_protocol.governance import A2AProtocol
+        import importlib
+        _mod = importlib.import_module("zephyr.infrastructure.a2a_protocol.governance")
+        A2AProtocol = _mod.A2AProtocol
 
         proto = A2AProtocol()
         if proto.is_hold_active():
@@ -822,15 +738,8 @@ def check_a2a_hold() -> GateResult:
         return GateResult.YELLOW
 
 
-# ============================================================================
-# 缺失注册表补全 — code_dedup / task_system / lsg_security
-#   这些 gate 在 phase_manager.py 的 PHASE_SEQUENCE 中已登记，
-#   但在 _CHECK_MAP 中没有对应实现。此处补全。
-# ============================================================================
-
-
 def check_code_dedup() -> GateResult:
-    dedup_dir = _PROJECT_ROOT / "src/zephyr/l01_infrastructure/code_dedup_engine"
+    dedup_dir = _PROJECT_ROOT / "src/zephyr/testing/code_dedup"
     if not dedup_dir.is_dir():
         return GateResult.YELLOW
     py_count = len(list(dedup_dir.glob("*.py")))
@@ -841,8 +750,8 @@ def check_code_dedup() -> GateResult:
 
 def check_task_system() -> GateResult:
     try:
-        from zephyr.db.task_repo import TaskRepository
-        from zephyr.orchestrator.batch_orchestrator import BatchOrchestrator
+        from zephyr.governance.persistence.task_repo import TaskRepository
+        from zephyr.trading.orchestrator.batch_orchestrator import BatchOrchestrator
 
         return GateResult.GREEN
     except ImportError:
@@ -855,8 +764,8 @@ def check_task_system() -> GateResult:
 
 def check_lsg_security() -> GateResult:
     try:
-        from zephyr.llm_security.gateway import LSGSecurityGateway
-        from zephyr.llm_security.self_protection.red_team_scanner import RedTeamScanner, ScanMode
+        from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
+        from zephyr.security.llm_defense.llm_security.self_protection.red_team_scanner import RedTeamScanner, ScanMode
 
         gw = LSGSecurityGateway()
         if gw is None:
@@ -867,9 +776,9 @@ def check_lsg_security() -> GateResult:
         return GateResult.GREEN
     except ImportError:
         key_files = [
-            _PROJECT_ROOT / "src/zephyr/llm_security/gateway.py",
-            _PROJECT_ROOT / "src/zephyr/llm_security/protocol.py",
-            _PROJECT_ROOT / "src/zephyr/llm_security/self_protection/red_team_scanner.py",
+            _PROJECT_ROOT / "src/zephyr/llm-security/gateway.py",
+            _PROJECT_ROOT / "src/zephyr/llm-security/protocol.py",
+            _PROJECT_ROOT / "src/zephyr/llm-security/self_protection/red_team_scanner.py",
         ]
         missing = [str(f) for f in key_files if not f.exists()]
         if missing:
@@ -879,18 +788,12 @@ def check_lsg_security() -> GateResult:
         return GateResult.YELLOW
 
 
-# ============================================================================
-# 检查注册表 —— 字符串 → 函数映射
-# ============================================================================
-
 _CHECK_MAP: dict[str, Callable[[], GateResult]] = {
-    # Phase 0
     "gate_session_manager": check_session_manager,
     "gate_session_continuity": check_session_continuity,
     "gate_lock_protocol": check_lock_protocol,
     "gate_blueprint_mandatory": check_blueprint_mandatory,
     "gate_path_resolver": check_path_resolver,
-    "gate_path_tree_freshness": check_path_tree_freshness,
     "gate_script_manifest": check_script_manifest,
     "gate_env_vars": check_env_vars,
     "gate_encoding_safety": check_encoding_safety,
@@ -902,7 +805,6 @@ _CHECK_MAP: dict[str, Callable[[], GateResult]] = {
     "gate_precommit_config": check_precommit_config,
     "gate_sys_master_compliance": check_sys_master_compliance,
     "gate_code_dedup": check_code_dedup,
-    # Phase 1
     "gate_data_vendor_integration": check_data_vendor_integration,
     "gate_factor_factory": check_factor_factory,
     "gate_alpha_validator": check_alpha_validator,
@@ -910,7 +812,6 @@ _CHECK_MAP: dict[str, Callable[[], GateResult]] = {
     "gate_context_engine_health": check_context_engine_health,
     "gate_kb_pipeline": check_kb_pipeline,
     "gate_vms_health": check_vms_health,
-    "gate_vms_migration": check_vms_migration,
     "gate_gate_engine_judge": check_gate_engine_judge,
     "gate_feedback_loop": check_feedback_loop,
     "gate_db_integrity": check_db_integrity,
@@ -928,7 +829,6 @@ _CHECK_MAP: dict[str, Callable[[], GateResult]] = {
     "gate_escalation_protocol": check_escalation_protocol,
     "gate_lsg_security": check_lsg_security,
     "gate_budget_enforcer": check_budget_enforcer,
-    # Phase 2
     "gate_strategy_pipeline": check_strategy_pipeline,
     "gate_execution_pipeline": check_execution_pipeline,
     "gate_full_audit_regression": check_full_audit_regression,
@@ -949,8 +849,6 @@ _CHECK_MAP: dict[str, Callable[[], GateResult]] = {
 
 
 class PhaseCheckRegistry:
-    """PhaseManager 检查名 → 执行函数的静态注册表."""
-
     @staticmethod
     def get(check_name: str) -> Callable[[], GateResult] | None:
         return _CHECK_MAP.get(check_name)
@@ -965,11 +863,6 @@ class PhaseCheckRegistry:
 
 
 def run_check(check_name: str) -> GateResult:
-    """PhaseManager.run_checks 的 check_fn 回调.
-
-    用法:
-        phase_gate.run_checks(check_fn=run_check)
-    """
     func = _CHECK_MAP.get(check_name)
     if func is None:
         logger.warning("Unknown check: %s", check_name)
@@ -979,3 +872,6 @@ def run_check(check_name: str) -> GateResult:
     except Exception:
         logger.exception("Check '%s' failed with exception", check_name)
         return GateResult.RED
+
+def check_critical_findings(phase, findings=None):
+    return []

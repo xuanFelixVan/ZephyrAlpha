@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1963 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-580 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.telemetry.test_l12_telemetry
 # [STABILITY] evolving
 # [SAFETY] L
@@ -14,7 +15,7 @@ SLA 测量 / 漂移检测 / 违规记录 / 统计聚合。
 Phase D | Safety: LOW（框架验证，无外部 IO）
 """
 
-from zephyr.l01_infrastructure.system_telemetry.contract_metrics import (
+from zephyr.infrastructure.system_telemetry.contract_metrics import (
     ContractMetricsCollector,
     DriftAlert,
     SlaRecord,
@@ -169,25 +170,25 @@ class TestL12TelemetryStreamsPhase1:
     """metrics/logs/traces/ai_behavior/archive Phase 1 最小导出冒烟。"""
 
     def test_emit_ai_behavior_event_no_throw(self):
-        from zephyr.l01_infrastructure.system_telemetry.ai_behavior import emit_ai_behavior_event
+        from zephyr.infrastructure.system_telemetry.ai_behavior import emit_ai_behavior_event
 
         emit_ai_behavior_event("hallucination_probe", {"rate": 0.01})
 
     def test_structured_log_record_stub(self):
-        from zephyr.l01_infrastructure.system_telemetry.logs import log_record_stub
+        from zephyr.infrastructure.system_telemetry.logs import log_record_stub
 
         rec = log_record_stub("INFO", "hello", layer="l12")
         assert rec["level"] == "INFO"
         assert rec["labels"]["layer"] == "l12"
 
     def test_noop_span_context_manager(self):
-        from zephyr.l01_infrastructure.system_telemetry.traces import noop_span
+        from zephyr.infrastructure.system_telemetry.traces import noop_span
 
         with noop_span("op"):
             pass
 
     def test_archive_batch_id_format(self):
-        from zephyr.l01_infrastructure.system_telemetry.archive import next_archive_batch_id
+        from zephyr.infrastructure.system_telemetry.archive import next_archive_batch_id
 
         bid = next_archive_batch_id("tst")
         assert bid.startswith("tst-")

@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0107 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-265 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.contracts.test_ct_rbk_gate_001
 # [STABILITY] evolving
 # [SAFETY] L
@@ -10,9 +11,9 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.orchestrator.contract_registry import ContractRegistry
-from zephyr.orchestrator.contract_router import ContractRouter
-from zephyr.rollback.contract import (
+from zephyr.trading.orchestrator.contract_registry import ContractRegistry
+from zephyr.trading.orchestrator.contract_router import ContractRouter
+from zephyr.governance.contract import (
     EXIT_CODE_TO_GATE_ACTION,
     PIPELINE_ACTIONS,
     RollbackExitCode,

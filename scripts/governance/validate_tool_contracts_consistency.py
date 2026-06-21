@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/validate_tool_contracts_consistency.py | §
 """Tool Contract 一致性校验脚本（MOD-INF-013 §9 R3）。
 
-对比 tool_contracts.yaml 中 tool 的 input_schema ↔ 代码中 handler 实际注册的参数。
+对比 tool-contracts.yaml 中 tool 的 input_schema ↔ 代码中 handler 实际注册的参数。
 通过 AST 解析 + Yaml 对比，检测契约漂移。
 
 使用：
@@ -10,6 +10,15 @@
 """
 
 from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 
@@ -21,7 +30,7 @@ from typing import Any
 import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-CONTRACTS_PATH = REPO_ROOT / "src/zephyr/mcp/tool_contracts.yaml"
+CONTRACTS_PATH = REPO_ROOT / "src/zephyr/mcp/tool-contracts.yaml"
 MCP_DIR = REPO_ROOT / "src/zephyr/mcp"
 
 SERVER_MAP: dict[str, str] = {
@@ -90,7 +99,7 @@ def validate_consistency(ci_mode: bool = False) -> int:
 
         for tool_name in registered:
             if tool_name not in defined_tools:
-                errors.append(f"Code-registered tool '{tool_name}' not in tool_contracts.yaml for {server_id}")
+                errors.append(f"Code-registered tool '{tool_name}' not in tool-contracts.yaml for {server_id}")
 
     if errors:
         print(f"[FAIL] {len(errors)} contract drift issues:")

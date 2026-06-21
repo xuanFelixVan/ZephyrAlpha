@@ -20,7 +20,7 @@ warn_only: false
 """
 
 
-DB = "data/zalpha_metadata.db"
+DB = "data/databases/governance.db"
 NOW = datetime.now(timezone.utc).isoformat()
 
 conn = sqlite3.connect(DB)

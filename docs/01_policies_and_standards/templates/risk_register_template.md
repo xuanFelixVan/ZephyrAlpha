@@ -1,8 +1,8 @@
 ---
-module_id: DW-RISK-TEMPLATE
+module_id: GOV-033
 title: <主题> 风险登记簿
-doc_type: register
-status: active
+doc_type: template
+status: Active
 version: 1.0.0
 layer: cross_layer
 owner: ZephyrAlpha-Owner

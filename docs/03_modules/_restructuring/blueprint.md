@@ -1,5 +1,6 @@
----
-module_id: "GOV-FSTR-001"
+﻿---
+module_id: GOV-FSTR-001
+submodule_paths_scope: restructuring
 title: "File Structure Governance 蓝图 — 文件结构治理·大文件拆分·重复合并·安全搬家"
 doc_type: blueprint
 status: Active
@@ -31,12 +32,13 @@ depends_on:
   - {target: "INF-016", at: "全篇", why: "Shared Core——注册表访问"}
 references:
   - {path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\templates\\blueprint-template.md", section: "全篇", why: "蓝图模板v3.6"}
-  - {path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\governance\\document\\compression-workflow-standard.md", section: "全篇", why: "压缩工作流标准"}
+  - {path: "D:\\ZephyrAlpha\\docs\\01_policies_and_standards\\governance\\document\\trae_030_doc_numbering_metadata.yaml", section: "全篇", why: "压缩工作流标准"}
 codification_level: L2
 codification_at: "2026-05-15"
 summary: "文件结构治理蓝图——大文件拆分、跨目录重复合并、安全搬家。覆盖全项目文件结构治理。"
 tags: [file-structure-governance, cross-layer, governance, file-split, dedup, migration]
 priority: P0
+runtime_plane: cold
 ---
 
 > module_id: GOV-FSTR-001 | version: 4.2.0 | status: active | layer: cross_layer
@@ -54,7 +56,7 @@ priority: P0
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
-> - 压缩工作流标准：[compression-workflow-standard.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/document/compression-workflow-standard.md)
+> - 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
 > - 依赖图：[system-dependency-map.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/system-dependency-map.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
@@ -68,6 +70,11 @@ priority: P0
 > 本蓝图为流程蓝图，重组脚本待施工。代码对齐验证待脚本落地后填写。
 
 ### §0.1 代码文件清单
+
+> **架构归属SSoT**：`data/databases/depgraph.db`
+> **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
+
+> **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules GOV-FSTR-001`
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|-------------------|
@@ -319,10 +326,10 @@ class RestructureResult(BaseModel):
 
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
-| INF-020 Audit Trail | 必须 | 重组操作审计 | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\audit-trail\blueprint.md` |
-| INF-021 Rollback | 必须 | 重组回滚 | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\rollback-system\blueprint.md` |
-| INF-023 Drift Detector | 必须 | 重组后漂移检测 | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\drift-detector\blueprint.md` |
-| INF-016 Shared Core | 必须 | 注册表访问 | — | `D:\ZephyrAlpha\docs\03_modules\l01_infrastructure\shared-core\blueprint.md` |
+| INF-020 Audit Trail | 必须 | 重组操作审计 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\audit-trail\blueprint.md` |
+| INF-021 Rollback | 必须 | 重组回滚 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\rollback-system\blueprint.md` |
+| INF-023 Drift Detector | 必须 | 重组后漂移检测 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\drift-detector\blueprint.md` |
+| INF-016 Shared Core | 必须 | 注册表访问 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\shared-core\blueprint.md` |
 
 ### 10.2 依赖图对齐声明
 
@@ -665,12 +672,12 @@ STEP 3: 拆分后验证
 | # | 文件 | module_id | 完整绝对路径 | 编写时用途 |
 |---|------|-----------|------------|----------|
 | 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\metadata-registry.md` | 编号规则 |
-| 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\directory-structure-standard.md` | 路径映射 |
+| 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\meta\governance-methodology-standard.md` | MTH-012 + MTH-013 |
-| 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\document\file-naming-standard.md` | 命名规则 |
-| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module-id-registry.yaml` | 编号注册 |
+| 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 命名规则 |
+| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
 | 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
-| 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index.yaml` | 现有规则索引 |
+| 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai-autonomy-authority-registry.md` | AI 操作权限 |
 
 ---
@@ -679,7 +686,7 @@ STEP 3: 拆分后验证
 
 | # | 已有模块/文件 | 完整绝对路径 | 功能重叠点 | 为什么不能复用 |
 |---|-------------|------------|----------|-------------|
-| 1 | code-dedup-engine | `D:\ZephyrAlpha\src\zephyr\l01_infrastructure\code_dedup_engine\` | 代码去重 | code-dedup-engine 做运行时去重检测，本蓝图做文件级重组——层级不同 |
+| 1 | code-dedup-engine | `D:\ZephyrAlpha\src\zephyr\infra_ops\code_dedup_engine\` | 代码去重 | code-dedup-engine 做运行时去重检测，本蓝图做文件级重组——层级不同 |
 
 ---
 

@@ -1,0 +1,244 @@
+rule_id: TRAE-007
+title: 防幻觉-行为约束层
+aliases:
+- ANTI-HALL-07
+- ANTI-HALL-08
+- ANTI-HALL-09
+- ANTI-HALL-10
+layer: L0
+severity: critical
+scope: code_behavior
+domain: TRAE
+triggers:
+- operation: code_write
+- operation: code_modify
+sections:
+  anti_hall_07:
+    title: 禁止占位符——禁止TODO/.../pass/NotImplementedError
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-07
+    conditions:
+    - type: pre_condition
+      check: 代码产出后占位符检查
+      pass: 无占位符
+      fail: 存在TODO/.../pass/NotImplementedError
+    actions:
+    - type: mandatory
+      step: 必须产出可执行代码，禁止TODO/.../pass/NotImplementedError
+    prohibitions:
+    - 代码中包含TODO/FIXME/HACK
+    - 函数体为...或pass
+    - "raise NotImplementedError（@abstractmethod除外）"
+  anti_hall_08:
+    title: 编辑优先——禁止删+建来修改
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-08
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 禁止删除+重建来修改，必须surgical edit
+    prohibitions:
+    - 删除文件后重建（丢失history+注册失效）
+    - git diff出现整文件删除+新增
+  anti_hall_09:
+    title: 最小变更——禁止顺手重构
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-09
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 只改必须改的，禁止顺手重构/顺便优化
+    prohibitions:
+    - diff中任何与需求无关的变更
+    - 顺手重命名变量
+    - 顺便优化相邻函数
+  anti_hall_10:
+    title: 假设显式化——标记[ASSUMPTION]
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-10
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 不确定的决策MUST标记[ASSUMPTION]等待确认
+    prohibitions:
+    - 路径和签名假设（必须Grep/Read验证）
+    - 静默假设API/格式/配置
+  gov_eng_007_placeholder_decision:
+    title: 占位符判定决策树
+    section_type: decision_tree
+    original_rules:
+    - ANTI-HALL-07
+    items:
+    - condition: "代码中出现TODO/FIXME/HACK注释"
+      if_true: "禁止——必须现在就实现"
+      if_false: "继续检查下一项"
+    - condition: "函数体为...（Ellipsis）"
+      if_true: "禁止——必须写完整实现"
+      if_false: "继续检查下一项"
+    - condition: "函数体为pass（空函数体）"
+      if_true: "禁止——必须写完整实现"
+      if_false: "继续检查下一项"
+    - condition: "raise NotImplementedError"
+      if_true: "检查是否有@abstractmethod装饰器"
+      if_false: "继续检查下一项"
+    - condition: "有@abstractmethod装饰器"
+      if_true: "豁免——合法接口声明"
+      if_false: "禁止——必须写完整实现或拆分任务"
+  gov_eng_007_edit_decision:
+    title: 编辑优先判定决策树
+    section_type: decision_tree
+    original_rules:
+    - ANTI-HALL-08
+    items:
+    - condition: "git diff中出现整文件删除+整文件新增"
+      if_true: "违反编辑优先——必须用surgical edit"
+      if_false: "正常diff，通过"
+    - condition: "diff中只有少量行变更"
+      if_true: "符合编辑优先"
+      if_false: "需要检查变更范围"
+  gov_eng_007_minimal_decision:
+    title: 最小变更判定决策树
+    section_type: decision_tree
+    original_rules:
+    - ANTI-HALL-09
+    items:
+    - condition: "diff中变更与需求直接相关"
+      if_true: "允许——最小变更"
+      if_false: "违反最小变更——必须移除无关变更"
+    - condition: "变更包含重命名变量"
+      if_true: "违反——除非需求明确要求重命名"
+      if_false: "继续检查"
+    - condition: "变更包含优化相邻函数"
+      if_true: "违反——禁止顺手优化"
+      if_false: "通过"
+  gov_eng_007_assumption_decision:
+    title: 假设显式化判定决策树
+    section_type: decision_tree
+    original_rules:
+    - ANTI-HALL-10
+    items:
+    - condition: "不确定API返回格式"
+      if_true: "标记[ASSUMPTION] API返回JSON {status: str}，等确认后继续"
+      if_false: "继续检查"
+    - condition: "不确定文件路径"
+      if_true: "禁止假设路径——必须Grep确认后才能使用"
+      if_false: "继续检查"
+    - condition: "不确定函数签名"
+      if_true: "禁止假设签名——必须Read确认后才能使用"
+      if_false: "通过"
+  gov_eng_007_examples:
+    title: 行为约束层示例
+    section_type: examples
+    original_rules:
+    - ANTI-HALL-07
+    - ANTI-HALL-08
+    - ANTI-HALL-09
+    - ANTI-HALL-10
+    items:
+    - description: "禁止占位符示例"
+      details: "禁止: # TODO: implement error handling / def func(): ... / def func(): pass / raise NotImplementedError / # will add validation later; 豁免: @abstractmethod + raise NotImplementedError"
+    - description: "编辑优先示例"
+      details: "禁止: 删除old_module.py→创建new_module.py; 正确: SearchReplace只替换变更的行"
+    - description: "假设显式化示例"
+      details: "禁止: result = api.call(data) # 静默假设api.call返回dict; 正确: # [ASSUMPTION] api.call() returns dict with 'status' key"
+  gov_eng_007_verification:
+    title: 行为约束层验证流程
+    section_type: verification
+    original_rules:
+    - ANTI-HALL-07
+    - ANTI-HALL-08
+    - ANTI-HALL-09
+    - ANTI-HALL-10
+    items:
+    - step: "检查代码中是否存在占位符"
+      command: "Grep工具: pattern='TODO|FIXME|HACK|\\.\\.\\.|pass$|NotImplementedError' path='src/zephyr/' output_mode='content' -n=true"
+      expected_exit: 1
+      on_fail: "发现占位符——必须实现或替换"
+    - step: "检查git diff是否整文件删除+新增"
+      command: "git diff --stat"
+      expected_exit: 0
+      on_fail: "出现整文件变更——必须改为surgical edit"
+    - step: "检查diff中是否有与需求无关的变更"
+      command: "git diff"
+      expected_exit: 0
+      on_fail: "包含无关变更——必须移除"
+  gov_eng_007_cross_refs:
+    title: 交叉引用
+    section_type: context
+    original_rules:
+    - ANTI-HALL-07
+    - ANTI-HALL-08
+    - ANTI-HALL-09
+    - ANTI-HALL-10
+    summary: 行为约束层(#7-#10)是防幻觉十八条的中间层，上接结构追溯层(#1-#6)，下接输出验证层(#11-#14)
+    impact_on_rules: 行为约束违反=代码质量降级，但不直接影响结构完整性
+    key_decisions:
+    - "@abstractmethod豁免是唯一合法的NotImplementedError使用场景"
+    - 路径和签名假设是幻觉最高发区域，必须验证
+  gov_eng_007_scope:
+    title: 适用范围
+    section_type: context
+    original_rules:
+    - ANTI-HALL-07
+    - ANTI-HALL-08
+    - ANTI-HALL-09
+    - ANTI-HALL-10
+    summary: 行为约束层(#7-#10)适用于所有代码写入和修改操作，是防幻觉十八条的中间层
+    impact_on_rules: 行为约束违反=代码质量降级，半成品代码禁止交付
+    key_decisions:
+    - 禁止占位符确保代码可执行
+    - 编辑优先保留git history和注册完整性
+    - 最小变更防止无关修改引入bug
+    - 假设显式化防止幻觉在不确定处生根
+  gov_eng_007_change_history:
+    title: 变更历史
+    section_type: context
+    original_rules:
+    - ANTI-HALL-07
+    - ANTI-HALL-08
+    - ANTI-HALL-09
+    - ANTI-HALL-10
+    summary: 行为约束层#7-#10提取自GOV-ENG-001§8.1-§8.4
+    impact_on_rules: 无结构性变更
+    key_decisions:
+    - "#7-#10从GOV-ENG-001§8独立提取为规则条目"
+    items:
+    - version: '1.2.0'
+      date: '2026-06-21'
+      change: 'std_009/std_011审查修复：gov_eng_007_verification步骤1的grep -rn命令改为Grep工具引用（RULE-SEVENTEEN禁止shell grep）'
+    - version: '1.1.0'
+      date: '2026-06-19'
+      change: 'RQ审查修复：移除provenance中已删除的code_construction_standards.md源文件引用（RQ-04引用断裂）；同步project_rules.md和onboarding_detail.md哈希到当前值（RQ-09哈希不匹配）'
+    - version: '1.0.0'
+      date: '2026-06-13'
+      change: '初始提取——#7-#10从GOV-ENG-001§8独立提取为规则条目'
+references:
+  rule_ids: []
+  scripts: []
+  modules: []
+  blueprints:
+  - GOV-ENG-001
+  - GOV-ENG-002
+enforcement:
+  type: code
+  executors:
+  - ruff
+  - mypy
+  - pre-commit
+  - audit_registration.py
+  bypass_allowed: false
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001
+  note: '2026-06-19 RQ审查：移除已删除的 code_construction_standards.md 源文件引用（内容已迁移到
+    trae_006/007/008/009 + project_rules.md + onboarding_detail.md）；同步 project_rules.md
+    和 onboarding_detail.md 的哈希到当前值'

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "generated_at": "2026-05-07T08:34:23.179896+00:00",
-  "contract_source": "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross-layer-contracts.yaml",
+  "contract_source": "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml",
   "fingerprints": {
     "CTR-BP-001": "546a23df05ff836aaef7a7cd42ea94f90109ae0a95c4d5cafb64e37edad0c528",
     "CTR-BP-002": "8a02da38fe33c5ce0ae3a5db6680b406d1facd5b410896f6704b424fee6416eb",

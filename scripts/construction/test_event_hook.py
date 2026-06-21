@@ -2,9 +2,9 @@
 import sys
 sys.path.insert(0, r"d:\ZephyrAlpha\src")
 
-from zephyr.hooks.event_hook import hook_registry, TransitionEvent
-from zephyr.db.task_repo import TaskRepository
-from zephyr.db.sqlite_schema import init_db
+from zephyr.integration.zephyr.event_hook import hook_registry, TransitionEvent
+from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.governance.persistence.sqlite_schema import init_db
 
 init_db()
 

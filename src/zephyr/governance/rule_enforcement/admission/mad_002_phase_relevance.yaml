@@ -1,0 +1,69 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# MAD-002 Phase Relevance Gate
+# 阶段相关性门禁 —— 确保新模块与当前开发阶段对齐
+# SSoT: src/zephyr/autonomy_core/gates/_registry.yaml → MAD-002
+
+module_id: MOD-INF-007
+gate_id: MAD-002
+gate_name: phase_relevance
+title: "MAD-002 Phase Relevance"
+category: admission
+scope: global
+execution_plane: warm
+status: active
+version: "1.0"
+created: "2026-05-04"
+rule_ids:
+  - TRAE-013
+
+description: >
+  对标：Wardley Mapping + Phase-based delivery。
+  任何新模块 MUST 证明与当前开发阶段（Phase A/B/C/D/E）的战略相关性。
+  Phase A (当前): 承重墙锁死 + 契约 SSoT 就位
+  Phase B: 层骨架生成 + 模块准入
+  Phase C: 第一支柱 MVP (L00-L07)
+  超前于当前阶段的模块提案即使合理也标记为 deferred。
+
+rules:
+  - rule_id: MAD-002-R1
+    name: phase_match
+    description: "模块的目标阶段 MUST ≤ 当前活跃阶段 + 1"
+    enforcement: REJECT
+    rule_ids:
+      - TRAE-013
+    check: target_phase <= current_phase + 1
+
+  - rule_id: MAD-002-R2
+    name: load_bearing_dependency
+    description: "如果模块声称是承重墙依赖，MUST 提供被依赖模块清单和 KB 决策记录"
+    enforcement: REJECT
+    rule_ids:
+      - TRAE-013
+    check: >
+      if is_load_bearing:
+          assert downstream_dependencies is not empty
+          assert adr_reference is not null
+
+  - rule_id: MAD-002-R3
+    name: deferred_not_rejected
+    description: "超出当前阶段的提案不拒绝，而是标记为 deferred-phase:{target} 并归档"
+    enforcement: WARN
+    rule_ids:
+      - TRAE-013
+    check: >
+      if target_phase > current_phase + 1:
+          mark status = deferred, add to phase_backlog.md
+
+  - rule_id: MAD-002-R4
+    name: current_phase_context
+    description: "当前活跃阶段上下文中，模块提案必须引用具体蓝图或 KB 决策记录文档"
+    enforcement: WARN
+    rule_ids:
+      - TRAE-013
+    check: proposal must reference at least one blueprint or KB decision document

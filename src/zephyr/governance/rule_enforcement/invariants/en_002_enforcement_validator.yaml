@@ -1,0 +1,36 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+module_id: MOD-INF-007
+gate_id: "EN-002"
+name: "EN-002 Enforcement Mode Validator"
+description: >
+  读取 cross_layer_contracts.yaml，验证每条 P0 契约均声明了 enforcement
+  （enforcement_mode / enforcement_action），且值与实际路由策略一致。
+phase: "Phase D"
+auto: true
+on_failure: "reject"
+on_pass: "pass"
+rule_ids:
+  - TRAE-013
+  - TRAE-014
+
+checks:
+  - id: "EN-002-CHK-01"
+    name: "Enforcement mode declared for every P0 contract"
+    type: "enforcement_mode_check"
+    severity: "error"
+    rule_ids:
+      - TRAE-013
+      - TRAE-014
+    description: "确保可路由契约均有 enforce_mode 字段"
+    params:
+      contract_spec_path: "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml"
+      required_enforcement_fields:
+        - "enforcement_mode"
+      allow_default:
+        enforcement_mode: "block"

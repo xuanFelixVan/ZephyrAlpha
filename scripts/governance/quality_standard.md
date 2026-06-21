@@ -1,5 +1,5 @@
 ---
-module_id: SCRIPT-QUALITY-001
+module_id: GOV-077
 title: ZephyrAlpha 审计脚本质量标准
 doc_type: standard
 status: active

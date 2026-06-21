@@ -1,0 +1,90 @@
+{
+  "task_id": "DM-100188",
+  "source_file": "docs/01_policies_and_standards/operational/vibe_coding/vibe_coding_gate_runbook.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_048_ops_vibe_coding_session.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "gate_a1_phase_read": {
+      "content": "A1-已读取当前Phase(按AGENTS.md §8执行)，未通过→读取onboarding文件",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_005_context"
+    },
+    "gate_a2_blueprint_read": {
+      "content": "A2-已读取施工图(知道本次session要执行哪些步骤)，未通过→读取对应Phase的施工图",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_005_context"
+    },
+    "gate_a3_ssot_read": {
+      "content": "A3-已读取相关SSoT文件(施工图必备链接中所有文件已读取)，自动化GATE-16，未通过→逐个读取必备链接中的文件",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_005_context"
+    },
+    "gate_b1_behavior_boundary": {
+      "content": "B1-行为边界已确认(已读取PS-STD-003，知道哪些操作绝对禁止)，自动化GATE-14+GATE-16，未通过→读取behavior-boundaries-standard.md",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_005_rules"
+    },
+    "gate_b2_hallucination_check": {
+      "content": "B2-幻觉自检已通过(按幻觉自检流程执行)，自动化GATE-15，未通过→读取ai-hallucination-self-check-policy.md",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_005_rules"
+    },
+    "gate_b3_dual_editor": {
+      "content": "B3-双编辑器规则已确认(知道当前使用哪个编辑器、哪些文件可编辑)，人工，未通过→读取dual-editor-collaboration-policy.md",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_005_rules"
+    },
+    "gate_b4_diagnostic_reversal": {
+      "content": "B4-诊断反转验证已执行(深挖后回溯初始诊断，不一致时追问并更新症状-根因映射表)，人工，未通过→读取PS-STD-011 MTH-006 step 6",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_005_rules"
+    },
+    "gate_c1_encoding": {
+      "content": "C1-编码安全已确认(所有文件UTF-8编码)，自动化GATE-16，未通过→读取GOV-DOC-005",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_005_security"
+    },
+    "gate_c2_file_operation": {
+      "content": "C2-文件操作安全已确认(知道删除/移动文件的安全门禁)，自动化GATE-16，未通过→读取GOV-DOC-007",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_005_security"
+    },
+    "gate_c3_key_management": {
+      "content": "C3-密钥管理已确认(不在代码中硬编码密钥)，自动化GATE-16，未通过→读取GOV-SEC-001",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_005_security"
+    },
+    "gate_d1_environment": {
+      "content": "D1-当前环境已确认(知道当前是dev还是prod环境)，人工，未通过→参见GOV-AI-001 §7.1",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_005_environment"
+    },
+    "gate_d2_permission_mode": {
+      "content": "D2-权限模式已确认(知道当前环境的AI自治权限)，自动化GATE-14，未通过→参见GOV-AI-001 §7.2",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_005_environment"
+    },
+    "gate_result_recording": {
+      "content": "每次会话开始时在Session Log中记录门禁检查结果(A1-D2共12项pass/fail)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_005_recording"
+    },
+    "prohibition_fail_blocks_operation": {
+      "content": "任何一项为fail时禁止开始操作",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_005_recording"
+    }
+  },
+  "summary": {
+    "total_rules": 14,
+    "COVERED": 14,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "原ops_vc_005 section仅有通用占位文本'遵守 OPS-VC-005: Session状态机/事故响应/会话门禁'",
+    "替换为5个详细section：ops_vc_005_context(上下文加载A1-A3)、ops_vc_005_rules(规则确认B1-B4)、ops_vc_005_security(安全检查C1-C3)、ops_vc_005_environment(环境确认D1-D2)、ops_vc_005_recording(检查结果记录)",
+    "每个检查项均包含pre_condition类型条件(pass/fail路径)和prohibition(任何一项未通过禁止开始操作)",
+    "保留了自动化映射信息(GATE-14/15/16)和人工标记"
+  ]
+}

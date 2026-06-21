@@ -1,0 +1,98 @@
+# [A_module] module_id=MOD-GOV_cold_start | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+from __future__ import annotations
+
+# [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md | §3.1
+# [MODULE] zephyr.governance.audit_trail.cold_start
+# [INVARIANTS] 100 Session冷启动共享单例缓存; 缓存不可变
+# [MODIFY-GUARD] 缓存Key变更必须同步 indexer.py
+# [CONSUMERS] audit-orchestrator.cli; MCP governance_server
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] 缓存未命中返回空字典
+# [TESTS] tests/audit-orchestrator/test_cold_start.py
+
+import json
+import logging
+from pathlib import Path
+from typing import Any
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["BootstrapCache"]
+
+CACHE_DIR = Path("data/audit_cache")
+CACHE_FILE = "bootstrap_cache.json"
+
+class BootstrapCache:
+    _instance: BootstrapCache | None = None
+
+    def __new__(cls) -> BootstrapCache:
+        if cls._instance is None:
+            instance = super().__new__(cls)
+            instance._cache: dict[str, Any] = {}
+            instance._loaded = False
+            instance._cache_path = CACHE_DIR / CACHE_FILE
+            cls._instance = instance
+        return cls._instance
+
+    def load(self) -> dict[str, Any]:
+        if self._loaded:
+            return dict(self._cache)
+
+        if self._cache_path.exists():
+            try:
+                self._cache = json.loads(self._cache_path.read_text(encoding="utf-8"))
+                self._loaded = True
+                logger.info("BootstrapCache loaded: %d keys", len(self._cache))
+                return dict(self._cache)
+            except Exception as exc:
+                logger.warning("BootstrapCache load failed: %s", exc)
+
+        self._cache = {
+            "version": "1.0",
+            "loaded_at": "",
+            "dimensions": {},
+            "recent_reports": [],
+            "circuit_breaker_status": {},
+        }
+        self._loaded = True
+        return dict(self._cache)
+
+    def get(self, key: str, default: Any = None) -> Any:
+        if not self._loaded:
+            self.load()
+        return self._cache.get(key, default)
+
+    def set(self, key: str, value: Any) -> None:
+        if not self._loaded:
+            self.load()
+        self._cache[key] = value
+
+    def persist(self) -> bool:
+        try:
+            from datetime import datetime
+            self._cache["loaded_at"] = datetime.now().isoformat()
+            CACHE_DIR.mkdir(parents=True, exist_ok=True)
+            self._cache_path.write_text(
+                json.dumps(self._cache, indent=2, ensure_ascii=False, default=str),
+                encoding="utf-8",
+            )
+            return True
+        except Exception as exc:
+            logger.error("BootstrapCache persist failed: %s", exc)
+            return False
+
+    def invalidate(self) -> None:
+        self._cache = {}
+        self._loaded = False
+
+    def stats(self) -> dict[str, Any]:
+        if not self._loaded:
+            self.load()
+        return {
+            "loaded": self._loaded,
+            "keys": len(self._cache),
+            "dimensions_count": len(self._cache.get("dimensions", {})),
+            "recent_reports": len(self._cache.get("recent_reports", [])),
+        }

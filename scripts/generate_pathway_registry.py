@@ -120,7 +120,7 @@ def scan_blueprints() -> list[dict]:
         if not mod_id:
             mod_id = "UNKNOWN"
 
-        name = parts[0] if "l01_infrastructure" in parts else parts[0]
+        name = parts[0] if "infrastructure.runtime_integration" in parts else parts[0]
 
         text = bp.read_text(encoding="utf-8", errors="replace")
         tables = extract_path_index_tables(text)
@@ -136,7 +136,7 @@ def scan_blueprints() -> list[dict]:
             {
                 "module_id": mod_id,
                 "name": name,
-                "layer": "L01" if "l01_infrastructure" in parts else "cross_layer",
+                "layer": "L01" if "infrastructure.runtime_integration" in parts else "cross_layer",
                 "blueprint": str(Path("docs/03_modules") / relative),
                 "source_dir": source_dir,
                 "test_dir": test_dir,

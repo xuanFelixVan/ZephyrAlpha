@@ -1,0 +1,24 @@
+# [A_config] module_id=CFG-trigger-config | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# MOD-INF-025 触发配置
+module_id: DOM-GOV-001
+version: "0.10.0"
+triggers:
+  - id: TASK_SUBMIT
+    on: task_created
+    action: route_to_supervisor
+  - id: GATE_FAIL
+    on: gate_not_passed
+    action: escalate
+  - id: TIMEOUT
+    on: deadline_exceeded
+    action: escalate_timeout
+  - id: DRIFT_DETECTED
+    on: freshness_below_30
+    action: trigger_review

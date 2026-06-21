@@ -5,16 +5,16 @@
      与物理目录名交叉比对，检测不一致并报告。
 
 检测逻辑：
-- 物理路径包含 `l01_infrastructure/` → 期望 layer=L01
-- 物理路径包含 `l00_data_source/`   → 期望 layer=L00
-- 物理路径包含 `l02_alpha_factor/`  → 期望 layer=L02
+- 物理路径包含 `infrastructure.runtime_integration/` → 期望 layer=L01
+- 物理路径包含 `data/`   → 期望 layer=L00
+- 物理路径包含 `factor/`  → 期望 layer=L02
 - ...
 - 物理路径包含 `_cross_layer/`      → 期望 layer=cross_layer
 - 物理路径包含 `_master-blueprint/` → 期望 layer=cross_layer（Level 1 域总蓝图）
 - 物理路径包含 `_domain-governance/`→ 期望 layer=cross_layer（Level 1 治理总蓝图）
 - 物理路径包含 `_sys-master/`       → 期望 layer=cross_layer（Level 0 系统总蓝图）
 
-三层防线定位：Layer 1 — 预防（AI/人创建蓝图后立即运行）；Layer 2 — 检测（pre-commit/CI）
+三层防线定位：Layer 1 — 预防（AI/人创建蓝图后立即运行）；Layer 2 — 检测（pre_commit/CI）
 
 exit codes: 0=pass, 1=findings, 2=error
 """
@@ -49,20 +49,20 @@ ensure_utf8_stdout()
 import argparse
 
 LAYER_DIR_MAP = {
-    "l00_data_source": "L00",
-    "l01_infrastructure": "L01",
-    "l02_alpha_factor": "L02",
-    "l03_signal_generation": "L03",
-    "l04_risk_management": "L04",
-    "l05_portfolio_construction": "L05",
-    "l06_trade_execution": "L06",
-    "l07_post_trade_analytics": "L07",
-    "l08_human_ai_interface": "L08",
-    "l09_research_innovation": "L09",
-    "l10_compliance": "L10",
-    "l11_ml_platform": "L11",
-    "system_telemetry": "L12",
-    "l13_experimentation": "L13",
+    "data": "L00",
+    "infrastructure.runtime_integration": "L01",
+    "factor": "L02",
+    "signal": "L03",
+    "risk": "L04",
+    "pf_core": "L05",
+    "ex_core": "L06",
+    "pf_core": "L07",
+    "frontend": "L08",
+    "research": "L09",
+    "compliance": "L10",
+    "ml_train": "L11",
+    "observability": "L12",
+    "integration": "L13",
     "_cross_layer": "cross_layer",
     "_master-blueprint": "cross_layer",
     "_domain-governance": "cross_layer",

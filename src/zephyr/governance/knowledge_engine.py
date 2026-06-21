@@ -1,4 +1,7 @@
-# [BLUEPRINT] DOM-GOV-001 | 03_modules/_domain-governance/blueprint.md | §
+# [A_module] module_id=MOD-DAT_knowledge_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+from __future__ import annotations
+
+# [BLUEPRINT] SRC-003 | docs/03_modules/_domain-governance/blueprint.md
 
 # [MODULE] zephyr.governance.knowledge_engine
 
@@ -18,8 +21,6 @@
 
 # [TESTS]
 
-from __future__ import annotations
-
 import json
 import logging
 from datetime import datetime, timezone
@@ -29,7 +30,6 @@ from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 
-
 class KnowledgeEntry(BaseModel):
     entry_id: str
     title: str
@@ -37,7 +37,6 @@ class KnowledgeEntry(BaseModel):
     tags: list[str] = Field(default_factory=list)
     source_file: str = ""
     indexed_at: str = ""
-
 
 class KnowledgeIndex(BaseModel):
     entries: dict[str, KnowledgeEntry] = Field(default_factory=dict)
@@ -72,9 +71,7 @@ class KnowledgeIndex(BaseModel):
                     related_ids.add(eid)
         return [self.entries[eid] for eid in related_ids if eid in self.entries]
 
-
 _knowledge_index: Optional[KnowledgeIndex] = None
-
 
 def get_index() -> KnowledgeIndex:
     global _knowledge_index

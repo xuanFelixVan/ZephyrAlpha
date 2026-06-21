@@ -65,7 +65,7 @@ MAX_BYPASSES_PER_7D = 3
 
 sys.path.insert(0, str(REPO_ROOT / "src"))
 try:
-    from zephyr.l01_infrastructure.script_system.finding import (
+    from zephyr.infrastructure.finding import (
         Dimension,
         Finding,
         FindingCollection,

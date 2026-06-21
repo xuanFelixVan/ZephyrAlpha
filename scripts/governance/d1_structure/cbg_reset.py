@@ -61,10 +61,10 @@ ensure_utf8_stdout()
 
 _warn_only = "--warn-only" in sys.argv
 try:
-    from zephyr.gates.circuit_breaker import CBGManager, CircuitBreakerState
+    from zephyr.governance.rule_enforcement.circuit_breaker import CBGManager, CircuitBreakerState
 except ImportError as e:
     print(f"[SKIP] cbg_reset.py 无法加载 CBGManager（依赖缺失: {e}）", file=sys.stderr)
-    print("       此脚本需要 zephyr.gates.circuit_breaker 及相关依赖存在时才能运行", file=sys.stderr)
+    print("       此脚本需要 zephyr.governance.gates.circuit_breaker 及相关依赖存在时才能运行", file=sys.stderr)
     sys.exit(0 if _warn_only else 2)
 
 def main() -> None:

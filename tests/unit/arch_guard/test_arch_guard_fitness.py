@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1822 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-452 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.arch_guard.test_arch_guard_fitness
 # [STABILITY] evolving
 # [SAFETY] L

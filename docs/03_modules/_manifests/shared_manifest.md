@@ -1,6 +1,7 @@
 ---
 blueprint_id: DOM-GOV-001
----
+title: Shared.Manifest
+module_id: MOD-069---
 
 # shared/ 文件清单（自动生成 2026-05-09）
 
@@ -87,7 +88,7 @@ blueprint_id: DOM-GOV-001
 - semantic_cache.py
 - serialization.py
 - session_audit.py
-- skill_registry.py
+- skill-registry.py
 - slo_review_assistant.py
 - ssot_guard.py
 - task_heartbeat.py
@@ -109,7 +110,7 @@ blueprint_id: DOM-GOV-001
 - config/__init__.py
 - config/loader.py
 - contracts/__init__.py
-- contracts/freeze_manifest.yaml
+- contracts/freezemanifest.yaml
 - contracts/backpressure/__init__.py
 - contracts/backpressure/pause.py
 - contracts/backpressure/resume.py

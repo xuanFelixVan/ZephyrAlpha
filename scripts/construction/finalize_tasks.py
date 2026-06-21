@@ -1,9 +1,9 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/construction/finalize_tasks.py | §
 import sys
 sys.path.insert(0, r"d:\ZephyrAlpha\src")
-from zephyr.db.task_repo import TaskRepository
-from zephyr.db.sqlite_schema import init_db
-from zephyr.shared.schemas import TaskStatus
+from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.integration.schema.schemas import TaskStatus
 
 init_db()
 repo = TaskRepository()

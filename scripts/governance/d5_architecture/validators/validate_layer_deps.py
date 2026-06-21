@@ -4,7 +4,7 @@
 
 
 对标：PS-STD-003 COND-30~32（跨层调用 / contracts 放业务层）
-     GOV-DOC-002 directory-structure-standard.md（层依赖纪律）
+     GOV-DOC-002 trae_028_doc_structure_naming.yaml（层依赖纪律）
      MOD-INF-005 蓝图 §3.2（不包含的职责）
 
 检测内容：

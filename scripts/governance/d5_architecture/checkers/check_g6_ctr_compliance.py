@@ -9,7 +9,7 @@ Checks:
 - Whether cross-layer imports go through shared/contracts/ rather than direct layer imports
 
 exit codes: 0=pass, 1=findings, 2=error
-SSoT: src/zephyr/gates/g6_ctr_compliance.yaml
+SSoT: src/zephyr/gates/g6-ctr-compliance.yaml
 """
 
 from __future__ import annotations
@@ -42,13 +42,13 @@ import argparse
 
 import yaml
 
-GATE_CONFIG_REL = "src/zephyr/gates/g6_ctr_compliance.yaml"
+GATE_CONFIG_REL = "src/zephyr/gates/g6-ctr-compliance.yaml"
 FORBIDDEN_CLASS_NAMES_BY_LAYER = {
-    "l00_data_source": {"NormalizedMarketData", "MarketData", "Tick", "Bar", "TradeData", "Candle", "Quote"},
-    "l02_alpha_factor": {"FactorSignal", "Factor", "FactorValue", "AlphaSignal", "Signal"},
-    "l04_risk_management": {"RiskLimits", "Limit", "Constraint", "RiskConstraint"},
-    "l05_portfolio_construction": {"Order", "OrderRequest", "OrderCmd", "TradeInstruction"},
-    "l06_trade_execution": {
+    "data": {"NormalizedMarketData", "MarketData", "Tick", "Bar", "TradeData", "Candle", "Quote"},
+    "factor": {"FactorSignal", "Factor", "FactorValue", "AlphaSignal", "Signal"},
+    "risk": {"RiskLimits", "Limit", "Constraint", "RiskConstraint"},
+    "pf_core": {"Order", "OrderRequest", "OrderCmd", "TradeInstruction"},
+    "ex_core": {
         "Order",
         "OrderRequest",
         "OrderCmd",
@@ -59,7 +59,7 @@ FORBIDDEN_CLASS_NAMES_BY_LAYER = {
         "PositionSnapshot",
         "Holding",
     },
-    "l07_post_trade_analytics": {"Position", "PositionSnapshot", "Holding"},
+    "pf_core": {"Position", "PositionSnapshot", "Holding"},
 }
 MONEY_FIELD_PATTERNS = {
     "price",
@@ -90,14 +90,14 @@ MONEY_FIELD_PATTERNS = {
 ALLOWED_CONTRACT_DIR = "shared/contracts"
 ALLOWED_SHARED_DIR = "shared"
 LAYER_DIRS = [
-    "l00_data_source",
-    "l01_infrastructure",
-    "l02_alpha_factor",
-    "l03_signal_generation",
-    "l04_risk_management",
-    "l05_portfolio_construction",
-    "l06_trade_execution",
-    "l07_post_trade_analytics",
+    "data",
+    "infrastructure.runtime_integration",
+    "factor",
+    "signal",
+    "risk",
+    "pf_core",
+    "ex_core",
+    "pf_core",
 ]
 
 
@@ -290,14 +290,14 @@ def check_required_imports() -> list[dict]:
     findings: list[dict] = []
     src_dir = REPO_ROOT / "src" / "zephyr"
     required_imports = {
-        "l00_data_source": {"shared.contracts.market_data": "NormalizedMarketData"},
-        "l02_alpha_factor": {
+        "data": {"shared.contracts.market_data": "NormalizedMarketData"},
+        "factor": {
             "shared.contracts.market_data": "NormalizedMarketData",
             "shared.contracts.factor_signal": "FactorSignal",
         },
-        "l04_risk_management": {"shared.contracts.risk_limits": "RiskLimits"},
-        "l05_portfolio_construction": {"shared.contracts.order": "Order"},
-        "l06_trade_execution": {
+        "risk": {"shared.contracts.risk_limits": "RiskLimits"},
+        "pf_core": {"shared.contracts.order": "Order"},
+        "ex_core": {
             "shared.contracts.order": "Order",
             "shared.contracts.fill": "Fill",
             "shared.contracts.position": "PositionSnapshot",
@@ -347,7 +347,7 @@ def main() -> None:
 
     config = load_gate_config()
     if config is None:
-        print("[G6] g6_ctr_compliance.yaml not found, skipping", file=sys.stderr)
+        print("[G6] g6-ctr-compliance.yaml not found, skipping", file=sys.stderr)
         sys.exit(EXIT_PASS)
 
     gate_name = config.get("gate_name", "unknown")

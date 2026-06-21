@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_hooks | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.lifecycle.hooks
 
@@ -114,7 +115,7 @@ class LifecycleManager:
 
         mgr = LifecycleManager()
         mgr.register(db_module)
-        mgr.register(context_engine)
+        mgr.register(context-engine)
         await mgr.startup_all()    # 按注册顺序初始化 + 启动
         ...
         await mgr.shutdown_all()   # 反向关闭

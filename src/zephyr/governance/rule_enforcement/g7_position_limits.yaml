@@ -1,0 +1,87 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+module_id: MOD-INF-007
+gate_id: "G10"
+name: "持仓限制门禁 (Position Limit Gate)"
+phase: "validate"
+category: "trading"
+auto: true
+scope: "trading"
+description: >
+  AI 生成的策略配置（L05/L06 产出）必须尊重 RiskLimits 中定义的
+  持仓比例上限。对标 SEC Reg T + FINRA 日内交易限制。
+
+on_failure: "reject"
+on_pass: "pass"
+activation_stage: "active"
+rule_ids:
+  - TRAE-019
+
+checks:
+  - id: "G7-P01"
+    name: "max_single_position"
+    description: >
+      每个独立策略的单一标的目标配置不得超过 RiskLimits.max_single_position
+      （默认 0.10 = 10%）。必须交叉引用 RiskLimits（CTR-003）。
+    type: "position_limit"
+    severity: "error"
+    failure_policy: "Ignore"
+    on_failure: "reject"
+    rule_ids:
+      - TRAE-019
+    fix_hint: >
+      降低该标的配置比例至 max_single_position 以下，
+      或向 RiskLimits 中添加 symbol_override 条目（需要审批）。
+    anti_pattern: >
+      生成一个持仓 35% 的策略——回测中表现出色，
+      但在实盘中，单标的超过 10% 属于集中度风险，
+      对标 Basel III 大额敞口限制。
+    verifiable: true
+    params:
+      risk_limits_contract: "CTR-003"
+      max_single_position_default: 0.05
+      require_symbol_overrides_justification: true
+
+  - id: "G7-P02"
+    name: "max_sector_concentration"
+    description: >
+      策略在同一行业（GICS Sector）的总敞口不得超过
+      RiskLimits.max_sector_concentration（默认 0.30 = 30%）。
+    type: "position_limit"
+    severity: "error"
+    failure_policy: "Ignore"
+    on_failure: "reject"
+    rule_ids:
+      - TRAE-019
+    fix_hint: >
+      分散到多个行业，或将超标行业的部分配置降低至阈值以下。
+      备注: 分散化是唯一的免费午餐 (Harry Markowitz, 1952)。
+    verifiable: true
+    params:
+      max_sector_concentration_default: 0.30
+      sector_field: "gics_sector"
+
+  - id: "G7-P03"
+    name: "single_stock_liquidity_check"
+    description: >
+      策略配置的单标的日均交易量（ADV）占比不得超过 5%。
+      对标 Almgren-Chriss 市场冲击模型：配置 >5% ADV 时，
+      滑点将显著侵蚀 alpha。
+    type: "position_limit"
+    severity: "warning"
+    failure_policy: "Ignore"
+    on_failure: "flag"
+    rule_ids:
+      - TRAE-019
+    fix_hint: >
+      降低该标的配置或增加执行时间窗口（TWAP/VWAP），
+      以减小市场冲击成本。
+    verifiable: false
+    params:
+      max_adv_ratio: 0.05
+      liquidity_source: "market_data"

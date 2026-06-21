@@ -1,0 +1,69 @@
+# [A_module] module_id=MOD-INF_error_codes | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+from __future__ import annotations
+
+# [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/mcp-servers/blueprint.md
+
+# [MODULE] zephyr.infrastructure.error_codes
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] stable
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+"""MCP 错误码集中注册（MOD-INF-013 §3.4）。
+
+本文件是 MCP 协议错误码的 canonical SSoT。
+_base_server.py 中的硬编码错误码已迁移至此处导入。
+"""
+
+ERR_PARSE_ERROR = -32700
+ERR_INVALID_REQUEST = -32600
+ERR_METHOD_NOT_FOUND = -32601
+ERR_INVALID_PARAMS = -32602
+ERR_INTERNAL_ERROR = -32603
+
+ERR_TOOL_NOT_FOUND = -32001
+ERR_TOOL_EXECUTION = -32002
+ERR_GATE_FAILED = -32003
+ERR_RBAC_DENIED = -32004
+
+__all__ = [
+    "ERR_PARSE_ERROR",
+    "ERR_INVALID_REQUEST",
+    "ERR_METHOD_NOT_FOUND",
+    "ERR_INVALID_PARAMS",
+    "ERR_INTERNAL_ERROR",
+    "ERR_TOOL_NOT_FOUND",
+    "ERR_TOOL_EXECUTION",
+    "ERR_GATE_FAILED",
+    "ERR_RBAC_DENIED",
+]
+
+_MESSAGE_MAP: dict[int, str] = {
+    ERR_PARSE_ERROR: "Parse error",
+    ERR_INVALID_REQUEST: "Invalid Request",
+    ERR_METHOD_NOT_FOUND: "Method not found",
+    ERR_INTERNAL_ERROR: "Internal error",
+    ERR_INVALID_PARAMS: "Invalid params",
+    ERR_TOOL_NOT_FOUND: "Tool not found",
+    ERR_TOOL_EXECUTION: "Tool execution error",
+    ERR_GATE_FAILED: "Gate check failed",
+    ERR_RBAC_DENIED: "RBAC permission denied",
+}
+
+def error_message(code: int) -> str:
+    return _MESSAGE_MAP.get(code, f"Unknown error code: {code}")
+
+def lookup(code: int) -> str:
+    return _MESSAGE_MAP.get(code, f"UNKNOWN_{abs(code)}")

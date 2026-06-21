@@ -19,7 +19,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 RI_BOUNDARIES = {
     "RI-01 EventBus": "should be in shared or event_bus module",
-    "RI-02 MemoryTrio": "vector_memory + relational memory + file memory",
+    "RI-02 MemoryTrio": "vector-memory + relational memory + file memory",
     "RI-03 StructuredConcurrency": "anyio structured concurrency",
     "RI-04 Bulkhead": "thread/semaphore-based bulkhead isolation",
     "RI-05 GracefulShutdown": "signal handlers + drain queues",
@@ -38,7 +38,7 @@ RI_BOUNDARIES = {
 NON_COVERED_MODULES = {
     "audit_guard": "MOD-INF-001",
     "security_gateway": "MOD-INF-014",
-    "vector_memory": "MOD-INF-011",
+    "vector-memory": "MOD-INF-011",
     "knowledge_graph": "MOD-INF-012",
     "script_system": "MOD-INF-013",
     "cicd_pipeline": "MOD-INF-015",
@@ -58,7 +58,7 @@ def main() -> None:
     for feature, module in NON_COVERED_MODULES.items():
         print(f"  → {feature:<25s} → {module}")
 
-    readme = PROJECT_ROOT / "docs/03_modules/l01_infrastructure/runtime-integration/README.md"
+    readme = PROJECT_ROOT / "docs/03_modules/infrastructure.runtime_integration/runtime-integration/README.md"
     if readme.exists():
         print(f"\n✅ README.md 存在: {readme}")
     else:

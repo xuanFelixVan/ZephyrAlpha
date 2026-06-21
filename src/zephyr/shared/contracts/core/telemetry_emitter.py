@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
+# [A_module] module_id=MOD-SHR_telemetry_emitter | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §
 
 # [MODULE] zephyr.shared.contracts.core.telemetry_emitter
 
@@ -28,7 +29,7 @@ from datetime import datetime
 # category: data_contract
 # status: auto_generated
 # created: "2026-05-05"
-# generated_by: codegen from cross-layer-contracts.yaml
+# generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
 ZephyrAlpha — shared/contracts/telemetry_emitter.py
@@ -37,7 +38,7 @@ CTR-P1-013: TelemetryEmitter / 遥测发射器
 
 L12 → 全系统遥测发射器契约。提供结构化指标、日志、追踪的发射接口。
 
-SSoT: cross-layer-contracts.yaml -> CTR-P1-013
+SSoT: cross_layer_contracts.yaml -> CTR-P1-013
 Version: 1.0
 Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.

@@ -10,6 +10,15 @@
 """
 
 from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 
@@ -49,17 +58,17 @@ def _check_kb_external_access() -> tuple[bool, str]:
 
 def _check_agent_spec_cli() -> tuple[bool, str]:
     """_check_agent_spec_cli implementation."""
-    target = _PROJECT_ROOT / "src" / "zephyr" / "agent_spec" / "__main__.py"
+    target = _PROJECT_ROOT / "src" / "zephyr" / "agent-spec" / "__main__.py"
     ok = target.exists()
-    return ok, f"agent_spec __main__.py exists: {'YES' if ok else 'NO'}"
+    return ok, f"agent-spec __main__.py exists: {'YES' if ok else 'NO'}"
 
 def _check_agent_spec_importable() -> tuple[bool, str]:
     """_check_agent_spec_importable implementation."""
     try:
-        import zephyr.agent_spec  # noqa: F401
-        return True, "agent_spec importable: YES"
+        import zephyr.orchestration.agent_lifecycle  # noqa: F401
+        return True, "agent-spec importable: YES"
     except Exception as exc:
-        return False, f"agent_spec importable: NO ({exc})"
+        return False, f"agent-spec importable: NO ({exc})"
 
 def _check_audit_writer_called() -> tuple[bool, str]:
     """_check_audit_writer_called implementation."""

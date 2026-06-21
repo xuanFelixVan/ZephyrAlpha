@@ -1,0 +1,20 @@
+- attack_payload: ''
+  count: 1
+  defense_response: 'BLOCKED by G1-CB-001: circuit_breaker.hard_check'
+  entry_id: BY-848f43ab
+  escalated: false
+  gate_id: G1-CB-001
+  occurred_at: '2026-05-23T14:30:34.289113+00:00'
+  root_cause: 'BLOCKED by G1-CB-001: circuit_breaker.hard_check'
+  scenario_id: RB-SCEN-007
+  tier: TIER_1
+- attack_payload: ''
+  count: 1
+  defense_response: 'BLOCKED by G1-CB-001: circuit_breaker.hard_check'
+  entry_id: BY-cba335a9
+  escalated: false
+  gate_id: G1-CB-001
+  occurred_at: '2026-05-23T14:30:52.932234+00:00'
+  root_cause: 'BLOCKED by G1-CB-001: circuit_breaker.hard_check'
+  scenario_id: RB-SCEN-007
+  tier: TIER_1

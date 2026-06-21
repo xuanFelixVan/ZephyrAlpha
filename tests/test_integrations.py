@@ -1,0 +1,35 @@
+# [A_test] module_id: SRC-TST-1136 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain-governance/code-dedup-engine/blueprint.md | §
+# [MODULE] tests.test_integrations
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
+# [CONSUMERS]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+import pytest
+from zephyr.governance.integrations import (
+    IntegrationManager, IntegrationConfig,
+)
+
+class TestIntegrationManager:
+    def test_instantiation(self):
+        mgr = IntegrationManager()
+        assert mgr is not None
+
+    def test_register_precommit(self):
+        mgr = IntegrationManager()
+        result = mgr.register_precommit()
+        assert result is not None
+
+    def test_register_ci(self):
+        mgr = IntegrationManager()
+        result = mgr.register_ci()
+        assert result is not None
+
+    def test_status(self):
+        mgr = IntegrationManager()
+        result = mgr.status()
+        assert isinstance(result, dict)

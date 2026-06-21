@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_factor_computation_error | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.contracts.errors.factor_computation_error
 
@@ -6,7 +7,7 @@
 
 # [MODIFY-GUARD] none
 
-# [CONSUMERS]
+# [CONSUMERS] factor.factor_base
 
 # [STABILITY] evolving
 
@@ -23,7 +24,7 @@ CTR-ERR-002: FactorComputationError / 因子计算失败错误
 
 L02 因子计算过程中遇到无法处理的异常时抛出的错误。
 
-SSoT: cross-layer-contracts.yaml → CTR-ERR-002
+SSoT: cross_layer_contracts.yaml → CTR-ERR-002
 Version: 1.0
 Status: AUTO-GENERATED — DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.
@@ -45,7 +46,7 @@ from zephyr.shared.contracts.core.trace_context import TraceContext
 # category: data_contract
 # status: auto_generated
 # created: "2026-05-05"
-# generated_by: codegen from cross-layer-contracts.yaml
+# generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
 ZephyrAlpha — shared/contracts/factor_computation_error.py
@@ -54,7 +55,7 @@ CTR-ERR-002: FactorComputationError / 因子计算失败错误
 
 L02 因子计算过程中遇到无法处理的异常时抛出的错误。
 
-SSoT: cross-layer-contracts.yaml -> CTR-ERR-002
+SSoT: cross_layer_contracts.yaml -> CTR-ERR-002
 Version: 1.0
 Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.

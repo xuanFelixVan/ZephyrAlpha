@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0146 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-303 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.infrastructure.test_capacity_runtime_red_blue
 # [STABILITY] evolving
 # [SAFETY] L
@@ -32,7 +33,7 @@ class TestCapacityAssuranceAdversarial:
 
     def test_auto_diagnostics_empty_input(self):
         """对抗：空输入应优雅处理"""
-        from zephyr.l01_infrastructure.auto_diagnostics import AutoDiagnostics
+        from zephyr.infrastructure.auto_diagnostics import AutoDiagnostics
 
         engine = AutoDiagnostics()
         report = engine.diagnose("", component="")
@@ -40,7 +41,7 @@ class TestCapacityAssuranceAdversarial:
 
     def test_auto_diagnostics_unicode_attack(self):
         """对抗：Unicode注入不崩溃"""
-        from zephyr.l01_infrastructure.auto_diagnostics import AutoDiagnostics
+        from zephyr.infrastructure.auto_diagnostics import AutoDiagnostics
 
         engine = AutoDiagnostics()
         report = engine.diagnose("🐛💥🔥" * 100, component="test")
@@ -48,7 +49,7 @@ class TestCapacityAssuranceAdversarial:
 
     def test_auto_diagnostics_all_rules(self):
         """对抗：验证每条规则都能触发"""
-        from zephyr.l01_infrastructure.auto_diagnostics import AutoDiagnostics
+        from zephyr.infrastructure.auto_diagnostics import AutoDiagnostics
 
         engine = AutoDiagnostics()
         test_messages = [
@@ -66,7 +67,7 @@ class TestCapacityAssuranceAdversarial:
 
     def test_contract_tester_non_existent(self):
         """对抗：不存在的文件"""
-        from zephyr.l01_infrastructure.contract_tester import ContractStatus, ContractTester
+        from zephyr.infrastructure.contract_tester import ContractStatus, ContractTester
 
         tester = ContractTester()
         result = tester.test_contract("D:/nonexistent/ghost.yaml")
@@ -77,7 +78,7 @@ class TestCapacityAssuranceAdversarial:
         import os
         import tempfile
 
-        from zephyr.l01_infrastructure.contract_tester import ContractTester
+        from zephyr.infrastructure.contract_tester import ContractTester
 
         tmp = tempfile.NamedTemporaryFile(suffix=".yaml", delete=False, mode="w", encoding="utf-8")
         tmp.write("")
@@ -96,7 +97,7 @@ class TestCapacityAssuranceAdversarial:
         import tempfile
 
         import yaml
-        from zephyr.l01_infrastructure.config_validator import ConfigValidator
+        from zephyr.infrastructure.config_validator import ConfigValidator
 
         tmp = tempfile.NamedTemporaryFile(suffix=".yaml", delete=False, mode="w", encoding="utf-8")
         yaml.dump({"version": "1.0", "thresholds": None, "error_budget": 0.5}, tmp)
@@ -115,7 +116,7 @@ class TestCapacityAssuranceAdversarial:
         import tempfile
 
         import yaml
-        from zephyr.l01_infrastructure.config_validator import ConfigValidator
+        from zephyr.infrastructure.config_validator import ConfigValidator
 
         tmp = tempfile.NamedTemporaryFile(suffix=".yaml", delete=False, mode="w", encoding="utf-8")
         yaml.dump({"version": "1.0", "timeout": 99999, "max_workers": 999}, tmp)
@@ -130,7 +131,7 @@ class TestCapacityAssuranceAdversarial:
 
     def test_warm_hot_gate_empty_context(self):
         """对抗：空上下文"""
-        from zephyr.l01_infrastructure.warm_hot_gate import WarmHotGate
+        from zephyr.infrastructure.warm_hot_gate import WarmHotGate
 
         gate = WarmHotGate()
         result = gate.check({})
@@ -142,7 +143,7 @@ class TestRuntimeIntegrationAdversarial:
 
     def test_event_store_concurrent_writes(self):
         """对抗：并发写入不丢失事件"""
-        from zephyr.l01_infrastructure.event_store import EventLevel, EventStore, StoredEvent
+        from zephyr.infrastructure.event_store import EventLevel, EventStore, StoredEvent
 
         db_path = tempfile.mktemp(suffix=".db")
         store = EventStore(db_path=db_path)
@@ -180,7 +181,7 @@ class TestRuntimeIntegrationAdversarial:
         """对抗：检测篡改事件"""
         import sqlite3
 
-        from zephyr.l01_infrastructure.event_store import EventLevel, EventStore, StoredEvent
+        from zephyr.infrastructure.event_store import EventLevel, EventStore, StoredEvent
 
         db_path = tempfile.mktemp(suffix=".db")
         store = EventStore(db_path=db_path)
@@ -209,7 +210,7 @@ class TestRuntimeIntegrationAdversarial:
 
     def test_dry_run_sql_injection_attempt(self):
         """对抗：SQL注入尝试被检测"""
-        from zephyr.l01_infrastructure.dry_run_simulator import DryRunSimulator, SimulationStatus
+        from zephyr.infrastructure.dry_run_simulator import DryRunSimulator, SimulationStatus
 
         sim = DryRunSimulator(sandbox_root=str(tempfile.mkdtemp()))
         sql_injection_op = {
@@ -222,7 +223,7 @@ class TestRuntimeIntegrationAdversarial:
 
     def test_cost_tracker_zero_tokens(self):
         """对抗：零Token使用"""
-        from zephyr.l01_infrastructure.cost_tracker import CostTracker
+        from zephyr.infrastructure.cost_tracker import CostTracker
 
         tracker = CostTracker(db_path=tempfile.mktemp(suffix=".db"))
         record = tracker.record_usage(model="deepseek-chat", tokens_in=0, tokens_out=0)
@@ -234,7 +235,7 @@ class TestRuntimeIntegrationAdversarial:
 
     def test_cost_tracker_budget_alert(self):
         """对抗：预算超限告警"""
-        from zephyr.l01_infrastructure.cost_tracker import CostTracker
+        from zephyr.infrastructure.cost_tracker import CostTracker
 
         tracker = CostTracker(db_path=tempfile.mktemp(suffix=".db"), daily_budget_usd=0.00001)
 
@@ -250,7 +251,7 @@ class TestRuntimeIntegrationAdversarial:
 
     def test_event_bus_dry_run_safety(self):
         """对抗：dry run 不修改任何状态"""
-        from zephyr.shared.events.upgrade_strategy import EventBusUpgrade
+        from zephyr.integration.shared.events.upgrade_strategy import EventBusUpgrade
 
         upgrader = EventBusUpgrade()
         plan = upgrader.generate_upgrade_plan()

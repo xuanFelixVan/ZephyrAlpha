@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0167 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-324 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.integration.test_e2e_pipeline
 # [STABILITY] evolving
 # [SAFETY] L
@@ -33,71 +34,71 @@ from unittest.mock import MagicMock, patch
 import pandas as pd
 import pytest
 
-from zephyr.l00_data_source.implementations.default_quality_gate import (
+from zephyr.governance.default_quality_gate import (
     DefaultQualityGate,
 )
-from zephyr.l03_signal_generation.implementations.default_capital_allocator import (
+from zephyr.signal_fundamental.strategy.implementations.default_capital_allocator import (
     AllocationMethod,
     DefaultCapitalAllocator,
 )
-from zephyr.l03_signal_generation.implementations.default_signal_aggregator import (
+from zephyr.signal_fundamental.gen.implementations.default_signal_aggregator import (
     DefaultSignalAggregator,
 )
-from zephyr.l04_risk_management.implementations.default_position_limit_checker import (
+from zephyr.risk.implementations.default_position_limit_checker import (
     DefaultPositionLimitChecker,
 )
-from zephyr.l04_risk_management.implementations.default_risk_limits_calculator import (
+from zephyr.risk.implementations.default_risk_limits_calculator import (
     DefaultRiskLimitsCalculator,
 )
-from zephyr.l04_risk_management.implementations.default_risk_manager_orchestrator import (
+from zephyr.risk.implementations.default_risk_manager_orchestrator import (
     DefaultRiskManagerOrchestrator,
 )
-from zephyr.l04_risk_management.implementations.default_risk_validator import (
+from zephyr.risk.implementations.default_risk_validator import (
     DefaultRiskValidator,
 )
-from zephyr.l04_risk_management.implementations.default_stop_loss_engine import (
+from zephyr.risk.implementations.default_stop_loss_engine import (
     DefaultStopLossEngine,
     StopLossRules,
 )
-from zephyr.l04_risk_management.stop_loss import evaluate_stop_loss
-from zephyr.l05_portfolio_construction.strategies.default_equity_strategy import (
+from zephyr.risk.stop_loss import evaluate_stop_loss
+from zephyr.pf_core.default_equity_strategy import (
     DefaultEquityStrategy,
     RebalanceMode,
 )
-from zephyr.l06_trade_execution.adapters.simulation_broker import SimulationBroker
-from zephyr.l06_trade_execution.broker_interface import BrokerInterface
-from zephyr.l06_trade_execution.execution_engine import (
+from zephyr.ex_core.adapters.simulation_broker import SimulationBroker
+from zephyr.ex_core.adapters.broker_interface import BrokerInterface
+from zephyr.ex_core.execution_engine import (
     AlgoType,
     ExecutionConfig,
     ExecutionEngine,
 )
-from zephyr.l06_trade_execution.order_manager import OrderManager
-from zephyr.l07_post_trade_analytics.implementations.default_attribution_engine import (
+from zephyr.ex_core.order_manager import OrderManager
+from zephyr.pf_core.default_attribution_engine import (
     DefaultAttributionEngine,
 )
-from zephyr.l07_post_trade_analytics.implementations.default_tca_engine import (
+from zephyr.pf_core.default_tca_engine import (
     DefaultTCAEngine,
 )
-from zephyr.l09_research_innovation.implementations.default_backtest_engine import (
+from zephyr.simulation.default_backtest_engine import (
     BacktestConfig,
     DefaultBacktestEngine,
 )
-from zephyr.l10_compliance.implementations.default_security_gateway import (
+from zephyr.governance.compliance_gate_a6.default_security_gateway import (
     DefaultSecurityGateway,
 )
-from zephyr.l11_ml_platform.implementations.default_inference_engine import (
+from zephyr.intelligence.model_evaluation.implementations.default_inference_engine import (
     DefaultInferenceEngine,
 )
-from zephyr.l13_experimentation.implementations.default_experiment_pipeline import (
+from zephyr.simulation.implementations.default_experiment_pipeline import (
     DefaultExperimentPipeline,
 )
-from zephyr.shared.contracts.execution.capital_allocation_result import CapitalAllocationResult
-from zephyr.shared.contracts.execution.execution_report import ExecutionReport
-from zephyr.shared.contracts.market.factor_signal import FactorSignal
-from zephyr.shared.contracts.execution.fill import Fill
-from zephyr.shared.contracts.execution.model_serving_request import ModelServingRequest
-from zephyr.shared.contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
-from zephyr.shared.contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
+from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
+from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
+from zephyr.trading.trading_contracts.execution.fill import Fill
+from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
+from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
 
 
 UNIVERSE_CSI300 = [
@@ -317,7 +318,7 @@ class TestE2EFullPipeline:
     def test_l13_experiment_pipeline(self):
         """L13: 实验管线 A/B 对照"""
         pipeline = DefaultExperimentPipeline()
-        from zephyr.l13_experimentation.pipeline_base import ExperimentConfig
+        from zephyr.simulation.pipeline_base import ExperimentConfig
 
         config = ExperimentConfig(
             experiment_id="exp-test-001",
@@ -339,7 +340,7 @@ class TestCrossLayerContractAlignment:
 
     def test_l04_produces_risk_limits_type(self):
         """L04 → CTR-003: RiskLimitsCalculator 输出正确的 RiskLimits 类型"""
-        from zephyr.l04_risk_management.risk_manager import RiskLimits
+        from zephyr.risk.risk_manager import RiskLimits
 
         calculator = DefaultRiskLimitsCalculator()
         limits = calculator.calculate(
@@ -373,7 +374,7 @@ class TestCrossLayerContractAlignment:
 
     def test_l00_quality_gate_produces_report(self):
         """L00 → CTR-ERR-001: QualityGate 输出正确的 QualityReport"""
-        from zephyr.l00_data_source.quality_gate import QualityReport
+        from zephyr.data.quality_gate import QualityReport
 
         gate = DefaultQualityGate()
         report = gate.check(
@@ -395,7 +396,7 @@ class TestOrderManagerLifecycle:
 
     def test_full_lifecycle(self):
         """订单 PENDING → SUBMITTED → FILLED 全生命周期"""
-        from zephyr.shared.contracts.portfolio.position import PositionSnapshot
+        from zephyr.integration.shared_08.contracts.position import PositionSnapshot
 
         broker = SimulationBroker()
         broker.connect()

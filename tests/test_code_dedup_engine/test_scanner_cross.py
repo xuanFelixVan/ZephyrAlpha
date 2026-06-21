@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0535 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-363 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.test_code_dedup_engine.test_scanner_cross
 # [STABILITY] evolving
 # [SAFETY] L
@@ -13,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 
 def test_same_file_no_duplicate():
-    from zephyr.l01_infrastructure.code_dedup_engine.scanner import Scanner
+    from zephyr.governance.scanner import Scanner
     s = Scanner()
     s.scan_file(Path(__file__))
     dupes = s.find_duplicates()
@@ -21,7 +22,7 @@ def test_same_file_no_duplicate():
 
 
 def test_cross_file_similarity():
-    from zephyr.l01_infrastructure.code_dedup_engine.scanner import Scanner
+    from zephyr.governance.scanner import Scanner
     s = Scanner()
     s.scan_file(Path(__file__))
     s.scan_file(Path(__file__).parent / "test_config.py")

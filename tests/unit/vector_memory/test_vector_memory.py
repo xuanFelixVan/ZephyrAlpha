@@ -1,11 +1,12 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-2091 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-708 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.vector_memory.test_vector_memory
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """
-vector_memory 模块单元测试 — MOD-INF-011
+vector-memory 模块单元测试 — MOD-INF-011
 ===========================================
 覆盖: CollectionManager / EmbeddingRouter / HybridRetriever
       BridgeLayer / CacheLayer / DesignPrinciplesEnforcer
@@ -20,7 +21,7 @@ from unittest.mock import MagicMock, patch
 
 class TestCollectionManager:
     def test_list_collections_returns_8(self):
-        from zephyr.vector_memory.collection_manager import CollectionManager
+        from zephyr.governance.vector_memory.collection_manager import CollectionManager
 
         cm = CollectionManager()
         assert len(cm.VMS_COLLECTION_NAMES) == 8
@@ -28,13 +29,13 @@ class TestCollectionManager:
         assert "execution_traces" in cm.VMS_COLLECTION_NAMES
 
     def test_collection_names_tuple(self):
-        from zephyr.vector_memory.collection_schemas import COLLECTION_NAMES
+        from zephyr.governance.vector_memory.collection_schemas import COLLECTION_NAMES
 
         assert isinstance(COLLECTION_NAMES, tuple)
         assert len(COLLECTION_NAMES) == 8
 
     def test_schemas_have_required_fields(self):
-        from zephyr.vector_memory.collection_schemas import COLLECTION_SCHEMAS
+        from zephyr.governance.vector_memory.collection_schemas import COLLECTION_SCHEMAS
 
         for name, schema in COLLECTION_SCHEMAS.items():
             assert "dimension" in schema, f"{name} missing dimension"
@@ -48,8 +49,8 @@ class TestCollectionManager:
 
 class TestDesignPrinciplesEnforcer:
     def test_validate_dimension_whitelist(self):
-        from zephyr.vector_memory.design_principles import DesignPrinciplesEnforcer
-        from zephyr.vector_memory.vms_errors import DimensionError
+        from zephyr.governance.vector_memory.design_principles import DesignPrinciplesEnforcer
+        from zephyr.governance.vector_memory.vms_errors import DimensionError
 
         DesignPrinciplesEnforcer.validate_dimension(512)
         DesignPrinciplesEnforcer.validate_dimension(1024)
@@ -57,8 +58,8 @@ class TestDesignPrinciplesEnforcer:
             DesignPrinciplesEnforcer.validate_dimension(768)
 
     def test_validate_provenance_missing(self):
-        from zephyr.vector_memory.design_principles import DesignPrinciplesEnforcer
-        from zephyr.vector_memory.vms_errors import ProvenanceMissingError
+        from zephyr.governance.vector_memory.design_principles import DesignPrinciplesEnforcer
+        from zephyr.governance.vector_memory.vms_errors import ProvenanceMissingError
 
         with pytest.raises(ProvenanceMissingError):
             DesignPrinciplesEnforcer.validate_provenance(None)
@@ -67,7 +68,7 @@ class TestDesignPrinciplesEnforcer:
             DesignPrinciplesEnforcer.validate_provenance({"other": "field"})
 
     def test_validate_provenance_ok(self):
-        from zephyr.vector_memory.design_principles import DesignPrinciplesEnforcer
+        from zephyr.governance.vector_memory.design_principles import DesignPrinciplesEnforcer
 
         DesignPrinciplesEnforcer.validate_provenance({"origin": "test", "audit_chain": ["test"], "arbitration": "owner"})
         DesignPrinciplesEnforcer.validate_provenance({"provenance": {"origin": "test", "audit_chain": ["test"], "arbitration": "owner"}})
@@ -75,7 +76,7 @@ class TestDesignPrinciplesEnforcer:
 
 class TestEmbeddingRouter:
     def test_router_collections(self):
-        from zephyr.local_model.embedding_router import BGE_M3_COLLECTIONS, BGE_SMALL_COLLECTIONS
+        from zephyr.integration.local_model.embedding_router import BGE_M3_COLLECTIONS, BGE_SMALL_COLLECTIONS
 
         assert "decisions" in BGE_M3_COLLECTIONS
         assert "rules" in BGE_M3_COLLECTIONS
@@ -85,21 +86,21 @@ class TestEmbeddingRouter:
         assert len(BGE_SMALL_COLLECTIONS) == 3
 
     def test_l2_normalize(self):
-        from zephyr.local_model.embedding_router import l2_normalize
+        from zephyr.integration.local_model.embedding_router import l2_normalize
 
         v = np.array([3.0, 4.0], dtype=np.float32)
         normed = l2_normalize(v)
         np.testing.assert_almost_equal(np.linalg.norm(normed), 1.0)
 
     def test_l2_normalize_zero_vector(self):
-        from zephyr.local_model.embedding_router import l2_normalize
+        from zephyr.integration.local_model.embedding_router import l2_normalize
 
         v = np.zeros(10, dtype=np.float32)
         normed = l2_normalize(v)
         np.testing.assert_array_equal(normed, v)
 
     def test_health_check_structure(self):
-        from zephyr.vector_memory.embedding_router import EmbeddingRouter
+        from zephyr.integration.local_model.embedding_router import EmbeddingRouter
 
         router = EmbeddingRouter()
         status = router.health_check()
@@ -110,7 +111,7 @@ class TestEmbeddingRouter:
 
 class TestHybridRetriever:
     def test_bm25_tokenize(self):
-        from zephyr.vector_memory.bm25_index import BM25Index
+        from zephyr.governance.vector_memory.bm25_index import BM25Index
 
         tokens = BM25Index._tokenize("Hello World 你好世界 test_123")
         assert "hello" in tokens
@@ -118,7 +119,7 @@ class TestHybridRetriever:
         assert "test_123" in tokens
 
     def test_bm25_index_and_search(self):
-        from zephyr.vector_memory.bm25_index import BM25Index
+        from zephyr.governance.vector_memory.bm25_index import BM25Index
 
         bm25 = BM25Index()
         docs = [
@@ -132,13 +133,13 @@ class TestHybridRetriever:
         assert results[0][0] in ("1", "3")
 
     def test_rrf_constant(self):
-        from zephyr.vector_memory.hybrid_retriever import RRF_K
+        from zephyr.governance.vector_memory.hybrid_retriever import RRF_K
         assert RRF_K == 60
 
 
 class TestBridgeLayer:
     def test_migration_map(self):
-        from zephyr.vector_memory.bridge_layer import MIGRATION_MAP
+        from zephyr.governance.vector_memory.bridge_layer import MIGRATION_MAP
 
         assert "ke_entries" in MIGRATION_MAP
         assert MIGRATION_MAP["ke_entries"]["target"] == "knowledge"
@@ -146,7 +147,7 @@ class TestBridgeLayer:
         assert MIGRATION_MAP["vibe_rules"]["target"] == "rules"
 
     def test_topic_to_collection(self):
-        from zephyr.vector_memory.bridge_layer import TOPIC_TO_COLLECTION
+        from zephyr.governance.vector_memory.bridge_layer import TOPIC_TO_COLLECTION
 
         assert TOPIC_TO_COLLECTION.get("knowledge") == "knowledge"
         assert TOPIC_TO_COLLECTION.get("rule") == "rules"
@@ -155,7 +156,7 @@ class TestBridgeLayer:
 
 class TestCacheLayer:
     def test_put_and_get_embedding(self):
-        from zephyr.vector_memory.cache_layer import CacheLayer
+        from zephyr.governance.vector_memory.cache_layer import CacheLayer
 
         cache = CacheLayer(max_size=10)
         vec = np.array([0.1, 0.2], dtype=np.float32)
@@ -165,13 +166,13 @@ class TestCacheLayer:
         np.testing.assert_array_almost_equal(cached, vec)
 
     def test_cache_miss(self):
-        from zephyr.vector_memory.cache_layer import CacheLayer
+        from zephyr.governance.vector_memory.cache_layer import CacheLayer
 
         cache = CacheLayer()
         assert cache.get_embedding("nonexistent") is None
 
     def test_invalidate_collection_only_affects_target(self):
-        from zephyr.vector_memory.cache_layer import CacheLayer
+        from zephyr.governance.vector_memory.cache_layer import CacheLayer
 
         cache = CacheLayer(max_size=100)
         vec = np.array([0.1, 0.2], dtype=np.float32)
@@ -190,12 +191,12 @@ class TestCacheLayer:
 
 class TestChunkStrategyRouter:
     def test_valid_strategies(self):
-        from zephyr.vector_memory.chunk_strategy_router import ChunkStrategyRouter
+        from zephyr.governance.vector_memory.chunk_strategy_router import ChunkStrategyRouter
 
         assert len(ChunkStrategyRouter.VALID_STRATEGIES) == 8
 
     def test_route_rule_level(self):
-        from zephyr.vector_memory.chunk_strategy_router import ChunkStrategyRouter
+        from zephyr.governance.vector_memory.chunk_strategy_router import ChunkStrategyRouter
 
         router = ChunkStrategyRouter()
         chunks = router.route("This is a rule", "rule_level")
@@ -205,13 +206,13 @@ class TestChunkStrategyRouter:
 
 class TestInMemoryBackend:
     def test_degraded_mode(self):
-        from zephyr.vector_memory.in_memory_memory_backend import InMemoryMemoryBackend
+        from zephyr.governance.vector_memory.in_memory_memory_backend import InMemoryMemoryBackend
 
         backend = InMemoryMemoryBackend()
         assert backend.degraded is True
 
     def test_write_and_recall(self):
-        from zephyr.vector_memory.in_memory_memory_backend import InMemoryMemoryBackend
+        from zephyr.governance.vector_memory.in_memory_memory_backend import InMemoryMemoryBackend
 
         backend = InMemoryMemoryBackend()
         doc_id = backend.write("test content", {"origin": "test"})
@@ -224,7 +225,7 @@ class TestInMemoryBackend:
 
 class TestRetrievalFeedback:
     def test_log_feedback(self):
-        from zephyr.vector_memory.retrieval_feedback import RetrievalFeedback
+        from zephyr.governance.vector_memory.retrieval_feedback import RetrievalFeedback
 
         fb = RetrievalFeedback()
         trace = type("Trace", (), {"collection": "decisions", "query": "test", "hits": [1, 2, 3]})()
@@ -233,7 +234,7 @@ class TestRetrievalFeedback:
         assert entry.hit_count == 3
 
     def test_hit_rates(self):
-        from zephyr.vector_memory.retrieval_feedback import RetrievalFeedback
+        from zephyr.governance.vector_memory.retrieval_feedback import RetrievalFeedback
 
         fb = RetrievalFeedback()
         trace = type("Trace", (), {"collection": "knowledge", "query": "q", "hits": [1]})()

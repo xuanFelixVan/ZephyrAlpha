@@ -1,0 +1,162 @@
+rule_id: TRAE-013
+title: 架构约束-跨包依赖
+aliases:
+- ARCH-001
+- ARCH-002
+- ARCH-003
+- ARCH-004
+- ARCH-005
+- ARCH-006
+layer: L1
+severity: error
+scope: architecture_dependency
+domain: TRAE
+triggers:
+- operation: architecture_dependency
+sections:
+  arch_001:
+    section_type: rule
+    title: 跨包依赖方向(向下依赖)
+    original_rules:
+    - ARCH-001
+    conditions:
+    - type: trigger
+      check: 修改包间依赖时
+      pass: 依赖方向向下(专用包→shared基础层)或跨包违规减少
+      fail: 向上依赖或跨包违规增加
+    actions:
+    - type: mandatory
+      step: 新增依赖前MUST推演依赖方向；专用包可依赖shared基础层；shared基础层禁止依赖业务层；跨包违规减少或不变为SAFE，增加向下依赖为CAUTION，增加向上依赖为BLOCKED
+    prohibitions:
+    - 专用包向上依赖shared包
+    - 基础层依赖业务层
+    - 跨层向上依赖
+  arch_002:
+    section_type: rule
+    title: 循环依赖禁止
+    original_rules:
+    - ARCH-002
+    conditions:
+    - type: trigger
+      check: 新增或修改依赖时
+      pass: 无循环依赖
+      fail: 产生新循环依赖
+    actions:
+    - type: mandatory
+      step: 移动模块/拆包/改标签前MUST执行依赖图推演(STEP 1)；推演发现新循环→BLOCKED，必须先解决循环再执行；验证命令python scripts/governance/diagnose_depgraph.py确认无循环
+    prohibitions:
+    - 引入循环依赖
+    - 不推演直接移动模块导致新循环依赖
+    - 系统堵塞后不回滚直接继续
+  arch_003:
+    section_type: rule
+    title: shared包职责限制
+    original_rules:
+    - ARCH-003
+    conditions:
+    - type: trigger
+      check: 向shared包添加模块时
+      pass: 模块被多包共享且无业务逻辑
+      fail: shared包含业务逻辑或被单一消费者独占
+    actions:
+    - type: mandatory
+      step: shared包仅放被多包共享的基础设施模块；新增模块前MUST确认消费者≥2个包；含业务逻辑的模块放专用包而非shared
+    prohibitions:
+    - shared包含业务逻辑
+    - shared包被单一消费者独占
+    - 向shared包添加仅被单一包使用的模块
+  arch_004:
+    section_type: rule
+    title: 基础设施层隔离
+    original_rules:
+    - ARCH-004
+    conditions:
+    - type: trigger
+      check: 修改基础设施层时
+      pass: 基础设施层无业务依赖
+      fail: 基础设施层依赖业务层
+    actions:
+    - type: mandatory
+      step: 基础设施层模块MUST保持无业务依赖；基础设施层仅提供通用能力(日志/配置/锁/IO等)；业务逻辑放业务层
+    prohibitions:
+    - 基础设施层依赖业务层
+    - 在基础设施层引入业务逻辑
+  arch_005:
+    section_type: rule
+    title: God模块分解
+    original_rules:
+    - ARCH-005
+    conditions:
+    - type: trigger
+      check: 模块fan_out/fan_in超标时
+      pass: 分解为职责单一的子模块
+      fail: God模块未分解
+    actions:
+    - type: mandatory
+      step: God模块分解依赖包边界清晰(先完成ARCH-001架构重构)；按唯一职责拆分为多个子模块；拆分后更新所有import和蓝图§4文件清单
+    prohibitions:
+    - 维持God模块不分解
+    - 在God模块中继续添加新功能
+    - 拆分前未完成包边界重构
+  arch_006:
+    section_type: rule
+    title: fan_out/fan_in限制
+    original_rules:
+    - ARCH-006
+    conditions:
+    - type: trigger
+      check: 模块依赖数超标时
+      pass: 依赖数在限制内
+      fail: 依赖数超标
+    actions:
+    - type: mandatory
+      step: 模块fan_out/fan_in超标时MUST分解或引入中介层；diagnose_depgraph.py检测超标模块；分解后重新生成depgraph确认达标
+    prohibitions:
+    - 模块fan_out/fan_in超标不分解
+    - 无视依赖数限制继续添加依赖
+  arch_scope:
+    title: 跨包依赖约束的目的与范围
+    section_type: context
+    summary: 管理ZephyrAlpha项目包间依赖方向、循环依赖、shared包职责、基础设施层隔离、God模块分解、fan_out/fan_in限制
+    applies_to:
+    - src/zephyr/ 下所有包的跨包依赖
+    - 模块移动/拆包/重构操作
+    - 依赖图生成与诊断
+    impact_on_rules:
+    - 跨包依赖必须向下(专用包→shared基础层)
+    - 循环依赖BLOCKED，必须先推演再动手
+    - shared包仅放多包共享的基础设施模块
+    key_decisions:
+    - 依赖方向判定：减少或不变→SAFE；增加向下→CAUTION；增加向上→BLOCKED
+    - God模块分解必须在包边界重构后进行
+    - 治理顺序按因果链：架构重构→God模块分解→孤儿消理
+  arch_change_history:
+    title: 修订记录
+    section_type: examples
+    items:
+    - version: "1.1.0"
+      date: "2026-06-19"
+      change: "RQ-01~RQ-14审查修复：补充6个section的conditions/prohibitions实质内容(基于onboarding_detail.md §十五)；更新provenance hash；补充references引用diagnose_depgraph.py和generate_project_depgraph.py；补充enforcement.executors；新增change_history和scope"
+    - version: "1.0.0"
+      date: "2026-06-13"
+      change: "从onboarding_detail.md §十五和project_rules.md RULE-TEN提取为TRAE-013规则YAML"
+references:
+  rule_ids: []
+  scripts:
+  - scripts/governance/diagnose_depgraph.py
+  - scripts/governance/generate_project_depgraph.py
+  modules: []
+  blueprints: []
+enforcement:
+  type: code
+  executors:
+  - scripts/governance/diagnose_depgraph.py
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

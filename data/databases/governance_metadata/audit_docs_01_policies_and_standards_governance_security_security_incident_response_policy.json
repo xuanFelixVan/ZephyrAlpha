@@ -1,0 +1,64 @@
+{
+  "task_id": "DM-100152",
+  "source_file": "docs/01_policies_and_standards/governance/security/security_incident_response_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_031_security_key_access.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "SIR-001": {
+      "title": "P0事件必须立即响应",
+      "type": "mandatory+constraint",
+      "content": "P0安全事件确认后必须在15分钟内启动响应流程",
+      "coverage": "COVERED",
+      "yaml_section": "sir_001"
+    },
+    "SIR-002": {
+      "title": "全级别通用响应规则",
+      "type": "mandatory",
+      "content": "所有安全事件(P0~P3)必须在发现后30分钟内记录在安全事件日志中",
+      "coverage": "COVERED",
+      "yaml_section": "sir_002"
+    },
+    "SIR-003": {
+      "title": "P0事件必须复盘",
+      "type": "mandatory+constraint",
+      "content": "P0事件解决后7天内必须完成复盘并提交改进方案",
+      "coverage": "COVERED",
+      "yaml_section": "sir_003"
+    },
+    "SIR-004": {
+      "title": "通知机制",
+      "type": "mandatory+constraint",
+      "content": "P0立即通知Owner/P1 4小时内通知/P2P3下次评审时报告",
+      "coverage": "COVERED",
+      "yaml_section": "sir_004"
+    },
+    "SIR-P0-RESPONSE": {
+      "title": "P0事件响应流程",
+      "type": "process",
+      "content": "7步流程：确认→隔离→止损→通知→恢复→记录→复盘",
+      "coverage": "COVERED",
+      "yaml_section": "sir_p0_response"
+    },
+    "SIR-P1P3-RESPONSE": {
+      "title": "P1-P3事件响应流程",
+      "type": "process",
+      "content": "4步流程：记录→评估→处理→记录结果",
+      "coverage": "COVERED",
+      "yaml_section": "sir_p1p3_response"
+    }
+  },
+  "summary": {
+    "total_rules": 6,
+    "COVERED": 6,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "新增sir_001节：P0事件15分钟内启动响应（原YAML无SIR规则）",
+    "新增sir_002节：全级别30分钟内记录日志",
+    "新增sir_003节：P0事件7天内复盘",
+    "新增sir_004节：通知机制（3个约束条件）",
+    "新增sir_p0_response节：P0事件7步响应流程",
+    "新增sir_p1p3_response节：P1-P3事件4步响应流程"
+  ]
+}

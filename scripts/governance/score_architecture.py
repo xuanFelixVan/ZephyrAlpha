@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/score_architecture.py | §
 """
-对标 12-dimension-audit-matrix.md §6.1：
+对标 dimension_audit_matrix.md §6.1：
   自动化评分引擎，读取各维度采集指标 → 计算加权分数 → 输出报告。
 
 用法:
@@ -48,9 +48,9 @@ AUDIT_MATRIX_PATH = (
     / "docs"
     / "02_enterprise_architecture"
     / "target-architecture"
-    / "12-dimension-audit-matrix.md"
+    / "dimension_audit_matrix.md"
 )
-ARCH_GUARD_MANIFEST = REPO_ROOT / "scripts" / "arch_guard" / "_manifest.yaml"
+ARCH_GUARD_MANIFEST = REPO_ROOT / "scripts" / "arch_guard" / "manifest.yaml"
 INVARIANTS_PATH = (
     REPO_ROOT
     / "docs"
@@ -67,7 +67,7 @@ CONTRACTS_PATH = (
     / "target-architecture"
     / "architecture-model"
     / "contracts"
-    / "cross-layer-contracts.yaml"
+    / "cross_layer_contracts.yaml"
 )
 OUTPUT_DIR = REPO_ROOT / "data" / "architecture_scores"
 
@@ -128,7 +128,7 @@ def score_d6_security() -> float:
     scaffold_gates = REPO_ROOT / "scripts" / "arch_guard" / "check_scaffold_exit_gates.py"
     if scaffold_gates.exists():
         score += 1.0
-    lsg_dir = REPO_ROOT / "src" / "zephyr" / "llm_security"
+    lsg_dir = REPO_ROOT / "src" / "zephyr" / "llm-security"
     if lsg_dir.exists() and any(lsg_dir.iterdir()):
         score += 0.5
     return min(score, 10.0)

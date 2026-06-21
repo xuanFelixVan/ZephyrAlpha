@@ -59,20 +59,20 @@ def find_all_blueprints() -> list[Path]:
 
 
 LAYER_DIR_MAP = {
-    "l00_data_source": "L00",
-    "l01_infrastructure": "L01",
-    "l02_alpha_factor": "L02",
-    "l03_signal_generation": "L03",
-    "l04_risk_management": "L04",
-    "l05_portfolio_construction": "L05",
-    "l06_trade_execution": "L06",
-    "l07_post_trade_analytics": "L07",
-    "l08_human_ai_interface": "L08",
-    "l09_research_innovation": "L09",
-    "l10_compliance": "L10",
-    "l11_ml_platform": "L11",
-    "system_telemetry": "L12",
-    "l13_experimentation": "L13",
+    "data": "L00",
+    "infrastructure.runtime_integration": "L01",
+    "factor": "L02",
+    "signal": "L03",
+    "risk": "L04",
+    "pf_core": "L05",
+    "ex_core": "L06",
+    "pf_core": "L07",
+    "frontend": "L08",
+    "research": "L09",
+    "compliance": "L10",
+    "ml_train": "L11",
+    "observability": "L12",
+    "integration": "L13",
     "_cross_layer": "cross_layer",
     "_master-blueprint": "cross_layer",
     "_domain-governance": "cross_layer",
@@ -197,7 +197,7 @@ def build_module_entry(filepath: Path, fm: dict[str, Any]) -> dict[str, Any]:
 def _default_module_registry_schema() -> dict[str, Any]:
     """_default_module_registry_schema implementation."""
     return {
-        "description": "模块登记表字段——与 REG-001（registry-of-registries.yaml）及物理 blueprint.md 对齐",
+        "description": "模块登记表字段——与 REG-001（registry_of_registries.yaml）及物理 blueprint.md 对齐",
         "priority_values": ["P0", "P1", "P2", "P3"],
         "construction_plan_status_values": [
             "not_started",

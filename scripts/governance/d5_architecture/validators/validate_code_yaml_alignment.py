@@ -97,9 +97,9 @@ def scan_alignment(code_dir: Path, yaml_dir: Path) -> tuple[list[str], list[str]
     highs: list[str] = []
     mediums: list[str] = []
 
-    index_path = yaml_dir / "_index.yaml"
+    index_path = yaml_dir / "index.yaml"
     if not index_path.exists():
-        criticals.append(f"_index.yaml 不存在: {index_path}")
+        criticals.append(f"index.yaml 不存在: {index_path}")
         return criticals, highs, mediums, 0, 0
 
     yaml_partitions = _parse_index(index_path)
@@ -129,7 +129,7 @@ def scan_alignment(code_dir: Path, yaml_dir: Path) -> tuple[list[str], list[str]
         if dir_name not in yaml_expected_dirs:
             criticals.append(
                 f"目录存在但 YAML 未登记: src/zephyr/{dir_name}/ "
-                f"— AGENTS.md §6.10 GATE-A 违规，请在 architecture-model/_index.yaml 添加"
+                f"— AGENTS.md §6.10 GATE-A 违规，请在 architecture-model/index.yaml 添加"
             )
 
     # HIGH/MEDIUM: YAML ↔ 实际文件对账

@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_constants | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.foundation.constants
 
@@ -43,25 +44,8 @@ SSoT: MOD-INF-016 §2.4 shared-constants
 Version: 0.1.0
 """
 
-from zephyr.trading_contracts.market.instrument import (
-    ETF,
-    FX,
-    AssetClass,
-    Country,
-    CryptoContractType,
-    CurrencyCode,
-    Exchange,
-    Future,
-    Jurisdiction,
-    OptionType,
-    Stock,
-    TradingCalendarName,
-)
-from zephyr.trading_contracts.execution.order import (
-    OrderSide,
-    OrderStatus,
-    OrderType,
-)
+import importlib
+
 from zephyr.shared.contracts.core.runtime_plane_tag import (
     COLD_PATH_LATENCY_BUDGET_MS,
     COLD_PATH_PARTIAL_ACTIVATED,
@@ -82,7 +66,33 @@ from zephyr.shared.schema.schemas import (
     TaskNamespace,
     TaskStatus,
 )
-from zephyr.escalation_engine.escalation_models import EscalationLevel
+from zephyr.governance.escalation_models import EscalationLevel
+
+# Lazy imports for trading-domain symbols (upward dependency from L0 shared → L3 trading)
+_TRADING_SYMBOLS = {
+    "ETF": "zephyr.execution.trading.trading_contracts.market.instrument",
+    "FX": "zephyr.execution.trading.trading_contracts.market.instrument",
+    "AssetClass": "zephyr.execution.trading.trading_contracts.market.instrument",
+    "Country": "zephyr.execution.trading.trading_contracts.market.instrument",
+    "CryptoContractType": "zephyr.execution.trading.trading_contracts.market.instrument",
+    "CurrencyCode": "zephyr.execution.trading.trading_contracts.market.instrument",
+    "Exchange": "zephyr.execution.trading.trading_contracts.market.instrument",
+    "Future": "zephyr.execution.trading.trading_contracts.market.instrument",
+    "Jurisdiction": "zephyr.execution.trading.trading_contracts.market.instrument",
+    "OptionType": "zephyr.execution.trading.trading_contracts.market.instrument",
+    "Stock": "zephyr.execution.trading.trading_contracts.market.instrument",
+    "TradingCalendarName": "zephyr.execution.trading.trading_contracts.market.instrument",
+    "OrderSide": "zephyr.execution.trading.trading_contracts.execution.order",
+    "OrderStatus": "zephyr.execution.trading.trading_contracts.execution.order",
+    "OrderType": "zephyr.execution.trading.trading_contracts.execution.order",
+}
+
+
+def __getattr__(name):
+    if name in _TRADING_SYMBOLS:
+        mod = importlib.import_module(_TRADING_SYMBOLS[name])
+        return getattr(mod, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 __all__ = [
     "AssetClass",

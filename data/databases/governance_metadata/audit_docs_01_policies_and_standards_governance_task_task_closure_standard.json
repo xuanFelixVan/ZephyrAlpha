@@ -1,0 +1,56 @@
+{
+  "task_id": "DM-100152",
+  "source_file": "docs/01_policies_and_standards/governance/task/task_closure_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "TASK-005-COMPLETION": {
+      "title": "完成定义(IN_PROGRESS→COMPLETED)",
+      "type": "mandatory+constraint",
+      "content": "交付物完整性+验收达标+编码合规(UTF-8无BOM+LF)+依赖完整",
+      "coverage": "COVERED",
+      "yaml_section": "task_005_completion"
+    },
+    "TASK-005-VERIFICATION": {
+      "title": "验证定义(COMPLETED→VERIFIED)",
+      "type": "mandatory+constraint",
+      "content": "清扫通过(task_completion_gate.py)+编码合规+验收确认(safety_level决定验证者)",
+      "coverage": "COVERED",
+      "yaml_section": "task_005_verification"
+    },
+    "TASK-005-CLEANUP": {
+      "title": "清扫三步法",
+      "type": "mandatory+prohibition",
+      "content": "Step1产出物核验/Step2临时文件清除(temp_*/backup/*-v2等)/Step3残留物检测(5类分类处置)",
+      "coverage": "COVERED",
+      "yaml_section": "task_005_cleanup"
+    },
+    "TASK-005-CANCEL": {
+      "title": "取消关闭流程",
+      "type": "mandatory",
+      "content": "取消原因记录/部分产出物标记/取消后仍需临时文件清除",
+      "coverage": "COVERED",
+      "yaml_section": "task_005_cancel"
+    },
+    "TASK-005-VIOLATION": {
+      "title": "违规处理",
+      "type": "prohibition",
+      "content": "WARNING(未提及清扫)/ERROR(残留)/CRITICAL(产出物未声明)",
+      "coverage": "COVERED",
+      "yaml_section": "task_005_violation"
+    }
+  },
+  "summary": {
+    "total_rules": 5,
+    "COVERED": 5,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "新增task_005_completion节：完成定义（5个约束条件+4条强制步骤）",
+    "新增task_005_verification节：验证定义（2个约束条件+3条强制步骤）",
+    "新增task_005_cleanup节：清扫三步法（3条强制步骤+1条禁止项）",
+    "新增task_005_cancel节：取消关闭流程（3条强制步骤）",
+    "新增task_005_violation节：违规处理（3条禁止项）"
+  ]
+}

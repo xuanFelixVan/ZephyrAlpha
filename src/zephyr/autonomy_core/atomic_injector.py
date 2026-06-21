@@ -1,0 +1,38 @@
+# [A_module] module_id=MOD-ORC_atomic_injector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+from __future__ import annotations
+
+# [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md
+
+# [MODULE] zephyr.autonomy_core.atomic_injector
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+"""atomic_injector.py — 原子注入 (DD101, TASK-019)"""
+
+from dataclasses import dataclass
+
+@dataclass
+class AtomicResult:
+    success: bool
+    full_context_applied: bool
+    rolled_back: bool = False
+
+class AtomicInjector:
+    """All-or-nothing: all 4 layers must succeed or rollback entirely (DD101)."""
+    def inject_atomic(self, layers: dict[str, str]) -> AtomicResult:
+        all_valid = all(bool(v) for v in layers.values())
+        return AtomicResult(success=all_valid, full_context_applied=all_valid, rolled_back=not all_valid)

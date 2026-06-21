@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0116 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-273 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.governance.conftest
 # [STABILITY] evolving
 # [SAFETY] L
@@ -31,7 +32,7 @@ def manifest(repo_root: Path) -> dict:
 
     import yaml
 
-    manifest_path = repo_root / "scripts" / "script_manifest.yaml"
+    manifest_path = repo_root / "scripts" / "script-manifest.yaml"
     sys.path.insert(0, str(repo_root / "scripts"))
     with open(manifest_path, encoding="utf-8") as f:
         return yaml.safe_load(f)

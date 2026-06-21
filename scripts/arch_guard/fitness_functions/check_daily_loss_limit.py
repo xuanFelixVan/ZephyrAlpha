@@ -41,11 +41,11 @@ def main() -> int:
             print(f"FAIL: daily_loss_limit_nav_ratio={limit_ratio} 非法（应在 0 < x ≤ 1.0）")
             return 1
 
-    stop_loss_path = REPO_ROOT / "src" / "zephyr" / "l04_risk_management" / "stop_loss.py"
+    stop_loss_path = REPO_ROOT / "src" / "zephyr" / "risk" / "stop_loss.py"
     has_stop_loss = stop_loss_path.is_file()
     if not has_stop_loss:
         stop_loss_files = list(
-            (REPO_ROOT / "src" / "zephyr" / "l04_risk_management").rglob("*.py")
+            (REPO_ROOT / "src" / "zephyr" / "risk").rglob("*.py")
         )
         has_stop_loss = any("stop" in f.stem.lower() or "loss" in f.stem.lower() for f in stop_loss_files)
 

@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
+# [A_module] module_id=MOD-SHR_factories | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §
 
 # [MODULE] zephyr.shared.contracts.core.factories
 
@@ -6,7 +7,7 @@
 
 # [MODIFY-GUARD] none
 
-# [CONSUMERS]
+# [CONSUMERS] trading.trading_contracts.factories
 
 # [STABILITY] evolving
 
@@ -22,22 +23,16 @@
 
 Phase D-3: 提供跨层数据转换的工厂方法，统一处理 float→Decimal 边界转换。
 
-SSoT: cross-layer-contracts.yaml v3.0
+SSoT: cross_layer_contracts.yaml v3.0
 Status: HAND-MAINTAINED — codegen disabled (Phase D)
 """
 from __future__ import annotations
 
 
+import importlib
 from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any
-
-from zephyr.trading_contracts.market.factor_signal import FactorSignal
-from zephyr.trading_contracts.execution.order import Order, OrderSide, OrderType
-from zephyr.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
-from zephyr.trading_contracts.risk.risk_limits import RiskLimits
-from zephyr.trading_contracts.risk.risk_metrics import RiskMetricsReport
-from zephyr.trading_contracts.market.synthesized_signal import SynthesizedSignal
 
 
 def _to_decimal(value: Any) -> Decimal:
@@ -71,12 +66,14 @@ def make_risk_limits(
     max_portfolio_var_1d: float | Decimal | None = None,
     max_drawdown_limit: float | None = None,
     symbol_overrides: dict[str, float] | None = None,
-) -> RiskLimits:
+):
     """创建 RiskLimits 实例——与 CTR-003（float VaR 上限）对齐。"""
+    _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.risk.risk_limits")
+    _RiskLimits = getattr(_mod, "RiskLimits")
     mpv: float | None = None
     if max_portfolio_var_1d is not None:
         mpv = float(max_portfolio_var_1d)
-    return RiskLimits(
+    return _RiskLimits(
         as_of_date=as_of_date or datetime.now(UTC),
         idempotency_key=idempotency_key or f"limits-{int(datetime.now(UTC).timestamp())}",
         max_single_position=max_single_position,
@@ -104,9 +101,11 @@ def make_risk_dashboard_snapshot(
     active_alerts: list[str] | None = None,
     overall_risk_score: float = 0.0,
     idempotency_key: str = "",
-) -> RiskDashboardSnapshot:
+):
     """创建 RiskDashboardSnapshot——用于 L04→L08 监控面板推送。"""
-    return RiskDashboardSnapshot(
+    _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.risk.risk_dashboard_snapshot")
+    _RiskDashboardSnapshot = getattr(_mod, "RiskDashboardSnapshot")
+    return _RiskDashboardSnapshot(
         snapshot_time=datetime.now(UTC).isoformat(),
         portfolio_id=portfolio_id,
         portfolio_var_1d=float(portfolio_var_1d),
@@ -143,9 +142,11 @@ def make_risk_metrics_report(
     lookback_period: int = 252,
     idempotency_key: str = "",
     as_of_date: datetime | None = None,
-) -> RiskMetricsReport:
+):
     """创建 RiskMetricsReport——用于 L04→L05/L07/L08/L10 风险指标推送。"""
-    return RiskMetricsReport(
+    _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.risk.risk_metrics")
+    _RiskMetricsReport = getattr(_mod, "RiskMetricsReport")
+    return _RiskMetricsReport(
         portfolio_id=portfolio_id,
         as_of_date=as_of_date or datetime.now(UTC),
         var_1d_95=float(var_1d_95),
@@ -180,9 +181,11 @@ def make_factor_signal(
     confidence: float = 1.0,
     as_of_date: datetime | None = None,
     idempotency_key: str = "",
-) -> FactorSignal:
+):
     """创建 FactorSignal 实例——因子信号标准化入口。"""
-    return FactorSignal(
+    _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.market.factor_signal")
+    _FactorSignal = getattr(_mod, "FactorSignal")
+    return _FactorSignal(
         as_of_date=as_of_date or datetime.now(UTC),
         factor_id=factor_id,
         idempotency_key=idempotency_key or f"fsig-{factor_id}-{symbol}-{int(datetime.now(UTC).timestamp())}",
@@ -212,9 +215,11 @@ def make_synthesized_signal(
     is_degraded: bool = False,
     idempotency_key: str = "",
     as_of_timestamp: datetime | None = None,
-) -> SynthesizedSignal:
+):
     """创建 SynthesizedSignal 实例——L03 合成信号标准化入口。"""
-    return SynthesizedSignal(
+    _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.market.synthesized_signal")
+    _SynthesizedSignal = getattr(_mod, "SynthesizedSignal")
+    return _SynthesizedSignal(
         signal_id=signal_id,
         symbol=symbol,
         as_of_timestamp=as_of_timestamp or datetime.now(UTC),
@@ -238,15 +243,17 @@ def make_synthesized_signal(
 def make_order(
     order_id: str,
     symbol: str,
-    side: OrderSide,
-    order_type: OrderType,
+    side,  # OrderSide — lazy imported
+    order_type,  # OrderType — lazy imported
     quantity: Decimal,
     strategy_id: str,
     limit_price: Decimal | None = None,
     idempotency_key: str = "",
-) -> Order:
+):
     """创建 Order 实例——L05 委托指令标准化入口。"""
-    return Order(
+    _mod = importlib.import_module("zephyr.execution.trading.trading_contracts.execution.order")
+    _Order = getattr(_mod, "Order")
+    return _Order(
         idempotency_key=idempotency_key or f"ord-{order_id}",
         order_id=order_id,
         order_type=order_type,

@@ -2,7 +2,7 @@
 """
 全项目资产索引生成器
 ===================
-RULE-NINE 合规：生成 unified_asset_index.yaml 供新 AI session 冷启动时了解项目全盘资产规模。
+RULE-NINE 合规：生成 unified-asset-index.yaml 供新 AI session 冷启动时了解项目全盘资产规模。
 运行方式：python scripts/governance/generate_asset_index.py [--output <path>]
 """
 from __future__ import annotations
@@ -16,7 +16,7 @@ from pathlib import Path
 import yaml
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[2]
-_DEFAULT_OUTPUT = _PROJECT_ROOT / "data" / "asset_index" / "unified_asset_index.yaml"
+_DEFAULT_OUTPUT = _PROJECT_ROOT / "data" / "asset_index" / "unified-asset-index.yaml"
 
 _SCAN_DIRECTORIES: dict[str, list[str | None]] = {
     "src": ["src/zephyr"],

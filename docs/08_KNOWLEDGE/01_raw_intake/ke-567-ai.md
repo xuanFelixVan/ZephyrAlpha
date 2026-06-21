@@ -1,0 +1,18 @@
+---
+module_id: KE-512
+title: 8. AI 自治权限标注
+category: documentation
+---
+
+# 8. AI 自治权限标注
+
+8. AI 自治权限标注
+
+<!-- 填写：AI 对本协议的操作权限。协议类文档通常是 human_gated——涉及多方交互的规则变更需 Owner 审批。 -->
+
+| 操作 | AI 自治权限 | 说明 |
+|------|:---:|------|
+| 新增交互步骤 | human_gated | 交互流程变更涉及多方协调 |
+| 修改失败处理 | human_gated | 失败处理的变更需谨慎 |
+| 更新版本兼容表 | ai_editable | AI 可自主更新版本兼容信息 |
+| 补充参与方信息 | ai_editable | AI 可自主补充参与方详情 |

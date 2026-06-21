@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/generate_rule_catalog.py | §
 #!/usr/bin/env python3
-"""Scan docs/01_policies_and_standards and emit _registry/catalogs/rule-catalog.yaml.
+"""Scan docs/01_policies_and_standards and emit _registry/catalogs/rule-catalog-registry.yaml.
 
 Parses Markdown/YAML frontmatter (and YAML comment headers where applicable).
 
@@ -13,7 +13,7 @@ CLI::
 __manifest__ = """
 args: []
 description: >
-  Scan policy tree; aggregate frontmatter into rule-catalog.yaml.
+  Scan policy tree; aggregate frontmatter into rule-catalog-registry.yaml.
   Aligns with static-manifest SSOT for governance scripts (section 6.16-style workflow).
 dimensions:
   - D3
@@ -141,7 +141,7 @@ def scan_directory(scan_dir: str, repo_root: Path) -> list[dict]:
 SCOPE_NOTE_DOCUMENT_METADATA = (
     "本文件仅索引 docs/01_policies_and_standards/ 下带治理 frontmatter 的 Markdown（及本树登记引用）。"
     " docs/02_enterprise_architecture/、docs/09_audit/findings/、architecture-model 施工树等不在此表——见各目录 "
-    "INDEX.md 与 architecture-model/SCOPE.yaml。"
+    "index.md 与 architecture-model/SCOPE.yaml。"
 )
 
 
@@ -150,7 +150,7 @@ def generate_catalog(
     output_path: str,
     metadata_path: str | None = None,
 ) -> None:
-    """Write rule-catalog.yaml and optionally document-metadata-index.yaml."""
+    """Write rule-catalog-registry.yaml and optionally document-metadata-index-registry.yaml."""
     gen_ts = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     catalog = {
@@ -191,7 +191,7 @@ def generate_catalog(
             "title": "文档元数据索引",
             "status": "active",
             "generated_at": gen_ts,
-            "generated_from": "generate_rule_catalog.py（与 rule-catalog.yaml 同批同步）",
+            "generated_from": "generate_rule_catalog.py（与 rule-catalog-registry.yaml 同批同步）",
             "scope_note": SCOPE_NOTE_DOCUMENT_METADATA,
             "total_files": len(entries),
             "files": entries,
@@ -290,25 +290,25 @@ def main() -> None:
     )
     parser.add_argument(
         "--output",
-        default=str(repo_root / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "rule-catalog.yaml"),
+        default=str(repo_root / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "rule-catalog-registry.yaml"),
         help="Output YAML file",
     )
     parser.add_argument(
         "--metadata-output",
         default=str(
-            repo_root / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index.yaml"
+            repo_root / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index-registry.yaml"
         ),
-        help="同步写出 document-metadata-index.yaml（默认启用）",
+        help="同步写出 document-metadata-index-registry.yaml（默认启用）",
     )
     parser.add_argument(
         "--no-metadata-output",
         action="store_true",
-        help="不同步写出 document-metadata-index.yaml",
+        help="不同步写出 document-metadata-index-registry.yaml",
     )
     parser.add_argument(
         "--compare",
         default=str(
-            repo_root / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index.yaml"
+            repo_root / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index-registry.yaml"
         ),
         help="Compare with existing registry",
     )

@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0164 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-321 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.integration.test_audit08_service_layer_wiring
 # [STABILITY] evolving
 # [SAFETY] L
@@ -12,17 +13,17 @@ import importlib.util
 
 import pytest
 
-from zephyr.feedback_loop.backpressure_bridge import sync_evolution_proposals_to_backpressure
-from zephyr.feedback_loop.evolution_engine import (
+from zephyr.ops.backpressure_bridge import sync_evolution_proposals_to_backpressure
+from zephyr.ops.evolution_engine import (
     EvolutionProposal,
     EvolutionSignal,
     FeedbackLayer,
     Severity,
 )
-from zephyr.kb.unified_memory_api import InMemoryMemoryBackend, UnifiedMemoryAPI
-from zephyr.pipeline.backpressure_manager import BackpressureManager
-from zephyr.shared.utils.time_utils import default_now
-from zephyr.vector_memory import MemoryEntry, UnifiedVectorMemoryAdapter
+from zephyr.intelligence.model_evaluation.unified_memory_api import InMemoryMemoryBackend, UnifiedMemoryAPI
+from zephyr.integration.backpressure_manager import BackpressureManager
+from zephyr.integration.shared_08.time_utils import default_now
+from zephyr.governance.vector_memory import MemoryEntry, UnifiedVectorMemoryAdapter
 
 
 def test_sync_evolution_triggers_throttle_on_critical() -> None:
@@ -70,11 +71,11 @@ def test_sync_evolution_skips_when_no_critical() -> None:
 @pytest.mark.parametrize(
     "mod,gate_id",
     [
-        ("zephyr.kb.ingest", "G1"),
-        ("zephyr.kb.triage", "G2"),
-        ("zephyr.kb.analyze", "G3"),
-        ("zephyr.kb.activate", "G4"),
-        ("zephyr.kb.extract", "G5"),
+        ("zephyr.data.storage.ingest", "G1"),
+        ("zephyr.data.storage.triage", "G2"),
+        ("zephyr.alt_data.kb.analyze", "G3"),
+        ("zephyr.intelligence.model_evaluation.activate", "G4"),
+        ("zephyr.alt_data.kb.extract", "G5"),
     ],
 )
 def test_kb_stage_wires_expected_gate_id(mod: str, gate_id: str) -> None:

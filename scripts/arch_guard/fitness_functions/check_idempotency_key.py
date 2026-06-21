@@ -5,7 +5,7 @@ check_idempotency_key.py — 幂等 Key 字段存在性检查 (INV-007)
 INV-007: 所有跨层事件必须携带幂等 Key（Idempotency Key）：防止重复处理。
 
 检测方式：
-  - 读取 cross-layer-contracts.yaml
+  - 读取 cross_layer_contracts.yaml
   - 检查所有 P0 DATA / ERROR / BACKPRESSURE 契约的 fields 中是否包含 idempotency_key
   - 对于已 codegen 的契约，检查对应的 Python dataclass 是否包含该字段
 
@@ -29,7 +29,7 @@ CONTRACTS_YAML = (
     / "target-architecture"
     / "architecture-model"
     / "contracts"
-    / "cross-layer-contracts.yaml"
+    / "cross_layer_contracts.yaml"
 )
 
 CONTRACT_TYPES_TO_CHECK = ["P0", "P1"]

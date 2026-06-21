@@ -145,7 +145,7 @@ utilities:
       note: 项目根目录绝对路�?
     - symbol: DB_PATH
       type: Path
-      note: data/zalpha_metadata.db
+      note: data/databases/governance.db
     - symbol: find_repo_root
       type: () -> Path
       note: 健壮的根目录定位函数
@@ -570,18 +570,18 @@ blueprint_scorer:
   - 裸路由查表不评分——用 score_and_rank_routes 避免短链路截�?最长匹配陷�?
 agent_rbac:
   description: Agent 身份与权限系统——静态权限注册表升级为七层运行时强制执行�?
-  blueprint: docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md
-  code_root: src/zephyr/agent_rbac/
+  blueprint: docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md
+  code_root: src/zephyr/agent-rbac/
   status: draft (0% 施工)
   architecture: L0 Immutable Core �?L1 RBAC �?L2 ABAC �?L3 Input Guard �?L4 Sequence
     Guard �?[执行] �?L5 Output Guard �?L6 Observability
   layers:
     l0_immutable_core:
-      file: agent_rbac/immutable_core.py
+      file: agent-rbac/immutable_core.py
       description: 硬编码不可变保护路径 + Kill Switch 全局熔断 + Engine 降级策略（崩=blocked�?
       key_exports:
       - symbol: PROTECTED_PATHS
-        note: 硬编码保护路径列表—�?git, agent_rbac/, AGENTS.md, .pre-commit-config.yaml
+        note: 硬编码保护路径列表—�?git, agent-rbac/, AGENTS.md, .pre-commit-config.yaml
       - symbol: ALWAYS_BLOCKED
         note: 硬编码禁止操作——modify_self_permissions, delete_audit_logs, shell_true_execution
       - symbol: KillSwitch
@@ -591,7 +591,7 @@ agent_rbac:
       anti_patterns:
       - AI 修改 immutable_core.py �?rbac_roles.yaml 给自己提权——L0 必须硬阻�?
     l1_rbac:
-      file: agent_rbac/rbac_guard.py
+      file: agent-rbac/rbac_guard.py
       description: RBAC 角色权限——三�?always_allow 95% / auto_guard 4% / blocked 1%
       key_exports:
       - symbol: PermissionGuard.check()
@@ -602,7 +602,7 @@ agent_rbac:
         note: 判定结果 + layered_decisions 逐层明细
       config: rbac_roles.yaml——从 GOV-AI-001 自动派生
     l2_abac:
-      file: agent_rbac/abac_guard.py
+      file: agent-rbac/abac_guard.py
       description: ABAC 属性权限——意图感�?+ 时间窗口 + Agent 成熟度四�?+ 资源敏感�?
       key_exports:
       - symbol: AgentMaturityLevel
@@ -610,23 +610,23 @@ agent_rbac:
       - symbol: AbacContext
         note: 四维属性上下文——intent + temporal + maturity + sensitivity
     l3_input_guard:
-      file: agent_rbac/input_guard.py
+      file: agent-rbac/input_guard.py
       description: 参数护栏——schema 白名�?+ 范围限制 + 危险模式检测（DROP TABLE/shell injection�?
     l4_sequence_guard:
-      file: agent_rbac/sequence_guard.py
+      file: agent-rbac/sequence_guard.py
       description: 序列护栏——会话级操作序列追踪 + 禁止序列阻断（read_sensitive→external_output�?
       note: 最关键盲点补丁——防止多步合法操作组成攻击链
     l5_output_guard:
-      file: agent_rbac/output_guard.py
+      file: agent-rbac/output_guard.py
       description: 输出护栏——PII 脱敏 + 凭证检�?+ 大小截断
     l6_observability:
-      file: agent_rbac/observability.py
+      file: agent-rbac/observability.py
       description: 可观测性——OpenTelemetry 指标 + 行为异常检�?+ 权限变更审计
     l7_testing:
-      file: agent_rbac/dry_run.py
+      file: agent-rbac/dry_run.py
       description: 测试与模拟——权限影响分�?+ Dry-Run 模式 + 自动化测试框�?
   identity:
-    file: agent_rbac/identity.py
+    file: agent-rbac/identity.py
     key_exports:
     - symbol: AgentIdentity
       note: agent_id + agent_type + ide_source + role_bindings + maturity_level +
@@ -642,7 +642,7 @@ agent_rbac:
   - target: mcp._base_server
     at: tool_call 拦截
     why: MCP Tool 执行前七层权限检�?
-  - target: audit_trail
+  - target: audit-trail
     at: MOD-INF-020
     why: 权限判定 + 序列违规 + Kill Switch 事件
   - target: rollback_system
@@ -710,12 +710,12 @@ consumers:
   - time_utils.now_iso
   - token_utils.estimate_tokens
   note: MOD-INF-022——三级升级判�?四级委托安全约束
-- module: agent_rbac.immutable_core
+- module: agent-rbac.immutable_core
   depends_on:
   - resilience.circuit_breaker
 - module: mcp._base_server
   depends_on:
-  - agent_rbac.permission_guard
+  - agent-rbac.permission_guard
 - module: mcp.knowledge_base_server
   depends_on:
   - logging.get_logger
@@ -749,7 +749,7 @@ consumers:
   - errors.SecurityError
   - resilience.circuit_breaker
   note: Phase 6 规划中——代码执行沙箱MCP服务�?
-- module: audit_trail.writer
+- module: audit-trail.writer
   depends_on:
   - file_utils.atomic_write
   - file_utils.safe_read
@@ -759,53 +759,53 @@ consumers:
   - time_utils.now_iso
   note: 'MOD-INF-020 v1.1.0——不可变审计写入�? JSONL append + 哈希�?+ HMAC + Ed25519 Agent签名
     + Lamport时钟'
-- module: audit_trail.query
+- module: audit-trail.query
   depends_on:
   - paths.DB_PATH
   - file_utils.safe_read
   - logging.get_logger
   note: 'MOD-INF-020 v1.1.0——审计查�? SQLite优先 + JSONL回退 + trail_for_ai_context(P0) +
     证据包导�?
-- module: audit_trail.agent_signer
+- module: audit-trail.agent_signer
   depends_on:
-  - audit_trail.models
+  - audit-trail.models
   - logging.get_logger
   note: MOD-INF-020——Agent级Ed25519签名�?+ DID注册�?
-- module: audit_trail.external_verifier
+- module: audit-trail.external_verifier
   depends_on: []
   note: MOD-INF-020——外部独立验证脚本——CI门禁�?
-- module: audit_trail.supply_chain
+- module: audit-trail.supply_chain
   depends_on:
-  - audit_trail.writer.AuditTrailWriter
+  - audit-trail.writer.AuditTrailWriter
   - logging.get_logger
   note: 'MOD-INF-020——供应链审计: 包安装检�?+ SHA-256验证'
-- module: audit_trail.delegation
+- module: audit-trail.delegation
   depends_on:
-  - audit_trail.models
-  - audit_trail.agent_signer
+  - audit-trail.models
+  - audit-trail.agent_signer
   note: 'MOD-INF-020——委托链审计�? 深度控制 + 权限缩小校验'
-- module: audit_trail.trust_score
+- module: audit-trail.trust_score
   depends_on:
-  - audit_trail.models
+  - audit-trail.models
   note: 'MOD-INF-020——渐进信任引�? 连续分数 + 时间衰减 + 自动降级'
-- module: audit_trail.cross_ide
+- module: audit-trail.cross_ide
   depends_on:
-  - audit_trail.query.AuditQuery
+  - audit-trail.query.AuditQuery
   note: 'MOD-INF-020——跨IDE一致�? 冲突检�?+ 共识合并'
-- module: audit_trail.evidence_pack
+- module: audit-trail.evidence_pack
   depends_on:
-  - audit_trail.query.AuditQuery
-  - audit_trail.integrity
+  - audit-trail.query.AuditQuery
+  - audit-trail.integrity
   note: 'MOD-INF-020——监管证据包导出: JSON+PDF + FCA五维格式'
 - module: gate_engine.gate_runner
   depends_on:
-  - audit_trail.writer.AuditTrailWriter
+  - audit-trail.writer.AuditTrailWriter
   note: 门禁决策结果写入审计追踪
-- module: feedback_loop.aggregator
+- module: feedback-loop.aggregator
   depends_on:
-  - audit_trail.query.AuditQuery
+  - audit-trail.query.AuditQuery
   note: 审计聚合数据消费——生成反�?PR
-- module: feedback_loop.engine
+- module: feedback-loop.engine
   depends_on:
   - schemas.Task
   - schemas.TaskStatus
@@ -816,40 +816,40 @@ consumers:
   - flags.FeatureFlag
   - resilience.circuit_breaker.CircuitState
   note: 'MOD-INF-010 v0.3.1——FLE主引�? LifecycleManager注册+FeatureFlag渐进控制+agent_rbac联动'
-- module: feedback_loop.detection_model_health
+- module: feedback-loop.detection_model_health
   depends_on:
   - time_utils.now_iso
   - logging.get_logger
   - flags.FeatureFlag
   note: MOD-INF-010 v0.3.1——FLE自身概念漂移检�?Isolation Forest自动重训�?
-- module: feedback_loop.behavioral_drift
+- module: feedback-loop.behavioral_drift
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   note: MOD-INF-010 v0.3.1——Agent行为漂移(CoT/Tool call/Output结构)
-- module: feedback_loop.llm_vote_cost
+- module: feedback-loop.llm_vote_cost
   depends_on:
   - errors.FeedbackError
   - time_utils.now_iso
   note: MOD-INF-010 v0.4.0——LLM投票成本计量+频率控制+$5/月预�?per-model分解
-- module: feedback_loop.regime_detector
+- module: feedback-loop.regime_detector
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - errors.FeedbackError
   note: MOD-INF-010 v0.4.0——MarketRegimeDetector+MarketCalendarAware+Per-Regime基线切换
-- module: feedback_loop.model_profiles
+- module: feedback-loop.model_profiles
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   note: MOD-INF-010 v0.4.0——Per-Model Failure Profiles(DeepSeek/GLM/GPT-5.2)独立特征空间
-- module: feedback_loop.cross_model_consensus
+- module: feedback-loop.cross_model_consensus
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - errors.FeedbackError
   note: MOD-INF-010 v0.4.0——Cross-Model Consensus Monitor跨模型分歧检�?
-- module: feedback_loop.fle_observability
+- module: feedback-loop.fle_observability
   depends_on:
   - logging.get_logger
   - time_utils.now_iso
@@ -857,138 +857,138 @@ consumers:
   - lifecycle.LifecycleManager
   note: 'MOD-INF-010 v0.4.0——FLE可观测�? FP/FN+Latency Decomp+Longitudinal KPIs+Self-Test
     Coverage+Dep Version Tracker'
-- module: feedback_loop.causal_engine
+- module: feedback-loop.causal_engine
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - errors.FeedbackError
   - schemas.Task
   note: MOD-INF-010 v0.5.0——CausalRCA反事实验�?DoWhy)+Bayesian ActionEffectiveness因果归因(BSTS)
-- module: feedback_loop.config_manager
+- module: feedback-loop.config_manager
   depends_on:
   - flags.FeatureFlag
   - logging.get_logger
   - time_utils.now_iso
   - errors.FeedbackError
   note: MOD-INF-010 v0.5.0——Config-as-Code Git对账+Flag交互矩阵验证+配置回滚+部署安全模式
-- module: feedback_loop.db_integrity
+- module: feedback-loop.db_integrity
   depends_on:
   - logging.get_logger
   - errors.FeedbackError
   note: MOD-INF-010 v0.5.0——FLE SQLite PRAGMA完整性自检+腐败告警
-- module: feedback_loop.checkpoint_manager
+- module: feedback-loop.checkpoint_manager
   depends_on:
   - time_utils.now_iso
   - logging.get_logger
   - flags.FeatureFlag
   - errors.FeedbackError
   note: MOD-INF-010 v0.5.0——Checkpoint序列�?Resume热恢�?冷启�?2h�?-30min)
-- module: feedback_loop.code_provenance
+- module: feedback-loop.code_provenance
   depends_on:
   - lifecycle.LifecycleManager
   - flags.FeatureFlag
   - logging.get_logger
   note: MOD-INF-010 v0.5.0——AI/human/AI+human三级代码信任追踪+Detection灵敏度自适应
-- module: feedback_loop.saga_coordinator
+- module: feedback-loop.saga_coordinator
   depends_on:
   - errors.FeedbackError
   - logging.get_logger
   - flags.FeatureFlag
   - schemas.Task
   note: MOD-INF-010 v0.5.0——多步骤REPAIR Saga/Compensation事务协调+RejectedAction日志
-- module: feedback_loop.action_selection_model
+- module: feedback-loop.action_selection_model
   depends_on:
   - flags.FeatureFlag
   - logging.get_logger
   - errors.FeedbackError
   note: MOD-INF-010 v0.5.0——基于历�?Action→Effect)学习的Action推荐模型
-- module: feedback_loop.session_awareness
+- module: feedback-loop.session_awareness
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   note: MOD-INF-010 v0.5.0——Vibe Coding Session感知+Onboarding模式新人友好
-- module: feedback_loop.fle_value_tracker
+- module: feedback-loop.fle_value_tracker
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - time_utils.now_iso
   note: MOD-INF-010 v0.7.0——ROI量化+时间节省+Daily Value Report
-- module: feedback_loop.skill_retention
+- module: feedback-loop.skill_retention
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - time_utils.now_iso
   note: MOD-INF-010 v0.7.0——反自动化悖�?手动演习提醒+系统健康摘要
-- module: feedback_loop.fle_tco_auditor
+- module: feedback-loop.fle_tco_auditor
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   note: MOD-INF-010 v0.7.0——自审计维护成本+精简建议
-- module: feedback_loop.fle_federation
+- module: feedback-loop.fle_federation
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - errors.FeedbackError
   - time_utils.now_iso
   note: 'MOD-INF-010 v0.7.0——FLE联邦协议: InterFLEDiscovery+Cross-FLE Consensus+Escalation'
-- module: feedback_loop.action_mediator
+- module: feedback-loop.action_mediator
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   note: MOD-INF-010 v0.7.0——FLE联邦冲突仲裁+domain优先�?
-- module: feedback_loop.federation_policy
+- module: feedback-loop.federation_policy
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - errors.SecurityError
   note: MOD-INF-010 v0.7.0——跨域权�?mTLS验证
-- module: feedback_loop.adversarial_defense
+- module: feedback-loop.adversarial_defense
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - time_utils.now_iso
   note: MOD-INF-010 v0.7.0——对抗注入检�?缓慢投毒+来源验证
-- module: feedback_loop.prompt_sanitizer
+- module: feedback-loop.prompt_sanitizer
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - errors.SecurityError
   note: MOD-INF-010 v0.7.0——LLM输入净�?Prompt注入防御
-- module: feedback_loop.amplification_guard
+- module: feedback-loop.amplification_guard
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - time_utils.now_iso
   note: MOD-INF-010 v0.7.0——攻击放大防�?同root_cause暂停LLM
-- module: feedback_loop.kb_provenance
+- module: feedback-loop.kb_provenance
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   note: MOD-INF-010 v0.7.0——KB来源可靠性评�?UNTRUSTED标记
-- module: feedback_loop.unknown_handler
+- module: feedback-loop.unknown_handler
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   note: MOD-INF-010 v0.7.0—�?我不知道'显式输出→HUMAN_REQUIRED
-- module: feedback_loop.longitudinal_meta
+- module: feedback-loop.longitudinal_meta
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - time_utils.now_iso
   note: MOD-INF-010 v0.7.0——月度纵向自评报�?Top3优化方向
-- module: feedback_loop.value_added_baseline
+- module: feedback-loop.value_added_baseline
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   note: MOD-INF-010 v0.7.0——FLE vs EMA对照→真正的价值增�?
-- module: feedback_loop.deprecation_advisor
+- module: feedback-loop.deprecation_advisor
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
   - lifecycle.LifecycleManager
   - time_utils.now_iso
   note: MOD-INF-010 v0.7.0——子系统废弃建议+30天自动清�?
-- module: feedback_loop.daily_report_composer
+- module: feedback-loop.daily_report_composer
   depends_on:
   - logging.get_logger
   - flags.FeatureFlag
@@ -1061,14 +1061,14 @@ common_traps:
 audit_trail:
   description: 不可变、密码学完整性保证的审计追踪链——记录每�?AI 动作�?who/when/what/why。JSONL SSoT + 哈希链防篡改
     + HMAC 签名 + Lamport 逻辑时钟 + 异常检�?+ 漂移对账 + 三角闭环反馈�?
-  blueprint: docs/03_modules/l01_infrastructure/audit-trail/blueprint.md
-  code_root: src/zephyr/audit_trail/
+  blueprint: docs/03_modules/_domain-governance/audit-trail/blueprint.md
+  code_root: src/zephyr/audit-trail/
   status: draft (0% 施工)
   architecture: JSONL SSoT (append-only + tamper-evident) �?SQLite 派生索引 (查询加�? �?异常检测引�?
     �?漂移对账�?�?三角闭环反馈 (�?Policy PR)
   files: 12
   models:
-    file: audit_trail/models.py
+    file: audit-trail/models.py
     description: Pydantic V2 不可变审计事件模型——frozen=True + extra='forbid'。全�?23 字段�?
     key_exports:
     - symbol: AuditEntryV1
@@ -1115,7 +1115,7 @@ audit_trail:
     - 修改 AuditEntryV1 字段不更�?schema_version——历史记录回读失�?
     - 跳过 frozen=True 可变审计条目——破�?append-only 原则
   writer:
-    file: audit_trail/writer.py
+    file: audit-trail/writer.py
     description: 不可变审计写入器——JSONL append + 哈希�?+ HMAC + Lamport tick。唯一写入入口�?
     key_exports:
     - symbol: AuditTrailWriter.append()
@@ -1129,7 +1129,7 @@ audit_trail:
     - 直接 open(data/audit/audit-trail.jsonl, 'a')——绕过哈希链�?HMAC 生成
     - append 后不调用异步索引重建——查询延迟超�?5s
   query:
-    file: audit_trail/query.py
+    file: audit-trail/query.py
     description: 审计查询接口——SQLite 优先 + JSONL 回退 + 查询前完整性快速校验。每次查询自动写元审计�?
     key_exports:
     - symbol: AuditQuery.by_task()
@@ -1159,7 +1159,7 @@ audit_trail:
     - 绕过 AuditQuery 直接 SQL SELECT——缺少元审计 + 完整性校�?
     - 查询异常事件不传 min_score——返回全量噪声（建议默认 0.7�?
   integrity:
-    file: audit_trail/integrity.py
+    file: audit-trail/integrity.py
     description: 密码学完整性验证器——哈希链连续�?/ HMAC 批量验证 / Merkle 树重建校�?
     key_exports:
     - symbol: verify_hash_chain()
@@ -1169,7 +1169,7 @@ audit_trail:
     - symbol: rebuild_merkle_tree()
       note: �?JSONL 重建 Merkle �?�?写入 data/audit/merkle/audit-merkle-{YYYY-MM-DDTHH}.json
   lamport_clock:
-    file: audit_trail/writer.py
+    file: audit-trail/writer.py
     description: Lamport 逻辑时钟——多 IDE 并发下的因果顺序保证。不对操作系统时钟做任何假设�?
     key_exports:
     - symbol: LamportClock.tick()
@@ -1179,7 +1179,7 @@ audit_trail:
     - symbol: audit_entry_sort_key()
       note: '全序排序�? (counter, ide_source) 字典序——对�?Dynamo Vector Clock 简化版'
   anomaly:
-    file: audit_trail/anomaly.py
+    file: audit-trail/anomaly.py
     description: AI 行为异常检测引擎—�? 种异常签�?+ 行为基线模型 + 自动告警。Experimental 阶段落位�?
     key_exports:
     - symbol: AnomalyDetector.detect()
@@ -1219,7 +1219,7 @@ audit_trail:
       score_gt_0_7: P1 告警——写�?anomaly_detected 事件 + 通知 Owner
       score_gt_0_9: P0 阻断——触�?Gate Engine block + 通知 Owner + escalation
   drift:
-    file: audit_trail/drift.py
+    file: audit-trail/drift.py
     description: 蓝图 vs 实际操作漂移检测器——对�?AI 实际做了什�?vs 蓝图规定该做什么。Experimental 阶段落位�?
     key_exports:
     - symbol: DriftDetector.compare()
@@ -1231,12 +1231,12 @@ audit_trail:
     - skipped_check——AI 跳过了蓝图规定的检查项
     - immutable_violation——AI 修改了不可变文件
   feedback:
-    file: audit_trail/writer.py (aggregator)
+    file: audit-trail/writer.py (aggregator)
     description: 审计聚合数据回写 Policy——对�?ADR-0010 §4.4 Runtime→Policy 接口。Beta 阶段落位�?
     schedule: '每日 00:30 UTC 聚合: Top 10 异常 + 漂移摘要 + 权限违规趋势 + 高成本事�?
     consumer: feedback_to_policy.py �?GitHub PR (Owner 审批)
   lifecycle:
-    file: audit_trail/lifecycle.py
+    file: audit-trail/lifecycle.py
     description: 三层存储迁移 + 隐私脱敏 + 保留期自动执行。Beta 阶段落位�?
     key_exports:
     - symbol: TierMigrator.migrate_hot_to_warm()
@@ -1250,7 +1250,7 @@ audit_trail:
     - symbol: RetentionEnforcer.enforce()
       note: 保留期清理——需 Owner 审批 token
   cold_start:
-    file: audit_trail/lifecycle.py
+    file: audit-trail/lifecycle.py
     description: 审计系统首次启动——扫�?git log + session-logs/ �?生成历史审计基线。Beta 阶段落位�?
     key_exports:
     - symbol: ColdStartBootstrapper.scan_git_log()
@@ -1260,7 +1260,7 @@ audit_trail:
     - symbol: ColdStartBootstrapper.merge_to_baseline()
       note: 合并 �?bootstrap_audit_baseline.jsonl
   self_monitor:
-    file: audit_trail/self_monitor.py
+    file: audit-trail/self_monitor.py
     description: 审计系统自监控——heartbeat + 健康指标 + 自动修复�?�?AI 维护刚需�?
     key_exports:
     - symbol: SelfMonitor.heartbeat()
@@ -1271,7 +1271,7 @@ audit_trail:
     - symbol: SelfMonitor.auto_heal()
       note: 索引损坏 �?自动�?JSONL 重建（零人工干预�?
   cli:
-    file: audit_trail/cli.py
+    file: audit-trail/cli.py
     description: CLI 审计面板——Owner 日常交互的唯一入口
     commands:
     - zephyr audit query <task_id>——查询任务审�?
@@ -1294,25 +1294,25 @@ audit_trail:
       deliverables: 三角闭环反馈 + 仪表�?+ Cold Start + 三层存储迁移 + 保留期自动执�?+ CI 一致�?+ PII 检�?
       status: 📋 Backlog
   integration_points:
-  - target: agent_rbac
+  - target: agent-rbac
     at: MOD-INF-018 §2.2
     why: 审计记录�?subject �?AgentIdentity + permission_level 决定 provenance_depth
   - target: gate_engine
     at: MOD-INF-007 §2
     why: 门禁决策的审计记�?+ 实时阻断联动
-  - target: feedback_loop
+  - target: feedback-loop
     at: MOD-INF-010 §2
     why: 三角闭环反馈——审计聚合数据推�?feedback_to_policy.py
   - target: runtime_integration
     at: MOD-INF-002 §2
     why: RI-13 EventStore + RI-14 DryRunSimulator + RI-15 CostTracker 联动
-  - target: drift_detector
+  - target: drift-detector
     at: MOD-INF-023 §2
     why: 蓝图 vs 实际漂移检测的审计信号输入
   - target: database
     at: MOD-INF-012 §3
     why: SQLite 派生查询索引的存�?
-  - target: system_telemetry
+  - target: system-telemetry
     at: MOD-INF-015 §2
     why: 审计事件的遥测发�?
   - target: shared_core

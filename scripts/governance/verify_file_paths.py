@@ -23,7 +23,7 @@ EXPECTED_FILES: list[str] = [
     "src/zephyr/mcp/rate_limiter.py",
     "src/zephyr/mcp/audit_logger.py",
     "src/zephyr/mcp/handoff_auto_loader.py",
-    "src/zephyr/mcp/tool_contracts.yaml",
+    "src/zephyr/mcp/tool-contracts.yaml",
     # §5.2 测试文件
     "tests/unit/test_mcp_servers.py",
     "tests/unit/test_task_manager_mcp.py",
@@ -43,7 +43,7 @@ EXPECTED_FILES: list[str] = [
     "requirements.txt",
     ".env.example",
     "docker-compose.yml",
-    ".pre-commit-config.yaml",
+    ".pre_commit-config.yaml",
     "docs/01_policies_and_standards/governance/ai/ai-autonomy-authority-registry.md",
     "architecture-model/layers/b_mcp.yaml",
     "docs/03_modules/_cross_layer/mcp-servers/blueprint.md",

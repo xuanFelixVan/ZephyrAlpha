@@ -1,0 +1,214 @@
+schema_version: "1.0.0"
+partition:
+  id: shared
+  name: Shared
+  track: b_track
+  bounded_context: false
+  status: implemented
+
+modules:
+  - id: shared-contracts
+    module_id: MOD_INF_016
+    name: Shared Contracts
+    submodule_path: src/zephyr/shared/contracts/
+    status: implemented
+    priority: P0
+    runtime_plane: warm
+    description: 跨层共享数据契约 �?Instrument / Money / Timestamp / RuntimePlaneTag (Pydantic V2)
+    files:
+      - instrument.py
+      - money.py
+      - runtime_plane_tag.py
+      - timestamp.py
+    interfaces:
+      - contract_id: CT-HEALTH-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-CBAC-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-CDC-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-DLQ-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-RECONCILE-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-STARTUP-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-TEARDOWN-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-SLO-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-BULKHEAD-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-WATCHDOG-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-BACKUP-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-CONFIG-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-FEATUREFLAG-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-SECRETS-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-KISS-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-DATA-LIFECYCLE-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-CHAOS-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-MODEL-REGISTRY-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-DEPS-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-KNOWLEDGE-FRESHNESS-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-HOUSEKEEPING-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-SESSION-HANDOFF-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-STABILITY-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-CANARY-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-INCIDENT-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-RACE-CONDITIONS-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-COST-BUDGET-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-DISK-GUARD-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-NETWORK-PARTITION-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-BENCH-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-DEPLOY-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-SCHEMA-MIGRATE-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-DEGRADE-CASCADE-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-AUTONOMY-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-AGENT-QUALITY-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-PROMPT-VERSION-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-SESSION-CONFLICT-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-LEAN-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-BLUEPRINT-HEALTH-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-TRANSFER-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+      - contract_id: CT-KE-QUALITY-001
+        description: "从 MOD-MASTER-002 §2.1 同步"
+        status: planned
+        source: blueprint-baseline-sync-2026-05-12
+    kb_ref:
+      - KBG-0040
+
+  - id: shared-infra
+    module_id: MOD_INF_016
+    name: Shared Infrastructure
+    submodule_path: src/zephyr/shared/
+    status: implemented
+    priority: P0
+    runtime_plane: warm
+    description: 跨层共享基础设施 �?SSoT 守卫 / 观察者事件总线 / 能力定义 / 内容指纹 / DOS 启动�?
+    files:
+      - capability.py
+      - content_fingerprint.py
+      - dos_launcher.py
+      - observer.py
+      - schemas.py
+      - ssot_guard.py
+    interfaces: []
+    kb_ref:
+      - KBG-0021
+      - KBG-0037
+
+summary:
+  total: 2
+  by_status:
+    implemented: 2

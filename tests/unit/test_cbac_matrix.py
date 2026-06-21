@@ -1,16 +1,17 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1986 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-603 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_cbac_matrix
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """CBAC 矩阵单元测试——18条capability + checksum防篡改。"""
 
-from __future__ import annotations
 
 import pytest
-from zephyr.gates.cbac_matrix import CbacMatrix
-from zephyr.gates.capability_checker import CapabilityChecker
+from zephyr.governance.rule_enforcement.cbac_matrix import CbacMatrix
+from zephyr.governance.rule_enforcement.capability_checker import CapabilityChecker
 
 
 @pytest.fixture

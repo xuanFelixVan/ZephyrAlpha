@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §3.9
+# [BLUEPRINT] GOV-069 | docs/03_modules/_domain-governance/blueprint.md | §3.9
 # [MODULE] scripts.governance._resource_guard
 # [INVARIANTS] Worker内存不可超过限制;超限必须降级
 # [MODIFY-GUARD] 限制值变更需同步resource_guard.py

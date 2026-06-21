@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0533 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-361 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.test_code_dedup_engine.test_degradation_edge
 # [STABILITY] evolving
 # [SAFETY] L
@@ -13,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 
 def test_degradation_stage_failure():
-    from zephyr.l01_infrastructure.code_dedup_engine.degradation import DegradationManager, DegradationLevel
+    from zephyr.governance.degradation import DegradationManager, DegradationLevel
     dm = DegradationManager()
 
     def always_fail():
@@ -28,8 +29,8 @@ def test_degradation_stage_failure():
 
 
 def test_degradation_pipeline():
-    from zephyr.l01_infrastructure.code_dedup_engine.degradation import DegradationManager
-    from zephyr.l01_infrastructure.code_dedup_engine.exit_codes import ExitCode
+    from zephyr.governance.degradation import DegradationManager
+    from zephyr.governance.exit_codes import ExitCode
     dm = DegradationManager()
 
     stages = [

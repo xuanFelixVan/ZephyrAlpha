@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0166 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-323 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.integration.test_beta_e2e
 # [STABILITY] evolving
 # [SAFETY] L
@@ -35,40 +36,40 @@ import pytest
 
 pytestmark = pytest.mark.e2e
 
-from zephyr.context_engine.intent_keyword_mapper import IntentKeywordMapper
-from zephyr.context_engine.intent_parser import (
+from zephyr.autonomy_core.intent_keyword_mapper import IntentKeywordMapper
+from zephyr.autonomy_core.intent_parser import (
     EmbeddingHit,
     IntentParser,
     LLMIntentVerdict,
 )
-from zephyr.feedback_loop.evolution_engine import (
+from zephyr.ops.evolution_engine import (
     EvolutionEngine,
     EvolutionSignal,
     FeedbackLayer,
     Severity,
     evolve,
 )
-from zephyr.feedback_loop.feedback_collector import FeedbackCollector
-from zephyr.feedback_loop.fitness_functions import (
+from zephyr.ops.feedback_collector import FeedbackCollector
+from zephyr.ops.fitness_functions import (
     FitnessFunctionFramework,
     FitnessInputs,
     FitnessThresholds,
     MetricStatus,
     from_gate_results,
 )
-from zephyr.mcp._base_server import JSONRPC_VERSION, BaseMCPServer
-from zephyr.mcp.doc_guard_server import DocGuardServer
-from zephyr.mcp.gate_engine_server import GateEngineServer
-from zephyr.mcp.knowledge_base_server import KnowledgeBaseServer
-from zephyr.mcp.sentinel_server import SentinelServer
-from zephyr.orchestrator.agent_orchestrator import (
+from zephyr.infrastructure._base_server import JSONRPC_VERSION, BaseMCPServer
+from zephyr.infrastructure.doc_guard_server import DocGuardServer
+from zephyr.infrastructure.gate_engine_server import GateEngineServer
+from zephyr.infrastructure.knowledge_base_server import KnowledgeBaseServer
+from zephyr.infrastructure.sentinel_server import SentinelServer
+from zephyr.trading.orchestrator.agent_orchestrator import (
     AgentOrchestrator,
     AgentRole,
     AgentRouter,
     HealthMonitor,
     RoutingStrategy,
 )
-from zephyr.orchestrator.hallucination_detector import (
+from zephyr.trading.orchestrator.hallucination_detector import (
     FallbackMode,
     HallucinationDetector,
     ModelCallResult,
@@ -80,7 +81,7 @@ from zephyr.orchestrator.hallucination_detector import (
 # 当前状态: task_manager_server.py 的 create_task/list_tasks/update_status 均为 GATE_BLOCKED 空壳
 # 解除条件: 步骤5-6 TaskLifecycleManager 补齐后，tool 函数有真实逻辑，E2E 可重写适配 FastMCP Client
 try:
-    from zephyr.mcp.task_manager_server import TaskManagerServer
+    from zephyr.infrastructure.task_manager_server import TaskManagerServer
 except ImportError:
     TaskManagerServer = None  # type: ignore[assignment]
 

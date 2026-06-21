@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR___version__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.__version__
 
@@ -161,7 +162,7 @@ def version_gte(a: str, b: str) -> bool:
 def version_compatible(a: str, b: str) -> bool:
     """a 与 b 是否在 MAJOR 版本层面兼容（同 MAJOR 且 a >= b）。
 
-    cross-layer-contracts.yaml VER-R1：同 MAJOR 版本 MUST 前后兼容。
+    cross_layer_contracts.yaml VER-R1：同 MAJOR 版本 MUST 前后兼容。
 
     Usage::
 

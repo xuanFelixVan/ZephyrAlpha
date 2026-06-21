@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0204 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-340 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.ml_experiment.test_adversarial_ml
 # [STABILITY] evolving
 # [SAFETY] L
@@ -51,8 +52,8 @@ def _try_import(module_path: str) -> bool:
 @attack("A1", "模型元数据伪造: 虚假model_id/model_version注入")
 def attack_01_metadata_forgery() -> dict[str, Any]:
     try:
-        from zephyr._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
-        from zephyr.l11_ml_platform.inference_base import ModelMetadata
+        from zephyr.cross_asset.cross_market_data_adapter.ml_experiment_pipeline import MLExperimentPipeline
+        from zephyr.intelligence.model_evaluation.inference_base import ModelMetadata
 
         MLExperimentPipeline._global_run_count = 0
         MLExperimentPipeline._seen_idempotency_keys.clear()
@@ -82,8 +83,8 @@ def attack_01_metadata_forgery() -> dict[str, Any]:
 @attack("A2", "推理结果篡改: 篡改prediction/confidence绕过验证")
 def attack_02_inference_tampering() -> dict[str, Any]:
     try:
-        from zephyr._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
-        from zephyr.l11_ml_platform.inference_base import ModelMetadata
+        from zephyr.cross_asset.cross_market_data_adapter.ml_experiment_pipeline import MLExperimentPipeline
+        from zephyr.intelligence.model_evaluation.inference_base import ModelMetadata
 
         MLExperimentPipeline._global_run_count = 0
         MLExperimentPipeline._seen_idempotency_keys.clear()
@@ -122,8 +123,8 @@ def attack_02_inference_tampering() -> dict[str, Any]:
 def attack_03_p_hacking() -> dict[str, Any]:
     """模拟p-hacking: 多次运行变体实验寻找虚假显著性。"""
     try:
-        from zephyr._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
-        from zephyr.l11_ml_platform.inference_base import ModelMetadata
+        from zephyr.cross_asset.cross_market_data_adapter.ml_experiment_pipeline import MLExperimentPipeline
+        from zephyr.intelligence.model_evaluation.inference_base import ModelMetadata
 
         MLExperimentPipeline._global_run_count = 0
         MLExperimentPipeline._seen_idempotency_keys.clear()
@@ -162,8 +163,8 @@ def attack_03_p_hacking() -> dict[str, Any]:
 @attack("A4", "生产提升绕过: 绕过promotion threshold")
 def attack_04_promotion_bypass() -> dict[str, Any]:
     try:
-        from zephyr._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
-        from zephyr.l11_ml_platform.inference_base import ModelMetadata
+        from zephyr.cross_asset.cross_market_data_adapter.ml_experiment_pipeline import MLExperimentPipeline
+        from zephyr.intelligence.model_evaluation.inference_base import ModelMetadata
 
         MLExperimentPipeline._global_run_count = 0
         MLExperimentPipeline._seen_idempotency_keys.clear()
@@ -206,8 +207,8 @@ def attack_04_promotion_bypass() -> dict[str, Any]:
 @attack("A5", "特征数据泄漏: 注入敏感训练数据特征")
 def attack_05_feature_leakage() -> dict[str, Any]:
     try:
-        from zephyr._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
-        from zephyr.l11_ml_platform.inference_base import ModelMetadata
+        from zephyr.cross_asset.cross_market_data_adapter.ml_experiment_pipeline import MLExperimentPipeline
+        from zephyr.intelligence.model_evaluation.inference_base import ModelMetadata
 
         MLExperimentPipeline._global_run_count = 0
         MLExperimentPipeline._seen_idempotency_keys.clear()
@@ -256,7 +257,7 @@ def attack_06_registry_poisoning() -> dict[str, Any]:
         import builtins
         original_builtins_keys = set(builtins.__dict__.keys())
 
-        from zephyr._cross_layer.ml_experiment_pipeline import MLExperimentPipeline
+        from zephyr.cross_asset.cross_market_data_adapter.ml_experiment_pipeline import MLExperimentPipeline
         pipeline = MLExperimentPipeline()
         clean_snapshot = pipeline._snapshot_builtins()
 

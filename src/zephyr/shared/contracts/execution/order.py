@@ -1,9 +1,14 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
-"""Backward-compat shim — canonical location is zephyr.trading_contracts.execution.order."""
+# [A_module] module_id=MOD-EXE_order | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
+"""Backward-compat shim — canonical location is zephyr.execution.trading.trading_contracts.execution.order."""
 
-from zephyr.trading_contracts.execution.order import (  # noqa: F401
-    Order,
-    OrderSide,
-    OrderStatus,
-    OrderType,
-)
+import importlib
+
+_TARGET_MODULE = "zephyr.execution.trading.trading_contracts.execution.order"
+
+
+def __getattr__(name):
+    mod = importlib.import_module(_TARGET_MODULE)
+    if hasattr(mod, name):
+        return getattr(mod, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

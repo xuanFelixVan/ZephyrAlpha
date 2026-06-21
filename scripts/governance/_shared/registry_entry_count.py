@@ -14,7 +14,7 @@ def count_primary_registry_entries(data: dict[str, Any], file_stem: str) -> int:
     if not isinstance(data, dict):
         return 0
 
-    if file_stem == "registry-of-registries":
+    if file_stem == "registry_of_registries":
         return len(data.get("registries", [])) + len(data.get("cross_registry_rules", []))
 
     if file_stem == "task-card-meta-registry":
@@ -49,7 +49,7 @@ def count_primary_registry_entries(data: dict[str, Any], file_stem: str) -> int:
 
 def primary_count_entry_key(data: dict[str, Any], file_stem: str) -> str:
     """返回用于日志/告警展示的键名（合成计数时用 '+' 连接）。"""
-    if file_stem == "registry-of-registries":
+    if file_stem == "registry_of_registries":
         r, c = len(data.get("registries", []) or []), len(data.get("cross_registry_rules", []) or [])
         return f"registries({r})+cross_registry_rules({c})"
     if file_stem == "task-card-meta-registry":

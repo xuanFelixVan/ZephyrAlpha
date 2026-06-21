@@ -1,0 +1,42 @@
+{
+  "task_id": "DM-100086",
+  "source_file": "docs/01_policies_and_standards/governance/architecture/architecture_versioning_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_037_arch_qualification_versioning.yaml",
+  "yaml_section": "gov_arch_003",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "AVP-001": {
+      "type": "mandatory",
+      "content": "所有架构文档frontmatter必须包含version字段，格式X.Y.Z",
+      "status": "COVERED"
+    },
+    "AVP-002": {
+      "type": "mandatory",
+      "content": "版本号递增规则：Patch(Z+1)=文字修正；Minor(Y+1)=新增章节/规则；Major(X+1)=架构方向变更",
+      "status": "COVERED"
+    },
+    "AVP-003": {
+      "type": "mandatory",
+      "content": "Minor及以上变更必须在修订记录中记录变更日期、版本和内容",
+      "status": "COVERED"
+    },
+    "AVP-004": {
+      "type": "mandatory",
+      "content": "架构变更导致代码修改时，PR必须引用对应架构文档版本",
+      "status": "COVERED"
+    }
+  },
+  "summary": {
+    "total_rules": 4,
+    "COVERED": 4,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "原YAML section gov_arch_003仅有占位action'遵守GOV-ARCH-003'，无具体规则",
+    "补充AVP-001~AVP-004到original_rules",
+    "补充4条conditions（2条constraint+2条trigger）",
+    "补充4条actions（4条mandatory）",
+    "补充2条prohibitions"
+  ]
+}

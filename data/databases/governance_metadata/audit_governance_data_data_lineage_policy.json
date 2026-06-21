@@ -1,0 +1,27 @@
+{
+  "task_id": "DM-100100",
+  "source_file": "docs/01_policies_and_standards/governance/data/data_lineage_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_045_data_quality_lineage.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "gov_data_002": {
+      "title": "数据血缘策略 (GOV-DATA-002)",
+      "conditions_count": 5,
+      "actions_count": 3,
+      "prohibitions_count": 4
+    }
+  },
+  "summary": {
+    "total_rules": 12,
+    "COVERED": 12,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    {
+      "action": "YAML_UPDATE",
+      "target": "trae_045_data_quality_lineage.yaml section gov_data_002",
+      "detail": "从空壳更新为包含5个conditions+3个actions+4个prohibitions的完整规则提取(DLG-001~003)"
+    }
+  ]
+}

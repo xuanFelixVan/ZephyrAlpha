@@ -1,4 +1,4 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §3.9
+# [BLUEPRINT] GOV-068 | docs/03_modules/_domain-governance/blueprint.md | §3.9
 # [MODULE] scripts.governance._finding_lifecycle
 # [INVARIANTS] 活跃Finding不可自动清理;归档操作可逆
 # [MODIFY-GUARD] TTL规则变更需同步finding_state_machine.py

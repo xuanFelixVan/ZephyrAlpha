@@ -1,1 +1,2 @@
-# [BLUEPRINT] DOM-GOV-001 | tests/fixtures/__init__.py | §
+# [A_test] module_id: SRC-TST-0114 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable | error_contract=ImportError→skip
+# [BLUEPRINT] SRC-271 | tests/fixtures/__init__.py | §

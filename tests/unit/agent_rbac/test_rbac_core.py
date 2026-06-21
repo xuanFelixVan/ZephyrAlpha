@@ -1,17 +1,18 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1817 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-447 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.agent_rbac.test_rbac_core
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 
-"""Test suite: agent_rbac core — identity + permission_guard + rbac_guard + immutable_core + kill_switch"""
+"""Test suite: agent-rbac core — identity + permission_guard + rbac_guard + immutable_core + kill_switch"""
 
 import time
 
 import pytest
 
-from zephyr.shared.contracts.identity.agent_identity import (
+from zephyr.integration.shared_08.contracts.identity.agent_identity import (
     MATURITY_AUTO_GUARD_TIMEOUT,
     MATURITY_TLB_LIMITS,
     MaturityLevel,
@@ -20,14 +21,14 @@ from zephyr.shared.contracts.identity.agent_identity import (
     IDESource,
     ROLE_DEFAULT_PERMISSIONS,
 )
-from zephyr.shared.contracts.identity.permission import GuardDecision, GuardResult
-from zephyr.agent_rbac.immutable_core import (
+from zephyr.integration.shared_08.contracts.identity.permission import GuardDecision, GuardResult
+from zephyr.security.access_control.immutable_core import (
     ALWAYS_BLOCKED_OPERATIONS,
     PROTECTED_PATHS,
     ImmutableCore,
     IntegrityResult,
 )
-from zephyr.agent_rbac.rbac_guard import (
+from zephyr.security.access_control.rbac_guard import (
     ALWAYS_ALLOW_OPERATIONS,
     ALWAYS_BLOCKED_OPERATIONS as RBAC_BLOCKED_OPS,
     AUTO_GUARD_OPERATIONS,
@@ -35,22 +36,22 @@ from zephyr.agent_rbac.rbac_guard import (
     PermissionDecision,
     PermissionResult,
 )
-from zephyr.agent_rbac.kill_switch import (
+from zephyr.security.access_control.kill_switch import (
     KillSwitch,
     KillSwitchState,
     TriggerEvent,
     TriggerResult,
 )
-from zephyr.agent_rbac.exceptions import (
+from zephyr.security.access_control.exceptions import (
     AgentRbacError,
     ColdStartLockedError,
     PermissionDeniedError,
 )
-from zephyr.agent_rbac.input_guard import InputGuard, InputDecision
-from zephyr.agent_rbac.sequence_guard import SequenceGuard, SequenceEvent
-from zephyr.agent_rbac.output_guard import OutputGuard, OutputDecision
-from zephyr.agent_rbac.abac_guard import ABACGuard, ABACContext, TemporalCategory, SensitivityLabel
-from zephyr.agent_rbac.decision_explainer import DecisionExplainer, Explanation
+from zephyr.security.access_control.input_guard import InputGuard, InputDecision
+from zephyr.security.access_control.sequence_guard import SequenceGuard, SequenceEvent
+from zephyr.security.access_control.output_guard import OutputGuard, OutputDecision
+from zephyr.security.access_control.abac_guard import ABACGuard, ABACContext, TemporalCategory, SensitivityLabel
+from zephyr.security.access_control.decision_explainer import DecisionExplainer, Explanation
 
 
 @pytest.fixture
@@ -219,7 +220,7 @@ class TestImmutableCore:
         assert immutable_core.is_protected_path(".git/config") is True
 
     def test_is_protected_path_agent_rbac(self, immutable_core):
-        assert immutable_core.is_protected_path("src/zephyr/agent_rbac/immutable_core.py") is True
+        assert immutable_core.is_protected_path("src/zephyr/agent-rbac/immutable_core.py") is True
 
     def test_is_protected_path_safe(self, immutable_core):
         assert immutable_core.is_protected_path("src/zephyr/my_module/helper.py") is False
@@ -284,11 +285,11 @@ class TestRBACGuard:
         assert result.decision == PermissionDecision.ALLOW
 
     def test_protected_path_blocks_non_admin(self, rbac_guard, reader_agent):
-        result = rbac_guard.check(reader_agent, "read:docs", target_path="src/zephyr/agent_rbac/core.py")
+        result = rbac_guard.check(reader_agent, "read:docs", target_path="src/zephyr/agent-rbac/core.py")
         assert result.decision == PermissionDecision.BLOCKED
 
     def test_protected_path_allows_admin(self, rbac_guard, admin_agent):
-        result = rbac_guard.check(admin_agent, "read:docs", target_path="src/zephyr/agent_rbac/core.py")
+        result = rbac_guard.check(admin_agent, "read:docs", target_path="src/zephyr/agent-rbac/core.py")
         assert result.decision == PermissionDecision.ALLOW
 
     def test_is_blocked(self, rbac_guard):

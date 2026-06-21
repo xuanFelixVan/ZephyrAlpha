@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1858 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-485 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.db.test_gate_repo
 # [STABILITY] evolving
 # [SAFETY] L
@@ -25,14 +26,14 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.db.gate_repo import GateRepo, GateRunRecord
-from zephyr.db.task_repo import TaskRepository
-from zephyr.shared.utils.db_utils import ensure_schema
+from zephyr.governance.gate_repo import GateRepo, GateRunRecord
+from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.integration.shared_08.utils.db_utils import ensure_schema
 
 
 def _insert_task(db_path: Path, task_id: str = "OPS-1") -> None:
     import sqlite3
-    from zephyr.shared.utils.time_utils import now_iso
+    from zephyr.integration.shared_08.time_utils import now_iso
     conn = sqlite3.connect(str(db_path), isolation_level=None)
     try:
         now = now_iso()

@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
+# [A_module] module_id=MOD-SHR_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §
 
 # [MODULE] zephyr.shared.contracts.core.registry
 
@@ -6,7 +7,7 @@
 
 # [MODIFY-GUARD] none
 
-# [CONSUMERS]
+# [CONSUMERS] orchestration.runtime_core.orchestrator.contract_registry
 
 # [STABILITY] evolving
 
@@ -28,7 +29,7 @@ CTR-VER-001: ContractRegistry / 契约版本注册与查询服务
 
 设计原则
 --------
-- SSoT-backed: 启动时从 cross-layer-contracts.yaml 加载契约元数据
+- SSoT-backed: 启动时从 cross_layer_contracts.yaml 加载契约元数据
 - 版本协商: 实现 VER-R1~R5 的运行时行为
 - 消费者追踪: 记录哪些模块依赖哪些契约，用于影响分析
 - 升级通知: 发布 contract_version_change 事件到 L12 Telemetry
@@ -49,7 +50,7 @@ CTR-VER-001: ContractRegistry / 契约版本注册与查询服务
     if not registry.check_version("CTR-001", incoming_schema_version):
         raise ContractViolationError(...)
 
-SSoT: cross-layer-contracts.yaml → CTR-VER-001
+SSoT: cross_layer_contracts.yaml → CTR-VER-001
 """
 from __future__ import annotations
 
@@ -62,7 +63,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-_logger = logging.getLogger("zephyr.contracts.registry")
+_logger = logging.getLogger("zephyr.shared.contracts.registry")
 
 
 @dataclass
@@ -115,7 +116,7 @@ class ContractRegistry:
     """
 
     _ssot_path: str = (
-        "docs/02_enterprise_architecture/target-architecture/" "architecture-model/contracts/cross-layer-contracts.yaml"
+        "docs/02_enterprise_architecture/target-architecture/" "architecture-model/contracts/cross_layer_contracts.yaml"
     )
 
     def __init__(self, repo_root: Path | None = None) -> None:

@@ -28,11 +28,11 @@
 #     当前违规数: 待扫描确认
 #
 #   GATE-15 (Frontmatter元数据)  → 目标 2026-Q2 转硬阻断
-#     依赖: metadata-registry.md v3.0.0 全面推广
+#     依赖: metadata_registry.md v3.0.0 全面推广
 #     当前违规数: 待扫描确认
 #
 #   GATE-16 (架构合规)          → 目标 2026-Q3 转硬阻断
-#     依赖: architecture-contract.yaml 全覆盖验证
+#     依赖: architecture_contract.yaml 全覆盖验证
 #     当前违规数: 待扫描确认
 #
 #   GATE-IDX (索引-实际同步)    → 目标 2026-Q2 转硬阻断
@@ -128,16 +128,16 @@ repos:
         files: "^docs/02_enterprise_architecture/.*\\.yaml$"
         description: "检查每条不变量是否有且仅有一个 owner 层，防止职责模糊"
 
-      # ── GATE-06: ADR 状态检查 ──
-      - id: gate-06-adr-status
-        name: "GATE-06: ADR 状态检查"
+      # ── GATE-06: KB 决策记录状态检查 ──
+      - id: gate-06-kb-decision-status
+        name: "GATE-06: KB 决策记录状态检查"
         entry: python scripts/governance/d5_architecture/check_architecture_gates.py
         args: ["--gate", "06"]
         language: python
         pass_filenames: false
         always_run: false
         files: "^docs/02_enterprise_architecture/.*\\.yaml$"
-        description: "验证所有 ADR 的 status 字段合法（Accepted / Proposed / Superseded / Deprecated）"
+        description: "验证所有 KB 决策记录的 status 字段合法（Accepted / Proposed / Superseded / Deprecated）"
 
       # ── GATE-07: 事件 publisher 层级检查 ──
       - id: gate-07-event-publisher-layer
@@ -151,10 +151,10 @@ repos:
         description: "检查每条领域事件的 publisher 层级是否与事件所属域一致"
 
       # ── GATE-11: 命名规范门禁（Stage G 落地）──
-      # 权威依据：docs/01_policies_and_standards/governance/document/file-naming-standard.md v2.0.1 §五
+      # 权威依据：docs/01_policies_and_standards/rules/file_naming_standard.md v2.0.1 §五
       # 续号于 Architecture-as-Code GATE-01 ~ GATE-10（避让 AaC 编号空间）
       # 检测 7 条 N-01 ~ N-07 违规：文件名大小写 / 版本号后缀 / 日期后缀 /
-      #   ADR 嵌套编号 / ADR kebab 尾缀 / module_id scope 前缀 / ADR 编号一致性
+      #   KBG 嵌套编号 / KBG kebab 尾缀 / module_id scope 前缀 / KBG 编号一致性
       - id: gate-11-naming-convention
         name: "GATE-11: 命名规范门禁"
         entry: python scripts/governance/d3_metadata/check_naming_convention.py
@@ -163,12 +163,12 @@ repos:
         pass_filenames: false
         always_run: false
         files: "^.*"
-        description: "全库命名规范门禁（kebab-case / module_id namespace / ADR 铁律），违规即 block commit"
+        description: "全库命名规范门禁（kebab-case / module_id namespace / KBG 铁律），违规即 block commit"
 
       # ── GATE-12: 蓝图真源准入门禁（Wave 0 终审 R73 · V-12）──
-      # 权威依据：metadata-registry.md §10.3（provenance 字段格式）
+      # 权威依据：metadata_registry.md §10.3（provenance 字段格式）
       # 真源声明：rationale-log R73 兜底缺口 V-12 / Claude-Opus-4.7 终审
-      # 校验范围：docs/02_enterprise_architecture/target-architecture/ + 04_construction_plans/ + 01_policies_and_standards/
+      # 校验范围：docs/02_enterprise_architecture/target_architecture/ + 04_construction_plans/ + 01_policies_and_standards/
       # 校验内容：frontmatter.provenance 三件套（origin_drafts + audit_chain≥3 + arbitration）+ 物理路径存在性
       # 骨架阶段：--warn-only 模式（只警告不阻塞），experimental 转 --ci 强制
       - id: gate-12-blueprint-provenance
@@ -178,14 +178,14 @@ repos:
         language: python
         pass_filenames: false
         always_run: false
-        files: "^docs/(02_enterprise_architecture/target-architecture|04_construction_plans|01_policies_and_standards)/.*\\.md$"
+        files: "^docs/(02_enterprise_architecture/target_architecture|04_construction_plans|01_policies_and_standards)/.*\\.md$"
         description: "蓝图真源 Provenance 三件套校验（origin_drafts / audit_chain≥3 / arbitration），骨架阶段 warn-only"
 
       # ── GATE-14: AI 自治权限注册表自校验（Wave 0 终审 R74 · V-11）──
-      # 权威依据：docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md
+      # 权威依据：docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.md
       # （governance/ai/ 下为 deprecated 桩，勿作为校验路径）
       # 真源声明：rationale-log R74 兜底缺口 V-11 / T-V2-003
-      # 校验范围：ai-autonomy-authority-registry.md（上述 catalogs 路径）中的权限标注
+      # 校验范围：ai_autonomy_authority_registry.md（上述 catalogs 路径）中的权限标注
       # 校验内容：三层权限值合法 / 必填字段完整 / 模块无重复 / 章节覆盖率 / Immutable Core 最低数量
       # 骨架阶段：--warn-only 模式（只警告不阻塞），experimental 转 --ci 强制
       - id: gate-14-authority-registry
@@ -199,7 +199,7 @@ repos:
         description: "权限注册表自校验（三层权限值 / 必填字段 / 重复模块 / 章节覆盖 / Immutable Core 最低数量），骨架阶段 warn-only"
 
       # ── GATE-13: 蓝图重叠检测门禁（Wave 1 V-14 · T-V2-011）──
-      # 权威依据：docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md §2.11
+      # 权威依据：docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.md §2.11
       # 真源声明：Wave 1 V-14 兜底 / T-V2-011
       # 校验范围：docs/19_development_workspace/drafts-and-audits/ 下草稿的 components 字段
       # 校验内容：同一 component_id 出现在 2+ 草稿时 warn
@@ -227,9 +227,9 @@ repos:
         always_run: false
         files: "^(docs/03_modules/.*blueprint\\.md|src/zephyr/.*\\.py|docs/02_enterprise_architecture/system-dependency-map\\.md|docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry\\.yaml)$"
 
-      # ── GATE-15: Frontmatter 元数据校验（metadata-registry.md v3.0.0）──
-      # 权威依据：docs/01_policies_and_standards/meta/metadata-registry.md v3.0.0
-      # 真源声明：合并 frontmatter-standard.md v1.0.0 + discussion-document-standard.md v2.0.0 + frontmatter-schema.json R4
+      # ── GATE-15: Frontmatter 元数据校验（metadata_registry.md v3.0.0）──
+      # 权威依据：docs/01_policies_and_standards/meta/metadata_registry.md v3.0.0
+      # 真源声明：合并 frontmatter-standard.md v1.0.0 + discussion-document-standard.md v2.0.0 + frontmatter_schema.json R4
       # 校验范围：docs/ 下所有 .md 和 .yaml 文件
       # 校验内容：doc_type 合法值（17种）/ status 合法值（7种）/ 必填字段 / module_id 格式 / AI 生成文件标记
       # 骨架阶段：--warn-only 模式（只警告不阻塞），experimental 转 --ci 强制
@@ -243,8 +243,8 @@ repos:
         files: "^docs/.*\\.(md|yaml|yml)$"
         description: "Frontmatter 元数据校验（doc_type 17种合法值 / status 7种 / 必填字段 / module_id 格式 / AI 生成标记），骨架阶段 warn-only"
 
-      # ── GATE-16: 架构合规校验（architecture-contract.yaml v1.0.0）──
-      # 权威依据：docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml
+      # ── GATE-16: 架构合规校验（architecture_contract.yaml v1.0.0）──
+      # 权威依据：docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml
       # 真源声明：stable D-008/D-011 产出
       # 校验范围：docs/01_policies_and_standards/ 下所有 .md 和 .yaml 文件
       # 校验内容：目录合规 / frontmatter 必填字段 / doc_type↔rule_form 一致性 / governance下无operational_rule / operational下无policy
@@ -276,7 +276,7 @@ repos:
         description: "项目根目录孤儿.py检测+自动清理（AGENTS.md §6.5 — .py只允许在合法三目录中）"
 
       # ── GATE-ZR: 零残留强制门禁（IRN-011 · ZERO-RESIDUE · §6.19）──
-      # 权威依据：IRN-011（ai-behavior-iron-policy.md）9 条零残留规则（ZR-001~009）
+      # 权威依据：IRN-011（ai_behavior_iron_policy.md）9 条零残留规则（ZR-001~009）
       # 真源声明：Session 20260505 零残留原则落地
       # 检测范围：全项目（always_run=true）
       # 检测内容：ZeroResidueScanner 聚合 5 项检测（临时文件/孤儿文件/废墟引用/残留学债/代码级残留）
@@ -296,7 +296,7 @@ repos:
       # 模式：--warn-only（骨架阶段，验证稳定后转 --fail-on-duplicates 硬阻断）
       - id: gate-dedup-code-deduplication
         name: "GATE-DEDUP: 代码去重门禁（MOD-INF-017）"
-        entry: python -m zephyr.l01_infrastructure.code_dedup_engine.cli scan --incremental --warn-only
+        entry: python -m zephyr.testing.code_dedup.cli scan --incremental --warn-only
         language: system
         pass_filenames: false
         always_run: false
@@ -319,14 +319,14 @@ repos:
         files: "^src/zephyr/.*\\.py$|^tests/.*\\.py$"
         description: "源码或测试文件变更时强制验证测试能正常收集（排除 slow/e2e），AGENTS.md §4 源码-测试同步铁律自动化执行层"
 
-      # ── GATE-SSOT: SSoT 唯一真源门禁（ADR-0001 + ADR-0021 强制执行层）──
-      # 权威依据：ADR-0001（docs/ 为唯一 canonical 真源）+ ADR-0021（三级违规分级 + Phase 0 强制门禁）
-      # 真源声明：Session 20260417 + 20260424 ADR 拍板
+      # ── GATE-SSOT: SSoT 唯一真源门禁（KBG-0001 + KBG-0021 强制执行层）──
+      # 权威依据：KBG-0001（docs/ 为唯一 canonical 真源）+ KBG-0021（三级违规分级 + Phase 0 强制门禁）
+      #  真源声明：Session 20260417 + 20260424 KB 决策记录拍板
       # 检测范围：docs/ 下所有 .md 文件变更时触发
       # 检测内容：P0（layer 无效 / module_id 重复活跃 / 死链 / 命名冲突）+ P1（status 漂移 / version 倒挂）+ P2（其他）
-      # 模式：硬阻断（P0 > 0 时 exit(1) 拒绝提交），与 ADR-0021 §4.2 三级违规分级对齐
+      # 模式：硬阻断（P0 > 0 时 exit(1) 拒绝提交），与 KBG-0021 §4.2 三级违规分级对齐
       - id: gate-ssot
-        name: "GATE-SSOT: SSoT 唯一真源门禁（ADR-0001/0021 强制执行）"
+        name: "GATE-SSOT: SSoT 唯一真源门禁（KBG-0001/0021 强制执行）"
         entry: python scripts/governance/d5_architecture/validate_ssot.py
         args: ["--ci"]
         language: python
@@ -348,7 +348,7 @@ repos:
         pass_filenames: false
         always_run: false
         files: "^docs/03_modules/.*blueprint\\.md$"
-        description: "全库 SSoT 唯一真源一致性校验（P0 无效layer/重复module_id/死链/命名冲突硬阻断），ADR-0001 + ADR-0021 §4.2 强制执行层"
+        description: "全库 SSoT 唯一真源一致性校验（P0 无效layer/重复module_id/死链/命名冲突硬阻断），KBG-0001 + KBG-0021 §4.2 强制执行层"
 
       # ── GATE-SQ: 审计脚本质量门禁（AGENTS.md §8.2.1 + SCRIPT-QUALITY-001）──
       # 权威依据：AGENTS.md §8.2.1 _shared/ API 速查目录 + scripts/governance/quality-standard.md
@@ -370,8 +370,8 @@ repos:
       # ── GATE-ADM: Manifest 准入控制器（AGENTS.md §6.5 K8s Admission Controller 落地）──
       # 权威依据：AGENTS.md §6.5（脚本自创入库强制约定——任何.py创建必须通过准入审核）
       # 真源声明：Session 20260502-005 Manifest Admission Controller 创建 → 接入 pre-commit → 零例外
-      # 检测范围：script_manifest.yaml 变更时触发
-      # 检测内容：git diff HEAD -- script_manifest.yaml → 发现新条目 →
+      # 检测范围：script-manifest.yaml 变更时触发
+      # 检测内容：git diff HEAD -- script-manifest.yaml → 发现新条目 →
       #   自动运行 validate_script_quality.py 质量扫描 → 违规拒绝准入
       # 模式：硬阻断（warn-only=false）
       - id: gate-adm-manifest-admission
@@ -387,7 +387,7 @@ repos:
       # ── GATE-IDX: 索引-实际同步校验（AGENTS.md §6.11 自动化执行层）──
       # 权威依据：AGENTS.md §6.11（索引-实际同步强制约定——index.md声称数字必须与磁盘实际一致）
       # 真源声明：Session 20260502-007 索引漂移 → 新建 validate_index_reality.py → 接入 pre-commit
-      # 检测范围：index.md 或 script_manifest.yaml 变更时触发
+      # 检测范围：index.md 或 script-manifest.yaml 变更时触发
       # 检测内容：各维度声称脚本数 vs 磁盘实际 .py 文件数 / 声称 manifest 条目数 vs 实际
       # 模式：第一次上线用 warn-only（骨架阶段），验证稳定后转硬阻断
       - id: gate-idx-index-reality
@@ -482,7 +482,7 @@ repos:
       # ── GATE-C2: 契约-代码双写漂移阻断（盲点 C2 修复）──
       # 对标：盲点 C2 — AI 改 YAML 忘 codegen → 契约与代码漂移 → 硬阻断
 
-      # ── GATE-MCP: MCP Tool Contract 一致性校验（MOD-INF-013 §9 R3）──
+      # ── GATE-MCP: MCP Tool Contract 一致性校验（MOD_INF_013 §9 R3）──
       # 检测 tool_contracts.yaml ↔ 代码 register_tool 声明不一致
       - id: gate-mcp-contract-consistency
         name: "GATE-MCP: Tool Contract 一致性（R3）"
@@ -491,11 +491,11 @@ repos:
         language: python
         pass_filenames: false
         always_run: false
-        files: "^(src/zephyr/mcp/tool_contracts\\.yaml|src/zephyr/mcp/.*\\.py)$"
-        description: "tool_contracts.yaml ↔ 代码 register_tool 一致性校验（MOD-INF-013 §9 R3 契约漂移缓解）"
+        files: "^(src/zephyr/mcp/tool-contracts\\.yaml|src/zephyr/mcp/.*\\.py)$"
+        description: "tool_contracts.yaml ↔ 代码 register_tool 一致性校验（MOD_INF_013 §9 R3 契约漂移缓解）"
 
       # ── GATE-C2: 契约-代码双写漂移阻断（盲点 C2 修复）──
-      # 检测范围：cross-layer-contracts.yaml 或 contracts/*.py 变更时触发
+      # 检测范围：cross_layer_contracts.yaml 或 contracts/*.py 变更时触发
       # 检测内容：SHA256 快照对比 → YAML 变更但 .py 未同步 → exit 1
       # 模式：--ci 硬块，首次运行 --freeze 建立基线
       - id: gate-c2-contract-code-drift
@@ -505,7 +505,7 @@ repos:
         language: python
         pass_filenames: false
         always_run: false
-        files: "^(docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/|src/zephyr/shared/contracts/).*"
+        files: "^(docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/|src/zephyr/shared/contracts/).*"
         description: "YAML契约修改→强制codegen同步→CI硬阻断，首次运行 --freeze 建立基线"
 
       - id: gate-bom-utf8-check
@@ -516,6 +516,21 @@ repos:
         always_run: true
         files: "\\.(yaml|md|py)$"
         description: "检测 UTF-8 BOM，对标 AGENTS.md §4 编码安全"
+
+      # ── GATE-ENCODING: 编码安全+mojibake检测（DM-379 强制执行层）──
+      # 权威依据：encoding_safety_standard.md (GOV-DOC-005) + DM-379 根因修复
+      # 检测范围：src/zephyr/**/*.py + docs/**/*.md 变更时触发
+      # 检测内容：UTF-8 BOM / CRLF / autoGuessEncoding / GBK-as-UTF-8 mojibake
+      # 模式：硬阻断（mojibake检测到即拒绝提交）
+      - id: gate-encoding-safety
+        name: "GATE-ENCODING: 编码安全+mojibake检测"
+        entry: python scripts/governance/d7_code/check_encoding.py
+        args: ["--dir", "src/zephyr"]
+        language: python
+        pass_filenames: false
+        always_run: false
+        files: "\\.(py|md|yaml|yml|json|toml)$"
+        description: "编码安全门禁——UTF-8 BOM/CRLF/autoGuessEncoding/mojibake检测，mojibake硬阻断"
 
       # ── GATE-DRIFT: 漂移检测 LIGHT scan（MOD-INF-023 §1.7 post-commit 自动化）──
       # 权威依据：MOD-INF-023 蓝图 §1.7 典型场景 + §10.4 自动化规格
@@ -538,7 +553,7 @@ repos:
         pass_filenames: false
         always_run: true
         files: "(script_manifest\\.yaml|gate-registry\\.yaml|registry-master-index\\.yaml|\\.pre-commit-config\\.yaml)$"
-        description: "SSoT 变更时自动同步 audit-protocol.md 中的硬编码数字"
+        description: "SSoT 变更时自动同步 audit_protocol.md 中的硬编码数字"
 
       # ── Commit Message 校验（Conventional Commits v1.0.0）──
   # 对标: conventionalcommits.org / Angular convention / pre-commit commit-msg stage

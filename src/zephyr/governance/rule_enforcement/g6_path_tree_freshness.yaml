@@ -1,0 +1,106 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+module_id: MOD-INF-007
+schema_version: "1.0"
+doc_type: gate
+gate_id: G6_PT
+gate_name: path_tree_freshness
+title: "G6 Path Tree Freshness Gate"
+description: "GOV-DOC-004 §四-A 强制门禁 — 文件创建/删除/移动后必须刷新物理路径树快照和路径归属声明，防止路径漂移和AI幻觉"
+rule_ids:
+  - TRAE-001
+  - TRAE-013
+status: active
+ttl: permanent
+
+scope: "global"
+category: "compliance"
+owner: "MOD-INF-037"
+consumer: gate_engine
+ai_autonomy: "autonomous"
+
+token_budget: 200
+latency_budget_ms: 500
+execution_plane: "warm"
+
+trigger:
+  event: "file_created | file_deleted | file_moved | blueprint_section_01_updated"
+  precondition: "scaffold.py create_* method called OR blueprint §0.1 modified"
+  frequency: "per_request"
+
+depends_on_gates: ["G6_BP"]
+blocked_by_gates: []
+parallel_allowed_with: []
+
+entry_conditions:
+  - id: G6_PT-C00
+    name: path_tree_refresh_after_create
+    type: manual_approval
+    description: "文件创建后，物理路径树快照(project-path-tree.yaml)必须刷新。scaffold.py 已内置提醒，Session 关门步骤 6.1 强制刷新。"
+    check: "scaffold.py 输出包含 'PATH-TREE: Run' 提醒，或 generate_project_path_tree.py --write 已执行"
+    severity: warning
+    on_failure: flag
+    verifiable: true
+    verification_method: "检查 project-path-tree.yaml 的 generated_at 时间戳是否晚于最后文件创建时间"
+    rule_ids:
+      - TRAE-001
+      - TRAE-013
+    anti_pattern:
+      description: "新建文件后不刷新路径树 → AI冷启动读到过时快照 → 路径幻觉 → 写错文件位置"
+      example: "AI 创建 src/zephyr/new_module/engine.py 但未刷新路径树 → 下一个 session 的 AI 不知道此文件存在 → 在错误位置创建同名文件"
+
+  - id: G6_PT-C01
+    name: ownership_map_refresh_after_blueprint_change
+    type: manual_approval
+    description: "蓝图 §0.1 变更后，路径归属声明(path-ownership-map.yaml)必须刷新。蓝图自检清单 5.1 要求 --write && --conflicts。"
+    check: "generate_path_ownership_map.py --write 已执行，且 --conflicts 返回 0 conflicts"
+    severity: warning
+    on_failure: flag
+    verifiable: true
+    verification_method: "检查 path-ownership-map.yaml 的 generated_at 时间戳是否晚于蓝图最后修改时间"
+    rule_ids:
+      - TRAE-001
+      - TRAE-013
+    anti_pattern:
+      description: "蓝图 §0.1 新增文件但不刷新归属图 → 路径归属图缺失条目 → 路径冲突检测失效 → 两个蓝图声明同一路径"
+      example: "MOD-INF-037 §0.1 新增 generate_project_path_tree.py 但未刷新归属图 → 归属图中无此条目 → 其他蓝图也可声明同一路径而不被检测"
+
+  - id: G6_PT-C02
+    name: path_tree_check_before_session_close
+    type: manual_approval
+    description: "Session 关门前，project-path-tree.yaml --check 必须通过（快照与磁盘一致）。L0 关门步骤 6.1 强制要求。"
+    check: "generate_project_path_tree.py --check exits 0"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "在 Session 关门序列中执行 --check，返回非零则阻止关门"
+    rule_ids:
+      - TRAE-001
+      - TRAE-013
+    anti_pattern:
+      description: "Session 关门不检查路径树 → 磁盘与快照漂移累积 → 下一个 session 的 AI 基于过时信息操作"
+      example: "Session 中删除了 3 个文件但未刷新路径树 → 下一个 AI 仍以为这 3 个文件存在 → 尝试读取/修改不存在的文件"
+
+severity_levels:
+  error: "硬阻断——Session 不得关闭，必须先执行 --write 刷新"
+  warning: "软警告——提醒刷新，不阻断当前操作"
+
+failure_actions:
+  reject: "拒绝关闭Session——必须先执行 generate_project_path_tree.py --write"
+  flag: "标记——输出提醒信息，不阻断当前操作"
+
+upgrade_triggers:
+  - condition: "路径树覆盖的扫描根目录变更（新增/删除根目录）"
+    action: "version bump + 更新 scan_roots 配置"
+    approval: "MOD-INF-037 owner"
+
+change_log:
+  - version: "0.1.0"
+    date: "2026-05-16"
+    author: "MOD-INF-037"
+    change: "初始创建 — 三项检查：创建后刷新(C00)、蓝图变更后刷新(C01)、关门前检查(C02)"

@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [A_test] module_id: SRC-TST-0038 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §
 # [MODULE] tests.agent_rbac.test_forensic_c
 # [STABILITY] evolving
 # [SAFETY] L
@@ -9,11 +10,11 @@ from __future__ import annotations
 
 import pytest
 import time
-from zephyr.agent_rbac.audit_log_guard import AuditLogGuard
-from zephyr.agent_rbac.replay_attack_guard import ReplayAttackGuard
-from zephyr.agent_rbac.legal_audit_chain import LegalAuditChain
-from zephyr.agent_rbac.rollback_sandbox import RollbackSandbox
-from zephyr.agent_rbac.monotonic_clock import MonotonicClock
+from zephyr.security.access_control.audit_log_guard import AuditLogGuard
+from zephyr.security.access_control.replay_attack_guard import ReplayAttackGuard
+from zephyr.security.access_control.legal_audit_chain import LegalAuditChain
+from zephyr.security.access_control.rollback_sandbox import RollbackSandbox
+from zephyr.security.access_control.monotonic_clock import MonotonicClock
 
 
 class TestForensicC:

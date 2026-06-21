@@ -1,17 +1,18 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-002 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# blueprint: MOD-INF-002 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
+module_id: MOD-INF-002
 version: "1.0.0"
 schema_version: "1.0.0"
 doc_type: rule
 title: "Context Rules v1"
 status: active
 ttl: permanent
-belongs_to: MOD-INF-008
+belongs_to: MOD_INF_008
 implementation_status: "operational — CTX-001~006 consumed by context_budget_tracker.py and context_injector.py; CR-007~015 declarative only (CT-012 partial)"
 
 description: "15 context management rules for AI agent sessions covering token budget allocation, priority decay, and window sliding strategies"

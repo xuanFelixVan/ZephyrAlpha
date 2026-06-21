@@ -1,8 +1,9 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_agent_identity | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 # [MODULE] zephyr.shared.contracts.identity.agent_identity
 # [INVARIANTS] Agent身份模型不可被篡改;成熟度分级不可扩展
 # [MODIFY-GUARD] none
-# [CONSUMERS] zephyr.agent_rbac.identity;zephyr.escalation_engine;zephyr.governance;zephyr.mcp
+# [CONSUMERS] zephyr.security.access_control.identity;zephyr.infrastructure.escalation;zephyr.governance;zephyr.integration.mcp
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] immutable_core

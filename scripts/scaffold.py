@@ -9,11 +9,17 @@
     module: src/zephyr/<package>/<name>.py → 更新 <package>/__init__.py
     script: scripts/<path>/<name>.py       → 更新 script_manifest.yaml
     gate:   src/zephyr/gates/<name>.yaml   → 更新 _registry.yaml
+    yaml:   <path>/<name>.yaml             → 通知资产盘点（kebab-case 强制）
+    json:   <path>/<name>.json             → 通知资产盘点（kebab-case 强制）
+    md:     <path>/<name>.md               → 通知资产盘点（kebab-case 强制）
 
 用法:
-    python scripts/scaffold.py module feedback_loop scheduler --desc "FLE 全链路调度器"
+    python scripts/scaffold.py module feedback-loop scheduler --desc "FLE 全链路调度器"
     python scripts/scaffold.py script governance/audit_registration --desc "孤儿注册检测"
     python scripts/scaffold.py gate g6_my_gate --title "My Gate" --category kms
+    python scripts/scaffold.py yaml docs/01_policies/my-policy --desc "策略文档"
+    python scripts/scaffold.py json data/config/my-config --desc "配置文件"
+    python scripts/scaffold.py md docs/guides/my-guide --desc "用户指南"
 
 设计基线:
     RULE-TWO: 反孤儿功能——所有新产出必须可被系统发现和调用
@@ -33,6 +39,13 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+
+# 确保项目根目录在 sys.path 中，以便 from scripts.governance... 导入生效
+_PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
+
+from scripts.governance.d3_metadata.check_naming_convention import check_file, check_dir
 
 # ---------------------------------------------------------------------------
 # 路径常量
@@ -103,6 +116,41 @@ execution_plane: warm
 checks: []
 """
 
+YAML_TEMPLATE = """# [BLUEPRINT] {blueprint_id} | {file_path} |
+# [MODULE] {module_path}
+# [INVARIANTS]
+# [MODIFY-GUARD]
+# [CONSUMERS]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+
+# {description}
+"""
+
+JSON_TEMPLATE = """{{
+  "_meta": {{
+    "blueprint": "",
+    "module": "",
+    "stability": "evolving",
+    "safety": "L",
+    "ai_autonomy": "ai_modifiable",
+    "created_at": "{created_at}",
+    "description": "{description}"
+  }}
+}}
+"""
+
+MD_TEMPLATE = """# [BLUEPRINT] | {file_path} |
+<!-- [MODULE]  -->
+<!-- [STABILITY] evolving -->
+<!-- [SAFETY] L -->
+
+{description}
+"""
+
 
 # ===================================================================
 # 核心引擎
@@ -163,6 +211,9 @@ class ScaffoldEngine:
                     f"确认不是重复创建。"
                 )
 
+        # ── 检查 5: 命名规范 ──
+        _check_naming(str(file_path), str(package_dir))
+
         # ── 执行创建 ──
         content = MODULE_TEMPLATE.format(description=description or f"{class_name} 模块")
         _atomic_write(file_path, content, self.dry_run, self.actions)
@@ -211,6 +262,9 @@ class ScaffoldEngine:
         # ── 检查 4: manifest 中无重复 ──
         _check_manifest_duplicate(rel_path)
 
+        # ── 检查 5: 命名规范 ──
+        _check_naming(str(file_path), str(parent))
+
         # ── 执行创建 ──
         content = SCRIPT_TEMPLATE.format(description=description or f"{rel_path} 脚本")
         _atomic_write(file_path, content, self.dry_run, self.actions)
@@ -247,6 +301,9 @@ class ScaffoldEngine:
         # ── 检查 2: registry 中无重复 ──
         _check_gate_registry_duplicate(gate_id)
 
+        # ── 检查 3: 命名规范 ──
+        _check_naming(str(file_path), str(GATES_DIR))
+
         # ── 执行创建 ──
         content = GATE_TEMPLATE.format(
             gate_id=gate_id,
@@ -264,6 +321,146 @@ class ScaffoldEngine:
 
         print(f"\n  CREATED  {file_path}")
         print(f"  REGISTERED  {GATE_REGISTRY}  (gate_id '{gate_id}')")
+        _remind_path_tree_refresh()
+        return file_path
+
+    def create_yaml(
+        self,
+        rel_path: str,
+        description: str = "",
+        domain: str = "",
+        subdomain: str = "",
+    ) -> Path:
+        """在指定路径创建 YAML 文件（kebab-case 强制），通知资产盘点。"""
+        # ── 检查 1: kebab-case 命名 ──
+        name_part = Path(rel_path).name
+        _enforce_kebab_case(name_part)
+
+        file_path = PROJECT_ROOT / f"{rel_path}.yaml"
+
+        # ── 检查 2: 父目录 ──
+        parent = file_path.parent
+        if not parent.is_dir():
+            os.makedirs(parent, exist_ok=True)
+
+        # ── 检查 3: 文件冲突 ──
+        if file_path.exists():
+            raise ScaffoldError(
+                f"文件已存在: {file_path}\n"
+                f"如果是功能重复，请复用已有文件而非新建。"
+            )
+
+        # ── 检查 4: 功能重复 ──
+        _check_duplicate_functionality(name_part, description, domain, subdomain)
+
+        # ── 检查 5: 命名规范 ──
+        _check_naming(str(file_path), str(parent))
+
+        # ── 执行创建 ──
+        content = YAML_TEMPLATE.format(
+            blueprint_id="",
+            file_path=str(file_path).replace(str(PROJECT_ROOT) + "\\", "").replace("\\", "/"),
+            module_path="",
+            description=description or name_part,
+        )
+        _atomic_write(file_path, content, self.dry_run, self.actions)
+
+        # ── 通知资产盘点系统（MOD-INF-026）──
+        _notify_asset_inventory(str(file_path), "yaml", self.dry_run)
+
+        print(f"\n  CREATED  {file_path}")
+        _remind_path_tree_refresh()
+        return file_path
+
+    def create_json(
+        self,
+        rel_path: str,
+        description: str = "",
+        domain: str = "",
+        subdomain: str = "",
+    ) -> Path:
+        """在指定路径创建 JSON 文件（kebab-case 强制），通知资产盘点。"""
+        # ── 检查 1: kebab-case 命名 ──
+        name_part = Path(rel_path).name
+        _enforce_kebab_case(name_part)
+
+        file_path = PROJECT_ROOT / f"{rel_path}.json"
+
+        # ── 检查 2: 父目录 ──
+        parent = file_path.parent
+        if not parent.is_dir():
+            os.makedirs(parent, exist_ok=True)
+
+        # ── 检查 3: 文件冲突 ──
+        if file_path.exists():
+            raise ScaffoldError(
+                f"文件已存在: {file_path}\n"
+                f"如果是功能重复，请复用已有文件而非新建。"
+            )
+
+        # ── 检查 4: 功能重复 ──
+        _check_duplicate_functionality(name_part, description, domain, subdomain)
+
+        # ── 检查 5: 命名规范 ──
+        _check_naming(str(file_path), str(parent))
+
+        # ── 执行创建 ──
+        content = JSON_TEMPLATE.format(
+            created_at=datetime.now().strftime("%Y-%m-%d"),
+            description=description or name_part,
+        )
+        _atomic_write(file_path, content, self.dry_run, self.actions)
+
+        # ── 通知资产盘点系统（MOD-INF-026）──
+        _notify_asset_inventory(str(file_path), "json", self.dry_run)
+
+        print(f"\n  CREATED  {file_path}")
+        _remind_path_tree_refresh()
+        return file_path
+
+    def create_md(
+        self,
+        rel_path: str,
+        description: str = "",
+        domain: str = "",
+        subdomain: str = "",
+    ) -> Path:
+        """在指定路径创建 Markdown 文件（kebab-case 强制），通知资产盘点。"""
+        # ── 检查 1: kebab-case 命名 ──
+        name_part = Path(rel_path).name
+        _enforce_kebab_case(name_part)
+
+        file_path = PROJECT_ROOT / f"{rel_path}.md"
+
+        # ── 检查 2: 父目录 ──
+        parent = file_path.parent
+        if not parent.is_dir():
+            os.makedirs(parent, exist_ok=True)
+
+        # ── 检查 3: 文件冲突 ──
+        if file_path.exists():
+            raise ScaffoldError(
+                f"文件已存在: {file_path}\n"
+                f"如果是功能重复，请复用已有文件而非新建。"
+            )
+
+        # ── 检查 4: 功能重复 ──
+        _check_duplicate_functionality(name_part, description, domain, subdomain)
+
+        # ── 检查 5: 命名规范 ──
+        _check_naming(str(file_path), str(parent))
+
+        # ── 执行创建 ──
+        content = MD_TEMPLATE.format(
+            file_path=str(file_path).replace(str(PROJECT_ROOT) + "\\", "").replace("\\", "/"),
+            description=description or name_part,
+        )
+        _atomic_write(file_path, content, self.dry_run, self.actions)
+
+        # ── 通知资产盘点系统（MOD-INF-026）──
+        _notify_asset_inventory(str(file_path), "md", self.dry_run)
+
+        print(f"\n  CREATED  {file_path}")
         _remind_path_tree_refresh()
         return file_path
 
@@ -414,7 +611,7 @@ def _register_to_gate_registry(
 def _check_duplicate_functionality(name: str, description: str, domain: str = "", subdomain: str = "") -> None:
     """SSoT门禁：检查功能域重叠。硬阻断——重叠时禁止创建。"""
     try:
-        from zephyr.l01_infrastructure.registry_governance import FunctionalDomainRegistry
+        from zephyr.infrastructure.registry_governance import FunctionalDomainRegistry
         registry = FunctionalDomainRegistry()
         overlap = registry.check_overlap(
             domain=domain,
@@ -442,7 +639,7 @@ def _check_duplicate_functionality(name: str, description: str, domain: str = ""
         print(f"  WARNING: 功能域注册表检查失败: {exc}")
 
     try:
-        from zephyr.mcp import BlueprintSearchServer
+        from zephyr.integration.mcp import BlueprintSearchServer
     except ImportError:
         return
 
@@ -512,6 +709,21 @@ def _check_gate_registry_duplicate(gate_id: str) -> None:
 # 通用工具
 # ===================================================================
 
+def _check_naming(file_path: str, dir_path: str) -> None:
+    """命名规范门禁：调用 check_naming_convention 检查文件名和目录名。
+    检测到违规时打印违规信息并以非零退出码终止。
+    强化: 传递 abspath 以启用 N-06/N-07/N-11/N-14/N-15 内容感知检查
+    """
+    rel_file = os.path.relpath(file_path, PROJECT_ROOT).replace("\\", "/")
+    abspath = Path(file_path) if Path(file_path).exists() else None
+    violations = check_file(rel_file, abspath, PROJECT_ROOT)
+    violations.extend(check_dir(os.path.relpath(dir_path, PROJECT_ROOT).replace("\\", "/")))
+    if violations:
+        for v in violations:
+            print(f"  NAMING VIOLATION [{v.rule}]: {v.message}")
+        sys.exit(1)
+
+
 def _notify_asset_inventory(file_path: str, asset_type: str, dry_run: bool) -> None:
     """post-creation hook: 通知资产盘点系统新文件已创建。
 
@@ -524,11 +736,21 @@ def _notify_asset_inventory(file_path: str, asset_type: str, dry_run: bool) -> N
         return
 
     try:
-        from zephyr.asset_inventory.telemetry import get_telemetry
+        from zephyr.governance.asset_inventory.telemetry import get_telemetry
         telemetry = get_telemetry()
         telemetry.inc(f"scaffold_{asset_type}_created")
     except Exception:
         pass
+
+
+def _remind_path_tree_refresh() -> None:
+    """post-creation hook: 提醒刷新项目路径树。
+
+    创建/删除/移动文件后 MUST 同步刷新路径树，
+    否则下一个 session 冷启动看到错误结构。
+    """
+    print("  ⚠️  REMINDER: 文件结构已变更，请刷新路径树:")
+    print("  ⚠️    python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py --write")
 
 
 def _remind_sys_master_dispatch(package: str, name: str, description: str) -> None:
@@ -658,6 +880,28 @@ def _to_class_name(name: str) -> str:
     return "".join(part.capitalize() for part in name.split("_"))
 
 
+def _to_kebab_case(name: str) -> str:
+    """将任意命名转换为 kebab-case。支持 snake_case、PascalCase、camelCase。"""
+    # 先处理 camelCase / PascalCase：在大写字母前插入连字符
+    result = re.sub(r'([a-z0-9])([A-Z])', r'\1-\2', name)
+    # 再将下划线和空格替换为连字符
+    result = re.sub(r'[_\s]+', '-', result).lower().strip('-')
+    result = re.sub(r'-+', '-', result)
+    return result
+
+
+def _enforce_kebab_case(name: str) -> str:
+    """强制 kebab-case 命名。不符合时抛出 ScaffoldError 并建议正确形式。"""
+    kebab = _to_kebab_case(name)
+    if kebab != name:
+        raise ScaffoldError(
+            f"命名规范阻断: '{name}' 不符合 kebab-case 规范。\n"
+            f"  建议使用: '{kebab}'\n"
+            f"  YAML/JSON/MD 文件名必须使用 kebab-case（小写+连字符），禁止下划线和大写字母。"
+        )
+    return name
+
+
 def _list_packages() -> str:
     """列出 src/zephyr/ 下所有子包。"""
     pkgs = [
@@ -683,7 +927,7 @@ def main() -> None:
 
     # module
     p_mod = sub.add_parser("module", help="创建 src/zephyr/<package>/<name>.py")
-    p_mod.add_argument("package", help="目标包名 (e.g. feedback_loop)")
+    p_mod.add_argument("package", help="目标包名 (e.g. feedback-loop)")
     p_mod.add_argument("name", help="模块名 (e.g. scheduler)")
     p_mod.add_argument("--desc", default="", help="功能描述")
     p_mod.add_argument("--domain", default="", help="功能域 (e.g. governance)")
@@ -705,6 +949,30 @@ def main() -> None:
     p_gate.add_argument("--category", default="kms", help="门禁分类")
     p_gate.add_argument("--dry-run", action="store_true", help="仅检查，不写入")
 
+    # yaml
+    p_yaml = sub.add_parser("yaml", help="创建 YAML 文件（kebab-case 强制）")
+    p_yaml.add_argument("path", help="项目根目录下的相对路径（不含扩展名，e.g. docs/01_policies/my-policy）")
+    p_yaml.add_argument("--desc", default="", help="功能描述")
+    p_yaml.add_argument("--domain", default="", help="功能域 (e.g. governance)")
+    p_yaml.add_argument("--subdomain", default="", help="子功能域")
+    p_yaml.add_argument("--dry-run", action="store_true", help="仅检查，不写入")
+
+    # json
+    p_json = sub.add_parser("json", help="创建 JSON 文件（kebab-case 强制）")
+    p_json.add_argument("path", help="项目根目录下的相对路径（不含扩展名，e.g. data/config/my-config）")
+    p_json.add_argument("--desc", default="", help="功能描述")
+    p_json.add_argument("--domain", default="", help="功能域 (e.g. governance)")
+    p_json.add_argument("--subdomain", default="", help="子功能域")
+    p_json.add_argument("--dry-run", action="store_true", help="仅检查，不写入")
+
+    # md
+    p_md = sub.add_parser("md", help="创建 Markdown 文件（kebab-case 强制）")
+    p_md.add_argument("path", help="项目根目录下的相对路径（不含扩展名，e.g. docs/guides/my-guide）")
+    p_md.add_argument("--desc", default="", help="功能描述")
+    p_md.add_argument("--domain", default="", help="功能域 (e.g. governance)")
+    p_md.add_argument("--subdomain", default="", help="子功能域")
+    p_md.add_argument("--dry-run", action="store_true", help="仅检查，不写入")
+
     args = parser.parse_args()
     engine = ScaffoldEngine(dry_run=args.dry_run)
 
@@ -715,6 +983,12 @@ def main() -> None:
             engine.create_script(args.path, args.desc, domain=getattr(args, 'domain', ''), subdomain=getattr(args, 'subdomain', ''))
         elif args.mode == "gate":
             engine.create_gate(args.gate_id, args.title, args.category)
+        elif args.mode == "yaml":
+            engine.create_yaml(args.path, args.desc, domain=getattr(args, 'domain', ''), subdomain=getattr(args, 'subdomain', ''))
+        elif args.mode == "json":
+            engine.create_json(args.path, args.desc, domain=getattr(args, 'domain', ''), subdomain=getattr(args, 'subdomain', ''))
+        elif args.mode == "md":
+            engine.create_md(args.path, args.desc, domain=getattr(args, 'domain', ''), subdomain=getattr(args, 'subdomain', ''))
         else:
             parser.print_help()
             sys.exit(1)

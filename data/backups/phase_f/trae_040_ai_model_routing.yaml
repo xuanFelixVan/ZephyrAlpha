@@ -1,0 +1,327 @@
+rule_id: TRAE-040
+title: AI治理-模型路由与协作
+aliases:
+- GOV-AI-002
+- PSP-005
+- GOV-AI-008
+layer: L1
+severity: error
+scope: ai_model_routing
+domain: TRAE
+triggers:
+- operation: ai_model_routing
+sections:
+  psp_005_encoding_safety:
+    section_type: rule
+    title: 双编辑器编码安全规则（PSP-005 §二）
+    original_rules:
+    - PSP-005
+    conditions:
+    - type: pre_condition
+      check: 开始任何Trae session之前
+      pass: files.autoGuessEncoding=false 且 files.encoding=utf8 已确认
+      fail: 禁止开始session
+    actions:
+    - type: mandatory
+      step: Trae必须配置 files.autoGuessEncoding=false 和 files.encoding=utf8
+    - type: mandatory
+      step: 切换到Trae前：确认Cursor中所有文件已保存并关闭，确认没有未提交的修改
+    - type: mandatory
+      step: 切换到Cursor前：确认Trae中所有文件已保存并关闭，运行编码扫描 python scripts/hooks/check_encoding.py
+    - type: mandatory
+      step: 编码损坏修复流程：check_encoding.py确认范围→git checkout HEAD恢复→确认修复
+    prohibitions:
+    - 禁止两个编辑器同时打开同一文件进行编辑
+    - 禁止在Trae中编辑 .cursor/rules/ 下的文件
+    - 禁止使用 echo 重定向创建 .md 文件（Windows默认UTF-16 LE或GBK）
+    - 禁止使用 PowerShell Out-File 默认参数创建文件（默认编码非UTF-8）
+    - 禁止 Python open(f, 'w') 不指定 encoding（必须 encoding='utf-8'）
+    - 禁止用文本编辑器逐字修改乱码字符（必须git checkout整文件还原）
+    - 禁止在损坏文件上追加"修复"（必须从git历史恢复整个文件）
+    - 禁止将损坏文件当作参考资料使用
+  psp_005_editor_fault:
+    section_type: rule
+    title: 编辑器故障应急（PSP-005 §六）
+    original_rules:
+    - PSP-005
+    conditions:
+    - type: trigger
+      check: Cursor崩溃/无响应
+      pass: 确认未保存更改+编码完整性
+      fail: 记录CURSOR-CRASH-YYYYMMDD到Session Log
+    - type: trigger
+      check: Trae假死/卡住超过30秒
+      pass: 强制终止+重启+编码扫描
+      fail: 记录TRAE-HANG-YYYYMMDD到Session Log
+    - type: constraint
+      check: 同一编辑器1小时内崩溃≥2次
+      pass: 正常
+      fail: 暂停工作并通知Owner
+    actions:
+    - type: mandatory
+      step: Cursor崩溃后：确认未保存更改→运行check_encoding.py验证编码→记录Session Log
+    - type: mandatory
+      step: Trae假死后：等待30秒→强制终止→重启→运行编码扫描→记录Session Log标注假死时任务
+    - type: mandatory
+      step: 故障后切换编辑器前必须先完成恢复步骤和编码扫描
+    - type: mandatory
+      step: 故障事件必须写入Session Log供下一session确认状态
+    prohibitions:
+    - 禁止故障后未完成恢复步骤就切换到另一编辑器继续工作
+  gov_ai_008_handoff:
+    section_type: rule
+    title: Session Handoff协议（GOV-AI-008）
+    original_rules:
+    - GOV-AI-008
+    conditions:
+    - type: trigger
+      check: AI Session 结束时
+      pass: 生成完整HandoffPackage（8字段齐全）
+      fail: 非法交接，禁止关闭session
+    actions:
+    - type: mandatory
+      step: HandoffPackage必须包含8个字段：session_id/completed_tasks/in_progress_tasks/blocked_items/decisions_made/next_actions/context_summary/open_questions
+    - type: mandatory
+      step: in_progress_tasks必须附带离开时上下文：当前执行步骤、已完成部分产出物路径、下一session接手第一个动作
+    - type: mandatory
+      step: decisions_made中rationale（理由）是必填项
+    - type: mandatory
+      step: next_actions至少1项
+    - type: mandatory
+      step: context_summary不超过500字
+    - type: mandatory
+      step: 文件命名：docs/09_audit/handoff/session-YYYYMMDD-NNN.yaml，编码UTF-8，换行符LF
+    prohibitions:
+    - 禁止删除HandoffPackage中任一字段（删任一字段视为非法交接）
+    - 禁止decisions_made中无rationale的决策
+    - 禁止next_actions为空（至少1项）
+  gov_ai_002_routing:
+    section_type: rule
+    title: 模型路由策略（GOV-AI-002）
+    original_rules:
+    - GOV-AI-002
+    conditions:
+    - type: trigger
+      check: 收到任务卡
+      pass: 按决策树分配模型
+      fail: 未分配模型禁止执行
+    - type: constraint
+      check: assigned_pipeline="C"（横切）
+      pass: 分配给脚本系统
+      fail: 不在本策略范围
+    actions:
+    - type: mandatory
+      step: 主力施工=DeepSeek V4 Pro（A区M1-M4、B区M6/M8/M9/M10/M11）
+    - type: mandatory
+      step: 深度审查=GLM-5.1（B区M7深度审查、A区M5产出物打包）
+    - type: mandatory
+      step: 特种救援=Claude Opus 4.7（仅DeepSeek+GLM都搞不定+Owner标记关键任务）
+    - type: mandatory
+      step: 任务分配决策树：C管线→脚本系统→Claude关键任务清单→A管线M1-M4→DeepSeek/M5→GLM→B管线M7→GLM/其他→DeepSeek
+    - type: mandatory
+      step: Claude特种救援触发条件：DeepSeek执行失败连续3次/GLM审查驳回≥2次/Owner标记P0+关键/安全敏感任务/新领域探索
+    prohibitions:
+    - 禁止日常使用Claude（太贵，仅特种救援）
+    - 禁止DeepSeek产出未经GLM审查直接合入（幻觉率94%）
+  gov_ai_002_fallback:
+    section_type: rule
+    title: 模型降级与容灾（GOV-AI-002 §四）
+    original_rules:
+    - GOV-AI-002
+    conditions:
+    - type: trigger
+      check: DeepSeek V4 Pro API不可用
+      pass: 降级到GLM-5.1（全部任务）
+      fail: 继续降级链路
+    - type: trigger
+      check: GLM-5.1不可用（Trae CN故障）
+      pass: 降级到DeepSeek V4 Pro+追加Claude审查
+      fail: 继续降级链路
+    - type: trigger
+      check: Claude API不可用
+      pass: 跳过Claude环节，Owner人工审查
+      fail: 不阻塞任务
+    - type: trigger
+      check: 所有模型不可用
+      pass: 暂停任务管线+通知Owner
+      fail: 任务卡全部标记blocked
+    actions:
+    - type: mandatory
+      step: DeepSeek不可用→降级到GLM-5.1（免费fallback）
+    - type: mandatory
+      step: GLM不可用→降级到DeepSeek自行审查→Claude兜底
+    - type: mandatory
+      step: Claude不可用→跳过Claude环节，标记需要人工复查，不阻塞任务
+    - type: mandatory
+      step: 所有模型不可用→暂停任务管线+通知Owner+任务卡全部标记blocked
+    prohibitions:
+    - 禁止Claude不可用时阻塞任务
+  psp_005_division:
+    section_type: context
+    title: Cursor vs Trae分工映射
+    original_rules:
+    - PSP-005-§一
+    summary: 8种任务类型→编辑器的映射
+    impact_on_rules:
+    - 架构设计/KB决策/规范文档/代码实现→Cursor（深度推理+长上下文）
+    - 批量操作/消除流水线/蓝图安全/校验脚本/编码扫描→Trae（Agent模式+工具链）
+    key_decisions: []
+  psp_005_encoding_symptom:
+    section_type: symptom_mapping
+    title: 编码损坏识别信号
+    original_rules:
+    - PSP-005-§三
+    mappings:
+    - symptom: 文件末尾出现阿拉伯文/西里尔文字符
+      root_cause: 双重编码损坏——文件被错误编码保存后再以不同编码打开
+      treatment: git checkout HEAD恢复整个文件
+    - symptom: frontmatter字段值出现非中英文字符
+      root_cause: 主体可能全部损坏——frontmatter区域已受编码错误影响
+      treatment: git checkout HEAD恢复+检查其他文件
+    - symptom: 正文标题出现非中英文字符
+      root_cause: 至少局部损坏——标题区域受编码错误影响
+      treatment: git checkout HEAD恢复+检查相邻文件
+  psp_005_head_corrupted_rollback:
+    section_type: rollback
+    title: HEAD也损坏时的回退路径
+    original_rules:
+    - PSP-005-§四
+    steps:
+    - order: 1
+      action: git log --oneline找到最近的干净commit
+      verify: 找到commit hash
+      on_fail: 检查git历史
+    - order: 2
+      action: git show <干净commit>:<文件> > <文件路径> 恢复
+      verify: 文件内容正常
+      on_fail: 尝试更早的commit
+    - order: 3
+      action: 确认恢复后的文件编码正确
+      verify: Get-Content -Encoding UTF8验证
+      on_fail: 重新从干净commit恢复
+  psp_005_fallback_verification:
+    section_type: procedure
+    title: check_encoding.py不存在时的fallback手动验证
+    original_rules:
+    - PSP-005-§四
+    steps:
+    - order: 1
+      action: PowerShell Get-Content -Encoding UTF8 <文件路径> -First 5
+      pre_condition: check_encoding.py脚本不存在
+      expected_result: 前5行内容正常显示
+      on_failure: 文件已损坏，走修复流程
+    - order: 2
+      action: 对所有疑似损坏文件逐一验证
+      pre_condition: 第一个文件验证完成
+      expected_result: 所有文件前5行正常
+      on_failure: 损坏文件走git checkout恢复
+  psp_005_file_locking:
+    section_type: procedure
+    title: 文件锁定手动约定
+    original_rules:
+    - PSP-005-§五
+    steps:
+    - order: 1
+      action: Session Log中记录当前编辑文件列表
+      pre_condition: 开始编辑文件
+      expected_result: 文件列表已记录
+      on_failure: 补充记录
+    - order: 2
+      action: 切换编辑器前确认对方编辑器没有打开相同文件
+      pre_condition: 需要切换编辑器
+      expected_result: 确认无冲突
+      on_failure: 等待对方关闭文件
+  gov_ai_008_template:
+    section_type: procedure
+    title: HandoffPackage YAML模板
+    original_rules:
+    - GOV-AI-008-§3
+    steps:
+    - order: 1
+      action: 复制HandoffPackage YAML模板并填写8个字段
+      pre_condition: AI Session即将结束
+      expected_result: 完整的handoff文件已生成
+      on_failure: 缺字段则非法交接，禁止关闭session
+    - order: 2
+      action: 保存到docs/09_audit/handoff/session-YYYYMMDD-NNN.yaml
+      pre_condition: 模板已填写
+      expected_result: 文件已保存(UTF-8/LF换行)
+      on_failure: 检查路径和编码
+  gov_ai_008_change_history:
+    section_type: examples
+    title: Handoff协议变更记录
+    original_rules:
+    - GOV-AI-008-§4
+    items:
+    - title: v2.0.0
+      code: 'date: 2026-05-01
+
+        change: 压缩——移除R-编号/Pydantic实现细节/SessionCarryover JSON/自评报告/pre-commit配置示例，从governance/task/迁入'
+      language: yaml
+      note: 重大压缩
+    - title: v1.0.0
+      code: 'date: 2026-04-27
+
+        change: 初始版本300行'
+      language: yaml
+      note: 初始版本
+  gov_ai_002_benchmark:
+    section_type: context
+    title: 模型角色决策依据(REG-LLM-001基准数据)
+    original_rules:
+    - GOV-AI-002-§一
+    summary: 5维度基准对比——代码能力(DeepSeek 9.0/GLM 8.2/Claude 10)、幻觉控制(4.5/8.5/10)、中文能力(9.0/9.0/7.5)、性价比(8.5/8.5/3.0)、综合(7.8/7.7/8.4)
+    impact_on_rules:
+    - DeepSeek能力强但不可信(幻觉4.5)→GLM审查纠错(幻觉8.5)→Claude兜底(幻觉10)
+    - 三层防御：主力施工(DeepSeek)→深度审查(GLM)→特种救援(Claude)
+    key_decisions: []
+  gov_ai_002_change_history:
+    section_type: examples
+    title: 模型路由变更记录
+    original_rules:
+    - GOV-AI-002-§五
+    items:
+    - title: v2.0.0
+      code: 'date: 2026-05-02
+
+        change: 重大重写——Claude终审取消→特种救援/DeepSeek V4 Pro升为主力/GLM承担深度审查/基于REG-LLM-001重新验证/新增Claude触发条件与降级方案'
+      language: yaml
+      note: 重大重写
+    - title: v1.0.0
+      code: 'date: 2026-04-23
+
+        change: 初始版本——Claude终审+Composer 2主力'
+      language: yaml
+      note: 初始版本
+  trae_040_change_history:
+    title: TRAE-040文件变更记录
+    section_type: examples
+    original_rules:
+    - TRAE-040
+    items:
+    - version: "1.1.0"
+      date: "2026-06-19"
+      change: "RQ审查修复——references.scripts路径修正(scripts/hooks/check_encoding.py→scripts/governance/d7_code/check_encoding.py)；references.modules路径修正+snake_case化(model-capability-contract.yaml→docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml)；provenance源文件标注归档状态；新增文件级change_history(违反RQ-14)"
+references:
+  rule_ids:
+  - GOV-AI-002
+  - PSP-005
+  - GOV-AI-008
+  scripts:
+  - scripts/governance/d7_code/check_encoding.py
+  modules:
+  - docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml
+  blueprints: []
+enforcement:
+  type: code
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001
+  archive_note: 源.md文件已合并入本YAML规则文件后删除，hash为提取时记录值，RQ-09哈希验证不适用(status=archived)

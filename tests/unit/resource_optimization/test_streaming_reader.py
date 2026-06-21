@@ -1,9 +1,11 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1934 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-553 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.resource_optimization.test_streaming_reader
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """
 test_streaming_reader.py - StreamingReader unit tests
 ======================================================
@@ -11,13 +13,12 @@ test_streaming_reader.py - StreamingReader unit tests
 TASK-INF-0140 Phase 2 verification.
 """
 
-from __future__ import annotations
 
 import json
 
 import pytest
 
-from zephyr.shared.io.streaming_reader import tail_jsonl, stream_jsonl
+from zephyr.integration.shared_08.io.streaming_reader import tail_jsonl, stream_jsonl
 
 
 def _write_jsonl(path, records: list[dict]) -> None:

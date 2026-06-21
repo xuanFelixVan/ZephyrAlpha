@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0100 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-258 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.contracts.test_ct_health_001
 # [STABILITY] evolving
 # [SAFETY] L
@@ -10,9 +11,9 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.orchestrator.contract_registry import ContractRegistry
-from zephyr.orchestrator.contract_router import ContractRouter
-from zephyr.l01_infrastructure.system_telemetry.health_probes import (
+from zephyr.trading.orchestrator.contract_registry import ContractRegistry
+from zephyr.trading.orchestrator.contract_router import ContractRouter
+from zephyr.infrastructure.system_telemetry.health_probes import (
     SYSTEMS,
     HealthProbeManager,
     ProbeStatus,
@@ -54,10 +55,10 @@ def test_systems_are_12():
 
 def test_special_rules_have_expected_keys():
     assert "orchestrator" in SPECIAL_RULES
-    assert "context_engine" in SPECIAL_RULES
-    assert "llm_security" in SPECIAL_RULES
+    assert "context-engine" in SPECIAL_RULES
+    assert "llm-security" in SPECIAL_RULES
     assert "database" in SPECIAL_RULES
-    assert SPECIAL_RULES["llm_security"]["no_degraded"] is True
+    assert SPECIAL_RULES["llm-security"]["no_degraded"] is True
 
 
 def test_health_manager_liveness():
@@ -96,7 +97,7 @@ def test_health_manager_healthz_orchestrator_degraded():
 
 def test_health_manager_healthz_llm_security_never_degraded():
     mgr = HealthProbeManager()
-    result = mgr.healthz("llm_security", {"token_budget": 9999})
+    result = mgr.healthz("llm-security", {"token_budget": 9999})
     assert result["status"] == "healthy"
 
 

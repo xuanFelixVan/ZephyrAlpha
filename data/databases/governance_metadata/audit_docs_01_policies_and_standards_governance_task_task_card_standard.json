@@ -1,0 +1,80 @@
+{
+  "task_id": "DM-100152",
+  "source_file": "docs/01_policies_and_standards/governance/task/task_card_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "TASK-001-TEMPLATE": {
+      "title": "任务卡模板格式",
+      "type": "mandatory+prohibition",
+      "content": "唯一创建入口TaskRepository.create()写入SQLite；.md为伴读副本；禁止绕过",
+      "coverage": "COVERED",
+      "yaml_section": "task_001_template"
+    },
+    "TASK-001-FIELDS": {
+      "title": "必填字段约束",
+      "type": "constraint",
+      "content": "33个必填字段+task_id格式+title长度1-200字+description≥10字+applicable_rules默认含TRAE-011+post_sync_standard含三方对齐命令",
+      "coverage": "COVERED",
+      "yaml_section": "task_001_fields"
+    },
+    "TASK-001-GRANULARITY": {
+      "title": "粒度约束(RULE-THIRTEEN)",
+      "type": "constraint+prohibition",
+      "content": "deliverables≤1/files_in_scope≤3/acceptance≤1/禁止跨Phase",
+      "coverage": "COVERED",
+      "yaml_section": "task_001_granularity"
+    },
+    "TASK-001-DESCRIPTION": {
+      "title": "description强制格式(八步工作流)",
+      "type": "mandatory+prohibition",
+      "content": "八步工作流：搜索审计→前置检查→施工→疏通→循环验证→更新清单→四方对齐→端到端测试",
+      "coverage": "COVERED",
+      "yaml_section": "task_001_description"
+    },
+    "TASK-001-MTH006": {
+      "title": "MTH-006深挖到底协议",
+      "type": "mandatory+prohibition",
+      "content": "触发条件(Bug/漂移/异常/结构缺陷)+4条强制要求+4条禁止行为",
+      "coverage": "COVERED",
+      "yaml_section": "task_001_mth006"
+    },
+    "TASK-001-CLOSURE": {
+      "title": "关闭验证",
+      "type": "mandatory+prohibition",
+      "content": "关闭三步法+循环验收协议+全景图对齐协议+5条禁止关闭情况",
+      "coverage": "COVERED",
+      "yaml_section": "task_001_closure"
+    },
+    "TASK-001-SPLIT": {
+      "title": "拆卡规则",
+      "type": "mandatory+prohibition",
+      "content": "R1-R4四条机械规则+2条禁止拆卡情况",
+      "coverage": "COVERED",
+      "yaml_section": "task_001_split"
+    },
+    "TASK-001-PERF": {
+      "title": "PERF-001慢/卡死程序诊断SOP",
+      "type": "mandatory+trigger",
+      "content": "十项强制检查+进度可观测性要求+建卡判定",
+      "coverage": "COVERED",
+      "yaml_section": "task_001_perf"
+    }
+  },
+  "summary": {
+    "total_rules": 8,
+    "COVERED": 8,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "新增task_001_template节：任务卡模板格式（原YAML仅有占位符）",
+    "新增task_001_fields节：必填字段约束（5个约束条件）",
+    "新增task_001_granularity节：粒度约束（4个约束条件+3条禁止项）",
+    "新增task_001_description节：八步工作流（9个强制步骤+8条禁止项）",
+    "新增task_001_mth006节：深挖到底协议（1个触发条件+4条强制要求+4条禁止项）",
+    "新增task_001_closure节：关闭验证（3个强制步骤+5条禁止项）",
+    "新增task_001_split节：拆卡规则（5个强制步骤+2条禁止项）",
+    "新增task_001_perf节：PERF-001诊断SOP（2个触发条件+2条强制步骤）"
+  ]
+}

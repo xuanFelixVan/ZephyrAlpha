@@ -1,3 +1,4 @@
+# [A_config] module_id=CFG-status-vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: DOM-GOV-001
@@ -85,7 +86,7 @@ values:
 #    不可擅自做：自己判断文件过时就废弃了
 #
 # 4. 任何状态回退（active→draft、deprecated→active）
-#    必须走：Owner 明确批准 + ADR 记录
+#    必须走：Owner 明确批准 + KB 决策记录
 # ============================================================
 
 deprecated_values:

@@ -1,3 +1,4 @@
+# [A_config] module_id=CFG-session-log-schema | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: DOM-GOV-001
@@ -117,7 +118,7 @@ required_fields:
     description: "本次 session 变更的文件（含操作类型：创建/编辑/移动）"
     example:
       - "创建: docs/01_policies_and_standards/governance/ai/ai-onboarding-guide.md"
-      - "编辑: docs/01_policies_and_standards/governance/_registry/catalogs/document-metadata-index.yaml"
+      - "编辑: docs/01_policies_and_standards/governance/_registry/catalogs/document-metadata-index-registry.yaml"
     usage: "每条必须以操作类型开头（创建/编辑/移动），后跟完整绝对路径。"
 
   - field: "decisions"
@@ -133,7 +134,7 @@ required_fields:
         alternatives_considered:
           - "方案B：严格继承 ABC 接口 → 否决，因为会丢失 L1/L2 上下文"
         category: "interface_design"
-        tags: ["security", "ocp-004", "l10_compliance"]
+        tags: ["security", "ocp-004", "compliance"]
         status: "accepted"
     usage: |
       结构化决策对象子字段（均为可选）：
@@ -181,7 +182,7 @@ optional_fields:
       - blind_spot_id: "BLIND-L04-DUPLICATE-RISKLIMITS"
         description: "L04 存在两套 RiskLimits 定义"
         severity: high
-        scope: ["l04_risk_management"]
+        scope: ["risk"]
         status: open
     sub_fields:
       - name: "blind_spot_id"
@@ -219,11 +220,11 @@ optional_fields:
     description: "施工偏差明细列表"
     example:
       - deviation_type: "blueprint_defect"
-        blueprint_ref: "docs/03_modules/l01_infrastructure/<module>/blueprint.md"
+        blueprint_ref: "docs/03_modules/_domain-infra_ops/<module>/blueprint.md"
         description: "蓝图 §4 接口契约定义的返回类型与实际业务需求不一致"
         recommended_action: "modify_blueprint"
       - deviation_type: "tech_choice_infeasible"
-        blueprint_ref: "docs/03_modules/l01_infrastructure/<module>/blueprint.md"
+        blueprint_ref: "docs/03_modules/_domain-infra_ops/<module>/blueprint.md"
         description: "蓝图选型的 DuckDB 在高频小写入场景性能不足"
         recommended_action: "update_decision_record"
     sub_fields:

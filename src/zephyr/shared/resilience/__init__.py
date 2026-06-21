@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-RES_resilience | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 """
 resilience/__init__.py — 韧性工具包入口（Phase 2 新增）
 
@@ -24,13 +25,5 @@ __all__ = [
     "fallback",
     "retry",
     "circuit_breaker",
-    "fallback",
 ]
 
-from .circuit_breaker import (  # noqa: E402
-    CircuitBreaker,
-    CircuitOpenError,
-    CircuitState,
-)
-from .fallback import FallbackChain, fallback  # noqa: E402
-from .retry import RetryConfig, RetryExhaustedError, async_retry  # noqa: E402

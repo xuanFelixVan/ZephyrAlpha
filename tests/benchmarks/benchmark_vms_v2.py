@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0086 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-244 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.benchmarks.benchmark_vms_v2
 # [STABILITY] evolving
 # [SAFETY] L
@@ -39,7 +40,7 @@ def main():
         shutil.rmtree(TEST_DIR)
     TEST_DIR.mkdir(parents=True)
 
-    from zephyr.vector_memory.faiss_collection_manager import FAISSCollectionManager
+    from zephyr.governance.vector_memory.faiss_collection_manager import FAISSCollectionManager
     import faiss
 
     print("=" * 60)

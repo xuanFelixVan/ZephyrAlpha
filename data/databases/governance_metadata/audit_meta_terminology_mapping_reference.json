@@ -1,0 +1,26 @@
+{
+  "task_id": "DM-100164",
+  "source_file": "docs/01_policies_and_standards/meta/terminology_mapping_reference.md",
+  "yaml_file": "N/A",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "skipped_content": {
+      "description": "术语映射参考文件，内容为术语在不同体系间的映射对照表，无规则类内容（禁止/必须/约束/流程步骤/检查命令）",
+      "analysis": [
+        "文件内容：TRAE编号↔ABS/COND/REC编号↔RULE-*编号↔PS-STD-*编号的映射对照表",
+        "性质：纯参考映射，无行为约束",
+        "判定：非规则类内容，不需要进入YAML"
+      ]
+    }
+  },
+  "summary": {
+    "total_rules": 0,
+    "COVERED": 0,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "No YAML modification needed: terminology_mapping_reference.md contains only mapping tables between rule numbering systems, no actionable rules (prohibitions/mandates/constraints/process steps/check commands)",
+    "The mapping information is already represented in _index.yaml aliases fields and individual YAML rule_id/aliases fields"
+  ]
+}

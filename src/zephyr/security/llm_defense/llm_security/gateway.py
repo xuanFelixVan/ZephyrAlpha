@@ -1,0 +1,391 @@
+# [A_module] module_id=MOD-SEC_gateway | layer=module | stability=evolving | safety=L | ai_autonomy=human_gated
+# [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
+
+# [MODULE] zephyr.security.llm_defense.llm_security.gateway
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] human_gated
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+import asyncio
+import time
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any, Dict, List, Optional
+
+from zephyr.security.llm_defense.llm_security.protocol import (
+    LLMSecurityProtocol,
+    SecurityContext,
+    SecurityDecision,
+    SecurityResult,
+)
+from zephyr.security.llm_defense.llm_security.layers.l0_supply_chain import SupplyChainGuard
+from zephyr.security.llm_defense.llm_security.layers.l1_input import InputDefenseLayer
+from zephyr.security.llm_defense.llm_security.layers.l2_prompt_protection import PromptProtectionLayer
+from zephyr.security.llm_defense.llm_security.layers.l2a_process_sandbox import ProcessSandboxLayer
+from zephyr.security.llm_defense.llm_security.layers.l3_output import OutputSecurityLayer
+from zephyr.security.llm_defense.llm_security.layers.l4_agent import AgentSecurityLayer
+from zephyr.security.llm_defense.llm_security.layers.l5_resource_protection import ResourceProtectionLayer
+from zephyr.security.llm_defense.llm_security.layers.l6_observability import ObservabilityLayer
+from zephyr.security.llm_defense.llm_security.self_protection.l7_validation import ValidationLayer
+from zephyr.security.llm_defense.llm_security.layers.l8_multi_agent import MultiAgentSecurityLayer
+
+
+class ScanMode(str, Enum):
+    FULL = "full"
+    INPUT_ONLY = "input_only"
+    OUTPUT_ONLY = "output_only"
+    AGENT_ONLY = "agent_only"
+
+
+@dataclass
+class ScanResult:
+    decision: SecurityDecision
+    mode: ScanMode
+    layers_evaluated: int
+    layers_passed: int
+    layers_denied: int
+    layers_flagged: int
+    total_score: float
+    elapsed_ms: float
+    layer_results: Dict[str, SecurityResult] = field(default_factory=dict)
+    blocked_by: str = ""
+    sanitized_input: str = ""
+    sanitized_output: str = ""
+
+
+class LSGSecurityGateway:
+    """LLM Security Gateway — L0-L8 九层纵深防御统一编排入口.
+
+    原则：fail-closed —— 任一层 DENY → 整体 DENY，LSG 不可用 → 拒绝所有流量.
+    L6/L7 为 pass-through 层（fail-open 降级例外）.
+
+    执行语义：严格顺序链式执行 L0→L1→...→L8，任一非 fail-open 层 DENY/BLOCK
+    立即中断后续层的评估。这是纵深防御的核心安全语义，不可并行化。
+
+    用法:
+        gw = LSGSecurityGateway()
+        result = await gw.scan_input("user prompt text", metadata={...})
+        if result.decision == SecurityDecision.DENY:
+            # 拒绝该请求
+    """
+
+    FAIL_OPEN_LAYERS = {"l6_observability", "l7_validation"}
+
+    def __init__(
+        self,
+        model_digest_registry: Optional[Dict[str, str]] = None,
+        rules_file_baselines: Optional[Dict[str, str]] = None,
+        project_root: Optional[str] = None,
+        max_tokens: int = 100000,
+        max_cost_cents: float = 500.0,
+        hmac_key: Optional[bytes] = None,
+        layer_timeout_seconds: float = 10.0,
+    ):
+        self._layers: Dict[str, LLMSecurityProtocol] = {}
+        self._layer_timeout_seconds = layer_timeout_seconds
+        self._init_layers(
+            model_digest_registry=model_digest_registry,
+            rules_file_baselines=rules_file_baselines,
+            project_root=project_root,
+            max_tokens=max_tokens,
+            max_cost_cents=max_cost_cents,
+            hmac_key=hmac_key,
+        )
+
+    def _init_layers(self, **kwargs):
+        self._layers["l0_supply_chain"] = SupplyChainGuard(
+            model_digest_registry=kwargs.get("model_digest_registry"),
+            rules_file_baselines=kwargs.get("rules_file_baselines"),
+            project_root=kwargs.get("project_root"),
+        )
+        self._layers["l1_input"] = InputDefenseLayer()
+        self._layers["l2_prompt_protection"] = PromptProtectionLayer()
+        self._layers["l2a_process_sandbox"] = ProcessSandboxLayer()
+        self._layers["l3_output"] = OutputSecurityLayer()
+        self._layers["l4_agent"] = AgentSecurityLayer(
+            hmac_key=kwargs.get("hmac_key"),
+        )
+        self._layers["l5_resource_protection"] = ResourceProtectionLayer(
+            max_tokens=kwargs.get("max_tokens", 100000),
+            max_cost_cents=kwargs.get("max_cost_cents", 500.0),
+        )
+        self._layers["l6_observability"] = ObservabilityLayer()
+        self._layers["l7_validation"] = ValidationLayer()
+        self._layers["l8_multi_agent"] = MultiAgentSecurityLayer(
+            hmac_key=kwargs.get("hmac_key"),
+        )
+
+    @property
+    def layers(self) -> Dict[str, LLMSecurityProtocol]:
+        return dict(self._layers)
+
+    def get_layer(self, layer_name: str) -> Optional[LLMSecurityProtocol]:
+        return self._layers.get(layer_name)
+
+    async def scan_input(
+        self,
+        text: str,
+        source: str = "direct_input",
+        metadata: Optional[Dict[str, Any]] = None,
+        mode: ScanMode = ScanMode.INPUT_ONLY,
+    ) -> ScanResult:
+        """输入扫描：L0→L1→L2→L5 顺序执行.
+
+        fail-closed: 任一层 DENY → 整体 DENY.
+        """
+        meta = metadata or {}
+        meta["source"] = source
+        ctx = SecurityContext(
+            request_id=meta.get("request_id", f"lsg-{int(time.time()*1000)}"),
+            layer_name="gateway",
+            raw_input=text,
+            metadata=meta,
+        )
+
+        input_layer_names = ["l0_supply_chain", "l1_input", "l2_prompt_protection", "l5_resource_protection"]
+        return await self._evaluate_chain(ctx, input_layer_names, mode)
+
+    async def scan_output(
+        self,
+        text: str,
+        source: str = "model_output",
+        metadata: Optional[Dict[str, Any]] = None,
+        mode: ScanMode = ScanMode.OUTPUT_ONLY,
+    ) -> ScanResult:
+        """输出扫描：L3→L6 顺序执行.
+
+        fail-closed: L3 DENY → 整体 DENY; L6 为 pass-through.
+        """
+        meta = metadata or {}
+        meta["source"] = source
+        ctx = SecurityContext(
+            request_id=meta.get("request_id", f"lsg-{int(time.time()*1000)}"),
+            layer_name="gateway",
+            raw_input=text,
+            metadata=meta,
+        )
+
+        output_layer_names = ["l3_output", "l6_observability"]
+        return await self._evaluate_chain(ctx, output_layer_names, mode)
+
+    async def scan_agent_action(
+        self,
+        text: str,
+        tool_name: str = "",
+        tool_params: Optional[Dict[str, Any]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        mode: ScanMode = ScanMode.AGENT_ONLY,
+    ) -> ScanResult:
+        """Agent 动作扫描：L4→L5→L8 顺序执行.
+
+        fail-closed: 任一层 DENY → 整体 DENY.
+        """
+        meta = metadata or {}
+        meta["tool_name"] = tool_name
+        meta["tool_params"] = tool_params or {}
+        ctx = SecurityContext(
+            request_id=meta.get("request_id", f"lsg-{int(time.time()*1000)}"),
+            layer_name="gateway",
+            raw_input=text,
+            metadata=meta,
+        )
+
+        agent_layer_names = ["l4_agent", "l5_resource_protection", "l8_multi_agent"]
+        return await self._evaluate_chain(ctx, agent_layer_names, mode)
+
+    async def full_scan(
+        self,
+        text: str,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> ScanResult:
+        """全链路扫描：L0→L1→L2→L2a→L3→L4→L5→L6→L7→L8 顺序执行.
+
+        fail-closed: 任一非 pass-through 层 DENY → 整体 DENY.
+        """
+        meta = metadata or {}
+        ctx = SecurityContext(
+            request_id=meta.get("request_id", f"lsg-{int(time.time()*1000)}"),
+            layer_name="gateway",
+            raw_input=text,
+            metadata=meta,
+        )
+
+        all_layer_names = [
+            "l0_supply_chain", "l1_input", "l2_prompt_protection",
+            "l2a_process_sandbox", "l3_output", "l4_agent",
+            "l5_resource_protection", "l6_observability", "l7_validation",
+            "l8_multi_agent",
+        ]
+        return await self._evaluate_chain(ctx, all_layer_names, ScanMode.FULL)
+
+    async def _evaluate_chain(
+        self,
+        ctx: SecurityContext,
+        layer_names: List[str],
+        mode: ScanMode,
+    ) -> ScanResult:
+        """顺序链式评估——纵深防御核心语义：L0→L1→...→LN 严格顺序执行.
+
+        任一非 fail-open 层 DENY/BLOCK → 立即中断，不评估后续层.
+        每层评估带超时保护，防止单层卡死导致整体阻塞.
+        """
+        t0 = time.perf_counter()
+        layer_results: Dict[str, SecurityResult] = {}
+        passed = 0
+        denied = 0
+        flagged = 0
+        blocked_by = ""
+        final_decision = SecurityDecision.ALLOW
+        min_score = 1.0
+
+        for name in layer_names:
+            layer = self._layers.get(name)
+            if layer is None:
+                if name in self.FAIL_OPEN_LAYERS:
+                    continue
+                layer_results[name] = SecurityResult(
+                    decision=SecurityDecision.BLOCK,
+                    reason=f"{name} is missing/broken — fail-closed",
+                    layer_name=name,
+                    score=0.0,
+                )
+                denied += 1
+                final_decision = SecurityDecision.BLOCK
+                blocked_by = name
+                break
+
+            try:
+                result = await asyncio.wait_for(
+                    layer.evaluate(ctx),
+                    timeout=self._layer_timeout_seconds,
+                )
+                layer_results[name] = result
+
+                if result.decision == SecurityDecision.DENY:
+                    denied += 1
+                    if name not in self.FAIL_OPEN_LAYERS:
+                        final_decision = SecurityDecision.DENY
+                        blocked_by = name
+                        break
+                elif result.decision == SecurityDecision.BLOCK:
+                    denied += 1
+                    if name not in self.FAIL_OPEN_LAYERS:
+                        final_decision = SecurityDecision.BLOCK
+                        blocked_by = name
+                        break
+                elif result.decision == SecurityDecision.FLAG:
+                    flagged += 1
+                else:
+                    passed += 1
+
+                min_score = min(min_score, result.score)
+
+            except asyncio.TimeoutError:
+                if name in self.FAIL_OPEN_LAYERS:
+                    layer_results[name] = SecurityResult(
+                        decision=SecurityDecision.ALLOW,
+                        reason=f"{name} timed out after {self._layer_timeout_seconds}s but is fail-open",
+                        layer_name=name,
+                        score=1.0,
+                    )
+                    passed += 1
+                else:
+                    layer_results[name] = SecurityResult(
+                        decision=SecurityDecision.DENY,
+                        reason=f"{name} timed out after {self._layer_timeout_seconds}s — fail-closed",
+                        layer_name=name,
+                        score=0.0,
+                    )
+                    denied += 1
+                    final_decision = SecurityDecision.DENY
+                    blocked_by = name
+                    break
+
+            except Exception:
+                if name in self.FAIL_OPEN_LAYERS:
+                    layer_results[name] = SecurityResult(
+                        decision=SecurityDecision.ALLOW,
+                        reason=f"{name} raised exception but is fail-open",
+                        layer_name=name,
+                        score=1.0,
+                    )
+                    passed += 1
+                else:
+                    layer_results[name] = SecurityResult(
+                        decision=SecurityDecision.DENY,
+                        reason=f"{name} raised exception — fail-closed",
+                        layer_name=name,
+                        score=0.0,
+                    )
+                    denied += 1
+                    final_decision = SecurityDecision.DENY
+                    blocked_by = name
+                    break
+
+        elapsed_ms = (time.perf_counter() - t0) * 1000.0
+
+        return ScanResult(
+            decision=final_decision,
+            mode=mode,
+            layers_evaluated=len(layer_results),
+            layers_passed=passed,
+            layers_denied=denied,
+            layers_flagged=flagged,
+            total_score=round(min_score, 3),
+            elapsed_ms=round(elapsed_ms, 3),
+            layer_results=layer_results,
+            blocked_by=blocked_by,
+        )
+
+    async def validate_self_integrity(self) -> Dict[str, Any]:
+        """L7 自检：验证 LSG 自身代码完整性."""
+        l7 = self._layers.get("l7_validation")
+        if l7 is None:
+            return {"integrity": "unknown", "reason": "L7 not available"}
+
+        guard = l7.integrity_guard
+        checks = guard.check_all()
+        all_passed = all(c.passed for c in checks)
+        return {
+            "integrity": "ok" if all_passed else "compromised",
+            "checks": len(checks),
+            "passed": sum(1 for c in checks if c.passed),
+            "failed": sum(1 for c in checks if not c.passed),
+        }
+
+    async def trigger_regression(self) -> Dict[str, Any]:
+        """L7 安全回归测试."""
+        l7 = self._layers.get("l7_validation")
+        if l7 is None:
+            return {"regression": "unavailable"}
+
+        from zephyr.security.llm_defense.llm_security.self_protection.l7_validation import RegressionType
+        weekly = l7.trigger_security_regression(RegressionType.WEEKLY, gateway=self)
+        return {
+            "regression": "completed",
+            "total_scenarios": weekly.total_scenarios,
+            "passed": weekly.passed,
+            "failed": weekly.failed,
+            "coverage_pct": weekly.coverage_pct,
+        }
+
+    def get_observability_metrics(self) -> Dict[str, Any]:
+        """L6 仪表板指标."""
+        l6 = self._layers.get("l6_observability")
+        if l6 is None:
+            return {}
+        metrics = l6.collect_metrics()
+        return metrics.model_dump()

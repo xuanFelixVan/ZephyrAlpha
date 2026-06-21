@@ -1,0 +1,111 @@
+# [A_module] module_id=MOD-DAT_vector_memory | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+
+
+__all__ = [
+    "BM25Index",
+    "BridgeLayer",
+    "cache_layer",
+    "Chunk",
+    "ChunkStrategyRouter",
+    "ChunkStrategyError",
+    "CollectionInfo",
+    "CollectionManager",
+    "DesignPrincipleError",
+    "DesignPrinciplesEnforcer",
+    "DimensionError",
+    "HotColdSeparationError",
+    "ProvenanceMissingError",
+    "TTLError",
+    "VMSError",
+    "CollectionInfo",
+    "ContextIngest",
+    "ingest_context",
+    "logger",
+    "CrossCollectionRetriever",
+    "UnifiedMemoryAPI",
+    "UnifiedVectorMemoryAdapter",
+    "WriteTrace",
+    "get_unified_memory_api",
+    "DesignPrinciplesEnforcer",
+    "FAISSCollectionManager",
+    "BM25Index",
+    "HybridRetriever",
+    "RetrievalTrace",
+    "ScoredHit",
+    "InMemoryFakeVMS",
+    "InMemoryMemoryBackend",
+    "InProcessVectorMemory",
+    "DriftReport",
+    "HealthReport",
+    "IndexHealthMonitor",
+    "TTLExpiryReport",
+    "EmbeddingEngineBase",
+    "MemoryEntry",
+    "VectorMemoryBase",
+    "local_model_scheduler",
+    "FAISS_PATH",
+    "VMS_CHROMA_PATH",
+    "main",
+    "migrate_kb_collection",
+    "migrate_vms_collection",
+    "ollama_chat",
+    "ollama_embedding",
+    "ProvenanceEnforcer",
+    "FeedbackEntry",
+    "RetrievalFeedback",
+    "SQLiteMetadataStore",
+    "ScoredHit",
+    "SearchTrace",
+    "ChunkStrategyError",
+    "DesignPrincipleError",
+    "DimensionError",
+    "HotColdSeparationError",
+    "ProvenanceMissingError",
+    "TTLError",
+    "VMSError",
+    "Chunk",
+    "CollectionMetadata",
+    "HealthReport",
+    "Provenance",
+    "RetrievalTrace",
+    "ScoredHit",
+    "WriteTrace",
+    "bm25_index",
+    "bridge_layer",
+    "chunk_strategy_router",
+    "collection_manager",
+    "collection_schemas",
+    "context_ingest",
+    "cross_collection_retriever",
+    "delegated_vector_memory",
+    "design_principles",
+    "faiss_collection_manager",
+    "hybrid_retriever",
+    "in_memory_fake_vms",
+    "in_memory_memory_backend",
+    "in_process_vector_memory",
+    "index_health_monitor",
+    "interface",
+    "migrate_chroma_to_faiss",
+    "provenance_enforcer",
+    "retrieval_feedback",
+    "sqlite_metadata_store",
+    "vms_errors",
+    "vms_schemas",
+]
+
+class MemoryEntry:
+    def __init__(self, entry_id='', content='', embedding=None, metadata=None, timestamp=None):
+        self.entry_id = entry_id
+        self.content = content
+        self.embedding = embedding
+        self.metadata = metadata or {}
+        self.timestamp = timestamp
+
+class UnifiedVectorMemoryAdapter:
+    def __init__(self, config=None):
+        self.config = config or {}
+    def store(self, entry):
+        pass
+    def retrieve(self, query, limit=10):
+        return []

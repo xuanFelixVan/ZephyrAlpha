@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0155 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-312 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.infrastructure.test_escalation_e2e
 # [STABILITY] evolving
 # [SAFETY] L
@@ -7,14 +8,14 @@
 """End-to-End Integration Tests — Escalation Protocol Full Chain.
 
 Tests the complete chain: EscalationEngine → RBAC bridge → Audit trail → Rollback trigger.
-Blueprint: docs/03_modules/l01_infrastructure/escalation-protocol/blueprint.md §2
+Blueprint: docs/03_modules/_domain-infra_ops/escalation-protocol/blueprint.md §2
 """
 import uuid
 from unittest.mock import patch, MagicMock
 
 import pytest
 
-from zephyr.escalation_engine import (
+from zephyr.governance.escalation import (
     EscalationEngine,
     EscalationLevel,
     EscalationState,

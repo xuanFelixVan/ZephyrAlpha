@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0149 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-306 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.infrastructure.test_delegation_safety
 # [STABILITY] evolving
 # [SAFETY] L
@@ -12,13 +13,13 @@ Tests each of the four safety constraints independently:
 3. Depth cap enforcement
 4. SLA / timeout enforcement
 
-Blueprint: docs/03_modules/l01_infrastructure/escalation-protocol/blueprint.md D-022-02
+Blueprint: docs/03_modules/_domain-infra_ops/escalation-protocol/blueprint.md D-022-02
 """
 import time
 
 import pytest
 
-from zephyr.escalation_engine import (
+from zephyr.governance.escalation import (
     DelegationEngine,
     DelegationStrategy,
     EscalationLevel,

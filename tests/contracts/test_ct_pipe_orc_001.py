@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0106 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-264 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.contracts.test_ct_pipe_orc_001
 # [STABILITY] evolving
 # [SAFETY] L
@@ -10,8 +11,8 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.orchestrator.contract_registry import ContractRegistry
-from zephyr.orchestrator.contract_router import ContractRouter
+from zephyr.trading.orchestrator.contract_registry import ContractRegistry
+from zephyr.trading.orchestrator.contract_router import ContractRouter
 
 
 def test_ct_pipe_orc_registered():

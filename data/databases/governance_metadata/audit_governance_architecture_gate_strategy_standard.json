@@ -1,0 +1,123 @@
+{
+  "task_id": "DM-100086",
+  "source_file": "docs/01_policies_and_standards/governance/architecture/gate_strategy_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_036_arch_gate_transition.yaml",
+  "yaml_section": "gov_arch_006",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "GATE-001": {
+      "type": "mandatory",
+      "content": "5级门禁严格串行执行G1→G2→G3→G4→G5，同一task禁止跳级",
+      "status": "COVERED"
+    },
+    "GATE-002": {
+      "type": "mandatory",
+      "content": "严重级别双层映射：YAML侧error/critical→P0，warning/warn→P1，info→P2",
+      "status": "COVERED"
+    },
+    "GATE-003": {
+      "type": "mandatory+prohibition",
+      "content": "YAML文件中gate_name为机读权威slug，title为人类标签，顶层name字段禁止使用",
+      "status": "COVERED"
+    },
+    "GATE-004": {
+      "type": "mandatory",
+      "content": "entry_conditions为权威字段，checks仅为过渡期兼容别名",
+      "status": "COVERED"
+    },
+    "GATE-005": {
+      "type": "mandatory+prohibition",
+      "content": "YAML侧只允许error/critical/warning/warn/info，P0/P1/P2只在代码内部出现",
+      "status": "COVERED"
+    },
+    "GATE-006": {
+      "type": "mandatory",
+      "content": "GateEngine.reload_gates()启动时必须对每个YAML执行schema校验（7项），失败则fail-fast拒绝启动",
+      "status": "COVERED"
+    },
+    "GATE-007": {
+      "type": "mandatory",
+      "content": "门禁检查必须在task_repo._write_tx()之外执行，防止死锁（事务隔离）",
+      "status": "COVERED"
+    },
+    "GATE-008": {
+      "type": "mandatory",
+      "content": "同一(task_id,gate_id)重复evaluate必须产生独立gate_run_id，禁止UPSERT覆盖（幂等性）",
+      "status": "COVERED"
+    },
+    "GATE-009": {
+      "type": "mandatory",
+      "content": "门禁结果写入gates表同时，task_repo侧写入events表一条gate_evaluation事件",
+      "status": "COVERED"
+    },
+    "GATE-010": {
+      "type": "mandatory",
+      "content": "豁免仅Project Owner可签发，commit trailer格式gate-exempt:G{N}-C{NN}|reason:...|valid_until:YYYY-MM-DD，valid_until最多30天",
+      "status": "COVERED"
+    },
+    "GATE-G1-CHECKS": {
+      "type": "constraint",
+      "content": "G1检查项7项：no_deprecated_path(P0)、file_exists(P0)、encoding_compliant(P0)、line_ending_compliant(P1)、frontmatter_present(P0)、frontmatter_required_fields(P0)、file_size_within_limit(P1)、no_binary_content(P0)",
+      "status": "COVERED"
+    },
+    "GATE-G2-CHECKS": {
+      "type": "constraint",
+      "content": "G2检查项7项：content_not_empty_shell(P0)、classification_label_valid(P0)、doc_type_valid(P0)、priority_score_assigned(P0)、layer_assignment_valid(P1)、no_duplicate_ingest(P0)、source_path_compliant(P1)",
+      "status": "COVERED"
+    },
+    "GATE-G3-CHECKS": {
+      "type": "constraint",
+      "content": "G3检查项5项：knowledge_value_score_threshold(P0,score≥0.4)、uniqueness_check(P1)、content_integrity_verified(P0)、metadata_complete(P1)、no_expired_ttl(P0)",
+      "status": "COVERED"
+    },
+    "GATE-G4-CHECKS": {
+      "type": "constraint",
+      "content": "G4检查项6项：dependencies_ready(P0,defer)、no_conflict_with_existing(P0,flag)、target_path_compliant(P0)、frontmatter_schema_valid(P0)、module_id_registered(P1)、no_orphan_references(P1)，deferred_queue max_wait_time=72h",
+      "status": "COVERED"
+    },
+    "GATE-G5-CHECKS": {
+      "type": "constraint",
+      "content": "G5检查项6项+后验检查4项：extraction_template_ready(P0)、target_path_available(P0)、target_path_compliant(P0)、ke_number_assigned(P0)、source_document_complete(P0)、extraction_scope_defined(P1)，后验：内容非空、frontmatter合法、无数据丢失(命中率≥90%)、交叉引用有效",
+      "status": "COVERED"
+    },
+    "GATE-NO-DYNAMIC-REGRADE": {
+      "type": "prohibition",
+      "content": "禁止运行时动态升降级严重级别",
+      "status": "COVERED"
+    },
+    "GATE-NO-SKIP": {
+      "type": "prohibition",
+      "content": "禁止跳级（直接调用G3跳过G1/G2）",
+      "status": "COVERED"
+    },
+    "GATE-NO-PROD-DISABLE": {
+      "type": "prohibition",
+      "content": "禁止生产环境关闭门禁",
+      "status": "COVERED"
+    },
+    "GATE-AI-NO-EXEMPTION": {
+      "type": "prohibition",
+      "content": "AI禁止自行签发豁免",
+      "status": "COVERED"
+    },
+    "GATE-P0-UNEXEMPTABLE": {
+      "type": "prohibition",
+      "content": "GOV-P0红线不可豁免",
+      "status": "COVERED"
+    }
+  },
+  "summary": {
+    "total_rules": 17,
+    "COVERED": 17,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "原YAML section gov_arch_006仅有占位action'遵守GOV-ARCH-006'，无具体规则",
+    "补充GATE-001~GATE-010到original_rules",
+    "补充8条conditions（5条trigger+3条constraint含G3阈值/G4超时/G5后验）",
+    "补充10条actions（10条mandatory）",
+    "补充7条prohibitions",
+    "G1-G5各级检查项细节以constraint形式覆盖在conditions中"
+  ]
+}

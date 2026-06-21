@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-002 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# blueprint: MOD-INF-002 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: M
@@ -11,21 +11,22 @@
 # 目的：Skill 加载时自动校验该 Skill 的操作是否在 CBAC 允许范围内
 #
 # 映射逻辑
-# ----------
+# _______---
 # skill_id → required_cbac_rules: 该 Skill 执行时需要的 CBAC 规则
 # skill_id → restricted_paths: 该 Skill 不得触碰的路径（即使 CBAC 允许）
 # role_id → max_cbac_level: 该角色可使用的最高 CBAC 安全等级
 #
 # 校验流程
-# --------
+# _______-
 # 1. PipelineSkillBridge.inject_for_task() 注入 Skill 时
 # 2. 查询本映射表获取 required_cbac_rules
 # 3. 调用 capability_check() 校验每条规则
 # 4. 任一规则拒绝 → Skill 降级为 read-only 或拒绝注入
 #
 # v0.2.0: 初始版本，覆盖 12 Domain Skill + 3 Role Skill
-# -----------------------------------
+# ________________________________---
 
+module_id: MOD-INF-002
 version: "1.0.0"
 schema_version: "1.0.0"
 doc_type: rule
@@ -74,7 +75,7 @@ domain_skills:
     description: "门禁专家——需要 write_src 修改 gates/ 层代码"
 
   SKILL-DOM-AGT-001:
-    name: agent-specialist
+    name: agent_specialist
     required_cbac_rules:
       - write_src
     restricted_paths:
@@ -89,7 +90,7 @@ domain_skills:
     description: "蓝图专家——只读，不需要写入权限"
 
   SKILL-DOM-DRF-001:
-    name: drift-detector
+    name: drift_detector
     required_cbac_rules:
       - write_src
       - write_config
@@ -112,14 +113,14 @@ domain_skills:
     description: "回滚专家——需要 write_src 执行回滚操作"
 
   SKILL-DOM-VMS-001:
-    name: vector-memory
+    name: vector_memory
     required_cbac_rules:
       - write_src
     restricted_paths: []
     description: "向量记忆专家——需要 write_src 修改 vector_memory/ 层代码"
 
   SKILL-DOM-A2A-001:
-    name: a2a-protocol
+    name: a2a_protocol
     required_cbac_rules:
       - write_src
     restricted_paths: []

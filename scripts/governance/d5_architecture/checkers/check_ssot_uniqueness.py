@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/checkers/check_ssot_uniqueness.py | §
 """
-[BLUEPRINT] MOD-INF-005 | 03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+[BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 [MODULE] scripts.governance.d5_architecture.checkers.check_ssot_uniqueness
 [INVARIANTS] 扫描所有蓝图 ssot_claims 字段; 检测跨蓝图 SSoT 冲突
 [MODIFY-GUARD] script_manifest.yaml; blueprint-construction-template.md

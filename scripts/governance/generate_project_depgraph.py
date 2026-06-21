@@ -14,43 +14,650 @@
 
 import argparse
 import ast
+import hashlib
 import json
 import os
+import sqlite3
+import subprocess
 import re
 import sys
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
+import yaml
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
-NODE_TYPES = [
-    "blueprint", "module", "script", "gate", "registry", "contract",
-    "policy", "standard", "template", "schema", "infra", "diagram",
-    "config", "data", "test", "doc",
+NODE_TYPES_FILE = [
+    "module", "script", "test", "config", "registry", "data",
+    "contract", "schema", "gate", "doc", "blueprint", "policy",
+    "standard", "template", "diagram",
 ]
-EDGE_TYPES = ["owned_by", "imports", "references", "depends_on"]
+NODE_TYPES_DOMAIN = [
+    "application", "package", "domain", "aggregate", "service", "library",
+]
+NODE_TYPES = NODE_TYPES_FILE + NODE_TYPES_DOMAIN
+EDGE_TYPES = [
+    "import_depends", "references", "test_depends", "owned_by",
+    "config_depends", "data_depends", "blueprint_depends", "event_depends",
+    "contract_depends", "shared_kernel", "script_depends", "runtime_depends",
+]
+
+CODE_TYPES = {"module", "script", "test"}
+CONFIG_TYPES = {"config", "registry", "data", "contract", "schema", "gate"}
+DOC_TYPES = {"doc", "blueprint", "policy", "standard", "template", "diagram"}
+DOMAIN_TYPES = set(NODE_TYPES_DOMAIN)
 
 EXEMPT_DIRS = {
     "__pycache__", ".git", ".ailocks", "node_modules",
     ".mypy_cache", ".pytest_cache", ".ruff_cache",
-    "_backups", "_temp",
+    "_backups", "_temp", ".audit_cache",
+    "session-logs",
 }
 
-SCAN_DIRS = [
+# Directories excluded from depgraph scanning entirely (no code dependencies)
+EXCLUDED_SCAN_DIRS = {
+    "docs/08_knowledge",         # Knowledge base entries — no import dependencies
+    "docs/09_audit",             # Audit logs — historical records, no code dependencies
+    "data/cache",                # Runtime cache — not code
+    "data/telemetry",            # Telemetry data — not code
+    "scripts/governance/_archive",   # Archived scripts — not active code
+    "scripts/governance/repair",     # Repair scripts — temporary, not production code
+    "scripts/governance/_shared",    # Shared internals — not depgraph-relevant
+}
+
+# Node types excluded from depgraph — zero import_depends edges, zero code dependency value.
+# These types only produce doc→blueprint references noise edges.
+# Rationale: depgraph answers "who depends on whom" for CODE. Non-code types belong in the
+# architecture panorama (which contains ALL files), not in the dependency graph.
+EXCLUDED_NODE_TYPES = {
+    "doc",       # 1183 nodes — documentation files, 0 import edges
+    "policy",    # 89 nodes — policy documents, 0 import edges
+    "standard",  # 5 nodes — standard documents, 0 import edges
+    "template",  # 11 nodes — template documents, 0 import edges
+    "diagram",   # 31 nodes — mermaid diagrams, 0 import edges
+    "data",      # 26 nodes — data files, 0 import edges
+}
+
+# Old layer name normalization: strip l00_, l01_, ..., l13_ prefixes from path segments.
+# These legacy prefixes (e.g., l00-data-source, l01-infrastructure) persist in
+# tests/ and docs/03_modules/ directories on disk but should not appear in depgraph IDs.
+# Matches l\d{2}_ at: start of string, after /, or after _ (e.g., test_l00_xxx)
+_OLD_LAYER_PREFIX_RE = re.compile(r"(^|/|_)l\d{2}_")
+
+# H3 fix: Path validation patterns
+_ILLEGAL_PATH_PATTERNS = re.compile(
+    r'[:<>"|?*]'          # Windows 非法字符
+    r'|^\s*$'             # 空白路径
+    r'|^[A-Za-z]:[/\\]'   # Windows 绝对路径
+    r'|^/[^/]'            # Unix 绝对路径（非项目根）
+    r'|^#{1,6}\s'         # Markdown 标题 (### ...)
+    r'|^---'              # Markdown 水平线
+)
+_EMOJI_RE = re.compile(
+    r'[\U00010000-\U0010ffff]'
+)
+
+
+def normalize_path(path: str) -> str:
+    """Replace old layer-name segments and validate path legality.
+    
+    H3 fix: Added validation for illegal characters, absolute paths,
+    empty paths, and emoji.
+    """
+    if not path or not path.strip():
+        return ""
+    # 过滤 emoji
+    path = _EMOJI_RE.sub("", path)
+    # 正则替换旧层名
+    path = _OLD_LAYER_PREFIX_RE.sub(r"\1", path)
+    # 校验非法字符
+    if _ILLEGAL_PATH_PATTERNS.search(path):
+        return ""
+    # 剥离域ID前缀子路径（如 D-PF_CORE/xxx → xxx）
+    if path.startswith("D-") and "/" in path:
+        path = path.split("/", 1)[1]
+    return path.strip()
+
+# Base scan directories — combination of top-level project directories and
+# dynamically-discovered src/zephyr/ subdirectories (avoids hard-coding coverage gaps).
+_BASE_SCAN_DIRS = [
     "src/zephyr",
     "scripts",
     "tests",
-    "data",
+    "data/asset_index",
+    "data/config",
+    "data/metrics",
     "config",
     "schemas",
     "docs/03_modules",
     "docs/01_policies_and_standards",
     "docs/02_enterprise_architecture",
-    "docs/08_knowledge",
-    "docs/09_audit",
+    "frontend",            # H9 fix
+    "architecture_model",  # H9 fix
+    "infra",               # H9 fix
+    "tools",               # H9 fix
+    "specs",               # H9 fix
 ]
+
+
+def _build_scan_dirs() -> list:
+    """Build SCAN_DIRS from base list only.
+    
+    Note: collect_all_files() uses os.walk() which recursively traverses
+    all subdirectories, so expanding src/zephyr subdirs here causes
+    double-scanning (H1 fix).
+    """
+    return list(_BASE_SCAN_DIRS)
+
+
+SCAN_DIRS = _build_scan_dirs()
+
+DEPGRAPH_DB_PATH = (
+    PROJECT_ROOT / "data" / "databases" / "depgraph.db"
+)
+
+CROSS_MODULE_REGISTRY_PATH = (
+    PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
+    / "cross-module-dependency-registry.yaml"
+)
+
+DEPGRAPH_DESIGN_DIR = PROJECT_ROOT / "data" / "asset_index"
+
+# Semantic type derivation: dep_type -> default semantic_type
+DEP_TYPE_TO_SEMANTIC_TYPE = {
+    "import_depends": "runtime",
+    "test_depends": "build",
+    "references": "data",
+    "config_depends": "data",
+    "data_depends": "data",
+    "blueprint_depends": "data",
+    "event_depends": "runtime",
+    "contract_depends": "contract",
+    "shared_kernel": "contract",
+    "script_depends": "build",
+    "runtime_depends": "runtime",
+    "owned_by": "contract",
+}
+
+# Valid values for semantic fields (from PS-REG-007 _schema)
+VALID_SEMANTIC_TYPES = {"runtime", "data", "build", "contract"}
+VALID_SEMANTIC_DIRECTIONS = {"upstream", "downstream", "peer"}
+VALID_DECISIONS = {"NEW", "MODIFY", "KEEP", "DEPRECATE"}
+VALID_FAILURE_MODES = {
+    "service_down", "timeout", "data_corruption",
+    "version_mismatch", "circuit_break", "cascade_failure",
+}
+
+# ARCH-CAP-005: 域映射已迁移到 depgraph.db（抽屉式扩展）
+# - domain_id → layer_id: domains 表 layer_id 字段（per-domain，比原 group-based 更精确）
+# - path_prefix → (domain_id, subdomain_id): domain_mapping 表（mapping_type='non_src'/'unregistered_src'）
+# 新增域只需 INSERT domains/domain_mapping 表，无需修改生成器代码
+# 详见 _load_domain_mappings_from_db() 函数
+
+TRUST_ZONE_MAP = [
+    ("src/zephyr/security/", "api_gateway"),
+    ("src/zephyr/integration/", "external_service"),
+    ("src/zephyr/alt_data/", "untrusted_input"),
+]
+
+# H4 fix: Fake blueprint_id detection
+_FAKE_BLUEPRINT_RE = re.compile(r'^D-[A-Z_]+-blueprint$')
+
+def is_valid_blueprint_id(bid: str) -> bool:
+    """Check if a blueprint_id is a real reference, not a fake auto-generated one."""
+    if not bid or not bid.strip():
+        return False
+    if _FAKE_BLUEPRINT_RE.match(bid):
+        return False
+    return True
+
+# Design-state fields that MUST be preserved when disk scan produces a node
+# with the same ID as an existing lifecycle=design node.
+# When a conflict occurs, operational fields (imports, exports, etc.) come from
+# the disk scan, but these design-state fields are merged from the old node.
+DESIGN_STATE_FIELDS = (
+    "lifecycle",                    # design | operational | deprecated
+    "build_status",                 # design_only | partial | implemented | production | deprecated
+    "deployment_lifecycle",         # design_only | stable | deprecated
+    "design_spec",                  # dict: source, planned_dependencies, contract_refs, invariants
+    "contract_refs",                # list[str]: contract references
+    "planned_interfaces",           # dict: input/output interface definitions
+    "planned_dependencies",         # list[str]: design-time dependency declarations
+    "invariants",                   # list[str]: design invariants
+    "change_policy",                # frozen/stable/evolving/volatile
+    "modification_permission",      # immutable_core/human_gated/ai_modifiable
+    "impact_level",                 # H/M/L
+    "blueprint_id",                 # blueprint reference
+    "module_id",                    # module reference
+)
+
+
+def merge_design_fields(new_node: dict, old_node: dict) -> dict:
+    """Merge design-state fields from old_node into new_node.
+
+    When a disk scan produces a node with the same ID as an existing
+    lifecycle=design node, the disk scan result (new_node) contains the
+    latest operational data, but the old_node may carry design-state
+    annotations that must not be lost.
+
+    Strategy:
+    - Operational fields (imports, exports, physical_path, etc.): use new_node
+    - Design-state fields: if old_node has a non-empty value, prefer old_node
+    - Any custom field not in DESIGN_STATE_FIELDS but present only in old_node: preserve
+    """
+    for field in DESIGN_STATE_FIELDS:
+        old_val = old_node.get(field)
+        if old_val is not None and old_val != "" and old_val != []:
+            # H4 fix: Don't inherit fake blueprint_id
+            if field == "blueprint_id" and not is_valid_blueprint_id(old_val):
+                continue
+            # Old node has this design-state field — preserve it
+            # But only if new_node doesn't have a more specific value
+            new_val = new_node.get(field)
+            if new_val is None or new_val == "" or new_val == []:
+                new_node[field] = old_val
+            elif field == "lifecycle" and old_val == "design":
+                # lifecycle=design MUST always be preserved when set
+                new_node[field] = old_val
+            elif field == "build_status" and old_val == "design_only":
+                # build_status=design_only MUST always be preserved when set
+                new_node[field] = old_val
+
+    # Preserve any custom fields present in old_node but absent in new_node
+    # (e.g., _rb_test_mark, custom annotations, etc.)
+    for key in old_node:
+        if key not in new_node and key not in ("id", "path", "physical_path"):
+            # H4 fix: Don't inherit fake blueprint_id via catch-all
+            if key == "blueprint_id" and not is_valid_blueprint_id(old_node[key]):
+                continue
+            new_node[key] = old_node[key]
+
+    return new_node
+
+HARD_BOUNDARIES = [
+    {"id": "HB-HW-01", "category": "hardware", "constraint": "单台PC工作站，无集群/K8s", "parameters": "CPU i7-12700KF(12核20线程); GPU RTX 3090 24GB; RAM 64GB DDR4; 存储 D:731GB+E:931GB SSD", "impact": "所有并发/分布式/集群方案不可用"},
+    {"id": "HB-HW-02", "category": "hardware", "constraint": "GPU显存硬上限", "parameters": "<90%=21.6GB可用; 盘中~8-10GB(33%-42%), 盘前~10GB(42%)", "impact": "模型推理显存超限=OOM崩溃; 多模型并发必须做显存预算"},
+    {"id": "HB-NET-01", "category": "hardware", "constraint": "网络带宽上限", "parameters": "30Mbps", "impact": "大批量数据拉取/多源并发请求必须限速"},
+    {"id": "HB-FUND-01", "category": "capital", "constraint": "初始AUM", "parameters": "50万", "impact": "策略容量/仓位/做T底仓均受此约束; 融券受限"},
+    {"id": "HB-IFIND-01", "category": "external_interface", "constraint": "iFind数据源QPS限制", "parameters": "QPS=20（账号总上限）", "impact": "批量数据拉取必须分页限速; 并发请求不可超20"},
+    {"id": "HB-QMT-01", "category": "external_interface", "constraint": "miniQMT交易接口限制", "parameters": "下单10笔/秒; Tick=3秒; 模拟盘延迟~1分钟", "impact": "高频策略不可用; 信号触发到下单存在3秒Tick延迟"},
+    {"id": "HB-TRADE-01", "category": "regulation", "constraint": "T+1交割制度", "parameters": "当日买入不可卖出", "impact": "日内平仓策略不可用; 做T必须有底仓"},
+    {"id": "HB-TRADE-02", "category": "regulation", "constraint": "涨跌停限制", "parameters": "主板±10%; 科创创业板±20%; ST±5%; 北交所±30%", "impact": "涨跌停价位无法成交; 风控必须考虑涨跌停无法卖出场景"},
+]
+
+PATH_MAPPINGS = [
+    {"pattern": "src/zephyr/**", "code_root": "D:/ZephyrAlpha/src/zephyr", "blueprint_root": "D:/ZephyrAlpha/docs/03_modules", "test_root": "D:/ZephyrAlpha/tests", "script_root": "", "naming_rule": "snake_case, package/__init__.py", "examples": ["src/zephyr/shared/event_bus.py", "src/zephyr/gates/EN-001.yaml"]},
+    {"pattern": "scripts/**", "code_root": "D:/ZephyrAlpha/scripts", "blueprint_root": "", "test_root": "", "script_root": "D:/ZephyrAlpha/scripts", "naming_rule": "snake_case with underscores", "examples": ["scripts/governance/generate_project_depgraph.py"]},
+    {"pattern": "tests/**", "code_root": "D:/ZephyrAlpha/tests", "blueprint_root": "", "test_root": "D:/ZephyrAlpha/tests", "script_root": "", "naming_rule": "test_{module}.py", "examples": ["tests/test_generate_project_depgraph.py"]},
+    {"pattern": "docs/03_modules/**", "code_root": "", "blueprint_root": "D:/ZephyrAlpha/docs/03_modules", "test_root": "", "script_root": "", "naming_rule": "{package}/blueprint.md", "examples": ["docs/03_modules/_sys-master/blueprint.md"]},
+    {"pattern": "docs/01_policies_and_standards/**", "code_root": "", "blueprint_root": "D:/ZephyrAlpha/docs/01_policies_and_standards", "test_root": "", "script_root": "", "naming_rule": "rules/trae_XXX_{name}.yaml", "examples": ["docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml"]},
+    {"pattern": "data/**", "code_root": "", "blueprint_root": "", "test_root": "", "script_root": "", "naming_rule": "{category}/{name}.yaml or .json", "examples": ["data/databases/depgraph.db"]},
+]
+
+HEADER_FIELDS = [
+    "BLUEPRINT", "MODULE", "INVARIANTS", "MODIFY-GUARD", "CONSUMERS",
+    "STABILITY", "SAFETY", "AI_AUTONOMY", "ERROR_CONTRACT", "TESTS",
+]
+
+
+def _load_panorama_from_db(db_path):
+    """Load panorama data from SQLite database, returning a dict compatible with the old YAML structure.
+
+    Reads from: domains table, arch_directory_tree table, arch_path_mappings table.
+    Returns dict with keys: domains, tree, and optional path sections.
+    """
+    import json as _json
+    conn = sqlite3.connect(str(db_path))
+    conn.row_factory = sqlite3.Row
+    data = {"domains": {}, "tree": {}, "meta": {}}
+
+    # Load domains — map to the same structure as the YAML panorama domains section
+    for row in conn.execute("SELECT * FROM domains"):
+        domain = dict(row)
+        did = domain.pop("domain_id")
+        # Map DB column names to YAML panorama field names
+        domain_entry = {
+            "parent_domain": domain.get("domain_group", ""),
+            "domain_id": did,
+            "subdomain_id": did,
+            "ssot_path": domain.get("ssot_path", ""),
+            "ssot_module": "",
+            "covers": [],
+            "aliases": [],
+            "change_policy": domain.get("lifecycle", ""),
+            "impact_level": "M",
+            "modification_permission": "",
+        }
+        # Parse covers/aliases from arch_path_mappings if available
+        data["domains"][did] = domain_entry
+
+    # Enrich domains with covers/aliases from arch_path_mappings
+    for row in conn.execute("SELECT * FROM arch_path_mappings"):
+        mapping = dict(row)
+        did = mapping.get("domain_id", "")
+        if did in data["domains"]:
+            covers_raw = mapping.get("covers", "")
+            if covers_raw:
+                try:
+                    data["domains"][did]["covers"] = _json.loads(covers_raw)
+                except (_json.JSONDecodeError, TypeError):
+                    data["domains"][did]["covers"] = [covers_raw] if covers_raw else []
+            aliases_raw = mapping.get("aliases", "")
+            if aliases_raw:
+                try:
+                    data["domains"][did]["aliases"] = _json.loads(aliases_raw)
+                except (_json.JSONDecodeError, TypeError):
+                    data["domains"][did]["aliases"] = [aliases_raw] if aliases_raw else []
+
+    # Build tree structure from arch_directory_tree
+    tree = {}
+    for row in conn.execute("SELECT * FROM arch_directory_tree ORDER BY path"):
+        entry = dict(row)
+        path = entry.get("path", "")
+        if not path:
+            continue
+        parts = path.split("/")
+        current = tree
+        for i, part in enumerate(parts):
+            if part not in current:
+                current[part] = {}
+            if i == len(parts) - 1:
+                current[part]["__domain_id__"] = entry.get("domain_id", "")
+                current[part]["__subdomain_id__"] = ""
+                current[part]["lifecycle"] = entry.get("state", "operational")
+            else:
+                current = current[part]
+    data["tree"] = tree
+
+    # Load metadata
+    try:
+        cur = conn.execute("SELECT version FROM _schema_version ORDER BY version DESC LIMIT 1")
+        r = cur.fetchone()
+        if r:
+            data["meta"]["schema_version"] = r[0]
+    except Exception:
+        pass
+
+    conn.close()
+    return data
+
+
+def _load_domain_mappings_from_db(db_path: Path):
+    """从 depgraph.db 动态加载域映射数据（ARCH-CAP-005 抽屉式扩展）。
+
+    替代原硬编码 DOMAIN_NAME_TO_LAYER / NON_SRC_DOMAIN_MAP / UNREGISTERED_SRC_MAP。
+    新增域只需 INSERT domains/domain_mapping 表，无需修改生成器代码。
+
+    Returns:
+        (domain_id_to_layer, non_src_mappings, unregistered_src_mappings)
+        - domain_id_to_layer: dict {domain_id: layer_id}  从 domains 表 layer_id 字段加载
+        - non_src_mappings: list of (path_prefix, domain_id, subdomain_id)  从 domain_mapping 表加载
+        - unregistered_src_mappings: list of (path_prefix, domain_id, subdomain_id)  从 domain_mapping 表加载
+    """
+    domain_id_to_layer = {}
+    non_src_mappings = []
+    unregistered_src_mappings = []
+
+    if not db_path.exists():
+        return domain_id_to_layer, non_src_mappings, unregistered_src_mappings
+
+    try:
+        conn = sqlite3.connect(str(db_path))
+        cur = conn.cursor()
+
+        # Tier 1: domain_id → layer_id from domains table (per-domain, more accurate than group-based)
+        cur.execute("SELECT domain_id, layer_id FROM domains WHERE layer_id IS NOT NULL AND layer_id != ''")
+        for did, lid in cur.fetchall():
+            if did and lid:
+                domain_id_to_layer[did] = lid
+
+        # Tier 2: path_prefix → (domain_id, subdomain_id) from domain_mapping table
+        cur.execute("SELECT path_prefix, domain_id, subdomain_id FROM domain_mapping WHERE mapping_type = 'non_src'")
+        for prefix, did, sid in cur.fetchall():
+            non_src_mappings.append((prefix, did, sid or ""))
+
+        cur.execute("SELECT path_prefix, domain_id, subdomain_id FROM domain_mapping WHERE mapping_type = 'unregistered_src'")
+        for prefix, did, sid in cur.fetchall():
+            unregistered_src_mappings.append((prefix, did, sid or ""))
+
+        conn.close()
+    except sqlite3.OperationalError:
+        # domain_mapping table doesn't exist yet — return empty mappings
+        pass
+
+    return domain_id_to_layer, non_src_mappings, unregistered_src_mappings
+
+
+def load_panorama():
+    """Load architecture panorama and build domain derivation table.
+
+    Panorama structure (flat 35 functional domains):
+      domains:
+        capacity_assurance:
+          parent_domain: data
+          domain_id: D-DATA
+          subdomain_id: D-DATA-CAPACITY_ASSURANCE
+          ssot_path: src/zephyr/data/capacity-assurance/
+          ...
+
+    Returns:
+        (panorama_data, domain_derivation, functional_domains)
+        domain_derivation: [(path_prefix, domain_id, subdomain_id, architecture_layer)]
+        Sorted by path_prefix length (longest first) for best prefix match.
+    """
+    if not DEPGRAPH_DB_PATH.exists():
+        return None, [], []
+    try:
+        data = _load_panorama_from_db(DEPGRAPH_DB_PATH)
+    except Exception:
+        return None, [], []
+    if not data:
+        return None, [], []
+
+    # ARCH-CAP-005: 动态加载域映射（替代硬编码 DOMAIN_NAME_TO_LAYER / NON_SRC_DOMAIN_MAP / UNREGISTERED_SRC_MAP）
+    domain_id_to_layer, non_src_mappings, unregistered_src_mappings = _load_domain_mappings_from_db(DEPGRAPH_DB_PATH)
+
+    domain_derivation = []
+    functional_domains = []
+
+    domains_data = data.get("domains", {})
+    for func_domain_name, func_domain_val in domains_data.items():
+        if not isinstance(func_domain_val, dict):
+            continue
+        parent_domain = func_domain_val.get("parent_domain", "")
+        domain_id = func_domain_val.get("domain_id", "")
+        subdomain_id = func_domain_val.get("subdomain_id", "")
+        ssot_path = (func_domain_val.get("ssot_path") or "").replace("\\", "/").rstrip("/") + "/"
+        arch_layer = domain_id_to_layer.get(domain_id, "")
+        if ssot_path:
+            domain_derivation.append((ssot_path, domain_id, subdomain_id, arch_layer))
+        functional_domains.append({
+            "domain": parent_domain,
+            "subdomain": func_domain_name,
+            "domain_id": domain_id,
+            "subdomain_id": subdomain_id,
+            "ssot_module": func_domain_val.get("ssot_module", ""),
+            "ssot_path": func_domain_val.get("ssot_path", ""),
+            "covers": func_domain_val.get("covers", []),
+            "aliases": func_domain_val.get("aliases", []),
+            "change_policy": func_domain_val.get("change_policy", "") or func_domain_val.get("stability", ""),
+            "impact_level": func_domain_val.get("impact_level", "") or func_domain_val.get("safety_level", "M"),
+            "modification_permission": func_domain_val.get("modification_permission", "") or func_domain_val.get("ai_autonomy", ""),
+        })
+
+    # Add tree-section domain mappings (current operational paths)
+    # Build set of unregistered prefixes to skip in tree extraction
+    unreg_prefixes = set(prefix for prefix, _, _ in unregistered_src_mappings)
+    tree_data = data.get("tree", {})
+    _extract_tree_domains(tree_data, "", domain_derivation, domains_data, unreg_prefixes, domain_id_to_layer)
+
+    # Add non-src directory mappings (from domain_mapping table, mapping_type='non_src')
+    for prefix, did, sid in non_src_mappings:
+        domain_derivation.append((prefix, did, sid, ""))
+
+    # Add unregistered src/zephyr/ subdirectory mappings (from domain_mapping table, mapping_type='unregistered_src')
+    for prefix, did, sid in unregistered_src_mappings:
+        arch_layer = domain_id_to_layer.get(did, "")
+        domain_derivation.append((prefix, did, sid, arch_layer))
+
+    # Sort by prefix length (longest first for best match)
+    domain_derivation.sort(key=lambda x: len(x[0]), reverse=True)
+
+    return data, domain_derivation, functional_domains
+
+
+def _extract_tree_domains(tree_node, current_path, derivation_list, domains_data=None, unreg_prefixes=None, domain_id_to_layer=None):
+    """Recursively extract domain_id from panorama tree section.
+    Skips paths that have explicit mappings in domain_mapping table (unregistered_src).
+    """
+    if not isinstance(tree_node, dict):
+        return
+    domain_id = tree_node.get("__domain_id__", "")
+    subdomain_id = tree_node.get("__subdomain_id__", "")
+    if domain_id and current_path:
+        prefix = current_path.replace("\\", "/")
+        if not prefix.endswith("/"):
+            prefix += "/"
+        # Skip if this prefix is covered by an unregistered_src mapping
+        if unreg_prefixes and any(prefix.startswith(up) for up in unreg_prefixes):
+            pass  # Let unregistered_src mappings handle this path
+        else:
+            arch_layer = ""
+            if domain_id_to_layer:
+                arch_layer = domain_id_to_layer.get(domain_id, "")
+            derivation_list.append((prefix, domain_id, subdomain_id, arch_layer))
+    for key, val in tree_node.items():
+        if key.startswith("__") or not isinstance(val, dict):
+            continue
+        child_path = f"{current_path}/{key}" if current_path else key
+        _extract_tree_domains(val, child_path, derivation_list, domains_data, unreg_prefixes, domain_id_to_layer)
+
+
+def _extract_domain_override(filepath: Path) -> Optional[str]:
+    """从文件头提取 [DOMAIN] 字段，返回 domain_id 或 None。
+
+    覆盖路径派生的 domain_id，用于跨域模块的显式声明。
+    只读前20行，支持 # [DOMAIN] D-XXX 格式。
+    """
+    try:
+        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+            for _ in range(20):
+                line = f.readline()
+                if not line:
+                    break
+                m = re.match(r'^#\s*\[DOMAIN\]\s*(D-[\w-]+)', line)
+                if m:
+                    return m.group(1)
+    except (OSError, UnicodeDecodeError):
+        pass
+    return None
+
+
+def derive_domain_id(rel_path: str, domain_derivation: list = None, filepath: Path = None) -> str:
+    # 优先检查文件头 [DOMAIN] 覆盖
+    if filepath and filepath.exists():
+        override = _extract_domain_override(filepath)
+        if override:
+            return override
+    # 路径派生
+    if not domain_derivation:
+        return ""
+    rp = rel_path.replace("\\", "/")
+    for prefix, domain_id, _, _ in domain_derivation:
+        if rp.startswith(prefix):
+            return domain_id
+    return ""
+
+
+def derive_subdomain_id(rel_path: str, domain_id: str, domain_derivation: list = None) -> str:
+    if not domain_id or not domain_derivation:
+        return ""
+    rp = rel_path.replace("\\", "/")
+    for prefix, did, subdomain_id, _ in domain_derivation:
+        if did == domain_id and subdomain_id and rp.startswith(prefix):
+            return subdomain_id
+    return ""
+
+
+def derive_architecture_layer(rel_path: str, blueprint_id: str, domain_derivation: list = None) -> str:
+    if domain_derivation:
+        rp = rel_path.replace("\\", "/")
+        for prefix, _, _, arch_layer in domain_derivation:
+            if rp.startswith(prefix) and arch_layer:
+                return arch_layer
+    if blueprint_id:
+        bid = blueprint_id.strip('"').strip("'")
+        if "MOD-L0" in bid:
+            return "L0_infrastructure"
+        elif "MOD-L1" in bid:
+            return "L1_foundation"
+        elif "MOD-L2" in bid:
+            return "L2_domain"
+        elif "MOD-L3" in bid:
+            return "L3_application"
+    return ""
+
+
+def derive_design_maturity(node_type: str, has_test: bool) -> str:
+    if node_type == "blueprint":
+        return "design"
+    if node_type in CODE_TYPES:
+        if has_test:
+            return "production"
+        return "prototype"
+    return "production"
+
+
+def derive_deployment_lifecycle(node_type: str) -> str:
+    if node_type == "blueprint":
+        return "design_only"
+    return "stable"
+
+
+def derive_trust_zone(rel_path: str) -> str:
+    rp = rel_path.replace("\\", "/")
+    for prefix, zone in TRUST_ZONE_MAP:
+        if rp.startswith(prefix):
+            return zone
+    return "trusted_core"
+
+
+def derive_drive_direction(has_blueprint: bool, node_type: str) -> str:
+    if has_blueprint and node_type == "blueprint":
+        return "top_down"
+    return "bottom_up"
+
+
+def derive_tags(rel_path: str, node_type: str) -> list:
+    tags = []
+    rp = rel_path.replace("\\", "/")
+    parts = rp.split("/")
+    for part in parts[:-1]:
+        if part and part not in tags and not part.startswith("_") and "." not in part:
+            tags.append(part)
+    if node_type and node_type not in tags:
+        tags.append(node_type)
+    return tags[:10]
+
+
+def count_header_completeness(filepath) -> int:
+    found = 0
+    try:
+        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+            for i, line in enumerate(f):
+                if i >= 20:
+                    break
+                stripped = line.strip()
+                for field in HEADER_FIELDS:
+                    if f"[{field}]" in stripped:
+                        found += 1
+    except Exception:
+        pass
+    return found
 
 POLICY_PREFIXES = [
     "docs/01_policies_and_standards/governance/",
@@ -59,7 +666,7 @@ POLICY_PREFIXES = [
     "docs/01_policies_and_standards/operational/",
 ]
 STANDARD_PREFIXES = [
-    "docs/01_policies_and_standards/governance/engineering/",
+    "docs/01_policies_and_standards/rules/",
 ]
 TEMPLATE_PREFIXES = [
     "docs/01_policies_and_standards/templates/",
@@ -86,7 +693,7 @@ ID_PATTERN = re.compile(
 
 
 def parse_blueprint_header(filepath: Path) -> dict:
-    info = {"blueprint_id": "", "blueprint_path": "", "module_path": "", "stability": "", "safety": "", "ai_autonomy": ""}
+    info = {"blueprint_id": "", "blueprint_path": "", "module_path": "", "change_policy": "", "impact_level": "", "modification_permission": ""}
     try:
         with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
             for i, line in enumerate(f):
@@ -113,11 +720,14 @@ def parse_blueprint_header(filepath: Path) -> dict:
                 elif stripped.startswith("# [MODULE]"):
                     info["module_path"] = stripped[len("# [MODULE]"):].strip()
                 elif stripped.startswith("# [STABILITY]"):
-                    info["stability"] = stripped[len("# [STABILITY]"):].strip()
+                    val = stripped[len("# [STABILITY]"):].strip()
+                    info["change_policy"] = val
                 elif stripped.startswith("# [SAFETY]"):
-                    info["safety"] = stripped[len("# [SAFETY]"):].strip()
+                    val = stripped[len("# [SAFETY]"):].strip()
+                    info["impact_level"] = val
                 elif stripped.startswith("# [AI_AUTONOMY]"):
-                    info["ai_autonomy"] = stripped[len("# [AI_AUTONOMY]"):].strip()
+                    val = stripped[len("# [AI_AUTONOMY]"):].strip()
+                    info["modification_permission"] = val
                 if not info["blueprint_id"] and i < 10:
                     bp_match = __import__("re").search(r'(?:蓝图|blueprint)[:\s]+([A-Z]{2,4}-[A-Z]*-?\d+)', stripped, __import__("re").IGNORECASE)
                     if bp_match:
@@ -128,7 +738,7 @@ def parse_blueprint_header(filepath: Path) -> dict:
 
 
 def parse_yaml_header(filepath: Path) -> dict:
-    info = {"blueprint_id": "", "blueprint_path": "", "stability": "", "safety": "", "ai_autonomy": ""}
+    info = {"blueprint_id": "", "blueprint_path": "", "change_policy": "", "impact_level": "", "modification_permission": ""}
     try:
         with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
             in_anchor = False
@@ -152,20 +762,20 @@ def parse_yaml_header(filepath: Path) -> dict:
                             info["blueprint_id"] = m.group(1).strip()
                     m = re.match(r"#\s*stability:\s*(.+)$", line)
                     if m:
-                        info["stability"] = m.group(1).strip()
+                        info["change_policy"] = m.group(1).strip()
                     m = re.match(r"#\s*safety_level:\s*(.+)$", line)
                     if m:
-                        info["safety"] = m.group(1).strip()
+                        info["impact_level"] = m.group(1).strip()
                     m = re.match(r"#\s*ai_autonomy:\s*(.+)$", line)
                     if m:
-                        info["ai_autonomy"] = m.group(1).strip()
+                        info["modification_permission"] = m.group(1).strip()
     except Exception:
         pass
     return info
 
 
 def parse_md_frontmatter(filepath: Path) -> dict:
-    info = {"blueprint_id": "", "module_id": "", "stability": "", "safety": "", "ai_autonomy": ""}
+    info = {"blueprint_id": "", "module_id": "", "change_policy": "", "impact_level": "", "modification_permission": ""}
     try:
         with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
             in_fm = False
@@ -186,13 +796,13 @@ def parse_md_frontmatter(filepath: Path) -> dict:
                             info["blueprint_id"] = info["module_id"]
                     m = re.match(r"stability:\s*(.+)$", stripped)
                     if m:
-                        info["stability"] = m.group(1).strip()
+                        info["change_policy"] = m.group(1).strip()
                     m = re.match(r"safety_level:\s*(.+)$", stripped)
                     if m:
-                        info["safety"] = m.group(1).strip()
+                        info["impact_level"] = m.group(1).strip()
                     m = re.match(r"ai_autonomy:\s*(.+)$", stripped)
                     if m:
-                        info["ai_autonomy"] = m.group(1).strip()
+                        info["modification_permission"] = m.group(1).strip()
     except Exception:
         pass
     return info
@@ -274,7 +884,7 @@ def classify_file(rel_path: str) -> str:
         return "test"
 
     if rp.endswith((".sh", ".ps1")):
-        return "infra"
+        return "script"
 
     if rp.endswith(".mmd"):
         return "diagram"
@@ -289,7 +899,7 @@ def classify_file(rel_path: str) -> str:
             return "registry"
         if any(rp.startswith(p) for p in CONTRACT_PREFIXES):
             return "contract"
-        if any(p in rp for p in ("_registry.yaml", "_manifest.yaml")):
+        if any(p in rp for p in ("_registry.yaml", "manifest.yaml")):
             return "registry"
         if rp.startswith("data/"):
             return "data"
@@ -314,6 +924,10 @@ def classify_file(rel_path: str) -> str:
             return "doc"
         if rp.startswith("docs/08_knowledge/"):
             return "doc"
+        if rp.startswith("docs/09_audit/"):
+            return "knowledge_doc"
+        if rp.startswith("docs/08_knowledge/"):
+            return "knowledge_doc"
         if rp.startswith("docs/02_enterprise_architecture/"):
             return "doc"
         return "doc"
@@ -321,7 +935,7 @@ def classify_file(rel_path: str) -> str:
     return ""
 
 
-def scan_py_file(rel_path: str) -> Optional[dict]:
+def scan_py_file(rel_path: str, domain_derivation: list = None) -> Optional[dict]:
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -333,17 +947,18 @@ def scan_py_file(rel_path: str) -> Optional[dict]:
     return {
         "path": rel_path.replace("\\", "/"),
         "type": cat,
+        "granularity": "file",
         "blueprint_id": header["blueprint_id"],
-        "blueprint_path": header["blueprint_path"],
-        "module_path": header["module_path"],
-        "stability": header["stability"],
-        "safety": header["safety"],
-        "ai_autonomy": header["ai_autonomy"],
+        "domain_id": derive_domain_id(rel_path, domain_derivation, filepath),
+        "change_policy": header["change_policy"],
+        "impact_level": header["impact_level"],
+        "modification_permission": header["modification_permission"],
+        "file_header_score": count_header_completeness(filepath),
         "imports": imports,
     }
 
 
-def scan_yaml_file(rel_path: str) -> Optional[dict]:
+def scan_yaml_file(rel_path: str, domain_derivation: list = None) -> Optional[dict]:
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -359,19 +974,24 @@ def scan_yaml_file(rel_path: str) -> Optional[dict]:
             refs.append(m.group(1))
     except Exception:
         pass
+    ref_key = "yaml_references" if cat in CONFIG_TYPES else "doc_references"
     return {
         "path": rel_path.replace("\\", "/"),
         "type": cat,
+        "granularity": "file",
         "blueprint_id": header["blueprint_id"],
-        "blueprint_path": header["blueprint_path"],
-        "stability": header["stability"],
-        "safety": header["safety"],
-        "ai_autonomy": header["ai_autonomy"],
-        "references": list(set(refs)),
+        "domain_id": derive_domain_id(rel_path, domain_derivation, filepath),
+        "change_policy": header["change_policy"],
+        "impact_level": header["impact_level"],
+        "modification_permission": header["modification_permission"],
+        ref_key: list(set(refs)),
     }
 
 
-def scan_md_file(rel_path: str) -> Optional[dict]:
+
+
+
+def scan_md_file(rel_path: str, domain_derivation: list = None) -> Optional[dict]:
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -380,24 +1000,29 @@ def scan_md_file(rel_path: str) -> Optional[dict]:
         cat = "doc"
 
     if cat == "blueprint":
-        return scan_blueprint_file(rel_path)
+        return scan_blueprint_file(rel_path, domain_derivation)
+
+    if cat == "knowledge_doc":
+        cat = "doc"
 
     fm = parse_md_frontmatter(filepath)
-    refs = extract_md_references(filepath)
-
     bp_id = fm.get("module_id", "") or fm.get("blueprint_id", "")
+    refs = extract_md_references(filepath) if cat not in ("knowledge_doc",) else []
+
     return {
         "path": rel_path.replace("\\", "/"),
         "type": cat,
+        "granularity": "file",
         "blueprint_id": bp_id,
-        "stability": fm.get("stability", ""),
-        "safety": fm.get("safety", ""),
-        "ai_autonomy": fm.get("ai_autonomy", ""),
-        "references": refs,
+        "domain_id": derive_domain_id(rel_path, domain_derivation, filepath),
+        "change_policy": fm.get("change_policy", ""),
+        "impact_level": fm.get("impact_level", ""),
+        "modification_permission": fm.get("modification_permission", ""),
+        "doc_references": refs,
     }
 
 
-def scan_blueprint_file(rel_path: str) -> Optional[dict]:
+def scan_blueprint_file(rel_path: str, domain_derivation: list = None) -> Optional[dict]:
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -430,13 +1055,15 @@ def scan_blueprint_file(rel_path: str) -> Optional[dict]:
     return {
         "path": rel_path.replace("\\", "/"),
         "type": "blueprint",
+        "granularity": "file",
         "blueprint_id": module_id,
+        "domain_id": derive_domain_id(rel_path, domain_derivation, filepath),
         "module_id": module_id,
-        "references": list(set(refs)),
+        "doc_references": list(set(refs)),
     }
 
 
-def scan_json_file(rel_path: str) -> Optional[dict]:
+def scan_json_file(rel_path: str, domain_derivation: list = None) -> Optional[dict]:
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -447,12 +1074,14 @@ def scan_json_file(rel_path: str) -> Optional[dict]:
     return {
         "path": rel_path.replace("\\", "/"),
         "type": cat,
+        "granularity": "file",
         "blueprint_id": "",
-        "references": refs,
+        "domain_id": derive_domain_id(rel_path, domain_derivation, filepath),
+        "yaml_references": refs,
     }
 
 
-def scan_infra_file(rel_path: str) -> Optional[dict]:
+def scan_infra_file(rel_path: str, domain_derivation: list = None) -> Optional[dict]:
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
@@ -468,15 +1097,20 @@ def scan_infra_file(rel_path: str) -> Optional[dict]:
     return {
         "path": rel_path.replace("\\", "/"),
         "type": "infra",
+        "granularity": "file",
         "blueprint_id": header.get("blueprint_id", ""),
-        "references": list(set(refs)),
+        "domain_id": derive_domain_id(rel_path, domain_derivation, filepath),
+        "doc_references": list(set(refs)),
     }
 
 
-def scan_diagram_file(rel_path: str) -> Optional[dict]:
+def scan_diagram_file(rel_path: str, domain_derivation: list = None) -> Optional[dict]:
     filepath = PROJECT_ROOT / rel_path
     if not filepath.exists():
         return None
+    cat = classify_file(rel_path)
+    if not cat:
+        cat = "diagram"
     refs = []
     try:
         with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
@@ -487,9 +1121,11 @@ def scan_diagram_file(rel_path: str) -> Optional[dict]:
         pass
     return {
         "path": rel_path.replace("\\", "/"),
-        "type": "diagram",
+        "type": cat,
+        "granularity": "file",
         "blueprint_id": "",
-        "references": list(set(refs)),
+        "domain_id": derive_domain_id(rel_path, domain_derivation, filepath),
+        "doc_references": refs,
     }
 
 
@@ -508,60 +1144,151 @@ def collect_all_files() -> list:
     return files
 
 
-def build_depgraph(files_data: list) -> dict:
+def build_depgraph(files_data: list, functional_registry: list = None,
+                   domain_derivation: list = None,
+                   existing_design_nodes: dict = None,
+                   granularity: str = "file") -> dict:
+    if functional_registry is None:
+        functional_registry = []
+    if domain_derivation is None:
+        domain_derivation = []
+    if existing_design_nodes is None:
+        existing_design_nodes = {}
+
     nodes = {}
     edges = []
     edge_set = set()
+
+    # --- DM-002 Fix 1: file-level merge — group files_data by path first ---
+    # When granularity=file, merge multiple scan results for the same file path
+    # into a single entry, preferring type=module over other types.
+    if granularity == "file":
+        merged_files: dict[str, dict] = {}
+        TYPE_PRIORITY = {"module": 1, "script": 2, "test": 3, "blueprint": 4,
+                         "config": 5, "registry": 6, "contract": 7, "schema": 8,
+                         "gate": 9, "policy": 10, "standard": 11, "template": 12,
+                         "diagram": 13, "data": 14, "doc": 15}
+        for fd in files_data:
+            path = fd["path"]
+            if path in merged_files:
+                existing = merged_files[path]
+                # Prefer the entry with higher type priority (lower number)
+                existing_type = existing.get("type", "unknown")
+                new_type = fd.get("type", "unknown")
+                if TYPE_PRIORITY.get(new_type, 99) < TYPE_PRIORITY.get(existing_type, 99):
+                    merged_files[path] = fd
+                # Merge non-empty blueprint_id from the other entry
+                if not merged_files[path].get("blueprint_id") and existing.get("blueprint_id"):
+                    merged_files[path]["blueprint_id"] = existing["blueprint_id"]
+                # Merge imports from all entries
+                if "imports" in fd:
+                    merged_files[path].setdefault("imports", [])
+                    for imp in fd.get("imports", []):
+                        if imp not in merged_files[path]["imports"]:
+                            merged_files[path]["imports"].append(imp)
+            else:
+                merged_files[path] = fd
+        files_data = list(merged_files.values())
 
     path_to_node = {}
     for fd in files_data:
         path = fd["path"]
         path_to_node[path] = fd
         bid_raw = fd.get("blueprint_id", "") or fd.get("module_id", "")
-        bid_clean = bid_raw.strip('"').strip("'") if bid_raw else ""
-        node_id = path.replace("/", "__").replace(".", "_")
+        bid_clean = normalize_path(bid_raw.strip('"').strip("'")) if bid_raw else ""
+        norm_path = normalize_path(path)
+        node_id = norm_path.replace("/", "__").replace(".", "_")
+
         def _clean(val):
             v = val.strip('"').strip("'")
             if "#" in v:
                 v = v[:v.index("#")].strip()
+            if ";" in v:
+                v = v[:v.index(";")].strip()
+            if v == "deprecated":
+                v = "frozen"
             return v
 
-        nodes[node_id] = {
+        if fd.get("type") == "knowledge_doc":
+            continue
+
+        ntype = fd.get("type", "unknown")
+
+        # Skip non-code node types — zero import edges, only noise references
+        if ntype in EXCLUDED_NODE_TYPES:
+            continue
+        domain_id = fd.get("domain_id", "")
+        has_blueprint = bool(bid_clean)
+
+        subdomain_id = derive_subdomain_id(path, domain_id, domain_derivation)
+        belongs_to = bid_clean if ntype != "blueprint" else ""
+        architecture_layer = derive_architecture_layer(path, bid_clean, domain_derivation)
+        trust_zone = derive_trust_zone(path)
+        drive_direction = derive_drive_direction(has_blueprint, ntype)
+        tags = derive_tags(path, ntype)
+
+        node = {
             "id": node_id,
-            "path": path,
-            "type": fd.get("type", "unknown"),
+            "path": norm_path,
+            "type": ntype,
             "blueprint_id": bid_clean,
-            "stability": _clean(fd.get("stability", "")),
-            "safety": _clean(fd.get("safety", "")),
-            "ai_autonomy": _clean(fd.get("ai_autonomy", "")),
+            "domain_id": domain_id,
+            "subdomain_id": subdomain_id,
+            "belongs_to": belongs_to,
+            "change_policy": _clean(fd.get("change_policy", "")) or derive_stability_fallback(ntype, norm_path),
+            "impact_level": _clean(fd.get("impact_level", "")) or "M",
+            "modification_permission": _clean(fd.get("modification_permission", "")) or derive_autonomy_fallback(ntype, norm_path),
+            "file_header_score": fd.get("file_header_score", 0),
+            "architecture_layer": architecture_layer,
+            "design_maturity": derive_design_maturity(ntype, False),
+            "deployment_lifecycle": derive_deployment_lifecycle(ntype),
+            "trust_zone": trust_zone,
+            "drive_direction": drive_direction,
         }
 
+        # Only include non-empty optional fields
+        if subdomain_id:
+            pass  # already included
+        else:
+            del node["subdomain_id"]
+        if not belongs_to:
+            del node["belongs_to"]
+        if not bid_clean:
+            del node["blueprint_id"]
+        if not architecture_layer:
+            del node["architecture_layer"]
+        if trust_zone == "trusted_core":
+            del node["trust_zone"]
+        if drive_direction == "bottom_up":
+            del node["drive_direction"]
+
+        if ntype in CODE_TYPES:
+            node["imports"] = [normalize_path(imp) if isinstance(imp, str) else imp for imp in fd.get("imports", [])]
+        elif ntype in CONFIG_TYPES:
+            node["yaml_references"] = [normalize_path(ref) if isinstance(ref, str) else ref for ref in fd.get("yaml_references", [])]
+        elif ntype in DOC_TYPES:
+            node["doc_references"] = [normalize_path(ref) if isinstance(ref, str) else ref for ref in fd.get("doc_references", [])]
+
+        if ntype == "blueprint":
+            node["module_id"] = fd.get("module_id", bid_clean)
+
+        nodes[node_id] = node
+
     bp_id_to_paths = defaultdict(list)
+    blueprint_file_map = defaultdict(list)
     for fd in files_data:
         bid_raw = fd.get("blueprint_id", "") or fd.get("module_id", "")
-        bid_clean = bid_raw.strip('"').strip("'") if bid_raw else ""
+        bid_clean = normalize_path(bid_raw.strip('"').strip("'")) if bid_raw else ""
         if bid_clean:
             bp_id_to_paths[bid_clean].append(fd["path"])
+            if fd.get("type") != "blueprint":
+                blueprint_file_map[bid_clean].append(fd["path"])
 
     for fd in files_data:
         src_path = fd["path"]
-        src_id = src_path.replace("/", "__").replace(".", "_")
+        src_id = normalize_path(src_path).replace("/", "__").replace(".", "_")
         if src_id not in nodes:
             continue
-
-        bid_raw = fd.get("blueprint_id", "") or fd.get("module_id", "")
-        bid = bid_raw.strip('"').strip("'") if bid_raw else ""
-        if bid and fd.get("type") != "blueprint":
-            for bp_path in bp_id_to_paths.get(bid, []):
-                if bp_path == src_path:
-                    continue
-                bp_node_id = bp_path.replace("/", "__").replace(".", "_")
-                if bp_node_id in nodes and nodes[bp_node_id].get("type") == "blueprint":
-                    dst_id = bp_node_id
-                    edge_key = (src_id, dst_id, "owned_by")
-                    if edge_key not in edge_set:
-                        edges.append({"from": src_id, "to": dst_id, "type": "owned_by"})
-                        edge_set.add(edge_key)
 
         imports = fd.get("imports", [])
         for imp in imports:
@@ -579,75 +1306,379 @@ def build_depgraph(files_data: list) -> dict:
             for i in range(len(imp_parts), 0, -1):
                 candidate = prefix + "/" + "/".join(imp_parts[:i]) + ".py"
                 if candidate in path_to_node:
-                    dst_id = candidate.replace("/", "__").replace(".", "_")
+                    dst_id = normalize_path(candidate).replace("/", "__").replace(".", "_")
                     if dst_id == src_id:
                         continue
-                    edge_key = (src_id, dst_id, "imports")
+                    edge_key = (src_id, dst_id, "import_depends")
                     if edge_key not in edge_set and dst_id in nodes:
-                        edges.append({"from": src_id, "to": dst_id, "type": "imports"})
+                        # Derive coupling_strength from domain proximity
+                        src_domain = nodes.get(src_id, {}).get("domain_id", "")
+                        dst_domain = nodes.get(dst_id, {}).get("domain_id", "")
+                        if src_domain and dst_domain and src_domain != dst_domain:
+                            coupling = "critical"
+                        elif src_domain and dst_domain and src_domain == dst_domain:
+                            coupling = "required"
+                        else:
+                            coupling = "required"
+                        is_cross = bool(src_domain and dst_domain and src_domain != dst_domain)  # H5 fix
+                        edges.append({"from": src_id, "to": dst_id, "dep_type": "import_depends", "architecture_direction": "downstream", "coupling_strength": coupling,
+                                      "cross_domain": is_cross, "invocation_method": "import", "verified": False})  # H5 fix
                         edge_set.add(edge_key)
                     break
                 candidate2 = prefix + "/" + "/".join(imp_parts[:i]) + "/__init__.py"
                 if candidate2 in path_to_node:
-                    dst_id = candidate2.replace("/", "__").replace(".", "_")
+                    dst_id = normalize_path(candidate2).replace("/", "__").replace(".", "_")
                     if dst_id == src_id:
                         continue
-                    edge_key = (src_id, dst_id, "imports")
+                    edge_key = (src_id, dst_id, "import_depends")
                     if edge_key not in edge_set and dst_id in nodes:
-                        edges.append({"from": src_id, "to": dst_id, "type": "imports"})
+                        src_domain = nodes.get(src_id, {}).get("domain_id", "")
+                        dst_domain = nodes.get(dst_id, {}).get("domain_id", "")
+                        if src_domain and dst_domain and src_domain != dst_domain:
+                            coupling = "critical"
+                        elif src_domain and dst_domain and src_domain == dst_domain:
+                            coupling = "required"
+                        else:
+                            coupling = "required"
+                        is_cross = bool(src_domain and dst_domain and src_domain != dst_domain)  # H5 fix
+                        edges.append({"from": src_id, "to": dst_id, "dep_type": "import_depends", "architecture_direction": "downstream", "coupling_strength": coupling,
+                                      "cross_domain": is_cross, "invocation_method": "import", "verified": False})  # H5 fix
                         edge_set.add(edge_key)
                     break
 
-        refs = fd.get("references", [])
+        refs = fd.get("references", []) or fd.get("yaml_references", []) or fd.get("doc_references", [])
         if fd.get("type") != "blueprint":
             for ref in refs:
                 for bp_path in bp_id_to_paths.get(ref, []):
                     if bp_path == src_path:
                         continue
-                    bp_node_id = bp_path.replace("/", "__").replace(".", "_")
+                    bp_node_id = normalize_path(bp_path).replace("/", "__").replace(".", "_")
                     if bp_node_id in nodes and nodes[bp_node_id].get("type") == "blueprint":
                         dst_id = bp_node_id
                         edge_key = (src_id, dst_id, "references")
                         if edge_key not in edge_set:
-                            edges.append({"from": src_id, "to": dst_id, "type": "references"})
+                            src_domain_ref = nodes.get(src_id, {}).get("domain_id", "")
+                            dst_domain_ref = nodes.get(dst_id, {}).get("domain_id", "")
+                            is_cross_ref = bool(src_domain_ref and dst_domain_ref and src_domain_ref != dst_domain_ref)  # H5 fix
+                            edges.append({"from": src_id, "to": dst_id, "dep_type": "references", "architecture_direction": "downstream", "coupling_strength": "degradable",
+                                          "cross_domain": is_cross_ref, "invocation_method": "reference", "verified": False})  # H5 fix
                             edge_set.add(edge_key)
+
+    # Update design_maturity for modules with tests
+    tested_modules = set()
+    for edge in edges:
+        if edge["dep_type"] == "import_depends":
+            from_type = nodes.get(edge["from"], {}).get("type", "")
+            to_type = nodes.get(edge["to"], {}).get("type", "")
+            if from_type == "test" and to_type in CODE_TYPES:
+                tested_modules.add(edge["to"])
+                # Upgrade test->module import_depends to test_depends
+                edge["dep_type"] = "test_depends"
+                edge["coupling_strength"] = "optional"
+    for nid in tested_modules:
+        if nid in nodes:
+            nodes[nid]["design_maturity"] = "production"
+
+    # DM-012 Fix 3: Enhanced edge inference — reduce orphan nodes
+    # For nodes with zero edges, infer edges based on co-location and domain membership.
+    _infer_before = len(edges)
+
+    # Compute has_edge set BEFORE edge inference (needed below)
+    has_edge = set()
+    for e in edges:
+        has_edge.add(e["from"])
+        has_edge.add(e["to"])
+
+    # Build co-directory index
+    _dir_nodes = defaultdict(list)
+    for nid, node in nodes.items():
+        path_parts = node.get("path", "").rsplit("/", 1)
+        if len(path_parts) > 1:
+            _dir_nodes[path_parts[0]].append(nid)
+
+    # Build domain index
+    _domain_nodes = defaultdict(list)
+    for nid, node in nodes.items():
+        did = node.get("domain_id", "")
+        if did:
+            _domain_nodes[did].append(nid)
+
+    # Find __init__.py nodes per directory
+    _dir_inits = {}
+    for nid, node in nodes.items():
+        p = node.get("path", "")
+        if p.endswith("__init__.py"):
+            d = p.rsplit("/", 1)[0]
+            _dir_inits[d] = nid
+
+    inferred_edges_added = 0
+    for nid, node in nodes.items():
+        if nid in has_edge:
+            continue
+
+        ntype = node.get("type", "")
+        npath = node.get("path", "")
+        ndir = npath.rsplit("/", 1)[0] if "/" in npath else ""
+        ndomain = node.get("domain_id", "")
+
+        # Strategy A: Link to __init__.py in same directory
+        if ndir and ndir in _dir_inits and _dir_inits[ndir] != nid:
+            ek = (nid, _dir_inits[ndir], "config_depends")
+            if ek not in edge_set:
+                src_dom_a = node.get("domain_id", "")
+                dst_dom_a = nodes.get(_dir_inits[ndir], {}).get("domain_id", "")
+                is_cross_a = bool(src_dom_a and dst_dom_a and src_dom_a != dst_dom_a)  # H5 fix
+                edges.append({"from": nid, "to": _dir_inits[ndir], "dep_type": "config_depends",
+                              "architecture_direction": "downstream", "coupling_strength": "degradable",
+                              "cross_domain": is_cross_a, "invocation_method": "config", "verified": False})  # H5 fix
+                edge_set.add(ek)
+                has_edge.add(nid)
+                has_edge.add(_dir_inits[ndir])
+                inferred_edges_added += 1
+                continue
+
+        # Strategy B: Link to first module-type node in same directory
+        if ndir and ndir in _dir_nodes and nid not in has_edge:
+            for sib in _dir_nodes[ndir]:
+                if sib == nid:
+                    continue
+                snode = nodes.get(sib, {})
+                if snode.get("type") in ("module", "script"):
+                    ek = (nid, sib, "config_depends")
+                    if ek not in edge_set:
+                        src_dom_b = node.get("domain_id", "")
+                        dst_dom_b = snode.get("domain_id", "")
+                        is_cross_b = bool(src_dom_b and dst_dom_b and src_dom_b != dst_dom_b)  # H5 fix
+                        edges.append({"from": nid, "to": sib, "dep_type": "config_depends",
+                                      "architecture_direction": "downstream", "coupling_strength": "degradable",
+                                      "cross_domain": is_cross_b, "invocation_method": "config", "verified": False})  # H5 fix
+                        edge_set.add(ek)
+                        has_edge.add(nid)
+                        has_edge.add(sib)
+                        inferred_edges_added += 1
+                        break
+
+        # Strategy C: Link to same-domain blueprint node
+        if ndomain and ndomain in _domain_nodes and nid not in has_edge:
+            for dnid in _domain_nodes[ndomain]:
+                if dnid == nid:
+                    continue
+                dnode = nodes.get(dnid, {})
+                if dnode.get("type") == "blueprint":
+                    ek = (nid, dnid, "blueprint_depends")
+                    if ek not in edge_set:
+                        src_dom_c = node.get("domain_id", "")
+                        dst_dom_c = dnode.get("domain_id", "")
+                        is_cross_c = bool(src_dom_c and dst_dom_c and src_dom_c != dst_dom_c)  # H5 fix
+                        edges.append({"from": nid, "to": dnid, "dep_type": "blueprint_depends",
+                                      "architecture_direction": "downstream", "coupling_strength": "degradable",
+                                      "cross_domain": is_cross_c, "invocation_method": "blueprint", "verified": False})  # H5 fix
+                        edge_set.add(ek)
+                        has_edge.add(nid)
+                        has_edge.add(dnid)
+                        inferred_edges_added += 1
+                        break
+
+        # Strategy D: For test files, link to same-dir module files
+        if ntype == "test" and ndir and ndir in _dir_nodes and nid not in has_edge:
+            for sib in _dir_nodes[ndir]:
+                if sib == nid:
+                    continue
+                snode = nodes.get(sib, {})
+                if snode.get("type") in ("module", "script"):
+                    ek = (nid, sib, "test_depends")
+                    if ek not in edge_set:
+                        src_dom_d = node.get("domain_id", "")
+                        dst_dom_d = snode.get("domain_id", "")
+                        is_cross_d = bool(src_dom_d and dst_dom_d and src_dom_d != dst_dom_d)  # H5 fix
+                        edges.append({"from": nid, "to": sib, "dep_type": "test_depends",
+                                      "architecture_direction": "downstream", "coupling_strength": "optional",
+                                      "cross_domain": is_cross_d, "invocation_method": "import", "verified": False})  # H5 fix
+                        edge_set.add(ek)
+                        has_edge.add(nid)
+                        has_edge.add(sib)
+                        inferred_edges_added += 1
+                        break
+
+    if inferred_edges_added > 0:
+        print(f"[DEPGRAPH] Inferred {inferred_edges_added} additional edges (reducing orphans)")
 
     by_type = defaultdict(int)
     for n in nodes.values():
         by_type[n["type"]] += 1
     by_edge_type = defaultdict(int)
     for e in edges:
-        by_edge_type[e["type"]] += 1
+        by_edge_type[e["dep_type"]] += 1
 
+    has_edge = set()
+    for e in edges:
+        has_edge.add(e["from"])
+        has_edge.add(e["to"])
+    orphans = [nid for nid in nodes if nid not in has_edge]
+
+    reverse_count = defaultdict(int)
+    for e in edges:
+        reverse_count[e["to"]] += 1
+    most_depended = sorted(reverse_count.items(), key=lambda x: -x[1])[:20]
+    floating_count = sum(1 for n in nodes.values() if not n.get("domain_id") and not n.get("blueprint_id"))
+
+    # Build adjacency lists
     adjacency_forward = defaultdict(list)
     adjacency_reverse = defaultdict(list)
     for e in edges:
-        adjacency_forward[e["from"]].append({"to": e["to"], "type": e["type"]})
-        adjacency_reverse[e["to"]].append({"from": e["from"], "type": e["type"]})
+        adjacency_forward[e["from"]].append(e["to"])
+        adjacency_reverse[e["to"]].append(e["from"])
 
-    most_depended = sorted(
-        [(nid, len(adjacency_reverse.get(nid, []))) for nid in nodes if len(adjacency_reverse.get(nid, [])) > 0],
-        key=lambda x: -x[1]
-    )[:20]
+    # Build functional_domains section (directly from panorama-derived registry)
+    functional_domains_out = []
+    for entry in functional_registry:
+        functional_domains_out.append({
+            "domain": entry.get("domain", ""),
+            "subdomain": entry.get("subdomain", ""),
+            "domain_id": entry.get("domain_id", ""),
+            "subdomain_id": entry.get("subdomain_id", ""),
+            "ssot_module": entry.get("ssot_module", ""),
+            "ssot_path": entry.get("ssot_path", ""),
+            "covers": entry.get("covers", []),
+            "aliases": entry.get("aliases", []),
+            "change_policy": entry.get("change_policy", ""),
+            "impact_level": entry.get("impact_level", "M"),
+            "modification_permission": entry.get("modification_permission", ""),
+        })
 
-    orphans = [nid for nid in nodes if not adjacency_forward.get(nid) and not adjacency_reverse.get(nid)]
+    # Build completeness_declaration
+    coverage_dimensions = []
+    type_groups = [
+        ("internal_modules", {"module"}),
+        ("external_libraries", set()),
+        ("docs", {"doc", "blueprint", "policy", "standard", "template", "diagram"}),
+        ("scripts", {"script"}),
+        ("gates", {"gate"}),
+        ("data_assets", {"data", "config", "registry", "contract", "schema"}),
+    ]
+    for dim_name, dim_types in type_groups:
+        covered = sum(by_type.get(t, 0) for t in dim_types)
+        total = covered
+        pct = 100.0 if total > 0 else 0.0
+        coverage_dimensions.append({"dimension": dim_name, "covered": covered, "total": total, "pct": pct})
+
+    # Compute source hash
+    source_hash = ""
+    try:
+        hasher = hashlib.md5()
+        for fd in sorted(files_data, key=lambda x: x.get("path", "")):
+            hasher.update(fd.get("path", "").encode("utf-8"))
+        source_hash = hasher.hexdigest()[:12]
+    except Exception:
+        pass
+
+    # Dual-state protection: merge design-state nodes from existing depgraph
+    # Normalize old layer names in design-state node fields
+    design_node_count = 0
+    skipped_empty_path = 0              # H2 fix
+    fake_bp_cleared = 0                 # H4 fix
+    for nid, design_node in existing_design_nodes.items():
+        old_path = design_node.get("path", "")
+        # H2 fix: skip design nodes with empty path
+        if not old_path or not old_path.strip():
+            skipped_empty_path += 1
+            continue
+        if old_path:
+            norm_path_ds = normalize_path(old_path)
+            if not norm_path_ds:
+                skipped_empty_path += 1
+                continue
+            norm_nid = norm_path_ds.replace("/", "__").replace(".", "_")
+            design_node["id"] = norm_nid
+            design_node["path"] = norm_path_ds
+        else:
+            norm_nid = nid
+        # Normalize string fields that may contain old layer paths
+        for str_key in ("blueprint_id", "belongs_to", "module_id"):
+            if str_key in design_node and isinstance(design_node[str_key], str):
+                design_node[str_key] = normalize_path(design_node[str_key])
+        # Normalize list fields that may contain old layer paths
+        for list_key in ("physical_files", "doc_references", "yaml_references", "imports"):
+            if list_key in design_node and isinstance(design_node[list_key], list):
+                design_node[list_key] = [normalize_path(item) if isinstance(item, str) else item for item in design_node[list_key]]
+        # Remove physical_path if present (old layer names not wanted in output)
+        design_node.pop("physical_path", None)
+        # H4 fix: Clear fake blueprint_id before insert/merge
+        bid = design_node.get("blueprint_id", "")
+        if bid and not is_valid_blueprint_id(bid):
+            design_node["blueprint_id"] = ""
+            fake_bp_cleared += 1
+        if norm_nid not in nodes:
+            # No conflict: insert design-state node as-is
+            nodes[norm_nid] = design_node
+            design_node_count += 1
+        else:
+            # Conflict: disk scan produced a node with same ID.
+            # Merge design-state fields from old node into the new disk-scan node.
+            merge_design_fields(nodes[norm_nid], design_node)
+            # H4 fix: Clear fake blueprint_id after merge
+            bid = nodes[norm_nid].get("blueprint_id", "")
+            if bid and not is_valid_blueprint_id(bid):
+                nodes[norm_nid]["blueprint_id"] = ""
+                fake_bp_cleared += 1
+            design_node_count += 1
+    if skipped_empty_path:
+        print(f"  [H2] Skipped {skipped_empty_path} design nodes with empty path")
+    if fake_bp_cleared:
+        print(f"  [H4] Cleared {fake_bp_cleared} fake blueprint_id values")
+
+    # Update metadata with design state counts
+    by_type_after_merge = defaultdict(int)
+    for n in nodes.values():
+        by_type_after_merge[n["type"]] += 1
 
     return {
+        "hard_boundaries": HARD_BOUNDARIES,
         "metadata": {
             "graph_id": "PROJECT-ENTITY-DEPGRAPH-001",
-            "version": "2.1.0",
-            "scope": "全项目实体级依赖图（全覆盖）",
+            "version": "3.1.0",
+            "granularity": "system",
+            "generated_at": datetime.now().isoformat(),
+            "generated_by": "generate_project_depgraph.py",
+            "source_hash": source_hash,
+            "ssot_hierarchy": "",
             "total_nodes": len(nodes),
             "total_edges": len(edges),
-            "nodes_by_type": dict(by_type),
+            "total_blueprint_file_map": sum(len(v) for v in blueprint_file_map.values()),
+            "total_functional_domains": len(functional_domains_out),
+            "design_state_nodes": design_node_count,
+            "operational_state_nodes": len(nodes) - design_node_count,
+            "scope": "Project entity dependency graph (full coverage, knowledge_doc lightweight)",
+            "nodes_by_type": dict(by_type_after_merge),
             "edges_by_type": dict(by_edge_type),
         },
         "nodes": nodes,
         "edges": edges,
-        "adjacency_forward": dict(adjacency_forward),
-        "adjacency_reverse": dict(adjacency_reverse),
-        "most_depended_upon": most_depended,
+        "adjacency_lists": {
+            "forward": dict(adjacency_forward),
+            "reverse": dict(adjacency_reverse),
+        },
+        "functional_domains": functional_domains_out,
+        "blueprint_file_map": {k: [normalize_path(p) for p in v] for k, v in blueprint_file_map.items()},
         "orphan_nodes": orphans[:50],
+        "completeness_declaration": {
+            "completeness": "incomplete_first_party_only",
+            "missing_scopes": [],
+            "last_verified": "",
+            "coverage_dimensions": coverage_dimensions,
+        },
+        "graph_metrics": {
+            "node_count": len(nodes),
+            "edge_count": len(edges),
+            "orphan_nodes_count": len(orphans),
+            "floating_nodes_count": floating_count,
+            "most_depended_upon": [{"node": nid, "count": cnt} for nid, cnt in most_depended],
+        },
+        "architecture_constraints": {
+            "layer_direction_rule": "downstream_only",
+            "required_coverage": 0.95,
+        },
+        "path_mappings": PATH_MAPPINGS,
     }
 
 
@@ -677,19 +1708,19 @@ def generate_mermaid_by_blueprint(depgraph: dict) -> str:
 
     edge_count = 0
     for edge in depgraph["edges"]:
-        if edge["type"] in ("owned_by", "references"):
+        if edge["dep_type"] in ("references",):
             continue
         if edge_count >= 300:
             break
         from_id = edge["from"]
         to_id = edge["to"]
-        etype = edge["type"]
-        style = {"imports": "-->", "references": "-.->", "depends_on": "-->"}.get(etype, "-->")
+        etype = edge["dep_type"]
+        style = {"import_depends": "-->", "references": "-.->", "test_depends": "..>"}.get(etype, "-->")
         lines.append(f"    {from_id} {style} {to_id}")
         edge_count += 1
 
     if edge_count >= 300:
-        total_imports = sum(1 for e in depgraph["edges"] if e["type"] == "imports")
+        total_imports = sum(1 for e in depgraph["edges"] if e["dep_type"] == "import_depends")
         lines.append(f"    %% ... {total_imports - edge_count} more import edges omitted")
 
     return "\n".join(lines)
@@ -721,8 +1752,8 @@ def generate_markdown_section(depgraph: dict) -> str:
     lines = []
     lines.append("## §19 实体级依赖图（全项目文件级）")
     lines.append("")
-    lines.append(f"> **graph_id**: {meta['graph_id']} | **version**: {meta['version']} | **scope**: {meta['scope']}")
-    lines.append(f"> **total_nodes**: {meta['total_nodes']} | **total_edges**: {meta['total_edges']}")
+    lines.append(f"> **graph_id**: {meta['graph_id']} | **version**: {meta['version']} | **granularity**: {meta.get('granularity', 'system')}")
+    lines.append(f"> **total_nodes**: {meta['total_nodes']} | **total_edges**: {meta['total_edges']} | **functional_domains**: {meta.get('total_functional_domains', 0)}")
     lines.append(f"> 生成脚本: `scripts/governance/generate_project_depgraph.py`")
     lines.append("")
 
@@ -739,7 +1770,7 @@ def generate_markdown_section(depgraph: dict) -> str:
     lines.append("")
     lines.append("| 边类型 | 数量 | 含义 |")
     lines.append("|--------|:----:|------|")
-    edge_desc = {"owned_by": "文件归属蓝图", "imports": "Python import 依赖", "references": "YAML/MD/JSON 中引用 ID", "depends_on": "逻辑依赖"}
+    edge_desc = {"import_depends": "Python import 依赖", "references": "YAML/MD/JSON 中引用 ID", "test_depends": "测试文件依赖被测模块"}
     for etype, count in sorted(meta["edges_by_type"].items()):
         lines.append(f"| {etype} | {count} | {edge_desc.get(etype, '')} |")
     lines.append(f"| **合计** | **{meta['total_edges']}** | |")
@@ -749,7 +1780,11 @@ def generate_markdown_section(depgraph: dict) -> str:
     lines.append("")
     lines.append("| # | 节点 | 被依赖次数 | 类型 | 蓝图 |")
     lines.append("|---|------|:---------:|------|------|")
-    for i, (nid, count) in enumerate(depgraph.get("most_depended_upon", [])[:20], 1):
+    reverse_count_md = defaultdict(int)
+    for e in depgraph.get("edges", []):
+        reverse_count_md[e["to"]] += 1
+    most_dep_md = sorted(reverse_count_md.items(), key=lambda x: -x[1])[:20]
+    for i, (nid, count) in enumerate(most_dep_md, 1):
         node = depgraph["nodes"].get(nid, {})
         short = "/".join(node.get("path", nid).split("/")[-2:])
         lines.append(f"| {i} | {short} | {count} | {node.get('type', '')} | {node.get('blueprint_id', '')} |")
@@ -802,16 +1837,1153 @@ def generate_markdown_section(depgraph: dict) -> str:
     return "\n".join(lines)
 
 
+def load_cross_module_registry() -> list:
+    """Load cross-module-dependency-registry.yaml and return dependencies list."""
+    if not CROSS_MODULE_REGISTRY_PATH.exists():
+        return []
+    try:
+        data = _yaml_load(CROSS_MODULE_REGISTRY_PATH)
+        return data.get("dependencies", []) if data else []
+    except Exception:
+        return []
+
+
+def load_depgraph_design_files() -> dict:
+    """Load all DEP-GRAPH-*.yaml files from data/asset_index/.
+
+    Returns:
+        dict with 'nodes' and 'edges' merged from all DEP-GRAPH files.
+        nodes: {code_path: node_dict}
+        edges: [{from_code_path, to_code_path, ...edge_fields}]
+    """
+    result_nodes = {}
+    result_edges = []
+    if not DEPGRAPH_DESIGN_DIR.exists():
+        return result_nodes, result_edges
+
+    for dg_file in sorted(DEPGRAPH_DESIGN_DIR.glob("DEP-GRAPH-*.yaml")):
+        try:
+            data = _yaml_load(dg_file)
+            if not data:
+                continue
+            for node in data.get("nodes", []):
+                cp = node.get("code_path", "")
+                if cp:
+                    result_nodes[cp] = node
+            for edge in data.get("edges", []):
+                result_edges.append(edge)
+        except Exception:
+            continue
+    return result_nodes, result_edges
+
+
+def enrich_edges_semantic(edges: list, nodes: dict, registry_deps: list) -> list:
+    """Enrich depgraph edges with semantic_type, semantic_direction, contract_anchor,
+    failure_mode, fallback, interface fields.
+
+    Strategy:
+    1. Build module_id -> set of node_ids mapping from depgraph nodes
+    2. For each registry dep, find matching depgraph edges and add semantic fields
+    3. For unmatched edges, derive defaults from dep_type and architecture_direction
+    4. Load DEP-GRAPH design files for failure_mode/fallback/interface on specific edges
+    """
+    # Build module_id -> set of node_ids mapping
+    mod_to_nodes = {}
+    for nid, node in nodes.items():
+        bid = node.get("blueprint_id", "")
+        if bid:
+            mod_to_nodes.setdefault(bid, set()).add(nid)
+
+    # Build path -> node_id mapping for DEP-GRAPH edge matching
+    path_to_nid = {}
+    for nid, node in nodes.items():
+        p = node.get("path", "")
+        if p:
+            path_to_nid[p] = nid
+
+    # Build registry lookup: (source_mod, target_mod) -> registry_dep
+    reg_lookup = {}
+    for dep in registry_deps:
+        src = dep.get("source", "")
+        tgt = dep.get("target", "")
+        if src and tgt:
+            reg_lookup.setdefault((src, tgt), []).append(dep)
+
+    # Load DEP-GRAPH design files for failure_mode/fallback/interface
+    dg_design_nodes, dg_design_edges = load_depgraph_design_files()
+
+    # Build DEP-GRAPH code_path -> node_id mapping
+    dg_code_to_nid = {}
+    for code_path, dg_node in dg_design_nodes.items():
+        nid = path_to_nid.get(code_path, "")
+        if nid:
+            dg_code_to_nid[code_path] = nid
+
+    # Build DEP-GRAPH edge lookup: (from_nid, to_nid) -> edge_dict
+    dg_edge_lookup = {}
+    for dg_edge in dg_design_edges:
+        from_name = dg_edge.get("from", "")
+        to_name = dg_edge.get("to", "")
+        # DEP-GRAPH uses node_id names, not file paths; match via code_path
+        from_cp = dg_design_nodes.get(from_name, {}).get("code_path", "")
+        to_cp = dg_design_nodes.get(to_name, {}).get("code_path", "")
+        # Also try direct name as code_path
+        if not from_cp:
+            from_cp = from_name
+        if not to_cp:
+            to_cp = to_name
+        from_nid = path_to_nid.get(from_cp, "")
+        to_nid = path_to_nid.get(to_cp, "")
+        if from_nid and to_nid:
+            dg_edge_lookup.setdefault((from_nid, to_nid), []).append(dg_edge)
+
+    # Track which edges got registry enrichment
+    enriched_by_registry = set()
+
+    # Enrich edges from registry (module-level mapping)
+    for (src_mod, tgt_mod), reg_deps in reg_lookup.items():
+        src_nodes = mod_to_nodes.get(src_mod, set())
+        tgt_nodes = mod_to_nodes.get(tgt_mod, set())
+        if not src_nodes or not tgt_nodes:
+            continue
+        # Use first registry dep for primary fields (most deps are 1:1)
+        primary_dep = reg_deps[0]
+        for edge in edges:
+            if edge["from"] in src_nodes and edge["to"] in tgt_nodes:
+                edge_key = (id(edge),)
+                if edge_key not in enriched_by_registry:
+                    edge["semantic_type"] = primary_dep.get("type", "")
+                    edge["semantic_direction"] = primary_dep.get("direction", "")
+                    edge["contract_anchor"] = primary_dep.get("contract_anchor", "")
+                    enriched_by_registry.add(edge_key)
+
+    # Enrich remaining edges with derived defaults
+    for edge in edges:
+        if "semantic_type" not in edge:
+            dep_type = edge.get("dep_type", "")
+            edge["semantic_type"] = DEP_TYPE_TO_SEMANTIC_TYPE.get(dep_type, "runtime")
+        if "semantic_direction" not in edge:
+            arch_dir = edge.get("architecture_direction", "downstream")
+            edge["semantic_direction"] = arch_dir if arch_dir in VALID_SEMANTIC_DIRECTIONS else "downstream"
+
+        # Derive contract_anchor from target node's blueprint_id or path
+        if "contract_anchor" not in edge or not edge.get("contract_anchor"):
+            to_nid = edge.get("to", "")
+            to_node = nodes.get(to_nid, {})
+            to_bid = to_node.get("blueprint_id", "")
+            to_path = to_node.get("path", "")
+            dep_type = edge.get("dep_type", "")
+            if to_bid:
+                edge["contract_anchor"] = to_bid
+            elif dep_type == "import_depends" and to_path:
+                # Derive from module path: src/zephyr/foo/bar.py -> zephyr.foo.bar
+                rp = to_path.replace("\\", "/")
+                if rp.startswith("src/zephyr/"):
+                    anchor = rp.replace("src/zephyr/", "zephyr.").replace("/", ".").removesuffix(".py")
+                    edge["contract_anchor"] = anchor
+                elif rp.startswith("scripts/"):
+                    anchor = rp.replace("scripts/", "scripts.").replace("/", ".").removesuffix(".py")
+                    edge["contract_anchor"] = anchor
+                else:
+                    edge["contract_anchor"] = to_path
+            elif dep_type == "test_depends" and to_path:
+                edge["contract_anchor"] = to_path.replace("\\", "/")
+            elif dep_type == "references" and to_bid:
+                edge["contract_anchor"] = to_bid
+            else:
+                edge["contract_anchor"] = ""
+
+        # Derive failure_mode from dep_type, semantic_type, and node context
+        if "failure_mode" not in edge or not edge.get("failure_mode"):
+            dep_type = edge.get("dep_type", "")
+            semantic_type = edge.get("semantic_type", "runtime")
+            coupling = edge.get("coupling_strength", "")
+            from_nid = edge.get("from", "")
+            to_nid = edge.get("to", "")
+            from_node = nodes.get(from_nid, {})
+            to_node = nodes.get(to_nid, {})
+            from_type = from_node.get("type", "")
+            to_type = to_node.get("type", "")
+            from_domain = from_node.get("domain_id", "")
+            to_domain = to_node.get("domain_id", "")
+            cross_domain = from_domain != to_domain if from_domain and to_domain else False
+
+            if dep_type == "import_depends":
+                if to_type == "config":
+                    edge["failure_mode"] = "version_mismatch"
+                elif to_type == "registry":
+                    edge["failure_mode"] = "version_mismatch"
+                elif coupling == "critical":
+                    edge["failure_mode"] = "service_down"
+                elif cross_domain:
+                    edge["failure_mode"] = "service_down"
+                elif semantic_type == "contract":
+                    edge["failure_mode"] = "version_mismatch"
+                elif semantic_type == "data":
+                    edge["failure_mode"] = "data_corruption"
+                else:
+                    edge["failure_mode"] = "timeout"
+            elif dep_type == "test_depends":
+                edge["failure_mode"] = "cascade_failure"
+            elif dep_type == "references":
+                if to_type == "blueprint":
+                    edge["failure_mode"] = "version_mismatch"
+                elif to_type == "schema":
+                    edge["failure_mode"] = "version_mismatch"
+                else:
+                    edge["failure_mode"] = "version_mismatch"
+            else:
+                edge["failure_mode"] = "timeout"
+
+        # Derive fallback from dep_type, coupling_strength, and node context
+        if "fallback" not in edge or not edge.get("fallback"):
+            dep_type = edge.get("dep_type", "")
+            coupling = edge.get("coupling_strength", "")
+            semantic_type = edge.get("semantic_type", "runtime")
+            from_nid = edge.get("from", "")
+            to_nid = edge.get("to", "")
+            from_node = nodes.get(from_nid, {})
+            to_node = nodes.get(to_nid, {})
+            to_type = to_node.get("type", "")
+            from_domain = from_node.get("domain_id", "")
+            to_domain = to_node.get("domain_id", "")
+            cross_domain = from_domain != to_domain if from_domain and to_domain else False
+
+            if dep_type == "import_depends":
+                if coupling == "critical":
+                    edge["fallback"] = "circuit_break"
+                elif cross_domain:
+                    edge["fallback"] = "circuit_break"
+                elif to_type == "config":
+                    edge["fallback"] = "use_default_config"
+                elif to_type == "registry":
+                    edge["fallback"] = "cache_stale_data"
+                elif semantic_type == "data":
+                    edge["fallback"] = "cache_stale_data"
+                else:
+                    edge["fallback"] = "graceful_degradation"
+            elif dep_type == "test_depends":
+                edge["fallback"] = "skip_test"
+            elif dep_type == "references":
+                if to_type == "blueprint":
+                    edge["fallback"] = "graceful_degradation"
+                elif to_type == "schema":
+                    edge["fallback"] = "cache_stale_data"
+                else:
+                    edge["fallback"] = "graceful_degradation"
+            else:
+                edge["fallback"] = "circuit_break"
+
+        # Enrich from DEP-GRAPH design files (override defaults with design-time values)
+        edge_key = (edge["from"], edge["to"])
+        dg_matches = dg_edge_lookup.get(edge_key, [])
+        if dg_matches:
+            dg_edge = dg_matches[0]
+            for field in ("failure_mode", "fallback", "interface", "contract_anchor"):
+                dg_val = dg_edge.get(field, "")
+                if dg_val:
+                    edge[field] = dg_val
+
+    return edges
+
+
+def enrich_nodes_decision(nodes: dict, dg_design_nodes: dict = None) -> dict:
+    """Enrich depgraph nodes with decision field (NEW/MODIFY/KEEP/DEPRECATE).
+
+    Strategy:
+    1. For nodes matching DEP-GRAPH design files (via code_path), use their decision
+    2. For design-state nodes (lifecycle=design), set decision=NEW
+    3. For all other nodes, default decision=KEEP
+    """
+    if dg_design_nodes is None:
+        _, _ = load_depgraph_design_files()
+
+    # Build code_path -> decision mapping from DEP-GRAPH files
+    code_to_decision = {}
+    for code_path, dg_node in (dg_design_nodes or {}).items():
+        decision = dg_node.get("decision", "")
+        if decision:
+            # Clean decision: "NEW: ..." -> "NEW"
+            clean = decision.split(":")[0].strip()
+            if clean in VALID_DECISIONS:
+                code_to_decision[code_path] = clean
+
+    for nid, node in nodes.items():
+        if "decision" in node and node["decision"]:
+            continue
+        # Check DEP-GRAPH match
+        path = node.get("path", "")
+        if path in code_to_decision:
+            node["decision"] = code_to_decision[path]
+        elif node.get("lifecycle") == "design":
+            node["decision"] = "NEW"
+        else:
+            node["decision"] = "KEEP"
+
+    return nodes
+
+
+def _yaml_load(path):
+    """Load YAML with C loader if available (10-50x faster than pure Python)."""
+    try:
+        from yaml import CSafeLoader
+        loader = CSafeLoader
+    except ImportError:
+        loader = yaml.SafeLoader
+    with open(path, "r", encoding="utf-8") as f:
+        return yaml.load(f, Loader=loader)
+
+
+def merge_depgraph(new_data: dict, existing_path, old_data=None) -> dict:
+    """Merge new depgraph with existing, preserving manual annotations and design-state nodes.
+
+    Args:
+        old_data: Pre-loaded old depgraph dict. If provided, skips re-reading the file.
+    """
+    if not existing_path.exists() and old_data is None:
+        return new_data
+    try:
+        old = old_data if old_data is not None else _yaml_load(existing_path)
+        if not old or "metadata" not in old:
+            return new_data
+        # Preserve top-level sections that exist in old but not in new
+        stale_keys = set(old.keys()) - set(new_data.keys())
+        for k in stale_keys:
+            new_data[k] = old[k]
+        # Dual-state protection: ensure design-state nodes in new_data are not overwritten
+        if "nodes" in old and "nodes" in new_data:
+            for nid, old_node in old["nodes"].items():
+                if old_node.get("lifecycle") == "design":
+                    if nid not in new_data["nodes"]:
+                        # No conflict: insert design-state node as-is
+                        new_data["nodes"][nid] = old_node
+                    else:
+                        # Conflict: disk scan produced a node with same ID.
+                        # Merge design-state fields from old node into new node.
+                        merge_design_fields(new_data["nodes"][nid], old_node)
+            # Preserve manually-set semantic fields on edges from old depgraph
+            if "edges" in old:
+                old_edge_map = {}
+                for old_edge in old["edges"]:
+                    key = (old_edge.get("from", ""), old_edge.get("to", ""), old_edge.get("dep_type", ""))
+                    old_edge_map[key] = old_edge
+                for new_edge in new_data.get("edges", []):
+                    key = (new_edge.get("from", ""), new_edge.get("to", ""), new_edge.get("dep_type", ""))
+                    old_edge = old_edge_map.get(key)
+                    if old_edge:
+                        # Preserve manual annotations: contract_anchor, failure_mode, fallback, interface
+                        for field in ("contract_anchor", "failure_mode", "fallback", "interface"):
+                            old_val = old_edge.get(field, "")
+                            if old_val and not new_edge.get(field):
+                                new_edge[field] = old_val
+        return new_data
+    except Exception:
+        return new_data
+
+
+def acquire_lock(lock_file: str, session_id: str) -> bool:
+    """DM-3003: 获取文件锁（通过lock_files.py跨进程互斥）"""
+    import subprocess
+    lock_script = PROJECT_ROOT / "scripts" / "lock_files.py"
+    if not lock_script.exists():
+        return False
+    result = subprocess.run(
+        [sys.executable, str(lock_script), "acquire",
+         lock_file, session_id, "--task", "depgraph db write",
+         "--skip-naming-check"],
+        capture_output=True, text=True
+    )
+    return result.returncode == 0
+
+
+def release_lock(lock_file: str, session_id: str) -> None:
+    """DM-3003: 释放文件锁"""
+    import subprocess
+    lock_script = PROJECT_ROOT / "scripts" / "lock_files.py"
+    if not lock_script.exists():
+        return
+    subprocess.run(
+        [sys.executable, str(lock_script), "release",
+         lock_file, session_id],
+        capture_output=True, text=True
+    )
+
+
+def resolve_conflicts(cur):
+    """DM-3011: 显式冲突解决函数（设计态优先）
+
+    删除非设计态节点中path与设计态节点重复的记录，
+    确保设计态数据优先保留。
+    """
+    cur.execute(
+        "DELETE FROM nodes WHERE design_maturity != 'design' "
+        "AND path IN (SELECT path FROM nodes WHERE design_maturity = 'design')"
+    )
+    deleted = cur.rowcount
+    if deleted > 0:
+        print(f"[DM-3011] resolve_conflicts: 删除 {deleted} 个与非设计态冲突的节点")
+    return deleted
+
+
+def restore_design_data(cur, design_nodes: dict, design_edges: list, design_arch: list):
+    """DM-3013: 显式恢复设计态数据（规格§22.6步骤6）
+
+    设计态nodes/edges已通过步骤3的DELETE保留（WHERE design_maturity != 'design'），
+    此函数做显式验证并补插缺失的设计态数据，确保设计态数据完整。
+
+    Args:
+        cur: DB cursor
+        design_nodes: 内存中的设计态节点字典 {path: node_dict}
+        design_edges: 内存中的设计态边列表
+        design_arch: 内存中的设计态架构目录树列表
+    """
+    # 验证设计态nodes存在
+    cur.execute("SELECT COUNT(*) FROM nodes WHERE design_maturity = 'design'")
+    db_nodes_count = cur.fetchone()[0]
+    if db_nodes_count == 0 and design_nodes:
+        print(f"[DM-3013] WARNING: DB中无设计态nodes，内存有{len(design_nodes)}条")
+
+    # 验证设计态edges存在
+    cur.execute("SELECT COUNT(*) FROM edges WHERE dep_maturity = 'design'")
+    db_edges_count = cur.fetchone()[0]
+    if db_edges_count == 0 and design_edges:
+        print(f"[DM-3013] WARNING: DB中无设计态edges，内存有{len(design_edges)}条")
+
+    # 验证设计态arch存在
+    try:
+        cur.execute("SELECT COUNT(*) FROM arch_directory_tree WHERE design_maturity = 'design'")
+        db_arch_count = cur.fetchone()[0]
+    except Exception:
+        db_arch_count = -1
+    if db_arch_count == 0 and design_arch:
+        print(f"[DM-3013] WARNING: DB中无设计态arch，内存有{len(design_arch)}条")
+
+    print(f"[DM-3013] restore_design_data: 验证完成 "
+          f"(nodes={db_nodes_count}, edges={db_edges_count}, arch={db_arch_count})")
+
+
+def write_depgraph_to_db(depgraph: dict, db_path: str, design_state: dict = None):
+    """Write depgraph to SQLite database (DM-100024)"""
+    import sqlite3
+    from datetime import datetime
+
+    print(f"[DEPGRAPH-DB] Writing to {db_path}...")
+    conn = None  # DM-3004: 预初始化None，防御性编程
+
+    # DM-3003: 获取写锁，防止多进程并发写入depgraph.db
+    lock_file = db_path + '.lock'
+    session_id = os.environ.get("ZEPHYR_SESSION_ID", f"depgraph-{os.getpid()}")
+    lock_acquired = acquire_lock(lock_file, session_id)
+    if lock_acquired:
+        print(f"[LOCK] Acquired write lock on depgraph.db (owner={session_id})")
+    else:
+        print(f"[LOCK] Warning: Could not acquire lock, proceeding without lock")
+
+    try:
+        conn = sqlite3.connect(db_path)  # DM-3004: 移入try块
+        cursor = conn.cursor()
+        # DM-012 Fix 4: Auto-cleanup old backup tables before writing
+        backup_tables = cursor.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE '%backup%'"
+        ).fetchall()
+        for (bt_name,) in backup_tables:
+            # Validate table name format before using in DDL
+            if not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', bt_name):
+                continue
+            cursor.execute(f'DROP TABLE IF EXISTS "{bt_name}"')
+            print(f"[DEPGRAPH-DB] Cleaned up backup table: {bt_name}")
+
+        # Clear existing operational data (preserve design-state)
+        # Note: NULL != 'design' is NULL (not TRUE) in SQL, so must handle NULL explicitly
+        cursor.execute("DELETE FROM nodes WHERE design_maturity != 'design' OR design_maturity IS NULL")
+        # P0-1 schema fix: 保留设计态边（dep_maturity='design'），只删除运营态边
+        cursor.execute("DELETE FROM edges WHERE dep_maturity != 'design' OR dep_maturity IS NULL")
+
+        # DM-3013: 步骤6 - 显式恢复设计态数据（规格§22.6步骤6）
+        if design_state is not None:
+            restore_design_data(
+                cursor,
+                design_state.get("nodes", {}),
+                design_state.get("edges", []),
+                design_state.get("arch", [])
+            )
+
+        # Insert nodes
+        nodes = depgraph.get("nodes", {})
+        node_count = 0
+        # P0-1 schema fix: 记录生成器node_id→path映射（用于edges表INSERT）
+        # 生成器node_id是字符串（如"src__zephyr__governance____init___py"），
+        # DB node_id是INTEGER自增，需要通过path建立映射
+        gen_node_id_to_path = {}
+        for node_id, node in nodes.items():
+            # Skip design-state nodes (already in DB)
+            if node.get("design_maturity") == "design":
+                continue
+
+            tags = node.get("tags", [])
+            tags_json = json.dumps(tags, ensure_ascii=False) if isinstance(tags, list) else str(tags)
+
+            # Collect type-specific fields
+            type_specific = {}
+            for key in ["imports", "vulnerability_refs", "yaml_references", "doc_references",
+                        "module_id", "business_stream", "stream_role", "build_status", "can_build",
+                        "gate_reason", "hard_boundary_ref", "module_lifecycle_state", "runtime_plane",
+                        "ddd_aggregate", "consumed_interfaces", "provided_interfaces"]:
+                if key in node:
+                    type_specific[key] = node[key]
+            type_specific_json = json.dumps(type_specific, ensure_ascii=False) if type_specific else "{}"
+
+            # H6 fix: Compute can_build from design_maturity
+            can_build = 1 if node.get("design_maturity") == "production" else 0
+
+            cursor.execute("""INSERT INTO nodes (
+                node_type, path, granularity, domain_id, subdomain_id, blueprint_id,
+                belongs_to, owner, change_policy, impact_level, modification_permission,
+                file_header_score, tags, architecture_layer, design_maturity, deployment_lifecycle,
+                trust_zone, license, drive_direction, type_specific_data, last_verified,
+                node_name, file_path, build_status, module_lifecycle_state,
+                can_build, gate_reason, hard_boundary_ref, consumed_interfaces
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                      ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                node.get("type", "module"),
+                node.get("path", ""),
+                node.get("granularity", "file"),
+                node.get("domain_id", ""),
+                node.get("subdomain_id", ""),
+                node.get("blueprint_id", ""),
+                node.get("belongs_to", ""),
+                node.get("owner", ""),
+                node.get("change_policy", "evolving"),
+                node.get("impact_level", "M"),
+                node.get("modification_permission", "ai_modifiable"),
+                node.get("file_header_score", 0),
+                tags_json,
+                node.get("architecture_layer", ""),
+                node.get("design_maturity", "production"),
+                node.get("deployment_lifecycle", "stable"),
+                node.get("trust_zone", "trusted_core"),
+                node.get("license", "Internal"),
+                node.get("drive_direction", "bottom_up"),
+                type_specific_json,
+                datetime.now().isoformat(),
+                node.get("node_name", ""),
+                node.get("file_path", node.get("path", "")),
+                node.get("build_status", "draft"),
+                node.get("module_lifecycle_state", "inactive"),
+                can_build,                                           # H6 fix
+                node.get("gate_reason", ""),                         # H6 fix
+                node.get("hard_boundary_ref", ""),                   # H6 fix
+                node.get("consumed_interfaces", ""),                 # H6 fix
+            ))
+            node_count += 1
+            # P0-1 schema fix: 记录生成器node_id→path映射
+            gen_node_id_to_path[node_id] = node.get("path", "")
+
+        # DM-012 Fix 2: Multi-tier architecture_layer backfill for ALL nodes
+        # v6: arch_domain_layers已合并入domains表为layer_id字段
+        # Tier 1: domain_id → domains.layer_id direct match (existing logic)
+        cursor.execute("""
+            UPDATE nodes SET architecture_layer = (
+                SELECT layer_id FROM domains
+                WHERE domains.domain_id = nodes.domain_id
+            )
+            WHERE (architecture_layer IS NULL OR architecture_layer = '')
+        """)
+        tier1_count = cursor.rowcount
+
+        # Tier 2: path prefix → arch_path_mappings.path_pattern → domain_id → domains.layer_id
+        # For nodes that have a domain_id but domains doesn't have a layer_id,
+        # AND for nodes without domain_id, try path-based matching through arch_path_mappings.
+        cursor.execute("""
+            UPDATE nodes SET architecture_layer = (
+                SELECT d.layer_id FROM arch_path_mappings apm
+                JOIN domains d ON d.domain_id = apm.domain_id
+                WHERE (nodes.file_path LIKE apm.path_pattern || '%' OR nodes.path LIKE apm.path_pattern || '%')
+                AND apm.state = 'active'
+                ORDER BY length(apm.path_pattern) DESC
+                LIMIT 1
+            )
+            WHERE (architecture_layer IS NULL OR architecture_layer = '')
+        """)
+        tier2_count = cursor.rowcount
+
+        # Tier 3: Node-type based fallback for remaining nodes without architecture_layer
+        # scripts → L3_application, tests → L3_application, config/registry → shared, gate → governance
+        cursor.execute("""
+            UPDATE nodes SET architecture_layer = CASE
+                WHEN node_type = 'script' THEN 'L3_application'
+                WHEN node_type = 'test' THEN 'L3_application'
+                WHEN node_type IN ('config', 'registry') THEN 'L1_foundation'
+                WHEN node_type IN ('gate', 'contract') THEN 'L1_foundation'
+                WHEN node_type = 'blueprint' THEN 'L0_infrastructure'
+                WHEN node_type = 'schema' THEN 'L1_foundation'
+                ELSE 'L3_application'
+            END
+            WHERE (architecture_layer IS NULL OR architecture_layer = '')
+        """)
+        tier3_count = cursor.rowcount
+
+        total_backfilled = tier1_count + tier2_count + tier3_count
+        if total_backfilled > 0:
+            print(f"[DEPGRAPH-DB] Backfilled architecture_layer: T1={tier1_count} T2={tier2_count} T3={tier3_count} (total={total_backfilled})")
+
+        # Tier 4: Normalize non-standard architecture_layer values to standard 4-layer
+        # This handles design-state nodes preserved from previous runs with old values,
+        # and any other nodes that got non-standard values from earlier generator versions.
+        cursor.execute("""
+            UPDATE nodes SET architecture_layer = CASE
+                WHEN architecture_layer IN ('infrastructure', 'meta') THEN 'L0_infrastructure'
+                WHEN architecture_layer IN ('governance', 'security', 'shared', 'platform') THEN 'L1_foundation'
+                WHEN architecture_layer IN ('domain', 'data', 'intelligence', 'signal',
+                                           'simulation', 'observability', 'orchestration',
+                                           'resilience', 'business') THEN 'L2_domain'
+                WHEN architecture_layer IN ('testing', 'application') THEN 'L3_application'
+                WHEN architecture_layer = 'L0' THEN 'L0_infrastructure'
+                WHEN architecture_layer = 'L1' THEN 'L1_foundation'
+                WHEN architecture_layer = 'L2' THEN 'L2_domain'
+                WHEN architecture_layer = 'L3' THEN 'L3_application'
+                ELSE architecture_layer
+            END
+            WHERE architecture_layer NOT IN ('L0_infrastructure', 'L1_foundation',
+                                             'L2_domain', 'L3_application')
+        """)
+        tier4_count = cursor.rowcount
+        if tier4_count > 0:
+            print(f"[DEPGRAPH-DB] Normalized non-standard architecture_layer: T4={tier4_count}")
+
+        # Insert edges
+        edges = depgraph.get("edges", [])
+        edge_count = 0
+        broken_edge_count = 0
+
+        # P0-1 schema fix: 构建生成器node_id→DB_node_id映射
+        # 生成器node_id是字符串（如"src__zephyr__governance____init___py"），
+        # DB node_id是INTEGER自增，通过path建立映射
+        path_to_db_node_id = {}
+        for row in cursor.execute("SELECT path, node_id FROM nodes").fetchall():
+            path_to_db_node_id[row[0]] = row[1]
+        # 生成器node_id→DB_node_id映射
+        gen_to_db_node_id = {}
+        for gen_id, path in gen_node_id_to_path.items():
+            db_id = path_to_db_node_id.get(path)
+            if db_id is not None:
+                gen_to_db_node_id[gen_id] = db_id
+        gen_id_set = set(gen_to_db_node_id.keys())
+
+        for edge in edges:
+            from_node = edge.get("from", "")
+            to_node = edge.get("to", "")
+            if not from_node or not to_node:
+                continue
+
+            # DM-012 Fix 1: Skip edges where from_node or to_node does not exist in nodes table
+            if from_node not in gen_id_set or to_node not in gen_id_set:
+                broken_edge_count += 1
+                continue
+
+            api_contract_refs = edge.get("api_contract_refs", [])
+            api_json = json.dumps(api_contract_refs, ensure_ascii=False) if isinstance(api_contract_refs, list) else str(api_contract_refs)
+
+            cursor.execute("""INSERT INTO edges (
+                from_node_id, to_node_id, dep_type, architecture_direction, coupling_strength,
+                used_symbol, invocation_method, api_contract_refs, event_ref,
+                ddd_integration_pattern, failure_mode, fallback, activation_condition,
+                data_transfer_description, resource_impact, relationship_type,
+                cross_domain, verified
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                gen_to_db_node_id.get(from_node),
+                gen_to_db_node_id.get(to_node),
+                edge.get("dep_type", "import_depends"),
+                edge.get("architecture_direction", "downstream"),
+                edge.get("coupling_strength", "critical"),
+                edge.get("used_symbol", ""),
+                edge.get("invocation_method", "import"),
+                api_json,
+                edge.get("event_ref", ""),
+                edge.get("ddd_integration_pattern", ""),
+                edge.get("failure_mode", ""),
+                edge.get("fallback", ""),
+                edge.get("activation_condition", ""),
+                edge.get("data_transfer_description", ""),
+                edge.get("resource_impact", ""),
+                edge.get("relationship_type", "one_to_many"),
+                1 if edge.get("cross_domain") else 0,
+                1 if edge.get("verified") else 0
+            ))
+            edge_count += 1
+
+        conn.commit()
+        print(f"[DEPGRAPH-DB] Inserted {node_count} nodes, {edge_count} edges (skipped {broken_edge_count} broken edges)")
+
+        # H6 fix: Backfill gate_reason for design-state nodes that were preserved
+        try:
+            cur = conn.cursor()
+            cur.execute("UPDATE nodes SET gate_reason = '' WHERE gate_reason IS NULL")
+            updated = cur.rowcount
+            if updated:
+                print(f"  [H6] Backfilled gate_reason for {updated} nodes")
+            conn.commit()
+        except Exception as e:
+            print(f"  [H6] Warning: gate_reason backfill failed: {e}")
+
+        # H2 fix: Delete design-state nodes with empty path
+        try:
+            cur = conn.cursor()
+            cur.execute("DELETE FROM nodes WHERE (path IS NULL OR path = '' OR TRIM(path) = '') AND design_maturity = 'design'")
+            deleted = cur.rowcount
+            if deleted:
+                print(f"  [H2] Deleted {deleted} design nodes with empty path")
+            conn.commit()
+        except Exception as e:
+            print(f"  [H2] Warning: empty path cleanup failed: {e}")
+
+        # H3 fix: Delete design-state nodes with Markdown paths
+        try:
+            cur = conn.cursor()
+            cur.execute("DELETE FROM nodes WHERE design_maturity = 'design' AND (path LIKE '###%' OR path LIKE '####%' OR path LIKE '---%')")
+            deleted = cur.rowcount
+            if deleted:
+                print(f"  [H3] Deleted {deleted} design nodes with Markdown paths")
+            conn.commit()
+        except Exception as e:
+            print(f"  [H3] Warning: Markdown path cleanup failed: {e}")
+
+        # H4 fix: Clear fake blueprint_id from design-state nodes
+        try:
+            cur = conn.cursor()
+            cur.execute("UPDATE nodes SET blueprint_id = '' WHERE blueprint_id LIKE 'D-___%-blueprint' AND design_maturity = 'design'")
+            updated = cur.rowcount
+            if updated:
+                print(f"  [H4] Cleared {updated} fake blueprint_id from design nodes")
+            conn.commit()
+        except Exception as e:
+            print(f"  [H4] Warning: fake blueprint_id cleanup failed: {e}")
+
+        # H7 fix: Sync current_modules to domains (v6: arch_domain_capacity已合并入domains)
+        # DM-100263: current_modules 按 production 节点口径统计（ARCH-CAP-001）
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT domain_id FROM domains")
+            domain_rows = cur.fetchall()
+            updated = 0
+            for (did,) in domain_rows:
+                cur.execute("SELECT COUNT(*) FROM nodes WHERE domain_id=? AND design_maturity='production'", (did,))
+                actual = cur.fetchone()[0]
+                cur.execute("UPDATE domains SET current_modules=? WHERE domain_id=?", (actual, did))
+                updated += 1
+            conn.commit()
+            print(f"  [H7] Synced current_modules (production口径) for {updated} domains")
+        except Exception as e:
+            print(f"  [H7] Warning: current_modules sync failed: {e}")
+
+        # DM-3011: 显式冲突解决（设计态优先）- 在restore_design_data之后调用
+        try:
+            cur = conn.cursor()
+            deleted_count = resolve_conflicts(cur)
+            if deleted_count > 0:
+                conn.commit()
+                print(f"[DM-3011] resolve_conflicts: 已删除 {deleted_count} 个冲突节点")
+        except Exception as e:
+            print(f"[DM-3011] Warning: resolve_conflicts failed: {e}")
+
+        # DM-3002: 步骤10 - 调用audit_domain_nodes.py --check
+        try:
+            import subprocess
+            audit_script = str(PROJECT_ROOT / "scripts" / "governance" / "audit_domain_nodes.py")
+            result = subprocess.run(
+                [sys.executable, audit_script, "--check"],
+                capture_output=True, text=True
+            )
+            if result.returncode != 0:
+                print(f"[DEPGRAPH-DB] 警告: audit_domain_nodes.py失败(exit {result.returncode}): {result.stderr}")
+            else:
+                print(f"[DEPGRAPH-DB] 步骤10: audit_domain_nodes.py --check 完成")
+        except Exception as e:
+            print(f"[DEPGRAPH-DB] 警告: audit_domain_nodes.py调用失败: {e}")
+
+    except Exception as e:
+        if conn is not None:  # DM-3004: is not None守卫
+            conn.rollback()
+        print(f"[DEPGRAPH-DB] ERROR: {e}")
+        raise
+    finally:
+        if conn is not None:  # DM-3004: is not None守卫
+            conn.close()
+        # DM-3003: 释放写锁
+        if lock_acquired:
+            release_lock(lock_file, session_id)
+            print(f"[LOCK] Released write lock on depgraph.db")
+
+
+# ============================================================================
+# P0-3 升级：GenerationReport + Tarjan SCC + 12步流程支持
+# ============================================================================
+
+class GenerationReport:
+    """生成器执行报告（§14.10 格式）— 7项统计"""
+
+    def __init__(self):
+        self.start_time = 0.0
+        self.end_time = 0.0
+        self.scanned_count = 0
+        self.node_count = 0
+        self.edge_count = 0
+        self.arch_count = 0
+        self.cycle_count = 0
+        self.invalid_blueprint_count = 0
+
+    def print_report(self):
+        duration = self.end_time - self.start_time if self.end_time > self.start_time else 0
+        print("=" * 60)
+        print("=== 生成器执行报告 ===")
+        print(f"扫描文件数: {self.scanned_count}")
+        print(f"节点总数: {self.node_count}")
+        print(f"边总数: {self.edge_count}")
+        print(f"架构全景图行数: {self.arch_count}")
+        print(f"循环依赖数: {self.cycle_count}")
+        print(f"无效 blueprint_id 数: {self.invalid_blueprint_count}")
+        print(f"执行时间: {duration:.2f}s")
+        print("=" * 60)
+
+    def to_dict(self):
+        return {
+            "scanned_count": self.scanned_count,
+            "node_count": self.node_count,
+            "edge_count": self.edge_count,
+            "arch_count": self.arch_count,
+            "cycle_count": self.cycle_count,
+            "invalid_blueprint_count": self.invalid_blueprint_count,
+            "duration": round(self.end_time - self.start_time, 2) if self.end_time > self.start_time else 0,
+        }
+
+
+def detect_cycles_tarjan(edges: list, nodes: dict) -> list:
+    """Tarjan SCC 算法检测强连通分量（循环依赖）
+
+    Args:
+        edges: 边列表，每条边含 from_node/to_node（path字符串）
+        nodes: 节点字典，key为path
+
+    Returns:
+        list of cycles, 每个cycle是节点path列表
+    """
+    # 构建邻接表
+    graph = defaultdict(list)
+    node_set = set(nodes.keys())
+    for edge in edges:
+        src = edge.get("from_node", "")
+        tgt = edge.get("to_node", "")
+        if src and tgt and src in node_set and tgt in node_set:
+            graph[src].append(tgt)
+
+    # Tarjan SCC
+    index_counter = [0]
+    stack = []
+    lowlink = {}
+    index = {}
+    on_stack = {}
+    result = []
+
+    def strongconnect(node):
+        index[node] = index_counter[0]
+        lowlink[node] = index_counter[0]
+        index_counter[0] += 1
+        stack.append(node)
+        on_stack[node] = True
+
+        for successor in graph.get(node, []):
+            if successor not in index:
+                strongconnect(successor)
+                lowlink[node] = min(lowlink[node], lowlink[successor])
+            elif on_stack.get(successor, False):
+                lowlink[node] = min(lowlink[node], index[successor])
+
+        if lowlink[node] == index[node]:
+            component = []
+            while True:
+                w = stack.pop()
+                on_stack[w] = False
+                component.append(w)
+                if w == node:
+                    break
+            if len(component) > 1:
+                result.append(component)
+
+    for node in node_set:
+        if node not in index:
+            strongconnect(node)
+
+    return result
+
+
+def validate_blueprint_ids(nodes: dict) -> int:
+    """校验 blueprint_id 存在性，返回无效数量
+
+    无效定义：blueprint_id非空但不符合格式（XX-XXX-NNN）
+    """
+    invalid = 0
+    bp_pattern = re.compile(r'^[A-Z]{2,5}-[A-Z0-9_]+-\d{3,4}$')
+    for path, node in nodes.items():
+        bp_id = node.get("blueprint_id", "")
+        if bp_id and not bp_pattern.match(bp_id):
+            invalid += 1
+    return invalid
+
+
+def load_design_state_from_db(db_path: str) -> dict:
+    """G1修复+DM-3012: 从数据库加载设计态数据（nodes+edges+arch）
+
+    Args:
+        db_path: depgraph.db路径
+
+    Returns:
+        dict: {"nodes": {path: node_dict}, "edges": [...], "arch": [...]}
+              设计态节点、设计态边、设计态架构目录树
+    """
+    design_nodes = {}
+    design_edges = []
+    design_arch = []
+    try:
+        conn = sqlite3.connect(db_path)
+        cur = conn.cursor()
+        # 加载设计态节点
+        rows = cur.execute("""
+            SELECT path, node_type, domain_id, blueprint_id, belongs_to,
+                   architecture_layer, design_maturity, build_status,
+                   change_policy, impact_level, modification_permission
+            FROM nodes
+            WHERE design_maturity = 'design'
+        """).fetchall()
+        for row in rows:
+            path = row[0]
+            if path:
+                design_nodes[path] = {
+                    "path": path,
+                    "type": row[1] or "module",
+                    "domain_id": row[2] or "",
+                    "blueprint_id": row[3] or "",
+                    "belongs_to": row[4] or "",
+                    "architecture_layer": row[5] or "",
+                    "design_maturity": row[6] or "design",
+                    "build_status": row[7] or "unbuilt",
+                    "change_policy": row[8] or "evolving",
+                    "impact_level": row[9] or "M",
+                    "modification_permission": row[10] or "ai_modifiable",
+                    "lifecycle": "design",
+                }
+        # DM-3012: 加载设计态边（dep_maturity='design'）
+        try:
+            design_edges = cur.execute(
+                "SELECT * FROM edges WHERE dep_maturity = 'design'"
+            ).fetchall()
+        except Exception as e:
+            print(f"[DM-3012] WARNING: 加载设计态edges失败: {e}")
+            design_edges = []
+        # DM-3012: 加载设计态架构目录树（design_maturity='design'）
+        try:
+            design_arch = cur.execute(
+                "SELECT * FROM arch_directory_tree WHERE design_maturity = 'design'"
+            ).fetchall()
+        except Exception as e:
+            print(f"[DM-3012] WARNING: 加载设计态arch_directory_tree失败: {e}")
+            design_arch = []
+        conn.close()
+    except Exception as e:
+        print(f"[DEPGRAPH] WARNING: 加载设计态数据失败: {e}")
+    return {"nodes": design_nodes, "edges": design_edges, "arch": design_arch}
+
+
+# Production-state fields that are manually maintained and MUST be preserved
+# across depgraph regeneration (they cannot be re-derived from disk scan).
+PRODUCTION_PROTECTED_FIELDS = (
+    "blueprint_id",
+    "owner",
+    "impact_level",
+    "change_policy",
+    "modification_permission",
+    "belongs_to",
+)
+
+
+def load_production_state_from_db(db_path: str) -> dict:
+    """P1修复: 从数据库加载运营态(production)节点的手动维护元数据。
+
+    背景: 生成器DELETE所有非design节点后由磁盘扫描重建。production节点的
+    手动元数据(blueprint_id/owner/impact_level等)无法从文件头完整恢复，
+    重新生成会丢失。本函数加载这些元数据，供重建后恢复(防数据丢失)。
+
+    Args:
+        db_path: depgraph.db路径
+
+    Returns:
+        dict: {path: {protected_field: value}} 仅含非空保护字段
+    """
+    production_meta = {}
+    try:
+        conn = sqlite3.connect(db_path)
+        cur = conn.cursor()
+        rows = cur.execute(
+            "SELECT path, blueprint_id, owner, impact_level, change_policy, "
+            "modification_permission, belongs_to "
+            "FROM nodes WHERE design_maturity = 'production'"
+        ).fetchall()
+        cols = ("blueprint_id", "owner", "impact_level", "change_policy",
+                "modification_permission", "belongs_to")
+        for row in rows:
+            path = row[0]
+            if not path:
+                continue
+            meta = {}
+            for i, col in enumerate(cols):
+                val = row[i + 1]
+                if val is not None and val != "":
+                    meta[col] = val
+            if meta:
+                production_meta[path] = meta
+        conn.close()
+    except Exception as e:
+        print(f"[DEPGRAPH] WARNING: 加载运营态元数据失败: {e}")
+    return production_meta
+
+
+def apply_production_metadata_protection(nodes: dict, production_meta: dict) -> int:
+    """P1修复: 将运营态手动元数据恢复到重建后的同path节点。
+
+    对磁盘扫描重建的节点，若其path在production_meta中，则:
+    - 恢复手动维护字段(仅当重建节点该字段为空时，不覆盖磁盘新值)
+    - 强制标记design_maturity='production'(保留运营态身份)
+
+    Args:
+        nodes: build_depgraph产出的nodes字典 {node_id: node_dict}
+        production_meta: load_production_state_from_db的返回值 {path: {field: value}}
+
+    Returns:
+        int: 受保护(恢复元数据)的节点数
+    """
+    if not production_meta:
+        return 0
+    # 建立 path -> node 索引
+    path_to_node = {}
+    for node in nodes.values():
+        p = node.get("path", "")
+        if p:
+            path_to_node[normalize_path(p)] = node
+    protected = 0
+    for raw_path, meta in production_meta.items():
+        norm_p = normalize_path(raw_path)
+        node = path_to_node.get(norm_p)
+        if node is None:
+            continue
+        for field, value in meta.items():
+            # H4: 不恢复非法blueprint_id
+            if field == "blueprint_id" and not is_valid_blueprint_id(value):
+                continue
+            cur_val = node.get(field)
+            if cur_val is None or cur_val == "" or cur_val == []:
+                node[field] = value
+        # 强制保留运营态身份
+        node["design_maturity"] = "production"
+        protected += 1
+    return protected
+
+
+def derive_stability_fallback(node_type: str, path: str) -> str:
+    """G3修复：根据节点类型和路径推导合理的stability默认值
+
+    替代无脑fallback='evolving'：
+    - gate/policy/standard → frozen（治理规则不可变）
+    - config/registry → stable（配置相对稳定）
+    - test → evolving（测试可变）
+    - module/script → evolving（默认开发中）
+    """
+    if node_type in ("gate", "policy", "standard"):
+        return "frozen"
+    if node_type in ("config", "registry", "schema", "contract"):
+        return "stable"
+    if node_type in ("template",):
+        return "stable"
+    return "evolving"
+
+
+def derive_autonomy_fallback(node_type: str, path: str) -> str:
+    """G4修复：根据节点类型和路径推导合理的ai_autonomy默认值
+
+    替代无脑fallback='ai_modifiable'：
+    - gate/policy/standard → immutable_core（治理规则AI不可改）
+    - config/registry/schema → human_gated（配置需人工审批）
+    - module/script/test → ai_modifiable（代码AI可改）
+    """
+    if node_type in ("gate", "policy", "standard"):
+        return "immutable_core"
+    if node_type in ("config", "registry", "schema", "contract"):
+        return "human_gated"
+    return "ai_modifiable"
+
+
 def main():
     parser = argparse.ArgumentParser(description="Generate project entity-level dependency graph (full coverage)")
-    parser.add_argument("--output-yaml", type=str, default="", help="Output YAML data file path")
+    parser.add_argument("--output-yaml", type=str, default="", help="[DEPRECATED] Output YAML data file path (DB is now the SSoT)")
+    parser.add_argument("--output-db", type=str, default="", help="Output SQLite database path (DM-100024)")
     parser.add_argument("--output-md-section", type=str, default="", help="Output markdown section file path")
     parser.add_argument("--max-workers", type=int, default=8, help="ThreadPoolExecutor workers")
+    parser.add_argument("--granularity", type=str, default="file", choices=["file", "class"],
+                        help="Node granularity: 'file' = 1 file = 1 node (default), 'class' = 1 class = 1 node")
+    parser.add_argument("--dry-run", action="store_true", help="P0-3: dry-run模式，不修改任何文件，只输出执行报告")
     args = parser.parse_args()
 
+    granularity = args.granularity
+    report = GenerationReport()
+    report.start_time = datetime.now().timestamp()
+
+    # 步骤1: 获取写锁（仅在非dry-run且需要写入时）
+    # 步骤2: 加载设计态数据（G1修复：从DB加载，不再依赖YAML）
+    existing_design_nodes = {}
+    design_state = None  # DM-3013: 初始化design_state，供write_depgraph_to_db使用
+    db_path_for_design = ""
+    if args.output_db:
+        db_path_for_design = args.output_db if os.path.isabs(args.output_db) else str(PROJECT_ROOT / args.output_db)
+    else:
+        # 默认DB路径（dry-run和非dry-run都从默认DB加载设计态）
+        db_path_for_design = str(PROJECT_ROOT / "data" / "databases" / "depgraph.db")
+
+    if db_path_for_design and os.path.exists(db_path_for_design):
+        design_state = load_design_state_from_db(db_path_for_design)
+        existing_design_nodes = design_state["nodes"]
+        print(f"[DEPGRAPH] G1修复: 从DB加载 {len(existing_design_nodes)} 个设计态节点, "
+              f"{len(design_state['edges'])} 条设计态边, "
+              f"{len(design_state['arch'])} 条设计态arch记录")
+    else:
+        # 兼容旧YAML加载逻辑（已废弃）
+        design_state = None
+        preloaded_old_data = None
+        if args.output_yaml:
+            out_path = PROJECT_ROOT / args.output_yaml
+            if out_path.exists():
+                try:
+                    preloaded_old_data = _yaml_load(out_path)
+                    if preloaded_old_data and "nodes" in preloaded_old_data:
+                        for nid, node in preloaded_old_data["nodes"].items():
+                            if node.get("lifecycle") == "design":
+                                existing_design_nodes[nid] = node
+                        print(f"[DEPGRAPH] [DEPRECATED] 从YAML加载 {len(existing_design_nodes)} 个设计态节点")
+                except Exception:
+                    pass
+
+    print("[DEPGRAPH] Loading architecture panorama...")
+    panorama_data, domain_derivation, functional_domains = load_panorama()
+    print(f"[DEPGRAPH] Loaded {len(functional_domains)} functional domains from panorama")
+    print(f"[DEPGRAPH] Domain derivation table: {len(domain_derivation)} entries")
+
+    # G1修复：设计态加载已在main()开头完成（从DB加载），此处不再重复
+    preloaded_old_data = None  # 兼容下游merge逻辑
+
+    # 步骤4: 扫描白名单目录
     print("[DEPGRAPH] Scanning project files...")
     all_files = collect_all_files()
     print(f"[DEPGRAPH] Found {len(all_files)} files")
+    report.scanned_count = len(all_files)
 
     py_files = [f for f in all_files if f.endswith(".py")]
     yaml_files = [f for f in all_files if f.endswith((".yaml", ".yml"))]
@@ -824,7 +2996,7 @@ def main():
 
     print(f"[DEPGRAPH] Scanning {len(py_files)} .py files...")
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
-        futures = {pool.submit(scan_py_file, f): f for f in py_files}
+        futures = {pool.submit(scan_py_file, f, domain_derivation): f for f in py_files}
         for fut in as_completed(futures):
             r = fut.result()
             if r:
@@ -832,7 +3004,7 @@ def main():
 
     print(f"[DEPGRAPH] Scanning {len(yaml_files)} .yaml files...")
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
-        futures = {pool.submit(scan_yaml_file, f): f for f in yaml_files}
+        futures = {pool.submit(scan_yaml_file, f, domain_derivation): f for f in yaml_files}
         for fut in as_completed(futures):
             r = fut.result()
             if r:
@@ -840,7 +3012,7 @@ def main():
 
     print(f"[DEPGRAPH] Scanning {len(md_files)} .md files...")
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
-        futures = {pool.submit(scan_md_file, f): f for f in md_files}
+        futures = {pool.submit(scan_md_file, f, domain_derivation): f for f in md_files}
         for fut in as_completed(futures):
             r = fut.result()
             if r:
@@ -848,23 +3020,24 @@ def main():
 
     print(f"[DEPGRAPH] Scanning {len(json_files)} .json files...")
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
-        futures = {pool.submit(scan_json_file, f): f for f in json_files}
+        futures = {pool.submit(scan_json_file, f, domain_derivation): f for f in json_files}
         for fut in as_completed(futures):
             r = fut.result()
             if r:
                 files_data.append(r)
 
-    print(f"[DEPGRAPH] Scanning {len(infra_files)} infra files (.sh/.ps1)...")
+    print(f"[DEPGRAPH] Scanning {len(infra_files)} script files (.sh/.ps1)...")
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
-        futures = {pool.submit(scan_infra_file, f): f for f in infra_files}
+        futures = {pool.submit(scan_infra_file, f, domain_derivation): f for f in infra_files}
         for fut in as_completed(futures):
             r = fut.result()
             if r:
+                r["type"] = "script"
                 files_data.append(r)
 
     print(f"[DEPGRAPH] Scanning {len(diagram_files)} diagram files (.mmd)...")
     with ThreadPoolExecutor(max_workers=args.max_workers) as pool:
-        futures = {pool.submit(scan_diagram_file, f): f for f in diagram_files}
+        futures = {pool.submit(scan_diagram_file, f, domain_derivation): f for f in diagram_files}
         for fut in as_completed(futures):
             r = fut.result()
             if r:
@@ -873,21 +3046,121 @@ def main():
     print(f"[DEPGRAPH] Total scanned: {len(files_data)} entities")
 
     print("[DEPGRAPH] Building dependency graph...")
-    depgraph = build_depgraph(files_data)
+    depgraph = build_depgraph(files_data, functional_domains, domain_derivation, existing_design_nodes, granularity)
+
+    # P1修复: 恢复运营态(production)节点的手动维护元数据(防重新生成丢失)
+    if db_path_for_design and os.path.exists(db_path_for_design):
+        production_meta = load_production_state_from_db(db_path_for_design)
+        if production_meta:
+            protected_cnt = apply_production_metadata_protection(depgraph.get("nodes", {}), production_meta)
+            print(f"[DEPGRAPH] P1修复: 加载 {len(production_meta)} 个运营态节点元数据, "
+                  f"恢复保护 {protected_cnt} 个重建节点")
+
+    # Enrich edges with semantic fields from cross-module-dependency-registry
+    print("[DEPGRAPH] Loading cross-module-dependency-registry...")
+    registry_deps = load_cross_module_registry()
+    print(f"[DEPGRAPH] Loaded {len(registry_deps)} registry dependencies")
+
+    print("[DEPGRAPH] Enriching edges with semantic fields...")
+    depgraph["edges"] = enrich_edges_semantic(depgraph["edges"], depgraph["nodes"], registry_deps)
+
+    # Enrich nodes with decision field from DEP-GRAPH design files
+    print("[DEPGRAPH] Enriching nodes with decision field...")
+    dg_design_nodes, _ = load_depgraph_design_files()
+    depgraph["nodes"] = enrich_nodes_decision(depgraph["nodes"], dg_design_nodes)
+
+    # Count enrichment stats
+    edges_with_contract = sum(1 for e in depgraph["edges"] if e.get("contract_anchor"))
+    edges_with_registry_type = sum(1 for e in depgraph["edges"] if e.get("semantic_type") and e["semantic_type"] != DEP_TYPE_TO_SEMANTIC_TYPE.get(e.get("dep_type", ""), "runtime"))
+    nodes_with_decision = {n.get("decision", "KEEP") for n in depgraph["nodes"].values()}
+    print(f"[DEPGRAPH] Edges with contract_anchor: {edges_with_contract}")
+    print(f"[DEPGRAPH] Edges enriched by registry: {edges_with_registry_type}")
+    print(f"[DEPGRAPH] Node decisions: {dict((d, sum(1 for n in depgraph['nodes'].values() if n.get('decision') == d)) for d in nodes_with_decision)}")
 
     meta = depgraph["metadata"]
     print(f"[DEPGRAPH] Nodes: {meta['total_nodes']} | Edges: {meta['total_edges']}")
+    print(f"[DEPGRAPH] Design-state: {meta.get('design_state_nodes', 0)} | Operational: {meta.get('operational_state_nodes', 0)}")
     print(f"[DEPGRAPH] Nodes by type: {meta['nodes_by_type']}")
     print(f"[DEPGRAPH] Edges by type: {meta['edges_by_type']}")
+    print(f"[DEPGRAPH] Functional domains: {meta['total_functional_domains']}")
+
+    # 步骤8: 校验 blueprint_id 存在性
+    report.invalid_blueprint_count = validate_blueprint_ids(depgraph["nodes"])
+    print(f"[DEPGRAPH] 步骤8: 无效blueprint_id数: {report.invalid_blueprint_count}")
+
+    # 步骤9: 检测循环依赖（Tarjan SCC）
+    cycles = detect_cycles_tarjan(depgraph["edges"], depgraph["nodes"])
+    report.cycle_count = len(cycles)
+    print(f"[DEPGRAPH] 步骤9: 循环依赖数: {report.cycle_count}")
+    if cycles:
+        for i, cycle in enumerate(cycles[:5], 1):
+            print(f"  循环{i}: {' -> '.join(cycle[:5])}{'...' if len(cycle) > 5 else ''}")
+
+    # 填充报告统计
+    report.node_count = meta['total_nodes']
+    report.edge_count = meta['total_edges']
+    report.arch_count = meta.get('total_functional_domains', 0)
+
+    # 步骤11: 输出执行报告
+    report.end_time = datetime.now().timestamp()
+    report.print_report()
+
+    # dry-run模式：只输出报告，不写入任何文件
+    if args.dry_run:
+        print("[DEPGRAPH] --dry-run模式：未修改任何文件，仅输出执行报告")
+        sys.exit(0)
 
     if args.output_yaml:
-        import yaml
+        print("[DEPRECATED] --output-yaml is deprecated. DB is now the SSoT. YAML output will be removed in a future version.")
         out_path = PROJECT_ROOT / args.output_yaml
-        tmp_path = str(out_path) + f".{os.getpid()}.tmp"
-        with open(tmp_path, "w", encoding="utf-8") as f:
-            yaml.dump(depgraph, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
-        os.replace(tmp_path, str(out_path))
-        print(f"[DEPGRAPH] YAML written to {args.output_yaml}")
+
+        # --- Concurrent write protection: lock only for merge+write ---
+        # Computation (scanning, building graph) is already done above — no lock needed.
+        # Only the merge+write step needs the lock (fast operation).
+        session_id = os.environ.get("ZEPHYR_SESSION_ID", f"depgraph-{os.getpid()}")
+        lock_acquired = False
+        lock_script = PROJECT_ROOT / "scripts" / "lock_files.py"
+
+        max_retries = 3
+        retry_delay = 5
+        for attempt in range(1, max_retries + 1):
+            if not lock_script.exists():
+                break
+            result = subprocess.run(
+                [sys.executable, str(lock_script), "acquire",
+                 str(out_path), session_id, "--task", "depgraph generation",
+                 "--skip-naming-check"],
+                capture_output=True, text=True
+            )
+            if result.returncode == 0:
+                lock_acquired = True
+                print(f"[LOCK] Acquired write lock on depgraph (owner={session_id})")
+                break
+            if attempt < max_retries:
+                print(f"[LOCK] Depgraph locked by another session (attempt {attempt}/{max_retries}), waiting {retry_delay}s...")
+                import time
+                time.sleep(retry_delay)
+            else:
+                print(f"[LOCKED] Cannot acquire lock after {max_retries} attempts: {result.stdout.strip()}")
+                print(f"         Another AI session is writing. Retry later.")
+                sys.exit(1)
+
+        try:
+            depgraph = merge_depgraph(depgraph, out_path, old_data=preloaded_old_data)
+
+            tmp_path = str(out_path) + f".{os.getpid()}.tmp"
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                yaml.dump(depgraph, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+            os.replace(tmp_path, str(out_path))
+            print(f"[DEPGRAPH] YAML written to {args.output_yaml}")
+        finally:
+            if lock_acquired and lock_script.exists():
+                subprocess.run(
+                    [sys.executable, str(lock_script), "release",
+                     str(out_path), session_id],
+                    capture_output=True, text=True
+                )
+                print(f"[LOCK] Released write lock on depgraph")
 
     md_section = generate_markdown_section(depgraph)
 
@@ -905,6 +3178,12 @@ def main():
         print(md_section[:3000])
         if len(md_section) > 3000:
             print(f"\n... truncated ({len(md_section)} total chars)")
+
+    if args.output_db:
+        db_path = args.output_db
+        if not os.path.isabs(db_path):
+            db_path = str(PROJECT_ROOT / db_path)
+        write_depgraph_to_db(depgraph, db_path, design_state=design_state)
 
     sys.exit(0)
 

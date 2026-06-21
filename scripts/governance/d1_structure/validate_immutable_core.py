@@ -54,7 +54,7 @@ def is_immutable(frontmatter: dict) -> bool:
     for marker in IMMUTABLE_MARKERS:
         if marker in frontmatter:
             return True
-    autonomy = frontmatter.get("ai_autonomy", "")
+    autonomy = frontmatter.get("modification_permission", frontmatter.get("ai_autonomy", ""))
     if isinstance(autonomy, str) and "immutable" in autonomy.lower():
         return True
     return False
@@ -108,7 +108,7 @@ def scan_docs() -> tuple[list[dict], int]:
         finding = {
             "file": rel,
             "immutable_marks": [m for m in IMMUTABLE_MARKERS if m in fm],
-            "ai_autonomy": fm.get("ai_autonomy", "N/A"),
+            "modification_permission": fm.get("modification_permission", fm.get("ai_autonomy", "N/A")),
             "recent_commits": commits,
             "owner_is_committer": any("ZephyrAlpha-Owner" in c["author"] or "Owner" in c["author"] for c in commits),
         }
@@ -130,7 +130,7 @@ def main() -> None:
     for f in immutable_files:
         print(f'\n  📄 {f['file']}', file=sys.stderr)
         print(f'     标记: {', '.join(f['immutable_marks'])}', file=sys.stderr)
-        print(f'     AI自治: {f['ai_autonomy']}', file=sys.stderr)
+        print(f'     AI自治: {f['modification_permission']}', file=sys.stderr)
         if f["recent_commits"]:
             print(f'     最近修改: {len(f['recent_commits'])} 次', file=sys.stderr)
             for c in f["recent_commits"][:3]:

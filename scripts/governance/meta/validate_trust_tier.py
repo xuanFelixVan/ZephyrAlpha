@@ -6,7 +6,7 @@ validate_trust_tier.py — Trust-Tier 门禁执行器
 
 对标 B46（Trust-Tier 决策模型）。
 
-在 pre-commit 和 CI 中运行，检查当前变更是否与 trust_tier_policy.yaml 定义
+在 pre_commit 和 CI 中运行，检查当前变更是否与 trust_tier_policy.yaml 定义
 的文件权限一致。如果 AI 通过 T2 文件直接修改了（跳过了"建议→确认"流程），
 则阻断提交并提示。
 
@@ -17,6 +17,14 @@ Usage:
 """
 
 from __future__ import annotations
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.constants import EXIT_PASS
 
 __manifest__ = """

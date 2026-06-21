@@ -1,0 +1,52 @@
+{
+  "task_id": "DM-100132",
+  "source_file": "docs/01_policies_and_standards/governance/engineering/expansion_1500_module_spec.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "GOV-ENG-003_命名空间验证": {
+      "source_section": "§1 命名空间验证",
+      "type": "mandatory+prohibition+constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_047_engineering_file_header.yaml:gov_eng_003",
+      "details": "命名碰撞检测+≤200顶层包+最大4层深度+__all__声明+scaffold.py查重+禁止循环导入"
+    },
+    "GOV-ENG-003_依赖图性能基准": {
+      "source_section": "§2 依赖图性能基准",
+      "type": "constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_047_engineering_file_header.yaml:gov_eng_003",
+      "details": "全量扫描≤60s+ThreadPoolExecutor(max_workers=8)+缓存+Gate硬阻断"
+    },
+    "GOV-ENG-003_蓝图对齐规范": {
+      "source_section": "§3 蓝图§4对齐规范",
+      "type": "mandatory+constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_047_engineering_file_header.yaml:gov_eng_003",
+      "details": "新模块MUST 100%对齐+蓝图§4文件清单+[BLUEPRINT]头部3字段必填"
+    },
+    "GOV-ENG-003_新模块扩展8步流程": {
+      "source_section": "§4 新模块扩展标准流程",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_047_engineering_file_header.yaml:gov_eng_003",
+      "details": "8步：创建蓝图模板→注册蓝图→scaffold.py创建包→添加[BLUEPRINT]头→注册module-registry→更新path-tree→更新depgraph→audit_registration验证"
+    },
+    "GOV-ENG-003_并行安全约束": {
+      "source_section": "§5 容量分析",
+      "type": "mandatory+constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_047_engineering_file_header.yaml:gov_eng_003",
+      "details": "同包互斥+注册表互斥+不同包并行"
+    }
+  },
+  "summary": {
+    "total_rules": 5,
+    "COVERED": 5,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "trae_047_engineering_file_header.yaml: 在gov_eng_003 section中添加5条conditions+6条actions+2条prohibitions覆盖expansion_1500_module_spec.md全部规则"
+  ]
+}

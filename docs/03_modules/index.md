@@ -1,11 +1,11 @@
-﻿---
+---
 classification: internal
 date: '2026-05-02'
 doc_type: index
 generated: '2026-05-02'
 merged_from: README.md + index.md
-module_id: DIR-03-README
-status: active
+module_id: MOD-074
+status: Active
 title: 03_modules 鐩綍璇存槑 鈥?妯″潡鐢熷懡鍛ㄦ湡鍞竴鐪熸簮
 ---
 
@@ -27,7 +27,7 @@ title: 03_modules 鐩綍璇存槑 鈥?妯″潡鐢熷懡鍛ㄦ湡鍞竴鐪
 |--------|-------------------|
 | 妯″潡钃濆浘锛坄blueprint.md`锛墊 浼佷笟绾ф灦鏋勮鍥撅紙鈫?`02_enterprise_architecture/target-architecture/`锛?|
 | 妯″潡鏂藉伐鍥撅紙鏁村悎鍦?`blueprint.md` 涓級| 鈥?|
-| 妯″潡浜や粯璁板綍锛坄delivery/`锛墊 鏋舵瀯鍐崇瓥璁板綍 ADR锛堚啋 `02_enterprise_architecture/adr/`锛?|
+| 妯″潡浜や粯璁板綍锛坄delivery/`锛墊 鏋舵瀯鍐崇瓥璁板綍 KB 决策记录锛堚啋 `02_enterprise_architecture/adr/`锛?|
 | 鈥?| AI 鏈嶅姟鎺ュ彛鍚堝悓锛堚啋 `_b_track_interfaces/`锛墊
 | 鈥?| 鍚堣瑙勮寖锛堚啋 `10_compliance/`锛?|
 | 鈥?| 娌荤悊瑙勫垯锛堚啋 `01_policies_and_standards/`锛?|
@@ -44,7 +44,7 @@ title: 03_modules 鐩綍璇存槑 鈥?妯″潡鐢熷懡鍛ㄦ湡鍞竴鐪
 鈹?  鈹溾攢鈹€ feedback-loop-engine-interface.md
 鈹?  鈹溾攢鈹€ llm-security-gateway-interface.md
 鈹?  鈹斺攢鈹€ vector-memory-service-interface.md
-鈹?鈹溾攢鈹€ l01_infrastructure/           鈫?L01 鍩虹璁炬柦灞?鈹?  鈹溾攢鈹€ README.md                 鈫?鏈眰鑱岃矗澹版槑
+鈹?鈹溾攢鈹€ infra_ops/           鈫?L01 鍩虹璁炬柦灞?鈹?  鈹溾攢鈹€ README.md                 鈫?鏈眰鑱岃矗澹版槑
 鈹?  鈹溾攢鈹€ index.md                  鈫?灞傜骇绱㈠紩
 鈹?  鈹溾攢鈹€ <module-name>/            鈫?姣忎釜妯″潡涓€涓瓙鐩綍锛堝叏灏忓啓 kebab-case锛?鈹?  鈹?  鈹溾攢鈹€ blueprint.md          鈫?鈽?钃濆浘锛氭灦鏋勮璁★紙搂1-搂11锛? 鏂藉伐鎸囧紩锛埪?2锛?鈹?  鈹?  鈹斺攢鈹€ delivery/             鈫?浜や粯璁板綍锛堟寜鐗堟湰锛?鈹?  鈹?      鈹斺攢鈹€ index.md
 鈹?  鈹斺攢鈹€ ...
@@ -91,7 +91,7 @@ pre-commit 鑴氭湰浼氳嚜鍔?
     鈹溾攢鈹€ templates/blueprint-construction-template.md        鈫?钃濆浘妯℃澘
     鈹溾攢鈹€ governance/module/                     鈫?妯″潡鍑嗗叆/鐢熷懡鍛ㄦ湡/娉ㄥ叆瑙勫垯
     鈹?                                            bootstrap-plans/ 宸蹭簬 2026-05-02 搴熼櫎锛?    鈹?                                            鏂藉伐鍐呭杩佸叆鍚勬ā鍧?blueprint.md 涓?
-02_enterprise_architecture/  鈫?涓轰粈涔堣繖鏍疯璁★紙浼佷笟鏋舵瀯 + ADR锛?    鈹斺攢鈹€ target-architecture/                   鈫?TOGAF 鏋舵瀯瑙嗗浘
+02_enterprise_architecture/  鈫?涓轰粈涔堣繖鏍疯璁★紙浼佷笟鏋舵瀯 + KB 决策记录锛?    鈹斺攢鈹€ target-architecture/                   鈫?TOGAF 鏋舵瀯瑙嗗浘
 
 03_modules/                  鈫?鈽?鏈洰褰曪細姣忎釜妯″潡鐨勫畬鏁存枃妗?    鈹斺攢鈹€ module-registry.yaml                  鈫?鐧昏琛?
 src/zephyr/                  鈫?浠ｇ爜锛堜笌 03_modules 鎸夊眰瀵归綈锛?    鈹斺攢鈹€ l{NN}_*/                              鈫?浠ｇ爜鐩綍锛屼笌鏂囨。鐩綍涓€涓€瀵瑰簲
@@ -146,7 +146,7 @@ Step 3: 纭鏃犻噸鍙犲悗 鈫?姝ｅ父鍒涘缓鏂拌摑鍥?```
 ```
 钃濆浘鍗囩骇娴佺▼:
   1. 閿佸畾鐩爣钃濆浘锛氱‘璁?status=deprecated 鐨勮摑鍥惧唴瀹逛笌褰撳墠闇€姹傞珮搴﹂噸鍙?  2. 鐘舵€侀噸寮€锛氬皢璇ヨ摑鍥?status 浠?deprecated 鏀逛负 draft锛堝姞 frontmatter 澶囨敞"reopened for Phase N upgrade"锛?  3. 鍗囩骇瑙勫垯锛?     鈹溾攢鈹€ 鍘熷唴瀹瑰繀椤讳繚鐣欏湪 搂1-搂11 涓紝鏂板鍐呭杩藉姞/鎻掑叆锛屼笉鍙垹闄?     鈹溾攢鈹€ Version bump锛氬 v2.0.0 鈫?v3.0.0
-     鈹溾攢鈹€ ADR 鍒涘缓锛氶噸澶у崌绾у繀椤诲垱寤?ADR锛堝 adr-nnnn-reopen-<module>.md锛?     鈹斺攢鈹€ superseded 閾炬洿鏂帮細濡傛灉璇ヨ摑鍥炬浘琚?superseded_by锛岄渶璇勪及鏄惁浠嶆寚鍚戞纭洰鏍?  4. 鎭㈠鏂藉伐锛氭寜 搂12 鏂藉伐鎸囧紩閲嶆柊鏂藉伐
+     鈹溾攢鈹€ KB 决策记录 鍒涘缓锛氶噸澶у崌绾у繀椤诲垱寤?KB 决策记录锛堝 adr-nnnn-reopen-<module>.md锛?     鈹斺攢鈹€ superseded 閾炬洿鏂帮細濡傛灉璇ヨ摑鍥炬浘琚?superseded_by锛岄渶璇勪及鏄惁浠嶆寚鍚戞纭洰鏍?  4. 鎭㈠鏂藉伐锛氭寜 搂12 鏂藉伐鎸囧紩閲嶆柊鏂藉伐
   5. 瀹屾垚鍚庯細status 鈫?deprecated锛堟垨 approved锛夛紝construction_progress 鈫?phase_N_complete
 
   绂佹:
@@ -174,7 +174,7 @@ Step 3: 纭鏃犻噸鍙犲悗 鈫?姝ｅ父鍒涘缓鏂拌摑鍥?```
 - 鉂?5 澶?AI 鏈嶅姟鐨勬帴鍙ｆ枃妗?鈫?`_b_track_interfaces/`锛堟湰鐩綍鍐咃級
 - 鉂?椤圭洰绾у厓璁″垝/DevOps 娴佺▼ 鈫?`01_policies_and_standards/operational/devops/`
 - 鉂?娌荤悊瑙勮寖/鏍囧噯 鈫?`01_policies_and_standards/governance/`
-- 鉂?浼佷笟鏋舵瀯瑙嗗浘/ADR 鈫?`02_enterprise_architecture/`
+- 鉂?浼佷笟鏋舵瀯瑙嗗浘/KB 决策记录 鈫?`02_enterprise_architecture/`
 
 ## 鐖剁骇鐩綍
 

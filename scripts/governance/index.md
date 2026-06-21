@@ -45,7 +45,7 @@ scripts/governance/
 ├── status.py                      健康仪表盘
 ├── check_registry_consistency.py  跨登记表一致性校验
 ├── script_manifest.yaml           脚本注册表（SSoT — 160 条目）
-└── quality-standard.md            审计脚本质量标准
+└── quality_standard.md            审计脚本质量标准
 ```
 <!-- TREE-AUTO-END -->
 

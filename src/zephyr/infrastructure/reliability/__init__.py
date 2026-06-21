@@ -1,0 +1,17 @@
+# [A_module] module_id=MOD-INF_reliability | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-132 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+# [MODULE] zephyr.infrastructure.shared_services.reliability
+# [INVARIANTS] pending_review
+# [MODIFY-GUARD] no structural changes without owner approval
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [CONSUMERS] 
+# [ERROR_CONTRACT] 
+# [TESTS] 
+"""core.reliability — auto-generated package init."""
+from . import circuit_breaker
+from . import context_guard
+
+__all__ = ['circuit_breaker', 'context_guard']
+

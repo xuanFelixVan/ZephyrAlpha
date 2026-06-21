@@ -1,0 +1,52 @@
+{
+  "task_id": "DM-100132",
+  "source_file": "docs/01_policies_and_standards/governance/engineering/file_header_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "GOV-ENG-002_适用范围": {
+      "source_section": "§1 适用范围",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_047_engineering_file_header.yaml:gov_eng_002",
+      "details": "100% AI开发语境下所有文件MUST包含治理锚定表头+10种file_category+7种豁免类型"
+    },
+    "GOV-ENG-002_表头格式映射": {
+      "source_section": "§2 文件类型→表头格式映射",
+      "type": "mandatory+constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_047_engineering_file_header.yaml:gov_eng_002",
+      "details": "A_full(10字段)/A_test(6字段)/B_yaml(5字段)/C_json(5字段)/D_md/E_shell(4字段)/exempt"
+    },
+    "GOV-ENG-002_枚举值定义": {
+      "source_section": "§9 枚举值定义",
+      "type": "mandatory+constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_047_engineering_file_header.yaml:gov_eng_002",
+      "details": "stability(frozen/stable/evolving/volatile)+safety_level(H/M/L)+ai_autonomy(immutable_core/human_gated/ai_modifiable)+修改MUST同步PS-STD-001"
+    },
+    "GOV-ENG-002_表头状态机": {
+      "source_section": "§10 表头状态机",
+      "type": "mandatory+prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_047_engineering_file_header.yaml:gov_eng_002",
+      "details": "4状态(UNHEADERED/ANCHORED/STABILIZED/LOCKED)+5种转换+UNHEADERED禁止修改+LOCKED禁止AI修改"
+    },
+    "GOV-ENG-002_锚定操作7步": {
+      "source_section": "§11 锚定操作清单",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_047_engineering_file_header.yaml:gov_eng_002",
+      "details": "7步：判断归属蓝图→添加表头→更新蓝图§0.1→更新蓝图§11→更新蓝图§10→更新注册表→验证双向对齐"
+    }
+  },
+  "summary": {
+    "total_rules": 5,
+    "COVERED": 5,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "trae_047_engineering_file_header.yaml: 在gov_eng_002 section中添加2条conditions+7条actions+3条prohibitions覆盖file_header_standard.md全部规则"
+  ]
+}

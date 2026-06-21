@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0147 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-304 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.infrastructure.test_cross_blueprint_e2e
 # [STABILITY] evolving
 # [SAFETY] L
@@ -25,7 +26,7 @@ sys.path.insert(0, str(_PROJECT_ROOT / "src"))
 
 def test_e2e_finding_to_taskcard_full_chain():
     """E2E：Finding→TaskCard→持久化完整链路"""
-    from zephyr.l01_infrastructure.finding_task_bridge import AuditFinding, bridge_findings_to_tasks
+    from zephyr.infrastructure.finding_task_bridge import AuditFinding, bridge_findings_to_tasks
 
     findings = [
         AuditFinding(
@@ -54,8 +55,8 @@ def test_e2e_finding_to_taskcard_full_chain():
 
 def test_e2e_auto_diagnostics_to_event_store():
     """E2E：AutoDiagnostics→EventStore审计链"""
-    from zephyr.l01_infrastructure.auto_diagnostics import AutoDiagnostics
-    from zephyr.l01_infrastructure.event_store import EventLevel, EventStore, StoredEvent
+    from zephyr.infrastructure.auto_diagnostics import AutoDiagnostics
+    from zephyr.infrastructure.event_store import EventLevel, EventStore, StoredEvent
 
     engine = AutoDiagnostics()
     report = engine.diagnose(
@@ -86,12 +87,12 @@ def test_e2e_auto_diagnostics_to_event_store():
 
 def test_e2e_contract_tester_on_real_files():
     """E2E：ContractTester 验证真实 gate 契约文件"""
-    from zephyr.l01_infrastructure.contract_tester import ContractTester
+    from zephyr.infrastructure.contract_tester import ContractTester
 
     tester = ContractTester(strict=False)
     gate_files = [
-        _PROJECT_ROOT / "src/zephyr/gates/g1_ingest.yaml",
-        _PROJECT_ROOT / "src/zephyr/gates/g2_triage.yaml",
+        _PROJECT_ROOT / "src/zephyr/gates/g1-ingest.yaml",
+        _PROJECT_ROOT / "src/zephyr/gates/g2-triage.yaml",
     ]
 
     for gf in gate_files:
@@ -102,7 +103,7 @@ def test_e2e_contract_tester_on_real_files():
 
 def test_e2e_config_validator():
     """E2E：ConfigValidator 验证现有配置"""
-    from zephyr.l01_infrastructure.config_validator import ConfigValidator
+    from zephyr.infrastructure.config_validator import ConfigValidator
 
     validator = ConfigValidator()
     config_files = list((_PROJECT_ROOT / "config").rglob("*.yaml"))[:3]
@@ -116,7 +117,7 @@ def test_e2e_config_validator():
 
 def test_e2e_warm_hot_gate():
     """E2E：WarmHotGate 完整门禁流程"""
-    from zephyr.l01_infrastructure.warm_hot_gate import WarmHotGate, WarmHotStatus
+    from zephyr.infrastructure.warm_hot_gate import WarmHotGate, WarmHotStatus
 
     gate = WarmHotGate(require_all_passed=True)
 
@@ -141,7 +142,7 @@ def test_e2e_warm_hot_gate():
 
 def test_e2e_dry_run_simulator():
     """E2E：DryRunSimulator 风险检测"""
-    from zephyr.l01_infrastructure.dry_run_simulator import DryRunSimulator, SimulationStatus
+    from zephyr.infrastructure.dry_run_simulator import DryRunSimulator, SimulationStatus
 
     sim = DryRunSimulator(sandbox_root=str(tempfile.mkdtemp()))
 
@@ -156,7 +157,7 @@ def test_e2e_dry_run_simulator():
 
 def test_e2e_cost_tracker():
     """E2E：CostTracker 完整链路"""
-    from zephyr.l01_infrastructure.cost_tracker import CostTracker
+    from zephyr.infrastructure.cost_tracker import CostTracker
 
     tracker = CostTracker(db_path=tempfile.mktemp(suffix=".db"), daily_budget_usd=10.0)
 
@@ -187,7 +188,7 @@ def test_e2e_cost_tracker():
 
 def test_e2e_pydantic_v2_scanner():
     """E2E：PydanticV2 扫描器自测"""
-    from zephyr.l01_infrastructure.pydantic_v2_migrator import PydanticV2Migrator
+    from zephyr.infrastructure.pydantic_v2_migrator import PydanticV2Migrator
 
     migrator = PydanticV2Migrator()
     report = migrator.scan(str(_PROJECT_ROOT / "src" / "zephyr" / "shared"))
@@ -200,7 +201,7 @@ def test_e2e_pydantic_v2_scanner():
 
 def test_e2e_event_bus_upgrade_plan():
     """E2E：EventBus 升级计划生成"""
-    from zephyr.shared.events.upgrade_strategy import EventBusUpgrade
+    from zephyr.integration.shared.events.upgrade_strategy import EventBusUpgrade
 
     upgrader = EventBusUpgrade()
     plan = upgrader.generate_upgrade_plan(version_from="v1.0.0", version_to="v2.0.0")

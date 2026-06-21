@@ -22,7 +22,7 @@ GATE = [sys.executable, str(PROJECT_ROOT / "src" / "zephyr" / "gates" / "sys_mas
 
 def run_gate() -> list[dict]:
     """run_gate implementation - call check functions directly to avoid subprocess/argv issues."""
-    from zephyr.gates.sys_master_compliance import (
+    from zephyr.governance.rule_enforcement.sys_master_compliance import (
         check_blueprint_existence,
         check_cold_start_integration,
         check_depends_on_integrity,

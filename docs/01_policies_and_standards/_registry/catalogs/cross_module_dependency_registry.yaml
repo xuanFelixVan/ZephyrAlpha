@@ -1,10 +1,11 @@
-# --- 治理锚定 ---
-# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
-# module_id: DOM-GOV-001
-# stability: evolving
-# safety_level: L
-# ai_autonomy: ai_modifiable
-# --- 治理锚定结束 ---
+# [A_config] module_id=CFG-cross-module-dependency-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+blueprint_id: GOV-INF-001
+# 治理锚定
+# blueprint: PS-REG-007 | docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml
+# stability: stable
+# safety_level: M
+# ai_autonomy: human_gated
+# 治理锚定结束
 schema_version: 1.0.0
 doc_type: register
 owner: ZephyrAlpha-Owner
@@ -13,10 +14,10 @@ title: 跨模块依赖登记表
 version: 1.0.7
 status: active
 created: '2026-05-02'
-last_updated: '2026-05-18'
+last_updated: '2026-05-08'
 ai_autonomy: human_gated
 ttl: permanent
-total_dependencies: 105
+total_dependencies: 111
 depends_on:
 - target: PS-STD-001
   at: §3.2.1
@@ -46,7 +47,7 @@ dependencies:
   description: 'EventBus 容量上限需 capacity-assurance 定义的 SLI/SLO；无容量模型时队列可能无限堆积。
 
     '
-  contract_anchor: cross-layer-contracts.yaml §CL-002
+  contract_anchor: cross_layer_contracts.yaml §CL-002
   direction: upstream
   valid_since: '2026-05-01'
 - dep_id: DEP-002
@@ -59,7 +60,7 @@ dependencies:
   description: 'G0-G6 门禁超时阈值依赖容量模型；容量不足时需自动升高超时阈值。
 
     '
-  contract_anchor: cross-layer-contracts.yaml §CL-004
+  contract_anchor: cross_layer_contracts.yaml §CL-004
   direction: upstream
   valid_since: '2026-05-01'
 - dep_id: DEP-003
@@ -72,7 +73,7 @@ dependencies:
   description: '任务卡状态变更经 RI-01 EventBus 发布 domain event，下游脚本/通知消费。
 
     '
-  contract_anchor: domain-events.yaml §EVT-TASK-001
+  contract_anchor: domain_events.yaml §EVT-TASK-001
   direction: upstream
   valid_since: '2026-05-01'
 - dep_id: DEP-004
@@ -98,7 +99,7 @@ dependencies:
   description: 'ContextBudgetTracker 的 token 配额依赖容量模型的阈值；接近预算时需触发压缩或降级。
 
     '
-  contract_anchor: cross-layer-contracts.yaml §CL-017
+  contract_anchor: cross_layer_contracts.yaml §CL-017
   direction: upstream
   valid_since: '2026-05-01'
 - dep_id: DEP-005-SM
@@ -144,7 +145,7 @@ dependencies:
   target_name: collectors
   type: runtime
   strength: hard
-  description: FLE scheduler imports from feedback_loop.collectors
+  description: FLE scheduler imports from feedback-loop.collectors
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-009
@@ -154,7 +155,7 @@ dependencies:
   target_name: detectors
   type: runtime
   strength: hard
-  description: FLE scheduler imports from feedback_loop.detectors
+  description: FLE scheduler imports from feedback-loop.detectors
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-010
@@ -164,7 +165,7 @@ dependencies:
   target_name: diagnosers
   type: runtime
   strength: hard
-  description: FLE scheduler imports from feedback_loop.diagnosers
+  description: FLE scheduler imports from feedback-loop.diagnosers
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-011
@@ -174,7 +175,7 @@ dependencies:
   target_name: actors
   type: runtime
   strength: hard
-  description: FLE scheduler imports from feedback_loop.actors
+  description: FLE scheduler imports from feedback-loop.actors
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-012
@@ -184,7 +185,7 @@ dependencies:
   target_name: verifiers
   type: runtime
   strength: hard
-  description: FLE scheduler imports from feedback_loop.verifiers
+  description: FLE scheduler imports from feedback-loop.verifiers
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-013
@@ -194,7 +195,7 @@ dependencies:
   target_name: evolution
   type: runtime
   strength: hard
-  description: FLE scheduler imports from feedback_loop.evolution
+  description: FLE scheduler imports from feedback-loop.evolution
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-014
@@ -204,7 +205,7 @@ dependencies:
   target_name: forensic
   type: runtime
   strength: hard
-  description: FLE scheduler imports from feedback_loop.forensic
+  description: FLE scheduler imports from feedback-loop.forensic
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-015
@@ -214,7 +215,7 @@ dependencies:
   target_name: resilience
   type: runtime
   strength: hard
-  description: FLE scheduler imports from feedback_loop.resilience
+  description: FLE scheduler imports from feedback-loop.resilience
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-016
@@ -224,7 +225,7 @@ dependencies:
   target_name: security
   type: runtime
   strength: hard
-  description: FLE scheduler imports from feedback_loop.security
+  description: FLE scheduler imports from feedback-loop.security
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-017
@@ -234,7 +235,7 @@ dependencies:
   target_name: gates
   type: runtime
   strength: hard
-  description: FLE scheduler imports from feedback_loop.gates
+  description: FLE scheduler imports from feedback-loop.gates
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-018
@@ -244,7 +245,7 @@ dependencies:
   target_name: protocols
   type: runtime
   strength: hard
-  description: FLE scheduler imports from feedback_loop.protocols
+  description: FLE scheduler imports from feedback-loop.protocols
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-019
@@ -254,7 +255,8 @@ dependencies:
   target_name: master-blueprint
   type: contract
   strength: hard
-  description: 'SYS-MASTER-001 三级金字塔顶点——通过 §零 导航链向下分派到 MOD-MASTER-001 Level 1 集成契约，冷启动 AI 通过此链定位子系统蓝图。'
+  description: SYS-MASTER-001 三级金字塔顶点——通过 §零 导航链向下分派到 MOD-MASTER-001 Level 1 集成契约，冷启动
+    AI 通过此链定位子系统蓝图。
   contract_anchor: SYS-MASTER-001 §零 导航链
   direction: downstream
   valid_since: '2026-05-04'
@@ -265,7 +267,7 @@ dependencies:
   target_name: audit-trail
   type: contract
   strength: hard
-  description: '回滚操作写入 Audit Trail（ProvenanceStandard + HMAC-SHA256 签名），G-CT-002 契约锚定。'
+  description: 回滚操作写入 Audit Trail（ProvenanceStandard + HMAC-SHA256 签名），G-CT-002 契约锚定。
   contract_anchor: DOM-GOV-001 G-CT-002
   direction: upstream
   valid_since: '2026-05-05'
@@ -276,7 +278,7 @@ dependencies:
   target_name: agent-rbac
   type: runtime
   strength: hard
-  description: 'auto_guard 后验失败触发自动回滚——失败信号来源为 Agent RBAC 的后验守卫。'
+  description: auto_guard 后验失败触发自动回滚——失败信号来源为 Agent RBAC 的后验守卫。
   direction: upstream
   valid_since: '2026-05-05'
 - dep_id: DEP-022
@@ -286,7 +288,7 @@ dependencies:
   target_name: gate-engine
   type: runtime
   strength: hard
-  description: '回滚后跑 G0 门禁验证——Gate Engine 提供门禁执行能力。'
+  description: 回滚后跑 G0 门禁验证——Gate Engine 提供门禁执行能力。
   direction: upstream
   valid_since: '2026-05-05'
 - dep_id: DEP-023
@@ -296,7 +298,7 @@ dependencies:
   target_name: master-blueprint
   type: contract
   strength: hard
-  description: 'CT-RBK-GATE-001 集成契约——48 exit code 映射到 Gate/Pipeline/Orchestrator。'
+  description: CT-RBK-GATE-001 集成契约——48 exit code 映射到 Gate/Pipeline/Orchestrator。
   contract_anchor: MOD-INF-021 §9 CT-RBK-GATE-001
   direction: upstream
   valid_since: '2026-05-05'
@@ -307,7 +309,7 @@ dependencies:
   target_name: rollback-system
   type: contract
   strength: soft
-  description: '回滚失败结果进入 Escalation——G-CT-003 契约锚定。'
+  description: 回滚失败结果进入 Escalation——G-CT-003 契约锚定。
   contract_anchor: DOM-GOV-001 G-CT-003
   direction: downstream
   valid_since: '2026-05-05'
@@ -318,7 +320,7 @@ dependencies:
   target_name: rollback-system
   type: runtime
   strength: hard
-  description: '漂移检测触发回滚——DriftEvent → RollbackExecutor 消费，G-CT-005 契约锚定。'
+  description: 漂移检测触发回滚——DriftEvent → RollbackExecutor 消费，G-CT-005 契约锚定。
   contract_anchor: DOM-GOV-001 G-CT-005
   direction: downstream
   valid_since: '2026-05-05'
@@ -329,7 +331,7 @@ dependencies:
   target_name: escalation-protocol
   type: runtime
   strength: hard
-  description: '漂移预算耗尽触发升级——G-CT-006 契约锚定。'
+  description: 漂移预算耗尽触发升级——G-CT-006 契约锚定。
   contract_anchor: DOM-GOV-001 G-CT-006
   direction: downstream
   valid_since: '2026-05-15'
@@ -340,7 +342,7 @@ dependencies:
   target_name: audit-trail
   type: runtime
   strength: hard
-  description: '漂移事件审计写入——tamper_proof_audit 使用 AiAuditLogger。'
+  description: 漂移事件审计写入——tamper_proof_audit 使用 AiAuditLogger。
   direction: downstream
   valid_since: '2026-05-15'
 - dep_id: DEP-025c
@@ -350,7 +352,7 @@ dependencies:
   target_name: agent-rbac
   type: runtime
   strength: hard
-  description: '检测器权限控制——detector_dispatcher 权限检查。'
+  description: 检测器权限控制——detector_dispatcher 权限检查。
   direction: downstream
   valid_since: '2026-05-15'
 - dep_id: DEP-025d
@@ -360,7 +362,7 @@ dependencies:
   target_name: gate-engine
   type: runtime
   strength: hard
-  description: '门禁持久化——gate_persistence 漂移预算门禁。'
+  description: 门禁持久化——gate_persistence 漂移预算门禁。
   direction: downstream
   valid_since: '2026-05-15'
 - dep_id: DEP-025e
@@ -370,7 +372,7 @@ dependencies:
   target_name: shared-core
   type: runtime
   strength: hard
-  description: 'AiAuditLogger + AbstractLock 共享基础设施。'
+  description: AiAuditLogger + AbstractLock 共享基础设施。
   direction: upstream
   valid_since: '2026-05-15'
 - dep_id: DEP-025f
@@ -380,7 +382,7 @@ dependencies:
   target_name: database
   type: runtime
   strength: hard
-  description: '基线+漂移结果持久化——drift_events DB + baseline JSON。'
+  description: 基线+漂移结果持久化——drift_events DB + baseline JSON。
   direction: upstream
   valid_since: '2026-05-15'
 - dep_id: DEP-026
@@ -390,7 +392,7 @@ dependencies:
   target_name: database
   type: runtime
   strength: hard
-  description: '审计事件 JSONL → SQLite 派生索引——查询加速与 BatchOrchestrator 消费。'
+  description: 审计事件 JSONL → SQLite 派生索引——查询加速与 BatchOrchestrator 消费。
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-027
@@ -400,7 +402,7 @@ dependencies:
   target_name: gate-engine
   type: runtime
   strength: hard
-  description: 'Gate Audit Trail 检查——门禁决策写入审计日志，实时阻断联动。'
+  description: Gate Audit Trail 检查——门禁决策写入审计日志，实时阻断联动。
   contract_anchor: DOM-GOV-001 G-CT-006
   direction: upstream
   valid_since: '2026-05-08'
@@ -411,7 +413,7 @@ dependencies:
   target_name: shared-core
   type: contract
   strength: hard
-  description: 'AuditEventType 枚举与 Task Schema 共享类型——EventType 枚举 + 韧性基座。'
+  description: AuditEventType 枚举与 Task Schema 共享类型——EventType 枚举 + 韧性基座。
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-029
@@ -421,7 +423,7 @@ dependencies:
   target_name: drift-detector
   type: runtime
   strength: hard
-  description: '审计追踪链 ↔ 漂移检测器双向桥接——DriftEvent 触发审计异常签名 + 审计对账。'
+  description: 审计追踪链 ↔ 漂移检测器双向桥接——DriftEvent 触发审计异常签名 + 审计对账。
   contract_anchor: DOM-GOV-001 G-CT-007
   direction: peer
   valid_since: '2026-05-08'
@@ -442,7 +444,8 @@ dependencies:
   target_name: budget-enforcer
   type: runtime
   strength: hard
-  description: 遥测成本 metrics 聚合到 Budget Enforcer 预算追踪三级管道。实际方向为 peer——budget_engine import system_telemetry(_budget_telemetry_bridge.py 解耦)。
+  description: 遥测成本 metrics 聚合到 Budget Enforcer 预算追踪三级管道。实际方向为 peer——budget_engine
+    import system_telemetry(_budget_telemetry_bridge.py 解耦)。
   direction: peer
   valid_since: '2026-05-03'
 - dep_id: DEP-032
@@ -462,7 +465,8 @@ dependencies:
   target_name: agent-rbac
   type: contract
   strength: hard
-  description: 'L6 Observability 以 Telemetry 为数据后端——ObservabilityManager 依赖 telemetry facade 的三副本 metric 聚合。'
+  description: L6 Observability 以 Telemetry 为数据后端——ObservabilityManager 依赖 telemetry
+    facade 的三副本 metric 聚合。
   contract_anchor: MOD-INF-018 §5 CT-OBS-TELEM-001
   direction: upstream
   valid_since: '2026-05-03'
@@ -473,7 +477,8 @@ dependencies:
   target_name: script-system
   type: contract
   strength: hard
-  description: '退出码约定 0/1/2/3/4 + Finding Schema + manifest 注册契约——dedup gate 消费 script-system 定义。'
+  description: 退出码约定 0/1/2/3/4 + Finding Schema + manifest 注册契约——dedup gate 消费 script-system
+    定义。
   direction: upstream
   valid_since: '2026-05-05'
 - dep_id: DEP-035
@@ -483,7 +488,7 @@ dependencies:
   target_name: gate-engine
   type: runtime
   strength: hard
-  description: 'GATE-DEDUP pre-commit 门禁判定逻辑——Wave 1 即落地 gate-engine 框架。'
+  description: GATE-DEDUP pre-commit 门禁判定逻辑——Wave 1 即落地 gate-engine 框架。
   direction: upstream
   valid_since: '2026-05-05'
 - dep_id: DEP-036
@@ -493,7 +498,7 @@ dependencies:
   target_name: context-engine
   type: contract
   strength: hard
-  description: '生成时注入共享API影子清单——防重第一道防线 + 消费验证回环。'
+  description: 生成时注入共享API影子清单——防重第一道防线 + 消费验证回环。
   direction: upstream
   valid_since: '2026-05-05'
 - dep_id: DEP-037
@@ -503,7 +508,7 @@ dependencies:
   target_name: feedback-loop
   type: runtime
   strength: hard
-  description: '重复模式→FLE→evolve()→EvolutionProposal 进化闭环——微观克隆检测结果驱动 FLE 自我演化。'
+  description: 重复模式→FLE→evolve()→EvolutionProposal 进化闭环——微观克隆检测结果驱动 FLE 自我演化。
   direction: upstream
   valid_since: '2026-05-05'
 - dep_id: DEP-038
@@ -513,7 +518,7 @@ dependencies:
   target_name: shared-core
   type: contract
   strength: hard
-  description: 'SSoT Guard + shared 目录结构——去重后的组件提取目标目录。'
+  description: SSoT Guard + shared 目录结构——去重后的组件提取目标目录。
   direction: upstream
   valid_since: '2026-05-05'
 - dep_id: DEP-039
@@ -523,7 +528,7 @@ dependencies:
   target_name: database
   type: data
   strength: hard
-  description: '发现的重复模式/健忘热点→KB 持久化→未来 AI session 主动查阅——KB 索引双分配存储。'
+  description: 发现的重复模式/健忘热点→KB 持久化→未来 AI session 主动查阅——KB 索引双分配存储。
   direction: upstream
   valid_since: '2026-05-05'
 - dep_id: DEP-040
@@ -533,7 +538,7 @@ dependencies:
   target_name: gate-engine
   type: runtime
   strength: hard
-  description: '蓝方防御判定依赖 Gate Engine 执行门禁检查——红方注入后验证 Gate 是否拦截。'
+  description: 蓝方防御判定依赖 Gate Engine 执行门禁检查——红方注入后验证 Gate 是否拦截。
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-041
@@ -543,7 +548,7 @@ dependencies:
   target_name: audit-trail
   type: contract
   strength: hard
-  description: '每次攻击和防御结果 MUST 记录不可变日志——G-CT-018 契约锚点。'
+  description: 每次攻击和防御结果 MUST 记录不可变日志——G-CT-018 契约锚点。
   contract_anchor: MOD-INF-030 §0 G-CT-018
   direction: upstream
   valid_since: '2026-05-08'
@@ -554,7 +559,7 @@ dependencies:
   target_name: semantic-auditor
   type: runtime
   strength: hard
-  description: '规则漂移攻击场景的检测器——RB-003/RB-020 依赖语义审计能力。'
+  description: 规则漂移攻击场景的检测器——RB-003/RB-020 依赖语义审计能力。
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-043
@@ -564,7 +569,7 @@ dependencies:
   target_name: code-dedup-engine
   type: runtime
   strength: hard
-  description: '重复注入场景的检测器——RB-004 依赖去重引擎能力。'
+  description: 重复注入场景的检测器——RB-004 依赖去重引擎能力。
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-044
@@ -574,7 +579,7 @@ dependencies:
   target_name: agent-rbac
   type: contract
   strength: hard
-  description: '攻击注入操作需要 RBAC 权限校验与身份验证——G-CT-001 契约锚点。'
+  description: 攻击注入操作需要 RBAC 权限校验与身份验证——G-CT-001 契约锚点。
   contract_anchor: MOD-INF-030 §0 G-CT-001
   direction: upstream
   valid_since: '2026-05-08'
@@ -585,7 +590,7 @@ dependencies:
   target_name: drift-detector
   type: runtime
   strength: medium
-  description: '攻击场景基线快照与漂移对比——G-CT-023 契约锚点。'
+  description: 攻击场景基线快照与漂移对比——G-CT-023 契约锚点。
   contract_anchor: MOD-INF-030 §0 G-CT-023
   direction: upstream
   valid_since: '2026-05-08'
@@ -596,7 +601,7 @@ dependencies:
   target_name: escalation-protocol
   type: runtime
   strength: medium
-  description: '重复绕过触发升级裁决——G-CT-022 契约锚点。'
+  description: 重复绕过触发升级裁决——G-CT-022 契约锚点。
   contract_anchor: MOD-INF-030 §0 G-CT-022
   direction: upstream
   valid_since: '2026-05-08'
@@ -607,7 +612,7 @@ dependencies:
   target_name: red-blue-validator
   type: runtime
   strength: hard
-  description: 'AuditOrchestrator Phase 5 红白对抗阶段委托 RedBlueValidator 执行。'
+  description: AuditOrchestrator Phase 5 红白对抗阶段委托 RedBlueValidator 执行。
   direction: downstream
   valid_since: '2026-05-08'
 - dep_id: DEP-048
@@ -617,7 +622,7 @@ dependencies:
   target_name: orphan-judge
   type: runtime
   strength: medium
-  description: '红方可能利用孤儿判定边界制造绕过——RB-002 场景依赖孤儿判定能力。'
+  description: 红方可能利用孤儿判定边界制造绕过——RB-002 场景依赖孤儿判定能力。
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-049
@@ -627,7 +632,7 @@ dependencies:
   target_name: auto-fix-engine
   type: runtime
   strength: medium
-  description: '绕过发现后的修复执行——自愈反馈闭环依赖 AutoFix Engine。'
+  description: 绕过发现后的修复执行——自愈反馈闭环依赖 AutoFix Engine。
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-050
@@ -637,7 +642,7 @@ dependencies:
   target_name: llm-security
   type: contract
   strength: hard
-  description: 'AI 生成攻击场景的安全约束——Tier 5 攻击生成依赖 LLM Security。'
+  description: AI 生成攻击场景的安全约束——Tier 5 攻击生成依赖 LLM Security。
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-051
@@ -647,7 +652,7 @@ dependencies:
   target_name: mcp-servers
   type: runtime
   strength: medium
-  description: 'governance.red_blue_scan MCP 端点注册——MCP 集成依赖。'
+  description: governance.red_blue_scan MCP 端点注册——MCP 集成依赖。
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-052
@@ -657,7 +662,7 @@ dependencies:
   target_name: budget-enforcer
   type: data
   strength: medium
-  description: '绕过模式知识条目存储与检索——G-CT-024 契约锚点。'
+  description: 绕过模式知识条目存储与检索——G-CT-024 契约锚点。
   contract_anchor: MOD-INF-030 §0 G-CT-024
   direction: upstream
   valid_since: '2026-05-08'
@@ -668,7 +673,8 @@ dependencies:
   target_name: shared-core
   type: runtime
   strength: hard
-  description: '资源优化引擎依赖 shared-core 的 DaemonRegistry/EventBus/ContractBus/API_INDEX 基础设施。'
+  description: 资源优化引擎依赖 shared-core 的 DaemonRegistry/EventBus/ContractBus/API_INDEX
+    基础设施。
   contract_anchor: MOD-INF-032 §5
   direction: upstream
   valid_since: '2026-05-08'
@@ -679,7 +685,7 @@ dependencies:
   target_name: system-telemetry
   type: runtime
   strength: hard
-  description: '资源优化引擎依赖 system-telemetry 上报 SLI 指标和健康探针。'
+  description: 资源优化引擎依赖 system-telemetry 上报 SLI 指标和健康探针。
   contract_anchor: MOD-INF-032 §15.5
   direction: upstream
   valid_since: '2026-05-08'
@@ -690,7 +696,7 @@ dependencies:
   target_name: pipeline
   type: runtime
   strength: hard
-  description: '资源优化引擎依赖 pipeline 的 pipeline_lock 和 orchestration 协调。'
+  description: 资源优化引擎依赖 pipeline 的 pipeline_lock 和 orchestration 协调。
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-056
@@ -700,7 +706,7 @@ dependencies:
   target_name: feedback-loop
   type: runtime
   strength: hard
-  description: '资源优化引擎将 FLE-Scheduler 注册为守护线程，接收资源异常检测器。'
+  description: 资源优化引擎将 FLE-Scheduler 注册为守护线程，接收资源异常检测器。
   contract_anchor: MOD-INF-032 §7.1
   direction: upstream
   valid_since: '2026-05-08'
@@ -711,7 +717,7 @@ dependencies:
   target_name: gate-engine
   type: contract
   strength: soft
-  description: '资源优化引擎注册 G-RES 资源检查门禁规则，资源不足时门禁阻断。'
+  description: 资源优化引擎注册 G-RES 资源检查门禁规则，资源不足时门禁阻断。
   contract_anchor: MOD-INF-032 §15.4
   direction: upstream
   valid_since: '2026-05-08'
@@ -722,7 +728,7 @@ dependencies:
   target_name: audit-trail
   type: contract
   strength: soft
-  description: '优化动作审计记录——每个优化动作写入 Audit Trail。'
+  description: 优化动作审计记录——每个优化动作写入 Audit Trail。
   contract_anchor: MOD-INF-032 §15.2 CT-ROE-002
   direction: upstream
   valid_since: '2026-05-08'
@@ -733,7 +739,7 @@ dependencies:
   target_name: drift-detector
   type: runtime
   strength: soft
-  description: '资源配置漂移检测——阈值被篡改时触发漂移告警。'
+  description: 资源配置漂移检测——阈值被篡改时触发漂移告警。
   contract_anchor: MOD-INF-032 §15.2 CT-ROE-006
   direction: upstream
   valid_since: '2026-05-08'
@@ -744,7 +750,7 @@ dependencies:
   target_name: budget-enforcer
   type: runtime
   strength: soft
-  description: '资源成本预算联动——资源超支时触发预算降级。'
+  description: 资源成本预算联动——资源超支时触发预算降级。
   contract_anchor: MOD-INF-032 §15.2 CT-ROE-003
   direction: peer
   valid_since: '2026-05-08'
@@ -755,7 +761,7 @@ dependencies:
   target_name: agent-spec
   type: contract
   strength: soft
-  description: '技能注册——SKILL-DOM-ROE-001 注册到 agent-spec 技能注册表。'
+  description: 技能注册——SKILL-DOM-ROE-001 注册到 agent-spec 技能注册表。
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-062
@@ -765,7 +771,7 @@ dependencies:
   target_name: mcp-servers
   type: contract
   strength: soft
-  description: 'MCP 工具暴露——6 个资源优化 MCP 工具注册到 MCP Gateway。'
+  description: MCP 工具暴露——6 个资源优化 MCP 工具注册到 MCP Gateway。
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-063
@@ -865,7 +871,7 @@ dependencies:
   target_name: gate-engine
   type: runtime
   strength: hard
-  description: 'Gate Engine 门禁验证——技能加载时门禁检查。'
+  description: Gate Engine 门禁验证——技能加载时门禁检查。
   direction: upstream
   valid_since: '2026-05-16'
 - dep_id: DEP-019-002
@@ -875,7 +881,7 @@ dependencies:
   target_name: context-engine
   type: runtime
   strength: hard
-  description: 'Context Engine 上下文注入——技能渐进披露时上下文装配。'
+  description: Context Engine 上下文注入——技能渐进披露时上下文装配。
   direction: upstream
   valid_since: '2026-05-16'
 - dep_id: DEP-019-003
@@ -885,7 +891,7 @@ dependencies:
   target_name: pipeline
   type: runtime
   strength: hard
-  description: 'Pipeline 多模型路由——技能加载触发管线阶段调度。'
+  description: Pipeline 多模型路由——技能加载触发管线阶段调度。
   direction: upstream
   valid_since: '2026-05-16'
 - dep_id: DEP-019-004
@@ -895,7 +901,7 @@ dependencies:
   target_name: agent-rbac
   type: runtime
   strength: hard
-  description: 'Agent RBAC 权限检查——技能操作权限校验。'
+  description: Agent RBAC 权限检查——技能操作权限校验。
   direction: upstream
   valid_since: '2026-05-16'
 - dep_id: DEP-019-005
@@ -905,7 +911,7 @@ dependencies:
   target_name: audit-trail
   type: runtime
   strength: hard
-  description: 'Audit Trail 审计闭环——技能加载/执行审计记录。'
+  description: Audit Trail 审计闭环——技能加载/执行审计记录。
   direction: upstream
   valid_since: '2026-05-16'
 - dep_id: DEP-019-006
@@ -915,7 +921,7 @@ dependencies:
   target_name: drift-detector
   type: runtime
   strength: hard
-  description: 'Drift Detector 漂移检测——技能规格漂移监控。'
+  description: Drift Detector 漂移检测——技能规格漂移监控。
   direction: upstream
   valid_since: '2026-05-16'
 - dep_id: DEP-019-007
@@ -925,7 +931,7 @@ dependencies:
   target_name: a2a-protocol
   type: runtime
   strength: hard
-  description: 'A2A Protocol Agent间协调——多Agent技能协商与冲突解决。'
+  description: A2A Protocol Agent间协调——多Agent技能协商与冲突解决。
   direction: upstream
   valid_since: '2026-05-16'
 - dep_id: DEP-019-008
@@ -935,7 +941,7 @@ dependencies:
   target_name: governance-automation
   type: contract
   strength: hard
-  description: 'Governance Automation 审计管线整合——技能注册触发审计管线。'
+  description: Governance Automation 审计管线整合——技能注册触发审计管线。
   direction: upstream
   valid_since: '2026-05-16'
 - dep_id: DEP-019-009
@@ -945,7 +951,7 @@ dependencies:
   target_name: feedback-loop
   type: runtime
   strength: soft
-  description: 'Feedback Loop 闭环——技能效果反馈驱动进化。'
+  description: Feedback Loop 闭环——技能效果反馈驱动进化。
   direction: upstream
   valid_since: '2026-05-16'
 - dep_id: DEP-019-010
@@ -955,7 +961,7 @@ dependencies:
   target_name: database
   type: data
   strength: soft
-  description: 'Database 间接依赖——技能元数据持久化（传递依赖 via shared-core）。'
+  description: Database 间接依赖——技能元数据持久化（传递依赖 via shared-core）。
   direction: upstream
   valid_since: '2026-05-16'
 - dep_id: DEP-019-011
@@ -965,7 +971,7 @@ dependencies:
   target_name: llm-security-gateway
   type: runtime
   strength: soft
-  description: 'LLM Security Gateway 注入检测——技能内容安全审查。'
+  description: LLM Security Gateway 注入检测——技能内容安全审查。
   direction: upstream
   valid_since: '2026-05-16'
 - dep_id: DEP-019-012
@@ -975,7 +981,7 @@ dependencies:
   target_name: rollback-system
   type: runtime
   strength: soft
-  description: 'Rollback System 回滚——技能加载失败回滚。'
+  description: Rollback System 回滚——技能加载失败回滚。
   direction: upstream
   valid_since: '2026-05-16'
 - dep_id: DEP-019-013
@@ -985,7 +991,7 @@ dependencies:
   target_name: escalation-protocol
   type: runtime
   strength: soft
-  description: 'Escalation Protocol 升级——技能异常升级处理。'
+  description: Escalation Protocol 升级——技能异常升级处理。
   direction: upstream
   valid_since: '2026-05-16'
 - dep_id: DEP-019-014
@@ -995,7 +1001,7 @@ dependencies:
   target_name: budget-enforcer
   type: runtime
   strength: soft
-  description: 'Budget Enforcer 预算管控——技能加载Token预算检查。'
+  description: Budget Enforcer 预算管控——技能加载Token预算检查。
   direction: upstream
   valid_since: '2026-05-16'
 - dep_id: DEP-019-015
@@ -1005,7 +1011,7 @@ dependencies:
   target_name: knowledge-base
   type: contract
   strength: soft
-  description: 'Knowledge Base KE沉淀——技能经验知识条目写入。'
+  description: Knowledge Base KE沉淀——技能经验知识条目写入。
   direction: upstream
   valid_since: '2026-05-16'
 - dep_id: DEP-072
@@ -1015,7 +1021,7 @@ dependencies:
   target_name: shared-core
   type: contract
   strength: hard
-  description: '蓝图 §2.2 复用清单：shared/logging + shared/flags + shared/observer + shared/contracts。'
+  description: 蓝图 §2.2 复用清单：shared/logging + shared/flags + shared/observer + shared/contracts。
   direction: upstream
   valid_since: '2026-05-18'
 - dep_id: DEP-073
@@ -1025,7 +1031,7 @@ dependencies:
   target_name: llm-security-gateway
   type: runtime
   strength: hard
-  description: '蓝图 §12 集成点：ai_behavior→lsg_security_gateway 安全审计。'
+  description: 蓝图 §12 集成点：ai_behavior→lsg_security_gateway 安全审计。
   direction: upstream
   valid_since: '2026-05-18'
 - dep_id: DEP-074
@@ -1035,7 +1041,7 @@ dependencies:
   target_name: capacity-assurance
   type: runtime
   strength: hard
-  description: '线6直接下游：遥测指标→容量保障 SLI 仪表盘。sli_instrumentation.py bridge→metrics.gauge()。'
+  description: 线6直接下游：遥测指标→容量保障 SLI 仪表盘。sli_instrumentation.py bridge→metrics.gauge()。
   direction: downstream
   valid_since: '2026-05-18'
 - dep_id: DEP-075
@@ -1045,7 +1051,7 @@ dependencies:
   target_name: fle
   type: runtime
   strength: soft
-  description: '蓝图 §12 可选集成：FLE 消费 metrics/logs 用于自愈反馈。'
+  description: 蓝图 §12 可选集成：FLE 消费 metrics/logs 用于自愈反馈。
   direction: downstream
   valid_since: '2026-05-18'
 - dep_id: DEP-076
@@ -1055,7 +1061,7 @@ dependencies:
   target_name: audit-trail
   type: runtime
   strength: soft
-  description: '蓝图 §12 可选集成：遥测事件→审计日志持久化。'
+  description: 蓝图 §12 可选集成：遥测事件→审计日志持久化。
   direction: downstream
   valid_since: '2026-05-18'
 - dep_id: DEP-077
@@ -1065,7 +1071,7 @@ dependencies:
   target_name: drift-detector
   type: runtime
   strength: soft
-  description: 'contract_metrics.py 委托 detect_contract_drift→behavioral_auditor.contract_drift_detector。'
+  description: contract_metrics.py 委托 detect_contract_drift→behavioral_auditor.contract_drift_detector。
   direction: upstream
   valid_since: '2026-05-18'
 - dep_id: DEP-078
@@ -1075,7 +1081,7 @@ dependencies:
   target_name: context-engine
   type: runtime
   strength: soft
-  description: 'auto_bootstrap.py monkey-patch session_continuity（运行时动态导入）。'
+  description: auto_bootstrap.py monkey-patch session_continuity（运行时动态导入）。
   direction: upstream
   valid_since: '2026-05-18'
 - dep_id: DEP-079
@@ -1085,7 +1091,7 @@ dependencies:
   target_name: rollback-system
   type: runtime
   strength: soft
-  description: 'auto_bootstrap.py monkey-patch phase_manager（运行时动态导入）。'
+  description: auto_bootstrap.py monkey-patch phase_manager（运行时动态导入）。
   direction: upstream
   valid_since: '2026-05-18'
 - dep_id: DEP-080
@@ -1095,7 +1101,7 @@ dependencies:
   target_name: system-telemetry
   type: runtime
   strength: hard
-  description: 'budget_engine.py 运行时导入 get_global_telemetry（遥测成本 metrics 聚合）。'
+  description: budget_engine.py 运行时导入 get_global_telemetry（遥测成本 metrics 聚合）。
   direction: upstream
   valid_since: '2026-05-18'
 - dep_id: DEP-081
@@ -1105,7 +1111,7 @@ dependencies:
   target_name: model-profiler
   type: data
   strength: soft
-  description: 'model_router.py 懒导入 load_benchmark_history（基准性能数据加载）。'
+  description: model_router.py 懒导入 load_benchmark_history（基准性能数据加载）。
   direction: upstream
   valid_since: '2026-05-18'
 - dep_id: DEP-082
@@ -1115,7 +1121,7 @@ dependencies:
   target_name: local-model
   type: runtime
   strength: hard
-  description: 'VMS消费嵌入服务——BGE-M3嵌入路由已迁至MOD-INF-039，VMS通过local-model获取嵌入向量。'
+  description: VMS消费嵌入服务——BGE-M3嵌入路由已迁至MOD-INF-039，VMS通过local-model获取嵌入向量。
   direction: upstream
   valid_since: '2026-05-18'
 - dep_id: DEP-083
@@ -1125,7 +1131,7 @@ dependencies:
   target_name: local-model
   type: runtime
   strength: hard
-  description: 'Agent Spec语义路由——BGE-M3嵌入路由依赖local-model的EmbeddingRouter。'
+  description: Agent Spec语义路由——BGE-M3嵌入路由依赖local-model的EmbeddingRouter。
   direction: upstream
   valid_since: '2026-05-18'
 - dep_id: DEP-084
@@ -1135,7 +1141,7 @@ dependencies:
   target_name: local-model
   type: runtime
   strength: hard
-  description: 'Pipeline嵌入+rerank——管线阶段调度依赖local-model的嵌入与重排序能力。'
+  description: Pipeline嵌入+rerank——管线阶段调度依赖local-model的嵌入与重排序能力。
   direction: upstream
   valid_since: '2026-05-18'
 - dep_id: DEP-085
@@ -1145,9 +1151,49 @@ dependencies:
   target_name: local-model
   type: runtime
   strength: soft
-  description: 'Runtime warmup——运行时启动预热依赖local-model的模型加载与缓存。'
+  description: Runtime warmup——运行时启动预热依赖local-model的模型加载与缓存。
   direction: upstream
   valid_since: '2026-05-18'
+- dep_id: DEP-086
+  source: MOD-INF-010
+  source_name: feedback-loop
+  target: fle-scheduler_act
+  target_name: scheduler_act
+  type: runtime
+  strength: hard
+  description: FLE scheduler imports from feedback-loop.scheduler_act
+  direction: downstream
+  valid_since: '2026-05-08'
+- dep_id: DEP-087
+  source: MOD-INF-010
+  source_name: feedback-loop
+  target: fle-scheduler_collect_detect
+  target_name: scheduler_collect_detect
+  type: runtime
+  strength: hard
+  description: FLE scheduler imports from feedback-loop.scheduler_collect_detect
+  direction: downstream
+  valid_since: '2026-05-08'
+- dep_id: DEP-088
+  source: MOD-INF-010
+  source_name: feedback-loop
+  target: fle-scheduler_health
+  target_name: scheduler_health
+  type: runtime
+  strength: hard
+  description: FLE scheduler imports from feedback-loop.scheduler_health
+  direction: downstream
+  valid_since: '2026-05-08'
+- dep_id: DEP-089
+  source: MOD-INF-010
+  source_name: feedback-loop
+  target: fle-scheduler_safety
+  target_name: scheduler_safety
+  type: runtime
+  strength: hard
+  description: FLE scheduler imports from feedback-loop.scheduler_safety
+  direction: downstream
+  valid_since: '2026-05-08'
 dependency_graph:
   forward:
     SYS-MASTER-001:
@@ -1382,7 +1428,7 @@ dependency_graph:
     fle-protocols:
     - MOD-INF-010
 summary:
-  total_dependencies: 105
+  total_dependencies: 111
   by_type:
     runtime: 69
     contract: 16
@@ -1405,12 +1451,13 @@ changelog:
 - version: 1.0.5
   date: '2026-05-16'
   changes:
-  - GAP-019：新增 DEP-019-001~DEP-019-015 共 15 条跨模块依赖——补齐 MOD-INF-019 (agent-spec)
-    作为 source 的全部依赖条目，含 8 条 hard + 7 条 soft
+  - GAP-019：新增 DEP-019-001~DEP-019-015 共 15 条跨模块依赖——补齐 MOD-INF-019 (agent-spec) 作为
+    source 的全部依赖条目，含 8 条 hard + 7 条 soft
 - version: 1.0.4
   date: '2026-05-08'
   changes:
-  - AUDIT-04：新增 DEP-030~DEP-039 共 10 条跨模块依赖——补齐 MOD-INF-015 (system-telemetry) 4 条 + MOD-INF-017 (code-dedup-engine) 6 条，消除注册表盲区
+  - AUDIT-04：新增 DEP-030~DEP-039 共 10 条跨模块依赖——补齐 MOD-INF-015 (system-telemetry) 4 条
+    + MOD-INF-017 (code-dedup-engine) 6 条，消除注册表盲区
 - version: 1.0.3
   date: '2026-05-08'
   changes:
@@ -1427,3 +1474,21 @@ changelog:
   date: '2026-05-02'
   changes:
   - 初始 5 条依赖与 DAG 摘要
+
+# ORPHAN-BP auto-generated edges
+  - zephyr.a2a_protocol → zephyr.core (internal)
+  - zephyr.agent_rbac → zephyr.core (internal)
+  - zephyr.agent_spec → zephyr.core (internal)
+  - zephyr.asset_inventory → zephyr.core (internal)
+  - zephyr.audit_trail → zephyr.core (internal)
+  - zephyr.budget_enforcer → zephyr.core (internal)
+  - zephyr.capacity_assurance → zephyr.core (internal)
+  - zephyr.code_dedup_engine → zephyr.core (internal)
+  - zephyr.datasource_core → zephyr.core (internal)
+  - zephyr.depmap_engine → zephyr.core (internal)
+  - zephyr.escalation_protocol → zephyr.core (internal)
+  - zephyr.governance_automation → zephyr.core (internal)
+  - zephyr.knowledge_base → zephyr.core (internal)
+  - zephyr.local_model → zephyr.core (internal)
+  - zephyr.registry_governance → zephyr.core (internal)
+  - zephyr.runtime_integration → zephyr.core (internal)

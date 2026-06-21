@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-005 | docs/03_modules/_cross_layer/governance-automation/blueprint.md | §
+# blueprint: MOD-INF-005 | docs/03_modules/_cross_layer/governance_automation/blueprint.md | §
 # module_id: MOD-INF-005
 # stability: evolving
 # safety_level: L
@@ -8,14 +8,14 @@
 # config/alert_rules.yaml — System Telemetry Alert Rules
 # module_id: MOD-INF-015
 # version: 0.1.0 (scaffold)
-# blueprint: docs/03_modules/l01_infrastructure/system-telemetry/blueprint.md §9.1
+# blueprint: docs/03_modules/_domain_infra_ops/system_telemetry/blueprint.md §9.1
 #
 # 本文件定义所有告警规则：触发条件、严重级别、通知目标、静默窗口。
 # 由 TelemetryFacade.alerting 子系统在每次指标采集后评估。
 
 version: "0.1.0"
 module_id: MOD-INF-015
-last_updated: "2026-05-08"
+last_updated: "2026_05_08"
 
 rules:
   - id: ALERT-SYS-001

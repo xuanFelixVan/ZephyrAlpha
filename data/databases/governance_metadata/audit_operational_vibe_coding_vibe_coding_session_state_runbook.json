@@ -1,0 +1,157 @@
+{
+  "task_id": "DM-100188",
+  "source_file": "docs/01_policies_and_standards/operational/vibe_coding/vibe_coding_session_state_runbook.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_048_ops_vibe_coding_session.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "state_single_state_invariant": {
+      "content": "Session在任意时刻恰好处于一个状态",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_states"
+    },
+    "state_unique_id_invariant": {
+      "content": "每个Session有唯一session_id",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_states"
+    },
+    "state_log_timeliness_invariant": {
+      "content": "Session Log在状态变更后5分钟内写入",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_states"
+    },
+    "state_active_lock_invariant": {
+      "content": "ACTIVE状态的Session持有任务锁",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_states"
+    },
+    "state_paused_unlock_invariant": {
+      "content": "PAUSED状态的Session已释放任务锁",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_states"
+    },
+    "transition_init_to_active": {
+      "content": "INIT→ACTIVE：任务已分配且前置条件满足→加载任务上下文，开始处理(P0)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_states"
+    },
+    "transition_active_to_paused": {
+      "content": "ACTIVE→PAUSED：用户暂停/依赖不可用/token预算耗尽→保存状态，释放资源(P0)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_states"
+    },
+    "transition_active_to_completed": {
+      "content": "ACTIVE→COMPLETED：所有任务成功完成→写入Session Log，更新追踪器(P0)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_states"
+    },
+    "transition_active_to_failed": {
+      "content": "ACTIVE→FAILED：不可恢复错误发生→记录错误，标记Session失败(P0)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_states"
+    },
+    "transition_paused_to_active": {
+      "content": "PAUSED→ACTIVE：用户恢复且依赖可用且token预算剩余→重新加载上下文，恢复处理(P1)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_states"
+    },
+    "transition_paused_to_completed": {
+      "content": "PAUSED→COMPLETED：用户取消剩余任务→写入部分Session Log，标注取消(P1)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_states"
+    },
+    "transition_paused_to_failed": {
+      "content": "PAUSED→FAILED：暂停超时且无法恢复→自动标记失败(P2)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_states"
+    },
+    "prohibition_completed_to_active": {
+      "content": "COMPLETED→ACTIVE：已完成的Session不可重启，必须创建新Session",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_states"
+    },
+    "prohibition_failed_to_active": {
+      "content": "FAILED→ACTIVE：失败的Session不可自动恢复，必须创建新Session并从错误中学习",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_states"
+    },
+    "prohibition_completed_to_paused": {
+      "content": "COMPLETED→PAUSED：已完成状态不可回退",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_states"
+    },
+    "prohibition_failed_to_paused": {
+      "content": "FAILED→PAUSED：失败状态不可降级",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_states"
+    },
+    "timeout_active_4h": {
+      "content": "ACTIVE状态最大持续时间4小时，超时→自动转为PAUSED，通知用户(P0)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_timeout"
+    },
+    "timeout_paused_72h": {
+      "content": "PAUSED状态最大持续时间72小时，超时→自动转为COMPLETED(部分结果)，标注timed_out(P1)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_timeout"
+    },
+    "timeout_init_30m": {
+      "content": "INIT状态最大持续时间30分钟，超时→自动转为FAILED，报告初始化超时(P1)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_timeout"
+    },
+    "exception_encoding_error": {
+      "content": "encoding_error：暂停Session，记录错误，通知用户，用户必须修复编码后才能恢复(P0)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_exceptions"
+    },
+    "exception_dependency_not_found": {
+      "content": "dependency_not_found：暂停Session，加入延迟队列，依赖可用时自动恢复(P1)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_exceptions"
+    },
+    "exception_token_budget_exceeded": {
+      "content": "token_budget_exceeded：暂停Session，保存进度检查点，用户必须批准额外token预算(P0)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_exceptions"
+    },
+    "exception_unrecoverable_error": {
+      "content": "unrecoverable_error：强制转为FAILED，无自动恢复，需人工干预(P0)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_exceptions"
+    },
+    "modification_sync_yaml": {
+      "content": "修改本文档必须同时更新config/session_state_machine.yaml(机器可读版本)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_modification"
+    },
+    "modification_sync_registry": {
+      "content": "修改本文档必须同时更新_registry/catalogs/document-metadata-index-registry.yaml(注册表)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_modification"
+    },
+    "modification_sync_kb": {
+      "content": "修改本文档必须同时更新任何引用状态机的KB决策记录文档",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_modification"
+    },
+    "modification_gate": {
+      "content": "修改通过rule-lifecycle-and-change-standard.md定义的变更门禁",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_002_modification"
+    }
+  },
+  "summary": {
+    "total_rules": 27,
+    "COVERED": 27,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "原ops_vc_002 section仅有通用占位文本'遵守 OPS-VC-002: Session状态机/事故响应/会话门禁'",
+    "替换为4个详细section：ops_vc_002_states(状态定义与合法转换，含5个不变量约束+7个转换动作+4条禁止转换)、ops_vc_002_timeout(超时规则3条约束)、ops_vc_002_exceptions(异常处理4个触发条件)、ops_vc_002_modification(修改条件4个强制步骤)",
+    "5个状态不变量以constraint类型条件覆盖",
+    "4条禁止状态转换以prohibitions覆盖",
+    "3条超时规则以constraint类型条件覆盖(含具体时限和超时动作)",
+    "4种异常处理以trigger类型条件覆盖(含优先级P0/P1)"
+  ]
+}

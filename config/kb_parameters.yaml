@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-002 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# blueprint: MOD-INF-002 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: M
@@ -13,6 +13,7 @@
 # 所有可调参数集中于此文件——不在KE frontmatter中硬编码。
 # 生产、测试、开发三个环境独立维护。
 
+module_id: MOD-INF-002
 environment: development
 
 mvkb:
@@ -58,7 +59,7 @@ tombstones:
 
 storage:
   chroma_collections: [ke_entries, ke_metadata, ke_tombstones, ke_versions]
-  sqlite_db: data/zalpha_metadata.db
+  sqlite_db: data/databases/governance.db
   max_wal_size_kb: 4096                 # warn if WAL exceeds this
 
 reranker:

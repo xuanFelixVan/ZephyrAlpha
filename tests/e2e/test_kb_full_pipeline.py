@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0112 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-270 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.e2e.test_kb_full_pipeline
 # [STABILITY] evolving
 # [SAFETY] L
@@ -29,7 +30,7 @@ import pytest
 
 os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
 
-from zephyr.kb.bootstrap import (
+from zephyr.governance.kb.bootstrap import (
     Bootstrap,
     BootstrapConfig,
     BootstrapResult,
@@ -39,10 +40,10 @@ from zephyr.kb.bootstrap import (
     run_bootstrap,
     segment_document,
 )
-from zephyr.kb.ingest import IngestGate, IngestResult
-from zephyr.kb.kb_repo import KbRepo
-from zephyr.kb.reranker import RerankedHit, Reranker, rerank_batch
-from zephyr.kb.unified_memory_api import (
+from zephyr.governance.ingest import IngestGate, IngestResult
+from zephyr.intelligence.model_evaluation.kb_repo import KbRepo
+from zephyr.intelligence.model_evaluation.reranker import RerankedHit, Reranker, rerank_batch
+from zephyr.intelligence.model_evaluation.unified_memory_api import (
     InMemoryMemoryBackend,
     UnifiedMemoryAPI,
     build_provenance,

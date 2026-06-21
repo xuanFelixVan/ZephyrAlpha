@@ -38,7 +38,7 @@ def generate_ide_configs() -> dict[str, bool]:
                 continue
             ide_config["mcpServers"][sid] = {
                 "command": sys.executable,
-                "args": ["-m", f"zephyr.mcp.{srv['module']}"],
+                "args": ["-m", f"zephyr.integration.mcp.{srv['module']}"],
             }
         with open(target_path, "w", encoding="utf-8") as fh:
             json.dump(ide_config, fh, indent=2, ensure_ascii=False)

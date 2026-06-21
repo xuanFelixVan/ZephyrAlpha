@@ -1,0 +1,627 @@
+rule_id: TRAE-030
+title: 文档治理-编号与元数据
+aliases:
+- DOC-011
+- DOC-012
+- DOC-013
+- DOC-014
+- DOC-015
+- DOC-016
+- DOC-017
+layer: L1
+severity: error
+scope: doc_numbering_metadata
+domain: TRAE
+triggers:
+- operation: doc_numbering_metadata
+sections:
+  doc_011:
+    title: AI产出物压缩工作流-产出物规格 (GOV-DOC-011第一篇)
+    section_type: rule
+    original_rules:
+    - DOC-011
+    conditions:
+    - type: constraint
+      check: 时态判定规则§0
+      pass: 永久时态(当前架构/接口/约束/状态事实)→保留;临时时态(从A到B的过程)→执行完毕后删除;施工声明(铁律/安全删除/必备链接等)→永久保留不可改为链接引用
+      fail: 未按时态分类就决定保留/删除
+    - type: constraint
+      check: 临时时态删除前置条件
+      pass: 正确方案/代码已实现+可运行(pytest+mypy+ruff通过)→才可删除
+      fail: 正确方案未实现或不可运行时删除临时时态内容
+    - type: constraint
+      check: 可删清单§1(11类)
+      pass: 大白话解释/对标段落/AI意识植入散文/修订记录/ASCII流程图(条件:信息已在表格中完整表达)/已实现代码蓝图内重复/已执行完毕临时时态/配置文件完整示例/技术栈理由列/§7备选方案(正确方案已实现)/§15正面后果(与§1重复)
+      fail: 删除不在清单中的内容
+    - type: constraint
+      check: 不可删清单§2(18类)
+      pass: frontmatter字段/路径/module_id引用/命令和代码模板/表格/禁止必须约束/漂移防护语句/异常处理/状态不变量/depends_on声明/触发条件/完成标准/多步流程步骤/可解析引用/导航路径/蓝图特有内容/反向进化通用新增/蓝图概述段
+      fail: 删除不可删清单中的内容
+    - type: constraint
+      check: 必须补充清单§3(10类)
+      pass: 可达性入口/frontmatter完整/负向责任/SSoT声明/消费者注册表/触发条件/可解析引用/导航路径/漂移防护/铁律禁止清单
+      fail: 规格化后缺失任一补充项
+    - type: constraint
+      check: 蓝图铁律B-00~B-22
+      pass: B-00:Layer1先于Layer2;B-01:施工步骤禁止砍;B-02:接口契约禁止砍;B-03:架构设计禁止砍;B-04:功能描述禁止砍;B-05:错误处理禁止砍;B-06:产出物路径禁止砍;B-07:必备链接表禁止砍;B-08:安全删除协议禁止砍;B-11:蓝图铁律表禁止砍;B-12:容量估算禁止砍;B-13:MUST标注codification_level;B-14:不可因模板砍价值;B-15:反向进化原则;B-16:蓝图特有内容保留;B-17:反向进化流程;B-18:规格化前MUST建立内容价值映射;B-19:概述段禁止砍;B-20:已实现代码不在蓝图重复;B-21:临时时态执行完毕后删除;B-22:蓝图拆分判定
+      fail: 违反任一蓝图铁律
+    - type: constraint
+      check: 代码文件十字段标准§5
+      pass: "[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS];__init__.py豁免仅需BLUEPRINT+AI_AUTONOMY"
+      fail: 代码文件头部缺失必填字段
+    actions:
+    - type: mandatory
+      step: 规格化是双向操作:该减的减+该加的加+反向进化。只减不加=越规格化越脆弱
+    - type: mandatory
+      step: 蓝图规格化后必须通过19项验证(§4.4)
+    - type: mandatory
+      step: 蓝图>800行时MUST按§4.5执行拆分判定(B-22)
+    prohibitions:
+    - 禁止删除不可删清单中的18类内容
+    - 禁止将施工声明(铁律/安全删除/必备链接/类似功能/文件范围/治理信息)改为链接引用
+    - 禁止因模板砍价值(B-14)
+    - 禁止未分类就动手规格化(B-18)
+    - 禁止砍掉概述段(B-19)
+  doc_012:
+    title: AI产出物压缩工作流-施工流程 (GOV-DOC-011第二篇)
+    section_type: rule
+    original_rules:
+    - DOC-012
+    conditions:
+    - type: trigger
+      check: 规格化触发条件§7
+      pass: 漂移检测告警/新AI反馈规则读不完/规则冲突/可达性审计发现0%可达文件/可达性审计发现缺失必要属性
+      fail: 常规维护(无上述信号)不触发
+    - type: constraint
+      check: 规格化前置流程§8(强制七步)
+      pass: STEP0判受众→STEP0.5 Layer1合规(内容价值映射+章节完整性+反向进化)→STEP1搜→STEP1.5时态判定→STEP2转化(散文→二元规则)→STEP3查重→STEP3.5幻觉安全验证→STEP3.6三桶判定→STEP4标注可执行性→STEP5补充缺失→STEP5.5十字段验证→STEP6审计
+      fail: 跳过任何步骤
+    - type: constraint
+      check: Layer1先于Layer2
+      pass: 先检查蓝图+施工图模板v4.0章节完整性(Layer1);Layer1不通过→不得进入Layer2(规格化砍削)
+      fail: 跳过Layer1直接规格化砍削
+    - type: constraint
+      check: 幻觉安全验证STEP3.5
+      pass: 砍前四问:路径漂移?存在性幻觉?操作幻觉?触发幻觉?全部NO→可砍;任意YES→进入三桶判定
+      fail: 未通过幻觉安全验证就砍内容
+    - type: constraint
+      check: 三桶判定STEP3.6
+      pass: 桶1可删除(标题+表格自解释)/桶2可压缩(保留区分信号+防漂移约束删除解释)/桶3必须保留(删掉导致幻觉且无法压缩);判定优先级:桶1>桶2>桶3
+      fail: 未按三桶判定处置幻觉安全验证未通过的内容
+    actions:
+    - type: mandatory
+      step: 规格化后步骤§11:更新depends_on+sync_rule_registry.py+标记codification_level+DriftDetector确认+可达性验证+可执行性验证+补充验证
+    - type: mandatory
+      step: 每次只改一个文件改完确认再下一个
+    prohibitions:
+    - 禁止跳过STEP2转化直接删除散文段落
+    - 禁止跳过STEP3.5幻觉安全验证就砍内容
+    - 禁止Layer1不通过就进入Layer2
+    - 禁止未完成内容价值映射(B-18)就动手规格化
+  doc_013:
+    title: AI产出物压缩工作流-安全原则与策略 (GOV-DOC-011§9-§10)
+    section_type: rule
+    original_rules:
+    - DOC-013
+    conditions:
+    - type: constraint
+      check: 安全原则-防幻觉最高
+      pass: 防幻觉/防漂移>一切其他规则;删掉会导致幻觉或漂移的内容即使它是理由/背景/原因也必须保留
+      fail: 以"AI只需规则不需理由"为由删除防幻觉内容
+    - type: constraint
+      check: 安全原则-转化优先
+      pass: 读到散文→先试转化为二元规则→能转化就保留;不能转化才判定砍/留;砍是最后手段不是默认操作
+      fail: 直接删除未尝试转化的散文
+    - type: constraint
+      check: 安全原则-可达性铁律
+      pass: 规格化后的文件MUST在L0/L1/registry中有入口;0%可达=规格化未完成
+      fail: 规格化后文件无入口
+    - type: constraint
+      check: 安全原则-可执行性铁律
+      pass: 规格化后的规则MUST标注执行方式:AI自觉/脚本门禁/策略引擎;纯MD声明且无执行机制=规格化未完成
+      fail: 规则无执行方式标注
+    - type: constraint
+      check: 安全原则-补充铁律
+      pass: 规格化后MUST对照§3必须补充清单检查并补充缺失项
+      fail: 规格化后未补充缺失项
+    - type: constraint
+      check: 安全原则-裁决原则
+      pass: 不确定→保留;宁可多留不可误删
+      fail: 不确定时选择删除
+    - type: constraint
+      check: 成熟度目标
+      pass: 所有规则文件MUST达到L1(可发现);核心规则MUST达到L2(可强制)
+      fail: 规则文件未达L1或核心规则未达L2
+    actions:
+    - type: mandatory
+      step: IDE规则类:保留表格/命令/路径/约束/状态不变量;砍掉原理/对标/AI意识植入/触因根因/修订历史;必须补充可达性入口+触发条件
+    - type: mandatory
+      step: 蓝图类:保留frontmatter/接口契约/约束/depends_on/施工步骤/SSoT声明/消费者注册表/代码存在性/依赖图/自动化规格/施工声明;砍掉散文/对标/重复拓扑/已实现代码重复/已执行临时时态/配置示例/技术栈理由/重复模块列表/人日列/§7备选/§15正面后果
+    prohibitions:
+    - 禁止以"AI只需规则"为由删除防幻觉/防漂移内容
+    - 禁止砍是默认操作(转化优先砍是最后手段)
+    - 禁止规格化后文件0%可达
+    - 禁止规格化后规则无执行方式标注
+  doc_014:
+    title: 统一编号规范-违规检测与迁移 (GOV-DOC-001§6-§7)
+    section_type: rule
+    original_rules:
+    - DOC-014
+    conditions:
+    - type: constraint
+      check: 自动检测项NUM-V03
+      pass: 施工图文件名以construction_plan_{domain}_或construction_plan_shared_开头
+      fail: 文件名不匹配(WARNING级)
+    - type: constraint
+      check: 自动检测项NUM-V05
+      pass: 模块ID匹配D-XXX-{SEQ}格式
+      fail: frontmatter module_id不匹配(WARNING级)
+    - type: constraint
+      check: 自动检测项NUM-V06
+      pass: 架构文档正文不使用旧编号指代架构层
+      fail: 正则匹配到废弃docs编号+业务域名称组合(WARNING级)
+    - type: constraint
+      check: 人工审查NUM-R01
+      pass: 新增层编号经KB决策记录审批
+      fail: L14+编号首次出现未经审批
+    - type: constraint
+      check: 人工审查NUM-R02
+      pass: 前端子层编号合理
+      fail: FE-L5+编号首次出现未经审查
+    - type: constraint
+      check: 人工审查NUM-R03
+      pass: 跨层契约正确引用两端层编号
+      fail: 新增CTR-*条目未检查引用
+    actions:
+    - type: mandatory
+      step: 迁移原则:不改变docs物理目录结构;只改变架构语义引用统一用D-XXX;渐进式迁移新文档必须遵守存量文档下次编辑时顺带修正
+    - type: mandatory
+      step: 迁移检查清单:Mermaid图节点→D-XXX;蓝图frontmatter→域英文名;施工图→construction_plan_{domain}_;模块ID→D-XXX-{SEQ};KB决策记录→D-XXX;移除旧编号称呼
+    prohibitions:
+    - 禁止违反迁移原则直接修改docs物理目录结构
+  doc_015:
+    title: 文件路径规范-物理路径树与违规检测 (GOV-DOC-004§四-A~§五)
+    section_type: rule
+    original_rules:
+    - DOC-015
+    conditions:
+    - type: constraint
+      check: 物理路径树规则1
+      pass: project_path_tree.yaml由脚本自动生成禁止手写
+      fail: 手写路径树文件
+    - type: constraint
+      check: 物理路径树规则2
+      pass: path_ownership_map.yaml中同一路径只能被一个蓝图声明
+      fail: 同一路径被多个蓝图声明(冲突)
+    - type: constraint
+      check: 物理路径树规则3
+      pass: 路径冲突时ssot_claims声明优先于§0.1清单声明
+      fail: 未按优先级解决冲突
+    - type: constraint
+      check: 物理路径树规则4
+      pass: 路径变更(移动/重命名)必须同步更新path_ownership_map.yaml
+      fail: 路径变更后未同步更新
+    - type: constraint
+      check: 违规检测-旧体系新建
+      pass: 不在docs/(旧体系)下新建文件
+      fail: 在旧体系下新建文件
+    - type: constraint
+      check: 违规检测-根目录白名单
+      pass: 不在根目录创建白名单外文件
+      fail: 根目录存在白名单外文件
+    - type: constraint
+      check: 违规检测-类型错放
+      pass: 治理规范不放02_enterprise_architecture/;架构视图不放01_policies_and_standards/
+      fail: 文件类型与目录不匹配
+    - type: constraint
+      check: 违规检测-AI产物
+      pass: AI生成产物不直接写入受版本控制目录
+      fail: AI产物写入受版本控制目录
+    actions:
+    - type: mandatory
+      step: 产出物:物理路径树快照→docs/01_policies_and_standards/_registry/catalogs/project_path_tree.yaml(脚本scripts/governance/generate_project_path_tree.py)
+    - type: mandatory
+      step: 产出物:路径归属声明→docs/03_modules/path_ownership_map.yaml(脚本scripts/governance/generate_path_ownership_map.py)
+    prohibitions:
+    - 禁止手写project_path_tree.yaml
+    - 禁止同一路径被多个蓝图声明
+    - 禁止路径变更后不更新path_ownership_map.yaml
+  gov_doc_011_anti_patterns:
+    title: 压缩工作流常见反模式 (GOV-DOC-011 §6)
+    section_type: error_patterns
+    original_rules:
+    - DOC-011
+    patterns:
+    - pattern: "砍错-把触发条件当散文"
+      description: "砍掉适用场景列表导致AI不知何时调用"
+      example: "砍掉当漂移检测告警时MUST触发→AI不知道何时执行"
+      detection: "检查规格化后是否丢失触发条件/适用场景"
+    - pattern: "砍错-把反模式清单当散文"
+      description: "砍掉反例清单导致AI失去对照"
+      example: "砍掉禁止凭记忆猜测路径→AI重新凭记忆操作"
+      detection: "检查规格化后是否丢失禁止/反模式列表"
+    - pattern: "砍错-把完成标准当散文"
+      description: "砍掉exit criteria导致AI不知道算不算做完"
+      example: "砍掉pytest exit 0才算通过→AI凭感觉判断完成"
+      detection: "检查规格化后是否丢失验证/完成标准"
+    - pattern: "砍错-部分删除流程步骤"
+      description: "砍掉流程中间步骤导致步骤链断裂"
+      example: "砍掉治根处理步骤→AI不知道下一步"
+      detection: "检查流程步骤是否完整(全留或全删)"
+    - pattern: "砍错-保留不可解析引用"
+      description: "写一篇KB决策记录但没有路径"
+      example: "参见KB决策记录无路径→AI无法定位"
+      detection: "检查所有项目术语后是否有路径"
+    - pattern: "砍错-砍掉导航路径"
+      description: "砍掉最小必读路径导致新AI不知道从哪开始"
+      example: "砍掉新AI→AGENTS.md→index.md→本标准→新AI迷失"
+      detection: "检查规格化后是否保留导航路径"
+    - pattern: "漏补-缺可达性入口"
+      description: "文件规格化后AI仍然找不到"
+      example: "新文件未在registry_of_registries.yaml注册"
+      detection: "检查文件是否在L0/L1/registry中有入口"
+    - pattern: "漏补-缺SSoT声明"
+      description: "两个文件都说自己管同一领域"
+      example: "两个文件都定义命名规则→AI不确定哪个是权威"
+      detection: "检查文件是否有SSoT声明"
+    - pattern: "漏补-缺漂移防护"
+      description: "修改后未同步更新依赖文件"
+      example: "修改§3可删清单但未同步更新project_rules.md"
+      detection: "检查文件是否有漂移防护声明"
+  gov_doc_011_doc_type_strategy:
+    title: 按文档类型规格化策略 (GOV-DOC-011 §9)
+    section_type: examples
+    original_rules:
+    - DOC-011
+    items:
+    - description: "IDE规则类(.trae/rules/AGENTS.md/CLAUDE.md)"
+      details: "目标L0自含≤500tokens+L1触发加载;保留表格/命令/路径/约束/状态不变量;砍掉原理/对标/AI意识植入/触因根因/修订历史;必须补充可达性入口+触发条件;分层判定四问法:不知道会造成不可逆破坏→L0;是机械命令→L0;是为什么/背景→L2;是特定场景流程→L1"
+    - description: "蓝图类(blueprint.md)"
+      details: "保留frontmatter/接口契约§4/约束§5/depends_on/施工步骤§16/SSoT声明/消费者注册表/§0.1代码存在性/§10.2依赖图对齐/§10.3内部依赖图/§10.4自动化规格/施工声明;砍掉散文/对标/重复拓扑/已实现代码重复(B-20)/已执行临时时态(B-21)/配置示例/技术栈理由/重复模块列表/人日列/§7备选/§15正面后果;拆分判定>800行MUST按§4.5"
+    - description: "编码标准类"
+      details: "保留frontmatter/命名约定表/文件组织约束/类型注解层级表/导入规范/SSoT守卫/禁止清单;砍掉大白话解释/对标段落/代码正例反例/修订记录;必须补充KB决策记录路径引用+最小必读路径"
+    - description: "操作手册类(vibe_coding/)"
+      details: "保留frontmatter/状态定义转换禁止转换表/超时规则/异常处理/状态不变量/检查表/事故分级表/回滚步骤;砍掉对标段落/散文描述;必须补充AI快速自检流程+触发条件"
+    - description: "Agent Skill类(agent_spec/skills/)"
+      details: "保留CRITICAL Rules(5-6条)/Core Operations/Unique Constraints(4条)/Error Patterns表格/Checklist/Key Constants表格/References;砍掉model_hint/freshness_score/author冗余字段;必须补充触发关键词+消费者列表"
+  gov_doc_011_ssot_declaration:
+    title: 压缩工作流SSoT声明与治理信息 (GOV-DOC-011 SSoT+负向责任+消费者+漂移防护)
+    section_type: context
+    original_rules:
+    - DOC-011
+    context:
+      summary: "GOV-DOC-011是AI产出物压缩工作流的唯一真源。定义可删/不可删/必须补充三类清单+蓝图铁律B-00~B-22+施工流程+安全原则。DriftDetector消费§1-§3清单;GateEngine(G7)消费§4蓝图铁律+§5十字段标准"
+      impact_on_rules:
+      - "修改§1可删清单→必须同步更新project_rules.md §10.6+onboarding_detail.md §10.6"
+      - "修改§2不可删清单→必须同步更新project_rules.md §10.6+onboarding_detail.md §10.6"
+      - "修改§4蓝图铁律→必须同步更新blueprint_construction_template.md铁律表"
+      - "修改§5十字段→必须同步更新trae_010/011/012.yaml(GOV-ENG-001子规则) §7+onboarding_detail.md §13.1"
+      - "修改§9策略→必须同步更新各对应Skill文件"
+      key_decisions:
+      - "规格化是双向操作(该减的减+该加的加+反向进化)"
+      - "防幻觉/防漂移>一切其他规则"
+      - "转化优先(散文→二元规则);砍是最后手段"
+      - "不确定→保留(宁可多留不可误删)"
+      - "所有规则MUST达L1(可发现);核心规则MUST达L2(可强制)"
+  gov_doc_011_maturity_model:
+    title: 规格化成熟度模型 (GOV-DOC-011 §12)
+    section_type: examples
+    original_rules:
+    - DOC-011
+    items:
+    - description: "L0被动文本(遵从率~30%)"
+      details: "规则写在MD中无任何执行机制"
+    - description: "L1可发现(遵从率~50%)"
+      details: "在L0/L1/registry中有入口;当前目标:所有规则文件MUST达到L1"
+    - description: "L2可强制(遵从率~85%)"
+      details: "有Python门禁脚本强制执行;当前目标:核心规则MUST达到L2"
+    - description: "L3可证明(遵从率~95%)"
+      details: "执行后能证明遵守了规则"
+    - description: "L4可注入(遵从率~98%)"
+      details: "规则自动注入AI工作计划"
+    - description: "L5可进化(遵从率~99%)"
+      details: "规则根据反馈自动进化"
+  gov_doc_001_docs_numbering:
+    title: docs目录编号处置方案 (GOV-DOC-001 §3)
+    section_type: decision_tree
+    original_rules:
+    - DOC-001
+    decision_tree:
+    - condition: "使用场景是否为文件系统路径引用/信息架构视图内部讨论/_index.yaml目录导航?"
+      if_true: "docs目录编号(0-1999)合法使用"
+      if_false: "进入禁止场景判定"
+    - condition: "是否在Mermaid架构图/KB决策记录/蓝图frontmatter/施工图命名/模块ID前缀/跨文档引用中使用docs编号?"
+      if_true: "禁止;必须使用D-XXX域编号替代"
+      if_false: "场景合法"
+    - condition: "docs目录编号是否对应业务域抽屉?"
+      if_true: "查§3.4旧版编号废弃对照表映射到D-XXX域编号(如09_data_platform→L00;10_research_and_factor_lab→L02+L09)"
+      if_false: "docs目录编号属于治理/架构/平台/知识层(不对应D-XXX);保持原状"
+  gov_doc_001_scene_rules:
+    title: 各场景编号使用规则 (GOV-DOC-001 §5)
+    section_type: examples
+    original_rules:
+    - DOC-001
+    items:
+    - description: "src代码目录命名"
+      details: "命名规则真源见trae_028_doc_structure_naming.yaml gov_doc_003_naming_ssot(域英文名snake_case)"
+    - description: "docs蓝图目录命名"
+      details: "命名规则真源见trae_028_doc_structure_naming.yaml gov_doc_003_naming_ssot(与src/zephyr/下目录名保持一致)"
+    - description: "Architecture Model YAML命名"
+      details: "命名规则真源见trae_028_doc_structure_naming.yaml gov_doc_003_naming_ssot(snake_case格式)"
+    - description: "Mermaid架构图节点ID"
+      details: "功能域用D-XXX_YYY(大写D+域英文大写缩写+下划线分隔子域);特殊分区用SH(FE);节点标签D-XXX {English Name};禁止使用docs目录编号"
+    - description: "KB决策记录引用"
+      details: "引用架构层时使用L04 Risk Management格式;禁止使用17_risk_and_controls目录格式"
+    - description: "施工图命名(历史保留)"
+      details: "construction_plan_{domain}_{snake_case_description}.md;施工指引已合并入蓝图"
+    - description: "模块ID格式"
+      details: "命名规则真源见trae_028_doc_structure_naming.yaml gov_doc_003_naming_ssot;D-XXX_YYY-{SEQ};Shared为SH-{ABBR}-{NNN};Frontend为FE-L{N}-{ABBR}-{NNN}"
+  gov_doc_cross_refs_030:
+    title: 编号与元数据域跨规则关系 (GOV-DOC-011+001+004)
+    section_type: context
+    original_rules:
+    - DOC-011
+    - DOC-014
+    - DOC-015
+    context:
+      summary: "GOV-DOC-011(压缩工作流)+GOV-DOC-001(编号规范)+GOV-DOC-004(路径规范)构成文档治理的编号与元数据子域。011定义规格化标准→001定义编号体系→004定义路径映射。011的§5十字段引用trae_010/011/012.yaml(GOV-ENG-001子规则) §7;001的编号前缀被GOV-DOC-003和GOV-DOC-010消费;004的路径树由脚本自动生成"
+      impact_on_rules:
+      - "修改GOV-DOC-011蓝图铁律→必须同步更新blueprint_construction_template.md"
+      - "修改GOV-DOC-011可删/不可删清单→必须同步更新project_rules.md和onboarding_detail.md"
+      - "修改GOV-DOC-001编号前缀→必须同步更新GOV-DOC-003 §四和GOV-DOC-010 §4.2"
+      - "修改GOV-DOC-004物理路径树规则→必须同步更新generate_project_path_tree.py和generate_path_ownership_map.py"
+      key_decisions:
+      - "规格化双向操作(减+加+反向进化)"
+      - "防幻觉/防漂移优先级最高"
+      - "docs目录编号仅用于物理路径;架构语义用D-XXX"
+      - "物理路径树由脚本自动生成禁止手写"
+  gov_doc_011_blueprint_split:
+    title: 蓝图拆分判定流程 (GOV-DOC-011 §4.5)
+    section_type: procedure
+    original_rules:
+    - DOC-011
+    procedure:
+    - order: 1
+      action: 识别职责域——蓝图中的内容是否属于同一职责域?判定维度:服务对象/变更频率/依赖关系
+      pre_condition: 蓝图内容超过~800行或包含多个独立职责域
+      expected_result: 职责域已识别并分类
+      on_failure: 无法判断职责域→保留原状不拆分
+    - order: 2
+      action: "职责域判定——职责相同(同一模块的升级/扩展)→原地升级;条件:服务对象相同+变更频率同步+依赖关系重叠"
+      pre_condition: 职责域已识别
+      expected_result: 判定结果为原地升级或拆分独立蓝图
+      on_failure: 判定不确定→保留原状
+    - order: 3
+      action: "拆分独立蓝图判定——职责不同(独立子系统/独立能力域)时检查触发条件:有独立module_id前缀/有独立Phase路线图和交付节奏/有独立依赖关系图(与蓝图主体depends_on交集<50%)/内容超过100行且与蓝图主体无直接数据流"
+      pre_condition: 职责不同
+      expected_result: 满足任一触发条件→拆分独立蓝图
+      on_failure: 不满足触发条件→原地升级
+    - order: 4
+      action: 拆分后验证——子蓝图有独立frontmatter+概述+§0~§18;子蓝图belongs_to=本蓝图module_id;本蓝图§10依赖关系新增子蓝图引用;blueprint-registry.yaml同步更新
+      pre_condition: 拆分独立蓝图决定已做出
+      expected_result: 四项验证全部通过
+      on_failure: 任一验证未通过→补充后重新验证
+  gov_doc_011_codification_verification:
+    title: 规格化后验证流程 (GOV-DOC-011 §11)
+    section_type: verification
+    original_rules:
+    - DOC-011
+    steps:
+    - step: 更新depends_on声明(新增/移除引用)
+      command: 编辑文件frontmatter depends_on字段
+      expected_exit: depends_on与实际引用一致
+      on_fail: 引用不一致→补充或移除
+    - step: 同步规则注册表
+      command: python scripts/governance/sync_rule_registry.py
+      expected_exit: exit 0
+      on_fail: 注册表不同步→修复后重新运行
+    - step: 标记规格化成熟度
+      command: 在frontmatter中标记codification_level:L{0~5}+codification_at:日期
+      expected_exit: frontmatter字段完整
+      on_fail: 字段缺失→补充
+    - step: 漂移检测确认
+      command: 跑DriftDetector确认无新增漂移
+      expected_exit: 无新增漂移
+      on_fail: 有新增漂移→修复后重新检测
+    - step: 可达性验证
+      command: 确认文件在L0/L1/registry中有入口
+      expected_exit: 文件可达性>0%
+      on_fail: 0%可达→规格化未完成;必须添加入口
+    - step: 可执行性验证
+      command: 确认核心规则标注了执行方式(AI自觉/脚本门禁/策略引擎)
+      expected_exit: 所有核心规则有执行方式标注
+      on_fail: 纯MD声明且无执行机制=规格化未完成
+    - step: 补充验证
+      command: 确认第一篇§3必须补充清单全部完成
+      expected_exit: 10类补充项全部完成
+      on_fail: 缺失补充项→补充后重新验证
+  gov_doc_011_governance_info:
+    title: 压缩工作流治理信息 (GOV-DOC-011 SSoT+负向责任+消费者+漂移防护)
+    section_type: context
+    original_rules:
+    - DOC-011
+    context:
+      summary: "GOV-DOC-011是AI产出物压缩工作流的唯一真源。SSoT覆盖:产出物可删/不可删清单(§1-§2)/产出物必须补充清单(§3)/蓝图规格化铁律(§4)/代码文件十字段标准(§5+trae_010/011/012.yaml(GOV-ENG-001子规则) §7)/规格化施工流程(§8-§9)。任何与本文件冲突的规格化规则以本文件为准"
+      impact_on_rules:
+      - "修改§1可删清单→必须同步更新project_rules.md §10.6+onboarding_detail.md §10.6"
+      - "修改§2不可删清单→必须同步更新project_rules.md §10.6+onboarding_detail.md §10.6"
+      - "修改§4蓝图铁律增删→必须同步更新blueprint_construction_template.md(铁律表)"
+      - "修改§5十字段字段变更→必须同步更新trae_010/011/012.yaml(GOV-ENG-001子规则) §7+onboarding_detail.md §13.1"
+      - "修改§9策略变更→必须同步更新各对应Skill文件"
+      key_decisions:
+      - "负向责任:本文件不涉及蓝图+施工图模板格式(→blueprint_construction_template.md)/代码命名类型注解(→trae_010/011/012.yaml(GOV-ENG-001子规则))/文档目录结构(→trae_028_doc_structure_naming.yaml doc_002)/会话门禁检查(→trae_048_ops_vibe_coding_session.yaml(OPS-VC会话管理))"
+      - "消费者:Tier1-DriftDetector(§1-§3清单)+GateEngine G7(§4铁律+§5十字段);Tier2-AI session(§8流程)+blueprint_construction_template.md(§4铁律);Tier3-project_rules.md/onboarding_detail.md(§10.6安全清单引用)"
+      - "漂移防护:修改§1→同步project_rules.md+onboarding_detail.md;修改§2→同步project_rules.md+onboarding_detail.md;修改§4→同步blueprint_construction_template.md;修改§5→同步trae_010/011/012.yaml(GOV-ENG-001子规则) §7+onboarding_detail.md §13.1;修改§9→同步各Skill文件"
+  gov_doc_011_normative_refs:
+    title: 压缩工作流专业对标 (GOV-DOC-011 §13)
+    section_type: examples
+    original_rules:
+    - DOC-011
+    items:
+    - description: Zoro (Columbia 2026)
+      details: Enrich-Enforce-Evolve三段式规则执行
+    - description: Anthropic Agent Skills
+      details: 三层渐进披露:L1 metadata→L2全文→L3资源
+    - description: AGENTS.md
+      details: 60K+开源项目采用;Linux Foundation托管
+    - description: SkillsBench (Li et al. 2026)
+      details: skills使Agent性能提升16.2百分点
+    - description: Policy-as-Prompt (NeurIPS 2025)
+      details: 非结构化文档→策略树→prompt分类器
+    - description: 蓝图+施工图模板 v4.0
+      details: blueprint_construction_template.md
+  gov_doc_scope_exclusions_030:
+    title: 编号与元数据域范围排除项 (GOV-DOC-011+001+004)
+    section_type: examples
+    original_rules:
+    - DOC-011
+    - DOC-014
+    - DOC-015
+    items:
+    - description: GOV-DOC-011不覆盖-蓝图+施工图模板格式
+      details: blueprint_construction_template.md
+    - description: GOV-DOC-011不覆盖-代码命名/类型注解
+      details: trae_010/011/012.yaml(GOV-ENG-001子规则)
+    - description: GOV-DOC-011不覆盖-文档目录结构
+      details: trae_028_doc_structure_naming.yaml doc_002(GOV-DOC-002)
+    - description: GOV-DOC-011不覆盖-会话门禁检查
+      details: trae_048_ops_vibe_coding_session.yaml(OPS-VC会话管理)
+    - description: GOV-DOC-001不覆盖-文件命名规则
+      details: trae_028_doc_structure_naming.yaml doc_003(GOV-DOC-003)
+    - description: GOV-DOC-001不覆盖-文件存放路径
+      details: trae_028_doc_structure_naming.yaml doc_004(GOV-DOC-004)
+    - description: GOV-DOC-001不覆盖-目录结构定义
+      details: trae_028_doc_structure_naming.yaml doc_002(GOV-DOC-002)
+    - description: GOV-DOC-001不覆盖-文档生命周期管理
+      details: trae_028_doc_structure_naming.yaml doc_006(GOV-DOC-006)
+    - description: GOV-DOC-001不覆盖-KB决策记录编号规则
+      details: trae_028_doc_structure_naming.yaml doc_003 §2.2.4
+    - description: GOV-DOC-004不覆盖-目录结构具体定义
+      details: trae_028_doc_structure_naming.yaml doc_002(GOV-DOC-002)
+    - description: GOV-DOC-004不覆盖-文件命名规范
+      details: trae_028_doc_structure_naming.yaml doc_003(GOV-DOC-003)
+    - description: GOV-DOC-004不覆盖-文档生命周期管理
+      details: trae_028_doc_structure_naming.yaml doc_006(GOV-DOC-006)
+    - description: GOV-DOC-004不覆盖-文件删除移动安全门禁
+      details: trae_029_doc_operation_security.yaml(GOV-DOC-007)
+    - description: GOV-DOC-004不覆盖-新增目录审批流程
+      details: trae_028_doc_structure_naming.yaml doc_002 §七
+  gov_doc_016_pure_assertion:
+    title: 规则文档纯陈述原则 (GOV-DOC-016)
+    section_type: rule
+    original_rules:
+    - DOC-016
+    conditions:
+    - type: constraint
+      check: 规则文档表述方式
+      pass: 只包含当前有效规则的肯定陈述句（陈述结果/约束/命令）
+      fail: 包含否定陈述句（"已废止"/"旧定义"/"之前是X现在改为Y"/"已被取代"等过渡文本）
+    - type: constraint
+      check: 历史版本追溯
+      pass: 历史版本差异通过 git log 和 change_history 追踪
+      fail: 在正文保留已过时的规则原文或添加废止标注
+    actions:
+    - type: mandatory
+      step: 发现规则过时时 MUST 直接更新为新规则，不保留旧规则原文
+    - type: mandatory
+      step: 禁止添加"已废止"/"已取代"/"旧定义"等标注；直接用新规则替换旧规则
+    - type: mandatory
+      step: 规则变更记录写入 change_history section（版本号+日期+变更摘要），不写入正文
+    - type: mandatory
+      step: 规则文档中所有数字、字段数、版本号、计数必须是当前唯一真实值
+    prohibitions:
+    - 在正文中保留"已废止"/"已取代"标注（直接更新为新规则）
+    - 在正文中保留"之前是X现在改为Y"过渡文本（直接写当前值）
+    - 在正文中保留已过时的规则原文（历史在 git log，不在正文）
+    - 添加解释性段落说明"之前为什么是错的"（直接修正为正确值）
+    rationale:
+      why_pure_assertion: 否定陈述句增加 AI 上下文字符、降低效率、制造漂移风险。AI 读取"已废止"标注时需要额外处理旧规则与新规则的关系，增加幻觉概率。纯陈述句让 AI 直接看到当前有效规则，零歧义消费。
+      why_git_log: 历史版本差异是 git log 的职责，不是正文的职责。正文只承载当前真实值。双源（正文+git log）会导致不一致和漂移。
+  gov_doc_017_rule_abstraction:
+    title: 规则抽象性原则 (GOV-DOC-017)
+    section_type: rule
+    original_rules:
+    - DOC-017
+    conditions:
+    - type: constraint
+      check: 规则中数字的性质
+      pass: 数字是阈值（定义边界/比例/关系，不随当前状态变化）
+      fail: 数字是事实状态（描述当前值/实测值，会随时间变化）
+    - type: constraint
+      check: 事实状态获取方式
+      pass: 事实状态通过动态查询获取（如 extract_depgraph.py --summary）
+      fail: 事实状态固化在规则正文中
+    actions:
+    - type: mandatory
+      step: 规则中的数字 MUST 是阈值（边界定义），禁止是事实状态（当前实测值）
+    - type: mandatory
+      step: 文件大小/当前节点数/当前域数/当前模块数等会变化的值 MUST 通过动态查询获取，禁止固化在规则中
+    - type: mandatory
+      step: 发现规则中存在事实状态数字时 MUST 删除，改为引用动态查询命令
+    prohibitions:
+    - 在规则中固化文件大小（如"depgraph.db 157MB"——157是事实状态会变化）
+    - 在规则中固化当前节点数（如"804个production节点"——804是事实状态会变化）
+    - 在规则中固化当前域数（如"39域"——39是事实状态会变化）
+    - 在规则中固化当前模块数（如"60个蓝图模块"——60是事实状态会变化）
+    rationale:
+      threshold_vs_fact: 阈值是规则定义的边界（如"单域≤200"的200），不随当前状态变化，可以写入规则。事实状态是当前实测值（如"depgraph.db 157MB"的157），会随时间变化，固化在规则中会导致规则过时失真。
+      why_dynamic_query: 事实状态必须通过动态查询获取（extract_depgraph.py --summary），确保规则永远引用当前值，不会失真。
+  gov_doc_change_history_030:
+    title: 编号与元数据域变更记录 (GOV-DOC-011+001+004)
+    section_type: examples
+    original_rules:
+    - DOC-011
+    - DOC-014
+    - DOC-015
+    items:
+    - description: GOV-DOC-011 v2.2.0
+      details: 双向操作:该减的减+该加的加+反向进化
+    - description: GOV-DOC-011 v2.3.0
+      details: 新增B-19保护概述段;B-00保护范围扩展至概述
+    - description: GOV-DOC-011 v3.0.1 (2026-05-13)
+      details: 更名为压缩工作流标准;全项目路径统一迁移
+    - description: GOV-DOC-011 v3.1.0 (2026-05-14)
+      details: 新增§0时态判定规则;§1可删清单新增#6-#11;铁律B-20~B-22;蓝图可砍内容新增8项;验证项新增#7-#19;新增§4.5蓝图拆分判定流程
+    - description: GOV-DOC-011 v3.2.0 (2026-05-15)
+      details: B-16铁律加强;蓝图特有内容MUST标注三要素
+    - description: GOV-DOC-011 v3.3.0 (2026-05-15)
+      details: §10安全原则新增防幻觉最高原则;AI只需规则原则
+    - description: GOV-DOC-001 v1.0.0 (2026-04-25)
+      details: 初始创建;定义全系统统一编号体系
+    - description: GOV-DOC-001 v1.1.0 (2026-05-01)
+      details: 结构对齐;新增§1.3不覆盖内容+§1.4专业对标+§8与其他规则关系+§9变更记录
+    - description: GOV-DOC-004 v1.2.0 (2026-05-16)
+      details: 新增§四-A物理路径树规则
+    - description: GOV-DOC-014 v1.1.0 (2026-06-19)
+      details: RQ-05/RQ-06修复;L151/L177施工图命名前缀由kebab改为snake_case对齐§2.2裁定;RQ-09修复;provenance.source_files标记status:archived+添加archive_note
+    - description: GOV-DOC-014 v1.1.1 (2026-06-21)
+      details: P1修复;脚本名错误修正(generate_project_ownership_map.py→generate_path_ownership_map.py,后者为真实存在的脚本);kebab-case文件名引用修正为snake_case(project-path-tree.yaml→project_path_tree.yaml/path-ownership-map.yaml→path_ownership_map.yaml)
+references:
+  rule_ids: [TRAE-010, TRAE-011, TRAE-012, TRAE-028, TRAE-048]
+  scripts: [scripts/governance/generate_project_path_tree.py, scripts/governance/generate_path_ownership_map.py, scripts/governance/sync_rule_registry.py]
+  modules: []
+  blueprints: []
+enforcement:
+  type: code
+  executors: [scripts/governance/d3_metadata/check_frontmatter_metadata.py]
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+  version: "1.1.1"
+  last_modified: "2026-06-21"
+  change_history:
+  - version: "1.1.1"
+    date: "2026-06-21"
+    author: "AI-Assistant"
+    change: "P2修复——GOV-DOC-016违规：行346删除否定陈述句';14层l{xx}_前缀体系已废弃'，仅保留当前有效规则陈述"
+  - version: "1.1.0"
+    date: "2026-06-21"
+    author: "AI-Assistant"
+    change: "审查修复：references.rule_ids补充[TRAE-010,TRAE-011,TRAE-012,TRAE-028,TRAE-048]；references.scripts补充文件内引用的3个脚本(generate_project_path_tree.py/generate_path_ownership_map.py/sync_rule_registry.py)；enforcement.executors补充check_frontmatter_metadata.py（原任务建议的check_document_metadata.py不存在，改为实际存在的frontmatter元数据校验脚本GATE-15，type=code但executors为空）"
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001
+  archive_note: 源.md文件已合并入本YAML规则文件后删除，hash为提取时记录值，RQ-09哈希验证不适用(status=archived)

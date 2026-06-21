@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0087 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-245 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.benchmarks.test_vms_full_e2e
 # [STABILITY] evolving
 # [SAFETY] L
@@ -77,7 +78,7 @@ def main():
     # =========================================================================
     print("\n[1] VMS 启动 + 嵌入模型状态...")
 
-    from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
+    from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
     vms = InProcessVectorMemory(persist_dir=str(TEST_DIR))
     t0 = time.perf_counter()
     vms.start()
@@ -131,8 +132,8 @@ def main():
     # =========================================================================
     print("\n[4] 批量写入 (add_vectors_batch)...")
 
-    from zephyr.vector_memory.faiss_collection_manager import FAISSCollectionManager
-    from zephyr.vector_memory.sqlite_metadata_store import SQLiteMetadataStore
+    from zephyr.governance.vector_memory.faiss_collection_manager import FAISSCollectionManager
+    from zephyr.governance.vector_memory.sqlite_metadata_store import SQLiteMetadataStore
 
     faiss_cm = vms._collection_manager
     meta_store = vms._metadata_store
@@ -204,8 +205,8 @@ def main():
     print("\n[7] 混合检索 (HybridRetriever RRF)...")
 
     try:
-        from zephyr.vector_memory.hybrid_retriever import HybridRetriever
-        from zephyr.vector_memory.embedding_router import EmbeddingRouter
+        from zephyr.governance.vector_memory.hybrid_retriever import HybridRetriever
+        from zephyr.integration.local_model.embedding_router import EmbeddingRouter
 
         embed_router = vms._embedding_router
         retriever = HybridRetriever(faiss_cm, embed_router, meta_store)

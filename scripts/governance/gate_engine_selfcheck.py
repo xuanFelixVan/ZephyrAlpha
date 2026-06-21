@@ -48,7 +48,7 @@ from typing import Any
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[2]
 _GATES_DIR = _PROJECT_ROOT / "src" / "zephyr" / "gates"
-_DB_PATH = _PROJECT_ROOT / "data" / "zephyr.db"
+_DB_PATH = _PROJECT_ROOT / "data" / "zephyr.infrastructure.db"
 
 
 def _fmt_status(ok: bool, label: str, detail: str = "") -> str:
@@ -174,7 +174,7 @@ def check_gate_engine_import() -> dict[str, Any]:
     """Check compliance and report findings."""
     issues: list[str] = []
     try:
-        from zephyr.gates.gate_engine import GateEngine, GateResult, GateViolation, GateViolationError
+        from zephyr.governance.rule_enforcement.gate_engine import GateEngine, GateResult, GateViolation, GateViolationError
         engine = GateEngine()
         gates = engine.load_gates()
         if len(gates) < 8:
@@ -197,7 +197,7 @@ def check_circuit_breaker_import() -> dict[str, Any]:
     """Check compliance and report findings."""
     issues: list[str] = []
     try:
-        from zephyr.gates.circuit_breaker import CircuitBreakerCheck
+        from zephyr.governance.rule_enforcement.circuit_breaker import CircuitBreakerCheck
     except Exception as exc:
         issues.append(f"circuit_breaker 导入失败: {exc}")
 
@@ -250,7 +250,7 @@ def check_gate_registry_consistency() -> dict[str, Any]:
             continue
 
     unregistered = yaml_gate_ids - registry_gate_ids
-    # GATE-18 是非YAML的pre-commit gate，过滤它
+    # GATE-18 是非YAML的pre_commit gate，过滤它
     phantom = registry_gate_ids - yaml_gate_ids - {""} - {"GATE-18"}
 
     for gid in unregistered:

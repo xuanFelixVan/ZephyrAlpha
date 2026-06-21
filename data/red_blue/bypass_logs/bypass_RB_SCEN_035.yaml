@@ -1,0 +1,168 @@
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED mcp_registry.whitelist_check + url_validation: mcp_registry.whitelist_check
+    + url_validation failed to block mcp_endpoint_injection'
+  entry_id: BY-1222b93e
+  escalated: false
+  gate_id: mcp_registry.whitelist_check + url_validation
+  occurred_at: '2026-05-23T14:39:35.461361+00:00'
+  root_cause: 'BYPASSED mcp_registry.whitelist_check + url_validation: mcp_registry.whitelist_check
+    + url_validation failed to block mcp_endpoint_injection'
+  scenario_id: RB-SCEN-035
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED mcp_registry.whitelist_check + url_validation: mcp_registry.whitelist_check
+    + url_validation failed to block mcp_endpoint_injection'
+  entry_id: BY-b1437d06
+  escalated: false
+  gate_id: mcp_registry.whitelist_check + url_validation
+  occurred_at: '2026-05-23T14:42:26.015262+00:00'
+  root_cause: 'BYPASSED mcp_registry.whitelist_check + url_validation: mcp_registry.whitelist_check
+    + url_validation failed to block mcp_endpoint_injection'
+  scenario_id: RB-SCEN-035
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED mcp_registry.whitelist_check + url_validation: mcp_registry.whitelist_check
+    + url_validation failed to block mcp_endpoint_injection'
+  entry_id: BY-49b7bd61
+  escalated: false
+  gate_id: mcp_registry.whitelist_check + url_validation
+  occurred_at: '2026-05-23T14:44:50.436851+00:00'
+  root_cause: 'BYPASSED mcp_registry.whitelist_check + url_validation: mcp_registry.whitelist_check
+    + url_validation failed to block mcp_endpoint_injection'
+  scenario_id: RB-SCEN-035
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  entry_id: BY-9f4de189
+  escalated: false
+  gate_id: mcp_registry.whitelist_check + url_validation
+  occurred_at: '2026-05-26T12:51:07.203017+00:00'
+  root_cause: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  scenario_id: RB-SCEN-035
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  entry_id: BY-5ad41ed4
+  escalated: false
+  gate_id: mcp_registry.whitelist_check + url_validation
+  occurred_at: '2026-05-27T19:03:59.202055+00:00'
+  root_cause: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  scenario_id: RB-SCEN-035
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  entry_id: BY-242d0da7
+  escalated: false
+  gate_id: mcp_registry.whitelist_check + url_validation
+  occurred_at: '2026-05-27T19:39:37.312101+00:00'
+  root_cause: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  scenario_id: RB-SCEN-035
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  entry_id: BY-f12ff150
+  escalated: false
+  gate_id: mcp_registry.whitelist_check + url_validation
+  occurred_at: '2026-05-27T19:49:35.219992+00:00'
+  root_cause: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  scenario_id: RB-SCEN-035
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  entry_id: BY-f9b40202
+  escalated: false
+  gate_id: mcp_registry.whitelist_check + url_validation
+  occurred_at: '2026-05-27T20:11:23.721425+00:00'
+  root_cause: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  scenario_id: RB-SCEN-035
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  entry_id: BY-ec7dc40d
+  escalated: false
+  gate_id: mcp_registry.whitelist_check + url_validation
+  occurred_at: '2026-05-27T20:34:45.447463+00:00'
+  root_cause: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  scenario_id: RB-SCEN-035
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  entry_id: BY-e1c2de53
+  escalated: false
+  gate_id: mcp_registry.whitelist_check + url_validation
+  occurred_at: '2026-05-28T06:16:43.682266+00:00'
+  root_cause: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  scenario_id: RB-SCEN-035
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  entry_id: BY-17fe8864
+  escalated: false
+  gate_id: mcp_registry.whitelist_check + url_validation
+  occurred_at: '2026-05-28T08:55:48.726504+00:00'
+  root_cause: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  scenario_id: RB-SCEN-035
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  entry_id: BY-283d3599
+  escalated: false
+  gate_id: mcp_registry.whitelist_check + url_validation
+  occurred_at: '2026-05-28T09:11:27.782829+00:00'
+  root_cause: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  scenario_id: RB-SCEN-035
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  entry_id: BY-585549a8
+  escalated: false
+  gate_id: mcp_registry.whitelist_check + url_validation
+  occurred_at: '2026-05-28T09:26:21.419415+00:00'
+  root_cause: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  scenario_id: RB-SCEN-035
+  tier: TIER_6
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  entry_id: BY-d205f641
+  escalated: false
+  gate_id: mcp_registry.whitelist_check + url_validation
+  occurred_at: '2026-05-28T09:27:24.730791+00:00'
+  root_cause: 'BYPASSED mcp_registry.whitelist_check + url_validation [simulated]:
+    mcp_registry.whitelist_check + url_validation failed to block mcp_endpoint_injection'
+  scenario_id: RB-SCEN-035
+  tier: TIER_6

@@ -1,0 +1,80 @@
+{
+  "task_id": "DM-100132",
+  "source_file": "docs/01_policies_and_standards/governance/module/module_interface_contract_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_032_module_lifecycle.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "IFC-001_P0模块接口契约7字段": {
+      "source_section": "§5 IFC-001",
+      "type": "mandatory+constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_004",
+      "details": "contract_id/provider/consumers/interface_type/schema/version/status 7字段必填且frozen"
+    },
+    "IFC-002_接口变更KB决策记录": {
+      "source_section": "§5 IFC-002",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_004",
+      "details": "frozen接口变更MUST创建KB决策记录+破坏性变更须含迁移方案"
+    },
+    "IFC-003_语义化版本兼容": {
+      "source_section": "§7 IFC-003",
+      "type": "constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_004",
+      "details": "MAJOR=破坏性/MINOR=新增兼容/PATCH=修复"
+    },
+    "IFC-004_契约注册表": {
+      "source_section": "§10 IFC-004",
+      "type": "mandatory+prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_004",
+      "details": "cross_layer_contracts.yaml为唯一发现入口+禁止手动编辑+使用validate_module_schema.py --sync-contracts"
+    },
+    "IFC-005_契约状态转换": {
+      "source_section": "§11 IFC-005",
+      "type": "constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_004",
+      "details": "draft→frozen(provider准入+owner审批)→deprecated(替代frozen+consumers迁移+30天通知)"
+    },
+    "IFC-006_契约一致性验证": {
+      "source_section": "§12 IFC-006",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_004",
+      "details": "validate_module_schema.py --check-conformance+3项验证内容"
+    },
+    "IFC-007_Provider退役契约级联废弃": {
+      "source_section": "§12 IFC-007",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_004",
+      "details": "provider archived时触发frozen→deprecated→archived级联"
+    },
+    "禁止行为7条": {
+      "source_section": "§6 禁止行为",
+      "type": "prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_004",
+      "details": "7条禁止：P0未定义契约就注入/frozen未经KB决策记录变更/破坏性变更无过渡期/绕过frozen契约/循环调用/手动编辑注册表/退役不触发级联"
+    },
+    "破坏性变更6步流程": {
+      "source_section": "§8 破坏性变更处理",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_004",
+      "details": "KB决策记录→双版本并行→通知consumers→30天迁移期→旧接口deprecated→60天后物理删除"
+    }
+  },
+  "summary": {
+    "total_rules": 9,
+    "COVERED": 9,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "trae_032_module_lifecycle.yaml: 新增mod_004 section覆盖module_interface_contract_policy.md全部IFC规则+7条禁止+3条conditions+4条actions"
+  ]
+}

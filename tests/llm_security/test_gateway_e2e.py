@@ -1,3 +1,4 @@
+# [A_test] module_id: SRC-TST-0186 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
 # [MODULE] tests.llm_security.test_gateway_e2e
 # [STABILITY] evolving
@@ -7,8 +8,8 @@
 import asyncio
 import pytest
 
-from zephyr.llm_security.gateway import LSGSecurityGateway, ScanMode, ScanResult
-from zephyr.llm_security.protocol import SecurityDecision
+from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway, ScanMode, ScanResult
+from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityDecision
 
 
 @pytest.fixture

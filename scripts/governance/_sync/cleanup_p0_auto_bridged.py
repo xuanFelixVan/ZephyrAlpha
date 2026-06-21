@@ -22,7 +22,7 @@ warn_only: false
 import sqlite3
 from pathlib import Path
 
-DB_PATH = Path(__file__).resolve().parents[3] / "data" / "zalpha_metadata.db"
+DB_PATH = Path(__file__).resolve().parents[3] / "data" / "databases" / "governance.db"
 
 def main() -> int:
     if not DB_PATH.exists():

@@ -8,7 +8,7 @@ validate_rules_integrity.py — 规则文件完整性保护
 
 对所有关键规则文件（AGENTS.md / blueprint.md / thresholds.yaml /
 kill_switch_state.yaml / shadow_mode_state.yaml / error_budget_state.yaml /
-QUICKSTART.md / quality-standard.md）计算 SHA256 哈希，
+quickstart.md / quality_standard.md）计算 SHA256 哈希，
 与之前注册的 known-good hash 对比——不一致 = 被修改 = 告警。
 
 文件修改正常来源：git commit。异常来源：AI session 意外修改 / 投毒 / 规则文件后门注入。
@@ -47,15 +47,15 @@ _INTEGRITY_DB = _SCRIPTS_DIR / "meta" / "rules_integrity_db.json"
 
 RULES_MANIFEST: list[dict] = [
     {"path": "AGENTS.md", "critical": True, "desc": "AI Agent 全局行为约束"},
-    {"path": "scripts/governance/QUICKSTART.md", "critical": True, "desc": "AI Session 冷启动卡片"},
+    {"path": "scripts/governance/quickstart.md", "critical": True, "desc": "AI Session 冷启动卡片"},
     {"path": "scripts/governance/_shared/thresholds.yaml", "critical": True, "desc": "关键阈值 SSoT"},
     {"path": "scripts/governance/meta/kill_switch_state.yaml", "critical": True, "desc": "Kill Switch 状态"},
     {"path": "scripts/governance/meta/shadow_mode_state.yaml", "critical": False, "desc": "Shadow Mode 状态"},
     {"path": "scripts/governance/meta/error_budget_state.yaml", "critical": True, "desc": "Error Budget 状态"},
-    {"path": "scripts/governance/quality-standard.md", "critical": True, "desc": "脚本质量标准"},
+    {"path": "scripts/governance/quality_standard.md", "critical": True, "desc": "脚本质量标准"},
     {"path": "scripts/governance/script_manifest.yaml", "critical": True, "desc": "脚本注册表"},
-    {"path": "docs/03_modules/l01_infrastructure/script-system/blueprint.md", "critical": True, "desc": "脚本系统蓝图"},
-    {"path": "docs/03_modules/l01_infrastructure/script-system/index.md", "critical": False, "desc": "模块索引"},
+    {"path": "docs/03_modules/infrastructure.runtime_integration/script-system/blueprint.md", "critical": True, "desc": "脚本系统蓝图"},
+    {"path": "docs/03_modules/infrastructure.runtime_integration/script-system/index.md", "critical": False, "desc": "模块索引"},
 ]
 
 if sys.stdout.encoding != 'utf-8':
@@ -163,7 +163,7 @@ def check() -> dict:
 def show_diff() -> str:
     """show_diff implementation."""
     result = subprocess.run(
-        ["git", "diff", "--", "AGENTS.md", "scripts/governance/", "docs/03_modules/l01_infrastructure/script-system/"],
+        ["git", "diff", "--", "AGENTS.md", "scripts/governance/", "docs/03_modules/infrastructure.runtime_integration/script-system/"],
         capture_output=True, text=True, timeout=10,
         cwd=str(_REPO_ROOT), encoding="utf-8", errors="replace",
     )

@@ -33,27 +33,38 @@ Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0
 注意：phase_check_registry 和 phase_manager 由调用方直接导入，不从 __init__ 重导出（避免循环依赖）。
 """
 
-import zephyr.escalation_engine as escalation_protocol
-import zephyr.budget_enforcer as budget_enforcer_mod
-import zephyr.drift_detector as drift_detector_mod
-import zephyr.rollback as rollback_mod
-import zephyr.l01_infrastructure.a2a_protocol.governance as a2a_protocol
+import zephyr.governance.escalation_engine as escalation_protocol
+import zephyr.governance.drift_detector as drift_detector_mod
 
-from zephyr.governance.path_resolver import PathResolver, PathResolution
+from zephyr.governance.architecture_governance.path_resolver import PathResolver, PathResolution
 
-from zephyr.governance.constitutional_update import (
+from zephyr.governance.constitutional_update.constitutional_update import (
     Learning,
     ProposedUpdate,
     ConstitutionalAutoUpdate,
 )
 
-from zephyr.governance.mcp_result_push import ResultPushManager, PushStatus
+from zephyr.governance.behavioral_admission.mcp_result_push import ResultPushManager, PushStatus
 
-from zephyr.governance.admission_response import (
+from zephyr.governance.behavioral_admission.admission_response import (
     AdmissionResponse,
     AdmissionResponseStatus,
     AdmissionResponseBuilder,
 )
+
+
+def __getattr__(name):
+    """延迟导入避免缺失模块阻塞整个包初始化."""
+    if name == "budget_enforcer_mod":
+        import zephyr.governance.budget_enforcement as _mod
+        return _mod
+    if name == "rollback_mod":
+        import zephyr.governance.rollback as _mod
+        return _mod
+    if name == "a2a_protocol":
+        import zephyr.l01_infrastructure.a2a_protocol.governance as _mod
+        return _mod
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 __all__ = [
     'agent_debate', 'agent_dispatch', 'ai_code_standards',

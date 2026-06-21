@@ -1,3 +1,4 @@
+# [A_config] module_id=CFG-category-vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: DOM-GOV-001
@@ -12,7 +13,7 @@
 # 创建日期：2026-05-06
 #
 # 本词表定义 category 字段的所有合法值（10 种）。
-# 用于 knowledge-article-registry.yaml 和 KMS 知识条目分类。
+# 用于 knowledge-article-registry.md 和 KMS 知识条目分类。
 #
 # 对标标准：
 #   - PS-STD-001 §9.1：知识条目内容类型
@@ -57,7 +58,7 @@ values:
 
   - value: lesson_learned
     definition: "经验教训——错误记录与改进措施"
-    ai_consumption: "经验教训条目须包含根本原因分析（5 Whys）。"
+    ai_consumption: "经验教训条目须包含根本原因分析（追问到底）。"
     ai_keywords: ["教训", "错误", "改进", "复盘"]
 
   - value: architecture

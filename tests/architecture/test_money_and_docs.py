@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0065 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-223 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.architecture.test_money_and_docs
 # [STABILITY] evolving
 # [SAFETY] L
@@ -53,14 +54,14 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC_DIR = REPO_ROOT / "src" / "zephyr"
 
 LAYER_ORDER = [
-    "l00_data_source",
-    "l01_infrastructure",
-    "l02_alpha_factor",
-    "l03_signal_generation",
-    "l04_risk_management",
-    "l05_portfolio_construction",
-    "l06_trade_execution",
-    "l07_post_trade_analytics",
+    "l00-data-source",
+    "l01-infrastructure",
+    "l02-alpha-factor",
+    "l03-signal-generation",
+    "l04-risk-management",
+    "l05-portfolio-construction",
+    "l06-trade-execution",
+    "l07-post-trade-analytics",
 ]
 
 

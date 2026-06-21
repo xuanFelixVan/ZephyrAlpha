@@ -3,7 +3,7 @@ import sys
 sys.path.insert(0, r"d:\ZephyrAlpha\src")
 
 import inspect
-from zephyr.db.task_repo import TaskRepository
+from zephyr.governance.persistence.task_repo import TaskRepository
 
 src = inspect.getsource(TaskRepository.transition)
 if "DEBUG" in src:

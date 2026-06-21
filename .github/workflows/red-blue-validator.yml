@@ -1,0 +1,103 @@
+# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §12 + §16 Phase 3
+name: Red-Blue Adversarial Validator
+
+on:
+  push:
+    branches: [main, master, "phase/*", "sprint/*", "feature/*"]
+    paths:
+      - "src/zephyr/red_blue_validator/**"
+      - "src/zephyr/gates/**"
+      - "src/zephyr/llm_security/**"
+      - "src/zephyr/escalation-engine/**"
+      - "src/zephyr/governance/**"
+      - "src/zephyr/feedback_loop/gates/**"
+      - "src/zephyr/agent_rbac/**"
+      - "src/zephyr/circuit_breaker/**"
+      - "src/zephyr/drift_detector/**"
+  pull_request:
+    branches: [main, master]
+    paths:
+      - "src/zephyr/red_blue_validator/**"
+      - "src/zephyr/gates/**"
+  workflow_dispatch:
+
+jobs:
+  adversarial-session:
+    name: Red-Blue Adversarial Session
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements-dev.txt
+          pip install -e .
+
+      - name: Cold Start Bootstrap
+        run: python -m zephyr.red_blue_validator onboard --source-dir src/zephyr
+        continue-on-error: true
+
+      - name: Red-Blue Adversarial Run
+        id: adversarial
+        run: python -m zephyr.red_blue_validator run --tier 1 --blast-radius FILE --format json
+        continue-on-error: true
+
+      - name: Generate Report
+        if: always()
+        run: python -m zephyr.red_blue_validator report --format json --output data/red_blue/ci_report.json
+
+      - name: Check Convergence
+        if: always()
+        run: python -m zephyr.red_blue_validator status
+        continue-on-error: true
+
+      - name: Upload Report Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: red-blue-report
+          path: data/red_blue/ci_report.json
+          retention-days: 30
+
+  game-day-daily:
+    name: Game Day Daily Sweep
+    runs-on: windows-latest
+    timeout-minutes: 45
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements-dev.txt
+          pip install -e .
+
+      - name: Run Game Day
+        id: gameday
+        run: python -m zephyr.red_blue_validator gameday --frequency DAILY --timeout 2400
+        continue-on-error: true
+
+      - name: Upload Game Day Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: red-blue-gameday-report
+          path: data/red_blue/gameday_report.json
+          retention-days: 7

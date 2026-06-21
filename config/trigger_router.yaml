@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-002 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# blueprint: MOD-INF-002 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: M
@@ -9,13 +9,13 @@
 #
 # 任务编号 : T-V2-007（experimental RI-03）
 # 权限层级 : Human-Gated（路由表修改 = 关键架构变更，R84 修正）
-# 真源声明 : ai-autonomy-authority-registry.md §2.9（RI-03）+ §2.10（三件套）
+# 真源声明 : ai_autonomy_authority_registry.md §2.9（RI-03）+ §2.10（三件套）
 # 关联决策 : rationale-log R84（RI-02/03 偏松 → Human-Gated 修正）
 #            B6 §2.4（RI-03 设计）
 # 创建日期 : 2026-04-27
 #
 # 路由表语义
-# ----------
+# _______---
 # triggers.<trigger_type>:
 #   handler:     完全限定的处理器函数路径（"<module>.<function>"）
 #   description: 触发场景的中文说明（≤ 100 字符）
@@ -23,7 +23,7 @@
 #   enabled:     是否启用（false 时 dispatch 静默忽略）
 #
 # 处理器函数签名
-# --------------
+# ______________
 # def handler(payload: dict[str, Any], **context) -> Any:
 #     ...
 # - payload: TriggerRouter.dispatch() 透传的负载字典
@@ -31,8 +31,9 @@
 # - 返回值通过 RouterDispatchResult.handler_result 返回给调用方
 #
 # v0.2.0: 所有 handler 已从 stub 升级为真实实现（含 fallback 保护）
-# -----------------------------------
+# ________________________________---
 
+module_id: MOD-INF-002
 version: "1.0.0"
 schema_version: "1.0.0"
 doc_type: rule
@@ -42,7 +43,7 @@ ttl: permanent
 
 triggers:
   onboarding:
-    handler: "zephyr.orchestrator.trigger_router.handle_onboarding_stub"
+    handler: "zephyr.orchestration.runtime_core.orchestrator.trigger_router.handle_onboarding_stub"
     description: "新会话或 Agent 注册时加载上下文与历史"
     safety: "M"
     enabled: true
@@ -52,7 +53,7 @@ triggers:
     notes: "v0.2.0 — 内部调用 layer_router.get_layer_order() 真实实现，fallback 到 stub"
 
   drift_detected:
-    handler: "zephyr.orchestrator.trigger_router.handle_drift_stub"
+    handler: "zephyr.orchestration.runtime_core.orchestrator.trigger_router.handle_drift_stub"
     description: "Drift Detector 报告偏移时触发恢复流程"
     safety: "H"
     enabled: true
@@ -62,7 +63,7 @@ triggers:
     notes: "v0.2.0 — 内部调用 drift_detector.trigger_recovery() 真实实现，fallback 到 stub"
 
   compression_needed:
-    handler: "zephyr.context_engine.context_budget_tracker.handle_compression_needed"
+    handler: "zephyr.orchestration.context_management.context_budget_tracker.handle_compression_needed"
     description: "Token 预算紧张时通过 DocCompressor 压缩文档"
     safety: "M"
     enabled: true
@@ -72,7 +73,7 @@ triggers:
     notes: "Phase C — 真实实现已兑现"
 
   cleanup_due:
-    handler: "zephyr.orchestrator.trigger_router.handle_cleanup_stub"
+    handler: "zephyr.orchestration.runtime_core.orchestrator.trigger_router.handle_cleanup_stub"
     description: "周期性清理任务（孤儿快照 / 过期审计日志等）"
     safety: "L"
     enabled: true
@@ -82,7 +83,7 @@ triggers:
     notes: "v0.2.0 — 内部调用 archive_drafts_zone.py 真实脚本，fallback 到 stub"
 
   blueprint_published:
-    handler: "zephyr.orchestrator.trigger_router.handle_blueprint_stub"
+    handler: "zephyr.orchestration.runtime_core.orchestrator.trigger_router.handle_blueprint_stub"
     description: "新蓝图发布后触发反思循环与 KE 索引"
     safety: "M"
     enabled: true
@@ -92,7 +93,7 @@ triggers:
     notes: "v0.2.0 — 内部调用 feedback_loop.decision_engine.reflect_on_blueprint() 真实实现，fallback 到 stub"
 
   blueprint_lookup:
-    handler: "zephyr.orchestrator.trigger_router.handle_blueprint_lookup_stub"
+    handler: "zephyr.orchestration.runtime_core.orchestrator.trigger_router.handle_blueprint_lookup_stub"
     description: "AI Agent 查询当前任务该读哪份蓝图——路由到 config/blueprint_routing.yaml"
     safety: "L"
     enabled: true
@@ -103,10 +104,10 @@ triggers:
 
 # --- AUTO-GENERATED WIRING STATUS START ---
 # trigger: compression_needed → handle_compression_needed（✅ 真实） ✅→ (已兑现) [experimental（T-V2-006）]
-# trigger: onboarding → handle_onboarding_stub（🔲 stub） 🔲→ zephyr.mcp.handoff_auto_loader.HandoffAutoLoader.load_context [experimentalf（T-V2-009）]
-# trigger: drift_detected → handle_drift_stub（🔲 stub） 🔲→ zephyr.gates.drift_detector.DriftDetector.trigger_recovery [experimentalf（T-V2-009）]
+# trigger: onboarding → handle_onboarding_stub（🔲 stub） 🔲→ zephyr.integration.mcp.handoff_auto_loader.HandoffAutoLoader.load_context [experimentalf（T-V2-009）]
+# trigger: drift_detected → handle_drift_stub（🔲 stub） 🔲→ zephyr.resilience.escalation.drift_detector.DriftDetector.trigger_recovery [experimentalf（T-V2-009）]
 # trigger: cleanup_due → handle_cleanup_stub（🔲 stub） 🔲→ scripts.governance.archive_drafts_zone.archive_expired_drafts [experimentalg+]
-# trigger: blueprint_published → handle_blueprint_stub（🔲 stub） 🔲→ zephyr.feedback_loop.decision_engine.DecisionEngine.reflect_on_blueprint [experimental（T-V2-008）]
+# trigger: blueprint_published → handle_blueprint_stub（🔲 stub） 🔲→ zephyr.observability.feedback_loop.decision_engine.DecisionEngine.reflect_on_blueprint [experimental（T-V2-008）]
 #
 # 真实 handler 实施后:
 #   (1) 更新 trigger_router.yaml triggers.<type>.handler 为真实路径

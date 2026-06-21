@@ -1,0 +1,55 @@
+# [A_test] module_id: SRC-TST-0796 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md | §
+# [MODULE] tests.test_e_error_budget_burst_limiter
+# [INVARIANTS] test完整性
+# [MODIFY-GUARD] none
+# [CONSUMERS] none
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] none
+# [TESTS] self
+
+from __future__ import annotations
+
+import time
+
+import pytest
+
+from zephyr.governance.error_budget_burst_limiter import BurstLimiter
+
+
+class TestBurstLimiterInit:
+    def test_default_state(self):
+        limiter = BurstLimiter()
+        assert limiter._burst_window_s == 60
+        assert limiter._max_burst == 10
+        assert limiter._requests == []
+
+
+class TestBurstLimiterAllow:
+    def test_first_request_allowed(self):
+        limiter = BurstLimiter()
+        assert limiter.allow() is True
+
+    def test_requests_up_to_max_burst(self):
+        limiter = BurstLimiter()
+        for _ in range(10):
+            assert limiter.allow() is True
+
+    def test_exceeds_max_burst(self):
+        limiter = BurstLimiter()
+        for _ in range(10):
+            limiter.allow()
+        assert limiter.allow() is False
+
+    def test_requests_stored(self):
+        limiter = BurstLimiter()
+        limiter.allow()
+        assert len(limiter._requests) == 1
+
+    def test_requests_capped_at_max_burst(self):
+        limiter = BurstLimiter()
+        for _ in range(15):
+            limiter.allow()
+        assert len(limiter._requests) == 10

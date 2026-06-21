@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0140 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-297 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.governance.test_phase1_gate_check
 # [STABILITY] evolving
 # [SAFETY] L
@@ -14,19 +15,19 @@ GOVERNANCE_DIR = Path(__file__).resolve().parents[2] / "src" / "zephyr" / "gover
 
 PHASE1_REQUIRED_FILES = [
     "governance/__init__.py",
-    "governance/agent_rbac/__init__.py",
-    "governance/agent_spec/__init__.py",
-    "governance/audit_trail/__init__.py",
+    "governance/agent-rbac/__init__.py",
+    "governance/agent-spec/__init__.py",
+    "governance/audit-trail/__init__.py",
     "governance/rollback/__init__.py",
     "governance/escalation/__init__.py",
-    "governance/drift_detector/__init__.py",
-    "governance/budget_enforcer/__init__.py",
+    "governance/drift-detector/__init__.py",
+    "governance/budget-enforcer/__init__.py",
     "governance/a2a/__init__.py",
 ]
 
 EIGHT_MODULES = [
-    "agent_rbac", "agent_spec", "audit_trail", "rollback",
-    "escalation", "drift_detector", "budget_enforcer", "a2a",
+    "agent-rbac", "agent-spec", "audit-trail", "rollback",
+    "escalation", "drift-detector", "budget-enforcer", "a2a",
 ]
 
 

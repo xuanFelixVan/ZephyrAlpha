@@ -1,6 +1,7 @@
 ---
 blueprint_id: DOM-GOV-001
----
+title: Core.Manifest
+module_id: MOD-052---
 
 # core/ 文件清单（自动生成 2026-05-09）
 
@@ -9,7 +10,7 @@ blueprint_id: DOM-GOV-001
 - __init__.py
 - blueprint_code_sync.py
 - blueprint_decomposer.py
-- context_engine.py
+- context-engine.py
 - healthcheck_service.py
 - models.py
 - session_continuity.py
@@ -19,7 +20,7 @@ blueprint_id: DOM-GOV-001
 - compensation/__init__.py
 - compensation/saga_compensator.py
 - dependency/__init__.py
-- dependency/dependency_graph.py
+- dependency/dependency-graph.py
 - draft/__init__.py
 - draft/draft_assistant.py
 - events/__init__.py

@@ -1,0 +1,222 @@
+rule_id: TRAE-008
+title: 防幻觉-输出验证层
+aliases:
+- ANTI-HALL-11
+- ANTI-HALL-12
+- ANTI-HALL-13
+- ANTI-HALL-14
+layer: L0
+severity: critical
+scope: output_verification
+domain: TRAE
+triggers:
+- operation: code_write
+- operation: code_modify
+sections:
+  anti_hall_11:
+    title: 步骤验证门——每步验证后才进下一步
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-11
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 每步完成MUST验证成功后才进下一步
+    prohibitions:
+    - 跳过验证直接进下一步
+    - 错误累积不回溯
+  anti_hall_12:
+    title: 导入验证——确认import目标存在
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-12
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 使用任何import/API/函数前MUST Grep/Read确认存在
+    prohibitions:
+    - 引用不存在的库/API/模块
+  anti_hall_13:
+    title: 自审闭环——产出代码后逐项检查
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-13
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 产出代码后MUST对照需求自审：功能完整？边界？错误路径？
+    prohibitions:
+    - 输出与需求不匹配
+  anti_hall_14:
+    title: 新代码必测——新建/修改必须测试
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-14
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 新建/修改代码→MUST写或更新测试
+    prohibitions:
+    - 无测试=未完成
+    - 修改Bug不添加回归测试
+  gov_eng_008_step_verification:
+    title: 步骤验证门流程
+    section_type: procedure
+    original_rules:
+    - ANTI-HALL-11
+    items:
+    - order: 1
+      action: "完成当前步骤"
+      pre_condition: "前一步骤已验证通过"
+      expected_result: "当前步骤产出完成"
+      on_failure: "回退到前一步骤检查"
+    - order: 2
+      action: "运行验证命令"
+      pre_condition: "步骤产出完成"
+      expected_result: "exit 0"
+      on_failure: "修复问题→重新验证→exit 0后才进下一步"
+    - order: 3
+      action: "进入下一步骤"
+      pre_condition: "验证通过(exit 0)"
+      expected_result: "下一步骤开始"
+      on_failure: "禁止跳过验证直接进下一步"
+  gov_eng_008_import_verification:
+    title: 导入验证操作清单
+    section_type: procedure
+    original_rules:
+    - ANTI-HALL-12
+    items:
+    - order: 1
+      action: "from zephyr.xxx import Yyy → Grep 'class Yyy' 或 Read目标文件确认存在"
+      pre_condition: "准备使用新import"
+      expected_result: "目标类/函数在文件中存在"
+      on_failure: "禁止使用不存在的import"
+    - order: 2
+      action: "import some_library → Grep requirements.txt/pyproject.toml确认已安装"
+      pre_condition: "准备引入第三方库"
+      expected_result: "库在依赖列表中"
+      on_failure: "必须先安装依赖"
+    - order: 3
+      action: "调用obj.method() → Read obj的类定义确认method存在"
+      pre_condition: "准备调用对象方法"
+      expected_result: "方法在类定义中存在"
+      on_failure: "禁止调用不存在的方法"
+    - order: 4
+      action: "使用config.KEY → Read配置文件确认KEY存在"
+      pre_condition: "准备使用配置项"
+      expected_result: "KEY在配置文件中存在"
+      on_failure: "禁止使用不存在的配置项"
+  gov_eng_008_self_audit:
+    title: 自审闭环检查项
+    section_type: verification
+    original_rules:
+    - ANTI-HALL-13
+    items:
+    - step: "功能完整检查"
+      command: "对照需求逐项确认每个点都有对应实现"
+      expected_exit: 0
+      on_fail: "缺失功能点——必须补充实现"
+    - step: "边界处理检查"
+      command: "检查空输入/零值/None/超长输入是否有处理"
+      expected_exit: 0
+      on_fail: "边界未处理——必须添加边界处理"
+    - step: "错误路径检查"
+      command: "检查try/except是否覆盖所有可能失败点"
+      expected_exit: 0
+      on_fail: "错误路径未覆盖——必须添加异常处理"
+    - step: "类型一致检查"
+      command: "检查函数签名类型与实际使用是否一致"
+      expected_exit: 0
+      on_fail: "类型不一致——必须修正"
+    - step: "导入完整检查"
+      command: "检查所有使用的类型/函数都已导入"
+      expected_exit: 0
+      on_fail: "导入缺失——必须补充"
+  gov_eng_008_test_requirements:
+    title: 新代码必测场景
+    section_type: examples
+    original_rules:
+    - ANTI-HALL-14
+    items:
+    - description: "新建模块"
+      details: "MUST创建test_{module}.py"
+    - description: "修改函数"
+      details: "MUST更新或添加对应测试用例"
+    - description: "修改Bug"
+      details: "MUST添加回归测试"
+    - description: "豁免场景"
+      details: "__init__.py / 纯配置YAML不需要测试"
+  gov_eng_008_cross_refs:
+    title: 交叉引用
+    section_type: context
+    original_rules:
+    - ANTI-HALL-11
+    - ANTI-HALL-12
+    - ANTI-HALL-13
+    - ANTI-HALL-14
+    summary: 输出验证层(#11-#14)是防幻觉十八条的第三层，承接行为约束层(#7-#10)
+    impact_on_rules: 输出验证不通过=代码不可交付
+    key_decisions:
+    - 步骤验证门防止错误累积
+    - 导入验证是幻觉最高发的防范点
+    - 自审闭环5项检查缺一不可
+  gov_eng_008_scope:
+    title: 适用范围
+    section_type: context
+    original_rules:
+    - ANTI-HALL-11
+    - ANTI-HALL-12
+    - ANTI-HALL-13
+    - ANTI-HALL-14
+    summary: 输出验证层(#11-#14)适用于所有代码产出后的验证操作，承接行为约束层(#7-#10)
+    impact_on_rules: 输出验证不通过=代码不可交付
+    key_decisions:
+    - 步骤验证门防止错误累积
+    - 导入验证是幻觉最高发的防范点
+    - 自审闭环5项检查缺一不可
+    - 新代码必测确保测试覆盖
+  gov_eng_008_change_history:
+    title: 变更历史
+    section_type: context
+    original_rules:
+    - ANTI-HALL-11
+    - ANTI-HALL-12
+    - ANTI-HALL-13
+    - ANTI-HALL-14
+    summary: 输出验证层#11-#14提取自GOV-ENG-001§8.5-§8.7
+    impact_on_rules: 无结构性变更
+    key_decisions:
+    - "#11-#14从GOV-ENG-001§8独立提取为规则条目"
+    items:
+    - version: '1.1.0'
+      date: '2026-06-19'
+      change: 'RQ审查修复：移除provenance中已删除的code_construction_standards.md源文件引用（RQ-04引用断裂）；同步project_rules.md和onboarding_detail.md哈希到当前值（RQ-09哈希不匹配）'
+    - version: '1.0.0'
+      date: '2026-06-13'
+      change: '初始提取——#11-#14从GOV-ENG-001§8独立提取为规则条目'
+references:
+  rule_ids: []
+  scripts: []
+  modules: []
+  blueprints:
+  - GOV-ENG-001
+  - GOV-ENG-002
+enforcement:
+  type: code
+  executors:
+  - ruff
+  - mypy
+  - pre-commit
+  - audit_registration.py
+  bypass_allowed: false
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001
+  note: '2026-06-19 RQ审查：移除已删除的 code_construction_standards.md 源文件引用（内容已迁移到
+    trae_006/007/008/009 + project_rules.md + onboarding_detail.md）；同步 project_rules.md
+    和 onboarding_detail.md 的哈希到当前值'

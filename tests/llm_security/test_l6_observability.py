@@ -1,3 +1,4 @@
+# [A_test] module_id: SRC-TST-0197 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
 # [MODULE] tests.llm_security.test_l6_observability
 # [STABILITY] evolving
@@ -9,7 +10,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from zephyr.llm_security.layers.l6_observability import (
+from zephyr.security.llm_defense.llm_security.layers.l6_observability import (
     AlertSender,
     AlertSeverity,
     DashboardMetrics,
@@ -161,7 +162,7 @@ class TestObservabilityLayer:
 
     @pytest.mark.asyncio
     async def test_evaluate_pass_through(self):
-        from zephyr.llm_security.protocol import SecurityContext, SecurityDecision
+        from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
         layer = ObservabilityLayer()
         ctx = SecurityContext(
             request_id="test-l6-eval",
@@ -175,7 +176,7 @@ class TestObservabilityLayer:
 
     @pytest.mark.asyncio
     async def test_evaluate_logs_event(self):
-        from zephyr.llm_security.layers.l6_observability import SecurityEventType, AlertSeverity
+        from zephyr.security.llm_defense.llm_security.layers.l6_observability import SecurityEventType, AlertSeverity
         layer = ObservabilityLayer()
         layer.log_security_event(
             SecurityEventType.PROMPT_BLOCKED,

@@ -1,5 +1,5 @@
----
-module_id: AI-ENG-VMS-001
+﻿---
+module_id: GOV-AI-ENG-VMS-001
 title: Vector Memory Service Interface / 向量记忆服务接口规范
 doc_type: service_interface_spec
 status: Active
@@ -13,12 +13,12 @@ created_date: "2026-04-24"
 last_updated: "2026-05-06"
 ttl: permanent
 truth_source:
-  - "03_modules/l01_infrastructure/vector-memory/blueprint.md（MOD-INF-011 — 详细设计与 Collection 契约；蓝图真源）"
+  - "03_modules/infra_ops/vector-memory/blueprint.md（MOD-INF-011 — 详细设计与 Collection 契约；蓝图真源）"
   - "architecture-model/layers/b_vector_memory.yaml（Vector Memory YAML SSoT）"
 supersedes:
   - "archive/reorg-2026-04-24/08_ai_engineering/memory-interface-contract.md (archived 2026-04-24)"
-related_adrs:
-  - "ADR-0016 Vector Memory Service 选型与渐进实施（pending B-e）"
+related_kb:
+  - "KBG-0016 Vector Memory Service 选型与渐进实施（pending B-e）"
 integration_points:
   - "Context Engine (downstream, 主消费者)"
   - "Agent Orchestrator (upstream writer)"
@@ -80,7 +80,7 @@ mod_master_contracts:
 
 ### 1.1 缺口 → 原因 → 解法
 
-**缺口**：AI Agent 编写代码时需要跨会话检索项目积累的知识（ADR / 代码 / 任务卡 / 教训），老方案要求人工分拣到六层 KMS，上线后 0 人分拣，知识库空转。
+**缺口**：AI Agent 编写代码时需要跨会话检索项目积累的知识（KB 决策记录 / 代码 / 任务卡 / 教训），老方案要求人工分拣到六层 KMS，上线后 0 人分拣，知识库空转。
 
 **原因**：
 1. 老方案把"知识价值评审"与"知识检索"耦合——分拣门（G1-G5）成为入库前置阻塞
@@ -107,7 +107,7 @@ mod_master_contracts:
 **关键决策**：定义 `VectorMemoryProtocol` 抽象基类，两种实现共享同一签名，业务层永远依赖 Protocol 而非具体实现，升级时零重写。
 
 ```python
-# src/zephyr/vector_memory/protocol.py (experimental 产出)
+# src/zephyr/security/llm_defense/llm-security/protocol.py (experimental 产出)
 
 from typing import Protocol, Literal
 
@@ -145,12 +145,12 @@ class RemoteVectorMemory:
 
 ## 2. 技术选型表（真源锁定）
 
-| 组件 | 首选 | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 ADR |
+| 组件 | 首选 | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 KB 决策记录 |
 |------|----------------|------|-------|---------|---------|----------|
-| 向量数据库 | **ChromaDB 0.6** | Qdrant 本地模式 | Weaviate / Pinecone（网络依赖） | 纯 Python、零外部依赖、Windows 原生支持 | 数据 > 10GB 或 chunks > 500k | ADR-0016 |
-| Embedding 模型 | **BAAI/bge-m3 ONNX 量化** | text-embedding-3-small（OpenAI） | Ada-002（已淘汰） | 本地推理、多语言、1024 维、MIT License | 本地质量 < API 质量 20% | ADR-0016 |
-| 分块策略 | **递归字符分块** | 语义分块（spaCy） | 固定长度分块 | 自动保留语义单元；spaCy 重量级 | 召回率 < 80% 或长文 > 50KB 频繁出现 | ADR-0016 |
-| multi_search 合并策略 | **RRF 倒数排名融合**（Cormack 2009） | 加权分数融合（需配权重） | 级联串行检索（延迟高） | 不同 Collection 向量距离尺度不同，RRF 只看排名不看分数 | - | ADR-0016 |
+| 向量数据库 | **ChromaDB 0.6** | Qdrant 本地模式 | Weaviate / Pinecone（网络依赖） | 纯 Python、零外部依赖、Windows 原生支持 | 数据 > 10GB 或 chunks > 500k | KBG-0016 |
+| Embedding 模型 | **BAAI/bge-m3 ONNX 量化** | text-embedding-3-small（OpenAI） | Ada-002（已淘汰） | 本地推理、多语言、1024 维、MIT License | 本地质量 < API 质量 20% | KBG-0016 |
+| 分块策略 | **递归字符分块** | 语义分块（spaCy） | 固定长度分块 | 自动保留语义单元；spaCy 重量级 | 召回率 < 80% 或长文 > 50KB 频繁出现 | KBG-0016 |
+| multi_search 合并策略 | **RRF 倒数排名融合**（Cormack 2009） | 加权分数融合（需配权重） | 级联串行检索（延迟高） | 不同 Collection 向量距离尺度不同，RRF 只看排名不看分数 | - | KBG-0016 |
 | 进程内并发 | **`asyncio.Lock`** | - | `threading.Lock`（阻塞事件循环）| 项目全异步栈 | 服务化后废除 | - |
 | 跨进程并发 | **`filelock.FileLock`** | `msvcrt.locking`（Windows Only） | 全局单例 | pytest 并发 + 多 Agent 场景 | 服务化后废除 | - |
 | 服务运行时（beta 启用） | FastAPI | gRPC | Flask | FastAPI 原生 async + OpenAPI | RPS > 500 → gRPC | - |
@@ -167,7 +167,7 @@ VMS 管理 **4 个预定义 Collection**，按检索用途分区，支持跨 Col
 |-----------|------|-------------------|
 | `decisions` | 架构决策与合约 | **KB:decisions**（SQLite `knowledge`，`category=architecture_decision`，`ke_id=ADR-*`）、`03_modules/_b_track_interfaces/*interface*.md` |
 | `code_context` | 代码与配置 | `src/**/*.py`、`src/**/*.yaml`、`docs/03_modules/**/*.md` |
-| `task_history` | 任务卡与执行历史 | `docs/03_modules/l01_infrastructure/task-system/changes/**/*.md`（拆卡/任务卡样例）、`src/zephyr/db/task_repo.py` 持久化任务元数据（见 MOD-INF-006） |
+| `task_history` | 任务卡与执行历史 | `docs/03_modules/_domain-infra_ops/task-system/changes/**/*.md`（拆卡/任务卡样例）、`src/zephyr/data/persistence/task_repo.py` 持久化任务元数据（见 MOD-INF-006） |
 | `lessons` | 经验教训与审计 | `docs/09_audit/reports/`、`docs/09_audit/findings/` |
 
 ### 3.2 Cascade 语义表（4 种场景）
@@ -175,19 +175,19 @@ VMS 管理 **4 个预定义 Collection**，按检索用途分区，支持跨 Col
 update / delete 动作的级联策略，每种对应不同的业务触发：
 
 ```python
-# src/zephyr/vector_memory/cascade.py (experimental 产出)
+# src/zephyr/data/knowledge_management/vector-memory/cascade.py (experimental 产出)
 
 from enum import Enum
 
 class CascadeStrategy(str, Enum):
-    SUPERSEDE = "supersede"   # ADR 替代 / 规范版本迭代
+    SUPERSEDE = "supersede"   # KB 决策记录 替代 / 规范版本迭代
     REORDER   = "reorder"     # 任务依赖调整
     DELETE    = "delete"      # 源文件删除
     MERGE     = "merge"       # 重复条目合并
 
 CASCADE_SCENARIOS = {
     "supersede": {
-        "trigger":        "新 ADR/契约明确替代旧版",
+        "trigger":        "新 KB 决策记录/契约明确替代旧版",
         "action":         "旧条目 metadata.superseded_by = 新条目ID，旧 chunks 保留",
         "search_weight":  0.1,   # 检索权重降级到 10%，除非 include_superseded=True
         "gc_eligible":    False, # gc() 不清理（历史留档）
@@ -216,7 +216,7 @@ CASCADE_SCENARIOS = {
 ### 3.3 Pydantic Schemas
 
 ```python
-# src/zephyr/vector_memory/schemas.py (experimental 产出)
+# src/zephyr/integration/shared/schema/schemas.py (experimental 产出)
 
 from pydantic import BaseModel, Field
 from typing import Optional, Literal
@@ -303,7 +303,7 @@ class SyncResult(BaseModel):
 ### 4.1 Python 库 API（experimental 主用，`InProcessVectorMemory` 实现）
 
 ```python
-# src/zephyr/vector_memory/in_process.py (experimental 产出)
+# src/zephyr/data/knowledge_management/vector-memory/in_process.py (experimental 产出)
 
 class InProcessVectorMemory:  # implements VectorMemoryProtocol
     """experimental 默认实现。所有方法均为 async，依赖 ChromaDB SDK。"""
@@ -359,7 +359,7 @@ class InProcessVectorMemory:  # implements VectorMemoryProtocol
     ) -> UpdateResult:
         """
         更新已入库文档。四种 cascade 策略见 §3.2 表：
-          - supersede（默认，适合 ADR / 契约 / 规范变更，保留历史）
+          - supersede（默认，适合 KB 决策记录 / 契约 / 规范变更，保留历史）
           - reorder（适合任务卡依赖变更，不动 chunks）
           - delete（触发物理删除）
           - merge（去重合并，旧 doc 指向新 doc）
@@ -397,7 +397,7 @@ class InProcessVectorMemory:  # implements VectorMemoryProtocol
     ) -> MultiSearchResult:
         """
         跨 Collection 联合检索。遗漏 #3 补充。
-        典型场景：AI 编写 L02 因子代码时需要 decisions(ADR) + code_context(接口) + lessons(教训)
+        典型场景：AI 编写 L02 因子代码时需要 decisions(KB 决策记录) + code_context(接口) + lessons(教训)
 
         merge_strategy（experimental 默认 rrf）：
           - "rrf"（推荐）：倒数排名融合 score = Σ 1/(k + rank_i)，k=60。
@@ -453,12 +453,12 @@ HTTP 请求 / 响应 schema = 库方法入参 / 出参的 Pydantic JSON 序列�
 | 前置项 | 状态 | 所在任务 |
 |-------|:----:|---------|
 | `src/zephyr/config/embedding_model_registry.yaml` | ✅ 已存在 | - |
-| `src/zephyr/vector_memory/` 包创建 | ⏳ 待建 | experimental T-1-XX |
+| `src/zephyr/vector-memory/` 包创建 | ⏳ 待建 | experimental T-1-XX |
 | BGE-M3 ONNX 模型下载到 `.models/bge-m3/` | ⏳ 待建 | experimental T-1-XX |
-| `.runtime/` 目录规范写入 `directory-structure-standard.md` | ⏳ 待修订 | B-d 阶段（B3/B4） |
+| `.runtime/` 目录规范写入 `trae_028_doc_structure_naming.yaml` | ⏳ 待修订 | B-d 阶段（B3/B4） |
 | `.gitignore` 追加 `.runtime/` + `.models/` | ⏳ 待追加 | experimental T-1-XX 首步 |
 | `vibe_config.yaml::runtime_root` 字段定义 | ⏳ 待修订 | B-d 阶段（B3） |
-| ADR-0016 批准 | ⏳ pending | B-e 阶段 |
+| KBG-0016 批准 | ⏳ pending | B-e 阶段 |
 
 ### 5.2 Python 依赖（锁定版本写入 pyproject.toml）
 
@@ -485,7 +485,7 @@ vector-memory = [
 ```
 
 ├── src/zephyr/
-│   ├── vector_memory/                              # ⏳ experimental 新建
+│   ├── vector-memory/                              # ⏳ experimental 新建
 │   │   ├── __init__.py                             # 导出 get_vm() 工厂（按配置返回 InProcess 或 Remote 实现）
 │   │   ├── protocol.py                             # VectorMemoryProtocol 抽象基类（§1.3）
 │   │   ├── in_process.py                           # experimental 实现（ChromaDB SDK）
@@ -503,7 +503,7 @@ vector-memory = [
 │   │   └── config.py                               # VMConfig 加载
 │   ├── config/
 │   │   ├── embedding_model_registry.yaml           # ✅ 已存在
-│   │   └── vector_memory.yaml                      # ⏳ 新建：runtime_root 引用 + ChromaDB 配置
+│   │   └── vector-memory.yaml                      # ⏳ 新建：runtime_root 引用 + ChromaDB 配置
 │   └── clients/                                    # beta 启用时才建
 │
 ├── vibe_config.yaml                                # ⏳ B-d 修订新增字段
@@ -525,7 +525,7 @@ vector-memory = [
 ├── .models/                                        # ⏳ 本地模型（加 .gitignore）
 │   └── bge-m3/                                     # ONNX 模型文件 (~1.2GB)
 │
-├── tests/unit/vector_memory/                       # ⏳ experimental 新建
+├── tests/unit/vector-memory/                       # ⏳ experimental 新建
 │   ├── test_chunker.py
 │   ├── test_embedder.py
 │   ├── test_chroma_adapter.py
@@ -544,7 +544,7 @@ vector-memory = [
 ```
 
 **关键约定**（本接口就地锁定）：
-1. **`.runtime/`** = 所有服务运行时数据根目录（B-d 阶段 `directory-structure-standard.md` 新增一节）
+1. **`.runtime/`** = 所有服务运行时数据根目录（B-d 阶段 `trae_028_doc_structure_naming.yaml` 新增一节）
 2. **`.models/`** = 本地模型文件根目录，不入 git
 3. ChromaDB **每个 Collection 独立 persist_directory**（便于单独备份/重建）
 4. **路径可配置**：`vibe_config.yaml::runtime_root` 支持环境变量覆盖（测试环境可用 `/tmp/zephyr-runtime/`）
@@ -578,7 +578,7 @@ vector-memory = [
 | **KB:decisions**（SQLite ingest / MCP KB） | `decisions` |
 | `docs/03_modules/_b_track_interfaces/*interface*.md` | `decisions` |
 | `src/**/*.py`, `src/**/*.yaml`, `docs/03_modules/**` | `code_context` |
-| `docs/03_modules/l01_infrastructure/task-system/changes/**` | `task_history` |
+| `docs/03_modules/_domain-infra_ops/task-system/changes/**` | `task_history` |
 | `docs/09_audit/reports/**`, `docs/09_audit/findings/**` | `lessons` |
 | 其他 | `code_context`（保守默认） |
 
@@ -588,7 +588,7 @@ vector-memory = [
 
 | Phase | 范围 | 验收标准 |
 |:-:|------|---------|
-| **scaffold**（当前） | 接口规范定稿（本文档） | ADR-0016 Active + 接口规范 Active |
+| **scaffold**（当前） | 接口规范定稿（本文档） | KBG-0016 Active + 接口规范 Active |
 | **experimental** | `InProcessVectorMemory` 实现 + `bulk_bootstrap` 200+ 文档首次导入 | ① §11 P0 用例全通过<br>② 导入 `docs/**/*.md` 全量成功<br>③ Context Engine `multi_search` p50 < 200ms |
 | **beta** | git post-commit hook 接 `sync_document` + MCP Server 重构 | ① commit 后 5s 内增量入库<br>② MCP `knowledge_base_server.py` 调用转发到 `get_vm()` |
 | **beta** | `RemoteVectorMemory` 独立服务（按需触发才启动） | 触发条件满足时启动；业务层切 factory 即可，零重写 |
@@ -631,7 +631,7 @@ HTTP 映射：`VMConfigError`→503 / `VMEmbeddingError`→422 / `VMStorageError
 try:
     results = await vm.multi_search(query, collections)
     if results.degraded:                       # 上游必须检查此标记
-        context_engine.fallback_to_filesystem_grep(query)
+        context-engine.fallback_to_filesystem_grep(query)
 except VMStorageError:
     # search/multi_search 内部捕获并返回 degraded=True 空结果，通常不抛到调用方
     # 若抛到这里说明基础设施已彻底失效
@@ -708,7 +708,7 @@ except VMStorageError:
 
 | # | 用例 | 前置 | 动作 | 预期 |
 |:-:|------|------|------|------|
-| P0-R1 | 单 Collection 语义检索 | decisions 含 ADR-0016 | `search("ChromaDB 选型", decisions)` | top_1 为 ADR-0016，score > 0.5 |
+| P0-R1 | 单 Collection 语义检索 | decisions 含 KBG-0016 | `search("ChromaDB 选型", decisions)` | top_1 为 KBG-0016，score > 0.5 |
 | P0-R2 | multi_search RRF 融合 | 4 Collection 均有数据 | `multi_search(query, [4 个], "rrf")` | 返回各 Collection top_k + 全局 merged_top_k，按 RRF 分数降序 |
 | P0-R3 | RRF vs weighted 一致性 | 同上 | 同 query 分别用 rrf 和 weighted | 两者 top-3 overlap ≥ 2（高相关 query 应稳定） |
 | P0-R4 | 过滤器语义正确 | 含 `tags=[archived]` | `search(..., filters=tags_exclude=["archived"])` | 不返回含 archived chunks |
@@ -717,7 +717,7 @@ except VMStorageError:
 
 | # | 用例 | 前置 | 动作 | 预期 |
 |:-:|------|------|------|------|
-| P0-C1 | cascade=supersede 默认 | ADR v1 已入库 | `update_document(..., cascade=SUPERSEDE)` | 旧 chunks 保留，metadata.superseded_by 指向新；默认 search 权重降至 0.1 |
+| P0-C1 | cascade=supersede 默认 | KB 决策记录 v1 已入库 | `update_document(..., cascade=SUPERSEDE)` | 旧 chunks 保留，metadata.superseded_by 指向新；默认 search 权重降至 0.1 |
 | P0-C2 | cascade=delete 物理删除 | doc 已入库 | `update_document(..., cascade=DELETE)` | 所有 chunks 物理删除，search 无命中 |
 | P0-C3 | cascade=merge 合并语义 | 两 doc content_hash 相同 | `update_document(old_id, ..., cascade=MERGE)` | old_id 标记 merged_into=new_id，gc 后物理删除 |
 | P0-C4 | cascade=reorder 元数据更新 | 任务卡 doc | `update_document(..., cascade=REORDER, new_metadata={"task_deps":...})` | chunks 不动，仅 metadata 更新 |

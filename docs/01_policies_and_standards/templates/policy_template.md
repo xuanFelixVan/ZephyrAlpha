@@ -1,27 +1,27 @@
 ---
-module_id: ""
-title: ""
-doc_type: policy
-status: Draft
-version: "0.1.0"
-layer: cross_layer
-owner: ZephyrAlpha-Owner
+ai_autonomy: human_gated
 classification: confidential
-language: zh
+completeness: unknown
 created_by: human_plus_agent
-date: ""
-ttl: permanent
-summary: "策略文档创建模板——声明式规则，定义必须/禁止，新建 policy 类文档时使用此模板"
-completeness: "unknown"
-template_for: policy
-tags: []
+date: ''
+depends_on: []
+doc_type: template
+evolution_policy: ''
+language: zh
+layer: cross_layer
+module_id: PSP-010
+owner: ZephyrAlpha-Owner
 rule_form: declarative
 scope: global
 stability: evolving
+status: Draft
+summary: 策略文档创建模板——声明式规则，定义必须/禁止，新建 policy 类文档时使用此模板
+tags: []
+template_for: policy
+title: Policy Template
+ttl: permanent
 verifiability: manual
-depends_on: []
-ai_autonomy: human_gated
-evolution_policy: ""
+version: 0.1.0
 ---
 
 <!--

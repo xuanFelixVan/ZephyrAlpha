@@ -130,7 +130,7 @@ SLA_METRICS_PATH = SCRIPTS_DIR / "meta" / "sla_metrics.jsonl"
 
 sys.path.insert(0, str(REPO_ROOT / "src"))
 try:
-    from zephyr.l01_infrastructure.script_system.finding import (
+    from zephyr.infrastructure.finding import (
         BlastRadius,
         Dimension,
         Finding,
@@ -144,7 +144,7 @@ except ImportError:
     FINDING_AVAILABLE = False
 
 try:
-    from zephyr.l01_infrastructure.finding_task_bridge import (
+    from zephyr.infrastructure.finding_task_bridge import (
         AuditFinding,
         FindingTaskBridge,
         bridge_findings_to_tasks,
@@ -887,7 +887,7 @@ _FILE_DIMENSION_MAP: tuple[tuple[str, str], ...] = (
     ("scripts/governance/d11_infrastructure/", "D11"),
     ("scripts/governance/d12_feedback/", "D12"),
     ("scripts/governance/", "D1"),
-    ("src/zephyr/l01_infrastructure/", "D11"),
+    ("src/zephyr/infrastructure.runtime_integration/", "D11"),
     ("src/zephyr/", "D6"),
     ("src/", "D7"),
     ("config/", "D4"),
@@ -1188,7 +1188,7 @@ def main() -> None:
             ))
         bridge_result = bridge_findings_to_tasks(
             audit_findings,
-            db_path=REPO_ROOT / "data" / "zalpha_metadata.db",
+            db_path=REPO_ROOT / "data" / "databases" / "governance.db",
             dry_run=args.dry_run,
         )
         print(f"\n  [CT-ORC-SCRIPT-001] 桥接完成: {bridge_result.tasks_created}/{len(audit_findings)} tasks创建",

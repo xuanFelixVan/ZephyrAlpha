@@ -1,0 +1,117 @@
+{
+  "task_id": "DM-100076",
+  "source_file": "docs/01_policies_and_standards/governance/ai/dual_editor_collaboration_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_040_ai_model_routing.yaml",
+  "module_id": "PSP-005",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "ENCODING_AUTO_GUESS": {
+      "rule": "MUST设置files.autoGuessEncoding=false",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "ENCODING_UTF8": {
+      "rule": "Trae必须配置files.encoding=utf8",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "SWITCH_TO_TRAE_CHECKLIST": {
+      "rule": "切换到Trae前：确认Cursor中所有文件已保存并关闭，确认没有未提交的修改",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "SWITCH_TO_CURSOR_CHECKLIST": {
+      "rule": "切换到Cursor前：确认Trae中所有文件已保存并关闭，运行编码扫描python scripts/hooks/check_encoding.py",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "ENCODING_FIX_FLOW": {
+      "rule": "编码损坏修复流程：check_encoding.py确认范围→git checkout HEAD恢复→确认修复",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "PROHIBIT_SIMULTANEOUS_EDIT": {
+      "rule": "禁止两个编辑器同时打开同一文件进行编辑",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_EDIT_CURSOR_RULES": {
+      "rule": "禁止在Trae中编辑.cursor/rules/下的文件",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_ECHO_MD": {
+      "rule": "禁止使用echo重定向创建.md文件（Windows默认UTF-16 LE或GBK）",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_POWERSHELL_OUTFILE": {
+      "rule": "禁止使用PowerShell Out-File默认参数创建文件（默认编码非UTF-8）",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_PYTHON_NO_ENCODING": {
+      "rule": "禁止Python open(f, 'w')不指定encoding（必须encoding='utf-8'）",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_MANUAL_GARBAGE_FIX": {
+      "rule": "禁止用文本编辑器逐字修改乱码字符（必须git checkout整文件还原）",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_APPEND_FIX": {
+      "rule": "禁止在损坏文件上追加'修复'（必须从git历史恢复整个文件）",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_USE_CORRUPT_FILE": {
+      "rule": "禁止将损坏文件当作参考资料使用",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "CURSOR_CRASH_RESPONSE": {
+      "rule": "Cursor崩溃后：确认未保存更改→运行check_encoding.py验证编码→记录Session Log",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "TRAE_HANG_RESPONSE": {
+      "rule": "Trae假死后：等待30秒→强制终止→重启→运行编码扫描→记录Session Log标注假死时任务",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "FAULT_SWITCH_PREREQUISITE": {
+      "rule": "故障后切换编辑器前必须先完成恢复步骤和编码扫描",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "FAULT_LOG_MANDATORY": {
+      "rule": "故障事件必须写入Session Log供下一session确认状态",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "DOUBLE_CRASH_NOTIFY": {
+      "rule": "同一编辑器1小时内崩溃≥2次，暂停工作并通知Owner",
+      "type": "constraint",
+      "status": "COVERED"
+    },
+    "PROHIBIT_SWITCH_WITHOUT_RECOVERY": {
+      "rule": "禁止故障后未完成恢复步骤就切换到另一编辑器继续工作",
+      "type": "prohibition",
+      "status": "COVERED"
+    }
+  },
+  "summary": {
+    "total_rules": 19,
+    "COVERED": 19,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "原YAML仅有占位action'遵守PSP-005'，无实际规则内容",
+    "新增section psp_005_encoding_safety：编码安全规则(5个actions+8个prohibitions)+pre_condition检查",
+    "新增section psp_005_editor_fault：编辑器故障应急(4个actions+1个prohibition)+3个conditions(崩溃/假死/双崩触发)",
+    "编码损坏识别信号(§三)为描述性内容，非规则，不纳入YAML",
+    "文件锁定机制(§五)当前为手动约定，无强制规则，不纳入YAML"
+  ]
+}

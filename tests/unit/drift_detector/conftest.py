@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1864 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-490 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.drift_detector.conftest
 # [STABILITY] evolving
 # [SAFETY] L
@@ -37,11 +38,11 @@ def _load(name, file_path):
 
 _ensure_stub("zephyr", _ZEPHYR)
 _ensure_stub("zephyr.shared", _ZEPHYR / "shared")
-_ensure_stub("zephyr.shared.contracts", _ZEPHYR / "shared" / "contracts")
-_ensure_stub("zephyr.shared.contracts.identity", _ZEPHYR / "shared" / "contracts" / "identity")
-_ensure_stub("zephyr.drift_detector", _ZEPHYR / "drift_detector")
+_ensure_stub("zephyr.integration.shared_08.contracts", _ZEPHYR / "shared" / "contracts")
+_ensure_stub("zephyr.integration.shared_08.contracts.identity", _ZEPHYR / "shared" / "contracts" / "identity")
+_ensure_stub("zephyr.drift_detector", _ZEPHYR / "drift-detector")
 
-_load("zephyr.drift_detector.drift_models", _ZEPHYR / "drift_detector" / "drift_models.py")
-_load("zephyr.drift_detector.drift_infrastructure", _ZEPHYR / "drift_detector" / "drift_infrastructure.py")
-_load("zephyr.drift_detector.drift_engine", _ZEPHYR / "drift_detector" / "drift_engine.py")
-_load("zephyr.drift_detector.baseline_manager", _ZEPHYR / "drift_detector" / "baseline_manager.py")
+_load("zephyr.behavioral_audit.drift_models", _ZEPHYR / "drift-detector" / "drift_models.py")
+_load("zephyr.behavioral_audit.drift_infrastructure", _ZEPHYR / "drift-detector" / "drift_infrastructure.py")
+_load("zephyr.behavioral_audit.drift_engine", _ZEPHYR / "drift-detector" / "drift_engine.py")
+_load("zephyr.behavioral_audit.baseline_manager", _ZEPHYR / "drift-detector" / "baseline_manager.py")

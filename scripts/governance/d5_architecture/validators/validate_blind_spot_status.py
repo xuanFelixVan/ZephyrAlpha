@@ -63,7 +63,7 @@ CheckFn = Callable[[str, Path], tuple[bool, str]]
 
 def check_var_cvar(_repo: Path) -> tuple[bool, str]:
     """BLIND-L04-VAR-CVAR-MISSING: L04 是否已有 VaR/CVaR 实现"""
-    risk_dir = _repo / "src" / "zephyr" / "l04_risk_management"
+    risk_dir = _repo / "src" / "zephyr" / "risk"
     if not risk_dir.exists():
         return False, "L04 目录不存在"
 
@@ -85,13 +85,13 @@ def check_var_cvar(_repo: Path) -> tuple[bool, str]:
 
 def check_channel_fallback(_repo: Path) -> tuple[bool, str]:
     """BLIND-L08-CHANNEL-FALLBACK: L08 是否有多渠道 fallback"""
-    l08_dir = _repo / "src" / "zephyr" / "l08_human_ai_interface"
-    if not l08_dir.exists():
+    frontend = _repo / "src" / "zephyr" / "frontend"
+    if not frontend.exists():
         return False, "L08 目录不存在"
 
     fallback_names = ["fallback", "failover", "retry", "channel_chain", "escalation"]
     evidence: list[str] = []
-    for py_file in l08_dir.rglob("*.py"):
+    for py_file in frontend.rglob("*.py"):
         try:
             content = py_file.read_text(encoding="utf-8", errors="replace")
         except Exception:
@@ -108,12 +108,12 @@ def check_channel_fallback(_repo: Path) -> tuple[bool, str]:
 
 def check_historical_backfill(_repo: Path) -> tuple[bool, str]:
     """BLIND-L09-HISTORICAL-BACKFILL: L09 是否有历史回填逻辑"""
-    l09_dir = _repo / "src" / "zephyr" / "l09_research_innovation"
-    if not l09_dir.exists():
+    research = _repo / "src" / "zephyr" / "research"
+    if not research.exists():
         return False, "L09 目录不存在"
 
     backfill_names = ["backfill", "historical", "replay", "historical_data"]
-    for py_file in l09_dir.rglob("*.py"):
+    for py_file in research.rglob("*.py"):
         try:
             content = py_file.read_text(encoding="utf-8", errors="replace")
         except Exception:
@@ -172,8 +172,8 @@ def check_codegen_snapshot(_repo: Path) -> tuple[bool, str]:
 def check_b_shadow(_repo: Path) -> tuple[bool, str]:
     """B-SHADOW: L05/L06 skeleton base 文件是否被 codegen 覆盖"""
     files_to_check = [
-        "src/zephyr/l05_portfolio_construction/strategy_base.py",
-        "src/zephyr/l06_trade_execution/broker_interface.py",
+        "src/zephyr/pf_core/strategy_base.py",
+        "src/zephyr/ex_core/broker_interface.py",
     ]
     missing = []
     for f in files_to_check:

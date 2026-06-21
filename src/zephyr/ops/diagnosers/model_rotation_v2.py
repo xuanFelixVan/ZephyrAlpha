@@ -1,0 +1,34 @@
+# [A_module] module_id=MOD-UNK_model_rotation_v2 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+
+# [MODULE] zephyr.observability.feedback_loop.diagnosers.model_rotation_v2
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+"""Model Rotation v2 — v0.10.0 R140
+
+Enhanced model rotation with weighted selection based on recent performance.
+"""
+
+from dataclasses import dataclass, field
+
+@dataclass
+class ModelRotationV2:
+    models: dict[str, float] = field(default_factory=dict)
+
+    def select(self) -> str:
+        return max(self.models, key=self.models.get) if self.models else ""

@@ -12,7 +12,7 @@ Dimensions:
   DIM-4: total_vr_rules matches actual count
   DIM-5: frontmatter field stage completeness
 
-Exit 1 on any FAIL → pre-commit blocks the commit.
+Exit 1 on any FAIL → pre_commit blocks the commit.
 """
 
 from __future__ import annotations

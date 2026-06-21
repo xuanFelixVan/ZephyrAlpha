@@ -5,7 +5,8 @@
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
-dag_id: model_drift_check
+module_id: MOD-INF-035
+dag_id: model-drift-check
 default_layer: local
 default_priority: P1
 description: Collect-Compare-Alert

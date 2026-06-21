@@ -3,7 +3,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/scan_ground_truth_deps.py | §7
 # [MODULE] scripts.governance.scan_ground_truth_deps
 # [INVARIANTS] Output MUST be ground-truth file-level dependency graph; every import MUST resolve to actual file; unresolved MUST be flagged
-# [MODIFY-GUARD] project-entity-depgraph.yaml; cross_pkg_imports_scan.json
+# [MODIFY-GUARD] depgraph.db; cross_pkg_imports_scan.json
 # [CONSUMERS] Task card system; governance automation; architecture refactoring
 # [STABILITY] evolving
 # [SAFETY] L
@@ -300,15 +300,15 @@ def _determine_lpc_layer(package: str) -> str:
     if package.startswith("l") and len(package) >= 3 and package[1:3].isdigit():
         return f"C-{package[:3]}"
     b_track = {
-        "llm_security": "B", "vector_memory": "B", "context_engine": "B",
-        "orchestrator": "B", "feedback_loop": "B", "gates": "B",
+        "llm-security": "B", "vector-memory": "B", "context-engine": "B",
+        "orchestrator": "B", "feedback-loop": "B", "gates": "B",
         "pipeline": "B", "core": "B", "db": "B", "kb": "B",
-        "mcp": "B", "shared": "B", "agent_rbac": "B", "agent_spec": "B",
-        "audit_trail": "B", "rollback": "B", "escalation_engine": "B",
-        "drift_detector": "B", "budget_enforcer": "B", "a2a": "B",
-        "telemetry": "B", "behavioral_auditor": "B", "behavioral_admission": "B",
-        "auto_fix_engine": "B", "local_model": "B", "runtime": "B",
-        "trading_contracts": "B", "governance": "B",
+        "mcp": "B", "shared": "B", "agent-rbac": "B", "agent-spec": "B",
+        "audit-trail": "B", "rollback": "B", "escalation-engine": "B",
+        "drift-detector": "B", "budget-enforcer": "B", "a2a": "B",
+        "telemetry": "B", "behavioral-auditor": "B", "behavioral-admission": "B",
+        "auto-fix-engine": "B", "local-model": "B", "runtime": "B",
+        "trading-contracts": "B", "governance": "B",
     }
     return b_track.get(package, "unknown")
 

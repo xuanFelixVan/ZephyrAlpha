@@ -1,0 +1,179 @@
+rule_id: TRAE-022
+title: 行为边界-条件禁止(代码与安全)
+aliases:
+- COND-05~COND-26
+layer: L1
+severity: error
+scope: conditional_prohibition_code_security
+domain: TRAE
+triggers:
+- operation: conditional_prohibition_code_security
+sections:
+  cond_05_08:
+    title: 规则层级条件禁止
+    section_type: rule
+    original_rules:
+    - COND-05
+    - COND-06
+    - COND-07
+    - COND-08
+    conditions:
+    - type: trigger
+      check: 编写规则文档时
+      pass: 规范性语言与文档层级匹配
+      fail: 层级与语言强度不匹配
+    actions:
+    - type: mandatory
+      step: L3文档使用信息性措辞；L2文档使用SHOULD/MAY；B轨不反向依赖C轨；C轨内部逐层向下依赖
+    prohibitions:
+    - L3文档使用MUST/SHOULD
+    - L2文档使用MUST
+    - B轨反向依赖C轨
+    - C轨内部反向依赖
+  cond_09_13:
+    title: Vibe Coding条件禁止
+    section_type: rule
+    original_rules:
+    - COND-09
+    - COND-10
+    - COND-11
+    - COND-12
+    - COND-13
+    conditions:
+    - type: trigger
+      check: Vibe Coding会话运行时
+      pass: 遵守会话状态机和施工规则
+      fail: 违反会话管理规则
+    actions:
+    - type: mandatory
+      step: 状态转换表硬编码运行时断言；只加载相关层上下文；由审计者填写verification_status；严格按蓝图§7规划路径存放产出物；交接时必须记录未解问题
+    prohibitions:
+    - COMPLETED→ACTIVE状态转换
+    - 同时加载所有层上下文
+    - 施工者自行设verification_status: passed
+    - 自行创建新路径存放产出物
+    - 隐藏未解问题
+  cond_14_17:
+    title: 规则变更条件禁止
+    section_type: rule
+    original_rules:
+    - COND-14
+    - COND-15
+    - COND-16
+    - COND-17
+    conditions:
+    - type: trigger
+      check: 任何规则变更时
+      pass: 变更流程完整
+      fail: 变更流程不完整
+    actions:
+    - type: mandatory
+      step: 应修改标准而非永久豁免；按五步废弃流程完整执行；必须在Session Log中记录变更详情；必须更新版本号和date字段
+    prohibitions:
+    - 永久豁免
+    - 跳过Step 2-4直接删除Active标准
+    - 修改规则后不更新Session Log
+    - 修改规则后不更新文件版本号
+  cond_18_19:
+    title: 密钥与凭证条件禁止
+    section_type: rule
+    original_rules:
+    - COND-18
+    - COND-19
+    conditions:
+    - type: trigger
+      check: 任何密钥传输或凭证使用场景
+      pass: 使用加密通道和独立凭证
+      fail: 密钥传输不安全或凭证共享
+    actions:
+    - type: mandatory
+      step: 使用TLS/SSH等加密通道传输密钥；每人/每服务独立凭证，定期轮换
+    prohibitions:
+    - 使用未加密方式传输密钥
+    - 共享或复用凭证
+  cond_21:
+    title: 配置变更记录条件禁止
+    section_type: rule
+    original_rules:
+    - COND-21
+    conditions:
+    - type: trigger
+      check: 运行时配置修改时
+      pass: 配置变更已在变更管理系统中记录
+      fail: 配置变更未记录
+    actions:
+    - type: mandatory
+      step: 所有配置变更必须在变更管理系统中记录
+    prohibitions:
+    - 未记录的配置变更
+  cond_23_25:
+    title: AI透明度条件禁止
+    section_type: rule
+    original_rules:
+    - COND-23
+    - COND-24
+    - COND-25
+    conditions:
+    - type: trigger
+      check: AI产出蓝图/施工图裁定/对结论不确定/调用外部服务时
+      pass: AI提供决策理由、声明不确定性、记录外部调用
+      fail: AI缺乏透明度
+    actions:
+    - type: mandatory
+      step: 必须在产出物中包含决策依据和推理过程；必须显式声明置信度和不确定性范围；必须在Session Log中记录外部工具/API调用
+    prohibitions:
+    - AI在高风险决策中不提供决策理由
+    - AI隐藏其行为的不确定性/置信度
+    - AI在未声明的情况下使用外部工具/API
+  rec_01_11:
+    title: 推荐做法（REC-01~REC-11）
+    section_type: rule
+    original_rules:
+    - REC-01
+    - REC-02
+    - REC-03
+    - REC-04
+    - REC-05
+    - REC-06
+    - REC-07
+    - REC-08
+    - REC-09
+    - REC-10
+    - REC-11
+    conditions:
+    - type: trigger
+      check: 日常操作中涉及推荐做法场景
+      pass: 遵守推荐做法
+      fail: 记录但不阻断，下次审查时评估是否升级为COND
+    actions:
+    - type: mandatory
+      step: 11条推荐做法——REC-01:每次修改规则后更新document-metadata-index-registry.yaml；REC-02:新增文件后更新document-metadata-index-registry.yaml；REC-03:session结束前写Session Log；REC-04:移动文件时commit message包含moved:old/path->new/path|reason:...；REC-05:引用尚不存在的文件时使用<!--PLANNED:path-->格式；REC-06:pre-commit集成密钥检测工具(git-secrets/detect-secrets)；REC-07:AI输出前自检是否包含密钥模式；REC-08:外部内容进入AI上下文前标记来源(trusted/untrusted)；REC-09:AI禁止奉承Owner必须以客观架构师视角参与讨论；REC-10:每次执行流水线必须重新扫描项目状态不得复用上次扫描结果；REC-11:Pydantic模型禁止Any类型字段(边界透传场景除外且需注释)
+    prohibitions: []
+  change_history:
+    title: 修订记录
+    section_type: examples
+    items:
+    - version: "1.1.0"
+      date: "2026-06-19"
+      change: "RQ-01~RQ-14审查修复——移除属于trae_023范围的重复section(cond_26含COND-52/cond_30_32/cond_33_37/cond_38_41/cond_42_46)；修复cond_20_21为cond_21(仅保留COND-21配置变更记录，COND-50审计日志连续性移至trae_023)；移除错误的gm_scope/gm_normative_refs/gm_change_history(原内容为KPI度量标准，与trae_022主题不符)；修复enforcement.type为doc(无executors)；新增references.rule_ids引用TRAE-023"
+    - version: "1.0.0"
+      date: "2026-06-13"
+      change: "初始提取——从behavior_boundaries_standard.md提取COND-05~COND-26条件禁止规则(代码与安全)"
+references:
+  rule_ids:
+  - TRAE-023
+  scripts: []
+  modules: []
+  blueprints: []
+enforcement:
+  type: doc
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

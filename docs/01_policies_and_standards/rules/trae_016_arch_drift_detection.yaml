@@ -1,0 +1,155 @@
+rule_id: TRAE-016
+title: 架构约束-漂移检测
+aliases:
+- ARCH-019
+- ARCH-020
+- ARCH-021
+- ARCH-022
+- ARCH-023
+- ARCH-024
+layer: L1
+severity: error
+scope: architecture_drift
+domain: TRAE
+triggers:
+- operation: architecture_drift
+sections:
+  arch_019:
+    section_type: rule
+    title: 漂移检测器套件
+    original_rules:
+    - ARCH-019
+    conditions:
+    - type: trigger
+      check: 运行漂移检测时
+      pass: 全部漂移检测器执行并输出结果
+      fail: 检测器缺失或被禁用
+    actions:
+    - type: mandatory
+      step: 执行漂移检测器套件，确认全部检测器运行；检测结果写入governance.db drift_events表
+    prohibitions:
+    - 跳过或禁用漂移检测器（需Owner批准）
+    - 检测器执行后不记录结果
+  arch_020:
+    section_type: rule
+    title: 漂移预算管理
+    original_rules:
+    - ARCH-020
+    conditions:
+    - type: constraint
+      check: 漂移事件累计时
+      pass: 漂移数量在预算范围内
+      fail: 漂移超预算
+    actions:
+    - type: mandatory
+      step: 监控漂移事件累计数量；超预算时触发告警并要求Owner介入处置
+    prohibitions:
+    - 漂移超预算后继续施工而不处置
+    - 重置漂移计数以规避预算管控
+  arch_021:
+    section_type: rule
+    title: 契约代码漂移检查
+    original_rules:
+    - ARCH-021
+    conditions:
+    - type: trigger
+      check: 修改YAML契约/配置后
+      pass: 契约与代码一致（check_contract_code_drift.py exit 0）
+      fail: 契约与代码漂移（exit≠0）
+    actions:
+    - type: mandatory
+      step: 修改YAML契约后运行 python scripts/governance/d5_architecture/checkers/check_contract_code_drift.py；漂移则禁止合并
+    prohibitions:
+    - 修改YAML契约后不运行契约代码漂移检查
+    - 契约断裂时强行合并
+  arch_022:
+    section_type: rule
+    title: LoadPath完整性验证
+    original_rules:
+    - ARCH-022
+    conditions:
+    - type: trigger
+      check: 修改AGENTS.md或LoadPath相关文件后
+      pass: LoadPath完整（validate_load_path_integrity.py exit 0）
+      fail: LoadPath断裂（exit≠0）
+    actions:
+    - type: mandatory
+      step: 修改AGENTS.md后运行 python scripts/governance/d5_architecture/validators/validate_load_path_integrity.py --check；断裂则禁止提交
+    prohibitions:
+    - 修改AGENTS.md后不验证LoadPath完整性
+    - LoadPath断裂时强行提交
+  arch_023:
+    section_type: rule
+    title: schema变更同步
+    original_rules:
+    - ARCH-023
+    conditions:
+    - type: trigger
+      check: 数据库schema变更后
+      pass: 所有消费者已同步schema变更
+      fail: 消费者未同步导致运行时错误
+    actions:
+    - type: mandatory
+      step: schema变更后同步更新所有消费者代码；运行迁移脚本确认schema版本一致
+    prohibitions:
+    - schema变更后不更新消费者代码
+    - 跳过迁移脚本直接修改schema
+  arch_024:
+    section_type: rule
+    title: 配置漂移检测
+    original_rules:
+    - ARCH-024
+    conditions:
+    - type: trigger
+      check: 配置文件变更后
+      pass: 配置一致（validate_config_integrity.py exit 0）
+      fail: 配置漂移（exit≠0）
+    actions:
+    - type: mandatory
+      step: 运行 python scripts/governance/d1_structure/validate_config_integrity.py 检测配置漂移；漂移则修复后才能继续
+    prohibitions:
+    - 配置漂移后不修复继续施工
+    - 绕过配置完整性检查
+references:
+  rule_ids:
+  - TRAE-017
+  scripts:
+  - scripts/governance/diagnose_depgraph.py
+  - scripts/governance/d5_architecture/checkers/check_contract_code_drift.py
+  - scripts/governance/d5_architecture/validators/validate_load_path_integrity.py
+  - scripts/governance/d1_structure/validate_config_integrity.py
+  - scripts/governance/d5_architecture/check_drift_e2e.py
+  modules: []
+  blueprints: []
+enforcement:
+  type: code
+  executors:
+  - scripts/governance/diagnose_depgraph.py
+  - scripts/governance/d5_architecture/checkers/check_contract_code_drift.py
+  - scripts/governance/d5_architecture/validators/validate_load_path_integrity.py
+  - scripts/governance/d1_structure/validate_config_integrity.py
+  - scripts/governance/d5_architecture/check_drift_e2e.py
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+  version: "1.2.0"
+  last_modified: "2026-06-21"
+  change_history:
+  - version: "1.2.0"
+    date: "2026-06-21"
+    change: "P2修复——补充metadata缺失的version/last_modified字段"
+  - version: "1.2.0"
+    date: "2026-06-21"
+    change: "循环审查修复：arch_019移除39个检测器事实状态数字（违反GOV-DOC-017规则抽象性原则），改为全部漂移检测器"
+  - version: "1.1.0"
+    date: "2026-06-19"
+    change: "RQ审查修复——补充6个section的conditions/prohibitions实际内容(RQ-08)；补充references.scripts和enforcement.executors实际脚本(RQ-04/RQ-06)；更新provenance哈希(RQ-09)；新增change_history(RQ-14)"
+  - version: "1.0.0"
+    date: "2026-06-13"
+    change: "初始提取——从onboarding_detail.md §十五和project_rules.md RULE-TEN提取ARCH-019~024漂移检测规则"
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

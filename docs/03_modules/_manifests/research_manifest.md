@@ -1,0 +1,11 @@
+---
+blueprint_id: DOM-GOV-001
+ssot_path: src/zephyr/research
+status: active
+---
+
+# research/ 文件清单（自动生成 2026-06-10）
+
+总计: 1 个文件
+
+- __init__.py

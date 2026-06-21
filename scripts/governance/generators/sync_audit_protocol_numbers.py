@@ -13,9 +13,9 @@
 
 SSoT 源:
     - script_manifest.yaml  → total_scripts
-    - gate-registry.yaml    → total_gates
+    - gate-registry.md    → total_gates
     - registry-master-index.yaml → total_registries
-    - .pre-commit-config.yaml   → precommit_hooks
+    - .pre_commit-config.yaml   → precommit_hooks
 
 占位符格式:
     <!-- AUTO_SYNC:total_scripts:201 -->  →  <!-- AUTO_SYNC:total_scripts:177 -->
@@ -51,14 +51,14 @@ SSOT_PATHS = {
     / "01_policies_and_standards"
     / "_registry"
     / "catalogs"
-    / "gate-registry.yaml",
+    / "gate-registry.md",
     "total_registries": REPO_ROOT
     / "docs"
     / "01_policies_and_standards"
     / "_registry"
     / "catalogs"
     / "registry-master-index.yaml",
-    "precommit_hooks": REPO_ROOT / ".pre-commit-config.yaml",
+    "precommit_hooks": REPO_ROOT / ".pre_commit-config.yaml",
 }
 
 AUDIT_PROTOCOL = (

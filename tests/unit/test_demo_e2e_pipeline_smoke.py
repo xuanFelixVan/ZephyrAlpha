@@ -1,12 +1,13 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-2007 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-624 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_demo_e2e_pipeline_smoke
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """demo_e2e_pipeline.py 语法自检（不执行全链路——需网络与 akshare）。"""
 
-from __future__ import annotations
 
 from pathlib import Path
 

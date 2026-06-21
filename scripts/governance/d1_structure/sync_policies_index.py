@@ -67,7 +67,7 @@ _SUBDIRS = [
         "governance/",
         "声明式全局规则——8 个治理域",
         "governance/index.md",
-        "[document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml)",
+        "[document-metadata-index-registry.yaml](_registry/catalogs/document-metadata-index-registry.yaml)",
     ),
     ("operational/", "过程式操作手册——3 个操作域", "operational/index.md", "同上"),
     ("domains/", "层域特定规则——4 个架构层", "domains/index.md", "同上"),
@@ -76,7 +76,7 @@ _SUBDIRS = [
         "templates/",
         "文档模板",
         "不需要（文件名自描述）",
-        "[document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml)",
+        "[document-metadata-index-registry.yaml](_registry/catalogs/document-metadata-index-registry.yaml)",
     ),
 ]
 
@@ -127,13 +127,13 @@ def _generate_table() -> list[str]:
 
     lines.append("")
     lines.append(
-        f"> **合计**：6 个子目录，{grand_total} 个文件，全部注册在 [document-metadata-index.yaml](_registry/catalogs/document-metadata-index.yaml)（auto-generated，取代旧的 governance-rules-master-registry.yaml 和 master-document-inventory.yaml）。"
+        f"> **合计**：6 个子目录，{grand_total} 个文件，全部注册在 [document-metadata-index-registry.yaml](_registry/catalogs/document-metadata-index-registry.yaml)（auto-generated，取代旧的 governance-rules-master-registry.yaml 和 master-document-inventory-registry.md）。"
     )
     lines.append(TABLE_END_MARKER)
     return lines
 
 def _find_table_range(content: str) -> tuple[int, int] | None:
-    """Find the old table block: starts with '| 子目录' and ends with 'master-document-inventory.yaml）。'"""
+    """Find the old table block: starts with '| 子目录' and ends with 'master-document-inventory-registry.md）。'"""
     start = content.find("| 子目录 ")
     if start == -1:
         return None

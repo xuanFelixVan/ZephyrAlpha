@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/checkers/check_blueprint_automation_sync.py | §
 r"""
-[BLUEPRINT] MOD-INF-005 | 03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+[BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 [MODULE] scripts.governance.d5_architecture.checkers.check_blueprint_automation_sync
 [INVARIANTS] 蓝图§5.5自动化触发机制状态列必须与代码实际实现一致; ⚠️待实现但代码已实现=DRIFT; ✅已实现但代码不存在=DRIFT
 [MODIFY-GUARD] script_manifest.yaml; blueprint-construction-template.md §0.2
@@ -53,24 +53,24 @@ DISK_PATH_RE = re.compile(r'actual_disk_path:\s*["\']?([^"\']+)["\']?\s*$')
 
 CODE_IMPLEMENTATION_PROBES: dict[str, dict] = {
     "MOD-INF-011": {
-        "package": "vector_memory",
+        "package": "vector-memory",
         "probes": {
             "VMS启动": {"file": "runtime/auto_runtime_core.py", "pattern": r"_vms\s*=\s*InProcessVectorMemory|VMS\.start\(\)"},
-            "TTL过期清理": {"file": "vector_memory/in_process_vector_memory.py", "pattern": r"_maintenance_loop.*purge_expired|purge_expired"},
-            "定时健康检查": {"file": "vector_memory/in_process_vector_memory.py", "pattern": r"_maintenance_loop.*check_all|check_all"},
-            "定时快照备份": {"file": "vector_memory/in_process_vector_memory.py", "pattern": r"_maintenance_loop.*snapshot_backup|snapshot_backup"},
-            "自动修复": {"file": "vector_memory/in_process_vector_memory.py", "pattern": r"_maintenance_loop.*auto_repair|auto_repair"},
-            "检索缓存": {"file": "vector_memory/in_process_vector_memory.py", "pattern": r"_cache_layer|CacheLayer"},
-            "检索反馈收集": {"file": "vector_memory/in_process_vector_memory.py", "pattern": r"_retrieval_feedback|RetrievalFeedback"},
-            "语义检索": {"file": "vector_memory/hybrid_retriever.py", "pattern": r"class HybridRetriever"},
-            "写入": {"file": "vector_memory/in_process_vector_memory.py", "pattern": r"def write\("},
-            "8 Collection初始化": {"file": "vector_memory/collection_manager.py", "pattern": r"init_all_collections"},
-            "嵌入模型warmup": {"file": "vector_memory/embedding_router.py", "pattern": "def warmup"},
-            "启动时健康检查": {"file": "vector_memory/in_process_vector_memory.py", "pattern": r"check_all"},
-            "启动时漂移检测": {"file": "vector_memory/index_health_monitor.py", "pattern": r"detect_drift"},
-            "模型版本变更清缓存": {"file": "vector_memory/cache_layer.py", "pattern": r"invalidate_all_on_model_change"},
-            "完整性校验": {"file": "vector_memory/index_health_monitor.py", "pattern": r"integrity_check"},
-            "定时漂移检测": {"file": "vector_memory/index_health_monitor.py", "pattern": r"detect_drift"},
+            "TTL过期清理": {"file": "vector-memory/in_process_vector_memory.py", "pattern": r"_maintenance_loop.*purge_expired|purge_expired"},
+            "定时健康检查": {"file": "vector-memory/in_process_vector_memory.py", "pattern": r"_maintenance_loop.*check_all|check_all"},
+            "定时快照备份": {"file": "vector-memory/in_process_vector_memory.py", "pattern": r"_maintenance_loop.*snapshot_backup|snapshot_backup"},
+            "自动修复": {"file": "vector-memory/in_process_vector_memory.py", "pattern": r"_maintenance_loop.*auto_repair|auto_repair"},
+            "检索缓存": {"file": "vector-memory/in_process_vector_memory.py", "pattern": r"_cache_layer|CacheLayer"},
+            "检索反馈收集": {"file": "vector-memory/in_process_vector_memory.py", "pattern": r"_retrieval_feedback|RetrievalFeedback"},
+            "语义检索": {"file": "vector-memory/hybrid_retriever.py", "pattern": r"class HybridRetriever"},
+            "写入": {"file": "vector-memory/in_process_vector_memory.py", "pattern": r"def write\("},
+            "8 Collection初始化": {"file": "vector-memory/collection_manager.py", "pattern": r"init_all_collections"},
+            "嵌入模型warmup": {"file": "vector-memory/embedding_router.py", "pattern": "def warmup"},
+            "启动时健康检查": {"file": "vector-memory/in_process_vector_memory.py", "pattern": r"check_all"},
+            "启动时漂移检测": {"file": "vector-memory/index_health_monitor.py", "pattern": r"detect_drift"},
+            "模型版本变更清缓存": {"file": "vector-memory/cache_layer.py", "pattern": r"invalidate_all_on_model_change"},
+            "完整性校验": {"file": "vector-memory/index_health_monitor.py", "pattern": r"integrity_check"},
+            "定时漂移检测": {"file": "vector-memory/index_health_monitor.py", "pattern": r"detect_drift"},
         },
     },
 }

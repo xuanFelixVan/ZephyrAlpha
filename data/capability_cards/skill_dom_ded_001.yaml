@@ -5,6 +5,7 @@
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
+module_id: MOD-INF-035
 capability_id: skill-dom-ded-001
 category: governance
 description: Code deduplication engine Monoculture immunity (BRS 0-100), atomic WAL-style

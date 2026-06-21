@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [A_test] module_id: SRC-TST-0052 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §
 # [MODULE] tests.agent_rbac.test_post_action
 # [STABILITY] evolving
 # [SAFETY] L
@@ -12,12 +13,12 @@ import pytest
 
 class TestPostActionHooks:
     def test_permission_hooks_post_action(self):
-        from zephyr.agent_rbac.permission_hooks import PermissionHooks
+        from zephyr.security.access_control.permission_hooks import PermissionHooks
         hooks = PermissionHooks()
         assert hasattr(hooks, "register")
 
     def test_hook_registration(self):
-        from zephyr.agent_rbac.permission_hooks import PermissionHooks
+        from zephyr.security.access_control.permission_hooks import PermissionHooks
         hooks = PermissionHooks()
         called = []
 

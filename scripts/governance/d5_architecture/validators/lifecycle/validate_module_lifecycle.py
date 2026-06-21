@@ -66,8 +66,8 @@ DEPRECATED_MIN_DAYS = 90
 def load_module_registry() -> dict:
     """加载模块注册表"""
     registry_paths = [
-        REPO_ROOT / "" / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "module-id-registry.yaml",
-        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "module-id-registry.yaml",
+        REPO_ROOT / "" / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "module_id_registry.yaml",
+        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "module_id_registry.yaml",
     ]
     for p in registry_paths:
         if p.exists():

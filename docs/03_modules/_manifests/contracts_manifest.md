@@ -1,13 +1,14 @@
 ---
 blueprint_id: DOM-GOV-001
----
+title: Contracts.Manifest
+module_id: MOD-051---
 
 # contracts/ 文件清单（自动生成 2026-05-09）
 
 总计: 5 个文件
 
-- capacity_assurance/__init__.py
-- capacity_assurance/batch1_infra.py
-- capacity_assurance/batch2_governance.py
-- capacity_assurance/batch3_integration.py
-- capacity_assurance/contract_bus.py
+- capacity-assurance/__init__.py
+- capacity-assurance/batch1_infra.py
+- capacity-assurance/batch2_governance.py
+- capacity-assurance/batch3_integration.py
+- capacity-assurance/contract_bus.py

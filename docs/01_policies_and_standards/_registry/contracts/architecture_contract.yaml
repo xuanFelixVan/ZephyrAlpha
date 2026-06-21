@@ -1,3 +1,4 @@
+# [A_config] module_id=CFG-architecture-contract | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: DOM-GOV-001
@@ -69,7 +70,7 @@ directory_schema:
       description: "过程式规则——定义'如何做'的步骤（architecture 子目录已于 2026-05-01 删除）"
 
     domains:
-      allowed_subdirs_pattern: "L{XX}_{name}"
+      allowed_subdirs_pattern: "{domain_name}"
       allowed_doc_types: [policy, operational_rule]
       subdirs_must_have: [governance, operational]
       description: "层域特定规则——每个层域有 governance/ + operational/ 子目录"
@@ -126,7 +127,7 @@ frontmatter_schema:
       stage: draft
 
     - name: layer
-      allowed_values: [l00_data_source, l01_infrastructure, l02_alpha_factor, l03_signal_generation, l04_risk_management, l05_portfolio_construction, l06_trade_execution, l07_post_trade_analytics, l08_human_ai_interface, l09_research_innovation, l10_governance_compliance, l11_ml_platform, system_telemetry, l13_experiment_pipeline, shared, cross_layer]
+      allowed_values: [data, infra_ops, factor, signal, risk, pf_core, ex_core, reporting, frontend, research, compliance, ml_train, system-telemetry, simulation, shared, cross_layer]
       description: "架构层归属——16 值（canonical SSoT: layer-vocabulary.yaml）"
       derived_from: "_registry/vocabularies/layer-vocabulary.yaml"
       stage: active

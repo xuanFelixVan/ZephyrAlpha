@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
+# [A_module] module_id=MOD-SHR_system_configuration | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §
 
 # [MODULE] zephyr.shared.contracts.core.system_configuration
 
@@ -29,7 +30,7 @@ from typing import Any
 # category: data_contract
 # status: auto_generated
 # created: "2026-05-05"
-# generated_by: codegen from cross-layer-contracts.yaml
+# generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
 ZephyrAlpha — shared/contracts/system_configuration.py
@@ -38,7 +39,7 @@ CTR-P1-010: SystemConfiguration / 系统配置
 
 L01 → 全系统配置契约。基于dataclass的配置加载API，支持环境变量覆盖和热重载。
 
-SSoT: cross-layer-contracts.yaml -> CTR-P1-010
+SSoT: cross_layer_contracts.yaml -> CTR-P1-010
 Version: 1.0
 Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.

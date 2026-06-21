@@ -6,7 +6,7 @@
 对标：MAD-005（P0 模块额外条件）
 
 检测内容：
-- P0 模块在 cross-layer-contracts.yaml 中有 status: frozen 的接口契约
+- P0 模块在 cross_layer_contracts.yaml 中有 status: frozen 的接口契约
 - P0 模块已关联至少一个 ADR
 - P0 模块已分配 runtime_plane（hot/warm/cold）
 
@@ -55,8 +55,8 @@ def load_contracts() -> dict:
         / "01_policies_and_standards"
         / "_registry"
         / "contracts"
-        / "cross-layer-contracts.yaml",
-        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "contracts" / "cross-layer-contracts.yaml",
+        / "cross_layer_contracts.yaml",
+        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "contracts" / "cross_layer_contracts.yaml",
     ]
     for p in paths:
         if p.exists():

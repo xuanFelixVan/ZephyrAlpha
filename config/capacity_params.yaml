@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-002 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# blueprint: MOD-INF-002 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: M
@@ -10,19 +10,20 @@
 # ============================================================================
 # 此文件是所有并发/容量/规模参数的唯一真源。
 # 所有模块蓝图引用此文件，代码启动时从此文件加载。
-# 变更此文件后执行: python scripts/governance/validate_capacity_params.py
+# 变更此文件后执行: python scripts/governance/d1_structure/validate_config_integrity.py
 # ============================================================================
 # module_id: CFG-CAP-001
 # version: 1.0.0
-# belongs_to: MOD-MASTER-001
+# belongs_to: MOD_MASTER_001
 # references:
-#   - MOD-INF-009 (Pipeline) §0.6
-#   - MOD-INF-001 (Capacity Assurance) §13
+#   - MOD_INF_009 (Pipeline) §0.6
+#   - MOD_INF_001 (Capacity Assurance) §13
 #   - MOD-INF-005 (Script System) §36
-#   - MOD-INF-032 (Resource Optimization) §0.3
-#   - MOD-INF-014 (LLM Security) §0.3
+#   - MOD_INF_032 (Resource Optimization) §0.3
+#   - MOD_INF_014 (LLM Security) §0.3
 # ============================================================================
 
+module_id: MOD-INF-002
 design_capacity:
   max_modules: 1500
   max_scripts: 10000

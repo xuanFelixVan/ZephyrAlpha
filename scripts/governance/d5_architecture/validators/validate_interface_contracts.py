@@ -59,8 +59,8 @@ def load_contracts() -> list[dict]:
         / "01_policies_and_standards"
         / "_registry"
         / "contracts"
-        / "cross-layer-contracts.yaml",
-        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "contracts" / "cross-layer-contracts.yaml",
+        / "cross_layer_contracts.yaml",
+        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "contracts" / "cross_layer_contracts.yaml",
     ]
     for p in paths:
         if p.exists():
@@ -81,7 +81,7 @@ def validate_contracts() -> list[dict]:
     findings = []
     contracts = load_contracts()
     if not contracts:
-        print("[IFC] 未找到 cross-layer-contracts.yaml，跳过契约校验", file=sys.stderr)
+        print("[IFC] 未找到 cross_layer_contracts.yaml，跳过契约校验", file=sys.stderr)
         return findings
     for contract in contracts:
         if not isinstance(contract, dict):

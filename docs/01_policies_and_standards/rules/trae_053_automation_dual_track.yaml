@@ -1,0 +1,78 @@
+rule_id: TRAE-053
+title: 铁律补充-自动化双轨判定
+aliases:
+- RULE-FIFTEEN
+layer: L0
+severity: critical
+scope: automation_dual_track
+domain: TRAE
+triggers:
+- operation: automation_system_creation_or_modification
+sections:
+  rule_fifteen:
+    section_type: rule
+    title: 自动化双轨判定(RULE-FIFTEEN)
+    original_rules:
+    - RULE-FIFTEEN
+    conditions:
+    - type: trigger
+      check: 新建/改造自动化系统时
+      pass: 通过两轨分类+实现验证(🕐定时/⚡事件/🕐+⚡双轨)
+      fail: 单轨实现=未完成
+    - type: constraint
+      check: 全项目扫描(去重/孤儿/临时文件/审计保留)
+      pass: 归属🕐定时轨
+      fail: 挂在事件驱动上(每次文件变更扫全项目=拖死)
+    - type: constraint
+      check: 状态变更响应(BLOCKED→升级/IN_PROGRESS→超时计时器)
+      pass: 归属⚡事件轨
+      fail: 只靠定时(反馈延迟十几小时)
+    - type: constraint
+      check: 关键校验(预算健康/三方对齐/升级路径)
+      pass: 归属🕐+⚡双轨(事件做增量+定时做全量兜底)
+      fail: 只有一轨无兜底(事件丢了没补偿=漏报)
+    actions:
+    - type: mandatory
+      step: STEP1判定归属→对照两轨分类表确定🕐/⚡/🕐+⚡
+    - type: mandatory
+      step: STEP2实现→🕐定时在boot_cron_jobs.py注册(circadian_scheduler.register_task)；⚡事件在boot_hooks.py注册(hook_registry.register或event_bus.subscribe)；🕐+⚡双轨两条都要
+    - type: mandatory
+      step: STEP3验证→python scripts/ide_health_service.py --status→circadian.running=true+tasks_registered正确计数→🕐通过；触发事件后check对应hooks执行→⚡通过
+    prohibitions:
+    - 新建自动化系统不判定两轨归属(盲目挂在单一轨=要么遗漏要么浪费)
+    - 全项目重扫描挂在事件驱动上(每次文件变更扫全项目=拖死)
+    - 实时校验只靠定时(等到凌晨才跑=反馈延迟十几小时)
+    - 关键校验只有一轨无兜底(事件丢了没补偿=漏报)
+    - 实现定时轨但不注册到circadian_scheduler(代码写好了但没人跑)
+    - 实现事件轨但不注册到hook_registry(触发条件满足了但钩子不响)
+references:
+  rule_ids: []
+  scripts:
+  - scripts/ide_health_service.py
+  modules:
+  - src/zephyr/trading/ide_health_daemon.py
+  - src/zephyr/trading/boot_hooks.py
+  - src/zephyr/trading/circadian_scheduler.py
+  blueprints: []
+enforcement:
+  type: hook
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-19T00:00:00'
+  extracted_by: session-20260619-001
+change_history:
+- version: '1.2.0'
+  date: '2026-06-19'
+  change: '文件重命名:trae_053_iron_law_diagnosis_performance.yaml→trae_053_automation_dual_track.yaml(匹配scope和title);补充references.scripts(ide_health_service.py)'
+- version: '1.1.0'
+  date: '2026-06-19'
+  change: 'RQ-01/RQ-04/RQ-09/RQ-14修复:移除rule_fourteen(project_rules.md指向trae_001非trae_053);移除rule_sixteen(project_rules.md指向trae_003非trae_053);修正rule_fifteen内容从"施工三步(两轨分类)"改为"自动化双轨判定"(匹配RULE-FIFTEEN实际定义);更新title/aliases/scope;更新provenance哈希;移除错误的onboarding_detail.md§八引用;新增change_history;补充conditions/prohibitions实际内容'
+- version: '1.0.0'
+  date: '2026-06-13'
+  change: '初始创建——从project_rules.md和onboarding_detail.md提取RULE-FOURTEEN/FIFTEEN/SIXTEEN(注:初始版本错误映射了RULE-FOURTEEN/SIXTEEN归属且内容标题不匹配)'

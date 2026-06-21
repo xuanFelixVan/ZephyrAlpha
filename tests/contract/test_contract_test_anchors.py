@@ -1,10 +1,11 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0092 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-250 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.contract.test_contract_test_anchors
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
-"""contract_test_anchors.yaml 中登记的路径必须存在。"""
+"""contract-test-anchors.yaml 中登记的路径必须存在。"""
 
 from __future__ import annotations
 
@@ -15,7 +16,7 @@ import pytest
 import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-ANCHORS = REPO_ROOT / "tests/contract/contract_test_anchors.yaml"
+ANCHORS = REPO_ROOT / "tests/contract/contract-test-anchors.yaml"
 
 
 def _paths_for_entry(rel: Any) -> list[str]:

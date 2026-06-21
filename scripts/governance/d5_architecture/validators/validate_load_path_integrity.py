@@ -1,6 +1,15 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_load_path_integrity.py | §
 """Module docstring — see module-level docstring for details."""
 from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 #!/usr/bin/env python3
@@ -56,7 +65,7 @@ PATH_MAP = {
     "scripts/": REPO_ROOT,
     "src/": REPO_ROOT,
     "pyproject.toml": REPO_ROOT,
-    ".pre-commit-config.yaml": REPO_ROOT,
+    ".pre_commit-config.yaml": REPO_ROOT,
 }
 
 
@@ -65,7 +74,7 @@ def extract_paths_from_agents_md() -> list[str]:
     content = AGENTS_PATH.read_text(encoding="utf-8")
     paths: set[str] = set()
     pattern = re.compile(r"`([a-zA-Z0-9_/.\-]+)`")
-    blacklist = frozenset({".md", ".py", ".yaml", ".yml", ".md/.yaml/.yml", ".pre-commit-config"})
+    blacklist = frozenset({".md", ".py", ".yaml", ".yml", ".md/.yaml/.yml", ".pre_commit-config"})
 
     in_section82 = False
     for line in content.split("\n"):

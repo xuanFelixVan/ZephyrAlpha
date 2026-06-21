@@ -1,3 +1,4 @@
+# [A_config] module_id=CFG-domain-vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: DOM-GOV-001
@@ -12,7 +13,7 @@
 # 创建日期：2026-05-06
 #
 # 本词表定义 domain 字段的所有合法值（10 种）。
-# 用于 knowledge-article-registry.yaml 和 KMS 知识条目领域分类。
+# 用于 knowledge-article-registry.md 和 KMS 知识条目领域分类。
 #
 # 对标标准：
 #   - PS-STD-001 §9.2：知识条目业务领域

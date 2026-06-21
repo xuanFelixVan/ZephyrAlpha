@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0162 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-319 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.integration.test_agent_e2e
 # [STABILITY] evolving
 # [SAFETY] L
@@ -21,8 +22,8 @@ import pytest
 
 pytestmark = pytest.mark.e2e
 
-from zephyr.orchestrator.agent_health_monitor import AgentHealthMonitor, HealthState
-from zephyr.orchestrator.agent_orchestrator import (
+from zephyr.trading.orchestrator.agent_health_monitor import AgentHealthMonitor, HealthState
+from zephyr.trading.orchestrator.agent_orchestrator import (
     AgentOrchestrator,
     AgentProfile,
     AgentRole,

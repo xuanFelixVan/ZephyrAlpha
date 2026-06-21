@@ -1,0 +1,33 @@
+{
+  "task_id": "DM-100100",
+  "source_file": "docs/01_policies_and_standards/governance/document/file_path_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "doc_004": {
+      "title": "文件路径规范 (GOV-DOC-004)",
+      "conditions_count": 4,
+      "actions_count": 2,
+      "prohibitions_count": 7
+    },
+    "doc_015": {
+      "title": "文件路径规范-物理路径树与违规检测",
+      "conditions_count": 8,
+      "actions_count": 2,
+      "prohibitions_count": 3
+    }
+  },
+  "summary": {
+    "total_rules": 26,
+    "COVERED": 26,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    {
+      "action": "YAML_UPDATE",
+      "target": "trae_028_doc_structure_naming.yaml section doc_004 + trae_030_doc_numbering_metadata.yaml section doc_015",
+      "detail": "从空壳更新为包含完整规则提取:21种强制写入路径+废弃路径+根目录白名单+物理路径树4条规则+违规检测5种判定"
+    }
+  ]
+}

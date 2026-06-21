@@ -1,0 +1,294 @@
+# [A_config] module_id=CFG-invariants | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+module_id: DOM-GOV-001
+schema_version: "2.0"
+partition:
+  id: cross-cutting-invariants
+  name: Architecture Invariants
+  description: "不变量集合（资金安全 / PIT 铁律 / ACL 边界 / 幂等 / 跨平面通信）�? 来源：ARCHITECTURE-AS-CODE-PLAN-v2.0.md §3.5 + 03-application_architecture.md + 09-governance_architecture.md + KBG-0008 / KBG-0009 / KBG-0010�?"
+  source_views:
+    - ARCHITECTURE-AS-CODE-PLAN-v2.0.md §3.5
+    - 03-application_architecture.md
+    - 09-governance_architecture.md
+    - 04bis-runtime_planes.md §4.2
+  related_kb_refs: [KBG-0005, KBG-0007, KBG-0008, KBG-0009, KBG-0010, KBG-0011]
+
+invariants:
+
+  - id: INV-001
+    category: capital_safety
+    statement: "Kill Switch 延迟 < 1ms：风控硬拦截必须�?1ms 内触发熔�?"
+
+    owner: l04-risk-management
+    sub_owner: l04-stop-loss / l04-limits
+    enforcement: fitness_function
+    fitness_function_path: scripts/arch_guard/fitness_functions/check_kill_switch_latency.py
+    kb_ref: KBG-0009
+    violation_action: halt_trading
+    priority: P0
+    runtime_plane: hot
+    activation_trigger: T1 真实资金接入后激活硬检�?
+
+  - id: INV-002
+    category: capital_safety
+    statement: "单一持仓限制 �?5% NAV：任何单个仓位不得超过净资产价值的 5%"
+    owner: l04-risk-management
+    sub_owner: l04-limits
+    enforcement: fitness_function
+    fitness_function_path: scripts/arch_guard/fitness_functions/check_position_limit.py
+    kb_ref: KBG-0009
+    violation_action: reject_order
+    priority: P0
+    runtime_plane: hot
+    note: 参数配置�?config/risk_params.yaml（三平面共享同一参数文件�?
+
+  - id: INV-003
+    category: capital_safety
+    statement: "日损失限额触发自动暂停：当日亏损触及预设阈值时系统自动暂停交易"
+    owner: l04-risk-management
+    sub_owner: l04-monitor
+    enforcement: fitness_function
+    fitness_function_path: scripts/arch_guard/fitness_functions/check_daily_loss_limit.py
+    kb_ref: KBG-0009
+    violation_action: halt_trading
+    priority: P0
+    runtime_plane: hot
+    note: 日损失限额配置在 config/risk_params.yaml
+
+  - id: INV-004
+    category: data_integrity
+    statement: "PIT（Point-in-Time）铁律：回测数据禁止未来信息泄露（Look-ahead Bias 零容忍）"
+    owner: l02-alpha-factor
+    sub_owner: l02-pipeline / l02-factors
+    enforcement: fitness_function
+    fitness_function_path: scripts/arch_guard/fitness_functions/check_pit_compliance.py
+    kb_ref: KBG-0005
+    violation_action: fail_backtest
+    priority: P0
+    runtime_plane: cold
+    note: "所有因子计算必须严格以截止日期 T 时刻的已知数据为输入�? F 函数在每次回�?pipeline 触发时自动检�?forward-fill 泄露�?"
+  - id: INV-005
+    category: boundary_integrity
+    statement: "Broker ACL 边界：仅 `src/zephyr/ex_core/adapters/`（Python 包路�?`ex_core`�? EA 分层条目�?`layers/l06_trade_execution.yaml`）可调用 Broker API；其他层禁止直连�?"
+    owner: l06-trade-execution
+    sub_owner: l06-adapters
+    enforcement: arch_guard
+    fitness_function_path: scripts/arch_guard/check_acl_boundary.py
+    kb_ref: KBG-0008
+    violation_action: reject_commit
+    priority: P0
+    runtime_plane: hot
+    note: "�?import-linter / arch_guard �?CI 中强制检查�? 任何跨过 ACL 边界�?import 路径都会导致 pipeline 失败�?"
+  - id: INV-006
+    category: boundary_integrity
+    statement: "前后端唯一接触点：前端只能通过 L08 api_gateway 访问后端，禁止前端直接调用任何内部服�?"
+
+    owner: l08-human-ai-interface
+    sub_owner: l08-api-gateway
+    enforcement: arch_guard
+    fitness_function_path: scripts/arch_guard/check_fe_acl_boundary.py
+    kb_ref: KBG-0007
+    violation_action: reject_commit
+    priority: P0
+    runtime_plane: warm
+    note: KBG-0007 Frontend Platform 的核心边界约�?
+
+  - id: INV-007
+    category: idempotency
+    statement: "所有跨层事件必须携带幂�?Key（Idempotency Key）：防止重复处理"
+    owner: shared-contracts
+    sub_owner: shared/contracts/base_event.py
+    enforcement: fitness_function
+    fitness_function_path: scripts/arch_guard/fitness_functions/check_idempotency_key.py
+    kb_ref: KBG-0010
+    violation_action: reject_event
+    priority: P1
+    runtime_plane: all
+    note: 跨所有运行平面（Hot/Warm/Cold）的事件消息均需携带 idempotency_key 字段
+
+  - id: INV-008
+    category: boundary_integrity
+    statement: "跨层依赖方向：低层不�?import 高层（L00 不得 import L04+），依赖只能向上"
+    owner: l01-infrastructure
+    sub_owner: shared-contracts
+    enforcement: arch_guard
+    fitness_function_path: scripts/arch_guard/import_linter/layer_boundary_check.py
+    kb_ref: KBG-0009
+    violation_action: reject_commit
+    priority: P0
+    runtime_plane: all
+    note: "14 层架构的核心依赖方向约束�? import-linter �?CI 中检测所�?Python import 路径�?"
+  - id: INV-009
+    category: capital_safety
+    statement: "OCP 契约冻结：shared/contracts/ 中的接口一�?release，不得修改签名（只能扩展�?"
+
+    owner: shared-contracts
+    sub_owner: shared/contracts/_frozen_signatures/
+    enforcement: fitness_function
+    fitness_function_path: scripts/arch_guard/fitness_functions/check_ocp_signatures.py
+    kb_ref: KBG-0004
+    violation_action: reject_commit
+    priority: P0
+    runtime_plane: all
+    note: "F24 OCP 契约冻结机制�? frozen_signatures/ 快照�?Sprint 10 激活后对所有发布契约作 hash 校验�?"
+  - id: INV-010
+    category: data_integrity
+    statement: "PIT 契约统一：Cold / Warm / Hot 三平面必须共�?shared/contracts/ canonical schema，不允许任何平面独立发明 schema"
+    owner: shared-contracts
+    enforcement: arch_guard
+    fitness_function_path: scripts/arch_guard/check_schema_consistency.py
+    kb_ref: KBG-0011
+    violation_action: reject_commit
+    priority: P0
+    runtime_plane: all
+    note: "Sim-to-Real Gap 保障机制核心约束�? 特别针对 MarketImpactModel / WeightPortfolio / OrderBook / FillEvent / Timestamp 五类契约�?"
+  - id: INV-011
+    category: boundary_integrity
+    statement: "Cold �?Hot 禁止直接通信：Cold Path 输出必须先落 Warm Path 并经影子验证后方可进�?Hot Path"
+    owner: l13-experiment-pipeline
+    sub_owner: l13-shadow / l13-champion-challenger
+    enforcement: arch_guard
+    fitness_function_path: scripts/arch_guard/check_cross_plane_communication.py
+    kb_ref: KBG-0011
+    violation_action: reject_deployment
+    priority: P0
+    runtime_plane: cross
+    note: 任何绕过 Champion-Challenger shadow validation �?Cold→Hot 直通部署均违反此不变量
+
+  - id: INV-012
+    category: boundary_integrity
+    statement: "Hot Path 禁止同步调用 Python 代码：Hot 路径严禁直接调用任何 Python asyncio 代码"
+    owner: l04-risk-management
+    sub_owner: l04-limits / l06-sor
+    enforcement: arch_guard
+    fitness_function_path: scripts/arch_guard/check_hot_path_purity.py
+    kb_ref: KBG-0011
+    violation_action: reject_commit
+    priority: P0
+    runtime_plane: hot
+    note: Python GIL + asyncio 延迟不可预测，Hot �?Warm 等同�?Hot 降级�?Warm
+
+  - id: INV-013
+    category: capital_safety
+    statement: "风控参数三平面一致性：Cold 回测 / Warm 实盘 / Hot 拦截必须使用同一 config/risk_params.yaml 参数"
+    owner: l04-risk-management
+    enforcement: fitness_function
+    fitness_function_path: scripts/arch_guard/fitness_functions/check_risk_params_consistency.py
+    kb_ref: KBG-0011
+    violation_action: fail_deployment
+    priority: P0
+    runtime_plane: all
+    note: 防止三平面参数漂移导�?Sim-to-Real Gap
+
+  - id: INV-014
+    category: data_integrity
+    statement: "Survivorship Bias 零容忍：回测数据集必须包含退�?停牌标的，不得使用存活者偏差数�?"
+
+    owner: l00-data-source
+    sub_owner: l00-storage / l00-quality
+    enforcement: fitness_function
+    fitness_function_path: scripts/arch_guard/fitness_functions/check_survivorship_bias.py
+    kb_ref: KBG-0005
+    violation_action: fail_backtest
+    priority: P0
+    runtime_plane: cold
+    note: �?PIT 铁律（INV-004）协同，共同保证回测数据完整�?
+
+  - id: INV-015
+    category: boundary_integrity
+    statement: "AISG 拦截门禁：所�?AI 生成的代�?/ 指令必须�?L10 AISG security_gateway 拦截验证后才能执�?"
+
+    owner: l10-governance-compliance
+    sub_owner: l10-security-gateway
+    enforcement: fitness_function
+    fitness_function_path: scripts/arch_guard/fitness_functions/check_aisg_gateway.py
+    kb_ref: KBG-0010
+    violation_action: reject_ai_action
+    priority: P0
+    runtime_plane: warm
+    note: "AISG = AI Security Gateway（D-01 D 家族），六模块中 security_gateway �?Hot-adjacent�? 50ms）�? 任何跳过 AISG �?AI 指令执行均违反此不变量�?"
+  - id: INV-016
+    category: boundary_integrity
+    statement: "审计日志不可篡改：policy_decision_ledger.jsonl 仅允�?append-only 写入，禁止删�?修改历史记录"
+    owner: l10-governance-compliance
+    sub_owner: scripts/audit_log/decision_provenance.py
+    enforcement: fitness_function
+    fitness_function_path: scripts/arch_guard/fitness_functions/check_audit_log_immutability.py
+    kb_ref: KBG-0010
+    violation_action: reject_commit
+    priority: P1
+    runtime_plane: cold
+    note: F25 Decision Provenance 机制的核心约�?
+
+  - id: INV-017
+    category: ssot_capital
+    statement: "SSoT-CAP-INV: 架构模型中每个概念必须有且仅有一个权威来�?"
+
+    owner: ZephyrAlpha-Owner
+    sub_owner: "ssot-authority-map / architecture-model/index.yaml"
+    enforcement: manual_review
+    fitness_function_path: "scripts/arch_guard/fitness_functions/check_ssot_cap.py"
+    priority: P1
+    status: active
+    note: "SSoT-CAP 铁律——对�?AGENTS.md S5.3.3 + ssot-authority-map.md"
+
+  - id: INV-018
+    category: boundary_integrity
+    statement: "Hot↔Warm 必须通过 IPC 协议通信（runtime_plane_tag.py），禁止直接函数调用"
+    owner: ZephyrAlpha-Owner
+    sub_owner: "l04-stop-loss / l06-sor / shared-runtime-plane-tag"
+    enforcement: arch_guard
+    fitness_function_path: "scripts/arch_guard/fitness_functions/check_hot_warm_ipc.py"
+    priority: P1
+    status: active
+    note: "runtime_planes.yaml HOT_WARM_IPC_ONLY——AUDIT-04 FD4"
+
+  - id: INV-019
+    category: boundary_integrity
+    statement: "Warm→Cold 必须通过 Parquet/Redis Streams 异步通信，禁止同步阻�?"
+
+    owner: ZephyrAlpha-Owner
+    sub_owner: "l05-optimization / l11-serving / shared-runtime-plane-tag"
+    enforcement: arch_guard
+    fitness_function_path: "scripts/arch_guard/fitness_functions/check_warm_cold_async.py"
+    priority: P1
+    status: active
+    note: "runtime_planes.yaml WARM_COLD_ASYNC_ONLY——AUDIT-04 FD4"
+
+  - id: INV-020
+    category: boundary_integrity
+    statement: "跨运行时平面禁止共享可变全局状�?"
+
+    owner: ZephyrAlpha-Owner
+    sub_owner: "shared-contracts / shared-utils"
+    enforcement: arch_guard
+    fitness_function_path: "scripts/arch_guard/fitness_functions/check_no_cross_plane_mutable_state.py"
+    priority: P1
+    status: active
+    note: "runtime_planes.yaml NO_SHARED_MUTABLE_STATE——AUDIT-04 FD4"
+
+summary:
+  total: 20
+  by_category:
+    capital_safety: 5
+    data_integrity: 4
+    boundary_integrity: 12
+    idempotency: 1
+    ssot_capital: 1
+  by_priority:
+    P0: 14
+    P1: 6
+  by_runtime_plane:
+    hot: 5
+    warm: 2
+    cold: 3
+    all: 10
+    cross: 1
+  gate_03_status: "GATE-03 前置条件：所有不变量均有 owner �?enforcement 字段 �?"
+  last_updated: "2026-05-06"

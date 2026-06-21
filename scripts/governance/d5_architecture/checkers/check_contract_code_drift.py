@@ -5,12 +5,21 @@
       盲点 C2：AI 改 YAML 忘 codegen → 契约与代码漂移 → 硬阻断
 
 检测逻辑：
-  1. 计算 cross-layer-contracts.yaml 和所有生成 .py 文件的 SHA256
+  1. 计算 cross_layer_contracts.yaml 和所有生成 .py 文件的 SHA256
   2. 与作者签名的 _contract_sso.yml 中记录的上次 codegen 快照对比
   3. YAML 变更但 .py 未同步 → exit 1
 """
 
 from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 
@@ -46,7 +55,7 @@ _CONTRACTS_YAML = (
     / "target-architecture"
     / "architecture-model"
     / "contracts"
-    / "cross-layer-contracts.yaml"
+    / "cross_layer_contracts.yaml"
 )
 _CONTRACT_OUT_DIR = _REPO_ROOT / "src" / "zephyr" / "shared" / "contracts"
 _SNAPSHOT_FILE = _CONTRACT_OUT_DIR / "_codegen_snapshot.txt"

@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0012 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-207 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_cross_layer_systems_red_team
 # [STABILITY] evolving
 # [SAFETY] L
@@ -34,20 +35,20 @@ sys.path.insert(0, str(_PROJECT_ROOT))
 
 def test_00_import_vector_memory():
     modules = [
-        ("vector_memory", "zephyr.vector_memory"),
-        ("vector_memory.interface", "zephyr.vector_memory.interface"),
-        ("vector_memory.in_process_vector_memory", "zephyr.vector_memory.in_process_vector_memory"),
-        ("vector_memory.collection_manager", "zephyr.vector_memory.collection_manager"),
-        ("vector_memory.embedding_router", "zephyr.vector_memory.embedding_router"),
-        ("vector_memory.hybrid_retriever", "zephyr.vector_memory.hybrid_retriever"),
-        ("vector_memory.provenance_enforcer", "zephyr.vector_memory.provenance_enforcer"),
-        ("vector_memory.bridge_layer", "zephyr.vector_memory.bridge_layer"),
-        ("vector_memory.cache_layer", "zephyr.vector_memory.cache_layer"),
-        ("vector_memory.chunk_strategy_router", "zephyr.vector_memory.chunk_strategy_router"),
-        ("vector_memory.cross_collection_retriever", "zephyr.vector_memory.cross_collection_retriever"),
-        ("vector_memory.retrieval_feedback", "zephyr.vector_memory.retrieval_feedback"),
-        ("vector_memory.vector_bridge", "zephyr.vector_memory.vector_bridge"),
-        ("vector_memory.vms_schemas", "zephyr.vector_memory.vms_schemas"),
+        ("vector-memory", "zephyr.knowledge.vector_memory"),
+        ("vector-memory.interface", "zephyr.knowledge.vector_memory.interface"),
+        ("vector-memory.in_process_vector_memory", "zephyr.knowledge.vector_memory.in_process_vector_memory"),
+        ("vector-memory.collection_manager", "zephyr.knowledge.vector_memory.collection_manager"),
+        ("vector-memory.embedding_router", "zephyr.integration.local_model.embedding_router"),
+        ("vector-memory.hybrid_retriever", "zephyr.knowledge.vector_memory.hybrid_retriever"),
+        ("vector-memory.provenance_enforcer", "zephyr.knowledge.vector_memory.provenance_enforcer"),
+        ("vector-memory.bridge_layer", "zephyr.knowledge.vector_memory.bridge_layer"),
+        ("vector-memory.cache_layer", "zephyr.knowledge.vector_memory.cache_layer"),
+        ("vector-memory.chunk_strategy_router", "zephyr.knowledge.vector_memory.chunk_strategy_router"),
+        ("vector-memory.cross_collection_retriever", "zephyr.knowledge.vector_memory.cross_collection_retriever"),
+        ("vector-memory.retrieval_feedback", "zephyr.knowledge.vector_memory.retrieval_feedback"),
+        ("vector-memory.vector_bridge", "zephyr.autonomy_core.vector_bridge"),
+        ("vector-memory.vms_schemas", "zephyr.knowledge.vector_memory.vms_schemas"),
     ]
     errors = []
     for name, import_path in modules:
@@ -55,22 +56,22 @@ def test_00_import_vector_memory():
             __import__(import_path)
         except Exception as e:
             errors.append(f"{name}: {e}")
-    assert not errors, f"vector_memory import failures: {errors}"
+    assert not errors, f"vector-memory import failures: {errors}"
 
 
 def test_00_import_mcp_servers():
     modules = [
-        ("mcp", "zephyr.mcp"),
-        ("mcp._base_server", "zephyr.mcp._base_server"),
-        ("mcp.gateway_server", "zephyr.mcp.gateway_server"),
-        ("mcp.task_manager_server", "zephyr.mcp.task_manager_server"),
-        ("mcp.sentinel_server", "zephyr.mcp.sentinel_server"),
-        ("mcp.doc_guard_server", "zephyr.mcp.doc_guard_server"),
-        ("mcp.knowledge_base_server", "zephyr.mcp.knowledge_base_server"),
-        ("mcp.gate_engine_server", "zephyr.mcp.gate_engine_server"),
-        ("mcp.blueprint_search_server", "zephyr.mcp.blueprint_search_server"),
-        ("mcp.sandbox_server", "zephyr.mcp.sandbox_server"),
-        ("mcp.governance_server", "zephyr.mcp.governance_server"),
+        ("mcp", "zephyr.infrastructure.a2a_protocol.governance"),
+        ("mcp._base_server", "zephyr.infrastructure._base_server"),
+        ("mcp.gateway_server", "zephyr.infrastructure.gateway_server"),
+        ("mcp.task_manager_server", "zephyr.infrastructure.task_manager_server"),
+        ("mcp.sentinel_server", "zephyr.infrastructure.sentinel_server"),
+        ("mcp.doc_guard_server", "zephyr.infrastructure.doc_guard_server"),
+        ("mcp.knowledge_base_server", "zephyr.infrastructure.knowledge_base_server"),
+        ("mcp.gate_engine_server", "zephyr.infrastructure.gate_engine_server"),
+        ("mcp.blueprint_search_server", "zephyr.infrastructure.blueprint_search_server"),
+        ("mcp.sandbox_server", "zephyr.infrastructure.sandbox_server"),
+        ("mcp.governance_server", "zephyr.infrastructure.governance_server"),
     ]
     errors = []
     for name, import_path in modules:
@@ -83,15 +84,15 @@ def test_00_import_mcp_servers():
 
 def test_00_import_llm_security():
     modules = [
-        ("llm_security", "zephyr.llm_security"),
-        ("llm_security.input_sanitizer", "zephyr.llm_security.input_sanitizer"),
-        ("llm_security.process_sandbox", "zephyr.llm_security.process_sandbox"),
-        ("llm_security.patterns.secrets", "zephyr.llm_security.patterns.secrets"),
-        ("llm_security.layers.l0_supply_chain", "zephyr.llm_security.layers.l0_supply_chain"),
-        ("llm_security.layers.l1_input", "zephyr.llm_security.layers.l1_input"),
-        ("llm_security.layers.l2_prompt_protection", "zephyr.llm_security.layers.l2_prompt_protection"),
-        ("llm_security.layers.l3_output", "zephyr.llm_security.layers.l3_output"),
-        ("llm_security.layers.l4_agent", "zephyr.llm_security.layers.l4_agent"),
+        ("llm-security", "zephyr.security.llm_defense.llm_security"),
+        ("llm-security.input_sanitizer", "zephyr.security.llm_defense.llm_security.input_sanitizer"),
+        ("llm-security.process_sandbox", "zephyr.security.llm_defense.llm_security.process_sandbox"),
+        ("llm-security.patterns.secrets", "zephyr.security.llm_defense.llm_security.patterns.secrets"),
+        ("llm-security.layers.l0_supply_chain", "zephyr.security.llm_defense.llm_security.layers.l0_supply_chain"),
+        ("llm-security.layers.l1_input", "zephyr.security.llm_defense.llm_security.layers.l1_input"),
+        ("llm-security.layers.l2_prompt_protection", "zephyr.security.llm_defense.llm_security.layers.l2_prompt_protection"),
+        ("llm-security.layers.l3_output", "zephyr.security.llm_defense.llm_security.layers.l3_output"),
+        ("llm-security.layers.l4_agent", "zephyr.security.llm_defense.llm_security.layers.l4_agent"),
     ]
     errors = []
     for name, import_path in modules:
@@ -99,19 +100,19 @@ def test_00_import_llm_security():
             __import__(import_path)
         except Exception as e:
             errors.append(f"{name}: {e}")
-    assert not errors, f"llm_security import failures: {errors}"
+    assert not errors, f"llm-security import failures: {errors}"
 
 
 def test_00_import_shared_core():
     modules = [
         ("shared", "zephyr.shared"),
-        ("shared.schemas", "zephyr.shared.schemas"),
-        ("shared.errors", "zephyr.shared.errors"),
-        ("shared.event_bus", "zephyr.shared.event_bus"),
-        ("shared.ssot_guard", "zephyr.shared.ssot_guard"),
-        ("shared.resilience", "zephyr.shared.resilience"),
-        ("core.models", "zephyr.core.models"),
-        ("core.blueprint_decomposer", "zephyr.core.blueprint_decomposer"),
+        ("shared.schemas", "zephyr.integration.shared.schema.schemas"),
+        ("shared.errors", "zephyr.integration.shared_08.errors"),
+        ("shared.event_bus", "zephyr.infrastructure.shared_services.events.event_bus"),
+        ("shared.ssot_guard", "zephyr.integration.shared_08.ssot_guard"),
+        ("shared.resilience", "zephyr.integration.shared_08.resilience"),
+        ("core.models", "zephyr.infrastructure.shared_services.models"),
+        ("core.blueprint_decomposer", "zephyr.infrastructure.shared_services.blueprint_decomposer"),
     ]
     errors = []
     for name, import_path in modules:
@@ -127,7 +128,7 @@ def test_00_import_shared_core():
 # ============================================================================
 
 def _setup_vms_collection(tmp_path=None):
-    from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
+    from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
     vms = InProcessVectorMemory(persist_dir=tmp_path / "vms_col" if tmp_path else None)
     vms.create_collection("decisions", 512)
     return vms
@@ -146,7 +147,7 @@ class TestVectorMemoryAdversarial:
         assert isinstance(results, list)
 
     def test_nonexistent_collection_search_raises(self, tmp_path):
-        from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
         vms = InProcessVectorMemory(persist_dir=tmp_path / "vms_nx")
         with pytest.raises(KeyError):
             vms.search("__nonexistent__", "query")
@@ -164,29 +165,29 @@ class TestVectorMemoryAdversarial:
         assert isinstance(results, list)
 
     def test_collection_manager_8_collections(self):
-        from zephyr.vector_memory.collection_manager import CollectionManager
+        from zephyr.governance.vector_memory.collection_manager import CollectionManager
         cm = CollectionManager()
         if hasattr(cm, "TARGET_COLLECTIONS"):
             expected = len(cm.TARGET_COLLECTIONS)
             assert expected == 8, f"Expected 8 collections, got {expected}"
 
     def test_interface_contract(self):
-        from zephyr.vector_memory.interface import VectorMemoryBase
+        from zephyr.governance.vector_memory.interface import VectorMemoryBase
         assert hasattr(VectorMemoryBase, "store")
         assert hasattr(VectorMemoryBase, "search")
         assert hasattr(VectorMemoryBase, "delete")
 
     def test_provenance_bypass_write_rejected(self, tmp_path):
-        from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
-        from zephyr.vector_memory.vms_errors import ProvenanceMissingError
+        from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        from zephyr.governance.vector_memory.vms_errors import ProvenanceMissingError
         vms = InProcessVectorMemory(persist_dir=tmp_path / "vms_prov")
         vms.init_all_collections()
         with pytest.raises(ProvenanceMissingError):
             vms.write("decisions", "制造一个没有来源的决策", metadata=None)
 
     def test_human_gated_collection_write_behavior(self, tmp_path):
-        from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
-        from zephyr.vector_memory.collection_schemas import COLLECTION_SCHEMAS
+        from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        from zephyr.governance.vector_memory.collection_schemas import COLLECTION_SCHEMAS
         human_gated_collections = [
             name for name, schema in COLLECTION_SCHEMAS.items()
             if schema.get("ai_autonomy_level") == "human-gated"
@@ -218,7 +219,7 @@ class TestVectorMemoryAdversarial:
             assert isinstance(results, list)
 
     def test_collection_metadata_corruption_resilience(self, tmp_path):
-        from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
         vms = InProcessVectorMemory(persist_dir=tmp_path / "vms_meta")
         vms.init_all_collections()
         try:
@@ -232,7 +233,7 @@ class TestVectorMemoryAdversarial:
             pass
 
     def test_vms_start_stop_cycle_health(self, tmp_path):
-        from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
         vms = InProcessVectorMemory(persist_dir=tmp_path / "vms_cycle")
         vms.init_all_collections()
         vms.start()
@@ -245,9 +246,9 @@ class TestVectorMemoryAdversarial:
         assert len(info2) == 8
 
     def test_vector_bridge_all_collections_access(self, tmp_path):
-        from zephyr.vector_memory.vector_bridge import VectorBridge
-        from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
-        from zephyr.vector_memory.collection_schemas import COLLECTION_NAMES
+        from zephyr.autonomy_core.vector_bridge import VectorBridge
+        from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
+        from zephyr.governance.vector_memory.collection_schemas import COLLECTION_NAMES
 
         vms = InProcessVectorMemory(persist_dir=tmp_path / "vms_test")
         vms.init_all_collections()
@@ -262,7 +263,7 @@ class TestVectorMemoryAdversarial:
 # ============================================================================
 
 def _make_test_server():
-    from zephyr.mcp._base_server import BaseMCPServer
+    from zephyr.infrastructure._base_server import BaseMCPServer
     return BaseMCPServer("test_server", "1.0.0", "Test server for adversarial testing")
 
 
@@ -320,16 +321,16 @@ class TestMCPServersAdversarial:
         assert result["error"]["code"] == -32601
 
     def test_gateway_import(self):
-        from zephyr.mcp.gateway_server import MCPGateway
+        from zephyr.infrastructure.gateway_server import MCPGateway
         assert MCPGateway.__name__ == "MCPGateway"
 
     def test_all_servers_importable(self):
-        from zephyr.mcp.task_manager_server import TaskManagerMCP
-        from zephyr.mcp.sentinel_server import SentinelServer
-        from zephyr.mcp.doc_guard_server import DocGuardServer
-        from zephyr.mcp.knowledge_base_server import KnowledgeBaseServer
-        from zephyr.mcp.gate_engine_server import GateEngineServer
-        from zephyr.mcp.blueprint_search_server import BlueprintSearchServer
+        from zephyr.infrastructure.task_manager_server import TaskManagerMCP
+        from zephyr.infrastructure.sentinel_server import SentinelServer
+        from zephyr.infrastructure.doc_guard_server import DocGuardServer
+        from zephyr.infrastructure.knowledge_base_server import KnowledgeBaseServer
+        from zephyr.infrastructure.gate_engine_server import GateEngineServer
+        from zephyr.infrastructure.blueprint_search_server import BlueprintSearchServer
         assert TaskManagerMCP is not None
         assert SentinelServer is not None
         assert DocGuardServer is not None
@@ -339,8 +340,8 @@ class TestMCPServersAdversarial:
 
     def test_tool_contracts_yaml_valid(self):
         import yaml
-        contracts_path = _PROJECT_ROOT / "src" / "zephyr" / "mcp" / "tool_contracts.yaml"
-        assert contracts_path.exists(), f"tool_contracts.yaml not found at {contracts_path}"
+        contracts_path = _PROJECT_ROOT / "src" / "zephyr" / "mcp" / "tool-contracts.yaml"
+        assert contracts_path.exists(), f"tool-contracts.yaml not found at {contracts_path}"
         with open(contracts_path, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         assert data is not None
@@ -370,7 +371,7 @@ class TestLLMSecurityAdversarial:
     ]
 
     def test_l1_input_sanitizer_detects_injections(self):
-        from zephyr.llm_security.input_sanitizer import InputSanitizer, ContextInjectionError
+        from zephyr.security.llm_defense.llm_security.input_sanitizer import InputSanitizer, ContextInjectionError
         sanitizer = InputSanitizer(root=_PROJECT_ROOT)
         detected = 0
         for injection in self.PROMPT_INJECTIONS:
@@ -381,39 +382,39 @@ class TestLLMSecurityAdversarial:
         assert detected > 0, f"Expected some injections to be detected, got {detected}"
 
     def test_l1_input_sanitizer_empty_input(self):
-        from zephyr.llm_security.input_sanitizer import InputSanitizer
+        from zephyr.security.llm_defense.llm_security.input_sanitizer import InputSanitizer
         sanitizer = InputSanitizer(root=_PROJECT_ROOT)
         sanitizer.validate_llm_context("")
 
     def test_l1_input_sanitizer_unicode_bomb(self):
-        from zephyr.llm_security.input_sanitizer import InputSanitizer
+        from zephyr.security.llm_defense.llm_security.input_sanitizer import InputSanitizer
         sanitizer = InputSanitizer(root=_PROJECT_ROOT)
         unicode_bomb = "\u0000\u0001\u0002\u0003" + "test"
         sanitizer.validate_llm_context(unicode_bomb)
 
     def test_l3_output_secret_scanning(self):
-        from zephyr.llm_security.patterns.secrets import scan_secrets
+        from zephyr.security.llm_defense.llm_security.patterns.secrets import scan_secrets
         for leak in self.SECRET_LEAKS:
             findings = scan_secrets(leak)
             assert isinstance(findings, list)
 
     def test_l3_output_security_layer_instantiate(self):
-        from zephyr.llm_security.layers.l3_output import OutputSecurityLayer
+        from zephyr.security.llm_defense.llm_security.layers.l3_output import OutputSecurityLayer
         layer = OutputSecurityLayer()
         assert layer is not None
 
     def test_l3_agent_public_interaction_guard(self):
-        from zephyr.llm_security.layers.l3_output import AgentPublicInteractionGuard
+        from zephyr.security.llm_defense.llm_security.layers.l3_output import AgentPublicInteractionGuard
         guard = AgentPublicInteractionGuard()
         assert guard is not None
 
     def test_l2a_sandbox_instantiate(self):
-        from zephyr.llm_security.process_sandbox import L2aSandbox
+        from zephyr.security.llm_defense.llm_security.process_sandbox import L2aSandbox
         sandbox = L2aSandbox()
         assert sandbox is not None
 
     def test_l0_scanner_instantiate(self):
-        from zephyr.llm_security.layers.l0_supply_chain import MCPDeepSupplyChainScanner
+        from zephyr.security.llm_defense.llm_security.layers.l0_supply_chain import MCPDeepSupplyChainScanner
         scanner = MCPDeepSupplyChainScanner()
         assert scanner is not None
 
@@ -425,15 +426,15 @@ class TestLLMSecurityAdversarial:
 class TestSharedCoreAdversarial:
     def test_freeze_manifest_valid(self):
         import yaml
-        manifest_path = _PROJECT_ROOT / "src" / "zephyr" / "shared" / "contracts" / "freeze_manifest.yaml"
-        assert manifest_path.exists(), f"freeze_manifest.yaml not found at {manifest_path}"
+        manifest_path = _PROJECT_ROOT / "src" / "zephyr" / "shared" / "contracts" / "freezemanifest.yaml"
+        assert manifest_path.exists(), f"freezemanifest.yaml not found at {manifest_path}"
         with open(manifest_path, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         assert data is not None
 
     def test_task_model_minimal(self):
-        from zephyr.core.models import TaskCard
-        from zephyr.shared.schemas import (
+        from zephyr.shared.shared_services.models import TaskCard
+        from zephyr.integration.shared.schema.schemas import (
             TaskStatus, TaskNamespace, Priority, Classification,
             ExecutionModel, SafetyLevel,
         )
@@ -460,9 +461,9 @@ class TestSharedCoreAdversarial:
         assert task.phase == 0
 
     def test_task_invalid_status_rejected(self):
-        from zephyr.core.models import TaskCard
-        from zephyr.shared.schemas import TaskNamespace, Classification
-        from zephyr.shared.schemas import ExecutionModel, SafetyLevel
+        from zephyr.shared.shared_services.models import TaskCard
+        from zephyr.integration.shared.schema.schemas import TaskNamespace, Classification
+        from zephyr.integration.shared.schema.schemas import ExecutionModel, SafetyLevel
         now = datetime.now(UTC)
         try:
             task = TaskCard(
@@ -483,7 +484,7 @@ class TestSharedCoreAdversarial:
         assert task.status != "__INVALID__", "Invalid status was silently accepted"
 
     def test_event_bus_event_dataclass(self):
-        from zephyr.shared.event_bus import Event, EventPriority
+        from zephyr.shared.shared_services.events.event_bus import Event, EventPriority
         evt = Event(
             topic="test.adversarial",
             payload={"test": True},
@@ -493,16 +494,16 @@ class TestSharedCoreAdversarial:
         assert evt.priority == EventPriority.LOW
 
     def test_ssot_guard_instantiate(self):
-        from zephyr.shared.ssot_guard import SsotGuard
+        from zephyr.integration.shared_08.ssot_guard import SsotGuard
         guard = SsotGuard()
         assert guard is not None
 
     def test_taskcard_instantiate(self):
-        from zephyr.shared.schemas import (
+        from zephyr.integration.shared.schema.schemas import (
             TaskStatus, TaskNamespace, Classification,
             ExecutionModel, SafetyLevel,
         )
-        from zephyr.core.models import TaskCard
+        from zephyr.shared.shared_services.models import TaskCard
         now = datetime.now(UTC)
         card = TaskCard(
             task_id="ADR-9997",
@@ -524,12 +525,12 @@ class TestSharedCoreAdversarial:
         assert card.phase == 0
 
     def test_blueprint_decomposer_instantiate(self):
-        from zephyr.core.blueprint_decomposer import BlueprintDecomposer
+        from zephyr.shared.shared_services.blueprint_decomposer import BlueprintDecomposer
         decomposer = BlueprintDecomposer()
         assert decomposer is not None
 
     def test_resilience_circuit_breaker(self):
-        from zephyr.shared.resilience import CircuitBreaker
+        from zephyr.integration.shared_08.resilience import CircuitBreaker
         cb = CircuitBreaker("test_cb", failure_threshold=3)
         assert cb.name == "test_cb"
         assert cb.state == "CLOSED"

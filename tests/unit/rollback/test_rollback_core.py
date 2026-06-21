@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1937 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-554 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.rollback.test_rollback_core
 # [STABILITY] evolving
 # [SAFETY] L
@@ -14,8 +15,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.rollback.kill_switch import KillLevel, KillSwitchManager, KillSwitchStatus
-from zephyr.rollback.rollback_executor import (
+from zephyr.ops.kill_switch import KillLevel, KillSwitchManager, KillSwitchStatus
+from zephyr.governance.rollback_executor import (
     DiscardDecision,
     DiscardResult,
     PreflightResult,
@@ -23,7 +24,7 @@ from zephyr.rollback.rollback_executor import (
     RollbackOp,
     RollbackResult,
 )
-from zephyr.rollback.rollback_lock import LockAcquireResult, LockPriority, RollbackLock
+from zephyr.governance.rollback_lock import LockAcquireResult, LockPriority, RollbackLock
 
 
 @pytest.fixture
@@ -67,8 +68,8 @@ def executor(tmp_project, mock_dumper, mock_lock):
 
 class TestRollbackExecutorInit:
     def test_default_instantiation(self, tmp_project):
-        with patch("zephyr.rollback.rollback_executor.SqliteDumper"), \
-             patch("zephyr.rollback.rollback_executor.RollbackLock"):
+        with patch("zephyr.infrastructure.rollback.rollback_executor.SqliteDumper"), \
+             patch("zephyr.infrastructure.rollback.rollback_executor.RollbackLock"):
             ex = RollbackExecutor(project_root=tmp_project)
             assert ex._project_root == tmp_project
             assert ex._owner_session_id is None

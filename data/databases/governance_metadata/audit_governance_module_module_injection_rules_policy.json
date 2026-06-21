@@ -1,0 +1,87 @@
+{
+  "task_id": "DM-100132",
+  "source_file": "docs/01_policies_and_standards/governance/module/module_injection_rules_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_032_module_lifecycle.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "INJ-001_ID唯一性": {
+      "source_section": "rules[0]",
+      "type": "pre_condition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_005",
+      "details": "module_id在module-id-registry.json中唯一→REJECT"
+    },
+    "INJ-002_依赖可解析": {
+      "source_section": "rules[1]",
+      "type": "pre_condition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_005",
+      "details": "depends_on所有依赖存在且可解析→REJECT"
+    },
+    "INJ-003_契约已定": {
+      "source_section": "rules[2]",
+      "type": "pre_condition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_005",
+      "details": "P0模块接口契约frozen→REJECT"
+    },
+    "INJ-004_生命周期状态合法": {
+      "source_section": "rules[3]",
+      "type": "pre_condition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_005",
+      "details": "status为8个合法值之一→REJECT"
+    },
+    "INJ-005_运行平面已分配": {
+      "source_section": "rules[4]",
+      "type": "pre_condition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_005",
+      "details": "runtime_plane为hot/warm/cold→REJECT"
+    },
+    "INJ-006_KB决策记录已关联": {
+      "source_section": "rules[5]",
+      "type": "pre_condition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_005",
+      "details": "P0模块关联至少1个KB决策记录→REJECT"
+    },
+    "INJ-007_编码合规": {
+      "source_section": "rules[6]",
+      "type": "pre_condition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_005",
+      "details": "UTF-8编码无BOM→REJECT"
+    },
+    "INJ-008_依赖方向合法": {
+      "source_section": "rules[7]",
+      "type": "pre_condition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_005",
+      "details": "依赖方向符合GOV-ARCH-001跨层规则→REJECT"
+    },
+    "execution_sequence_fail_fast": {
+      "source_section": "execution",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_005",
+      "details": "INJ-001→002→007→003→004→005→006→008顺序+fail_fast模式"
+    },
+    "exemptions_INJ-003_006": {
+      "source_section": "exemptions",
+      "type": "constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_005",
+      "details": "非P0模块SKIP INJ-003/INJ-006"
+    }
+  },
+  "summary": {
+    "total_rules": 10,
+    "COVERED": 10,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "trae_032_module_lifecycle.yaml: 新增mod_005 section覆盖module_injection_rules_policy.md全部8条INJ检查+执行顺序+豁免规则(8条pre_conditions+3条actions+1条prohibition)"
+  ]
+}

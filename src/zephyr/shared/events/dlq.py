@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_dlq | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.events.dlq
 
@@ -30,7 +31,7 @@ Phase 6 新增（盲点 B6）——解决 observer.emit() 静默吞 handler 异�
 
 设计原则：
   - DeadLetter CLOCK——Subscribe 到 Observer，拦截失败事件（不修改 observer 源码）
-  - SQLite 持久化——利用项目已有的 data/zalpha_metadata.db（共用 DB_PATH）
+  - SQLite 持久化——利用项目已有的 data/databases/governance.db（共用 DB_PATH）
   - 保留策略——max_age 自动清理过期死信
   - 定时重试——可配置 retry_interval，将死信重新推送回事件总线
   - 零侵入——Observer 本身不需要修改，DLQ 作为外部 subscriber 挂载
@@ -119,7 +120,7 @@ class DeadLetterQueue:
 
     Usage:
         from zephyr.shared.infra.observer import global_observer
-        dlq = DeadLetterQueue(db_path="data/zalpha_metadata.db")
+        dlq = DeadLetterQueue(db_path="data/databases/governance.db")
         dlq.attach(global_observer)
 
         # 任何 handler 失败 → 自动写入 dead_letters 表
@@ -411,7 +412,7 @@ def attach_dlq_to_observer(
         from zephyr.shared.infra.observer import global_observer
         from zephyr.shared.events.dlq import attach_dlq_to_observer
 
-        dlq = attach_dlq_to_observer(global_observer, "data/zalpha_metadata.db")
+        dlq = attach_dlq_to_observer(global_observer, "data/databases/governance.db")
     """
     dlq = DeadLetterQueue(
         db_path,

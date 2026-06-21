@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0014 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-209 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_kb_redteam
 # [STABILITY] evolving
 # [SAFETY] L
@@ -45,7 +46,7 @@ def _ke_dir() -> Path:
 
 
 def _db_path() -> Path:
-    return PROJECT_ROOT / "data" / "zalpha_metadata.db"
+    return PROJECT_ROOT / "data" / "databases" / "governance.db"
 
 
 def _snap_dir() -> Path:
@@ -90,7 +91,7 @@ test whether a near-duplicate can bypass semantic deduplication.
         dupe_path.write_text(near_dupe_content, encoding="utf-8")
 
         try:
-            from zephyr.kb.graph_validator import GraphValidator
+            from zephyr.governance.kb.graph_validator import GraphValidator
             gv = GraphValidator()
             result = gv.check_near_duplicate(str(orig_path), str(dupe_path))
             assert result.get("is_duplicate", False), (
@@ -128,7 +129,7 @@ Document B with standard content for collision boundary testing.
         mod_path.write_text(modified, encoding="utf-8")
 
         try:
-            from zephyr.kb.graph_validator import GraphValidator
+            from zephyr.governance.kb.graph_validator import GraphValidator
             gv = GraphValidator()
             result = gv.check_near_duplicate(str(base_path), str(mod_path))
 
@@ -149,7 +150,7 @@ class TestRedTeamStateMachine:
     def test_R5_invalid_state_transition(self):
         """攻击: 尝试将KE从 draft 直接跳到 verified 跳过 reviewed。"""
         try:
-            from zephyr.kb.kb_repo import KbRepo, KeStatus
+            from zephyr.intelligence.model_evaluation.kb_repo import KbRepo, KeStatus
             repo = KbRepo()
 
             allowed = repo.validate_state_transition(KeStatus.DRAFT, KeStatus.VERIFIED)
@@ -163,7 +164,7 @@ class TestRedTeamStateMachine:
     def test_R5_self_to_self_transition(self):
         """攻击: 尝试标记 KE 状态为自身（无意义操作）。"""
         try:
-            from zephyr.kb.kb_repo import KbRepo, KeStatus
+            from zephyr.intelligence.model_evaluation.kb_repo import KbRepo, KeStatus
             repo = KbRepo()
 
             for status in KeStatus:
@@ -175,7 +176,7 @@ class TestRedTeamStateMachine:
     def test_R5_backwards_transition_rejected(self):
         """攻击: 尝试将KE从 reviewed 回退到 draft。"""
         try:
-            from zephyr.kb.kb_repo import KbRepo, KeStatus
+            from zephyr.intelligence.model_evaluation.kb_repo import KbRepo, KeStatus
             repo = KbRepo()
 
             allowed = repo.validate_state_transition(KeStatus.REVIEWED, KeStatus.DRAFT)
@@ -193,7 +194,7 @@ class TestRedTeamChromaDBBypass:
     def test_R6_chromadb_tampering_attack(self):
         """攻击: 直接向ChromaDB注入向量，绕过SQLite元数据层。"""
         try:
-            from zephyr.kb.chromadb_init import get_chroma_client
+            from zephyr.governance.kb.chromadb_init import get_chroma_client
             client = get_chroma_client()
             coll = client.get_or_create_collection("ke_entries")
 
@@ -233,7 +234,7 @@ class TestRedTeamChromaDBBypass:
         ke_dir.mkdir(parents=True, exist_ok=True)
 
         try:
-            from zephyr.kb.self_test import _check_ghost_scan as ghost_scan
+            from zephyr.governance.self_test import _check_ghost_scan as ghost_scan
             report = ghost_scan(PROJECT_ROOT)
 
             valid_statuses = ("PASS", "WARN", "FAIL", "SKIP")
@@ -266,7 +267,7 @@ class TestRedTeamContextOverflow:
         if file_size > MAX_KE_SIZE:
             try:
                 os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
-                from zephyr.kb.self_test import SelfTest
+                from zephyr.governance.self_test import SelfTest
                 os.environ["ZEPHYR_PROJECT_ROOT"] = str(PROJECT_ROOT)
                 st = SelfTest()
                 report = st.run()

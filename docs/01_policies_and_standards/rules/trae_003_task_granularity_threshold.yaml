@@ -1,0 +1,98 @@
+rule_id: TRAE-003
+title: 任务粒度与完成门槛协议
+aliases:
+- RULE-SIX
+- RULE-THIRTEEN
+- 任务粒度
+- 完成门槛
+layer: L0
+severity: critical
+scope: task_management
+domain: TRAE
+triggers:
+- operation: task_create
+- operation: task_transition
+- skill_id: SKILL-DOM-TSK-001
+sections:
+  task_granularity:
+    section_type: rule
+    title: 任务粒度边界
+    original_rules:
+    - RULE-SIX
+    conditions:
+    - type: pre_condition
+      check: 八指标机械门——1.新代码>50行？2.涉及>3文件？3.需读蓝图？4.Schema变更？5.depgraph.db操作？6.消费者影响>50文件？7.跨域操作？8.多步骤>3施工步骤？
+      pass: 任一YES→走任务系统
+      fail: 全NO→直接做
+    actions:
+    - type: mandatory
+      step: 八指标机械门判定→任一触发→建卡（双触发机制：用户主动 OR 阈值自动触发）
+    - type: mandatory
+      step: 建卡后立刻施工——不等用户确认
+    - type: mandatory
+      step: 'RULE-ZERO-TASK: 任务卡MUST通过TaskRepository.create()写入SQLite，禁止手写.md建卡。建卡触发=用户主动 OR 八指标阈值触发。蓝图拆解是建卡来源之一，非唯一路径。'
+    - type: mandatory
+      step: 建卡来源——蓝图拆解(BlueprintDecomposer.decompose)/Bug修复/架构债务/代码扫描/重构任务/任何达到阈值的任务→TaskRepository.create(allow_direct_create=True)
+    prohibitions:
+    - 八指标任一触发但不建卡
+    - 全不触发但建卡（任务卡膨胀）
+    - 建卡后等用户确认再开工
+    - 用感觉判断是否建卡
+    - 禁止手写.md建卡（.md仅伴读副本）
+  granularity_gate:
+    section_type: rule
+    title: 粒度门禁
+    original_rules:
+    - RULE-THIRTEEN
+    conditions:
+    - type: pre_condition
+      check: deliverables≤1 / files_in_scope≤3 / acceptance≤1 / construction_targets≤1
+      pass: 粒度合规
+      fail: 超限→拒绝建卡，提示拆卡
+    actions:
+    - type: mandatory
+      step: create()时自动校验R1-R6六条规则
+    - type: mandatory
+      step: 超粒度→TaskRepository.auto_split_task(task)自动拆分
+    - type: mandatory
+      step: transition(COMPLETED)时自动执行post_sync_standard验证命令
+    prohibitions:
+    - deliverables>1或files_in_scope>3仍建卡（违反R1/R2粒度门）
+    - 遇到error不写root_cause_analysis直接完成
+    - 用'修了'替代MTH-006根源分析
+  change_history:
+    section_type: examples
+    title: 任务粒度与完成门槛协议修订记录
+    items:
+    - version: '2.0.0'
+      date: '2026-06-22'
+      change: '建卡路径规则变更：四指标→八指标机械门(新增depgraph操作/消费者影响>50/跨域操作/多步骤>3)；RULE-ZERO-TASK从"蓝图拆解唯一路径"改为"TaskRepository.create()唯一入口+双触发(用户主动OR阈值)"；建卡来源扩展(蓝图/Bug/债务/扫描/重构)'
+    - version: '1.1.0'
+      date: '2026-06-19'
+      change: 'RQ审查修复: references.modules路径修正(src/zephyr/data/persistence→src/zephyr/governance/task_repo.py); provenance哈希同步; 修复内部矛盾(prohibitions阈值>3/>5→>1/>3与conditions对齐); 新增change_history(RQ-14)'
+    - version: '1.0.0'
+      date: '2026-06-13'
+      change: '从project_rules.md(RULE-SIX/RULE-THIRTEEN)+onboarding_detail.md(§四)提取初始版本'
+references:
+  rule_ids: []
+  scripts: []
+  modules:
+  - src/zephyr/governance/task_repo.py
+  blueprints:
+  - GOV-TASK-001
+enforcement:
+  type: code
+  executors:
+  - TaskRepository._validate_template_fields()
+  - TaskRepository.auto_split_task()
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: H
+  modification_permission: human_gated
+  superseded_by: null
+  version: '2.0.0'
+  last_modified: '2026-06-22'
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

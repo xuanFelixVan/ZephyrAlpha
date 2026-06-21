@@ -1,3 +1,4 @@
+# [A_test] module_id: SRC-TST-1936 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 import importlib.util
 import sys
 import types
@@ -32,11 +33,11 @@ _rb_dir = _SRC / "zephyr" / "rollback"
 
 _ensure_pkg("zephyr.rollback", _rb_dir)
 
-_load_mod("zephyr.rollback.kill_switch", _rb_dir / "kill_switch.py")
-_load_mod("zephyr.rollback.rollback_lock", _rb_dir / "rollback_lock.py")
+_load_mod("zephyr.infrastructure.rollback.kill_switch", _rb_dir / "kill_switch.py")
+_load_mod("zephyr.infrastructure.rollback.rollback_lock", _rb_dir / "rollback_lock.py")
 
-sys.modules.setdefault("zephyr.rollback.sqlite_dumper", MagicMock())
-sys.modules.setdefault("zephyr.audit_trail", MagicMock())
-sys.modules.setdefault("zephyr.audit_trail.writer", MagicMock())
+sys.modules.setdefault("zephyr.infrastructure.rollback.sqlite_dumper", MagicMock())
+sys.modules.setdefault("zephyr.governance.audit_trail", MagicMock())
+sys.modules.setdefault("zephyr.governance.audit_trail.writer", MagicMock())
 
-_load_mod("zephyr.rollback.rollback_executor", _rb_dir / "rollback_executor.py")
+_load_mod("zephyr.infrastructure.rollback.rollback_executor", _rb_dir / "rollback_executor.py")

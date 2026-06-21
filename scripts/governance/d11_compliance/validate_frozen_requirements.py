@@ -2,7 +2,7 @@
 """
 validate_frozen_requirements.py — 依赖版本锁定与验证（蓝图 §34.2）
 
-对比当前 Python 环境中的依赖版本与 frozen-versions.txt 中锁定的版本：
+对比当前 Python 环境中的依赖版本与 frozen_versions.txt 中锁定的版本：
 - 任何低于锁定版本 → Finding
 - 任何不在锁定列表中的新包 → 警告
 
@@ -15,7 +15,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: 依赖版本锁定验证 — 对比环境版本与 frozen-versions.txt
+description: 依赖版本锁定验证 — 对比环境版本与 frozen_versions.txt
 dimensions:
 - D11
 priority: P1
@@ -38,11 +38,11 @@ ensure_utf8_stdout()
 
 from _shared.constants import EXIT_PASS, SCRIPTS_DIR
 
-FROZEN_PATH = SCRIPTS_DIR / "meta" / "frozen-versions.txt"
+FROZEN_PATH = SCRIPTS_DIR / "meta" / "frozen_versions.txt"
 
 
 def parse_frozen(path: Path) -> dict[str, str]:
-    """解析 frozen-versions.txt。
+    """解析 frozen_versions.txt。
 
     Args:
         path: 锁定文件路径
@@ -108,7 +108,7 @@ def main() -> None:
 
     frozen = parse_frozen(FROZEN_PATH)
     if not frozen:
-        print("[FROZEN] frozen-versions.txt 为空或不存在", file=sys.stderr)
+        print("[FROZEN] frozen_versions.txt 为空或不存在", file=sys.stderr)
         sys.exit(0 if args.warn_only else 1)
 
     violations, passed = check_versions(frozen)

@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [A_test] module_id: SRC-TST-0058 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §
 # [MODULE] tests.agent_rbac.test_vibe_coding
 # [STABILITY] evolving
 # [SAFETY] L
@@ -8,9 +9,9 @@
 from __future__ import annotations
 
 import pytest
-from zephyr.agent_rbac.vibe_coding_guard import VibeCodingGuard
-from zephyr.agent_rbac.novel_attack_guard import NovelAttackGuard
-from zephyr.agent_rbac.cybersec_2026_guard import Cybersec2026Guard
+from zephyr.security.access_control.vibe_coding_guard import VibeCodingGuard
+from zephyr.security.access_control.novel_attack_guard import NovelAttackGuard
+from zephyr.security.access_control.cybersec_2026_guard import Cybersec2026Guard
 
 
 class TestAttackSurface:

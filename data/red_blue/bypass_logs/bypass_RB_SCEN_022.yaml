@@ -1,0 +1,20 @@
+- attack_payload: ''
+  count: 1
+  defense_response: 'BLOCKED by secrets.scan_logs: secrets.scan_logs'
+  entry_id: BY-32910113
+  escalated: false
+  gate_id: secrets.scan_logs
+  occurred_at: '2026-05-23T14:30:34.292676+00:00'
+  root_cause: 'BLOCKED by secrets.scan_logs: secrets.scan_logs'
+  scenario_id: RB-SCEN-022
+  tier: TIER_1
+- attack_payload: ''
+  count: 1
+  defense_response: 'BLOCKED by secrets.scan_logs: secrets.scan_logs'
+  entry_id: BY-99d83174
+  escalated: false
+  gate_id: secrets.scan_logs
+  occurred_at: '2026-05-23T14:30:52.936798+00:00'
+  root_cause: 'BLOCKED by secrets.scan_logs: secrets.scan_logs'
+  scenario_id: RB-SCEN-022
+  tier: TIER_1

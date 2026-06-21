@@ -1,3 +1,4 @@
+# [A_config] module_id=CFG-model-capability-contract | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: DOM-GOV-001
@@ -49,7 +50,7 @@ models:
     recommended_tasks:
       - "架构设计"
       - "契约定义"
-      - "ADR 编写"
+      - "KB 决策记录编写"
       - "规范文档编写"
       - "代码实现"
       - "复杂推理"
@@ -60,7 +61,7 @@ models:
       - "修改 AGENTS.md"
 
   - name: "Trae-Free"
-    tier: "basic"
+    tier: "free"
     description: "Trae 编辑器中的免费 AI 模型"
     max_files_per_session: 5
     max_new_files_per_session: 3
@@ -84,7 +85,7 @@ models:
       - "蓝图安全流水线"
     forbidden_tasks:
       - "架构设计"
-      - "ADR 编写"
+      - "KB 决策记录编写"
       - "复杂推理"
       - "修改 Cursor 规则文件"
       - "修改 AGENTS.md"
@@ -157,7 +158,7 @@ models:
       - "cron-like 定时任务"
     forbidden_tasks:
       - "架构设计"
-      - "ADR 终审"
+      - "KB 决策记录终审"
       - "复杂跨模块集成"
       - "修改 Cursor 规则文件"
 
@@ -207,7 +208,7 @@ models:
     recommended_tasks:
       - "M2 ChromaDB 架构"
       - "M3 Router 跨模块设计"
-      - "ADR 终审"
+      - "KB 决策记录终审"
       - "复杂调试"
       - "终审裁决"
       - "关键架构决策"
@@ -261,7 +262,7 @@ models:
       - "编码扫描"
     forbidden_tasks:
       - "架构设计"
-      - "ADR 编写"
+      - "KB 决策记录编写"
       - "复杂推理"
 
 # 通用约束（所有模型）

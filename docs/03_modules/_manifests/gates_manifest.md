@@ -1,12 +1,13 @@
 ---
 blueprint_id: DOM-GOV-001
----
+title: Gates.Manifest
+module_id: MOD-057---
 
 # gates/ 文件清单（自动生成 2026-05-09）
 
 总计: 64 个文件
 
-- ZERO-RESIDUE.yaml
+- zero-residue.yaml
 - __init__.py
 - _registry.yaml
 - _template.yaml
@@ -21,21 +22,21 @@ blueprint_id: DOM-GOV-001
 - cdc_broker.py
 - circuit_breaker.py
 - contract_template_manager.py
-- behavioral_auditor.py
+- behavioral-auditor.py
 - end_to_end_walkthrough.py
-- g1_ingest.yaml
-- g2_triage.yaml
-- g3_evaluate.yaml
-- g4_activate.yaml
-- g5_extract.yaml
-- g6_blueprint_compliance.yaml
-- g6_ctr_compliance.yaml
-- g7_position_limits.yaml
+- g1-ingest.yaml
+- g2-triage.yaml
+- g3-evaluate.yaml
+- g4-activate.yaml
+- g5-extract.yaml
+- g6-blueprint-compliance.yaml
+- g6-ctr-compliance.yaml
+- g7-position-limits.yaml
 - g8.yaml
-- g8_leverage.yaml
+- g8-leverage.yaml
 - g9.yaml
-- g9_strategy_correlation.yaml
-- g_asset_inventory.yaml
+- g9-strategy-correlation.yaml
+- g-asset-inventory.yaml
 - gate_context.py
 - gate_engine.py
 - gate_health.py
@@ -43,30 +44,30 @@ blueprint_id: DOM-GOV-001
 - gate_override.py
 - gate_pipeline.py
 - gate_simulator.py
-- gct_024_budget_enforcer.yaml
+- gct-024-budget-enforcer.yaml
 - integration_test_runner.py
 - kiss_enforcer.py
-- observability_baseline.yaml
+- observability-baseline.yaml
 - risk_ssot.py
 - secrets_guard.py
 - sys_master_compliance.py
-- sys_master_compliance.yaml
+- sys-master-compliance.yaml
 - task_completion_gate.py
 - truth_source_validator.py
 - admission/__init__.py
-- admission/mad_001_architecture_necessity.yaml
-- admission/mad_002_phase_relevance.yaml
-- admission/mad_003_dependency_compliance.yaml
-- admission/mad_004_interface_definability.yaml
+- admission/mad-001-architecture-necessity.yaml
+- admission/mad-002-phase-relevance.yaml
+- admission/mad-003-dependency-compliance.yaml
+- admission/mad-004-interface-definability.yaml
 - invariants/__init__.py
 - invariants/en_001_circular_dependency.py
-- invariants/en_001_circular_dependency.yaml
+- invariants/en-001-circular-dependency.yaml
 - invariants/en_002_enforcement_validator.py
-- invariants/en_002_enforcement_validator.yaml
+- invariants/en-002-enforcement-validator.yaml
 - invariants/en_003_contract_compatibility.py
-- invariants/en_003_contract_compatibility.yaml
+- invariants/en-003-contract-compatibility.yaml
 - invariants/zero_residue_check.py
 - task/__init__.py
-- task/g0_entry.yaml
-- task/g0_orc_gate_engine.yaml
-- task/g7_orc_gate_engine.yaml
+- task/g0-entry.yaml
+- task/g0-orc-gate-engine.yaml
+- task/g7-orc-gate-engine.yaml

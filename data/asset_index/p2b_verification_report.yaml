@@ -1,0 +1,154 @@
+meta:
+  generated_at: '2026-06-09T21:15:11.722950+00:00'
+  version: 1.0.0
+  description: DM-106 P2-B 迁移全量验证报告
+overall_status: PASS
+summary:
+  total_checks: 18
+  passed: 10
+  failed: 8
+  critical_failures: 0
+  warning_failures: 8
+  warnings_count: 0
+  errors_count: 0
+checks:
+- check_id: CHK-01
+  name: 节点字段完整性
+  passed: false
+  detail: '缺失字段节点: 228/6964; 示例: src__zephyr__cross_asset____init___py[blueprint_id],
+    src__zephyr__data____init___py[blueprint_id], src__zephyr__data__contract_enforcement____init___py[blueprint_id],
+    src__zephyr__data__knowledge_management____init___py[blueprint_id], src__zephyr__data__knowledge_management__kb____init___py[blueprint_id],
+    src__zephyr__data__knowledge_management__kb__kb_engine____init___py[blueprint_id],
+    src__zephyr__data__knowledge_management__vector_memory____init___py[blueprint_id],
+    src__zephyr__data__storage____init___py[blueprint_id], src__zephyr__data__vector_storage__alt_data_connector____init___py[blueprint_id],
+    src__zephyr__data__vector_storage__governance____init___py[blueprint_id]'
+  severity: warning
+- check_id: CHK-02
+  name: blueprint_id覆盖率(>95%)
+  passed: true
+  detail: '活跃运营态节点: 6207, 有blueprint_id: 5984, 覆盖率: 96.41%'
+  severity: info
+- check_id: CHK-03
+  name: physical_files非空率(设计态>95%)
+  passed: false
+  detail: '设计态有physical_files字段: 128, 非空: 2, 非空率: 1.56%'
+  severity: warning
+- check_id: CHK-04
+  name: build_status一致性(设计态)
+  passed: true
+  detail: '不一致节点: 0'
+  severity: info
+- check_id: CHK-05
+  name: 边端点完整性
+  passed: true
+  detail: '无效边: 0/8002'
+  severity: info
+- check_id: CHK-06
+  name: 域覆盖(35子域)
+  passed: false
+  detail: '全景图子域: 35, depgraph覆盖: 34, 未覆盖: 1; 未覆盖: D-INFRA-TASK_MANAGEMENT'
+  severity: warning
+- check_id: CHK-07
+  name: 脚本节点数匹配(±5)
+  passed: true
+  detail: 'depgraph脚本节点: 460, 磁盘scripts/.py: 456, 差异: 4'
+  severity: info
+- check_id: CHK-08
+  name: build_status_summary一致性(设计态)
+  passed: false
+  detail: '设计态节点: 757, 报告节点: 6948, 状态不匹配: 7; 总数不匹配(差-6191); deprecated:实际=629,报告=643,
+    configuration:实际=2,报告=253, implemented:实际=0,报告=574, partial:实际=0,报告=1119, production:实际=0,报告=1952,
+    specification:实际=0,报告=102, test_asset:实际=0,报告=2179'
+  severity: warning
+- check_id: CHK-09
+  name: 废弃节点一致性
+  passed: true
+  detail: 'DEPRECATE节点: 629, build_status=deprecated: 629, 不一致: 0'
+  severity: info
+- check_id: CHK-10
+  name: 孤儿节点一致性
+  passed: true
+  detail: '孤儿列表: 50, 真正无连接: 50, 有连接但列入: 0, 未列入但无连接: 1164; 注意: 1164个无连接节点未列入孤儿列表(可能为设计态节点)'
+  severity: info
+- check_id: CHK-11
+  name: DM-101 blueprint_domain_mapping(>=60)
+  passed: true
+  detail: '映射蓝图数: 60, 报告总数: 60, 目标: >=60'
+  severity: info
+- check_id: CHK-12
+  name: DM-101 CSV匹配率(>90%)
+  passed: true
+  detail: 'CSV行数: 3176, 有blueprint_id: 3165, 匹配率: 99.65%, 目标: >=90%'
+  severity: info
+- check_id: CHK-13
+  name: DM-102 blueprint_id回填率(>90%)
+  passed: true
+  detail: '活跃模块节点: 3221, 有blueprint_id: 3069, 回填率: 95.28%, 目标: >=90%'
+  severity: info
+- check_id: CHK-14
+  name: DM-102 physical_files非空率(设计态>95%)
+  passed: false
+  detail: '设计态有physical_files字段: 128, 非空: 2, 非空率: 1.56%, 目标: >=95%'
+  severity: warning
+- check_id: CHK-15
+  name: DM-103 脚本节点blueprint_id(>90%)
+  passed: true
+  detail: '运营态脚本节点: 460, 有blueprint_id: 427(92.8%)'
+  severity: info
+- check_id: CHK-16
+  name: DM-104 by_type一致性(设计态)
+  passed: false
+  detail: '设计态类型不匹配: 8; blueprint:实际=0,报告=102, config:实际=5,报告=192, contract:实际=0,报告=3,
+    module:实际=625,报告=3825, registry:实际=1,报告=60, schema:实际=0,报告=2, script:实际=0,报告=454,
+    test:实际=0,报告=2184'
+  severity: warning
+- check_id: CHK-17
+  name: DM-105 活跃文件节点无空blueprint_id(非init)
+  passed: false
+  detail: '活跃文件节点无blueprint_id: 185(其中__init__.py: 66, 非init: 119); 非init示例: src__zephyr__infrastructure__runtime_integration__a2a_protocol__governance__audit_logger_py,
+    src__zephyr__infrastructure__runtime_integration__a2a_protocol__governance__error_codes_py,
+    src__zephyr__infrastructure__runtime_integration__a2a_protocol__governance__policy_engine_py,
+    src__zephyr__infrastructure__runtime_integration__a2a_protocol__governance__rate_limiter_py,
+    src__zephyr__infrastructure__runtime_integration__a2a_protocol__governance___base_server_py,
+    src__zephyr__infrastructure__runtime_integration__a2a_protocol__governance__session_manager_py,
+    src__zephyr__infrastructure__runtime_integration__observability__contract_metrics_py,
+    src__zephyr__infrastructure__runtime_integration__observability__health_probes_py,
+    src__zephyr__integration__contracts__experiment_result_py, src__zephyr__integration__contracts__model_serving_response_py'
+  severity: warning
+- check_id: CHK-18
+  name: DM-105 无未分配文件(非init)
+  passed: false
+  detail: '未分配域的文件节点: 11(init: 1, 非init: 10); 非init示例: scripts/a2a_full_verification.py,
+    scripts/check_naming_convention.py, scripts/fix_freeze_manifest.py, scripts/fix_orphan_all.py,
+    scripts/generate_pathway_registry.py, scripts/run_deepseek_v4_exam.py, scripts/generate_manifest.py,
+    scripts/scaffold.py, scripts/lock_files.py, scripts/rollback.py'
+  severity: warning
+warnings: []
+errors: []
+stats:
+  total_nodes: 6964
+  operational_nodes: 6207
+  design_nodes: 757
+  active_operational_nodes: 6207
+  active_design_nodes: 128
+  deprecated_nodes: 629
+  total_edges: 8002
+  orphan_nodes_in_list: 50
+  truly_orphan_nodes: 50
+  unlisted_orphan_nodes: 1164
+  blueprint_id_coverage_pct: 96.41
+  physical_files_nonempty_rate_pct: 1.56
+  module_blueprint_backfill_pct: 95.28
+  script_blueprint_id_pct: 92.83
+  script_node_count: 460
+  disk_script_count: 456
+  disk_py_counts:
+    src: 3198
+    scripts: 456
+    tests: 2184
+    total: 5838
+  depgraph_version: 3.1.0
+  active_file_nodes_no_blueprint: 185
+  init_no_blueprint: 66
+  non_init_no_blueprint: 119
+  verification_duration_sec: 34.84

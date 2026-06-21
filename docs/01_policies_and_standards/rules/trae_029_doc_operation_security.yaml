@@ -1,0 +1,472 @@
+rule_id: TRAE-029
+title: 文档治理-操作安全
+aliases:
+- DOC-007
+- DOC-009
+- DOC-010
+layer: L1
+severity: error
+scope: doc_operation_safety
+domain: TRAE
+triggers:
+- operation: doc_operation_safety
+sections:
+  doc_007:
+    title: 文件删除/移动安全门禁 (GOV-DOC-007)
+    section_type: rule
+    original_rules:
+    - DOC-007
+    conditions:
+    - type: pre_condition
+      check: 删除文件强制三问
+      pass: 1.不在不可触碰锚点列表中;2.已提取知识/价值(或文件无价值);3.无其他文件引用(或已更新引用)
+      fail: 任一问题回答不满足则禁止删除
+    - type: constraint
+      check: 不可触碰锚点文件
+      pass: 7个锚点文件(document_metadata_index_registry.yaml/architecture_contract.yaml/trae_041_meta_rule_classification.yaml/index.yaml/AGENTS.md/.pre-commit-config.yaml/.roomodes)禁止删除
+      fail: 删除锚点文件
+    - type: constraint
+      check: 断链阈值
+      pass: 正常生产≤100条;流水线重构过渡期≤500条(临时需注释)
+      fail: 超出500条pre-commit直接阻断commit
+    - type: constraint
+      check: 规划链接写法
+      pass: "尚不存在的文件引用使用HTML注释格式<!-- PLANNED: path -->"
+      fail: 使用普通Markdown链接[文字](不存在的路径)——会被计为断链
+    - type: trigger
+      check: 删除文件强制三步
+      pass: 1.Grep工具: pattern='旧文件名' path='d:/ZephyrAlpha' output_mode='files_with_matches' -n=true 找所有引用;2.同一commit内更新或移除所有引用;3.删除后确认断链增量符合预期
+      fail: 分两次commit先删文件后清引用
+    - type: trigger
+      check: 移动/重命名文件强制两步
+      pass: 1.git mv后立即搜索旧路径引用;2.批量替换旧路径为新路径与git mv在同一commit
+      fail: 未搜索旧路径引用或分次提交
+    - type: constraint
+      check: 搬迁历史查询
+      pass: 移动前必须查询git log --follow;搬迁次数≥2时停止并报告Owner
+      fail: 不查搬迁历史直接移动
+    actions:
+    - type: mandatory
+      step: MUST更新所有引用后再完成删除/移动——遗漏引用更新=断链批量积累
+    - type: mandatory
+      step: "搬迁commit message必须包含moved: old/path -> new/path | reason: 一句话原因"
+    prohibitions:
+    - 禁止删除锚点文件(治理系统崩溃风险)
+    - 禁止先删文件后清引用(分两次commit)
+    - 禁止使用--no-verify跳过pre-commit检查
+    - 禁止不查搬迁历史直接移动文件
+  doc_008:
+    title: 文档控制原则-DOC-001~DOC-004 (GOV-DOC-009前4条)
+    section_type: rule
+    original_rules:
+    - DOC-001
+    - DOC-002
+    - DOC-003
+    - DOC-004
+    conditions:
+    - type: constraint
+      check: DOC-001 SSoT唯一
+      pass: 每个架构事实有且仅有一份权威来源文件;其他文件只能引用不能重复定义
+      fail: 同一内容存在于两个文件中(AI按错误版本执行)
+    - type: constraint
+      check: DOC-002 责任二选一
+      pass: 文件title和summary准确反映管辖范围;重叠文件必须重新划分边界或合并
+      fail: 两个文件管辖范围重叠(AI判断错误)
+    - type: constraint
+      check: DOC-003 安全删除
+      pass: 删除前逐条确认目标文件中包含该内容;目标文件没有则先融入再删除;融入后验证目标文件内容完整
+      fail: 内容永久丢失不可恢复
+    - type: constraint
+      check: DOC-004 完整路径引用
+      pass: 所有文件间引用使用完整绝对路径+module_id;格式为相对路径+文件名+module_id
+      fail: 使用相对路径或仅使用module_id引用(AI无法定位)
+    actions:
+    - type: mandatory
+      step: 原则优先级:DOC-003(安全删除)>DOC-005(创建前必查)>DOC-001(SSoT)>DOC-007(引用不复制)>DOC-002(责任二选一)>DOC-006(先读后改)>DOC-004(完整路径)>DOC-009(引用链完整性)>DOC-008(上下文预算)
+    prohibitions:
+    - 禁止同一内容存在于两个文件中(违反DOC-001)
+    - 禁止两个文件管辖范围重叠而不处理(违反DOC-002)
+    - 禁止删除内容前未确认目标文件已包含(违反DOC-003)
+    - 禁止使用相对路径或仅module_id引用(违反DOC-004)
+  doc_009:
+    title: 文档控制原则-DOC-005~DOC-009 (GOV-DOC-009后5条)
+    section_type: rule
+    original_rules:
+    - DOC-009
+    - DOC-005
+    - DOC-006
+    - DOC-007
+    conditions:
+    - type: constraint
+      check: DOC-005 创建前必查
+      pass: 前置步:执行MTH-002架构上下文自检;Step1:查GOV-DOC-002定位;Step2:glob+grep查重;Step3:融入优先于创建
+      fail: 创建新文件是第一反应(目录结构混乱/内容分散)
+    - type: constraint
+      check: DOC-006 先读后改
+      pass: 操作前读取目标文件全文+depends_on中所有文件+交叉引用文件相关章节
+      fail: 凭记忆或猜测操作(逻辑矛盾/引用被破坏)
+    - type: constraint
+      check: DOC-007 引用不复制
+      pass: 使用完整路径引用;禁止在新文件中重新声明已有规则;措辞不同但含义相同也必须改为引用
+      fail: 隐形重复(修改原文件时副本不同步)
+    - type: constraint
+      check: DOC-008 上下文预算意识
+      pass: 创建前问能否通过引用表达;少于20行实质规则优先融入;纯转发文件用引用替代;30天无依赖文件评估删除
+      fail: 上下文窗口被低价值文件占用
+    - type: constraint
+      check: DOC-009 引用链完整性
+      pass: depends_on构成DAG无环;引用目标不存在/已废弃时阻断;深度=1层(直接声明);结构化格式{target,at,why};at字段精确到章节/段落/行号;禁止重定向链
+      fail: 引用环/断裂引用/传递依赖/缺失at字段/重定向文件
+    - type: constraint
+      check: depends_on结构化格式
+      pass: 新格式map数组{target:module_id,at:"§N",why:"原因"};at格式:§3/§3.1/§3.1~§3.5/§3 ¶4/L152-L158
+      fail: 旧格式纯字符串数组(触发V2警告);缺失at字段(累计3次→V1阻断)
+    actions:
+    - type: mandatory
+      step: DOC-005创建前必查四步:架构上下文自检→精准定位→查重扫描→融入优先
+    - type: mandatory
+      step: DOC-009 depends_on必须使用结构化map格式{target,at,why}
+    prohibitions:
+    - 禁止凭直觉或习惯随手放置文件(违反DOC-005)
+    - 禁止凭记忆或猜测操作文件(违反DOC-006)
+    - 禁止将内容从一个文件复制粘贴到另一个文件(违反DOC-007)
+    - 禁止depends_on引用环(违反DOC-009)
+    - 禁止引用已废弃的目标(违反DOC-009)
+    - 禁止depends_on传递依赖超过1层(违反DOC-009)
+    - 禁止仅作为转发/重定向用途的文件(违反DOC-009)
+  doc_010:
+    title: 文档可发现性策略 (GOV-DOC-010)
+    section_type: rule
+    original_rules:
+    - DOC-010
+    conditions:
+    - type: constraint
+      check: 发现路径优先级
+      pass: 路径1(首选):index.md入口→目录树定位→精确路径;路径2(次选):注册表查询→module_id搜索→精确路径;路径3(兜底):工具搜索→grep/SearchCodebase→手动确认
+      fail: 跳过index.md直接搜索或凭记忆猜测路径
+    - type: constraint
+      check: 不可协商原则P1
+      pass: index.md是一切发现的起点;任何AI session找文件第一步读index.md
+      fail: 跳过index.md直接猜测路径
+    - type: constraint
+      check: 不可协商原则P2
+      pass: module_id是通用钥匙;通过module_id搜索可精确命中目标文件
+      fail: 不使用module_id搜索
+    - type: constraint
+      check: 不可协商原则P3
+      pass: 注册表优先于人脑记忆;注册表和记忆不一致时以注册表为准
+      fail: 凭记忆判断文件位置
+    - type: constraint
+      check: 不可协商原则P4
+      pass: '"不存在"必须走三级判定:index.md显式声明→index.md+注册表均未找到→Grep/SearchCodebase均无结果'
+      fail: grep一次没找到就说文件不存在
+    - type: constraint
+      check: 发现效率约束
+      pass: 发现链最大深度3层;单次注册表查询上限2个;搜索尝试上限3次(3种路径各1次)
+      fail: 超出效率约束
+    - type: constraint
+      check: 缓存规则
+      pass: index.md目录树本Session有效;注册表映射本Session有效;Grep/SearchCodebase结果不缓存
+      fail: 使用过期缓存
+    actions:
+    - type: mandatory
+      step: 找文件必须按三种发现路径顺序执行:index.md→注册表→工具搜索
+    - type: mandatory
+      step: '"文件不存在"必须走完三级判定流程'
+    prohibitions:
+    - 禁止凭记忆猜测文件路径
+    - 禁止跳过index.md直接搜索(除非index.md中文件确实未注册)
+    - 禁止因为一次搜索失败就声称文件不存在
+    - 禁止手动维护注册表(注册表由脚本自动生成)
+  gov_doc_007_anchor_files:
+    title: 不可触碰锚点文件完整列表 (GOV-DOC-007 §一)
+    section_type: examples
+    original_rules:
+    - DOC-007
+    items:
+    - description: 文档元数据索引注册表
+      details: docs/01_policies_and_standards/_registry/catalogs/document_metadata_index_registry.yaml
+    - description: 架构合规契约
+      details: docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml
+    - description: 规则分类与裁定标准
+      details: docs/01_policies_and_standards/rules/trae_041_meta_rule_classification.yaml
+    - description: 架构模型索引
+      details: docs/02_enterprise_architecture/target-architecture/architecture-model/index.yaml
+    - description: KB决策记录真源
+      details: KB:decisions(已无docs/02_enterprise_architecture/adr/物理锚点)
+    - description: AGENTS.md
+      details: 项目根目录;Owner专属配置文件
+    - description: pre-commit配置
+      details: .pre-commit-config.yaml
+    - description: .roomodes
+      details: 项目根目录
+  gov_doc_009_priority:
+    title: 文档控制原则优先级 (GOV-DOC-009 §3)
+    section_type: principles
+    original_rules:
+    - DOC-009
+    principles:
+    - id: PRIO-1
+      statement: DOC-003安全删除优先级最高——内容丢失不可逆
+      rationale: 删除是不可逆操作;内容丢失后无法恢复
+      applies_to: 所有删除操作
+    - id: PRIO-2
+      statement: DOC-005创建前必查第二——杜绝源头重复
+      rationale: 从入口处控制质量;创建新文件永远是最后选项
+      applies_to: 所有文件创建操作
+    - id: PRIO-3
+      statement: DOC-001 SSoT唯一第三——重复定义导致治理混乱
+      rationale: 同一内容存在于两处=AI按错误版本执行
+      applies_to: 所有规则定义
+    - id: PRIO-4
+      statement: DOC-007引用不复制第四——杜绝隐形重复
+      rationale: 与SSoT联动;复制导致修改时副本不同步
+      applies_to: 所有文件间信息传递
+    - id: PRIO-5
+      statement: DOC-002责任二选一第五——责任不清导致连锁误判
+      rationale: 两个文件管辖范围重叠=AI判断错误+后续AI连锁误判
+      applies_to: 所有文件职责划分
+    - id: PRIO-6
+      statement: DOC-006先读后改第六——操作前置条件
+      rationale: 违反后果可逆(可重新操作);但仍须遵守
+      applies_to: 所有文件修改操作
+    - id: PRIO-7
+      statement: DOC-004完整路径引用第七——引用断裂导致治理信号失真
+      rationale: AI无法定位引用目标
+      applies_to: 所有文件间引用
+    - id: PRIO-8
+      statement: DOC-009引用链完整性第八——引用环和断裂引用导致解析失败
+      rationale: 行级精度关乎token效率;与DOC-004联动
+      applies_to: 所有depends_on声明
+    - id: PRIO-9
+      statement: DOC-008上下文预算意识第九——效率优化但可事后补救
+      rationale: 上下文窗口被低价值文件占用;可事后清理
+      applies_to: 所有文件创建决策
+  gov_doc_009_depends_on_format:
+    title: depends_on结构化格式规范 (GOV-DOC-009 §2新增)
+    section_type: examples
+    original_rules:
+    - DOC-009
+    items:
+    - description: 新格式(必须)——结构化map数组
+      details: 'depends_on: [{target: PS-STD-003, at: "§3.1~§3.5", why: "ABS定义"}, {target: PS-STD-001, at: "§2.1~§2.8", why: "frontmatter字段SSoT"}]'
+    - description: 旧格式(兼容但触发V2警告)——纯字符串数组
+      details: 'depends_on: [PS-STD-003, PS-STD-001]'
+    - description: target字段(必需)
+      details: module_id;引用目标的全局唯一标识符
+    - description: at字段(必需)
+      details: 精确到章节(§3)/小节(§3.1)/范围(§3.1~§3.5)/段落(§3 ¶4)/行号(L152-L158)
+    - description: why字段(必需)
+      details: 短句≤40字符;AI可读的依赖原因
+  gov_doc_009_cross_refs:
+    title: 文档控制原则与其他文件关系 (GOV-DOC-009 §4)
+    section_type: context
+    original_rules:
+    - DOC-009
+    context:
+      summary: DOC-001~009九条原则是所有文档治理操作的前提条件。DOC-005查重扫描是DOC-001 SSoT的执行保障;DOC-005融入判断依赖DOC-002责任边界;DOC-005位置确定依赖GOV-DOC-002;DOC-003安全删除与DOC-005创建前必查互为反操作
+      impact_on_rules:
+      - 修改DOC-001~009原则→必须同步更新所有governance/document/下文件的depends_on引用
+      - 修改depends_on格式规范→必须同步更新PS-REG-004架构合规契约的验证规则
+      - DOC-009循环依赖检测应加入architecture_contract.yaml的VR规则
+      key_decisions:
+      - 编号使用领域唯一前缀DOC-(与PS-STD-003的ABS编号全局不冲突)
+      - depends_on深度=1层(直接声明);超过1层→V1阻断
+      - at字段缺失→V2警告;累计3次→V1阻断
+  gov_doc_010_module_id_discovery:
+    title: module_id驱动发现与编号前缀速查 (GOV-DOC-010 §4)
+    section_type: examples
+    original_rules:
+    - DOC-010
+    items:
+    - description: module_id即语义地址(GOV-DOC-010=GOV治理域+DOC文档子域+010序号)
+      details: 看到编号就知道文件属于哪个体系/子域/序号
+    - description: PS-STD-前缀→元标准
+      details: 文件位置meta/
+    - description: PS-REG-前缀→元注册表
+      details: 文件位置meta/
+    - description: GOV-DOC-前缀→文档治理
+      details: 文件位置governance/document/
+    - description: GOV-AI-前缀→AI治理
+      details: 文件位置governance/ai/
+    - description: GOV-TASK-前缀→任务治理
+      details: 文件位置governance/task/
+    - description: GOV-SEC-前缀→安全治理
+      details: 文件位置governance/security/
+    - description: GOV-CMP-前缀→合规治理
+      details: 文件位置governance/compliance/
+    - description: GOV-ARCH-前缀→架构治理
+      details: 文件位置governance/architecture/
+    - description: GOV-DATA-前缀→数据治理
+      details: 文件位置governance/data/
+    - description: GOV-MOD-前缀→模块治理
+      details: 文件位置governance/module/
+    - description: DOM-D-XXX-前缀→域治理
+      details: 文件位置domains/{domain_name}/
+    - description: OPS-VC-前缀→VC操作
+      details: 文件位置operational/vibe_coding/
+    - description: OPS-DEV-前缀→DevOps操作
+      details: 文件位置operational/devops/
+    - description: OPS-MIG-前缀→迁移操作
+      details: 文件位置operational/migration/
+  gov_doc_010_not_exist_decision:
+    title: '"文件不存在"三级判定流程 (GOV-DOC-010 §3.5)'
+    section_type: decision_tree
+    original_rules:
+    - DOC-010
+    decision_tree:
+    - condition: 级别1-index.md显式声明文件不存在?
+      if_true: 文件确实不存在;停止搜索;记录"已确认不存在"
+      if_false: 进入级别2
+    - condition: 级别2-index.md中未注册+注册表中也未找到?
+      if_true: 大概率不存在;执行路径3(工具搜索确认);仍找不到→确认不存在
+      if_false: 文件存在(在注册表中找到)
+    - condition: 级别3-Grep/SearchCodebase均无结果?
+      if_true: 确认不存在;在Session Log中记录"已确认文件X不存在进行了三级判定"
+      if_false: 文件存在(通过工具搜索找到)
+  gov_doc_cross_refs_029:
+    title: 文档操作安全域跨规则关系 (GOV-DOC-007~010)
+    section_type: context
+    original_rules:
+    - DOC-007
+    - DOC-009
+    - DOC-010
+    context:
+      summary: "GOV-DOC-007~010构成文档治理的操作安全子域。007定义删除/移动门禁→009定义8条控制原则→010定义发现机制。007实现DOC-003安全删除原则;009的DOC-005创建前必查依赖GOV-DOC-002目录结构;010的发现路径消费GOV-DOC-002的目录树和GOV-DOC-001的编号前缀"
+      impact_on_rules:
+      - "修改GOV-DOC-007锚点文件清单→必须同步更新GOV-DOC-002 §5.1.2锚点文件表"
+      - "修改GOV-DOC-009原则→必须同步更新所有governance/document/下文件的depends_on引用"
+      - "修改GOV-DOC-010发现路径→必须同步更新document_metadata_index_registry.yaml"
+      key_decisions:
+      - "删除前必须通过强制三问(锚点/价值/引用)"
+      - "移动前必须查询搬迁历史(≥2次停止)"
+      - "断链阈值生产≤100/过渡期≤500/>500阻断commit"
+      - "发现路径优先级:index.md→注册表→工具搜索"
+      - "文件不存在必须走三级判定"
+  gov_doc_scope_exclusions_029:
+    title: 文档操作安全域范围排除项 (GOV-DOC-007~010)
+    section_type: examples
+    original_rules:
+    - DOC-007
+    - DOC-009
+    - DOC-010
+    items:
+    - description: GOV-DOC-007不覆盖-文档生命周期状态判定
+      details: trae_028_doc_structure_naming.yaml doc_006(GOV-DOC-006)
+    - description: GOV-DOC-007不覆盖-文件命名规范
+      details: trae_028_doc_structure_naming.yaml doc_003(GOV-DOC-003)
+    - description: GOV-DOC-007不覆盖-文件存放路径
+      details: trae_028_doc_structure_naming.yaml doc_004(GOV-DOC-004)
+    - description: GOV-DOC-007不覆盖-编码安全检测与修复
+      details: trae_028_doc_structure_naming.yaml doc_005(GOV-DOC-005)
+    - description: GOV-DOC-007不覆盖-commit message格式规范
+      details: PS-STD或项目级规范
+    - description: GOV-DOC-009不覆盖-行为边界标准
+      details: PS-STD-003(ABS编号与本文件DOC编号全局不冲突)
+    - description: GOV-DOC-009不覆盖-目录结构具体定义
+      details: GOV-DOC-002(DOC-005 Step1的核心依赖)
+    - description: GOV-DOC-009不覆盖-治理方法论
+      details: PS-STD-011(MTH-001~MTH-003)
+    - description: GOV-DOC-009不覆盖-规则退役整体审批流程
+      details: PS-STD-009(废弃级联)
+    - description: GOV-DOC-010不覆盖-文件命名规则
+      details: trae_028_doc_structure_naming.yaml doc_003(GOV-DOC-003)
+    - description: GOV-DOC-010不覆盖-文件存放路径规则
+      details: trae_028_doc_structure_naming.yaml doc_004(GOV-DOC-004)
+    - description: GOV-DOC-010不覆盖-目录结构定义
+      details: trae_028_doc_structure_naming.yaml doc_002(GOV-DOC-002)
+    - description: GOV-DOC-010不覆盖-注册表文件格式和生成方式
+      details: document_metadata_index_registry.yaml
+    - description: GOV-DOC-010不覆盖-文档生命周期状态定义
+      details: trae_028_doc_structure_naming.yaml doc_006(GOV-DOC-006)
+    - description: GOV-DOC-010不覆盖-搜索工具具体用法
+      details: 各工具自身文档
+  gov_doc_normative_refs_029:
+    title: 文档操作安全域专业对标 (GOV-DOC-007~010)
+    section_type: examples
+    original_rules:
+    - DOC-007
+    - DOC-009
+    - DOC-010
+    items:
+    - description: GOV-DOC-009对标-ISO 27001 Annex A
+      details: Information Management——DOC-001 SSoT唯一原则
+    - description: GOV-DOC-009对标-COBIT
+      details: Governance Accountability——DOC-002责任二选一原则
+    - description: GOV-DOC-009对标-ITIL Change Management
+      details: DOC-003安全删除原则
+    - description: GOV-DOC-009对标-ISO 27001 Document Control
+      details: DOC-004完整路径引用原则
+    - description: GOV-DOC-009对标-ITIL SACM Golden Record
+      details: DOC-005创建前必查原则
+    - description: GOV-DOC-009对标-ISO 9001 §7.5
+      details: Document Review Before Change——DOC-006先读后改原则
+    - description: GOV-DOC-009对标-Cursor Rules指南
+      details: Reference files instead of copying——DOC-007引用不复制原则
+    - description: GOV-DOC-009对标-npm dependencies
+      details: 只声明直接import的包——DOC-009引用链深度=1层
+    - description: GOV-DOC-009对标-Kubernetes API
+      details: 用户可见引用必须直接——DOC-009禁止传递依赖
+    - description: GOV-DOC-009对标-Anthropic CLAUDE.md
+      details: 上下文窗口是最重要的有限资源——DOC-009行级精度+DOC-008上下文预算
+    - description: GOV-DOC-010对标-ITIL SACM Discovery
+      details: 配置管理系统必须提供配置项的发现机制
+    - description: GOV-DOC-010对标-ISO 9001 §7.5.3
+      details: 确保文件可被发现和检索
+    - description: GOV-DOC-010对标-K8s API Discovery
+      details: kubectl api-resources+OpenAPI schema——声明式资源发现
+    - description: GOV-DOC-010对标-Anthropic CLAUDE.md
+      details: 项目上下文文件应作为AI的第一个读取点——index.md同理
+  gov_doc_change_history_029:
+    title: 文档操作安全域变更记录 (GOV-DOC-007~010)
+    section_type: examples
+    original_rules:
+    - DOC-007
+    - DOC-009
+    - DOC-010
+    items:
+    - description: GOV-DOC-007 v1.0.0 (2026-04-22)
+      details: 初始创建;定义删除强制三问+三步/移动强制两步/不可触碰锚点/断链阈值/规划链接写法
+    - description: GOV-DOC-007 v1.1.0 (2026-05-01)
+      details: 结构对齐;新增§0目的与范围+§7与其他规则关系+§8变更记录
+    - description: GOV-DOC-009 v1.6.0 (2026-04-30)
+      details: 新增DOC-009引用链完整性;depends_on必须构成DAG
+    - description: GOV-DOC-009 v1.7.0 (2026-05-01)
+      details: DOC-009升级为死规则;引用链深度必须=1层;超过1层→V1阻断
+    - description: GOV-DOC-009 v1.8.0 (2026-05-01)
+      details: DOC-009新增规则#5行级精度;depends_on必须使用结构化map格式{target,at,why}
+    - description: GOV-DOC-009 v1.8.2 (2026-05-01)
+      details: 状态升级draft→active;8条原则已被7个文件通过depends_on引用为权威
+    - description: GOV-DOC-010 v1.0.0 (2026-05-01)
+      details: 初始创建+同日审批;定义三种发现路径/module_id搜索范式/文件不存在三级判定
+    - description: GOV-DOC-007 v1.1.1 (2026-06-19)
+      details: RQ-09修复;provenance.source_files标记status:archived+添加archive_note(源.md已合并入YAML)
+    - description: GOV-DOC-007 v1.1.2 (2026-06-21)
+      details: P1修复;Select-String(PowerShell命令违反RULE-SEVENTEEN)改为Grep工具引用格式;移除不存在的check_dead_links.py引用;kebab-case文件名引用修正为snake_case(document-metadata-index-registry.yaml→document_metadata_index_registry.yaml/architecture-contract.yaml→architecture_contract.yaml);不存在的rule-classification-and-arbitration-standard.md引用修正为trae_041_meta_rule_classification.yaml
+    - description: GOV-DOC-009 v1.9.0 (2026-06-21)
+      details: P1修复;aliases移除DOC-008(与trae_028冲突,DOC-008属trae_028);doc_008 section original_rules移除DOC-008(该section实际关于DOC-001~DOC-004,DOC-008是错误引用)
+references:
+  rule_ids: [TRAE-028, TRAE-041]
+  scripts: [scripts/governance/d6_security/detect_anchor_file_deletion.py]
+  modules: []
+  blueprints: []
+enforcement:
+  type: code
+  executors: [scripts/governance/d6_security/detect_anchor_file_deletion.py]
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+  version: "1.1.0"
+  last_modified: "2026-06-21"
+  change_history:
+  - version: "1.1.0"
+    date: "2026-06-21"
+    author: "AI-Assistant"
+    change: "审查修复：references.rule_ids补充[TRAE-028,TRAE-041]；references.scripts补充scripts/governance/d6_security/detect_anchor_file_deletion.py（原任务建议的check_document_metadata.py不存在，改为实际存在的锚点文件删除检测脚本，对应GOV-DOC-007 §一）；enforcement.executors补充同名脚本（type=code但executors为空）"
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001
+  archive_note: 源.md文件已合并入本YAML规则文件后删除，hash为提取时记录值，RQ-09哈希验证不适用(status=archived)

@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1957 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-574 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.shared.test_shared_core
 # [STABILITY] evolving
 # [SAFETY] L
@@ -11,7 +12,7 @@ import pytest
 from datetime import datetime, timezone
 from pathlib import Path
 
-from zephyr.shared.schema.schemas import (
+from zephyr.integration.shared.schema.schemas import (
     AuditFinding,
     AuditReport,
     AuditSeverity,
@@ -27,9 +28,9 @@ from zephyr.shared.schema.schemas import (
     TaskNamespace,
     ExecutionModel,
 )
-from zephyr.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
-from zephyr.shared.schema.severity_types import SafetyLevel
-from zephyr.shared.io.paths import (
+from zephyr.integration.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
+from zephyr.integration.shared.schema.severity_types import SafetyLevel
+from zephyr.integration.shared_08.paths import (
     find_repo_root,
     REPO_ROOT,
     DB_DIR,
@@ -41,20 +42,21 @@ class TestTaskModel:
     def test_task_creation_minimal(self):
         now = datetime.now(timezone.utc)
         task = Task(
-            task_id="ADR-001",
+            task_id="SRC-001",
             title="Test task",
             status=TaskStatus.PENDING,
-            namespace=TaskNamespace.ADR,
+            namespace=TaskNamespace.SRC,
             seq=1,
             phase=0,
             safety_level=SafetyLevel.L,
             created_at=now,
             updated_at=now,
+            description="A test task for unit testing with enough length to pass validation.",
         )
-        assert task.task_id == "ADR-001"
+        assert task.task_id == "SRC-001"
         assert task.title == "Test task"
         assert task.status == TaskStatus.PENDING
-        assert task.namespace == TaskNamespace.ADR
+        assert task.namespace == TaskNamespace.SRC
 
     def test_task_status_enum_values(self):
         assert TaskStatus.PENDING.value == "PENDING"
@@ -65,11 +67,14 @@ class TestTaskModel:
         assert TaskStatus.READY.value == "READY"
 
     def test_task_namespace_enum_values(self):
-        assert TaskNamespace.ADR.value == "ADR"
+        assert TaskNamespace.KBG.value == "KBG"
         assert TaskNamespace.CP.value == "CP"
         assert TaskNamespace.KE.value == "KE"
+        assert TaskNamespace.STD.value == "STD"
+        assert TaskNamespace.DW.value == "DW"
         assert TaskNamespace.SRC.value == "SRC"
         assert TaskNamespace.OPS.value == "OPS"
+        assert TaskNamespace.DM.value == "DM"
 
     def test_execution_model_enum(self):
         assert ExecutionModel.deepseek.value == "deepseek"
@@ -79,7 +84,7 @@ class TestTaskModel:
         assert ExecutionModel.qwen.value == "qwen"
 
     def test_normalize_execution_model(self):
-        from zephyr.gates.task_types import normalize_execution_model
+        from zephyr.governance.rule_enforcement.task_types import normalize_execution_model
         assert normalize_execution_model("deepseek") == ExecutionModel.deepseek
         assert normalize_execution_model("glm") == ExecutionModel.glm
         assert normalize_execution_model("claude") == ExecutionModel.claude

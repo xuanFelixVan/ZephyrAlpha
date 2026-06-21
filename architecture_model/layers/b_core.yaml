@@ -1,0 +1,27 @@
+schema_version: "1.0.0"
+partition:
+  id: core
+  name: Core
+  track: b_track
+  bounded_context: false
+  status: implemented
+
+modules:
+  - id: core-blueprint
+    module_id: MOD_INF_006
+    name: Blueprint Decomposer + Core Models
+    submodule_path: src/zephyr/core/
+    status: implemented
+    priority: P0
+    runtime_plane: warm
+    description: 蓝图分解为任务卡 + 核心数据模型定义
+    files:
+      - blueprint_decomposer.py
+      - models.py
+    interfaces: []
+    kb_ref: []
+
+summary:
+  total: 1
+  by_status:
+    implemented: 1

@@ -1,0 +1,20 @@
+- attack_payload: ''
+  count: 1
+  defense_response: 'BLOCKED by G1-GATE-001: gates_registry.verify'
+  entry_id: BY-0cf87a59
+  escalated: false
+  gate_id: G1-GATE-001
+  occurred_at: '2026-05-23T14:30:34.291663+00:00'
+  root_cause: 'BLOCKED by G1-GATE-001: gates_registry.verify'
+  scenario_id: RB-SCEN-016
+  tier: TIER_1
+- attack_payload: ''
+  count: 1
+  defense_response: 'BLOCKED by G1-GATE-001: gates_registry.verify'
+  entry_id: BY-d7565a42
+  escalated: false
+  gate_id: G1-GATE-001
+  occurred_at: '2026-05-23T14:30:52.935280+00:00'
+  root_cause: 'BLOCKED by G1-GATE-001: gates_registry.verify'
+  scenario_id: RB-SCEN-016
+  tier: TIER_1

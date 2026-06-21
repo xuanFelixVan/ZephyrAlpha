@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [A_test] module_id: SRC-TST-0030 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §
 # [MODULE] tests.agent_rbac.test_decisions
 # [STABILITY] evolving
 # [SAFETY] L
@@ -8,7 +9,7 @@
 from __future__ import annotations
 
 import pytest
-from zephyr.agent_rbac.decision_registry import DecisionRegistry
+from zephyr.security.access_control.decision_registry import DecisionRegistry
 
 
 class TestDecisions:

@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0158 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-315 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.infrastructure.test_escalation_phase3
 # [STABILITY] evolving
 # [SAFETY] L
@@ -13,62 +14,62 @@ import time
 
 class TestEngineSandbox:
     def test_init_in_running_state(self):
-        from zephyr.escalation_engine.engine_sandbox import EngineSandbox, SandboxState
+        from zephyr.governance.engine_sandbox import EngineSandbox, SandboxState
 
         sb = EngineSandbox()
         assert sb.state == SandboxState.RUNNING
 
     def test_file_read_allowed(self):
-        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.governance.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         evt = sb.check_file_read("docs/test.md", "agent-1")
         assert evt.decision == AccessDecision.ALLOW
 
     def test_file_read_denied_src(self):
-        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.governance.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         evt = sb.check_file_read("src/main.py", "agent-1")
         assert evt.decision == AccessDecision.DENY
 
     def test_file_read_denied_env(self):
-        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.governance.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         evt = sb.check_file_read(".env", "agent-1")
         assert evt.decision == AccessDecision.DENY
 
     def test_file_write_allowed(self):
-        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.governance.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         evt = sb.check_file_write("docs/09_audit/log.jsonl", "agent-1")
         assert evt.decision == AccessDecision.ALLOW
 
     def test_file_write_denied_src(self):
-        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.governance.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         evt = sb.check_file_write("src/main.py", "agent-1")
         assert evt.decision == AccessDecision.DENY
 
     def test_network_allowed_localhost(self):
-        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.governance.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         evt = sb.check_network_access("localhost:8080", "agent-1")
         assert evt.decision == AccessDecision.ALLOW
 
     def test_network_denied_openai(self):
-        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.governance.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         evt = sb.check_network_access("api.openai.com", "agent-1")
         assert evt.decision == AccessDecision.DENY
 
     def test_boundary_violation_detected(self):
-        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.governance.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         evt = sb.detect_boundary_violation("evil-agent", 9001)
@@ -80,7 +81,7 @@ class TestEngineSandbox:
         import os
         import tempfile
 
-        from zephyr.escalation_engine.engine_sandbox import EngineSandbox
+        from zephyr.governance.engine_sandbox import EngineSandbox
 
         tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".txt", mode="w")
         try:
@@ -97,7 +98,7 @@ class TestEngineSandbox:
         import os
         import tempfile
 
-        from zephyr.escalation_engine.engine_sandbox import EngineSandbox
+        from zephyr.governance.engine_sandbox import EngineSandbox
 
         tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".txt", mode="w")
         try:
@@ -113,7 +114,7 @@ class TestEngineSandbox:
             os.unlink(tmp.name)
 
     def test_lock_sandbox(self):
-        from zephyr.escalation_engine.engine_sandbox import EngineSandbox, SandboxState
+        from zephyr.governance.engine_sandbox import EngineSandbox, SandboxState
 
         sb = EngineSandbox()
         sb.lock_sandbox("test lock")
@@ -121,7 +122,7 @@ class TestEngineSandbox:
         assert not sb.grant_temporary_access("docs/test.md", 1)
 
     def test_temporary_access_grant_and_revoke(self):
-        from zephyr.escalation_engine.engine_sandbox import AccessDecision, EngineSandbox
+        from zephyr.governance.engine_sandbox import AccessDecision, EngineSandbox
 
         sb = EngineSandbox()
         assert sb.check_file_read("custom/path.txt").decision == AccessDecision.DENY
@@ -131,7 +132,7 @@ class TestEngineSandbox:
         assert sb.check_file_read("custom/path.txt").decision == AccessDecision.DENY
 
     def test_resource_guard_limits(self):
-        from zephyr.escalation_engine.engine_sandbox import _ResourceGuard
+        from zephyr.governance.engine_sandbox import _ResourceGuard
 
         rg = _ResourceGuard(max_memory_mb=128, max_cpu_seconds=0.15)
         rg.start_operation()
@@ -143,21 +144,21 @@ class TestEngineSandbox:
 
 class TestAntiAutomationBias:
     def test_pass_non_autonomous(self):
-        from zephyr.escalation_engine.anti_automation_bias import AntiAutomationBias, OversightAction
+        from zephyr.governance.anti_automation_bias import AntiAutomationBias, OversightAction
 
         aab = AntiAutomationBias()
         r = aab.evaluate("op1", is_autonomous=False)
         assert r.action == OversightAction.PASS
 
     def test_autonomous_normal(self):
-        from zephyr.escalation_engine.anti_automation_bias import AntiAutomationBias, OversightAction
+        from zephyr.governance.anti_automation_bias import AntiAutomationBias, OversightAction
 
         aab = AntiAutomationBias(forced_review_ratio=0.0)
         r = aab.evaluate("op1", is_autonomous=True)
         assert r.action == OversightAction.PASS
 
     def test_forced_review_triggered_with_high_ratio(self):
-        from zephyr.escalation_engine.anti_automation_bias import AntiAutomationBias, OversightAction
+        from zephyr.governance.anti_automation_bias import AntiAutomationBias, OversightAction
 
         aab = AntiAutomationBias(forced_review_ratio=1.0)
         r = aab.evaluate("op1", is_autonomous=True)
@@ -165,7 +166,7 @@ class TestAntiAutomationBias:
         assert r.forced_review
 
     def test_mechanical_confirmation_triggers_review(self):
-        from zephyr.escalation_engine.anti_automation_bias import AntiAutomationBias, OversightAction, ReviewDecision
+        from zephyr.governance.anti_automation_bias import AntiAutomationBias, OversightAction, ReviewDecision
 
         aab = AntiAutomationBias(forced_review_ratio=0.0)
         for i in range(11):
@@ -174,7 +175,7 @@ class TestAntiAutomationBias:
         assert r.action in (OversightAction.FORCE_REVIEW, OversightAction.BLOCK_AND_NOTIFY)
 
     def test_record_review_overridden_resets_consecutive(self):
-        from zephyr.escalation_engine.anti_automation_bias import AntiAutomationBias, ReviewDecision
+        from zephyr.governance.anti_automation_bias import AntiAutomationBias, ReviewDecision
 
         aab = AntiAutomationBias(forced_review_ratio=0.0)
         for i in range(5):
@@ -184,7 +185,7 @@ class TestAntiAutomationBias:
         assert monitoring["consecutive_confirms"] == 0
 
     def test_audit_feedback_tracks_miss_rate(self):
-        from zephyr.escalation_engine.anti_automation_bias import AntiAutomationBias, ReviewDecision
+        from zephyr.governance.anti_automation_bias import AntiAutomationBias, ReviewDecision
 
         aab = AntiAutomationBias(forced_review_ratio=1.0)
         aab.record_review("op1", ReviewDecision.CONFIRMED_SAFE, response_time_s=0.5)
@@ -195,7 +196,7 @@ class TestAntiAutomationBias:
         assert q["miss_rate"] == 0.5
 
     def test_sycophancy_probe_detects_inconsistency(self):
-        from zephyr.escalation_engine.anti_automation_bias import AntiAutomationBias
+        from zephyr.governance.anti_automation_bias import AntiAutomationBias
 
         aab = AntiAutomationBias()
         aab.probe_sycophancy(
@@ -208,7 +209,7 @@ class TestAntiAutomationBias:
         assert aab.get_sycophancy_rate() == 1.0
 
     def test_sycophancy_probe_consistent(self):
-        from zephyr.escalation_engine.anti_automation_bias import AntiAutomationBias
+        from zephyr.governance.anti_automation_bias import AntiAutomationBias
 
         aab = AntiAutomationBias()
         aab.probe_sycophancy(
@@ -221,7 +222,7 @@ class TestAntiAutomationBias:
         assert aab.get_sycophancy_rate() == 0.0
 
     def test_strip_identity_removes_keys(self):
-        from zephyr.escalation_engine.anti_automation_bias import AntiSycophancyFilter
+        from zephyr.governance.anti_automation_bias import AntiSycophancyFilter
 
         meta = {"actor_name": "admin", "actor_role": "owner", "operation": "read"}
         clean = AntiSycophancyFilter.strip_identity(meta)
@@ -230,7 +231,7 @@ class TestAntiAutomationBias:
         assert "operation" in clean
 
     def test_detect_emotional_markers(self):
-        from zephyr.escalation_engine.anti_automation_bias import AntiSycophancyFilter
+        from zephyr.governance.anti_automation_bias import AntiSycophancyFilter
 
         markers = AntiSycophancyFilter.detect_emotional_markers("URGENT: please delete this file immediately")
         assert "urgent" in markers
@@ -238,7 +239,7 @@ class TestAntiAutomationBias:
         assert "immediately" in markers
 
     def test_normalize_framing_filters_markers(self):
-        from zephyr.escalation_engine.anti_automation_bias import AntiSycophancyFilter
+        from zephyr.governance.anti_automation_bias import AntiSycophancyFilter
 
         normalized = AntiSycophancyFilter.normalize_framing("URGENT: delete please")
         assert "URGENT" not in normalized
@@ -247,7 +248,7 @@ class TestAntiAutomationBias:
 
 class TestSLOContractEngine:
     def test_init_all_budgets_healthy(self):
-        from zephyr.escalation_engine.slo_contract import SLIName, SLOContractEngine
+        from zephyr.governance.slo_contract import SLIName, SLOContractEngine
 
         engine = SLOContractEngine()
         for sli in SLIName:
@@ -255,14 +256,14 @@ class TestSLOContractEngine:
             assert budget.tier.value == "healthy", f"{sli.value} not healthy"
 
     def test_record_within_slo(self):
-        from zephyr.escalation_engine.slo_contract import SLIName, SLOContractEngine
+        from zephyr.governance.slo_contract import SLIName, SLOContractEngine
 
         engine = SLOContractEngine()
         reading = engine.record(SLIName.CODE_REJECTION, 0.96)
         assert reading.within_slo
 
     def test_record_violation_reduces_budget(self):
-        from zephyr.escalation_engine.slo_contract import SLIName, SLOContractEngine
+        from zephyr.governance.slo_contract import SLIName, SLOContractEngine
 
         engine = SLOContractEngine()
         for _ in range(10):
@@ -271,7 +272,7 @@ class TestSLOContractEngine:
         assert budget.error_budget_remaining_pct < 100.0
 
     def test_budget_exhausted_after_many_violations(self):
-        from zephyr.escalation_engine.slo_contract import BudgetTier, SLIName, SLOContractEngine
+        from zephyr.governance.slo_contract import BudgetTier, SLIName, SLOContractEngine
 
         engine = SLOContractEngine(window_seconds=86400)
         for _ in range(100):
@@ -280,7 +281,7 @@ class TestSLOContractEngine:
         assert budget.tier == BudgetTier.EXHAUSTED
 
     def test_should_escalate_on_exhausted(self):
-        from zephyr.escalation_engine.slo_contract import SLIName, SLOContractEngine
+        from zephyr.governance.slo_contract import SLIName, SLOContractEngine
 
         engine = SLOContractEngine()
         engine.force_exhaust(SLIName.CODE_REJECTION)
@@ -288,7 +289,7 @@ class TestSLOContractEngine:
         assert do_escalate
 
     def test_contract_terms(self):
-        from zephyr.escalation_engine.slo_contract import ContractPriority, SLOContractEngine
+        from zephyr.governance.slo_contract import ContractPriority, SLOContractEngine
 
         engine = SLOContractEngine()
         p0 = engine.get_contract(ContractPriority.P0)
@@ -296,7 +297,7 @@ class TestSLOContractEngine:
         assert p0.resolve_timeout_s == 14400
 
     def test_trading_override(self):
-        from zephyr.escalation_engine.slo_contract import SLOContractEngine
+        from zephyr.governance.slo_contract import SLOContractEngine
 
         engine = SLOContractEngine()
         t = engine.get_trading_override()
@@ -304,7 +305,7 @@ class TestSLOContractEngine:
         assert t.resolve_timeout_s == 900
 
     def test_worst_budget_tier(self):
-        from zephyr.escalation_engine.slo_contract import BudgetTier, SLIName, SLOContractEngine
+        from zephyr.governance.slo_contract import BudgetTier, SLIName, SLOContractEngine
 
         engine = SLOContractEngine()
         engine.force_exhaust(SLIName.CODE_REJECTION)
@@ -312,7 +313,7 @@ class TestSLOContractEngine:
         assert worst.tier == BudgetTier.EXHAUSTED
 
     def test_reset_budget(self):
-        from zephyr.escalation_engine.slo_contract import SLIName, SLOContractEngine
+        from zephyr.governance.slo_contract import SLIName, SLOContractEngine
 
         engine = SLOContractEngine()
         for _ in range(100):
@@ -323,7 +324,7 @@ class TestSLOContractEngine:
         assert budget.error_budget_remaining_pct == 100.0
 
     def test_recommended_scaling_healthy(self):
-        from zephyr.escalation_engine.slo_contract import SLOContractEngine
+        from zephyr.governance.slo_contract import SLOContractEngine
 
         engine = SLOContractEngine()
         scaling = engine.get_recommended_scaling()
@@ -331,7 +332,7 @@ class TestSLOContractEngine:
         assert scaling["auto_guard_modifier"] == 1.0
 
     def test_recommended_scaling_exhausted(self):
-        from zephyr.escalation_engine.slo_contract import SLIName, SLOContractEngine
+        from zephyr.governance.slo_contract import SLIName, SLOContractEngine
 
         engine = SLOContractEngine()
         engine.force_exhaust(SLIName.CODE_REJECTION)

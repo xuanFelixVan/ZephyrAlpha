@@ -32,12 +32,12 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 
 C_TRACK_LAYERS = [
-    "l00_data_source", "l01_infrastructure", "l02_alpha_factor",
-    "l03_signal_generation", "l04_risk_management",
-    "l05_portfolio_construction", "l06_trade_execution",
-    "l07_post_trade_analytics", "l08_human_ai_interface",
-    "l09_research_innovation", "l10_compliance",
-    "l11_ml_platform", "system_telemetry", "l13_experimentation",
+    "data", "infrastructure.runtime_integration", "factor",
+    "signal", "risk",
+    "pf_core", "ex_core",
+    "pf_core", "frontend",
+    "research", "compliance",
+    "ml_train", "observability", "integration",
 ]
 
 THRESHOLD_DOCS_MD_WARN = 5

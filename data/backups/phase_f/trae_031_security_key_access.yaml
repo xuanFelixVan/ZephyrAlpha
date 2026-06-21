@@ -1,0 +1,798 @@
+rule_id: TRAE-031
+title: 安全治理-密钥与访问控制
+aliases:
+- SEC-001
+- SEC-002
+- SEC-003
+- ACS-001
+- ACS-002
+- ACS-003
+- ACS-004
+- ACS-005
+- SEC-004
+- SEC-005
+- SEC-006
+- SIR-001
+- SIR-002
+- SIR-003
+- SIR-004
+layer: L1
+severity: error
+scope: security_access
+domain: TRAE
+triggers:
+- operation: security_access
+sections:
+  acs_001:
+    title: 最小权限原则
+    section_type: rule
+    original_rules:
+    - ACS-001
+    conditions:
+    - type: constraint
+      check: 角色/用户/AI是否被授予了超出任务所需的权限
+      pass: 权限集与任务需求匹配
+      fail: 立即收回多余权限；安全审计
+    actions:
+    - type: mandatory
+      step: 每个角色/用户/AI只授予完成其任务所需的最小权限集
+    prohibitions: []
+  acs_002:
+    title: 禁止共享账号
+    section_type: rule
+    original_rules:
+    - ACS-002
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 每个人/AI必须使用独立账号
+    prohibitions:
+    - 禁止共享凭证
+  acs_003:
+    title: AI代理权限必须受控
+    section_type: rule
+    original_rules:
+    - ACS-003
+    conditions:
+    - type: constraint
+      check: AI代理权限是否在GOV-AI-001中注册
+      pass: 权限已注册，允许操作
+      fail: AI操作被拒绝；记录越权尝试
+    - type: constraint
+      check: AI代理使用的权限是否已注册
+      pass: 已注册
+      fail: 未注册的权限默认禁止
+    actions:
+    - type: mandatory
+      step: AI代理的权限必须在GOV-AI-001中明确注册
+    prohibitions:
+    - 未注册的权限默认禁止
+  acs_004:
+    title: 权限审批流程
+    section_type: rule
+    original_rules:
+    - ACS-004
+    conditions:
+    - type: constraint
+      check: 新增权限是否由Owner审批并记录审批理由
+      pass: 权限生效
+      fail: 权限不生效
+    - type: constraint
+      check: 临时权限是否设定过期时间且最长7天
+      pass: 临时权限合规
+      fail: 过期后自动收回
+    - type: constraint
+      check: 权限变更是否在24小时内更新权限矩阵
+      pass: 权限矩阵已更新
+      fail: 审计不通过
+    actions:
+    - type: mandatory
+      step: 新增权限必须由Owner审批并记录审批理由
+    - type: mandatory
+      step: 临时权限必须设定过期时间，最长7天
+    - type: mandatory
+      step: 权限变更必须在24小时内更新权限矩阵
+    prohibitions: []
+  acs_005:
+    title: 权限周期性审查
+    section_type: rule
+    original_rules:
+    - ACS-005
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 所有活跃权限每个季度必须复审一次，确认权限与当前职责匹配
+    - type: mandatory
+      step: 不再需要的权限须在复审后7天内收回
+    - type: mandatory
+      step: 复审结果记录于docs/09_audit/access-reviews/YYYY-MM.md
+    prohibitions: []
+  sec_001:
+    title: 禁止明文存储密钥
+    section_type: rule
+    original_rules:
+    - SEC-001
+    conditions: []
+    actions: []
+    prohibitions:
+    - 所有密钥/凭证/Token禁止以明文形式存储在代码/配置文件/文档或日志中
+    - 禁止硬编码在Python/JSON/YAML文件中
+    - 禁止写入.md文档
+    - 禁止输出到日志文件
+    - 禁止提交到git仓库
+  sec_002:
+    title: 密钥必须通过环境变量或密钥管理服务注入
+    section_type: rule
+    original_rules:
+    - SEC-002
+    conditions:
+    - type: constraint
+      check: 密钥注入方式选择
+      pass: 生产环境优先使用密钥管理服务
+      fail: 使用次优方案
+    - type: constraint
+      check: 开发环境密钥注入方式
+      pass: 使用环境变量(.env文件)
+      fail: 使用硬编码
+    - type: constraint
+      check: CI/CD环境密钥注入方式
+      pass: 使用系统环境变量
+      fail: 使用硬编码
+    actions:
+    - type: mandatory
+      step: 所有密钥必须通过环境变量(.env)或密钥管理服务注入
+    prohibitions:
+    - 不得在代码中直接引用密钥
+  sec_003:
+    title: .env文件必须在.gitignore中
+    section_type: rule
+    original_rules:
+    - SEC-003
+    conditions: []
+    actions:
+    - type: mandatory
+      step: .env文件必须在.gitignore中排除
+    prohibitions:
+    - 禁止将.env文件提交到版本控制
+  sec_004:
+    title: 密钥轮换周期
+    section_type: rule
+    original_rules:
+    - SEC-004
+    conditions:
+    - type: constraint
+      check: 生产环境API密钥轮换周期
+      pass: 每90天轮换一次
+      fail: 安全审计不通过
+    - type: constraint
+      check: 数据库凭证轮换周期
+      pass: 每180天轮换一次
+      fail: 安全审计不通过
+    - type: constraint
+      check: 开发环境密钥轮换周期
+      pass: 每365天轮换一次
+      fail: 提醒但不阻塞
+    - type: trigger
+      check: 密钥疑似泄露
+      pass: 立即轮换
+      fail: 不轮换视为P0事件
+    actions:
+    - type: mandatory
+      step: 生产环境API密钥每90天轮换一次
+    - type: mandatory
+      step: 数据库凭证每180天轮换一次
+    - type: mandatory
+      step: 开发环境密钥每365天轮换一次
+    - type: mandatory
+      step: 密钥疑似泄露时立即轮换，不受周期限制
+    prohibitions: []
+  sec_005:
+    title: 密钥撤销
+    section_type: rule
+    original_rules:
+    - SEC-005
+    conditions:
+    - type: constraint
+      check: 人员离职后密钥撤销时限
+      pass: 24小时内撤销其所有密钥访问权限
+      fail: 未撤销视为P1事件
+    - type: constraint
+      check: 服务下线后密钥撤销时限
+      pass: 7天内撤销该服务的所有密钥
+      fail: 未撤销视为P2事件
+    - type: trigger
+      check: 密钥泄露确认
+      pass: 立即撤销
+      fail: 不撤销视为P0事件
+    actions:
+    - type: mandatory
+      step: 人员离职24小时内撤销其所有密钥访问权限
+    - type: mandatory
+      step: 服务下线7天内撤销该服务的所有密钥
+    - type: mandatory
+      step: 密钥泄露确认后立即撤销
+    prohibitions: []
+  sec_006:
+    title: 密钥强度标准
+    section_type: rule
+    original_rules:
+    - SEC-006
+    conditions:
+    - type: constraint
+      check: API密钥/AccessToken强度
+      pass: 长度≥256bit(32字节)，使用CSPRNG生成
+      fail: 密钥不合规；阻断使用
+    - type: constraint
+      check: 数据库密码强度
+      pass: 长度≥16字符，含大写+小写+数字+特殊字符
+      fail: 密码不合规
+    - type: constraint
+      check: JWT签名密钥强度
+      pass: RSA≥2048bit或HMAC-SHA256(对称密钥≥256bit)
+      fail: 签名强度不足
+    - type: constraint
+      check: 加密密钥强度
+      pass: AES-256-GCM或等效算法
+      fail: 加密强度不足
+    actions:
+    - type: mandatory
+      step: API密钥/AccessToken长度≥256bit(32字节)，使用CSPRNG生成
+    - type: mandatory
+      step: 数据库密码长度≥16字符，含大写字母+小写字母+数字+特殊字符
+    - type: mandatory
+      step: JWT签名密钥RSA≥2048bit或HMAC-SHA256(对称密钥≥256bit)
+    - type: mandatory
+      step: 加密密钥使用AES-256-GCM或等效算法
+    prohibitions: []
+  sec_leak_response:
+    title: 密钥泄露响应流程
+    section_type: procedure
+    original_rules:
+    - SEC-LEAK-RESPONSE
+    conditions:
+    - type: trigger
+      check: 密钥泄露被确认
+      pass: 启动泄露响应流程
+      fail: 延迟响应视为P0事件
+    actions:
+    - type: mandatory
+      step: 立即撤销泄露的密钥
+    - type: mandatory
+      step: 生成新密钥并注入环境
+    - type: mandatory
+      step: 搜索泄露密钥出现过的所有文件，确认无残留
+    - type: mandatory
+      step: 通知所有使用该密钥的服务更新配置
+    - type: mandatory
+      step: 记录泄露事件（时间、范围、原因）
+    - type: mandatory
+      step: 复盘并在7天内提交改进方案（P0复盘标准见GOV-SEC-003）
+    prohibitions: []
+  sir_001:
+    title: P0事件必须立即响应
+    section_type: rule
+    original_rules:
+    - SIR-001
+    conditions:
+    - type: constraint
+      check: P0安全事件确认后响应时间
+      pass: 15分钟内启动响应流程
+      fail: 视为管理失职；事后复盘必须说明延迟原因
+    actions:
+    - type: mandatory
+      step: P0安全事件确认后必须在15分钟内启动响应流程
+    prohibitions: []
+  sir_002:
+    title: 全级别通用响应规则
+    section_type: rule
+    original_rules:
+    - SIR-002
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 所有安全事件(P0~P3)必须在发现后30分钟内记录在安全事件日志中
+    - type: mandatory
+      step: 日志包含时间戳(ISO8601UTC)/级别/事件描述/响应措施/复盘总结
+    - type: mandatory
+      step: 日志文件docs/09_audit/security-incident-log.md，每事件一条Markdown表格行
+    prohibitions: []
+  sir_003:
+    title: P0事件必须复盘
+    section_type: rule
+    original_rules:
+    - SIR-003
+    conditions:
+    - type: constraint
+      check: P0事件复盘时限
+      pass: 解决后7天内完成复盘并提交改进方案
+      fail: 不得关闭事件
+    actions:
+    - type: mandatory
+      step: P0事件解决后7天内必须完成复盘并提交改进方案
+    prohibitions: []
+  sir_004:
+    title: 通知机制
+    section_type: rule
+    original_rules:
+    - SIR-004
+    conditions:
+    - type: constraint
+      check: P0事件通知时限
+      pass: 立即通知Owner
+      fail: 延迟通知视为P1事件
+    - type: constraint
+      check: P1事件通知时限
+      pass: 4小时内通知Owner
+      fail: 延迟通知视为P2事件
+    - type: constraint
+      check: P2/P3事件通知
+      pass: 下次安全评审时报告
+      fail: 无
+    actions:
+    - type: mandatory
+      step: P0事件立即通知Owner
+    - type: mandatory
+      step: P1事件4小时内通知Owner
+    - type: mandatory
+      step: P2/P3事件下次安全评审时报告
+    prohibitions: []
+  sir_p0_response:
+    title: P0事件响应流程
+    section_type: procedure
+    original_rules:
+    - SIR-P0-RESPONSE
+    conditions:
+    - type: trigger
+      check: 确认事件为P0级别
+      pass: 启动P0响应流程
+      fail: 按P1-P3流程处理
+    actions:
+    - type: mandatory
+      step: 确认事件为P0级别
+    - type: mandatory
+      step: 立即隔离受影响的系统/服务
+    - type: mandatory
+      step: 撤销泄露的密钥、关闭未授权访问
+    - type: mandatory
+      step: 通知Owner和所有相关方
+    - type: mandatory
+      step: 生成新密钥、恢复服务
+    - type: mandatory
+      step: 记录事件全过程
+    - type: mandatory
+      step: 7天内完成复盘，提交改进方案
+    prohibitions: []
+  sir_p1p3_response:
+    title: P1-P3事件响应流程
+    section_type: procedure
+    original_rules:
+    - SIR-P1P3-RESPONSE
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 记录事件信息
+    - type: mandatory
+      step: 评估事件影响和紧急程度
+    - type: mandatory
+      step: 按优先级处理
+    - type: mandatory
+      step: 记录处理结果
+    prohibitions: []
+  acs_scope:
+    title: 访问控制-目的与范围
+    section_type: context
+    original_rules: []
+    content:
+      summary: 定义ZephyrAlpha系统中所有资源的访问控制规则
+      applies_to:
+      - 代码仓库访问
+      - 服务器/容器访问
+      - 数据库访问
+      - API接口访问
+      - 文档访问
+      impact_on_rules: ACS-001~ACS-005均在此范围内执行
+      key_decisions:
+      - AI-Agent权限按任务卡授权，非固定权限
+  acs_role_definitions:
+    title: 访问控制-角色定义
+    section_type: context
+    original_rules: []
+    content:
+      summary: 系统中5种角色及其典型权限
+      roles:
+      - role: Owner
+        description: 项目所有者
+        typical_permissions: 全部权限
+      - role: Developer
+        description: 开发者
+        typical_permissions: 代码读写、测试执行、日志查看
+      - role: Operator
+        description: 运维人员
+        typical_permissions: 部署、监控、日志查看、配置修改
+      - role: Auditor
+        description: 审计人员
+        typical_permissions: 只读访问所有日志和配置
+      - role: AI-Agent
+        description: AI代理
+        typical_permissions: 按任务卡授权的有限权限
+      key_decisions:
+      - AI-Agent无固定权限，每次任务按需授权
+  acs_permission_matrix:
+    title: 访问控制-权限矩阵
+    section_type: context
+    original_rules: []
+    content:
+      summary: 7种资源×5种角色的权限分配矩阵
+      matrix:
+      - resource: 代码仓库
+        Owner: 读写
+        Developer: 读写
+        Operator: 只读
+        Auditor: 只读
+        AI-Agent: 按任务卡
+      - resource: 生产数据库
+        Owner: 读写
+        Developer: 只读
+        Operator: 读写
+        Auditor: 只读
+        AI-Agent: 禁止
+      - resource: 测试数据库
+        Owner: 读写
+        Developer: 读写
+        Operator: 读写
+        Auditor: 只读
+        AI-Agent: 按任务卡
+      - resource: 服务器SSH
+        Owner: 允许
+        Developer: 禁止
+        Operator: 允许
+        Auditor: 禁止
+        AI-Agent: 禁止
+      - resource: CI/CD管线
+        Owner: 读写
+        Developer: 只读
+        Operator: 读写
+        Auditor: 只读
+        AI-Agent: 禁止
+      - resource: 安全日志
+        Owner: 读写
+        Developer: 只读
+        Operator: 只读
+        Auditor: 只读
+        AI-Agent: 禁止
+      - resource: 密钥管理
+        Owner: 读写
+        Developer: 禁止
+        Operator: 只读
+        Auditor: 禁止
+        AI-Agent: 禁止
+      key_decisions:
+      - AI-Agent禁止访问生产数据库、SSH、CI/CD、安全日志、密钥管理
+  acs_verification:
+    title: 访问控制-验证方式
+    section_type: verification
+    original_rules: []
+    steps:
+    - step: ACS-001验证
+      command: 检查是否有未经授权的访问记录
+      expected_exit: 0
+      frequency: 每次异常访问
+    - step: ACS-002验证
+      command: 检查新用户是否仅分配了最小必要权限
+      expected_exit: 0
+      frequency: 每次分配
+    - step: ACS-003验证
+      command: 检查AI代理权限是否在GOV-AI-001中注册
+      expected_exit: 0
+      frequency: 每次AI任务启动
+    - step: ACS-004验证
+      command: 检查权限变更记录是否包含理由和期限
+      expected_exit: 0
+      frequency: 每次变更
+    - step: ACS-005验证
+      command: 检查季度复审记录是否完成、过期权限是否已回收
+      expected_exit: 0
+      frequency: 每季度
+  acs_normative_refs:
+    title: 访问控制-规范性引用
+    section_type: context
+    original_rules: []
+    content:
+      summary: 访问控制策略的规范性引用和依赖
+      depends_on:
+      - target: PS-STD-001
+        at: "§2.5"
+        why: "frontmatter字段唯一真源——策略文件的doc_type/rule_form一致性约束"
+      impact_on_rules: ACS规则格式必须与PS-STD-001保持一致
+      key_decisions: []
+  acs_change_history:
+    title: 访问控制-修订记录
+    section_type: examples
+    original_rules: []
+    items:
+    - date: '2026-05-04'
+      version: 0.3.0
+      change: "审计修复。ACS-005审查记录路径更新：docs/19_development_workspace/ → docs/09_audit/（对齐directory-structure-standard.md v3.3.0，该文件现已转换为trae_028_doc_structure_naming.yaml doc_002）"
+    - date: '2026-04-30'
+      version: 0.1.0
+      change: 初始版本
+  sec_scope:
+    title: 密钥管理-目的与范围
+    section_type: context
+    original_rules: []
+    content:
+      summary: 定义ZephyrAlpha系统中所有密钥、凭证、Token的存储、轮换、撤销规则
+      applies_to:
+      - API密钥（交易所、数据源、第三方服务）
+      - 数据库凭证
+      - SSH密钥
+      - JWT/Session Token
+      - 加密密钥
+      excludes:
+      - 人类用户的登录密码（由GOV-SEC-002管理）
+      impact_on_rules: SEC-001~SEC-006均在此范围内执行
+      key_decisions:
+      - 登录密码不属于密钥管理范围
+  sec_001_plaintext_definition:
+    title: SEC-001明文存储定义
+    section_type: context
+    original_rules:
+    - SEC-001
+    content:
+      summary: 明文存储的4种具体形式定义
+      definitions:
+      - 硬编码在Python/JSON/YAML文件中
+      - 写入.md文档
+      - 输出到日志文件
+      - 提交到git仓库
+      impact_on_rules: 以上4种形式均触发SEC-001违规
+      key_decisions: []
+  sec_002_injection_priority:
+    title: SEC-002密钥注入方式优先级
+    section_type: decision_tree
+    original_rules:
+    - SEC-002
+    branches:
+    - condition: 生产环境
+      if_true: 使用密钥管理服务（如HashiCorp Vault、AWS Secrets Manager）
+      if_false: ''
+    - condition: 开发环境
+      if_true: 使用环境变量（.env文件）
+      if_false: ''
+    - condition: CI/CD环境
+      if_true: 使用系统环境变量
+      if_false: ''
+  sec_004_compliance_baseline:
+    title: SEC-004合规基线对齐
+    section_type: context
+    original_rules:
+    - SEC-004
+    content:
+      summary: 密钥轮换周期与行业合规基线的对齐关系
+      baselines:
+      - standard: PCI DSS
+        requirement: 高度敏感凭证要求≤90天轮换
+        alignment: 生产API密钥90天轮换对齐
+      - standard: NIST SP 800-63B
+        requirement: 多数场景建议≤180天定期复审
+        alignment: 数据库凭证180天轮换对齐
+      - standard: 公有云IAM常见实践
+        requirement: 生产API密钥90天轮换
+        alignment: 与本项目强制执行值一致
+      impact_on_rules: 轮换周期为本项目强制执行值，已对齐行业基线
+      key_decisions:
+      - 开发环境365天轮换为宽松值，仅提醒不阻塞
+  sec_exceptions:
+    title: 密钥管理-例外条件
+    section_type: decision_tree
+    original_rules: []
+    branches:
+    - condition: 第三方服务不支持密钥轮换
+      if_true: 需安全负责人审批，记录替代缓解措施
+      if_false: 按标准轮换周期执行
+    - condition: 开发环境临时测试密钥
+      if_true: 开发者自行管理，必须在24小时内删除
+      if_false: 按标准管理流程执行
+  sec_verification:
+    title: 密钥管理-验证方式
+    section_type: verification
+    original_rules: []
+    steps:
+    - step: SEC-001验证
+      command: 扫描代码库和配置文件中是否存在明文密钥
+      expected_exit: 0
+      frequency: 每次提交（pre-commit）
+    - step: SEC-002验证
+      command: 检查环境变量中是否包含硬编码密钥
+      expected_exit: 0
+      frequency: 每次部署
+    - step: SEC-003验证
+      command: 检查密钥管理服务的审计日志
+      expected_exit: 0
+      frequency: 每周
+    - step: SEC-004验证
+      command: 检查密钥创建时间与当前时间差值
+      expected_exit: 0
+      frequency: 每周
+    - step: SEC-005验证
+      command: 检查离职人员的密钥是否仍活跃
+      expected_exit: 0
+      frequency: 每月
+    - step: SEC-006验证
+      command: 检查活跃密钥的算法和长度是否满足强度标准
+      expected_exit: 0
+      frequency: 每月
+  sec_normative_refs:
+    title: 密钥管理-规范性引用
+    section_type: context
+    original_rules: []
+    content:
+      summary: 密钥管理策略的规范性引用和依赖
+      depends_on:
+      - target: PS-STD-003
+        at: "§3~§4"
+        why: "密钥管理行为边界——ABS-29~ABS-32禁止明文存储、日志记录、硬编码密钥"
+      impact_on_rules: SEC规则行为边界由PS-STD-003定义
+      key_decisions: []
+  sec_change_history:
+    title: 密钥管理-修订记录
+    section_type: examples
+    original_rules: []
+    items:
+    - date: '2026-05-06'
+      version: 0.2.1
+      change: "SEC-004：删除「待补充」占位，将周期与PCI DSS/NIST/云IAM实践的对齐关系写入正文"
+    - date: '2026-05-01'
+      version: 0.2.0
+      change: "#17审批修复。ABS/COND→SEC-（SEC-001~SEC-006）。SEC-004轮换周期补充行业参考。SEC-006新增密钥强度标准。§4验证表补齐SEC-006验证行。depends_on/ai_autonomy更新。"
+    - date: '2026-04-30'
+      version: 0.1.0
+      change: 初始版本
+  sir_scope:
+    title: 安全事件响应-目的与范围
+    section_type: context
+    original_rules: []
+    content:
+      summary: 定义ZephyrAlpha系统中安全事件的分级、响应步骤、通知机制和事后复盘规则
+      applies_to:
+      - 密钥泄露
+      - 未授权访问
+      - 数据泄露
+      - 系统入侵
+      - AI行为异常导致的安全问题
+      impact_on_rules: SIR-001~SIR-004均在此范围内执行
+      key_decisions:
+      - P0事件15分钟内必须启动响应
+  sir_severity_classification:
+    title: 安全事件-分级标准
+    section_type: context
+    original_rules: []
+    content:
+      summary: 安全事件P0~P3四级分级标准
+      levels:
+      - level: P0
+        definition: 确认的密钥泄露/数据泄露/系统入侵
+        response_time: 立即（15分钟内启动）
+        notification: Owner + 所有相关方
+      - level: P1
+        definition: 疑似泄露/未授权访问尝试
+        response_time: 4小时内启动
+        notification: Owner + 安全负责人
+      - level: P2
+        definition: 安全策略违规（非泄露类）
+        response_time: 24小时内处理
+        notification: 安全负责人
+      - level: P3
+        definition: 安全改进建议
+        response_time: 7天内评估
+        notification: 安全负责人
+      key_decisions:
+      - P0为最高级别，15分钟内必须响应
+  sir_cross_refs:
+    title: 安全事件响应-关联策略
+    section_type: context
+    original_rules: []
+    content:
+      summary: 安全事件响应与其他策略的关联关系
+      cross_references:
+      - policy: 密钥管理策略
+        module_id: GOV-SEC-001
+        relationship: 密钥泄露触发本策略
+      - policy: 访问控制策略
+        module_id: GOV-SEC-002
+        relationship: 未授权访问触发本策略
+      - policy: AI自治权限注册表
+        module_id: GOV-AI-001
+        relationship: AI越权操作触发本策略
+      - policy: 行为边界标准
+        module_id: PS-STD-003
+        relationship: Kill Switch触发本策略
+      impact_on_rules: 4条关联策略均可触发安全事件响应
+      key_decisions: []
+  sir_verification:
+    title: 安全事件响应-验证方式
+    section_type: verification
+    original_rules: []
+    steps:
+    - step: SIR-001验证
+      command: 检查P0事件响应时间
+      expected_exit: 0
+      frequency: 每次事件
+    - step: SIR-002验证
+      command: 检查安全事件日志是否完整
+      expected_exit: 0
+      frequency: 每周
+    - step: SIR-003验证
+      command: 检查P0事件复盘是否在7天内完成
+      expected_exit: 0
+      frequency: 每次事件
+    - step: SIR-004验证
+      command: 检查通知是否按时发送
+      expected_exit: 0
+      frequency: 每次事件
+  sir_normative_refs:
+    title: 安全事件响应-规范性引用
+    section_type: context
+    original_rules: []
+    content:
+      summary: 安全事件响应策略的规范性引用和依赖
+      depends_on:
+      - target: PS-STD-001
+        at: "§2.5"
+        why: "frontmatter字段唯一真源——策略文件的doc_type/rule_form一致性约束"
+      - target: PS-STD-003
+        at: "§3~§4"
+        why: "行为边界标准——AI越权/Kill Switch/安全边界违规触发P0安全事件响应"
+      impact_on_rules: SIR规则格式由PS-STD-001约束，行为边界触发条件由PS-STD-003定义
+      key_decisions: []
+  sir_change_history:
+    title: 安全事件响应-修订记录
+    section_type: examples
+    original_rules: []
+    items:
+    - date: '2026-06-19'
+      version: 0.4.0
+      change: "RQ审查修复：provenance源文件标记status=migrated（3个.md已迁移为本规则文件）；enforcement.executors补充scan_secret_leak.py（type=code不应为空）"
+    - date: '2026-05-04'
+      version: 0.3.0
+      change: "审计修复。SIR-002日志路径更新：docs/19_development_workspace/ → docs/09_audit/（对齐directory-structure-standard.md v3.3.0，该文件现已转换为trae_028_doc_structure_naming.yaml doc_002）"
+    - date: '2026-04-30'
+      version: 0.1.0
+      change: 初始版本
+references:
+  rule_ids:
+  - ACS-001
+  - ACS-002
+  - ACS-003
+  - ACS-004
+  - ACS-005
+  - SEC-001
+  - SEC-002
+  - SEC-003
+  - SEC-004
+  - SEC-005
+  - SEC-006
+  - SIR-001
+  - SIR-002
+  - SIR-003
+  - SIR-004
+  scripts:
+  - scripts/governance/d6_security/scan_secret_leak.py
+  modules:
+  - GOV-SEC-001
+  - GOV-SEC-002
+  - GOV-SEC-003
+  blueprints: []
+enforcement:
+  type: code
+  executors:
+  - scripts/governance/d6_security/scan_secret_leak.py
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

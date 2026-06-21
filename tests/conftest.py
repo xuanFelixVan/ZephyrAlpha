@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0090 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-248 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.conftest
 # [STABILITY] evolving
 # [SAFETY] L
@@ -37,10 +38,10 @@ if sys.stdout.encoding != "utf-8":
 def tmp_db(tmp_path):
     """返回已初始化的 SQLite 数据库路径（临时目录）。
 
-    使用 zephyr.db.sqlite_schema.init_db 初始化，
+    使用 zephyr.data_governance_governance.persistence.sqlite_schema.init_db 初始化，
     适用于所有需要数据库的测试（task_repo、circuit_breaker、olap_engine 等）。
     """
-    from zephyr.db.sqlite_schema import init_db
+    from zephyr.governance.persistence.sqlite_schema import init_db
 
     db_path = tmp_path / "test_zalpha.db"
     init_db(db_path)
@@ -63,7 +64,7 @@ def tmp_project_dir(tmp_path):
 @pytest.fixture
 def sanitizer(tmp_project_dir):
     """返回绑定 tmp_project_dir 的 InputSanitizer 实例。"""
-    from zephyr.llm_security.input_sanitizer import InputSanitizer
+    from zephyr.security.llm_defense.llm_security.input_sanitizer import InputSanitizer
 
     return InputSanitizer(root=str(tmp_project_dir))
 

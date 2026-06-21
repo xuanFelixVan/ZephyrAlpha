@@ -1,9 +1,11 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1914 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-533 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.orchestrator.test_agent_orchestrator
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """
 Unit tests for agent_orchestrator.py (T-3-10, A22)
 ===================================================
@@ -12,7 +14,6 @@ CoVe post-hook) + HealthMonitor (5 项 SLO)。
 
 最少测试：20 条。
 """
-from __future__ import annotations
 
 
 from datetime import UTC, datetime, timedelta
@@ -20,7 +21,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from zephyr.orchestrator.core.agent_orchestrator import (
+from zephyr.trading.orchestrator.agent_orchestrator import (
     DEFAULT_ROLE_DOMAIN_MATRIX,
     AgentOrchestrator,
     AgentProfile,
@@ -371,7 +372,7 @@ class TestAgentOrchestrator:
 
     def test_orchestrate_sanitizer_blocks_prompt_injection_claim(self) -> None:
         repo = Path(__file__).resolve().parents[3]
-        from zephyr.llm_security.input_sanitizer import InputSanitizer
+        from zephyr.security.llm_defense.llm_security.input_sanitizer import InputSanitizer
 
         orch = AgentOrchestrator(
             self.router,
@@ -440,7 +441,7 @@ class TestAgentOrchestrator:
 
 
 def test_exports_present() -> None:
-    from zephyr.orchestrator.core import agent_orchestrator as m
+    from zephyr.trading.orchestrator.core import agent_orchestrator as m
 
     for name in [
         "AgentRole",

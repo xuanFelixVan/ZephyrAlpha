@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0163 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-320 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.integration.test_akshare_real_data
 # [STABILITY] evolving
 # [SAFETY] L
@@ -84,7 +85,7 @@ def _akshare_has_usable_bar_data() -> bool:
         _AKSHARE_BARS_OK = False
         return False
     try:
-        from zephyr.l00_data_source.implementations.akshare_provider import AkshareProvider
+        from zephyr.data.akshare_provider import AkshareProvider
 
         provider = AkshareProvider()
         end = datetime.now(timezone.utc)
@@ -120,7 +121,7 @@ class TestAkshareRealData:
 
     def test_provider_instantiation(self):
         """实例化 AkshareProvider 并加载 lazy import"""
-        from zephyr.l00_data_source.implementations.akshare_provider import (
+        from zephyr.data.akshare_provider import (
             AkshareProvider,
         )
         provider = AkshareProvider()
@@ -131,7 +132,7 @@ class TestAkshareRealData:
 
     def test_get_stock_list(self):
         """获取全 A 股股票列表"""
-        from zephyr.l00_data_source.implementations.akshare_provider import (
+        from zephyr.data.akshare_provider import (
             AkshareProvider,
         )
         provider = AkshareProvider()
@@ -144,7 +145,7 @@ class TestAkshareRealData:
 
     def test_get_csi300_constituents(self):
         """获取沪深 300 成分股"""
-        from zephyr.l00_data_source.implementations.akshare_provider import (
+        from zephyr.data.akshare_provider import (
             AkshareProvider,
         )
         provider = AkshareProvider()
@@ -159,7 +160,7 @@ class TestAkshareRealData:
 
     def test_fetch_daily_kline_600519(self):
         """获取贵州茅台最近 60 日 K 线数据"""
-        from zephyr.l00_data_source.implementations.akshare_provider import (
+        from zephyr.data.akshare_provider import (
             AkshareProvider,
         )
         from datetime import datetime, timezone, timedelta
@@ -180,7 +181,7 @@ class TestAkshareRealData:
 
     def test_fetch_multiple_symbols(self):
         """获取多只 CSI 300 成分股最近 30 日数据"""
-        from zephyr.l00_data_source.implementations.akshare_provider import (
+        from zephyr.data.akshare_provider import (
             AkshareProvider,
         )
         from datetime import datetime, timezone, timedelta
@@ -204,10 +205,10 @@ class TestAkshareRealData:
 
     def test_quality_gate_on_real_data(self):
         """用真实行情数据过 Quality Gate"""
-        from zephyr.l00_data_source.implementations.akshare_provider import (
+        from zephyr.data.akshare_provider import (
             AkshareProvider,
         )
-        from zephyr.l00_data_source.implementations.default_quality_gate import (
+        from zephyr.governance.default_quality_gate import (
             DefaultQualityGate,
         )
         from datetime import datetime, timezone, timedelta
@@ -247,7 +248,7 @@ class TestAkshareMiniPipeline:
     @pytest.fixture(scope="class")
     def real_data(self):
         """获取 5 只 CSI 300 成分股最近 120 日数据"""
-        from zephyr.l00_data_source.implementations.akshare_provider import (
+        from zephyr.data.akshare_provider import (
             AkshareProvider,
         )
         from datetime import datetime, timezone, timedelta
@@ -269,7 +270,7 @@ class TestAkshareMiniPipeline:
 
     def test_quality_gate_batch_on_real_data(self, real_data):
         """批量质检真实数据"""
-        from zephyr.l00_data_source.implementations.default_quality_gate import (
+        from zephyr.governance.default_quality_gate import (
             DefaultQualityGate,
         )
 
@@ -308,10 +309,10 @@ class TestAkshareMiniPipeline:
 
     def test_risk_limit_on_real_positions(self, real_data):
         """用真实数据构建虚拟持仓 + 风控校验"""
-        from zephyr.l04_risk_management.implementations.default_risk_validator import (
+        from zephyr.risk.implementations.default_risk_validator import (
             DefaultRiskValidator,
         )
-        from zephyr.l04_risk_management.risk_manager import RiskLimits
+        from zephyr.risk.risk_manager import RiskLimits
         from datetime import datetime, timezone
 
         limits = RiskLimits(

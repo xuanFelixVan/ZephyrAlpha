@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | tests/zephyr/shared/infra/test_process_lifecycle_gateway.py | §
+# [A_test] module_id: SRC-TST-2093 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-710 | tests/zephyr/shared/infra/test_process_lifecycle_gateway.py | §
 """
 Tests for ProcessLifecycleGateway.
 """
@@ -67,7 +68,7 @@ class TestProcessLifecycleGateway:
 class TestGateScanner:
 
     def test_gate_detects_bare_popen(self, tmp_path: Path):
-        from zephyr.gates.invariants.en_process_lifecycle_gateway import scan_file
+        from zephyr.governance.rule_enforcement.invariants.en_process_lifecycle_gateway import scan_file
 
         bad_code = tmp_path / "bad.py"
         bad_code.write_text(
@@ -78,7 +79,7 @@ class TestGateScanner:
         assert len(violations) >= 1
 
     def test_gate_allows_gateway_consumer(self, tmp_path: Path):
-        from zephyr.gates.invariants.en_process_lifecycle_gateway import scan_file
+        from zephyr.governance.rule_enforcement.invariants.en_process_lifecycle_gateway import scan_file
 
         good_code = tmp_path / "good.py"
         good_code.write_text(

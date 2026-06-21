@@ -1,8 +1,8 @@
 ---
-module_id: TPL-IDX-001
+module_id: GOV-030
 title: "文档模板目录索引"
 doc_type: index
-status: active
+status: Active
 version: "1.1.0"
 layer: cross_layer
 owner: ZephyrAlpha-Owner
@@ -24,7 +24,7 @@ ai_autonomy: human_gated
 
 ## 责任声明（Single Responsibility）
 
-本目录只存放：**文档模板 — policy/standard/runbook/playbook/ADR/blueprint/roadmap/risk-register 模板**。
+本目录只存放：**文档模板 — policy/standard/runbook/playbook/KB 决策记录/blueprint/roadmap/risk-register 模板**。
 
 ## 文件清单
 
@@ -33,13 +33,13 @@ ai_autonomy: human_gated
 | blueprint-construction-template.md | 文档模板 |
 | dependency-graph-template.md | 依赖图数据结构模板 |
 | playbook-template.md | 文档模板 |
-| policy-template.md | 文档模板 |
-| protocol-template.md | 文档模板 |
-| register-template.md | 文档模板 |
-| risk-register-template.md | 文档模板 |
+| policy-policy.md | 文档模板 |
+| protocol-protocol.md | 文档模板 |
+| register-registry.md | 文档模板 |
+| risk-register-registry.md | 文档模板 |
 | roadmap-template.md | 文档模板 |
-| runbook-template.md | 文档模板 |
-| standard-template.md | 文档模板 |
+| runbook-runbook.md | 文档模板 |
+| standard-standard.md | 文档模板 |
 
 ## 排除规则（不应放入本目录的内容）
 

@@ -9,7 +9,7 @@ Detection: Find files with DEPRECATED- module_id prefix or superseded_by field
            that still exist at their original location AND at _registry/ target.
            Also detect files with identical content at two paths.
 
-Exit 1 on any FAIL -> pre-commit blocks the commit.
+Exit 1 on any FAIL -> pre_commit blocks the commit.
 """
 
 from __future__ import annotations

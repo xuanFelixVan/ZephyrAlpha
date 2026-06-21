@@ -1,0 +1,198 @@
+rule_id: TRAE-043
+title: 元规则-元数据与度量
+aliases:
+- PS-STD-001
+- STD-004
+- STD-005
+- GOV-024
+layer: L2
+severity: warning
+scope: meta_metadata_metrics
+domain: TRAE
+triggers:
+- operation: meta_metadata_metrics
+sections:
+  ps_std_001_four_domains:
+    title: 元数据四域架构
+    section_type: context
+    original_rules:
+    - PS-STD-001 §1.2
+    conditions:
+    - type: trigger
+      check: 创建或修改文档元数据时
+      pass: 文档属于正确的域且字段集合匹配
+      fail: 域归属错误或字段不匹配
+    actions:
+    - type: mandatory
+      step: 域A(文档frontmatter,40字段)全局适用；域B(任务卡,18字段)仅plan/roadmap；域C(AI治理)AI决策日志+员工档案；域D(代码文件头部,10字段)src/zephyr/下.py文件；YAML文件分document_yaml和registry_yaml两类契约
+    prohibitions: []
+  ps_std_001_dual_source:
+    title: 双真源声明
+    section_type: context
+    original_rules:
+    - PS-STD-001 §0
+    conditions:
+    - type: trigger
+      check: 修改字段定义或字段数据时
+      pass: 同步检查另一方
+      fail: 只改一方导致数据/规则不一致
+    actions:
+    - type: mandatory
+      step: YAML=PS-REG-012=数据真源；MD=PS-STD-001=规则真源；修改任一方MUST同步检查另一方；数据冲突→YAML优先；规则冲突→MD优先
+    prohibitions: []
+  ps_std_001_frontmatter_required:
+    title: frontmatter必填字段
+    section_type: rule
+    original_rules:
+    - PS-STD-001 §2
+    conditions:
+    - type: trigger
+      check: 创建新文档时
+      pass: frontmatter所有必填字段存在且值在受控词表中
+      fail: 必填字段缺失或值不合规
+    actions:
+    - type: mandatory
+      step: document_yaml最小必填7项(module_id/title/doc_type/status/version/date/owner)；registry_yaml最小必填4项(schema_version/doc_type/title/status)；Active阶段document_yaml需14项
+    prohibitions: []
+  ps_std_000_irreversibility:
+    title: 后果不可逆性二元分类
+    section_type: rule
+    original_rules:
+    - PS-STD-000 §2
+    conditions:
+    - type: trigger
+      check: 判定规则应归入宪法层还是登记表层时
+      pass: 按后果不可逆性二元判定
+      fail: 使用非二元标准(如严重性)判定
+    actions:
+    - type: mandatory
+      step: 违反后后果不可逆→宪法层(ABS)；违反后后果可逆→登记表层(COND/REC/CODE)；判定问题：如果这条规则被违反，后果能否通过后续操作完全消除？NO=不可逆→宪法层
+    prohibitions: []
+  ps_std_000_conditional_irreversibility:
+    title: 条件性不可逆升格
+    section_type: rule
+    original_rules:
+    - PS-STD-000 §2.4
+    conditions:
+    - type: trigger
+      check: 规则后果是否不可逆取决于触发条件时
+      pass: 触发后不可逆的规则归入ABS
+      fail: 条件性不可逆规则停留在COND
+    actions:
+    - type: mandatory
+      step: 部分规则默认COND但触发特定条件后后果不可逆→升格为ABS(如ABS-45~48)；条件性不可逆规则必须在ABS表中声明触发条件
+    prohibitions: []
+  ps_std_000_frozen:
+    title: 宪法层frozen约束
+    section_type: rule
+    original_rules:
+    - PS-STD-000 §1
+    conditions:
+    - type: trigger
+      check: 修改PS-STD-000或其他frozen标准时
+      pass: Owner+KB决策记录
+      fail: AI自主修改frozen标准
+    actions:
+    - type: mandatory
+      step: 本标准优先级高于所有其他PS-STD；修改需Owner+KB决策记录；本标准stability=frozen+ai_autonomy=immutable_core
+    prohibitions:
+    - AI自主修改frozen标准
+  gov_metrics_kpi:
+    title: 治理度量6项KPI
+    section_type: context
+    original_rules:
+    - GOV-024 §2
+    conditions:
+    - type: trigger
+      check: 评估规则体系健康度时
+      pass: 按KPI度量并报告
+      fail: 无度量或度量不完整
+    actions:
+    - type: mandatory
+      step: K1规则合规率(≥95%)/K2规则新鲜度(≥60%活跃文件)/K3引用链健康度/K4格式错误密度/K5一致性违规率/K6 SSoT冲突数；K1<80%或K2<30%触发告警
+    prohibitions: []
+  gov_metrics_prohibitions:
+    title: 治理度量禁止行为
+    section_type: rule
+    original_rules:
+    - GOV-024
+    conditions:
+    - type: trigger
+      check: 执行治理度量时
+      pass: 度量流程合规
+      fail: 度量流程违规
+    actions:
+    - type: mandatory
+      step: frozen文件不强制新鲜度(K2豁免)；引用链深度必须=1层；度量周期按stability和doc_type分级
+    prohibitions:
+    - 伪造度量数据
+    - 跳过告警阈值触发后的响应流程
+    - 不建立基线就进行趋势判断
+    - 忽略K5一致性违规(stability↔ai_autonomy不一致)
+  glossary_prohibition:
+    title: 术语表禁止行为
+    section_type: rule
+    original_rules:
+    - glossary §1
+    conditions:
+    - type: trigger
+      check: 在项目文档中使用或定义术语时
+      pass: 使用术语表中已定义的术语
+      fail: 绕过术语表直接定义新术语
+    actions:
+    - type: mandatory
+      step: 项目文档中使用的核心术语必须以术语表(glossary_glossary.md)为准；新增术语需更新术语表
+    prohibitions:
+    - 绕过术语表直接在非权威文件中定义新术语
+  mr3_scope:
+    title: 元数据注册表(续2)的目的与范围
+    section_type: context
+    summary: "覆盖元数据登记表(PS-STD-001)、元标准宪法(PS-STD-000)、治理度量(GOV-024)、术语表(glossary)的规则提取"
+    applies_to: "文档frontmatter元数据、元标准宪法层、治理度量体系、项目术语管理"
+    impact_on_rules: "所有文档必须按四域架构分类元数据；YAML与MD双真源必须同步；宪法层规则不可由AI自主修改；治理度量6项KPI必须定期评估"
+    key_decisions:
+    - "四域架构(A/B/C/D)划分元数据责任范围"
+    - "YAML=数据真源/MD=规则真源的双真源声明"
+    - "后果不可逆性二元分类(ABS/COND)决定规则层级"
+    - "宪法层frozen+immutable_core约束"
+  mr3_change_history:
+    title: 元数据注册表(续2)修订记录
+    section_type: examples
+    items:
+    - version: "6.0.1"
+      date: "2026-05-06"
+      change: "§14.1：新增META-V21——index.md清单条目与实际指向文件的frontmatter status不一致"
+    - version: "5.4.0"
+      date: "2026-05-01"
+      change: "§2.5表扩展+3列消除模板文件的per-doc_type字段约束盲区；§2.6 +3条一致性约束"
+    - version: "5.3.0"
+      date: "2026-05-01"
+      change: "§1.3加入YAML子类型分类(document_yaml/registry_yaml)，解决_registry/下.yaml文件的frontmatter字段问题"
+    - version: "5.1.0"
+      date: "2026-05-01"
+      change: "B5审查连带修复：§2.1字段表修正8处过时节号引用；§2.6新增架构公民原则说明块"
+    - version: "4.3.0"
+      date: "2026-04-29"
+      change: "真元规则裁定：§4.1 DocStatus从7种精简为3种(draft/active/deprecated)；§4.6 classification二分法(public/confidential)"
+    - version: "4.0.0"
+      date: "2026-04-28"
+      change: "重命名为元数据注册表，扩展为全项目三域字段真源；明确A(文档frontmatter)/B(任务卡)/C(AI治理)三层架构"
+references:
+  rule_ids:
+  - TRAE-041
+  - TRAE-042
+  scripts: []
+  modules: []
+  blueprints: []
+enforcement:
+  type: doc
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: evolving
+  impact_level: L
+  modification_permission: ai_modifiable
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

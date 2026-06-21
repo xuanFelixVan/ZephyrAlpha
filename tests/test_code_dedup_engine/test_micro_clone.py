@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0534 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-362 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.test_code_dedup_engine.test_micro_clone
 # [STABILITY] evolving
 # [SAFETY] L
@@ -13,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 
 def test_scanner_blocks():
-    from zephyr.l01_infrastructure.code_dedup_engine.scanner import Scanner
+    from zephyr.governance.scanner import Scanner
     s = Scanner()
     source = "a = 1\nb = 2\nc = 3\nd = 4\ne = 5\nf = 6\n"
     blocks = s.scan_blocks(source)

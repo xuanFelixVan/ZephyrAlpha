@@ -1,0 +1,20 @@
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED G3-BURN-001: burn_rate_monitor failed to block cost_override'
+  entry_id: BY-7bc00cdc
+  escalated: false
+  gate_id: G3-BURN-001
+  occurred_at: '2026-05-23T14:42:24.551579+00:00'
+  root_cause: 'BYPASSED G3-BURN-001: burn_rate_monitor failed to block cost_override'
+  scenario_id: RB-SCEN-010
+  tier: TIER_3
+- attack_payload: ''
+  count: 1
+  defense_response: 'BYPASSED G3-BURN-001: burn_rate_monitor failed to block cost_override'
+  entry_id: BY-b986417d
+  escalated: false
+  gate_id: G3-BURN-001
+  occurred_at: '2026-05-23T14:43:14.047832+00:00'
+  root_cause: 'BYPASSED G3-BURN-001: burn_rate_monitor failed to block cost_override'
+  scenario_id: RB-SCEN-010
+  tier: TIER_3

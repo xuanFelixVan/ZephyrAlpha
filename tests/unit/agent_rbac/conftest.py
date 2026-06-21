@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1816 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-446 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.agent_rbac.conftest
 # [STABILITY] evolving
 # [SAFETY] L
@@ -37,19 +38,19 @@ def _load(name, file_path):
 
 _ensure_stub("zephyr", _ZEPHYR)
 _ensure_stub("zephyr.shared", _ZEPHYR / "shared")
-_ensure_stub("zephyr.shared.contracts", _ZEPHYR / "shared" / "contracts")
-_ensure_stub("zephyr.shared.contracts.identity", _ZEPHYR / "shared" / "contracts" / "identity")
-_ensure_stub("zephyr.agent_rbac", _ZEPHYR / "agent_rbac")
+_ensure_stub("zephyr.integration.shared_08.contracts", _ZEPHYR / "shared" / "contracts")
+_ensure_stub("zephyr.integration.shared_08.contracts.identity", _ZEPHYR / "shared" / "contracts" / "identity")
+_ensure_stub("zephyr.security.access_control", _ZEPHYR / "agent-rbac")
 
-_load("zephyr.shared.contracts.identity.agent_identity", _ZEPHYR / "shared" / "contracts" / "identity" / "agent_identity.py")
-_load("zephyr.shared.contracts.identity.permission", _ZEPHYR / "shared" / "contracts" / "identity" / "permission.py")
-_load("zephyr.agent_rbac.immutable_core", _ZEPHYR / "agent_rbac" / "immutable_core.py")
-_load("zephyr.agent_rbac.exceptions", _ZEPHYR / "agent_rbac" / "exceptions.py")
-_load("zephyr.agent_rbac.kill_switch", _ZEPHYR / "agent_rbac" / "kill_switch.py")
-_load("zephyr.agent_rbac.input_guard", _ZEPHYR / "agent_rbac" / "input_guard.py")
-_load("zephyr.agent_rbac.sequence_guard", _ZEPHYR / "agent_rbac" / "sequence_guard.py")
-_load("zephyr.agent_rbac.output_guard", _ZEPHYR / "agent_rbac" / "output_guard.py")
-_load("zephyr.agent_rbac.abac_guard", _ZEPHYR / "agent_rbac" / "abac_guard.py")
-_load("zephyr.agent_rbac.decision_explainer", _ZEPHYR / "agent_rbac" / "decision_explainer.py")
-_load("zephyr.agent_rbac.rbac_guard", _ZEPHYR / "agent_rbac" / "rbac_guard.py")
-_load("zephyr.agent_rbac.engine_degradation", _ZEPHYR / "agent_rbac" / "engine_degradation.py")
+_load("zephyr.integration.shared_08.contracts.identity.agent_identity", _ZEPHYR / "shared" / "contracts" / "identity" / "agent_identity.py")
+_load("zephyr.integration.shared_08.contracts.identity.permission", _ZEPHYR / "shared" / "contracts" / "identity" / "permission.py")
+_load("zephyr.security.access_control.immutable_core", _ZEPHYR / "agent-rbac" / "immutable_core.py")
+_load("zephyr.security.access_control.exceptions", _ZEPHYR / "agent-rbac" / "exceptions.py")
+_load("zephyr.security.access_control.kill_switch", _ZEPHYR / "agent-rbac" / "kill_switch.py")
+_load("zephyr.security.access_control.input_guard", _ZEPHYR / "agent-rbac" / "input_guard.py")
+_load("zephyr.security.access_control.sequence_guard", _ZEPHYR / "agent-rbac" / "sequence_guard.py")
+_load("zephyr.security.access_control.output_guard", _ZEPHYR / "agent-rbac" / "output_guard.py")
+_load("zephyr.security.access_control.abac_guard", _ZEPHYR / "agent-rbac" / "abac_guard.py")
+_load("zephyr.security.access_control.decision_explainer", _ZEPHYR / "agent-rbac" / "decision_explainer.py")
+_load("zephyr.security.access_control.rbac_guard", _ZEPHYR / "agent-rbac" / "rbac_guard.py")
+_load("zephyr.security.access_control.engine_degradation", _ZEPHYR / "agent-rbac" / "engine_degradation.py")

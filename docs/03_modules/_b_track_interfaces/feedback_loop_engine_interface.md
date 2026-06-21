@@ -1,5 +1,5 @@
 ---
-module_id: AI-ENG-FLE-001
+module_id: MOD-004
 title: Feedback Loop Engine Interface / 反馈闭环引擎接口规范
 doc_type: service_interface_spec
 status: Active
@@ -17,8 +17,8 @@ truth_source:
   - "03_modules/_cross_layer/feedback-loop/blueprint.md（MOD-INF-010 — 详细设计与闭环契约；Phase 5 真源）"
   - "architecture-model/layers/b_feedback_loop.yaml（Feedback Loop YAML SSoT）"
 supersedes: []
-related_adrs:
-  - "ADR-0019 Feedback Loop Engine 架构与技术选型（pending B-e）"
+related_kb:
+  - "KBG-0019 Feedback Loop Engine 架构与技术选型（pending B-e）"
 integration_points:
   - "Agent Orchestrator (upstream, 任务指标主数据源)"
   - "Context Engine (downstream, 通过 FeedbackAction Protocol 反向调 adjust_strategy)"
@@ -114,7 +114,7 @@ mod_master_contracts:
 ### 1.3 实施策略：Protocol + 双实现
 
 ```python
-# src/zephyr/feedback_loop/protocol.py (experimental 产出)
+# src/zephyr/infrastructure/runtime_integration/a2a_protocol/governance/protocol.py (experimental 产出)
 
 from typing import Protocol
 
@@ -155,13 +155,13 @@ class DistributedFeedbackLoop:
 
 ## 2. 技术选型表（真源锁定）
 
-| 组件 | 首选 | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 ADR |
+| 组件 | 首选 | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 KB 决策记录 |
 |------|----------------|------|-------|---------|---------|----------|
-| 时间序列存储 | **SQLite 时间序列表（WAL）** | InfluxDB 2.x | Parquet 文件 | 零外部依赖 + 事务 | 数据点 > 100 万 或跨机查询 | ADR-0019 |
-| 趋势分析算法 | **移动平均（EMA）+ 阈值** | SPC（Shewhart 控制图） | 单点阈值（误报高） | 实现简单、可解释 | 误报率 > 20% | ADR-0019 |
-| 异常检测 | **规则引擎 + 滑窗阈值** | 轻量 ML（isolation forest） | LLM 语义判（成本高） | 确定性、可审计 | 规则维护成本 > ML 时切换 | ADR-0019 |
-| 反馈 → 动作映射 | **静态路由表 + Protocol 调用** | 规则引擎 DSL | 硬编码 | 解耦下游服务 | 动作 > 20 种 | ADR-0019 |
-| 下游调用 | **Protocol 注入（`ContextAdjustAction` / `OrchestratorControlAction`）** | 事件总线 | 直接 import | 单向依赖，无循环 | - | ADR-0019 |
+| 时间序列存储 | **SQLite 时间序列表（WAL）** | InfluxDB 2.x | Parquet 文件 | 零外部依赖 + 事务 | 数据点 > 100 万 或跨机查询 | KBG-0019 |
+| 趋势分析算法 | **移动平均（EMA）+ 阈值** | SPC（Shewhart 控制图） | 单点阈值（误报高） | 实现简单、可解释 | 误报率 > 20% | KBG-0019 |
+| 异常检测 | **规则引擎 + 滑窗阈值** | 轻量 ML（isolation forest） | LLM 语义判（成本高） | 确定性、可审计 | 规则维护成本 > ML 时切换 | KBG-0019 |
+| 反馈 → 动作映射 | **静态路由表 + Protocol 调用** | 规则引擎 DSL | 硬编码 | 解耦下游服务 | 动作 > 20 种 | KBG-0019 |
+| 下游调用 | **Protocol 注入（`ContextAdjustAction` / `OrchestratorControlAction`）** | 事件总线 | 直接 import | 单向依赖，无循环 | - | KBG-0019 |
 | 进程内并发 | **`asyncio.Lock`** | - | `threading.Lock` | 项目全异步栈 | - | - |
 | 跨进程并发 | **`filelock.FileLock`** | - | 全局单例 | pytest 并发 | - | - |
 
@@ -172,7 +172,7 @@ class DistributedFeedbackLoop:
 ### 3.1 Metric / Baseline / Anomaly / Action
 
 ```python
-# src/zephyr/feedback_loop/schemas.py (experimental 产出)
+# src/zephyr/integration/shared/schema/schemas.py (experimental 产出)
 
 from pydantic import BaseModel, Field
 from typing import Literal, Optional
@@ -184,7 +184,7 @@ class Metric(BaseModel):
     unit: Optional[str] = None
     tags: dict[str, str] = Field(default_factory=dict,
         description="如 {'task_kind':'feature','agent_id':'A-01'}")
-    source: Literal["orchestrator", "vms", "context_engine", "lsg", "external"] = "external"
+    source: Literal["orchestrator", "vms", "context-engine", "lsg", "external"] = "external"
     observed_at: datetime
     correlation_id: Optional[str] = Field(None, description="关联 task_id / request_id，用于根因追溯")
 
@@ -233,7 +233,7 @@ class PendingAction(BaseModel):
         "bump_lsg_strictness",          # → LSG
         "alert_ops",                    # → Dashboard / log only
     ]
-    target_service: Literal["context_engine", "orchestrator", "vms", "lsg", "ops"]
+    target_service: Literal["context-engine", "orchestrator", "vms", "lsg", "ops"]
     payload: dict
     dispatched_at: Optional[datetime] = None
     expires_at: datetime = Field(description="超时未执行自动丢弃")
@@ -250,7 +250,7 @@ class ActionOutcome(BaseModel):
 ### 3.2 Anomaly → Action 静态路由表
 
 ```python
-# src/zephyr/feedback_loop/action_router.py
+# src/zephyr/observability/feedback-loop/action_router.py
 
 ANOMALY_ACTION_ROUTING = {
     # 指标名 → anomaly_kind → action_kind
@@ -387,7 +387,7 @@ class InProcessFeedbackLoop:  # implements FeedbackLoopProtocol
 ### 5.1 FLE 侧定义的下游 Protocol
 
 ```python
-# src/zephyr/feedback_loop/action_protocols.py (FLE 侧定义)
+# src/zephyr/observability/feedback-loop/action_protocols.py (FLE 侧定义)
 
 from typing import Protocol
 
@@ -412,7 +412,7 @@ class LSGControlActionProtocol(Protocol):
 ### 5.2 Wiring 示例（experimental，单进程）
 
 ```python
-# src/zephyr/bootstrap.py
+# src/zephyr/data/knowledge_management/kb/bootstrap.py
 
 async def build_services():
     vm = get_vm()
@@ -440,7 +440,7 @@ async def build_services():
 ### 5.3 FeedbackSignal 适配（与 CE §3.3 对齐）
 
 ```python
-# src/zephyr/feedback_loop/adapters/context_engine.py
+# src/zephyr/infrastructure/shared_services/context-engine.py
 
 class CEAdjustAdapter:
     """FLE 侧 Anomaly → CE 侧 FeedbackSignal 的适配器。"""
@@ -516,11 +516,11 @@ EMA_t = α · value_t + (1-α) · EMA_{t-1}
 
 | 前置项 | 状态 |
 |-------|:----:|
-| `src/zephyr/feedback_loop/` 包创建 | ⏳ 待建 |
+| `src/zephyr/feedback-loop/` 包创建 | ⏳ 待建 |
 | SQLite 时间序列 schema | ⏳ experimental T-1-XX |
 | 上游 metrics sink 接线（Orchestrator/VMS/LSG/CE 都要调 FLE） | ⏳ beta 接入 |
 | 下游 Action Protocol 适配器实现 | ⏳ beta 接入 |
-| ADR-0019 批准 | ⏳ pending B-e |
+| KBG-0019 批准 | ⏳ pending B-e |
 
 **Python 依赖**：
 
@@ -541,7 +541,7 @@ feedback-loop = [
 ```
 
 ├── src/zephyr/
-│   ├── feedback_loop/                              # ⏳ experimental 新建
+│   ├── feedback-loop/                              # ⏳ experimental 新建
 │   │   ├── __init__.py                             # 导出 get_fle()
 │   │   ├── protocol.py                             # FeedbackLoopProtocol
 │   │   ├── action_protocols.py                     # §5.1 下游 Protocol 定义
@@ -556,18 +556,18 @@ feedback-loop = [
 │   │   ├── action_router.py                        # §3.2 ANOMALY_ACTION_ROUTING
 │   │   ├── dispatcher.py                           # dispatch_action 逻辑
 │   │   ├── adapters/
-│   │   │   ├── context_engine.py                   # CEAdjustAdapter
+│   │   │   ├── context-engine.py                   # CEAdjustAdapter
 │   │   │   ├── orchestrator.py                     # OrcControlAdapter
 │   │   │   ├── vms.py                              # VMSControlAdapter
 │   │   │   └── lsg.py                              # LSGControlAdapter
 │   │   ├── db.py                                   # SQLite schema
 │   │   └── config.py
 │   └── config/
-│       ├── feedback_loop.yaml
+│       ├── feedback-loop.yaml
 │       └── feedback_loop_rules.yaml                # 阈值外置
 │
 ├── .runtime/
-│   ├── feedback_loop/
+│   ├── feedback-loop/
 │   │   ├── metrics.db                              # SQLite WAL
 │   │   ├── pending_actions.ndjson                  # 下游未注入时的缓冲
 │   │   └── baseline_cache.json
@@ -575,7 +575,7 @@ feedback-loop = [
 │       ├── fle_degrade.log
 │       └── fle_action_audit.log                    # 所有 Action 审计
 │
-├── tests/unit/feedback_loop/
+├── tests/unit/feedback-loop/
 │   ├── test_sink.py
 │   ├── test_ema.py
 │   ├── test_trend_detection.py
@@ -620,7 +620,7 @@ Dashboard --[query_timeseries / get_baseline / list_pending_actions]--> FLE
 
 | Phase | 范围 | 验收标准 |
 |:-:|------|---------|
-| **scaffold**（当前） | 接口规范 + ADR-0019 | status=Active |
+| **scaffold**（当前） | 接口规范 + KBG-0019 | status=Active |
 | **experimental** | `InProcessFeedbackLoop` + SQLite 时间序列 + EMA/趋势 + ACTION_ROUTING 静态表 | ① §13 P0 用例通过<br>② Sink 吞吐 ≥ 1000 metric/s<br>③ 异常检测 P95 延迟 ≤ 200ms |
 | **beta** | 上游接线（4 服务均推指标）+ 下游 Protocol 适配器全启 | 闭环：hallucination 尖峰 → quarantine_agent 自动生效 |
 | **beta** | `DistributedFeedbackLoop`（InfluxDB + SPC） | 数据点 > 100 万触发 |
@@ -718,7 +718,7 @@ except Exception as e:
 
 | 指标 | 目标 | 说明 |
 |------|------|------|
-| 进程 import | ≤ 1 s | 仅 import feedback_loop |
+| 进程 import | ≤ 1 s | 仅 import feedback-loop |
 | SQLite 连接 + schema check | ≤ 300 ms | WAL |
 | 基线缓存加载 | ≤ 500 ms | 从 baseline_cache.json |
 | pending_actions.ndjson 回放 | ≤ 1 s | < 1000 条 |
@@ -791,4 +791,4 @@ except Exception as e:
 
 | 日期 | 版本 | 说明 |
 |------|:-:|------|
-| 2026-04-24 | 1.0.0 | 初版（B-a-4）。基于 VMS v1.2 模板 + ADR-0019。重点：① §5 下游 Protocol 单向引用（`ContextAdjustActionProtocol` 等）解决遗漏 #5 耦合风险；② §3.2 ANOMALY_ACTION_ROUTING 静态路由表；③ §6 EMA + 滑窗斜率 + Flatline 三算法；④ §11.2 DEGRADE-001/002 + 所有 Action TTL 强制（FLE 挂也不会留下永久错误配置）；⑤ §5.4 无循环依赖图。 |
+| 2026-04-24 | 1.0.0 | 初版（B-a-4）。基于 VMS v1.2 模板 + KBG-0019。重点：① §5 下游 Protocol 单向引用（`ContextAdjustActionProtocol` 等）解决遗漏 #5 耦合风险；② §3.2 ANOMALY_ACTION_ROUTING 静态路由表；③ §6 EMA + 滑窗斜率 + Flatline 三算法；④ §11.2 DEGRADE-001/002 + 所有 Action TTL 强制（FLE 挂也不会留下永久错误配置）；⑤ §5.4 无循环依赖图。 |

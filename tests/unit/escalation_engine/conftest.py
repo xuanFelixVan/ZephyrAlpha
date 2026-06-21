@@ -1,3 +1,4 @@
+# [A_test] module_id: SRC-TST-1867 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 import importlib.util
 import sys
 import types
@@ -28,16 +29,16 @@ def _load_mod(name, file_path):
     return mod
 
 
-_es_dir = _SRC / "zephyr" / "escalation_engine"
+_es_dir = _SRC / "zephyr" / "escalation-engine"
 
-_ensure_pkg("zephyr.escalation_engine", _es_dir)
+_ensure_pkg("zephyr.infrastructure.escalation", _es_dir)
 
-_load_mod("zephyr.escalation_engine.escalation_models", _es_dir / "escalation_models.py")
-_load_mod("zephyr.escalation_engine.circuit_breaker", _es_dir / "circuit_breaker.py")
-_load_mod("zephyr.escalation_engine.escalation_metrics", _es_dir / "escalation_metrics.py")
-_load_mod("zephyr.escalation_engine.delegation_engine", _es_dir / "delegation_engine.py")
+_load_mod("zephyr.governance.escalation_models", _es_dir / "escalation_models.py")
+_load_mod("zephyr.ops.circuit_breaker", _es_dir / "circuit_breaker.py")
+_load_mod("zephyr.governance.escalation_metrics", _es_dir / "escalation_metrics.py")
+_load_mod("zephyr.governance.delegation_engine", _es_dir / "delegation_engine.py")
 
-sys.modules.setdefault("zephyr.llm_security", MagicMock())
-sys.modules.setdefault("zephyr.llm_security.gateway", MagicMock())
+sys.modules.setdefault("zephyr.security.llm_defense.llm_security", MagicMock())
+sys.modules.setdefault("zephyr.security.llm_defense.llm_security.gateway", MagicMock())
 
-_load_mod("zephyr.escalation_engine.escalation_engine", _es_dir / "escalation_engine.py")
+_load_mod("zephyr.governance.escalation_engine", _es_dir / "escalation-engine.py")

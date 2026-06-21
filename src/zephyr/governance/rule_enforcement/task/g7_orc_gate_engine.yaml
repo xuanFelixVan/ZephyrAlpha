@@ -1,0 +1,49 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# G7 — CT-ORC-GATE-001 交付门禁（TaskCard 子集）
+# 普通 Task 无 verification_status / audit_findings 时相关检查跳过（见 skip_if_missing / 引擎逻辑）。
+
+module_id: MOD-INF-007
+gate_id: G7
+title: G7 Task Delivery Gate（Orc 最小硬校验）
+gate_name: task_delivery_orc
+description: >
+  收尾校验：TaskCard.verification_status=verified；audit_findings 全部 resolved。
+  残余目录扫描等见 task_completion_gate.py（与 YAML 门禁互补）。
+phase: task_delivery
+auto: true
+on_failure: reject
+on_pass: pass
+rule_ids:
+  - TRAE-002
+  - TRAE-005
+
+checks:
+  - id: G7-ORC-VERIFICATION
+    name: verification_status_verified
+    type: classification
+    severity: error
+    description: TaskCard.verification_status MUST be verified
+    rule_ids:
+      - TRAE-002
+      - TRAE-005
+    params:
+      field: verification_status
+      allowed_values: ["verified"]
+      require_present: false
+      skip_if_missing: true
+
+  - id: G7-ORC-AUDIT-CLEAR
+    name: audit_findings_resolved
+    type: audit_findings_resolved
+    severity: error
+    description: 所有 TaskAuditFinding.resolved MUST true（仅 TaskCard）
+    rule_ids:
+      - TRAE-002
+      - TRAE-005
+    params: {}

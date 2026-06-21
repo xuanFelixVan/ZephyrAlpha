@@ -9,8 +9,9 @@
 # R1-R12 全部 12 项风险 → 缓解脚本映射
 # 每项风险 ≥ 1 条缓解策略 + ≥ 1 个可运行的缓解脚本
 
+module_id: MOD-INF-005
 generated_at: "2026-05-07T00:00:00Z"
-source: "docs/03_modules/l01_infrastructure/script-system/blueprint.md §12.1 + §26"
+source: "docs/03_modules/infrastructure/script-system/blueprint.md §12.1 + §26"
 total_risks: 12
 
 matrix:

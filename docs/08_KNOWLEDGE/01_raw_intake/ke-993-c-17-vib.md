@@ -1,0 +1,29 @@
+---
+module_id: KE-915-----------17---vib-003
+title: 4.3 C 家族：氛围编程独有（17 个 VIB）
+category: governance
+---
+
+# 4.3 C 家族：氛围编程独有（17 个 VIB）
+
+4.3 C 家族：氛围编程独有（17 个 VIB）
+
+| ID | 系统名 | 主层 | 次层 | 激活 Sprint |
+|---|---|---|---|---|
+| VIB-01 | Session 协作治理 | Policy | (Runtime handoff-log) | 已就位 |
+| VIB-02 | 多 AI 工具规则单源 | Policy | — | 已就位 |
+| VIB-03 | 模型调用治理（6 子系统）| Policy | (Factory token 预算, Runtime 监控) | Sprint 10 |
+| VIB-04 | Prompt 资产治理 | Policy | — | Sprint 11 |
+| VIB-05 | AI 输出验收治理 | Runtime | — | Sprint 10 |
+| VIB-06 | 知识连续性（Transcript 索引）| Runtime | — | Sprint 11 |
+| VIB-07 | 人机信任校准 | Policy | — | 已就位 |
+| VIB-08 | AI 并发执行治理 | Runtime | (Factory 限流器) | Sprint 10 |
+| VIB-09 | 反向氛围编程（AI 防放水）| Runtime | — | Sprint 10 |
+| VIB-10 | 氛围工作节奏 | Policy | — | 已就位 |
+| VIB-11 | AI 成本治理 | Factory | (Runtime 监控) | Sprint 10 |
+| VIB-12 | 决策溯源（provenance）| Runtime | — | Sprint 10（与 A-11 合并）|
+| VIB-13 | AI 知识边界治理 | Policy | — | Sprint 11 |
+| VIB-14 | AI 行为审计 | Runtime | — | **T3 触发** |
+| VIB-15 | 漂移检测 | Runtime | — | Sprint 11 |
+| VIB-16 | 信息时效自刷新 | Runtime | — | Sprint 11 |
+| VIB-17 | 反讨好（红队模式）| Runtime | — | Sprint 10 |

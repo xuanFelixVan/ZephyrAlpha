@@ -1,6 +1,6 @@
-# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_dag.py | §
+﻿# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_dag.py | §
 """
-对标 12-dimension-audit-matrix.md §4.3：
+对标 dimension_audit_matrix.md §4.3：
   校验代码级 import 依赖图无循环，与 detect_depends_on_cycles.py（YAML 级）互补。
 
 检测方式：
@@ -15,7 +15,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: 代码级 import 依赖 DAG 无循环校验（12-dimension-audit-matrix §4.3 — D5依赖方向）
+description: 代码级 import 依赖 DAG 无循环校验（dimension-audit-matrix §4.3 — D5依赖方向）
 dimensions:
 - D5
 priority: P2

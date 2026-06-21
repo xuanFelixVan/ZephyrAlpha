@@ -56,11 +56,11 @@ LLM_IMPORTS = {
 }
 LAYER_PATTERN = re.compile("l(0[2-9]|[1-3]\\d)_", re.IGNORECASE)
 B_TRACK_DIRS = {
-    "llm_security",
-    "vector_memory",
-    "context_engine",
+    "llm-security",
+    "vector-memory",
+    "context-engine",
     "orchestrator",
-    "feedback_loop",
+    "feedback-loop",
     "gates",
     "db",
     "kb",

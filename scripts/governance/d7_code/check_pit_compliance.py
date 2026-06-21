@@ -42,7 +42,7 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
-SCAN_DIRS = ["l02_alpha_factor", "l03_signal_generation", "l04_risk_management"]
+SCAN_DIRS = ["factor", "signal", "risk"]
 
 LOOKAHEAD_PATTERNS = [
     (re.compile(r"\.shift\s*\(\s*-\s*\d+"), "shift(-N) — negative shift accesses future data"),

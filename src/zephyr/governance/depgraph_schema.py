@@ -1,0 +1,638 @@
+# [BLUEPRINT] MOD-INF-012 | docs/03_modules/_cross_layer/database/blueprint.md | §depgraph
+# [MODULE] zephyr.data.persistence.depgraph_schema
+# [INVARIANTS] depgraph.db path = data/databases/depgraph.db; init_db must be idempotent
+# [MODIFY-GUARD] sqlite_schema.py; database_manager.py; depgraph generators
+# [CONSUMERS] generate_project_depgraph.py; diagnose_depgraph.py; extract_depgraph.py; apply_depgraph.py
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] raises RuntimeError on migration failure; OperationalError on DDL errors
+# [TESTS] tests/test_depgraph_schema.py
+
+"""
+depgraph.db Schema DDL + 版本化迁移框架
+========================================
+依据：数据库合并方案（9库→3库），depgraph.db 作为依赖图专用数据库
+
+物理路径：data/databases/depgraph.db
+Safety  : M（DDL 定义，init_db 幂等执行）
+
+表结构
+------
+ 1. nodes                 — 依赖图节点（28列，v3对齐模板受控词表）
+ 2. edges                 — 依赖图边（19列）
+ 3. domains               — 域定义（14列，v3新增can_build等4字段）
+ 4. domain_dependencies   — 域间依赖（5列）
+ 5. domain_events         — 域事件（6列）
+ 6. contracts             — 域间契约（7列）
+ 7. invariants            — 不变量（5列）
+ 8. rule_bindings         — 规则绑定（6列）
+ 9. arch_bottlenecks      — 架构瓶颈（9列）
+10. arch_constraints      — 架构约束（9列）
+11. arch_directory_tree   — 目录树（10列，v3新增build_status）
+12. arch_layers           — 层定义（5列）
+13. arch_path_mappings    — 路径映射（7列）
+14. _schema_version       — Schema 版本追踪
+
+v6变更: arch_domain_capacity + arch_domain_layers 已合并入 domains 表
+        domains 表新增6字段: layer_id/growth_pattern/target_modules/feasibility/bottleneck_description/last_capacity_check
+
+PRAGMA 基线（与 governance.db 一致）
+-----------------------------------
+  journal_mode = WAL
+  synchronous = NORMAL
+  foreign_keys = ON
+  busy_timeout = 5000
+  temp_store = MEMORY
+  wal_autocheckpoint = 4096
+
+用法
+----
+    from zephyr.governance.persistence.depgraph_schema import init_db, get_db_connection, DB_PATH
+
+    init_db()              # 幂等，可重复调用
+    conn = get_db_connection()   # 返回配置好 PRAGMA 的连接
+"""
+
+from __future__ import annotations
+
+import sqlite3
+from pathlib import Path
+
+
+def _find_repo_root() -> Path:
+    current = Path(__file__).resolve()
+    for parent in current.parents:
+        if (parent / "src" / "zephyr" / "__init__.py").exists():
+            return parent
+    raise FileNotFoundError(f"Cannot find project root from {current}")
+
+
+DB_PATH: Path = _find_repo_root() / "data" / "databases" / "depgraph.db"
+
+# ---------------------------------------------------------------------------
+# DDL — nodes 表（完整29列）
+# ---------------------------------------------------------------------------
+
+_DDL_NODES = """
+CREATE TABLE IF NOT EXISTS nodes (
+    node_id                  TEXT    PRIMARY KEY,
+    node_type                TEXT    NOT NULL,
+    path                     TEXT    NOT NULL,
+    granularity              TEXT    NOT NULL DEFAULT 'file',
+    domain_id                TEXT,
+    subdomain_id             TEXT,
+    blueprint_id             TEXT,
+    belongs_to               TEXT,
+    owner                    TEXT,
+    change_policy            TEXT    DEFAULT 'evolving',
+    impact_level             TEXT    DEFAULT 'M',
+    modification_permission  TEXT    DEFAULT 'ai_modifiable',
+    file_header_score        INTEGER DEFAULT 0,
+    tags                     TEXT,
+    architecture_layer       TEXT,
+    design_maturity          TEXT    DEFAULT 'production',
+    deployment_lifecycle     TEXT    DEFAULT 'stable',
+    trust_zone               TEXT    DEFAULT 'trusted_core',
+    license                  TEXT    DEFAULT 'Internal',
+    drive_direction          TEXT    DEFAULT 'bottom_up',
+    type_specific_data       TEXT,
+    last_verified            TEXT,
+    node_name                TEXT    DEFAULT '',
+    file_path                TEXT    DEFAULT '',
+    build_status             TEXT    DEFAULT 'unbuilt',
+    module_lifecycle_state   TEXT    DEFAULT 'planned',
+    can_build                INTEGER DEFAULT 1,
+    gate_reason              TEXT    NOT NULL DEFAULT '',
+    hard_boundary_ref        TEXT,
+    consumed_interfaces      TEXT
+)
+"""
+
+# ---------------------------------------------------------------------------
+# DDL — edges 表
+# ---------------------------------------------------------------------------
+
+_DDL_EDGES = """
+CREATE TABLE IF NOT EXISTS edges (
+    edge_id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    from_node                TEXT    NOT NULL,
+    to_node                  TEXT    NOT NULL,
+    dep_type                 TEXT    NOT NULL,
+    architecture_direction   TEXT    DEFAULT 'downstream',
+    coupling_strength        TEXT    DEFAULT 'critical',
+    used_symbol              TEXT,
+    invocation_method        TEXT,
+    api_contract_refs        TEXT,
+    event_ref                TEXT,
+    ddd_integration_pattern  TEXT,
+    failure_mode             TEXT,
+    fallback                 TEXT,
+    activation_condition     TEXT,
+    data_transfer_description TEXT,
+    resource_impact          TEXT,
+    relationship_type        TEXT    DEFAULT 'one_to_many',
+    cross_domain             INTEGER DEFAULT 0,
+    verified                 INTEGER DEFAULT 0
+)
+"""
+
+# ---------------------------------------------------------------------------
+# DDL — domains 表
+# ---------------------------------------------------------------------------
+
+_DDL_DOMAINS = """
+CREATE TABLE IF NOT EXISTS domains (
+    domain_id        TEXT    PRIMARY KEY,
+    domain_name      TEXT    NOT NULL,
+    domain_group     TEXT    NOT NULL,
+    description      TEXT,
+    ssot_path        TEXT,
+    current_modules  INTEGER DEFAULT 0,
+    max_modules      INTEGER,
+    lifecycle        TEXT    DEFAULT 'design_only',
+    created_at       TEXT    NOT NULL,
+    updated_at       TEXT    NOT NULL,
+    build_status     TEXT    DEFAULT 'unbuilt',
+    can_build        INTEGER DEFAULT 1,
+    gate_reason      TEXT,
+    hard_boundary_ref TEXT,
+    modification_permission TEXT,
+    layer_id         TEXT,
+    growth_pattern   TEXT    DEFAULT 'linear',
+    target_modules   INTEGER,
+    feasibility      TEXT    DEFAULT 'feasible',
+    bottleneck_description TEXT,
+    last_capacity_check TEXT
+)
+"""
+
+# ---------------------------------------------------------------------------
+# DDL — domain_dependencies 表
+# ---------------------------------------------------------------------------
+
+_DDL_DOMAIN_DEPS = """
+CREATE TABLE IF NOT EXISTS domain_dependencies (
+    from_domain      TEXT    NOT NULL,
+    to_domain        TEXT    NOT NULL,
+    edge_count       INTEGER DEFAULT 0,
+    edge_types       TEXT,
+    constraint_type  TEXT,
+    PRIMARY KEY (from_domain, to_domain)
+)
+"""
+
+# ---------------------------------------------------------------------------
+# DDL — domain_events 表
+# ---------------------------------------------------------------------------
+
+_DDL_DOMAIN_EVENTS = """
+CREATE TABLE IF NOT EXISTS domain_events (
+    event_id         TEXT    PRIMARY KEY,
+    name             TEXT    NOT NULL,
+    source_domain    TEXT    NOT NULL,
+    target_domains   TEXT,
+    payload_schema   TEXT,
+    priority         TEXT    DEFAULT 'P1',
+    event_type       TEXT    NOT NULL DEFAULT 'domain_event'
+)
+"""
+
+# ---------------------------------------------------------------------------
+# DDL — contracts 表
+# ---------------------------------------------------------------------------
+
+_DDL_CONTRACTS = """
+CREATE TABLE IF NOT EXISTS contracts (
+    contract_id      TEXT    PRIMARY KEY,
+    name             TEXT    NOT NULL,
+    provider_domain  TEXT    NOT NULL,
+    consumer_domain  TEXT    NOT NULL,
+    contract_type    TEXT    NOT NULL,
+    schema_definition TEXT,
+    version          TEXT
+)
+"""
+
+# ---------------------------------------------------------------------------
+# DDL — invariants 表
+# ---------------------------------------------------------------------------
+
+_DDL_INVARIANTS = """
+CREATE TABLE IF NOT EXISTS invariants (
+    invariant_id     TEXT    PRIMARY KEY,
+    domain_id        TEXT    NOT NULL,
+    description      TEXT    NOT NULL,
+    constraint_type  TEXT    NOT NULL,
+    enforcement      TEXT
+)
+"""
+
+# ---------------------------------------------------------------------------
+# DDL — rule_bindings 表
+# ---------------------------------------------------------------------------
+
+_DDL_RULE_BINDINGS = """
+CREATE TABLE IF NOT EXISTS rule_bindings (
+    binding_id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    function_name    TEXT    NOT NULL,
+    rule_id          TEXT    NOT NULL,
+    binding_type     TEXT    NOT NULL,
+    trigger_type     TEXT    NOT NULL,
+    trigger_id       TEXT,
+    domain_id        TEXT    NOT NULL DEFAULT ''
+)
+"""
+
+# ---------------------------------------------------------------------------
+# DDL — arch_* 表
+# ---------------------------------------------------------------------------
+
+_DDL_ARCH_BOTTLENECKS = """
+CREATE TABLE IF NOT EXISTS arch_bottlenecks (
+    bottleneck_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+    area             TEXT    NOT NULL,
+    description      TEXT    NOT NULL,
+    severity         TEXT    NOT NULL,
+    current_impact   TEXT,
+    proposed_solution TEXT,
+    status           TEXT    DEFAULT 'open',
+    detected_at      TEXT    NOT NULL,
+    resolved_at      TEXT
+)
+"""
+
+_DDL_ARCH_CONSTRAINTS = """
+CREATE TABLE IF NOT EXISTS arch_constraints (
+    constraint_id    TEXT    PRIMARY KEY,
+    name             TEXT    NOT NULL,
+    constraint_type  TEXT    NOT NULL,
+    from_domain      TEXT,
+    to_domain        TEXT,
+    rule_definition  TEXT    NOT NULL,
+    severity         TEXT    DEFAULT 'hard',
+    enforcement      TEXT    DEFAULT 'gate',
+    description      TEXT
+)
+"""
+
+_DDL_ARCH_DIRECTORY_TREE = """
+CREATE TABLE IF NOT EXISTS arch_directory_tree (
+    path             TEXT    PRIMARY KEY,
+    parent_path      TEXT,
+    path_type        TEXT    NOT NULL,
+    domain_id        TEXT,
+    state            TEXT    NOT NULL DEFAULT 'design',
+    blueprint_id     TEXT,
+    change_policy    TEXT,
+    modification_permission TEXT,
+    build_status     TEXT    DEFAULT 'unbuilt',
+    design_maturity  TEXT    NOT NULL DEFAULT 'design',
+    last_scanned     TEXT
+)
+"""
+
+_DDL_ARCH_LAYERS = """
+CREATE TABLE IF NOT EXISTS arch_layers (
+    layer_id         TEXT    PRIMARY KEY,
+    layer_name       TEXT    NOT NULL,
+    layer_description TEXT,
+    decision_type    TEXT    NOT NULL,
+    parent_layer     TEXT
+)
+"""
+
+_DDL_ARCH_PATH_MAPPINGS = """
+CREATE TABLE IF NOT EXISTS arch_path_mappings (
+    mapping_id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    domain_id        TEXT    NOT NULL,
+    path_pattern     TEXT    NOT NULL,
+    path_type        TEXT    NOT NULL,
+    state            TEXT    NOT NULL DEFAULT 'design',
+    covers           TEXT,
+    aliases          TEXT
+)
+"""
+
+# ---------------------------------------------------------------------------
+# DDL — _schema_version 表
+# ---------------------------------------------------------------------------
+
+_DDL_SCHEMA_VERSION = """
+CREATE TABLE IF NOT EXISTS _schema_version (
+    version     INTEGER PRIMARY KEY,
+    applied_at  TEXT    NOT NULL,
+    description TEXT
+)
+"""
+
+# ---------------------------------------------------------------------------
+# DDL — 索引
+# ---------------------------------------------------------------------------
+
+_DDL_INDEXES = [
+    "CREATE INDEX IF NOT EXISTS idx_nodes_domain       ON nodes(domain_id)",
+    "CREATE INDEX IF NOT EXISTS idx_nodes_type         ON nodes(node_type)",
+    "CREATE INDEX IF NOT EXISTS idx_nodes_blueprint    ON nodes(blueprint_id)",
+    "CREATE INDEX IF NOT EXISTS idx_nodes_change_policy ON nodes(change_policy)",
+    "CREATE INDEX IF NOT EXISTS idx_nodes_build_status ON nodes(build_status)",
+    "CREATE INDEX IF NOT EXISTS idx_nodes_can_build    ON nodes(can_build)",
+    "CREATE UNIQUE INDEX IF NOT EXISTS idx_nodes_path         ON nodes(path)",
+    "CREATE INDEX IF NOT EXISTS idx_nodes_file_path    ON nodes(file_path)",
+    "CREATE INDEX IF NOT EXISTS idx_edges_from         ON edges(from_node)",
+    "CREATE INDEX IF NOT EXISTS idx_edges_to           ON edges(to_node)",
+    "CREATE INDEX IF NOT EXISTS idx_edges_type         ON edges(dep_type)",
+    "CREATE INDEX IF NOT EXISTS idx_edges_cross_domain ON edges(cross_domain)",
+    "CREATE INDEX IF NOT EXISTS idx_domains_group      ON domains(domain_group)",
+    "CREATE INDEX IF NOT EXISTS idx_domains_can_build  ON domains(can_build)",
+    "CREATE INDEX IF NOT EXISTS idx_domdeps_from       ON domain_dependencies(from_domain)",
+    "CREATE INDEX IF NOT EXISTS idx_domdeps_to         ON domain_dependencies(to_domain)",
+    "CREATE INDEX IF NOT EXISTS idx_arch_dir_domain    ON arch_directory_tree(domain_id)",
+    "CREATE INDEX IF NOT EXISTS idx_arch_dir_state     ON arch_directory_tree(state)",
+    "CREATE INDEX IF NOT EXISTS idx_arch_dir_build     ON arch_directory_tree(build_status)",
+    "CREATE INDEX IF NOT EXISTS idx_arch_path_domain   ON arch_path_mappings(domain_id)",
+]
+
+# ---------------------------------------------------------------------------
+# PRAGMA 配置
+# ---------------------------------------------------------------------------
+
+_PRAGMAS = [
+    "PRAGMA journal_mode = WAL",
+    "PRAGMA synchronous = NORMAL",
+    "PRAGMA foreign_keys = ON",
+    "PRAGMA busy_timeout = 5000",
+    "PRAGMA temp_store = MEMORY",
+    "PRAGMA wal_autocheckpoint = 4096",
+]
+
+
+def _apply_pragmas(conn: sqlite3.Connection) -> None:
+    for pragma in _PRAGMAS:
+        conn.execute(pragma)
+
+
+# ---------------------------------------------------------------------------
+# 版本化迁移框架
+# ---------------------------------------------------------------------------
+
+_MIGRATIONS: list[tuple[int, str, list[str]]] = [
+    (
+        1,
+        "Initial schema - 15 tables",
+        [
+            _DDL_NODES,
+            _DDL_EDGES,
+            _DDL_DOMAINS,
+            _DDL_DOMAIN_DEPS,
+            _DDL_DOMAIN_EVENTS,
+            _DDL_CONTRACTS,
+            _DDL_INVARIANTS,
+            _DDL_RULE_BINDINGS,
+            _DDL_ARCH_BOTTLENECKS,
+            _DDL_ARCH_CONSTRAINTS,
+            _DDL_ARCH_DIRECTORY_TREE,
+            _DDL_ARCH_LAYERS,
+            _DDL_ARCH_PATH_MAPPINGS,
+            *_DDL_INDEXES,
+        ],
+    ),
+    (
+        2,
+        "DM-100101: Add 7 fields to nodes table (node_name, file_path, stability, safety_level, ai_autonomy, design_state, runtime_state)",
+        [
+            "ALTER TABLE nodes ADD COLUMN node_name TEXT DEFAULT ''",
+            "ALTER TABLE nodes ADD COLUMN file_path TEXT DEFAULT ''",
+            "ALTER TABLE nodes ADD COLUMN stability TEXT DEFAULT 'evolving'",
+            "ALTER TABLE nodes ADD COLUMN safety_level TEXT DEFAULT 'M'",
+            "ALTER TABLE nodes ADD COLUMN ai_autonomy TEXT DEFAULT 'ai_modifiable'",
+            "ALTER TABLE nodes ADD COLUMN design_state TEXT DEFAULT 'draft'",
+            "ALTER TABLE nodes ADD COLUMN runtime_state TEXT DEFAULT 'inactive'",
+            "CREATE INDEX IF NOT EXISTS idx_nodes_stability    ON nodes(stability)",
+            "CREATE INDEX IF NOT EXISTS idx_nodes_design_state ON nodes(design_state)",
+            "CREATE INDEX IF NOT EXISTS idx_nodes_file_path    ON nodes(file_path)",
+        ],
+    ),
+    (
+        3,
+        "v3: Align nodes/domains/arch_directory_tree with TPL-DEPGRAPH-001 v6 template. Merge duplicate fields (stability→change_policy, safety_level→impact_level, ai_autonomy→modification_permission). Rename design_state→build_status, runtime_state→module_lifecycle_state. Add can_build/gate_reason/hard_boundary_ref/consumed_interfaces to nodes. Add build_status/can_build/gate_reason/hard_boundary_ref to domains. Add build_status to arch_directory_tree, rename stability→change_policy, ai_autonomy→modification_permission.",
+        [
+            # --- nodes: merge data from old columns to standard columns ---
+            "UPDATE nodes SET change_policy = COALESCE(NULLIF(change_policy,''), NULLIF(stability,'')) WHERE stability IS NOT NULL AND stability != ''",
+            "UPDATE nodes SET impact_level = COALESCE(NULLIF(impact_level,''), NULLIF(safety_level,'')) WHERE safety_level IS NOT NULL AND safety_level != ''",
+            "UPDATE nodes SET modification_permission = COALESCE(NULLIF(modification_permission,''), NULLIF(ai_autonomy,'')) WHERE ai_autonomy IS NOT NULL AND ai_autonomy != ''",
+            # --- nodes: rename design_state → build_status ---
+            "ALTER TABLE nodes RENAME COLUMN design_state TO build_status",
+            # Migrate build_status values: draft→unbuilt, active→built, inactive→unbuilt
+            "UPDATE nodes SET build_status = 'unbuilt' WHERE build_status = 'draft' OR build_status = 'inactive'",
+            "UPDATE nodes SET build_status = 'built' WHERE build_status = 'active'",
+            # --- nodes: rename runtime_state → module_lifecycle_state ---
+            "ALTER TABLE nodes RENAME COLUMN runtime_state TO module_lifecycle_state",
+            # Migrate module_lifecycle_state values: inactive→planned, active→active, deprecated→deprecated
+            "UPDATE nodes SET module_lifecycle_state = 'planned' WHERE module_lifecycle_state = 'inactive'",
+            # --- nodes: add new fields ---
+            "ALTER TABLE nodes ADD COLUMN can_build INTEGER DEFAULT 1",
+            "ALTER TABLE nodes ADD COLUMN gate_reason TEXT",
+            "ALTER TABLE nodes ADD COLUMN hard_boundary_ref TEXT",
+            "ALTER TABLE nodes ADD COLUMN consumed_interfaces TEXT",
+            # --- nodes: drop old indexes first (must drop before DROP COLUMN) ---
+            "DROP INDEX IF EXISTS idx_nodes_stability",
+            "DROP INDEX IF EXISTS idx_nodes_design_state",
+            # --- nodes: drop old duplicate columns ---
+            "ALTER TABLE nodes DROP COLUMN stability",
+            "ALTER TABLE nodes DROP COLUMN safety_level",
+            "ALTER TABLE nodes DROP COLUMN ai_autonomy",
+            # --- nodes: new indexes ---
+            "CREATE INDEX IF NOT EXISTS idx_nodes_change_policy ON nodes(change_policy)",
+            "CREATE INDEX IF NOT EXISTS idx_nodes_build_status ON nodes(build_status)",
+            "CREATE INDEX IF NOT EXISTS idx_nodes_can_build ON nodes(can_build)",
+            # --- domains: add 4 fields ---
+            "ALTER TABLE domains ADD COLUMN build_status TEXT DEFAULT 'unbuilt'",
+            "ALTER TABLE domains ADD COLUMN can_build INTEGER DEFAULT 1",
+            "ALTER TABLE domains ADD COLUMN gate_reason TEXT",
+            "ALTER TABLE domains ADD COLUMN hard_boundary_ref TEXT",
+            "CREATE INDEX IF NOT EXISTS idx_domains_can_build ON domains(can_build)",
+            # --- arch_directory_tree: rename stability→change_policy, ai_autonomy→modification_permission ---
+            "ALTER TABLE arch_directory_tree RENAME COLUMN stability TO change_policy",
+            "ALTER TABLE arch_directory_tree RENAME COLUMN ai_autonomy TO modification_permission",
+            # --- arch_directory_tree: add build_status ---
+            "ALTER TABLE arch_directory_tree ADD COLUMN build_status TEXT DEFAULT 'unbuilt'",
+            "CREATE INDEX IF NOT EXISTS idx_arch_dir_build ON arch_directory_tree(build_status)",
+        ],
+    ),
+    (
+        4,
+        "T0-001~T0-004 schema fixes: Add event_type to domain_events, domain_id to rule_bindings, design_maturity to arch_directory_tree, UNIQUE index on nodes(path)",
+        [
+            "ALTER TABLE domain_events ADD COLUMN event_type TEXT NOT NULL DEFAULT 'domain_event'",
+            "ALTER TABLE rule_bindings ADD COLUMN domain_id TEXT NOT NULL DEFAULT ''",
+            "ALTER TABLE arch_directory_tree ADD COLUMN design_maturity TEXT NOT NULL DEFAULT 'design'",
+            "CREATE UNIQUE INDEX IF NOT EXISTS idx_nodes_path ON nodes(path)",
+        ],
+    ),
+]
+
+
+def _get_current_version(conn: sqlite3.Connection) -> int:
+    cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='_schema_version'")
+    if cursor.fetchone() is None:
+        nodes_cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='nodes'")
+        if nodes_cursor.fetchone() is not None:
+            return -1
+        return 0
+    cursor = conn.execute("SELECT COALESCE(MAX(version), 0) FROM _schema_version")
+    row = cursor.fetchone()
+    return row[0] if row else 0
+
+
+def _run_migration(
+    conn: sqlite3.Connection,
+    version: int,
+    description: str,
+    statements: list[str],
+) -> None:
+    from datetime import UTC, datetime
+
+    now = datetime.now(UTC).isoformat()
+    for i, stmt in enumerate(statements):
+        stmt = stmt.strip()
+        if not stmt:
+            continue
+        try:
+            conn.execute(stmt)
+        except sqlite3.OperationalError as exc:
+            msg = str(exc).lower()
+            benign = (
+                "duplicate column name",
+                "duplicate column",
+                "already exists",
+                "duplicate key name:",
+            )
+            if any(p in msg for p in benign):
+                continue
+            raise RuntimeError(f"Migration v{version} statement #{i}: {exc}\n  SQL: {stmt[:200]}") from exc
+    conn.execute(
+        "INSERT OR IGNORE INTO _schema_version (version, applied_at, description) VALUES (?, ?, ?)",
+        (version, now, description),
+    )
+
+
+def init_db(
+    db_path: Path | str | None = None,
+    *,
+    echo: bool = False,
+) -> Path:
+    """幂等初始化 depgraph.db（执行 DDL + 按需运行版本化迁移）。
+
+    可安全重复调用：已存在的表和列不会被覆盖，已执行的迁移会被跳过。
+    """
+    resolved: Path = Path(db_path) if db_path is not None else DB_PATH
+    resolved.parent.mkdir(parents=True, exist_ok=True)
+
+    conn = sqlite3.connect(str(resolved))
+    try:
+        _apply_pragmas(conn)
+        conn.execute(_DDL_SCHEMA_VERSION.strip())
+
+        current = _get_current_version(conn)
+        if echo:
+            print(f"[depgraph_schema] current version: {current}")
+
+        if current < 0:
+            bootstrapped = abs(current)
+            if echo:
+                print(f"[depgraph_schema] bootstrapping legacy DB -> marking v1 as applied")
+            from datetime import UTC, datetime
+
+            now = datetime.now(UTC).isoformat()
+            for v, desc, _ in _MIGRATIONS:
+                if v <= bootstrapped:
+                    conn.execute(
+                        "INSERT OR IGNORE INTO _schema_version (version, applied_at, description) VALUES (?, ?, ?)",
+                        (v, now, desc + " [bootstrap: legacy DB]"),
+                    )
+            current = bootstrapped
+
+        conn.execute("BEGIN")
+        try:
+            for version, description, statements in _MIGRATIONS:
+                if version <= current:
+                    continue
+                if echo:
+                    print(f"[depgraph_schema] executing migration v{version}: {description}")
+                _run_migration(conn, version, description, statements)
+            conn.execute("COMMIT")
+        except Exception:
+            conn.execute("ROLLBACK")
+            raise
+    finally:
+        conn.close()
+
+    return resolved.resolve()
+
+
+# ---------------------------------------------------------------------------
+# 公共 API
+# ---------------------------------------------------------------------------
+
+
+def get_db_connection(
+    db_path: Path | str | None = None,
+    *,
+    check_same_thread: bool = False,
+    timeout: float = 30.0,
+) -> sqlite3.Connection:
+    """返回配置好 PRAGMA 的 depgraph.db 连接。"""
+    resolved: Path = Path(db_path) if db_path is not None else DB_PATH
+    conn = sqlite3.connect(
+        str(resolved),
+        isolation_level=None,
+        check_same_thread=check_same_thread,
+        timeout=timeout,
+    )
+    conn.row_factory = sqlite3.Row
+    _apply_pragmas(conn)
+    return conn
+
+
+def table_names(db_path: Path | str | None = None) -> list[str]:
+    """返回 depgraph.db 中所有表名。"""
+    resolved = Path(db_path) if db_path is not None else DB_PATH
+    conn = sqlite3.connect(str(resolved))
+    try:
+        cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
+        return [row[0] for row in cursor.fetchall()]
+    finally:
+        conn.close()
+
+
+def schema_version(db_path: Path | str | None = None) -> int:
+    """返回当前 depgraph.db 的 schema 版本。"""
+    resolved = Path(db_path) if db_path is not None else DB_PATH
+    conn = sqlite3.connect(str(resolved))
+    try:
+        _apply_pragmas(conn)
+        return _get_current_version(conn)
+    finally:
+        conn.close()
+
+
+__all__ = [
+    "DB_PATH",
+    "init_db",
+    "get_db_connection",
+    "table_names",
+    "schema_version",
+]
+
+
+if __name__ == "__main__":
+    import sys
+
+    db = init_db(echo=True)
+    tables = table_names(db)
+    ver = schema_version(db)
+    print(f"\n  depgraph.db initialized: {db}")
+    print(f"  Schema version: v{ver}")
+    print(f"  Tables ({len(tables)}): {', '.join(tables)}")
+    sys.exit(0)

@@ -46,15 +46,15 @@ REPO_ROOT_DIR = str(REPO_ROOT)
 if REPO_ROOT_DIR not in sys.path:
     sys.path.insert(0, REPO_ROOT_DIR)
 
-from zephyr.shared.io.paths import DB_PATH
-from zephyr.gates.task_types import TaskStatus, ExecutionModel, TaskNamespace
-from zephyr.shared.schema.severity_types import Priority, SafetyLevel
-from zephyr.core.models import TaskCard
-from zephyr.db.task_repo import TaskRepository
-from zephyr.db.sqlite_schema import init_db
+from zephyr.governance.persistence.sqlite_schema import DB_PATH
+from zephyr.governance.rule_enforcement.task_types import TaskStatus, ExecutionModel, TaskNamespace
+from zephyr.integration.schema.severity_types import Priority, SafetyLevel
+from zephyr.shared.shared_services.models import TaskCard
+from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.governance.persistence.sqlite_schema import init_db
 
 DEFAULT_FINDINGS = SCRIPTS_DIR / "reports" / "findings.jsonl"
-TASK_CARDS_DIR = REPO_ROOT / "docs" / "03_modules" / "l01_infrastructure" / "script-system" / "changes" / "MOD-INF-005"
+TASK_CARDS_DIR = REPO_ROOT / "docs" / "03_modules" / "infrastructure.runtime_integration" / "script-system" / "changes" / "MOD-INF-005"
 
 SEVERITY_TO_PRIORITY: dict[str, Priority] = {
     "CRITICAL": Priority.P0,
@@ -134,7 +134,7 @@ blocked_by:
 status: "{tc.status.value if hasattr(tc.status, 'value') else tc.status}"
 tags_fn:
   - finding-fix
-tags_ly: "l01_infrastructure"
+tags_ly: "infrastructure.runtime_integration"
 tags_md: "deepseek"
 tags_st: "active"
 tags_mo:

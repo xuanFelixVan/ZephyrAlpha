@@ -5,6 +5,15 @@
 """
 
 from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 
@@ -52,7 +61,7 @@ EXPECTED_FILES: list[dict[str, Any]] = [
 
     # Card 7: 风险缓解
     {"path": "scripts/governance/validate_tool_contracts_consistency.py", "card": "TASK-INF-013-0009", "new": True, "check": "has_SERVER_MAP"},
-    {"path": ".pre-commit-config.yaml", "card": "TASK-INF-013-0009", "new": False, "check": "has_gate_mcp_contract"},
+    {"path": ".pre_commit-config.yaml", "card": "TASK-INF-013-0009", "new": False, "check": "has_gate_mcp_contract"},
     {"path": "src/zephyr/mcp/task_manager_server.py", "card": "TASK-INF-013-0009", "new": False, "check": "has_idempotency_cache"},
 
     # Card 8: DAG
@@ -76,7 +85,7 @@ EXPECTED_FILES: list[dict[str, Any]] = [
     {"path": "docs/03_modules/_cross_layer/mcp-servers/runbook.md", "card": "TASK-INF-013-0007", "new": True, "check": "has_8_scenarios"},
 
     # Card 22: KB index
-    {"path": "docs/03_modules/l01_infrastructure/knowledge-base/index.md", "card": "TASK-KB-0001", "new": True, "check": "has_blueprint_ref"},
+    {"path": "docs/03_modules/infrastructure.runtime_integration/knowledge-base/index.md", "card": "TASK-KB-0001", "new": True, "check": "has_blueprint_ref"},
 ]
 
 
@@ -110,15 +119,15 @@ def check_imports():
     sys.path.insert(0, str(ROOT))
     results: dict[str, bool] = {}
     checks = [
-        ("from zephyr.mcp._base_server import BaseMCPServer, ToolDefinition, MCPError", "base_server"),
-        ("from zephyr.mcp.error_codes import ERR_GATE_FAILED, ERR_RBAC_DENIED", "error_codes"),
-        ("from zephyr.mcp.rate_limiter import RateLimiter, PerToolRateLimiter", "rate_limiter"),
-        ("from zephyr.mcp.audit_logger import AuditLogger", "audit_logger"),
-        ("from zephyr.mcp.gateway_server import MCPGateway, create_gateway", "gateway"),
-        ("from zephyr.mcp.resource_provider import ResourceProvider", "resource"),
-        ("from zephyr.mcp.prompt_provider import PromptProvider", "prompt"),
-        ("from zephyr.mcp.sandbox_server import SandboxServer", "sandbox"),
-        ("from zephyr.mcp.handoff_auto_loader import HandoffAutoLoader", "handoff"),
+        ("from zephyr.infrastructure._base_server import BaseMCPServer, ToolDefinition, MCPError", "base_server"),
+        ("from zephyr.infrastructure.error_codes import ERR_GATE_FAILED, ERR_RBAC_DENIED", "error_codes"),
+        ("from zephyr.infrastructure.rate_limiter import RateLimiter, PerToolRateLimiter", "rate_limiter"),
+        ("from zephyr.infrastructure.audit_logger import AuditLogger", "audit_logger"),
+        ("from zephyr.infrastructure.gateway_server import MCPGateway, create_gateway", "gateway"),
+        ("from zephyr.integration.mcp.resource_provider import ResourceProvider", "resource"),
+        ("from zephyr.integration.mcp.prompt_provider import PromptProvider", "prompt"),
+        ("from zephyr.integration.mcp.sandbox_server import SandboxServer", "sandbox"),
+        ("from zephyr.integration.mcp.handoff_auto_loader import HandoffAutoLoader", "handoff"),
     ]
     for stmt, name in checks:
         try:

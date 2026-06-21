@@ -1,0 +1,1391 @@
+rule_id: TRAE-034
+title: 任务系统-卡片标准与生命周期
+aliases:
+- TASK-001
+- TASK-004
+- TASK-005
+- GOV-TASK-001
+- GOV-TASK-004
+- GOV-TASK-005
+layer: L1
+severity: error
+scope: task_card_lifecycle
+domain: TRAE
+triggers:
+- operation: task_card_lifecycle
+sections:
+  task_001_template:
+    title: 任务卡模板格式
+    section_type: rule
+    original_rules:
+    - TASK-001
+    - GOV-TASK-001
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 唯一创建入口为TaskRepository.create()写入SQLite(data/zalpha_metadata.db)
+    - type: mandatory
+      step: .md文件为伴读副本，不作为创建入口
+    prohibitions:
+    - 禁止绕过TaskRepository.create()直接创建任务卡
+  task_001_fields:
+    title: 必填字段约束
+    section_type: rule
+    original_rules:
+    - TASK-001
+    conditions:
+    - type: constraint
+      check: task_id格式
+      pass: '{NAMESPACE}-{SEQ}格式'
+      fail: 系统自动分配，格式错误拒绝建卡
+    - type: constraint
+      check: title长度
+      pass: 1-200字
+      fail: 拒绝建卡
+    - type: constraint
+      check: description长度
+      pass: ≥10字，不限上限
+      fail: 拒绝建卡
+    - type: constraint
+      check: applicable_rules默认内容
+      pass: 默认MUST包含TRAE-011（域归属铁律）
+      fail: 拒绝建卡
+    - type: constraint
+      check: post_sync_standard默认内容
+      pass: 必须包含三方对齐命令（depgraph+path_tree+audit_registration）
+      fail: 拒绝建卡
+    actions:
+    - type: mandatory
+      step: 33个字段全部填写(21必填+12选填)（task_id/namespace/title/description/status/priority/phase/execution_model/files_in_scope/deliverables/source_blueprint/source_section/safety_level/directive/classification/ai_autonomy_level/applicable_rules/allowed_touch/post_sync_standard/acceptance/dependency_type等）
+    prohibitions: []
+  task_001_granularity:
+    title: 粒度约束(RULE-THIRTEEN)
+    section_type: rule
+    original_rules:
+    - TASK-001
+    - RULE-THIRTEEN
+    conditions:
+    - type: constraint
+      check: deliverables数量
+      pass: ≤1
+      fail: _validate_granularity()拒绝建卡，提示拆卡
+    - type: constraint
+      check: files_in_scope数量
+      pass: ≤3
+      fail: _validate_granularity()拒绝建卡，提示拆卡
+    - type: constraint
+      check: acceptance独立验收点
+      pass: ≤1
+      fail: 人工判定，需拆卡
+    - type: constraint
+      check: 是否跨Phase
+      pass: 不跨Phase
+      fail: _validate_granularity()拒绝建卡
+    actions: []
+    prohibitions:
+    - 禁止deliverables>1
+    - 禁止files_in_scope>3
+    - 禁止跨Phase建卡
+  task_001_description:
+    title: description强制格式(八步工作流)
+    section_type: rule
+    original_rules:
+    - TASK-001
+    conditions: []
+    actions:
+    - type: mandatory
+      step: description必须含根因→治根→施工规格结构
+    - type: mandatory
+      step: 第一步-搜索审计（MUST最优先执行）——搜索项目已有同类文件/脚本/模块，审计决策三选一（保留/搬家/删除），新建文件路径MUST建卡时确认
+    - type: mandatory
+      step: 第二步-前置检查（MUST施工前强制执行）——验证files_in_scope/allowed_touch/upstream_files路径存在、无幻觉、无漂移
+    - type: mandatory
+      step: 第三步-施工——具体改哪个文件的哪个方法改成什么
+    - type: mandatory
+      step: 第四步-疏通（仅第二步或第三步发现问题时执行）——为每个问题创建修复卡，修复卡优先级≥当前卡
+    - type: mandatory
+      step: 第五步-循环验证（MUST施工后强制执行）——执行acceptance+post_sync_standard命令，连续2轮0问题才通过
+    - type: mandatory
+      step: 第六步-更新清单（MUST验证通过后强制执行）——逐项更新registry_of_registries/project_rules/onboarding_detail/AGENTS/CLAUDE/script-manifest/__init__/架构全景图/依赖全景图/迁移登记表/生成器脚本/蓝图/gate定义
+    - type: mandatory
+      step: 第七步-四方对齐（MUST更新清单完成后强制执行）——架构全景图/依赖全景图/蓝图/代码头部四方数据一致
+    - type: mandatory
+      step: 第八步-端到端测试（MUST四方对齐完成后强制执行）——验证生成器→全景图→依赖图整条管线无断裂
+    prohibitions:
+    - 禁止只说"修X问题"不说为什么
+    - 禁止只说现象不说根因
+    - 禁止使用"优化""改进""调整"等模糊动词
+    - 禁止description长度<30字
+    - 禁止缺少八步工作流中的任何一步
+    - 禁止跳过搜索审计直接施工
+    - 禁止跳过前置检查直接施工
+    - 禁止跳过四方对齐
+  task_001_mth006:
+    title: MTH-006深挖到底协议
+    section_type: rule
+    original_rules:
+    - TASK-001
+    - MTH-006
+    conditions:
+    - type: trigger
+      check: 任务涉及Bug修复/漂移修复/异常状态/结构缺陷
+      pass: MUST执行深挖到底协议
+      fail: 可跳过
+    actions:
+    - type: mandatory
+      step: 一直问到根——不是固定5个为什么，是问到不能再问为止
+    - type: mandatory
+      step: 路上发现的所有问题一并修复——不留给以后
+    - type: mandatory
+      step: 修复后验证——同类问题不能重现
+    - type: mandatory
+      step: 根因必须可泛化——能描述为一条原则或规则
+    prohibitions:
+    - 禁止只修当前崩溃点不追问为什么不一致
+    - 禁止发现多个问题只修一个其余以后再建卡
+    - 禁止根因是"代码写错了"就停
+    - 禁止不写回description
+  task_001_closure:
+    title: 关闭验证
+    section_type: rule
+    original_rules:
+    - TASK-001
+    - GOV-TASK-005
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 关闭三步法——STEP1产物验证(deliverables全部产出路径正确内容完整)/STEP2残留清扫(无_temp*_check*_audit*临时文件)/STEP3注册审计(audit_registration.py
+        exit 0)
+    - type: mandatory
+      step: 循环验收协议——连续2次验收0错误才可COMPLETED；3轮修复仍无法归零→FAILED升级Owner
+    - type: mandatory
+      step: 全景图对齐协议——涉及文件结构变更的任务卡MUST在循环验收通过后COMPLETED前执行全景图对齐（重新生成depgraph+path_tree+diagnose）
+    prohibitions:
+    - 有临时文件残留禁止关闭
+    - 有未注册新文件禁止关闭
+    - 测试不通过禁止关闭
+    - 路径树未刷新禁止关闭
+    - description不含根因+治根禁止关闭
+  task_001_split:
+    title: 拆卡规则
+    section_type: rule
+    original_rules:
+    - TASK-001
+    conditions: []
+    actions:
+    - type: mandatory
+      step: R1 deliverables>1必须拆卡——每个产出物拆为一张卡
+    - type: mandatory
+      step: R2 files_in_scope>3必须拆卡——每3个文件一组拆为一张卡
+    - type: mandatory
+      step: R3 acceptance有>1个独立验收点必须拆卡——每个验收点拆为一张卡
+    - type: mandatory
+      step: R4 施工步骤跨>1个施工目标必须拆卡——每个施工步骤拆为一张卡
+    - type: mandatory
+      step: 拆卡后子卡自动建立hard依赖链
+    prohibitions:
+    - 禁止MTH-006路上发现的关联问题拆卡——必须同一张卡内修完
+    - 禁止同一根因导致的多个症状拆卡——一张卡治根
+  task_001_batch_review:
+    title: 建卡后批量审查协议
+    section_type: rule
+    original_rules:
+    - TASK-001
+    triggers:
+    - 批量建卡完成（蓝图拆解/Bug修复/架构债务/代码扫描/重构任务产生≥2张任务卡）
+    conditions:
+    - type: pre_condition
+      check: 阶段一建卡完成——按task_001_template/task_001_fields/task_001_granularity建卡，所有任务卡已写入SQLite(data/zalpha_metadata.db)
+      pass: 进入阶段二批量审查
+      fail: 先完成建卡
+    - type: pre_condition
+      check: 路径完整性——files_in_scope/deliverables/allowed_touch/upstream_files字段所有路径为绝对路径
+      pass: 路径完整
+      fail: 补全为绝对路径后进入审查
+    actions:
+    - type: mandatory
+      step: 阶段二执行7项审查维度——逐项审查所有任务卡，发现问题就地修复
+    - type: mandatory
+      step: 循环检查协议——审查→修复→再审查，直到连续2次审查问题数=0才算建卡完成
+    - type: mandatory
+      step: 审查覆盖单卡内容+卡间关系——单卡审查字段完整性/方案充分性/命令正确性；卡间审查依赖链/数据一致性/遗漏/漂移
+    - type: mandatory
+      step: 发现遗漏/幻觉/漂移时MUST创建补充修复任务卡（修复卡优先级≥当前批次）
+    prohibitions:
+    - 禁止跳过批量审查直接施工
+    - 禁止单次审查0问题就声明建卡完成——必须连续2次
+    - 禁止只审单卡不审卡间关系
+    - 禁止审查发现问题后不修复直接进入施工
+  task_001_batch_review_dimensions:
+    title: 建卡后批量审查7项维度
+    section_type: verification
+    original_rules:
+    - TASK-001
+    steps:
+    - step: 1.清单完整性
+      command: 对照蓝图/需求/源文档检查是否有未建卡的工作项
+      expected_exit: 无遗漏
+      on_fail: 补建遗漏任务卡
+    - step: 2.解决方案完整性
+      command: 审查每个任务卡description含根因+治根+八步工作流+施工步骤精确到行级
+      expected_exit: 方案充分
+      on_fail: 补充description
+    - step: 3.SQL/代码正确性
+      command: 审查修复命令逻辑——SQL语句/代码片段/命令参数验证无逻辑错误
+      expected_exit: 无逻辑错误
+      on_fail: 修正命令
+    - step: 4.因果链合理性
+      command: 审查blocked_by依赖链无循环/无缺失/无错序
+      expected_exit: 依赖链合理
+      on_fail: 修正依赖关系
+    - step: 5.数据一致性
+      command: 审查任务卡间引用的数字/路径/字段名一致
+      expected_exit: 数据自洽
+      on_fail: 修正不一致数据
+    - step: 6.遗漏风险
+      command: 审查未覆盖的边界情况——异常路径/空输入/并发/回滚场景
+      expected_exit: 边界覆盖
+      on_fail: 补充边界处理任务卡
+    - step: 7.漂移风险
+      command: 审查所有路径为绝对路径/所有命令可执行/所有引用模块存在
+      expected_exit: 无漂移
+      on_fail: 补全路径或修正引用
+  task_001_batch_review_loop:
+    title: 建卡后批量审查循环判定
+    section_type: decision_tree
+    original_rules:
+    - TASK-001
+    branches:
+    - condition: 第1次审查问题数=0 + 第2次审查问题数=0
+      if_true: ✅ 建卡完成，可进入施工
+      if_false: ''
+    - condition: 第1次审查问题数=0 + 第2次审查问题数>0
+      if_true: ❌ 不稳定，继续修复后重新审查
+      if_false: ''
+    - condition: 第1次审查问题数>0
+      if_true: ❌ 修复所有问题后重新审查
+      if_false: ''
+    - condition: 3轮审查后仍无法连续2次归零
+      if_true: ❌ 升级Owner决策
+      if_false: ''
+  task_001_perf:
+    title: PERF-001慢/卡死程序诊断SOP
+    section_type: rule
+    original_rules:
+    - TASK-001
+    - PERF-001
+    conditions:
+    - type: trigger
+      check: 短脚本(预期≤30s)超预期2x或2分钟无输出
+      pass: 触发诊断
+      fail: 不触发
+    - type: trigger
+      check: 长脚本(预期>30s)超预期1.5x或3分钟无输出
+      pass: 触发诊断
+      fail: 不触发
+    actions:
+    - type: mandatory
+      step: 十项强制检查——基线对比/分阶段计时/输入规模合理性/功能必要性/资源消耗/死循环检测/静默挂起检测/输出规模合理性/增量缓存机制/超时熔断
+    - type: mandatory
+      step: 运行时间>10s的脚本MUST每1000文件或每10s输出进度
+    prohibitions: []
+  task_004_cancel:
+    title: 取消权限
+    section_type: rule
+    original_rules:
+    - TASK-004
+    - GOV-TASK-004
+    conditions:
+    - type: constraint
+      check: P0/P1任务取消权限
+      pass: Owner审批
+      fail: AI不得单方面取消
+    - type: constraint
+      check: P2/P3/P4任务取消权限
+      pass: AI可自主取消但须在SessionLog记录原因
+      fail: 无记录则违规
+    actions:
+    - type: mandatory
+      step: P0/P1任务取消必须Owner审批
+    - type: mandatory
+      step: P2/P3/P4任务AI可自主取消但必须在SessionLog记录取消原因
+    prohibitions:
+    - 终态(VERIFIED/CANCELLED)不可取消——如需返工创建新任务
+    - AI不得单方面取消P0/P1任务
+  task_004_priority:
+    title: 优先级裁决规则
+    section_type: rule
+    original_rules:
+    - TASK-004
+    conditions:
+    - type: constraint
+      check: 多任务竞争同一资源时的裁决顺序
+      pass: P0>P1>P2>P3>P4→safety_level H>M>L→created_at先到先得→Owner最终裁定
+      fail: 裁决错误
+    actions:
+    - type: mandatory
+      step: 按优先级排序P0>P1>P2>P3>P4
+    - type: mandatory
+      step: 同优先级按safety_level排序H>M>L
+    - type: mandatory
+      step: 同优先级同safety_level按创建时间排序先到先得
+    - type: mandatory
+      step: Owner有最终裁定权
+    prohibitions: []
+  task_004_priority_change:
+    title: 优先级变更权限
+    section_type: rule
+    original_rules:
+    - TASK-004
+    conditions:
+    - type: constraint
+      check: 升级(P3→P2→P1→P0)审批
+      pass: AI可提议但Owner审批后方生效
+      fail: 未审批不生效
+    - type: constraint
+      check: 降级(P0→P1→P2→P3→P4)权限
+      pass: Owner独占
+      fail: AI不得降级
+    actions:
+    - type: mandatory
+      step: 升级AI可提议但Owner审批后方生效
+    - type: mandatory
+      step: 降级Owner独占决定
+    prohibitions:
+    - AI升级提议被Owner拒绝后48h内不得就同一任务再次提出升级
+  task_004_p0_inflation:
+    title: P0通胀保护
+    section_type: rule
+    original_rules:
+    - TASK-004
+    conditions:
+    - type: constraint
+      check: 当前离线P0任务数量
+      pass: <3
+      fail: ≥3黄色警戒/≥5红色冻结
+    actions:
+    - type: mandatory
+      step: 当前离线P0任务≥3个→后续P0升级提案必须附带论证段落
+    - type: mandatory
+      step: 当前离线P0任务≥5个→冻结新增P0，AI不得提议升级，系统不接受新P0创建
+    - type: mandatory
+      step: 仅Owner可以手动解除P0冻结
+    prohibitions:
+    - Owner解除P0冻结后48h内不得再次触发P0冻结
+  task_004_escalation:
+    title: 升级治理
+    section_type: rule
+    original_rules:
+    - TASK-004
+    conditions:
+    - type: trigger
+      check: P0任务BLOCKED超过2个session
+      pass: MUST升级到Owner
+      fail: 不得跳过升级
+    - type: trigger
+      check: 任何任务BLOCKED超过5个session
+      pass: MUST升级到Owner
+      fail: 不得跳过升级
+    - type: trigger
+      check: P0任务FAILED2次
+      pass: 等待Owner决定
+      fail: 不得跳过升级
+    actions:
+    - type: mandatory
+      step: P0任务BLOCKED>2session→SessionLog标记escalation:owner
+    - type: mandatory
+      step: 任何任务BLOCKED>5session→SessionLog标记escalation:owner
+    - type: mandatory
+      step: P0任务FAILED×2→等待Owner决定(创建替代任务/降级)
+    - type: mandatory
+      step: 优先级冲突无法自动裁决→等待Owner裁定
+    prohibitions:
+    - AI不得跳过升级直接做决策
+  task_004_timeout_exemption:
+    title: 超时豁免治理
+    section_type: rule
+    original_rules:
+    - TASK-004
+    conditions:
+    - type: constraint
+      check: Owner明确标注"长期阻塞"的任务(tags含exempt:timeout)
+      pass: 豁免超时规则
+      fail: 不豁免
+    - type: constraint
+      check: 依赖外部第三方的任务(blocked_reason注明外部依赖)
+      pass: 豁免超时规则
+      fail: 不豁免
+    actions: []
+    prohibitions: []
+  task_005_completion:
+    title: 完成定义(IN_PROGRESS→COMPLETED)
+    section_type: rule
+    original_rules:
+    - TASK-005
+    - GOV-TASK-005
+    conditions:
+    - type: constraint
+      check: 交付物存在性
+      pass: deliverables中所有文件物理存在
+      fail: 继续执行或报告FAILED
+    - type: constraint
+      check: 交付物路径正确性
+      pass: 所有交付物在deliverables指定路径下
+      fail: 将文件移到正确路径或更新deliverables
+    - type: constraint
+      check: 无未声明副产品
+      pass: 无deliverables之外的产出文件
+      fail: 声明并说明理由或删除
+    - type: constraint
+      check: 验收指标全部满足
+      pass: acceptance中所有指标达到目标值
+      fail: 继续执行或报告FAILED
+    - type: constraint
+      check: 无未完成依赖
+      pass: depends_on中所有任务状态为VERIFIED或COMPLETED
+      fail: 报告BLOCKED
+    actions:
+    - type: mandatory
+      step: 交付物完整性检查——所有文件物理存在且在声明路径
+    - type: mandatory
+      step: 验收达标检查——acceptance中所有指标达标
+    - type: mandatory
+      step: 编码合规检查——UTF-8无BOM+LF换行
+    - type: mandatory
+      step: 依赖完整检查——depends_on中所有任务已完成
+    prohibitions: []
+  task_005_verification:
+    title: 验证定义(COMPLETED→VERIFIED)
+    section_type: rule
+    original_rules:
+    - TASK-005
+    conditions:
+    - type: constraint
+      check: 清扫通过
+      pass: task_completion_gate.py --scan退出码为0
+      fail: 执行--clean后重新扫描
+    - type: constraint
+      check: 验证者身份
+      pass: safety_level:H→Owner验证; L/M→AI自验证但须在SessionLog记录
+      fail: 验证者不合规
+    actions:
+    - type: mandatory
+      step: 清扫通过——task_completion_gate.py --scan退出码0
+    - type: mandatory
+      step: 编码合规——所有交付物UTF-8无BOM+LF换行，无.backup/.tmp/temp_*残留
+    - type: mandatory
+      step: 验收确认——safety_level:H由Owner验证; L/M由AI自验证但须在SessionLog记录
+    prohibitions: []
+  task_005_cleanup:
+    title: 清扫三步法
+    section_type: rule
+    original_rules:
+    - TASK-005
+    conditions: []
+    actions:
+    - type: mandatory
+      step: Step1产出物核验——所有产出文件在deliverables内/无未声明副产品/编码正确
+    - type: mandatory
+      step: Step2临时文件清除——删除temp_*/*.backup/*-v2.*/*-v3.*/*-round2.*/__pycache__/*.pyc/tmp_*/ttl:session文件
+    - type: mandatory
+      step: Step3残留物检测——运行task_completion_gate.py扫描scope-paths，分类处置(ORPHAN_SHELL/STALE_SKELETON/DUPLICATE/LEGACY_TEST删除;
+        VALID_FILE由Owner判定)
+    prohibitions:
+    - 禁止跳过清扫三步法直接声明COMPLETED
+  task_005_cancel:
+    title: 取消关闭流程
+    section_type: rule
+    original_rules:
+    - TASK-005
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 取消原因必须在SessionLog中记录
+    - type: mandatory
+      step: 如有已完成交付物标记为"部分完成"不删除
+    - type: mandatory
+      step: 取消后仍需执行Step2临时文件清除
+    prohibitions: []
+  task_005_violation:
+    title: 违规处理
+    section_type: rule
+    original_rules:
+    - TASK-005
+    conditions: []
+    actions: []
+    prohibitions:
+    - WARNING:任务报告未提及清扫结果→下次session补扫
+    - ERROR:发现temp_*/backup残留→立即删除sessionlog记录
+    - CRITICAL:产出物不在deliverables内且未声明→任务标记为需返工
+  task_scope:
+    title: 任务系统-目的与范围
+    section_type: context
+    original_rules: []
+    content:
+      summary: 任务卡模板+关闭标准+生命周期治理的联合范围定义
+      source_files:
+      - file: task_card_standard.md
+        module_id: GOV-TASK-001
+        scope: 任务卡写法+关闭验证+MTH-006深挖到底+PERF-001诊断
+      - file: task_closure_standard.md
+        module_id: GOV-TASK-005
+        scope: IN_PROGRESS→COMPLETED→VERIFIED关闭流程+清扫三步法+残留检测
+      - file: task_lifecycle_standard.md
+        module_id: GOV-TASK-004
+        scope: 取消权限+优先级裁决+升级治理+P0通胀保护
+      impact_on_rules: 三个文件共同定义任务系统的完整治理框架
+      key_decisions:
+      - GOV-TASK-001三合一合并(写+关+MTH-006)
+      - GOV-TASK-005合并task-completion-cleanup-gate.md
+  task_001_create_entry:
+    title: 任务卡创建入口
+    section_type: procedure
+    original_rules:
+    - TASK-001
+    steps:
+    - order: 1
+      action: 调用TaskRepository.create()写入SQLite(data/zalpha_metadata.db)
+      pre_condition: 任务卡数据准备完毕
+      expected_result: 任务卡创建成功，task_id自动分配
+      on_failure: 检查必填字段完整性
+    - order: 2
+      action: .md伴读副本自动生成（不作为创建入口）
+      pre_condition: SQLite写入成功
+      expected_result: 伴读.md文件生成
+      on_failure: 不影响任务卡本身
+  task_001_field_table:
+    title: 必填字段速查表(33字段)
+    section_type: context
+    original_rules:
+    - TASK-001
+    content:
+      summary: 任务卡33个必填/选填字段定义
+      mandatory_fields:
+      - field: task_id
+        type: str
+        constraint: '{NAMESPACE}-{SEQ}'
+        note: 系统自动分配
+      - field: namespace
+        type: enum
+        constraint: 8命名空间之一
+        note: task_id前缀
+      - field: title
+        type: str
+        constraint: 1-200字
+        note: 一眼看懂干什么
+      - field: description
+        type: str
+        constraint: ≥10字，不限上限
+        note: 必须含完整施工规格
+      - field: status
+        type: enum
+        constraint: 10态
+        note: 初始PENDING
+      - field: priority
+        type: enum
+        constraint: P0/P1/P2/P3/P4
+        note: P0=关键阻塞
+      - field: phase
+        type: int
+        constraint: 0-9
+        note: 施工阶段
+      - field: execution_model
+        type: enum
+        constraint: 模型枚举
+        note: 主力模型
+      - field: files_in_scope
+        type: list[str]
+        constraint: 绝对路径
+        note: 需读取的文件
+      - field: deliverables
+        type: list[str]
+        constraint: 绝对路径
+        note: 产出文件
+      - field: source_blueprint
+        type: str
+        constraint: module_id
+        note: 来源蓝图
+      - field: source_section
+        type: str
+        constraint: §N
+        note: 来源蓝图节号
+      - field: safety_level
+        type: enum
+        constraint: H/M/L
+        note: 安全等级
+      - field: directive
+        type: str
+        constraint: 自由文本
+        note: 执行指令编号
+      - field: classification
+        type: enum
+        constraint: public/internal/confidential
+        note: 敏感度
+      - field: ai_autonomy_level
+        type: str
+        constraint: supervised/auto
+        note: AI自治级别
+      - field: applicable_rules
+        type: list[dict]
+        constraint: '[{module_id, section, reason}]'
+        note: 默认MUST包含TRAE-011
+      - field: allowed_touch
+        type: list[str]
+        constraint: 绝对路径白名单
+        note: 可修改文件
+      - field: post_sync_standard
+        type: list[str]
+        constraint: 命令列表
+        note: 必须包含三方对齐命令
+      - field: acceptance
+        type: list[str]
+        constraint: 可机械判定
+        note: 验收标准
+      - field: dependency_type
+        type: str
+        constraint: hard/soft/none
+        note: 依赖类型
+      optional_fields:
+      - field: fallback_model
+        type: enum
+        note: 备选模型
+      - field: forbidden_touch
+        type: list[str]
+        note: 禁止修改文件
+      - field: upstream_files
+        type: list[str]
+        note: 执行前必读文件
+      - field: downstream_outputs
+        type: list[dict]
+        note: 执行后必产出文件
+      - field: rollback_instructions
+        type: str
+        note: 失败时如何撤销
+      - field: estimated_tokens
+        type: int
+        constraint: ≥500
+        note: 预估Token
+      - field: timeout_minutes
+        type: int
+        constraint: ≥5
+        note: 超时时间
+      - field: post_sync_specific
+        type: list[str]
+        note: 特定同步更新命令
+      - field: depgraph_nodes
+        type: list[str]
+        note: 全景依赖图对应节点
+      - field: depgraph_layer
+        type: str
+        constraint: architecture/package/module/file
+        note: 依赖图层
+      - field: dependency_rationale
+        type: str
+        note: 依赖关系说明
+      - field: root_cause_analysis
+        type: str
+        note: MTH-006根源分析
+      impact_on_rules: 字段真源为src/zephyr/autonomy_core/gates/task_types.py Task模型
+      key_decisions:
+      - 2026-05-28 TaskCard全部字段并入Task——SSoT合并
+  task_001_description_quality:
+    title: description质量判定
+    section_type: decision_tree
+    original_rules:
+    - TASK-001
+    branches:
+    - condition: description含根因+治根+八步工作流+施工步骤精确到行级
+      if_true: Good——AI拿到卡不需要猜
+      if_false: ''
+    - condition: description只说"修X问题"不说为什么
+      if_true: Bad——下一个AI不知道根因
+      if_false: ''
+    - condition: 根因是"代码写错了"就停
+      if_true: Bad——没追问到底
+      if_false: ''
+    - condition: 施工步骤太粗没说改哪个文件哪行
+      if_true: Bad——不可直接执行
+      if_false: ''
+  task_001_mth006_procedure:
+    title: MTH-006深挖到底操作序列
+    section_type: procedure
+    original_rules:
+    - MTH-006
+    steps:
+    - order: 1
+      action: 发现问题→问为什么→找到中间原因
+      pre_condition: 任务涉及Bug/漂移/异常/结构缺陷
+      expected_result: 找到中间原因
+      on_failure: 继续追问
+    - order: 2
+      action: 判断中间原因是否为根因
+      pre_condition: 找到中间原因
+      expected_result: 判定根因深度
+      on_failure: 继续追问
+    - order: 3
+      action: 修复根因+修复路上发现的所有中间问题
+      pre_condition: 确认根因
+      expected_result: 同类问题不再产生
+      on_failure: 没追到底，继续问
+    - order: 4
+      action: 验证同类问题是否还会产生
+      pre_condition: 修复完成
+      expected_result: 同类问题不再重现
+      on_failure: 没追到底，继续问
+  task_001_mth006_depth:
+    title: MTH-006根因深度判定
+    section_type: decision_tree
+    original_rules:
+    - MTH-006
+    branches:
+    - condition: 0层(现象)——"脚本崩溃了"
+      if_true: ❌ 不是根因
+      if_false: ''
+    - condition: '1层(直接原因)——"KeyError: type"'
+      if_true: ❌ 在错误行打补丁
+      if_false: ''
+    - condition: 2层(字段不对齐)——"YAML用dep_type但代码读type"
+      if_true: ⚠️ 可能只在当前文件修
+      if_false: ''
+    - condition: 3层(系统性问题)——"全文19处用type读边，生成器和消费者字段名不一致"
+      if_true: ✅ 治根
+      if_false: ''
+  task_004_gate_checklist:
+    title: 全生命周期门禁速查
+    section_type: verification
+    original_rules:
+    - TASK-001
+    steps:
+    - step: G0建卡时
+      command: task_id格式+必填字段完整性校验
+      expected_exit: 0
+      on_fail: 拒绝建卡
+    - step: G1入管线
+      command: 蓝图一致性+依赖合法性校验
+      expected_exit: 0
+      on_fail: 不得入管线
+    - step: G2执行前
+      command: 文件锁+上下文就绪检查
+      expected_exit: 0
+      on_fail: 等待锁释放
+    - step: G3执行中
+      command: 上下文装配清单校验
+      expected_exit: 0
+      on_fail: 暂停执行
+    - step: G4执行后
+      command: 产物完整性+路径合规检查
+      expected_exit: 0
+      on_fail: 补全产物
+    - step: G5完成前
+      command: 自审闭环+残留清扫
+      expected_exit: 0
+      on_fail: 清扫后重试
+    - step: G6验证前
+      command: 蓝图合规+路径树新鲜度
+      expected_exit: 0
+      on_fail: 刷新后重试
+    - step: G7关闭时
+      command: python D:/ZephyrAlpha/scripts/governance/audit_registration.py
+      expected_exit: 0
+      on_fail: 有孤儿禁止关闭
+  task_001_split_principles:
+    title: 拆卡核心原则
+    section_type: principles
+    original_rules:
+    - TASK-001
+    items:
+    - id: P1
+      statement: 任务卡=施工图——施工细节写在description里，蓝图只写设计
+      rationale: 蓝图和任务卡职责分离
+      applies_to: 所有任务卡
+    - id: P2
+      statement: 任务卡永久保留——COMPLETED/CANCELLED的卡禁止删除
+      rationale: 任务卡是审计链、依赖链、知识沉淀的唯一真源
+      applies_to: 所有终态任务卡
+    - id: P3
+      statement: description不限字数——必须精确到AI拿到卡不需要猜
+      rationale: 模糊=幻觉温床
+      applies_to: 所有任务卡description
+    - id: P4
+      statement: 一卡一任务——多个施工任务=多张卡
+      rationale: 独立可验证
+      applies_to: 所有任务卡
+  task_001_split_dependency:
+    title: 拆卡后依赖关系
+    section_type: decision_tree
+    original_rules:
+    - TASK-001
+    branches:
+    - condition: 下游卡必须等上游卡完成
+      if_true: dependency_type=hard（上游产出是下游输入）
+      if_false: ''
+    - condition: 下游建议等上游完成
+      if_true: dependency_type=soft（上游让下游更好但不阻塞）
+      if_false: ''
+    - condition: 两个卡完全独立
+      if_true: dependency_type=none
+      if_false: ''
+  task_001_no_split:
+    title: 不拆卡的情况
+    section_type: decision_tree
+    original_rules:
+    - TASK-001
+    branches:
+    - condition: MTH-006路上发现的关联问题
+      if_true: 不拆——必须同一张卡内修完
+      if_false: ''
+    - condition: 同一根因导致的多个症状
+      if_true: 不拆——一张卡治根
+      if_false: ''
+    - condition: 一个施工目标的多个步骤
+      if_true: 不拆——步骤是原子的
+      if_false: ''
+    - condition: 修改同一文件的同一区域
+      if_true: 不拆——原子修改
+      if_false: ''
+  task_001_split_examples:
+    title: 拆卡示例
+    section_type: examples
+    original_rules:
+    - TASK-001
+    items:
+    - title: 需要拆的示例
+      code: '❌ 一张卡包含：scheduler.py加_audit_trail_check() + circadian_scheduler.py加_llm_security_scan()
+
+        → 拆成2张卡(OPS-25/OPS-26)，依赖：none'
+      language: text
+      note: 两个文件独立修改=2个施工目标
+    - title: 不需要拆的示例
+      code: '✅ 一张卡包含：scheduler.py加_audit_trail_check() + _periodic_checks()中调用
+
+        → 不拆：同一文件同一施工目标'
+      language: text
+      note: 两个步骤是同一施工目标
+  task_001_auto_split:
+    title: 自动拆分(auto_split)
+    section_type: procedure
+    original_rules:
+    - TASK-001
+    steps:
+    - order: 1
+      action: 调用TaskRepository.auto_split_task(task_id, split_strategy=auto)
+      pre_condition: _validate_granularity()拦截超粒度任务卡
+      expected_result: 按R1→R2→R3→R4优先级自动选择拆分策略
+      on_failure: 手动拆分
+    - order: 2
+      action: 每张子卡通过_validate_granularity()全部6条规则
+      pre_condition: 拆分策略确定
+      expected_result: 子卡粒度合规
+      on_failure: 调整拆分策略
+    - order: 3
+      action: 子卡之间自动建立hard依赖链
+      pre_condition: 子卡创建成功
+      expected_result: 依赖链按拆分顺序建立
+      on_failure: 手动建立依赖
+    - order: 4
+      action: 原卡自动CANCELLED(note记录子卡列表)
+      pre_condition: 子卡全部创建成功
+      expected_result: 原卡状态变为CANCELLED
+      on_failure: 手动处理
+  task_001_perf_baselines:
+    title: PERF-001基线标准
+    section_type: context
+    original_rules:
+    - PERF-001
+    content:
+      summary: 各类脚本的正常耗时基线和超时熔断阈值
+      baselines:
+      - type: 单文件扫描/检查
+        normal: <5s
+        timeout: 30s
+      - type: 目录级扫描(<1000文件)
+        normal: <30s
+        timeout: 120s
+      - type: 全项目扫描(1000-5000文件)
+        normal: <60s
+        timeout: 300s
+      - type: 全项目扫描(5000+文件)
+        normal: <120s
+        timeout: 600s
+      - type: YAML/JSON序列化(<1MB)
+        normal: <2s
+        timeout: 30s
+      - type: YAML/JSON序列化(1-10MB)
+        normal: <10s
+        timeout: 60s
+      - type: 测试套件(单模块)
+        normal: <30s
+        timeout: 120s
+      impact_on_rules: 超过基线2x(短脚本)/1.5x(长脚本)触发诊断
+      key_decisions: []
+  task_001_perf_progress:
+    title: 进度可观测性要求
+    section_type: procedure
+    original_rules:
+    - PERF-001
+    steps:
+    - order: 1
+      action: 开始时输出预期总量([START] Scanning 10000 files...)
+      pre_condition: 脚本运行时间可能>10s
+      expected_result: 用户知道预期总量
+      on_failure: 无
+    - order: 2
+      action: 每1000文件或每10s输出进度([PROGRESS] 3000/10000 files scanned...)
+      pre_condition: 脚本正在执行
+      expected_result: 用户知道当前进度
+      on_failure: 无
+    - order: 3
+      action: 结束时输出总耗时([DONE] 10000 files in 45.2s)
+      pre_condition: 脚本执行完毕
+      expected_result: 用户知道总耗时
+      on_failure: 无
+  task_001_perf_build_card:
+    title: PERF-001建卡判定
+    section_type: decision_tree
+    original_rules:
+    - PERF-001
+    branches:
+    - condition: 修复耗时<5分钟(加超时/加日志/删冗余)
+      if_true: 不建卡，直接修
+      if_false: ''
+    - condition: 修复耗时5-30分钟(优化算法/加缓存)
+      if_true: 建卡
+      if_false: ''
+    - condition: 修复耗时>30分钟(重构/增量机制)
+      if_true: 建卡，拆分多步
+      if_false: ''
+  task_cross_refs:
+    title: 任务系统-关联规则
+    section_type: context
+    original_rules: []
+    content:
+      summary: 任务系统三个文件与其他治理文件的关联关系
+      cross_references:
+      - rule: PS-STD-001 §7
+        relationship: TaskCard字段SSoT基座(PS-STD-001 §7定义31基座字段；本YAML速查表33字段=21必填+12选填；代码模型Task共70字段)
+      - rule: MOD-INF-006
+        relationship: TaskCard代码模型+BlueprintDecomposer
+      - rule: GOV-TASK-004
+        relationship: 任务生命周期治理(取消/优先级/升级)
+      - rule: 03_modules/_domain_infra_runtime/task_system/blueprint.md §5.2-§5.5
+        relationship: 状态机实现+门禁检查逻辑+超时检测
+      - rule: handoff-protocol.md
+        relationship: 升级通知通过交接协议open_questions传递
+      - rule: metadata-registry.md §7
+        relationship: 优先级和状态枚举值SSoT
+      - rule: trae_029_doc_operation_security.yaml(GOV-DOC-007)
+        relationship: 安全门禁管删除前，关闭标准管完成后
+      - rule: trae_028_doc_structure_naming.yaml doc_005(GOV-DOC-005)
+        relationship: 编码管写入格式，关闭标准管残留检测
+      impact_on_rules: 任务系统与7个治理文件有交叉引用
+      key_decisions: []
+  task_004_priority_definition:
+    title: 优先级定义(P0-P4)
+    section_type: context
+    original_rules:
+    - TASK-004
+    content:
+      summary: 任务优先级5级定义和典型场景
+      levels:
+      - level: P0
+        definition: 阻断级——系统不可用、数据不可逆损坏、主线阻塞无workaround
+        scenario: 构建失败、规则冲突导致AI无法施工
+      - level: P1
+        definition: 紧急——核心功能受阻但存在workaround，影响多个消费者
+        scenario: 关键功能退化、正则退化
+      - level: P2
+        definition: 重要——单一消费者阻塞或埋雷任务
+        scenario: 技术债务清理、SSoT拆分
+      - level: P3
+        definition: 常规——正常开发和治理任务
+        scenario: 新功能开发、文档更新
+      - level: P4
+        definition: 低优——锦上添花的改进、实验性探索
+        scenario: 美化、重构非关键模块
+      impact_on_rules: 优先级字段枚举值以metadata-registry.md §7为准
+      key_decisions:
+      - SSoT声明：优先级枚举值定义以metadata-registry.md为准
+  task_004_owner_options:
+    title: Owner升级后决策选项
+    section_type: decision_tree
+    original_rules:
+    - TASK-004
+    branches:
+    - condition: 降优先级
+      if_true: 将任务降为P3/P4，按新优先级重新排队
+      if_false: ''
+    - condition: 给Deadline
+      if_true: 在open_questions中回复截止时间，AI以deadline重排优先级
+      if_false: ''
+    - condition: 取消任务
+      if_true: 状态→CANCELLED，释放所有依赖它的任务
+      if_false: ''
+    - condition: 不变
+      if_true: 确认当前优先级合理，AI继续按原优先级执行
+      if_false: ''
+  task_005_closure_scope:
+    title: 关闭标准-目的与范围
+    section_type: context
+    original_rules:
+    - GOV-TASK-005
+    content:
+      summary: 任务关闭前必须满足的全部条件
+      prerequisites:
+      - 交付物完整——所有承诺的产出物都存在且合规
+      - 环境干净——无临时文件、残留文件、副产品
+      - 验收通过——所有验收指标达标
+      - 审计可追溯——关闭决策有据可查
+      transitions:
+      - from: IN_PROGRESS
+        to: COMPLETED
+        section: §2完成定义
+      - from: COMPLETED
+        to: VERIFIED
+        section: §3验证定义
+      - from: IN_PROGRESS/FAILED/BLOCKED/WAITING/READY
+        to: CANCELLED
+        section: §5取消关闭
+      ssot_mapping:
+      - content: IN_PROGRESS→COMPLETED准入条件
+        source: 本文件§2
+        not_source: task-card-standard.md§8
+      - content: COMPLETED→VERIFIED准入条件
+        source: 本文件§3
+        not_source: task-card-standard.md§8
+      - content: 清扫三步法
+        source: 本文件§4
+        not_source: task-completion-cleanup-gate.md(已删除)
+      impact_on_rules: MUST执行清扫三步法后才能声明COMPLETED
+      key_decisions:
+      - SSoT合并：task-card-standard.md§8 + task-completion-cleanup-gate.md
+  task_005_completion_detail:
+    title: 完成定义详细检查(IN_PROGRESS→COMPLETED)
+    section_type: verification
+    original_rules:
+    - GOV-TASK-005
+    steps:
+    - step: 交付物存在性
+      command: 检查deliverables中所有文件物理存在
+      expected_exit: 0
+      on_fail: 继续执行或报告FAILED
+    - step: 交付物路径正确性
+      command: 检查所有交付物在deliverables指定路径下
+      expected_exit: 0
+      on_fail: 将文件移到正确路径或更新deliverables
+    - step: 无未声明副产品
+      command: 检查无deliverables之外的产出文件
+      expected_exit: 0
+      on_fail: 声明并说明理由或删除
+    - step: 验收指标全部满足
+      command: 检查acceptance中所有指标达到目标值
+      expected_exit: 0
+      on_fail: 继续执行或报告FAILED
+    - step: 编码合规
+      command: 检查UTF-8无BOM+LF换行
+      expected_exit: 0
+      on_fail: 修复编码
+    - step: 依赖完整
+      command: 检查depends_on中所有任务状态为VERIFIED或COMPLETED
+      expected_exit: 0
+      on_fail: 报告BLOCKED
+  task_005_verification_detail:
+    title: 验证定义详细检查(COMPLETED→VERIFIED)
+    section_type: verification
+    original_rules:
+    - GOV-TASK-005
+    steps:
+    - step: 清扫通过
+      command: python src/zephyr/governance/rule_enforcement/task_completion_gate.py
+        --scan
+      expected_exit: 0
+      on_fail: 执行--clean后重新扫描
+    - step: 编码合规
+      command: 检查所有交付物UTF-8无BOM+LF换行，无.backup/.tmp/temp_*残留
+      expected_exit: 0
+      on_fail: 修复编码或删除残留
+    - step: 验收确认(safety_level:H)
+      command: Owner验证
+      expected_exit: 0
+      on_fail: 返工
+    - step: 验收确认(safety_level:L/M)
+      command: AI自验证但须在SessionLog记录
+      expected_exit: 0
+      on_fail: 返工
+  task_005_cleanup_detail:
+    title: 清扫三步法详细流程
+    section_type: procedure
+    original_rules:
+    - GOV-TASK-005
+    steps:
+    - order: 1
+      action: 产出物核验——所有产出文件在deliverables内/无未声明副产品/编码正确
+      pre_condition: 施工步骤全部完成
+      expected_result: 100%在指定路径
+      on_failure: 将文件移到正确路径或更新deliverables
+    - order: 2
+      action: 临时文件清除——删除temp_*/*.backup/*-v2.*/*-v3.*/*-round2.*/__pycache__/*.pyc/tmp_*/ttl:session文件
+      pre_condition: 产出物核验通过
+      expected_result: 零临时文件
+      on_failure: 继续删除
+    - order: 3
+      action: 残留物检测——运行task_completion_gate.py扫描scope-paths
+      pre_condition: 临时文件清除完成
+      expected_result: 0个ORPHAN/STALE/DUPLICATE/LEGACY
+      on_failure: 按分类处置
+  task_005_residual_classification:
+    title: 残留物分类与处置
+    section_type: decision_tree
+    original_rules:
+    - GOV-TASK-005
+    branches:
+    - condition: ORPHAN_SHELL——文件大小<100bytes且内容为空壳/占位
+      if_true: 删除
+      if_false: ''
+    - condition: STALE_SKELETON——import路径指向已不存在的模块
+      if_true: 删除
+      if_false: ''
+    - condition: DUPLICATE——与项目其他文件内容完全相同
+      if_true: 删除老副本
+      if_false: ''
+    - condition: LEGACY_TEST——测试文件引用已删除的源代码
+      if_true: 删除
+      if_false: ''
+    - condition: VALID_FILE——不属于以上任何分类
+      if_true: 在报告中声明，由Owner判定
+      if_false: ''
+  task_005_auto_script:
+    title: 清扫门禁自动化脚本
+    section_type: context
+    original_rules:
+    - GOV-TASK-005
+    content:
+      summary: task_completion_gate.py脚本功能和退出码定义
+      script_path: src/zephyr/governance/rule_enforcement/task_completion_gate.py
+      commands:
+      - command: --scan
+        function: 扫描指定路径输出残留文件分类报告
+      - command: --clean
+        function: 自动删除ORPHAN_SHELL/STALE_SKELETON/DUPLICATE/LEGACY_TEST
+      - command: --verify
+        function: 验证任务产出物全部在deliverables内
+      exit_codes:
+      - code: 0
+        meaning: 扫描通过无残留
+      - code: 1
+        meaning: 存在可自动清理的残留(需--clean)
+      - code: 2
+        meaning: 存在需人工判定的VALID_FILE残留
+      - code: 3
+        meaning: 产出物不在deliverables内
+      impact_on_rules: 脚本未就绪时AI必须执行手动检查清单
+      key_decisions: []
+  task_005_consumers:
+    title: 关闭标准-消费者注册表
+    section_type: context
+    original_rules:
+    - GOV-TASK-005
+    content:
+      summary: 关闭标准的消费者及其同步要求
+      consumers:
+      - consumer: src/zephyr/governance/rule_enforcement/task_completion_gate.py
+        dependency: 残留物分类规则、退出码定义
+        sync_requirement: 分类规则变更必须同commit更新
+      - consumer: src/zephyr/governance/task_repo.py
+        dependency: COMPLETED/VERIFIED状态转换条件
+        sync_requirement: 转换条件变更必须同commit更新
+      - consumer: scripts/governance/check_handoff_protocol.py
+        dependency: 任务状态校验
+        sync_requirement: 状态语义变更需同步
+      impact_on_rules: 消费者同步要求确保规则变更不产生漂移
+      key_decisions: []
+  task_005_lessons:
+    title: 关闭标准-历史教训记录
+    section_type: examples
+    original_rules:
+    - GOV-TASK-005
+    items:
+    - title: 2026-04-24 老树tests/unit/残留8个骨架测试+1个漏迁文件
+      code: T-2-34搬迁任务只搬files_in_scope内文件，未检测scope外残留
+      language: text
+      note: 对应条款：§4.3残留物检测
+    - title: 2026-04-24 老树scripts/infra/搬迁后目录空壳残留
+      code: 搬迁脚本不删除空目录
+      language: text
+      note: 对应条款：§4.3 ORPHAN_SHELL分类
+    - title: 2026-04-24 tmp_replace_composer*.py未清理
+      code: 临时脚本无TTL标记
+      language: text
+      note: 对应条款：§4.2 temp_*清除
+  task_normative_refs:
+    title: 任务系统-规范性引用
+    section_type: context
+    original_rules: []
+    content:
+      summary: 任务系统三个文件的规范性引用和依赖
+      depends_on:
+      - target: autonomy_core/gates/task_types.py
+        at: Task模型
+        why: 任务卡代码模型SSoT——Task模型共70字段完整定义(本YAML速查表33字段=21必填+12选填)
+      - target: GOV-TASK-004
+        at: 全篇
+        why: 任务生命周期治理——取消/优先级/升级
+      - target: MTH-006
+        at: 全篇
+        why: 根源分析——task-card-standard.md§3引用其深挖协议
+      - target: PS-STD-001
+        at: §7
+        why: metadata-registry.md§7定义的任务卡字段schema为优先级和状态枚举的SSoT
+      impact_on_rules: 字段定义和治理规则引用外部SSoT
+      key_decisions: []
+  task_001_examples:
+    title: 任务卡示例
+    section_type: examples
+    original_rules:
+    - TASK-001
+    items:
+    - title: Bug修复类示例
+      code: 'task_id: SRC-xxx
+
+        title: diagnose_depgraph.py全文edge["type"]→edge["dep_type"]字段名修正
+
+        description: 根因：depgraph.db的边使用dep_type字段记录类型，但diagnose_depgraph.py全文19处读取edge["type"]，字段名不对齐导致所有需要按类型过滤边的逻辑全部KeyError崩溃。治根：逐处替换为dep_type。'
+      language: yaml
+      note: 含根因+治根+施工步骤+验收标准
+    - title: 新文件创建类示例
+      code: 'task_id: SRC-xxx
+
+        title: 创建GOV-TASK-001 task-card-standard.md三合一模板
+
+        description: 根因：TEMPLATE-TASK-001/GOV-TASK-001/GOV-TASK-005三个文件被45+处引用但均未落盘。治根：三合一为一份task-card-standard.md，覆盖写+关+MTH-006。'
+      language: yaml
+      note: 三合一合并示例
+  task_005_manual_checklist:
+    title: 脚本未就绪时的手动检查清单
+    section_type: verification
+    original_rules:
+    - GOV-TASK-005
+    steps:
+    - step: 临时文件扫描
+      command: 在scope-paths下搜索temp_*/*-v2.*/*-v3.*/*-round2.*/*.backup/__pycache__
+      expected_exit: 0
+      on_fail: 删除匹配文件
+    - step: 空壳文件检测
+      command: 检查scope-paths下文件大小<100bytes的文件内容是否为空壳/占位
+      expected_exit: 0
+      on_fail: 删除空壳文件
+    - step: 文件一致性
+      command: 对比deliverables列表与scope-paths下实际文件列表
+      expected_exit: 0
+      on_fail: 补全遗漏或删除多余
+    - step: 编码检测
+      command: 检查所有产出文件是否为UTF-8无BOM+LF换行
+      expected_exit: 0
+      on_fail: 修复编码
+  task_005_acceptance_template:
+    title: 任务卡acceptance字段必须包含的条目
+    section_type: context
+    original_rules:
+    - GOV-TASK-005
+    content:
+      summary: 所有新任务卡的acceptance字段必须包含以下条目
+      required_items:
+      - 无temp_*/backup/*-v2残留文件
+      - 所有产出文件在deliverables指定路径下
+      - task_completion_gate.py扫描通过（0个ORPHAN/STALE/DUPLICATE/LEGACY）
+      impact_on_rules: 新建任务卡时acceptance字段必须包含以上3条
+      key_decisions: []
+  task_change_history:
+    title: 任务系统-修订记录
+    section_type: examples
+    original_rules: []
+    items:
+    - title: trae_034_task_card_standard.yaml
+      code: 'v1.1.0: RQ审查修复——移除ACS-004别名(与trae_031冲突)/修正task_completion_gate.py路径/修正task-system蓝图路径/修正33字段表述/澄清31/33/70字段数/provenance标注源文件已合并'
+      language: text
+      note: PS-STD-009 §9 RQ-01~RQ-14审查
+    - title: trae_034_task_card_standard.yaml
+      code: 'v1.0.0: 从task_card_standard.md+task_closure_standard.md+task_lifecycle_standard.md三合一YAML化'
+      language: text
+      note: 初始YAML化版本(2026-06-13)
+    - title: task_card_standard.md
+      code: 'v3.5.0: 三合一合并(GOV-TASK-001+GOV-TASK-005+TEMPLATE-TASK-001)'
+      language: text
+      note: 合并写+关+MTH-006为一份SSoT
+    - title: task_closure_standard.md
+      code: 'v1.1.0: 合并task-completion-cleanup-gate.md内容'
+      language: text
+      note: 清扫三步法+残留物检测+消费者注册表
+    - title: task_lifecycle_standard.md
+      code: 'v2.0.0: 治理决策规则独立为标准'
+      language: text
+      note: 状态机/门禁/超时迁移至blueprint.md§5.2-§5.5
+references:
+  rule_ids:
+  - TRAE-003
+  - TRAE-024
+  - TRAE-053
+  scripts:
+  - scripts/governance/audit_registration.py
+  - scripts/governance/generate_project_depgraph.py
+  - scripts/governance/generate_project_path_tree.py
+  - scripts/governance/diagnose_depgraph.py
+  modules:
+  - src/zephyr/governance/rule_enforcement/task_completion_gate.py
+  - src/zephyr/governance/task_repo.py
+  blueprints:
+  - 03_modules/_domain_infra_runtime/task_system/blueprint.md
+enforcement:
+  type: code
+  executors:
+  - scripts/governance/audit_registration.py
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+  version: "1.3.3"
+  last_modified: "2026-06-21"
+  change_history:
+  - version: 1.3.3
+    date: '2026-06-21'
+    by: AI-Assistant
+    changes:
+    - 'P2修复——references.rule_ids移除自引用TRAE-034(保留[TRAE-003,TRAE-024,TRAE-053])；补充metadata缺失的version/last_modified字段'
+  - version: 1.3.2
+    date: '2026-06-21'
+    by: session-20260621-fix4
+    changes:
+    - P1修复——v1.3.0的date从'2026-06-22'(未来日期)修正为'2026-06-21'(当天日期)，消除版本递增但日期递减的矛盾
+  - version: 1.3.1
+    date: '2026-06-21'
+    by: session-20260621-batch4
+    changes:
+    - P1修复——references.rule_ids去重(6个TRAE-034重复项→1个，保留TRAE-003/TRAE-024/TRAE-053)，符合RQ-02规范
+    - P1修复——task_005_consumers中task_repo.py路径修正(src/zephyr/db/→src/zephyr/governance/)，符合RQ-04规范
+    - P1修复——enforcement.executors补充scripts/governance/audit_registration.py(原为空)，符合RQ-06规范
+  - version: 1.3.0
+    date: '2026-06-21'
+    by: session-20260622-001
+    changes:
+    - 新增task_001_batch_review建卡后批量审查协议——阶段一建卡完成后MUST执行阶段二7项维度审查(清单完整性/解决方案完整性/SQL代码正确性/因果链合理性/数据一致性/遗漏风险/漂移风险)，循环检查至连续2次问题数=0才可施工
+    - 新增task_001_batch_review_dimensions(7项审查维度验证步骤)+task_001_batch_review_loop(循环判定决策树)
+  - version: 1.2.0
+    date: '2026-06-19'
+    by: session-20260619-001
+    changes:
+    - 全量审查STEP9修复——references.modules从rule_id(GOV-TASK-001/004/005)改为模块路径(task_completion_gate.py/task_repo.py)
+    - 移除references.scripts中重复的task_completion_gate.py(已在modules中)
+  - version: 1.1.0
+    date: '2026-06-19'
+    by: session-20260619-001
+    changes:
+    - RQ审查修复——移除ACS-004别名/修正task_completion_gate.py路径/修正task-system蓝图路径/修正33字段表述/澄清31/33/70字段数/provenance标注源文件已合并
+  - version: 1.0.0
+    date: '2026-06-13'
+    by: session-20260613-001
+    changes:
+    - 初始YAML化，从task_card_standard.md+task_closure_standard.md+task_lifecycle_standard.md三合一
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

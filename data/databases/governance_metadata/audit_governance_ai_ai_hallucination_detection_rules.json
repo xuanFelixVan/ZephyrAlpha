@@ -1,0 +1,176 @@
+{
+  "task_id": "DM-100076",
+  "source_file": "docs/01_policies_and_standards/governance/ai/ai_hallucination_detection_rules.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_039_ai_hallucination_detection.yaml",
+  "module_id": "GOV-AI-009",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "HC-1": {
+      "rule": "新增类/接口未在 module_id_registry.json 中登记",
+      "severity": "ERROR",
+      "detection": "AST解析+注册表比对",
+      "intercept": "阻断提交",
+      "status": "COVERED"
+    },
+    "HC-2": {
+      "rule": "代码引入的依赖未在 technology_landscape.yaml 的 Adopt/Assess 象限",
+      "severity": "WARNING",
+      "detection": "import解析+Tech Radar比对",
+      "intercept": "标注不阻断",
+      "status": "COVERED"
+    },
+    "HC-3": {
+      "rule": "跨层直接调用（绕过 shared/contracts/）",
+      "severity": "ERROR",
+      "detection": "依赖图分析",
+      "intercept": "阻断提交，资金执行安全红线",
+      "status": "COVERED"
+    },
+    "HC-4": {
+      "rule": "修改 frozen 契约",
+      "severity": "ERROR",
+      "detection": "契约文件diff",
+      "intercept": "阻断提交，架构稳定性保护",
+      "status": "COVERED"
+    },
+    "HC-5": {
+      "rule": "新增配置项未在 system-configuration.yaml 登记",
+      "severity": "WARNING",
+      "detection": "配置文件diff+注册表比对",
+      "intercept": "标注不阻断",
+      "status": "COVERED"
+    },
+    "HC-6": {
+      "rule": "不变量违反——AI生成代码违反架构不变量",
+      "severity": "ERROR",
+      "detection": "invariant_check.py",
+      "intercept": "阻断提交",
+      "status": "COVERED"
+    },
+    "HC-7": {
+      "rule": "运行平面错配——Cold Path逻辑写入Hot Path模块",
+      "severity": "ERROR",
+      "detection": "运行平面标签比对",
+      "intercept": "阻断提交",
+      "status": "COVERED"
+    },
+    "HC-8": {
+      "rule": "数据流方向违反——违反L00→L02→L03单向数据流",
+      "severity": "ERROR",
+      "detection": "依赖方向分析",
+      "intercept": "阻断提交",
+      "status": "COVERED"
+    },
+    "HC-9": {
+      "rule": "幂等性缺失——L06执行层代码缺少幂等Key",
+      "severity": "WARNING",
+      "detection": "AST解析+层标签比对",
+      "intercept": "标注不阻断",
+      "status": "COVERED"
+    },
+    "HC-10": {
+      "rule": "PIT铁律绕过——回测代码访问了未来数据",
+      "severity": "ERROR",
+      "detection": "PIT合规检查",
+      "intercept": "阻断提交",
+      "status": "COVERED"
+    },
+    "HC-6b": {
+      "rule": "语义一致性校验——关键子类必须附带属性测试",
+      "severity": "WARNING",
+      "detection": "AST解析+测试文件检测",
+      "intercept": "标注不阻断",
+      "status": "COVERED"
+    },
+    "HC-7b": {
+      "rule": "跨模块变更隔离——同一commit禁止跨2层修改契约文件",
+      "severity": "WARNING",
+      "detection": "Git diff层标签分析",
+      "intercept": "标注不阻断",
+      "status": "COVERED"
+    },
+    "WARNING_THRESHOLD": {
+      "rule": "WARNING累计超过5条则禁止commit",
+      "severity": "ERROR",
+      "detection": "计数",
+      "intercept": "阻断提交",
+      "status": "COVERED"
+    },
+    "HUMAN_CONFIRM_HC3": {
+      "rule": "HC-3跨层直接调用必须强制人工确认",
+      "severity": "ERROR",
+      "detection": "触发时检查Owner确认",
+      "intercept": "阻断提交",
+      "status": "COVERED"
+    },
+    "HUMAN_CONFIRM_HC4": {
+      "rule": "HC-4修改frozen契约必须强制人工确认",
+      "severity": "ERROR",
+      "detection": "触发时检查Owner确认",
+      "intercept": "阻断提交",
+      "status": "COVERED"
+    },
+    "HUMAN_CONFIRM_HC10": {
+      "rule": "HC-10 PIT铁律绕过必须强制人工确认",
+      "severity": "ERROR",
+      "detection": "触发时检查Owner确认",
+      "intercept": "阻断提交",
+      "status": "COVERED"
+    },
+    "CONDITIONAL_CONFIRM_HC1": {
+      "rule": "HC-1新增类属于L04/L06层时需Owner确认",
+      "severity": "ERROR",
+      "detection": "层标签检查",
+      "intercept": "条件阻断",
+      "status": "COVERED"
+    },
+    "CONDITIONAL_CONFIRM_HC2": {
+      "rule": "HC-2引入技术不在Tech Radar Adopt象限时需Owner确认",
+      "severity": "WARNING",
+      "detection": "Tech Radar比对",
+      "intercept": "条件阻断",
+      "status": "COVERED"
+    },
+    "SLA_MAX_DELAY": {
+      "rule": "人工确认SLA：max_delay_hours=24, escalation=block_further_work, reminder_after_hours=12",
+      "severity": "ERROR",
+      "detection": "时间检查",
+      "intercept": "block_further_work",
+      "status": "COVERED"
+    },
+    "CONFIRMED_BY_OWNER": {
+      "rule": "Owner在Session Log签字+Git commit message包含Confirmed-By: Owner",
+      "severity": "ERROR",
+      "detection": "commit message检查",
+      "intercept": "阻断提交",
+      "status": "COVERED"
+    },
+    "WARNING_REVIEW_MANDATORY": {
+      "rule": "每次commit前必须展示WARNING清单，强制AI阅读并确认",
+      "severity": "ERROR",
+      "detection": "流程检查",
+      "intercept": "阻断提交",
+      "status": "COVERED"
+    },
+    "OWNER_DOD_CONFIRM": {
+      "rule": "Owner必须在Session Log中确认已审阅WARNING，作为DoD的一部分",
+      "severity": "ERROR",
+      "detection": "Session Log检查",
+      "intercept": "阻断完成",
+      "status": "COVERED"
+    }
+  },
+  "summary": {
+    "total_rules": 22,
+    "COVERED": 22,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "原YAML仅有占位action'遵守GOV-AI-009'，无实际规则内容",
+    "新增section gov_ai_009_detection_rules：12条HC规则(HC-1~HC-10+HC-6b+HC-7b)全部写入actions+prohibitions",
+    "新增section gov_ai_009_human_confirmation：强制人工确认(HC-3/HC-4/HC-10)+条件确认(HC-1/HC-2)+SLA+签字+WARNING审查规则",
+    "新增conditions：代码提交触发+WARNING阈值约束+强制/条件人工确认触发",
+    "新增prohibitions：9条禁止项"
+  ]
+}

@@ -1,3 +1,4 @@
+# [A_test] module_id: SRC-TST-0185 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
 # [MODULE] tests.llm_security.test_fail_closed
 # [STABILITY] evolving
@@ -6,7 +7,7 @@
 # [TESTS] —
 import pytest
 
-from zephyr.llm_security.protocol import (
+from zephyr.infrastructure.a2a_protocol.governance.protocol import (
     LLMSecurityProtocol,
     SecurityContext,
     SecurityDecision,
@@ -142,7 +143,7 @@ class TestFailClosed:
             ("model_extraction", ["l5_resource_protection"]),
             ("cost_asymmetry", ["l5_resource_protection"]),
         ]
-        from zephyr.llm_security.gateway import LSGSecurityGateway
+        from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
         gw = LSGSecurityGateway()
         for name, expected_layers in consequences:
             for layer_name in expected_layers:

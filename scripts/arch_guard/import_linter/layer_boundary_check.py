@@ -35,8 +35,8 @@ LAYER_NUM_RE = re.compile(r"l(\d{2})")
 
 SHARED_MODULES = {
     "shared", "gates", "core", "db", "kb",
-    "orchestrator", "pipeline", "mcp", "feedback_loop",
-    "vector_memory", "llm_security", "context_engine",
+    "orchestrator", "pipeline", "mcp", "feedback-loop",
+    "vector-memory", "llm-security", "context-engine",
 }
 
 EXCLUDE_DIRS = {"__pycache__", ".git", "tests", "docs", "shared", "gates"}

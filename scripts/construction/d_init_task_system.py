@@ -2,7 +2,7 @@
 """
 初始化任务系统数据库 + 创建任务系统自身的施工任务卡（吃狗粮）
 ===========================================================
-对应蓝图：MOD-INF-006 (l01_infrastructure/task-system)
+对应蓝图：MOD-INF-006 (infrastructure.runtime_integration/task-system)
 施工进度：phase_1_complete → 建立剩余任务的 TaskCard
 """
 
@@ -13,10 +13,10 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, r"d:\ZephyrAlpha\src")
 
-from zephyr.db.sqlite_schema import init_db
-from zephyr.db.task_repo import TaskRepository
-from zephyr.core.models import TaskCard
-from zephyr.shared.schemas import TaskNamespace, TaskStatus
+from zephyr.governance.persistence.sqlite_schema import init_db
+from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.shared.shared_services.models import TaskCard
+from zephyr.integration.schema.schemas import TaskNamespace, TaskStatus
 
 init_db()
 repo = TaskRepository()
@@ -93,7 +93,7 @@ specs = [
         "allowed_touch": ["d:/ZephyrAlpha/src/zephyr/db/task_repo.py"],
         "upstream_files": [
             "d:/ZephyrAlpha/src/zephyr/db/task_repo.py",
-            "d:/ZephyrAlpha/docs/03_modules/l01_infrastructure/task-system/blueprint.md",
+            "d:/ZephyrAlpha/docs/03_modules/infrastructure.runtime_integration/task-system/blueprint.md",
         ],
         "downstream_outputs": [
             {"path": "d:/ZephyrAlpha/src/zephyr/db/task_repo.py",
@@ -119,7 +119,7 @@ specs = [
         "allowed_touch": ["d:/ZephyrAlpha/src/zephyr/db/task_repo.py"],
         "upstream_files": [
             "d:/ZephyrAlpha/src/zephyr/db/task_repo.py",
-            "d:/ZephyrAlpha/docs/03_modules/l01_infrastructure/task-system/blueprint.md",
+            "d:/ZephyrAlpha/docs/03_modules/infrastructure.runtime_integration/task-system/blueprint.md",
         ],
         "downstream_outputs": [
             {"path": "d:/ZephyrAlpha/src/zephyr/db/task_repo.py",
@@ -151,7 +151,7 @@ specs = [
             "d:/ZephyrAlpha/src/zephyr/db/task_repo.py",
             "d:/ZephyrAlpha/src/zephyr/db/sqlite_schema.py",
             "d:/ZephyrAlpha/scripts/governance/status.py",
-            "d:/ZephyrAlpha/docs/03_modules/l01_infrastructure/task-system/blueprint.md",
+            "d:/ZephyrAlpha/docs/03_modules/infrastructure.runtime_integration/task-system/blueprint.md",
         ],
         "downstream_outputs": [
             {"path": "d:/ZephyrAlpha/scripts/governance/task_summary.py",
@@ -173,19 +173,19 @@ specs = [
             "1. 确认 list_by_phase() 可用 2. 填充真数据 3. 输出 Phase 进度条"
         ),
         "files_in_scope": [
-            "src/zephyr/l08_human_ai_interface/dashboard/components/task_progress.py"],
+            "src/zephyr/frontend/dashboard/components/task_progress.py"],
         "depends_on": ["OPS-001"],
         "estimate_hours": 1.0,
         "allowed_touch": [
-            "d:/ZephyrAlpha/src/zephyr/l08_human_ai_interface/dashboard/components/task_progress.py",
+            "d:/ZephyrAlpha/src/zephyr/frontend/dashboard/components/task_progress.py",
         ],
         "upstream_files": [
             "d:/ZephyrAlpha/src/zephyr/db/task_repo.py",
-            "d:/ZephyrAlpha/src/zephyr/l08_human_ai_interface/dashboard/components/task_progress.py",
-            "d:/ZephyrAlpha/docs/03_modules/l01_infrastructure/task-system/blueprint.md",
+            "d:/ZephyrAlpha/src/zephyr/frontend/dashboard/components/task_progress.py",
+            "d:/ZephyrAlpha/docs/03_modules/infrastructure.runtime_integration/task-system/blueprint.md",
         ],
         "downstream_outputs": [
-            {"path": "d:/ZephyrAlpha/src/zephyr/l08_human_ai_interface/dashboard/components/task_progress.py",
+            {"path": "d:/ZephyrAlpha/src/zephyr/frontend/dashboard/components/task_progress.py",
              "description": "task_progress 接入真数据"},
         ],
         "directive": "fetch_task_progress() 从桩→真：调用 task_repo.list_by_phase()，输出 Phase 进度条",
@@ -209,7 +209,7 @@ specs = [
         "upstream_files": [
             "d:/ZephyrAlpha/src/zephyr/db/task_repo.py",
             "d:/ZephyrAlpha/src/zephyr/db/sqlite_schema.py",
-            "d:/ZephyrAlpha/docs/03_modules/l01_infrastructure/task-system/blueprint.md",
+            "d:/ZephyrAlpha/docs/03_modules/infrastructure.runtime_integration/task-system/blueprint.md",
         ],
         "downstream_outputs": [
             {"path": "d:/ZephyrAlpha/src/zephyr/hooks/__init__.py", "description": "hooks包"},
@@ -236,7 +236,7 @@ specs = [
         "upstream_files": [
             "d:/ZephyrAlpha/src/zephyr/db/task_repo.py",
             "d:/ZephyrAlpha/src/zephyr/pipeline/pipeline_orchestrator.py",
-            "d:/ZephyrAlpha/docs/03_modules/l01_infrastructure/task-system/blueprint.md",
+            "d:/ZephyrAlpha/docs/03_modules/infrastructure.runtime_integration/task-system/blueprint.md",
         ],
         "downstream_outputs": [
             {"path": "d:/ZephyrAlpha/src/zephyr/orchestrator/task_queue.py",
@@ -262,7 +262,7 @@ specs = [
         "allowed_touch": ["d:/ZephyrAlpha/src/zephyr/core/blueprint_decomposer.py"],
         "upstream_files": [
             "d:/ZephyrAlpha/src/zephyr/core/blueprint_decomposer.py",
-            "d:/ZephyrAlpha/docs/03_modules/l01_infrastructure/task-system/blueprint.md",
+            "d:/ZephyrAlpha/docs/03_modules/infrastructure.runtime_integration/task-system/blueprint.md",
         ],
         "downstream_outputs": [
             {"path": "d:/ZephyrAlpha/src/zephyr/core/blueprint_decomposer.py",
@@ -290,7 +290,7 @@ specs = [
         "allowed_touch": ["d:/ZephyrAlpha/src/zephyr/orchestrator/failure_matcher.py"],
         "upstream_files": [
             "d:/ZephyrAlpha/src/zephyr/hooks/event_hook.py",
-            "d:/ZephyrAlpha/docs/03_modules/l01_infrastructure/task-system/blueprint.md",
+            "d:/ZephyrAlpha/docs/03_modules/infrastructure.runtime_integration/task-system/blueprint.md",
         ],
         "downstream_outputs": [
             {"path": "d:/ZephyrAlpha/src/zephyr/orchestrator/failure_matcher.py",
@@ -318,7 +318,7 @@ specs = [
             "d:/ZephyrAlpha/src/zephyr/db/task_repo.py",
             "d:/ZephyrAlpha/src/zephyr/db/sqlite_schema.py",
             "d:/ZephyrAlpha/src/zephyr/hooks/event_hook.py",
-            "d:/ZephyrAlpha/docs/03_modules/l01_infrastructure/task-system/blueprint.md",
+            "d:/ZephyrAlpha/docs/03_modules/infrastructure.runtime_integration/task-system/blueprint.md",
         ],
         "downstream_outputs": [
             {"path": "d:/ZephyrAlpha/scripts/governance/task_self_check.py",

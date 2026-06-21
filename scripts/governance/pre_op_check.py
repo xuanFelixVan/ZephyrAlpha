@@ -18,6 +18,14 @@ Exit codes:
 """
 
 from __future__ import annotations
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 from _shared.constants import EXIT_PASS
@@ -54,7 +62,7 @@ _SCRIPTS_DIR = _PROJECT_ROOT / "scripts"
 _LOCK_SCRIPT = _SCRIPTS_DIR / "lock_files.py"
 _SCAFFOLD_SCRIPT = _SCRIPTS_DIR / "scaffold.py"
 _AUDIT_SCRIPT = _SCRIPTS_DIR / "governance" / "audit_registration.py"
-_REGISTRY_OF_REGISTRIES = _PROJECT_ROOT / "docs" / "registry-of-registries.yaml"
+_REGISTRY_OF_REGISTRIES = _PROJECT_ROOT / "docs" / "registry_of_registries.yaml"
 _SCRIPT_MANIFEST = _SCRIPTS_DIR / "script_manifest.yaml"
 
 _LEGAL_DIRS = {
@@ -145,7 +153,7 @@ def _file_is_registered(filepath: str) -> tuple[bool, str]:
         try:
             content = _REGISTRY_OF_REGISTRIES.read_text(encoding="utf-8")
             if rel in content:
-                checks.append((True, f"registry-of-registries.yaml"))
+                checks.append((True, f"registry_of_registries.yaml"))
         except Exception:
             pass
 

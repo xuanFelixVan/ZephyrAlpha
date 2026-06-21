@@ -23,7 +23,7 @@ validate_config_integrity.py — 运行时配置完整性十一层纵深审计 +
 - L8 代码-配置对账：KNOWN_MODELS同步、registry路径漂移、状态机完整性、implementation_status标注
 - L9 注释与追踪审计：YAML注释计数准确性、git追踪状态、登记表entry_count一致性
 - L10 测试标记对账：@pytest.mark.* 装饰器 ↔ pyproject.toml markers 双向同步（AGENTS.md §6.2 测试标记注册链）
-- L11 契约-实现对账：declarative-contract-tracker.yaml ↔ config/ YAML implementation_status 自动交叉校验
+- L11 契约-实现对账：declarative-contract-tracker-registry.md ↔ config/ YAML implementation_status 自动交叉校验
 
 exit codes: 0=pass, 1=findings, 2=error
 """
@@ -70,7 +70,7 @@ from _shared.constants import CONFIG_DIR, EXIT_PASS
 EXCLUDE_DIRS: tuple[str, ...] = ()
 
 AUTH_REG_PATH = REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry.md"
-DIR_STD_PATH = REPO_ROOT / "docs/01_policies_and_standards/governance/document/directory-structure-standard.md"
+DIR_STD_PATH = REPO_ROOT / "docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml"
 
 PHASE1D_TRIGGER_TYPES = frozenset(
     {
@@ -288,7 +288,7 @@ def l3_cross_reference(yaml_data: dict) -> tuple[list[str], list[str]]:
         except ImportError:
             if is_stub:
                 try:
-                    rt = __import__("zephyr.orchestrator.trigger_router", fromlist=[attr])
+                    rt = __import__("zephyr.orchestration.runtime_core.orchestrator.trigger_router", fromlist=[attr])
                     if not hasattr(rt, attr):
                         errors.append(f'[L3] trigger "{ttype}": stub "{attr}" 不在 trigger_router 模块中')
                 except ImportError:
@@ -448,9 +448,9 @@ def l5_gov_doc_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]]:
     if DIR_STD_PATH.exists():
         dir_s = DIR_STD_PATH.read_text(encoding="utf-8", errors="replace")
         if "config/ — 运行时配置目录" not in dir_s:
-            errors.append("[L5] directory-structure-standard.md 缺少 config/ 目录结构定义")
+            errors.append("[L5] trae_028_doc_structure_naming.yaml 缺少 config/ 目录结构定义")
     else:
-        warnings.append(f"[L5] directory-structure-standard.md 不存在 — {DIR_STD_PATH}")
+        warnings.append(f"[L5] trae_028_doc_structure_naming.yaml 不存在 — {DIR_STD_PATH}")
 
     cap = yaml_data.get("/config/capabilities.yaml", {})
     write_config = next((r for r in cap.get("rules", []) if r.get("name") == "write_config"), {})
@@ -769,7 +769,7 @@ def l8_code_config_reconciliation(yaml_data: dict) -> tuple[list[str], list[str]
 
     # 8D: implementation_status 标注检查
     for cfg_rel in [
-        "/config/context_rules_v1.yaml",
+        "/config/context-rules.yaml",
         "/config/embedding_model_registry.yaml",
         "/config/session_state_machine.yaml",
     ]:
@@ -807,10 +807,10 @@ def l9_comment_and_tracking_audit(yaml_data: dict) -> tuple[list[str], list[str]
             if claimed != trigger_count:
                 errors.append(f"[L9] trigger_router.yaml: 注释声称 {claimed} 种 trigger_type，实际 {trigger_count} 种")
 
-    # 9B: context_rules_v1.yaml description 规则计数
-    ctx_path = CONFIG_DIR / "context_rules_v1.yaml"
+    # 9B: context-rules.yaml description 规则计数
+    ctx_path = CONFIG_DIR / "context-rules.yaml"
     if ctx_path.exists():
-        ctx_data = yaml_data.get("/config/context_rules_v1.yaml", {})
+        ctx_data = yaml_data.get("/config/context-rules.yaml", {})
         if isinstance(ctx_data, dict):
             desc = ctx_data.get("description", "")
             rules = ctx_data.get("rules", [])
@@ -819,7 +819,7 @@ def l9_comment_and_tracking_audit(yaml_data: dict) -> tuple[list[str], list[str]
                 claimed = int(count_match.group(1))
                 actual = len(rules) if isinstance(rules, list) else 0
                 if claimed != actual:
-                    errors.append(f"[L9] context_rules_v1.yaml: description 声称 {claimed} rules，实际 {actual} 条")
+                    errors.append(f"[L9] context-rules.yaml: description 声称 {claimed} rules，实际 {actual} 条")
 
     # 9C: registry-master-index.yaml entry_count 与 YAML 实际条目一致性
     idx_path = (
@@ -912,7 +912,7 @@ def l9_comment_and_tracking_audit(yaml_data: dict) -> tuple[list[str], list[str]
 
 PYTEST_BUILTIN_MARKERS = frozenset({"parametrize", "skip", "skipif", "xfail", "usefixtures"})
 
-def l10_pytest_markers_sync() -> tuple[list[str], list[str]]:
+def step10_pytest_markers_sync() -> tuple[list[str], list[str]]:
     """L10: 测试标记对账 — @pytest.mark.* ↔ pyproject.toml markers 双向同步（AGENTS.md §6.2 测试标记注册链）"""
     errors = []
     warnings = []
@@ -965,8 +965,8 @@ def l10_pytest_markers_sync() -> tuple[list[str], list[str]]:
 
     return errors, warnings
 
-def l11_contract_implementation_audit() -> tuple[list[str], list[str]]:
-    """L11: 契约-实现对账 — declarative-contract-tracker.yaml ↔ config/ YAML implementation_status 交叉校验（根因修复第2层）"""
+def step11_contract_implementation_audit() -> tuple[list[str], list[str]]:
+    """L11: 契约-实现对账 — declarative-contract-tracker-registry.md ↔ config/ YAML implementation_status 交叉校验（根因修复第2层）"""
     errors = []
     warnings = []
 
@@ -976,10 +976,10 @@ def l11_contract_implementation_audit() -> tuple[list[str], list[str]]:
         / "01_policies_and_standards"
         / "_registry"
         / "catalogs"
-        / "declarative-contract-tracker.yaml"
+        / "declarative-contract-tracker-registry.md"
     )
     if not tracker_path.exists():
-        warnings.append("[L11] declarative-contract-tracker.yaml 不存在 — 跳过契约对账")
+        warnings.append("[L11] declarative-contract-tracker-registry.md 不存在 — 跳过契约对账")
         return errors, warnings
 
     try:
@@ -1019,7 +1019,7 @@ def l11_contract_implementation_audit() -> tuple[list[str], list[str]]:
     if untracked:
         warnings.append(
             f"[L11] config/ YAML 含 implementation_status 但未在契约跟踪登记表中登记: "
-            f"{sorted(untracked)}（新契约未注册——请在 declarative-contract-tracker.yaml 中添加）"
+            f"{sorted(untracked)}（新契约未注册——请在 declarative-contract-tracker-registry.md 中添加）"
         )
 
     tracked_but_gone = unresolved_sources_yaml - config_yaml_paths
@@ -1035,7 +1035,7 @@ def l11_contract_implementation_audit() -> tuple[list[str], list[str]]:
             warnings.append(f"[L11] 契约跟踪登记表中登记的 Python 源已不存在: {py_src}（请更新或删除条目）")
 
     if unresolved_count > 0:
-        warnings.append(f"[L11] {unresolved_count} 条声明式契约尚未兑现（详见 declarative-contract-tracker.yaml）")
+        warnings.append(f"[L11] {unresolved_count} 条声明式契约尚未兑现（详见 declarative-contract-tracker-registry.md）")
 
     return errors, warnings
 
@@ -1101,12 +1101,12 @@ def main() -> None:
     all_warnings.extend(w)
     print(f"  L9 注释与追踪审计:       {len(e)} errors, {len(w)} warnings", file=sys.stderr)
 
-    e, w = l10_pytest_markers_sync()
+    e, w = step10_pytest_markers_sync()
     all_errors.extend(e)
     all_warnings.extend(w)
     print(f"  L10 测试标记对账:        {len(e)} errors, {len(w)} warnings", file=sys.stderr)
 
-    e, w = l11_contract_implementation_audit()
+    e, w = step11_contract_implementation_audit()
     all_errors.extend(e)
     all_warnings.extend(w)
     print(f"  L11 契约-实现对账:        {len(e)} errors, {len(w)} warnings", file=sys.stderr)

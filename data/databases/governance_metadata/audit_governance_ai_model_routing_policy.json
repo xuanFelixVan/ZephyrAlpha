@@ -1,0 +1,102 @@
+{
+  "task_id": "DM-100076",
+  "source_file": "docs/01_policies_and_standards/governance/ai/model_routing_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_040_ai_model_routing.yaml",
+  "module_id": "GOV-AI-002",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "ROLE_DEEPSEEK": {
+      "rule": "主力施工=DeepSeek V4 Pro（A区M1-M4、B区M6/M8/M9/M10/M11）",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "ROLE_GLM": {
+      "rule": "深度审查=GLM-5.1（B区M7深度审查、A区M5产出物打包）",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "ROLE_CLAUDE": {
+      "rule": "特种救援=Claude Opus 4.7（仅DeepSeek+GLM都搞不定+Owner标记关键任务）",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "ROUTING_DECISION_TREE": {
+      "rule": "任务分配决策树：C管线→脚本系统→Claude关键任务清单→A管线M1-M4→DeepSeek/M5→GLM→B管线M7→GLM/其他→DeepSeek",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "CLAUDE_TRIGGER_DEEPSEEK_FAIL": {
+      "rule": "Claude触发条件：DeepSeek执行失败连续3次（MODULE_TIMEOUT或ARTIFACT_FORMAT_ERROR）",
+      "type": "constraint",
+      "status": "COVERED"
+    },
+    "CLAUDE_TRIGGER_GLM_REJECT": {
+      "rule": "Claude触发条件：GLM审查驳回≥2次（G7门禁不通过）",
+      "type": "constraint",
+      "status": "COVERED"
+    },
+    "CLAUDE_TRIGGER_OWNER_KEY": {
+      "rule": "Claude触发条件：Owner标记P0且title含'核心'/'关键'/'架构'/'安全'",
+      "type": "constraint",
+      "status": "COVERED"
+    },
+    "CLAUDE_TRIGGER_SECURITY": {
+      "rule": "Claude触发条件：tags_fn含'security'或tags_mo含安全相关模块",
+      "type": "constraint",
+      "status": "COVERED"
+    },
+    "CLAUDE_TRIGGER_NEW_DOMAIN": {
+      "rule": "Claude触发条件：tags_st='experimental'（新领域探索）",
+      "type": "constraint",
+      "status": "COVERED"
+    },
+    "PROHIBIT_CLAUDE_DAILY": {
+      "rule": "禁止日常使用Claude（太贵，仅特种救援）",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_UNREVIEWED_DEEPSEEK": {
+      "rule": "禁止DeepSeek产出未经GLM审查直接合入（幻觉率94%）",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "FALLBACK_DEEPSEEK_DOWN": {
+      "rule": "DeepSeek不可用→降级到GLM-5.1（免费fallback）",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "FALLBACK_GLM_DOWN": {
+      "rule": "GLM不可用→降级到DeepSeek自行审查→Claude兜底",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "FALLBACK_CLAUDE_DOWN": {
+      "rule": "Claude不可用→跳过Claude环节，标记需要人工复查，不阻塞任务",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "FALLBACK_ALL_DOWN": {
+      "rule": "所有模型不可用→暂停任务管线+通知Owner+任务卡全部标记blocked",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "PROHIBIT_BLOCK_ON_CLAUDE_DOWN": {
+      "rule": "禁止Claude不可用时阻塞任务",
+      "type": "prohibition",
+      "status": "COVERED"
+    }
+  },
+  "summary": {
+    "total_rules": 16,
+    "COVERED": 16,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "原YAML仅有占位action'遵守GOV-AI-002'，无实际规则内容",
+    "新增section gov_ai_002_routing：5个actions+2个prohibitions+2个conditions",
+    "新增section gov_ai_002_fallback：4个actions+1个prohibition+4个trigger conditions",
+    "角色决策依据表（基于REG-LLM-001基准数据）为数据参考，非规则，不纳入YAML",
+    "变更记录（§五）为历史信息，非规则，不纳入YAML"
+  ]
+}

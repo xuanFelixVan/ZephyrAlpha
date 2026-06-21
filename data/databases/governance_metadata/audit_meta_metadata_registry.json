@@ -1,0 +1,52 @@
+{
+  "task_id": "DM-100164",
+  "source_file": "docs/01_policies_and_standards/meta/metadata_registry.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "ps_std_001_four_domains": {
+      "title": "元数据四域架构",
+      "rules": [
+        "四域：frontmatter/registry/blueprint/code_header",
+        "每个域有唯一职责，禁止跨域冗余",
+        "禁止：frontmatter与code_header字段重复定义"
+      ]
+    },
+    "ps_std_001_dual_source": {
+      "title": "双真源声明",
+      "rules": [
+        "frontmatter为文档元数据真源",
+        "code_header为代码元数据真源",
+        "冲突时以code_header为准（代码是运行时真源）",
+        "禁止：在第三处定义相同元数据"
+      ]
+    },
+    "ps_std_001_frontmatter_required": {
+      "title": "frontmatter必填字段",
+      "rules": [
+        "所有标准文档必须包含：module_id/title/version/layer/depends_on/tags",
+        "禁止：frontmatter缺少任一必填字段",
+        "禁止：module_id格式不符合规范"
+      ]
+    },
+    "skipped_content": {
+      "description": "SSoT声明、消费者注册表、变更日志、审查周期为非规则类内容，不进入YAML",
+      "items": [
+        "元数据SSoT声明",
+        "元数据消费者注册表",
+        "变更日志格式定义",
+        "审查周期定义"
+      ]
+    }
+  },
+  "summary": {
+    "total_rules": 10,
+    "COVERED": 10,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "TRAE-043 enriched in current session: added ps_std_001_four_domains(3 rules), ps_std_001_dual_source(4 rules), ps_std_001_frontmatter_required(3 rules)",
+    "Non-rule content skipped: SSoT declarations, consumer registry, changelog format, review cycles"
+  ]
+}

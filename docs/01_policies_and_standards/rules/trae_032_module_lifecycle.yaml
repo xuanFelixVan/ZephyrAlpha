@@ -1,0 +1,666 @@
+rule_id: TRAE-032
+title: 模块治理-准入与生命周期
+aliases:
+- MOD-001
+- MOD-002
+- MOD-003
+- MOD-004
+- MOD-005
+layer: L1
+severity: error
+scope: module_governance
+domain: TRAE
+triggers:
+- operation: module_admission
+- operation: module_lifecycle
+sections:
+  mod_001:
+    section_type: rule
+    title: 模块准入门控(GOV-MOD-001)
+    original_rules:
+    - MOD-001
+    conditions:
+    - type: pre_condition
+      check: MAD-001架构必要性
+      pass: 层归属唯一且该层_index.yaml中已定义
+      fail: 无层归属/层归属模糊/层归属冲突→拒绝注入
+    - type: pre_condition
+      check: MAD-002 Phase相关性
+      pass: 模块在当前Phase P0/P1优先级列表中
+      fail: 不在当前Phase范围→延迟注入
+    - type: pre_condition
+      check: MAD-003依赖关系合规
+      pass: depends_on所有ID已存在+依赖图无环+依赖方向符合跨层规则
+      fail: 引用不存在ID/循环依赖/违反跨层方向→延迟注入
+    - type: pre_condition
+      check: MAD-004接口可定义性
+      pass: 接口来源于已有文档或Owner明确说明
+      fail: 接口依赖AI推测→暂停等待
+    - type: pre_condition
+      check: MAD-005 P0模块额外条件
+      pass: 接口契约frozen+已关联KB决策记录+已分配runtime_plane
+      fail: 任一未满足
+    actions:
+    - type: mandatory
+      step: 准入否决条件5项快速检查：1.module_id已存在→否决 2.depends_on含不存在ID→否决 3.status非法→否决 4.P0未分配runtime_plane→否决
+        5.功能域重叠→否决
+    - type: mandatory
+      step: 四级筛选依次通过：MAD-001→MAD-002→MAD-003→MAD-004
+    - type: mandatory
+      step: P0模块额外通过MAD-005
+    - type: mandatory
+      step: 准入记录写入module-id-registry.json admission_records数组
+    - type: mandatory
+      step: 功能域重叠四步判定：关键词扫描→responsibility_domain匹配→covers[]交叉→输出否决建议
+    prohibitions:
+    - 禁止module_id重复
+    - 禁止引用不存在的依赖
+    - 禁止status字段使用非法值
+    - 禁止P0模块未分配runtime_plane
+    - 禁止功能域重叠——创建平行蓝图覆盖已有子域
+    gov_mod_001_scope:
+      section_type: context
+      applies_to: architecture-model/下所有新模块 + active模块的接口修改/依赖变更/status变化/优先级调整(变更视同重新注入)
+        + 从候选池注入正式目录的迁移模块
+      not_applies_to: '纯文档类文件(doc_type: template/register) + 临时草稿(status: draft且未申请注入)'
+      third_party_extra: 第三方模块除四级筛选外还须通过§10专项安全检查(来源信任/许可证合规/安全审计/隔离声明)
+    gov_mod_001_escalation:
+      section_type: escalation
+      steps:
+      - 'Owner发起: 以书面形式(session log或KB决策记录)声明豁免理由'
+      - '记录否决原因: 明确哪一级筛选未通过及原因'
+      - '风险接受声明: Owner明确声明接受该模块注入的技术风险'
+      - '限时有效: 豁免仅在当前Phase有效——下一Phase开始前必须补齐所有筛选条件否则自动回退至未准入'
+      - '豁免记录: 在module-id-registry.json中标记admission_override: true + 豁免原因'
+    gov_mod_001_third_party:
+      section_type: procedure
+      checks:
+      - item: 来源信任
+        pass: 模块来源可追溯(官方仓库/认证发布者)
+        fail: 拒绝注入
+      - item: 许可证合规
+        pass: 许可证与本项目兼容(Apache 2.0/MIT/BSD等)
+        fail: 拒绝注入
+      - item: 安全审计
+        pass: 无已知CVE(严重+高危)或CVE已有缓解方案
+        fail: 暂停等待安全评审
+      - item: 隔离声明
+        pass: 明确第三方模块的运行平面(hot/warm/cold)和资源边界
+        fail: 暂停等待声明完成
+    gov_mod_001_record_template:
+      section_type: examples
+      format: '{"module_id": "GOV-MOD-XXX", "admission_records": [{"date": "ISO8601",
+        "reviewer": "AI/Owner", "p1_arch": "passed/failed", "p2_phase": "passed/failed",
+        "p3_dep": "passed/failed", "p4_iface": "passed/failed", "p0_extras": "passed/N/A",
+        "decision": "admitted/deferred/rejected/paused", "override": false}]}'
+      note: 四级筛选通过=准入临时通过——最终注入以GOV-MOD-005全部INJ检查通过为准
+    gov_mod_001_normative_refs:
+      section_type: principles
+      refs:
+      - target: PS-STD-001 §2
+        role: frontmatter字段合法性——本文件所有frontmatter字段格式遵循其约束
+      - target: PS-STD-003 §3
+        role: 行为边界标准ABS——准入否决条件的宪法级边界基准——被ABS明确禁止的行为MAD规则不能突破
+    gov_mod_001_cross_refs:
+      section_type: context
+      refs:
+      - target: GOV-MOD-005 context.injection_flow
+        role: 模块注入技术检查——准入通过后执行的完整INJ-001~008检查流程
+      - target: GOV-ARCH-002
+        role: 架构变更门控——active模块变更需先通过其审批后再走本策略四级筛选
+    gov_mod_001_change_history:
+      section_type: context
+      entries:
+      - version: 1.1.0
+        date: '2026-05-06'
+        change: 新增#5功能域重叠否决条件+§7.1四步判定流程
+      - version: 0.6.3
+        date: '2026-05-01'
+        change: JSON键名p1_id→p1_arch/p2_doc→p2_phase语义对齐
+      - version: 0.6.0
+        date: '2026-05-01'
+        change: '对齐PS-STD-002: 新增受控枚举+消费者注册表+变更同步+修改条件+废弃流程+审查周期'
+  mod_002:
+    section_type: rule
+    title: AI行为铁律(GOV-MOD-002)
+    original_rules:
+    - MOD-002
+    conditions:
+    - type: constraint
+      check: IRN-001编码扫描
+      pass: 文件为UTF-8编码
+      fail: 非UTF-8编码
+    - type: constraint
+      check: IRN-002 Session预算
+      pass: 新创建文件≤8个，新建目录≤3个
+      fail: 超出预算
+    - type: constraint
+      check: IRN-003 SSoT唯一
+      pass: 每个架构事实有且仅有一份权威来源
+      fail: SSoT矛盾
+    - type: constraint
+      check: IRN-008先读后写
+      pass: 修改文件前已Read该文件当前内容
+      fail: 凭记忆或推测直接写入
+    - type: constraint
+      check: IRN-010受保护路径
+      pass: 写入目标不在受保护清单中
+      fail: 写入受保护路径
+    actions:
+    - type: mandatory
+      step: 'IRN-001: YAML/Markdown写入后运行check_encoding.py确认UTF-8'
+    - type: mandatory
+      step: 'IRN-004: 删除或移动文件后同一commit中更新所有引用'
+    - type: mandatory
+      step: 'IRN-008: 修改任何文件前必须Read该文件当前内容'
+    - type: mandatory
+      step: 'IRN-011: Phase结束时执行零残留自检(detect_temp_files.py+detect_orphan_py.py)'
+    prohibitions:
+    - IRN-009: 禁止Cursor和Trae同时打开同一文件编辑
+    - IRN-010: 禁止AI直接写入受保护路径(.git/、AGENTS.md重大修改、meta/下.md、architecture-model/)
+    - 'IRN-011 ZR-001: 禁止临时文件(phase完成后不删除)'
+    - 'IRN-011 ZR-004: 禁止引用已删除/废弃的路径'
+    - 'IRN-011 ZR-009: 禁止AI代码含幻觉import/空壳stub/死代码块/调试残留'
+    gov_mod_002_scope:
+      section_type: context
+      applies_to: 所有AI模型的全部操作(不限于模块注入)
+      complement: 本策略管辖AI模型的行为准则; GOV-MOD-005管辖模块注入的技术检查——模块注入前必须同时满足本策略行为铁律+GOV-MOD-005注入检查
+    gov_mod_002_missing_rules:
+      section_type: procedure
+      rules:
+      - id: IRN-004
+        name: 断链清零
+        rule: 删除或移动文件后必须在同一commit中更新所有引用——禁止分两次commit
+        verify: check_dead_links.py
+        violation: 断链累积，治理信号失真
+      - id: IRN-005
+        name: Phase Gate
+        rule: scaffold未完成前禁止进入beta施工
+        verify: Phase Gate检查
+        violation: 技术债务爆发，地基不稳
+        sunset: scaffold验收通过后自动失效——由Owner声明退役
+      - id: IRN-006
+        name: 模型能力边界
+        rule: 每个AI模型必须在其能力契约定义的边界内操作——禁止越权
+        verify: docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml白名单校验
+        violation: 越权操作导致治理混乱
+      - id: IRN-007
+        name: 架构终局锁定
+        rule: 架构模型锁定后任何变更必须走Emergency Change Board流程——禁止直接修改
+        verify: 架构模型锁定状态校验——检查depgraph.db中架构节点的locked标记，锁定后任何架构节点变更必须附Owner批准的Emergency Change Board记录
+        violation: 架构漂移，终局锁定失效
+    gov_mod_002_violation_severity:
+      section_type: decision_tree
+      levels:
+      - severity: P0
+        rules: 铁律1(IRN-001)/8(IRN-008)/10(IRN-010)/11(IRN-011)
+        action: 立即中止操作，记录Session Log，通知Owner——违反后果不可逆
+      - severity: P1
+        rules: 铁律2-4(IRN-002~004)/9(IRN-009)
+        action: 警告+自纠——AI必须立即重新执行操作并遵守铁律; 连续3次不遵守→升级为P0
+      - severity: P2
+        rules: 铁律5-7(IRN-005~007)
+        action: 记录违规，在Session Log中说明原因，Owner裁决
+    gov_mod_002_abs_mapping:
+      section_type: context
+      mappings:
+      - iron_law: IRN-001
+        abs: ABS-23, ABS-24
+        relation: 铁律是ABS的程序化执行——check_encoding.py验证
+      - iron_law: IRN-003
+        abs: ABS-19, ABS-20
+        relation: 铁律是ABS的泛化——不仅字段所有架构事实均唯一
+      - iron_law: IRN-004
+        abs: ABS-15
+        relation: 直接对应——同一commit完成删除+引用更新
+      - iron_law: IRN-006
+        abs: ABS-12
+        relation: 直接对应——铁律要求能力合约白名单校验
+      - iron_law: IRN-008
+        abs: ABS-52
+        relation: 直接对应——社区第一安全准则
+      - iron_law: IRN-009
+        abs: ABS-25
+        relation: 直接对应——铁律禁止并发编辑
+      - iron_law: IRN-010
+        abs: ABS-09, ABS-44, ABS-08
+        relation: 直接对应——铁律将多个ABS合并为统一受保护路径清单
+      - iron_law: IRN-011
+        abs: ABS-15, ABS-44
+        relation: 延伸关系——铁律抽象清理原则并定义可编程执行点ZR-001~009
+    gov_mod_002_exemption:
+      section_type: escalation
+      principle: 铁律不可豁免——IRN-001~010对所有AI行为同等级约束
+      exception_channel: Owner可通过KB决策记录签发豁免——仅限灾难恢复(绕过铁律才能恢复)和Phase边界(临时豁免IRN-002预算上限)
+      rules:
+      - '每份豁免必须指定: 豁免的铁律编号+豁免范围(文件/模块)+有效截止日期'
+      - 豁免到期自动回退——不自动续期
+      - 所有豁免记录在module-id-registry.json的exemptions字段
+    gov_mod_002_normative_refs:
+      section_type: principles
+      refs:
+      - target: PS-STD-001 §2.5
+        role: doc_type/rule_form一致性约束——policy文件的元数据合法性
+      - target: PS-STD-003 §3
+        role: ABS级别禁止行为的宪法级约束基准——铁律违反处置的最高依据
+    gov_mod_002_cross_refs:
+      section_type: context
+      refs:
+      - target: GOV-MOD-005 §2
+        role: 注入检查规则与行为铁律的互补关系
+      - target: GOV-MOD-001 §7
+        role: 准入否决条件在操作层面落地IRN行为约束
+      - target: governance/security/
+        role: 安全操作基线的领域规范
+      - target: governance/architecture/
+        role: 架构治理的领域规范
+    gov_mod_002_change_history:
+      section_type: context
+      entries:
+      - version: 1.0.0
+        date: '2026-05-06'
+        change: 新增IRN-011零残留原则(ZR-001~009); 铁律→ABS映射表; 消费者通知机制三层体系
+  mod_003:
+    section_type: rule
+    title: 模块生命周期(GOV-MOD-003)
+    original_rules:
+    - MOD-003
+    conditions:
+    - type: constraint
+      check: MLC-001阶段转换前置条件
+      pass: planned→in_design(准入通过)→in_dev(契约frozen)→testing(代码+单测通过)→active(集成测试+Owner审批)
+      fail: 未满足前置条件
+    - type: constraint
+      check: MLC-002逆向转换限制
+      pass: 仅允许suspended→active和testing→in_dev(非破坏性bug)
+      fail: 其他逆向转换
+    actions:
+    - type: mandatory
+      step: 8阶段严格按序转换：planned→in_design→in_dev→testing→active→suspended→deprecated→archived
+    - type: mandatory
+      step: MLC-003退役7步：确认依赖方迁移→搜索旧ID无断链→标记deprecated→设置superseded_by→保留90天→Owner批准→触发IFC-007契约级联废弃
+    - type: mandatory
+      step: P0模块特殊约束：in_dev需契约frozen+testing→active需GOV-ARCH-002审查+KB决策记录+active→deprecated需退役KB决策记录
+    - type: mandatory
+      step: ID永不回收原则——archived模块的module_id在注册表中永恒保留
+    prohibitions:
+    - 禁止跳过阶段
+    - 禁止active→in_dev逆向转换（应创建新模块）
+    - 禁止active→testing逆向转换
+    - 禁止suspended回退到suspended之前的阶段
+    - 禁止P0模块suspended——必须走紧急修复流程
+    - 禁止P0模块退役——必须先完成P1+等效替代并active≥30天
+    - 禁止重新分配archived模块的module_id
+    gov_mod_003_scope:
+      section_type: context
+      applies_to: architecture-model/下所有模块 + 01_policies_and_standards/下所有doc_type文件
+        + 候选池中的模块
+      not_applies_to: '临时草稿(ttl: session) + 纯引用文件'
+    gov_mod_003_stage_details:
+      section_type: context
+      stages:
+      - name: planned
+        must_have: module_id + 层归属 + 优先级
+        prohibited: 代码实现 + 接口定义
+      - name: in_design
+        must_have: 接口契约草案 + 依赖清单
+        prohibited: 代码实现(仅允许伪代码/接口定义)
+        note: '契约冻结时序: 准入后进入in_design→在此阶段完成契约draft→frozen(GOV-MOD-004 IFC-005)→然后才能in_design→in_dev'
+      - name: in_dev
+        must_have: 接口契约(frozen) + 代码骨架
+        prohibited: 注入到active环境
+      - name: testing
+        must_have: 单元测试 + 集成测试计划
+        prohibited: 生产环境使用
+      - name: active
+        must_have: 完整文档 + 测试覆盖 + Owner签收
+        note: 变更必须走变更门控(GOV-ARCH-002)
+      - name: suspended
+        must_have: 暂停原因记录(Session Log中)
+        prohibited: 新功能开发 + 接口变更
+        note: 暂停期间仍须响应安全补丁; 恢复路径suspended→active(Owner审批不创建新module_id)
+      - name: deprecated
+        must_have: superseded_by指向替代模块(或N/A)
+        prohibited: 新功能开发 + 接口变更
+        retention: 至少保留90天供引用迁移
+      - name: archived
+        must_have: 删除日期 + 删除审批人(Owner)
+        principle: ID永不回收——module_id在注册表中永恒保留禁止重新分配
+        prohibited: 重新激活 + 重新注入
+    gov_mod_003_retirement_extension:
+      section_type: escalation
+      rule: 90天到期后仍有引用未迁移→Owner可批准延期(最长再90天)→必须在Session Log中记录原因和截止日期
+    gov_mod_003_exemption:
+      section_type: escalation
+      scenarios:
+      - scenario: Phase边界转换
+        exemption: 临时跳过testing→active的集成测试前置条件
+        constraint: Owner审批，仅限scaffold期
+      - scenario: testing→in_dev回退
+        exemption: 允许从testing退回in_dev
+        constraint: '前提: 因外部依赖不可用导致(已在MLC-001表中标注为允许例外)'
+      - scenario: 紧急热修复
+        exemption: 跳过in_design→in_dev的接口契约冻结条件
+        constraint: 24h内补齐契约 + Session Log记录
+    gov_mod_003_normative_refs:
+      section_type: principles
+      refs:
+      - target: PS-STD-001 §4.1
+        role: active/deprecated生命周期状态定义
+      - target: PS-STD-003 §3 ABS-22
+        role: 跨级降格禁止——deprecated不能直接标记为archived
+      - target: GOV-MOD-001 MOD-P4
+        role: 接口可定义性筛选——决定模块是否能进入设计阶段
+      - target: GOV-MOD-004 IFC-005
+        role: 契约冻结时序——in_design阶段接口契约必须frozen
+    gov_mod_003_cross_refs:
+      section_type: context
+      refs:
+      - target: GOV-MOD-005 INJ-004
+        role: 注入时status合法性检查——本策略是合法值的SSoT
+      - target: PS-STD-009 §5
+        role: 通用废弃流程框架——本策略补充模块特有步骤
+      - target: GOV-ARCH-002
+        role: P0模块active→deprecated的架构审查
+    gov_mod_003_change_history:
+      section_type: context
+      entries:
+      - version: 1.0.0
+        date: '2026-05-06'
+        change: 新增§13字段不重复声明+§14跨标准字段交叉引用; P0模块suspended不可接受风险约束
+  mod_004:
+    section_type: rule
+    title: 模块接口契约(GOV-MOD-004)
+    original_rules:
+    - MOD-004
+    conditions:
+    - type: constraint
+      check: IFC-001 P0模块接口契约
+      pass: cross_layer_contracts.yaml中7个必填字段完整且status=frozen
+      fail: 缺少必填字段或status非frozen
+    - type: constraint
+      check: IFC-003语义化版本
+      pass: MAJOR=破坏性/MINOR=新增兼容/PATCH=修复
+      fail: 版本号不符合语义化版本规则
+    - type: constraint
+      check: IFC-005契约状态转换
+      pass: draft→frozen(provider准入+owner审批)→deprecated(替代frozen+consumers迁移+30天通知)
+      fail: 非法状态转换
+    actions:
+    - type: mandatory
+      step: 'IFC-001: P0模块MUST在cross_layer_contracts.yaml中定义7字段接口契约'
+    - type: mandatory
+      step: 'IFC-002: frozen接口变更MUST创建KB决策记录——破坏性变更须含迁移方案'
+    - type: mandatory
+      step: 'IFC-006: provider注入和变更时MUST通过契约一致性验证(validate_module_schema.py --check-conformance)'
+    - type: mandatory
+      step: 破坏性变更6步：创建KB决策记录→双版本并行→通知consumers→30天迁移期→旧接口deprecated→60天后物理删除
+    prohibitions:
+    - 禁止P0模块未定义接口契约就注入
+    - 禁止frozen契约未经KB决策记录直接变更
+    - 禁止破坏性变更不提供≥30天双版本并行过渡期
+    - 禁止跨层调用绕过frozen契约直接操作
+    - 禁止模块间循环调用(A→B→A)
+    - 禁止手动编辑cross_layer_contracts.yaml注册表
+    - 禁止Provider退役时不触发IFC-007契约级联废弃
+    - 禁止deprecated阶段新增consumer引用
+    gov_mod_004_scope:
+      section_type: context
+      applies_to: 所有P0模块的接口定义 + 跨层模块间的交互接口 + 模块对外暴露的API/事件/数据接口
+      not_applies_to: '临时草案(ttl: session) + 未注入的模块接口讨论稿'
+    gov_mod_004_ifc002_change:
+      section_type: procedure
+      rule: 'IFC-002: 任何frozen接口契约变更必须创建KB决策记录'
+      variants:
+      - type: 非破坏性变更(新增可选字段)
+        action: KB决策记录简要记录即可
+      - type: 破坏性变更(删除字段/修改类型)
+        action: KB决策记录必须包含迁移方案和影响分析
+    gov_mod_004_ifc004_registry:
+      section_type: procedure
+      rule: 'IFC-004: cross_layer_contracts.yaml为契约注册表'
+      flow:
+      - 人工/AI在模块文件中定义契约schema(IFC-001六字段)
+      - 脚本validate_module_schema.py --sync-contracts将契约条目同步至注册表
+      - 注册表是镜像——禁止手动编辑——所有变更在源契约文件中进行
+      - 消费者查找契约时仅从此注册表查询——禁止扫描源码推测接口
+    gov_mod_004_ifc007_cascade:
+      section_type: procedure
+      rule: 'IFC-007: Provider退役时契约级联废弃(由GOV-MOD-003 MLC-003触发)'
+      steps:
+      - provider模块进入archived时触发
+      - 该模块在cross_layer_contracts.yaml中的所有frozen契约自动标记为deprecated
+      - 消费者在迁移期限内完成迁移(从模块归档之日起算)
+      - 期满后契约自动进入archived状态
+    gov_mod_004_interaction_rules:
+      section_type: principles
+      rules:
+      - id: '1'
+        name: 调用失败不扩散
+        rule: A调用B失败时A必须处理异常(重试/降级/报错)——不得让错误向上游传播
+      - id: '2'
+        name: 循环调用禁止
+        rule: 禁止A→B→A的直接或间接循环调用——循环引用应在depends_on设计阶段由MAD-003捕获
+      - id: '3'
+        name: 跨层调用契约强制
+        rule: 跨层调用(如hot→cold)必须通过frozen契约进行——禁止绕过契约直接操作
+      - id: '4'
+        name: 级联退役通知
+        rule: 模块退役时必须在Session Log中列出所有consumers并逐个确认迁移状态(GOV-MOD-003 MLC-003)
+    gov_mod_004_doc_requirements:
+      section_type: examples
+      required_fields:
+      - 接口用途说明(一段话)
+      - 请求/响应示例
+      - 错误码清单
+      - '性能约束(P0必填: 延迟p99与吞吐下限MUST在契约进入frozen之前由Owner写入SLA字段; 非P0选填)'
+      - 调用频率限制(P0必填; 非P0选填)
+    gov_mod_004_exemption:
+      section_type: escalation
+      scenarios:
+      - scenario: scaffold原型阶段
+        exemption: 豁免IFC-001强制契约要求
+        constraint: Owner审批; scaffold边界自动回退; 必须在experimental开始前补齐
+      - scenario: 安全修复热更新
+        exemption: 跳过IFC-004审批流程
+        constraint: 24h内补齐KB决策记录
+      - scenario: 契约一致性验证临时跳过
+        exemption: 因外部验证脚本不可用
+        constraint: 记录Session Log; 外部依赖恢复后立即补验
+      rules:
+      - 每份豁免必须指定豁免的IFC编号+豁免范围+有效截止日期
+      - 过期不续期
+    gov_mod_004_normative_refs:
+      section_type: principles
+      refs:
+      - target: PS-STD-001 §2.5
+        role: doc_type/rule_form一致性约束——policy文件的元数据合法性
+      - target: PS-STD-003 §3
+        role: ABS级别约束——破坏性变更的流程合规基准
+      - target: GOV-MOD-001 MOD-P4
+        role: 接口可定义性筛选——决定模块是否具备接口设计资格
+      - target: GOV-MOD-003 MLC-003步骤7
+        role: 退役触发契约级联废弃——是IFC-007规则的触发器
+    gov_mod_004_cross_refs:
+      section_type: context
+      refs:
+      - target: GOV-MOD-005 INJ-003
+        role: 注入时契约存在性检查——消费本策略定义的契约注册表
+      - target: validate_module_schema.py
+        role: 契约注册表同步与一致性验证的执行工具
+    gov_mod_004_change_history:
+      section_type: context
+      entries:
+      - version: 1.0.0
+        date: '2026-05-06'
+        change: 新增§13模块间交互规则4条; §19异常豁免3场景; §20字段不重复声明+跨标准字段交叉引用
+  mod_005:
+    section_type: rule
+    title: 模块注入检查(GOV-MOD-005)
+    original_rules:
+    - MOD-005
+    conditions:
+    - type: pre_condition
+      check: INJ-001 ID唯一性
+      pass: module_id在module-id-registry.json中唯一
+      fail: ID重复→REJECT
+    - type: pre_condition
+      check: INJ-002依赖可解析
+      pass: depends_on所有依赖存在且可解析到具体文件
+      fail: 依赖不存在→REJECT
+    - type: pre_condition
+      check: INJ-003契约已定(P0)
+      pass: P0模块接口契约在cross_layer_contracts.yaml中已定义且frozen
+      fail: 契约未定义→REJECT
+    - type: pre_condition
+      check: INJ-004生命周期状态合法
+      pass: status字段为8个合法值之一
+      fail: status非法→REJECT
+    - type: pre_condition
+      check: INJ-005运行平面已分配
+      pass: runtime_plane为hot/warm/cold之一
+      fail: 未分配→REJECT
+    - type: pre_condition
+      check: INJ-006 KB决策记录已关联(P0)
+      pass: P0模块关联至少1个KB决策记录
+      fail: 未关联→REJECT
+    - type: pre_condition
+      check: INJ-007编码合规
+      pass: 模块文件UTF-8编码无BOM
+      fail: 编码不合规→REJECT
+    - type: pre_condition
+      check: INJ-008依赖方向合法
+      pass: 依赖方向符合GOV-ARCH-001跨层规则
+      fail: 违反跨层方向→REJECT
+    actions:
+    - type: mandatory
+      step: 注入检查按序执行：INJ-001→INJ-002→INJ-007→INJ-003→INJ-004→INJ-005→INJ-006→INJ-008
+    - type: mandatory
+      step: fail_fast模式——任一INJ检查失败即停止
+    - type: mandatory
+      step: INJ-003/INJ-006对非P0模块SKIP
+    prohibitions:
+    - 禁止绕过INJ检查直接注入模块
+    gov_mod_005_scope:
+      section_type: context
+      applies_to: 所有向architecture-model/注入模块的操作(新增+变更)
+      principle: MUST通过注入检查后才能写入模块——无前置检查=ID重复+依赖错误+接口幻觉
+    gov_mod_005_injection_flow:
+      section_type: procedure
+      steps:
+      - step: 1
+        action: 提交注入请求(module_id + 文件路径)
+      - step: 2
+        action: 'GOV-MOD-001 §7准入否决条件快速检查: INJ-001(ID重复)/INJ-002(依赖不存在)/INJ-004(状态非法)/INJ-005(无运行平面)→任一命中即立即否决'
+      - step: 3
+        action: 'GOV-MOD-001 §5准入四级筛选: MOD-P1→MOD-P2→MOD-P3→MOD-P4'
+      - step: 4
+        action: 四级筛选通过=准入临时通过(GOV-MOD-001 §8临届状态声明)
+      - step: 5
+        action: 本规则execution.sequence顺序执行INJ-001~008全部检查
+      - step: 6
+        action: INJ全部通过→最终注入完成→更新module-id-registry.json(admission_records + status)
+      - step: 7
+        action: INJ任一失败→准入回退→模块回到未准入状态修正后重新提交至步骤1
+    gov_mod_005_exemptions:
+      section_type: escalation
+      rules:
+      - rule_ids:
+        - INJ-003
+        - INJ-006
+        condition: module_priority != 'P0'
+        action: SKIP
+        reason: 非P0模块免接口契约+KB决策记录检查
+        record: 必须在module-id-registry.json中标注豁免原因
+    gov_mod_005_normative_refs:
+      section_type: principles
+      refs:
+      - target: PS-STD-001 §2.5
+        role: frontmatter字段合法性定义——本文件所有frontmatter字段格式遵循其约束
+      - target: PS-STD-003 §3
+        role: 行为边界标准ABS——REJECT动作的宪法级边界基准
+    gov_mod_005_cross_refs:
+      section_type: context
+      refs:
+      - target: GOV-MOD-001 §5~§8
+        role: 模块准入门控——本规范的INJ检查在准入四级筛选通过后执行
+      - target: GOV-MOD-002 §5
+        role: AI行为铁律——INJ-007从IRN-001派生为注入级检查
+      - target: GOV-MOD-003 §3~§6
+        role: 模块生命周期——INJ-004的valid_values对接阶段生命周期
+      - target: GOV-MOD-004 §3~§10
+        role: 模块接口契约——INJ-003的契约检查依据其frozen状态约束
+      - target: GOV-ARCH-001
+        role: 架构分层模型——INJ-008跨层依赖方向检查的建筑学基础
+    gov_mod_005_change_history:
+      section_type: context
+      entries:
+      - version: 1.1.0
+        date: '2026-06-19'
+        change: RQ审查修复：provenance源文件标记status=migrated（5个.md已迁移）；references.scripts路径更新为实际位置（6个脚本）；enforcement.executors路径更新
+      - version: 0.7.2
+        date: '2026-05-01'
+        change: '消费者通知机制交叉引用: notification_mechanism_ref字段引用GOV-MOD-002 §10三层通知体系'
+      - version: 0.7.0
+        date: '2026-05-01'
+        change: '对齐PS-STD-002: 新增controlled_enums/consumer_registry/change_sync_rules/modification_conditions/deprecation_flow/review_cycle'
+      - version: 0.5.0
+        date: '2026-05-01'
+        change: 新增INJ-008跨层依赖方向检查+完整注入流程编排(injection_flow)
+references:
+  rule_ids:
+  - TRAE-034
+  scripts:
+  - scripts/governance/d3_metadata/assign_module_id.py
+  - scripts/governance/d5_architecture/checkers/check_dependency_direction.py
+  - scripts/governance/d5_architecture/validators/validate_module_schema.py
+  - scripts/governance/d7_code/check_encoding.py
+  - scripts/governance/d5_architecture/checkers/check_ssot_uniqueness.py
+  - scripts/governance/d2_links/audit_broken_links.py
+  modules: []
+  blueprints: []
+enforcement:
+  type: code
+  executors:
+  - scripts/governance/d3_metadata/assign_module_id.py
+  - scripts/governance/d5_architecture/checkers/check_dependency_direction.py
+  - scripts/governance/d5_architecture/validators/validate_module_schema.py
+  - scripts/governance/d7_code/check_encoding.py
+  - scripts/governance/d5_architecture/checkers/check_ssot_uniqueness.py
+  - scripts/governance/d2_links/audit_broken_links.py
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: H
+  modification_permission: human_gated
+  superseded_by: null
+  version: "1.1.2"
+  last_modified: "2026-06-21"
+  change_history:
+  - version: 1.1.2
+    date: '2026-06-21'
+    by: AI-Assistant
+    changes:
+    - 'P1修复——references.modules改为[](空列表)，源.md文件已迁移为YAML规则文件后被删除(governance/module/目录不存在)'
+  - version: 1.1.1
+    date: '2026-06-21'
+    by: AI-Assistant
+    changes:
+    - 'IRN-007 verify字段从不存在的architecture-endgame-locked声明检查改为描述验证逻辑（Owner批准裁定）——改为描述depgraph.db中架构节点locked标记校验+Emergency Change Board记录检查'
+  - version: 1.1.0
+    date: '2026-06-21'
+    by: AI-Assistant
+    changes:
+    - 审查修复——references.rule_ids移除TRAE-032自引用，补充TRAE-034(任务卡相关)；references.modules将GOV-MOD-001~005模块ID改为模块路径(对应module-admission/ai-behavior-iron/module-lifecycle/module-interface-contract/module-injection-rules-policy.md)；enforcement.executors对齐references.scripts(从1个补充至6个)；line185 model-capability-contract.yaml修正为完整路径docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml
+  - version: 1.0.1
+    date: '2026-06-21'
+    by: session-20260621-batch4
+    changes:
+    - P1修复——references.rule_ids去重(5个TRAE-032重复项→1个)，符合RQ-02规范
+  - version: 1.0.0
+    date: '2026-06-13'
+    change: '初始提取——从module_admission_policy.md §5/§7提取模块准入四级筛选与否决条件；源文件已迁移为本规则文件（status:
+      migrated）'
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

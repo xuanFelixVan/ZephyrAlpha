@@ -1,45 +1,204 @@
-# [BLUEPRINT] MOD-INF-037 | docs/03_modules/l01_infrastructure/registry-governance/blueprint.md | §
+# [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain-governance/registry-governance/blueprint.md | §
 # [MODULE] scripts.governance.generate_project_path_tree
-# [INVARIANTS] 
-# [MODIFY-GUARD] 
-# [CONSUMERS] 
+# [INVARIANTS] --write MUST preserve design-state nodes; output MUST be valid YAML
+# [MODIFY-GUARD] depgraph.db
+# [CONSUMERS] AI cold-start; depgraph generator; migration tasks
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 
-# [TESTS] 
-"""从磁盘扫描生成 project-path-tree.yaml 物理路径树快照。
+# [ERROR_CONTRACT] PanoramaLoadError
+# [TESTS]
+"""从磁盘扫描生成架构全景图的tree段（运营态目录结构）。
 
-对标: Bazel BUILD 文件聚合 + Google Piper 目录视图。
-生成物: docs/01_policies_and_standards/_registry/catalogs/project-path-tree.yaml
+核心变更（DM-283/DM-310）:
+  - 输出写入 depgraph.db 的 tree 段（而非独立文件）
+  - 每个目录节点输出 lifecycle/__domain_id__/__subdomain_id__/__target_path__
+  - 双态保护：生成运营态时不覆盖设计态节点（lifecycle: design 优先于 operational）
+  - DM-310: __state__ 统一为 lifecycle 字段（与 depgraph 一致）
 
 用法:
     python scripts/governance/generate_project_path_tree.py            # stdout
-    python scripts/governance/generate_project_path_tree.py --write    # 覆写
+    python scripts/governance/generate_project_path_tree.py --write    # 覆写全景图tree段
     python scripts/governance/generate_project_path_tree.py --check    # CI 漂移检测
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import os
+import sqlite3
+import subprocess
 import re
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
+import yaml
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-OUTPUT_FILE = (
-    PROJECT_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "catalogs"
-    / "project-path-tree.yaml"
+
+
+def _yaml_load(path):
+    """Load YAML with C loader if available (10-50x faster than pure Python)."""
+    try:
+        from yaml import CSafeLoader
+        loader = CSafeLoader
+    except ImportError:
+        loader = yaml.SafeLoader
+    with open(path, "r", encoding="utf-8") as f:
+        return yaml.load(f, Loader=loader)
+
+
+def _load_panorama_from_db(db_path):
+    """Load panorama data from SQLite database, returning a dict compatible with the old YAML structure.
+
+    Reads from: domains table, arch_directory_tree table, arch_path_mappings table.
+    Returns dict with keys: domains, tree, meta, and optional path sections.
+    """
+    conn = sqlite3.connect(str(db_path))
+    conn.row_factory = sqlite3.Row
+    data = {"domains": {}, "tree": {}, "meta": {}}
+
+    # Load domains — map to the same structure as the YAML panorama domains section
+    for row in conn.execute("SELECT * FROM domains"):
+        domain = dict(row)
+        did = domain.pop("domain_id")
+        domain_entry = {
+            "parent_domain": domain.get("domain_group", ""),
+            "domain_id": did,
+            "subdomain_id": did,
+            "ssot_path": domain.get("ssot_path", ""),
+            "ssot_module": "",
+            "covers": [],
+            "aliases": [],
+            "change_policy": domain.get("lifecycle", ""),
+            "impact_level": "M",
+            "modification_permission": "",
+        }
+        data["domains"][did] = domain_entry
+
+    # Enrich domains with covers/aliases from arch_path_mappings
+    for row in conn.execute("SELECT * FROM arch_path_mappings"):
+        mapping = dict(row)
+        did = mapping.get("domain_id", "")
+        if did in data["domains"]:
+            covers_raw = mapping.get("covers", "")
+            if covers_raw:
+                try:
+                    data["domains"][did]["covers"] = json.loads(covers_raw)
+                except (json.JSONDecodeError, TypeError):
+                    data["domains"][did]["covers"] = [covers_raw] if covers_raw else []
+            aliases_raw = mapping.get("aliases", "")
+            if aliases_raw:
+                try:
+                    data["domains"][did]["aliases"] = json.loads(aliases_raw)
+                except (json.JSONDecodeError, TypeError):
+                    data["domains"][did]["aliases"] = [aliases_raw] if aliases_raw else []
+
+    # Build tree structure from arch_directory_tree
+    tree = {}
+    for row in conn.execute("SELECT * FROM arch_directory_tree ORDER BY path"):
+        entry = dict(row)
+        path = entry.get("path", "")
+        if not path:
+            continue
+        parts = path.split("/")
+        current = tree
+        for i, part in enumerate(parts):
+            if part not in current:
+                current[part] = {}
+            if i == len(parts) - 1:
+                current[part]["__domain_id__"] = entry.get("domain_id", "")
+                current[part]["__subdomain_id__"] = ""
+                current[part]["lifecycle"] = entry.get("state", "operational")
+            else:
+                current = current[part]
+    data["tree"] = tree
+
+    # Load metadata
+    try:
+        cur = conn.execute("SELECT version FROM _schema_version ORDER BY version DESC LIMIT 1")
+        r = cur.fetchone()
+        if r:
+            data["meta"]["schema_version"] = r[0]
+    except Exception:
+        pass
+
+    conn.close()
+    return data
+
+
+def _write_tree_to_db(db_path, tree, total_files, total_dirs):
+    """Write tree structure to SQLite database arch_directory_tree table.
+
+    Clears existing operational rows (preserves design-state), then inserts new ones.
+    """
+    conn = sqlite3.connect(str(db_path))
+    try:
+        # Clear existing operational data (preserve design-state)
+        conn.execute("DELETE FROM arch_directory_tree WHERE COALESCE(design_maturity, '') != 'design'")
+
+        def _insert_tree_node(cursor, path, node_data, parent_path=None):
+            """Recursively insert tree nodes."""
+            state = node_data.get("lifecycle", "operational")
+            # Skip design-state nodes (already in DB)
+            if state == "design":
+                return
+
+            cursor.execute("""INSERT OR IGNORE INTO arch_directory_tree
+                (path, parent_path, path_type, domain_id, design_maturity, blueprint_id,
+                 change_policy, modification_permission, build_status, last_scanned)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    path,
+                    parent_path,
+                    "directory",
+                    node_data.get("__domain_id__", ""),
+                    state,
+                    node_data.get("__blueprint_id__", ""),
+                    node_data.get("__stability__", node_data.get("change_policy", "")),
+                    node_data.get("__ai_autonomy__", node_data.get("modification_permission", "")),
+                    node_data.get("build_status", "unbuilt"),
+                    datetime.now(UTC).isoformat()
+                ))
+
+            # Recurse into children
+            for key, val in node_data.items():
+                if key.startswith("__") or not isinstance(val, dict):
+                    continue
+                child_path = f"{path}/{key}" if path else key
+                _insert_tree_node(cursor, child_path, val, path)
+
+        # Insert all root nodes
+        for root_name, root_data in tree.items():
+            if isinstance(root_data, dict):
+                _insert_tree_node(conn, root_name, root_data)
+
+        # Update metadata in _schema_version
+        desc = f"path_tree_update; total_files={total_files}; total_directories={total_dirs}"
+        conn.execute(
+            "INSERT OR REPLACE INTO _schema_version (version, applied_at, description) VALUES (?, ?, ?)",
+            (4, datetime.now(UTC).isoformat(), desc)
+        )
+
+        conn.commit()
+        count = conn.execute("SELECT COUNT(*) FROM arch_directory_tree").fetchone()[0]
+        print(f"[PATH-TREE-DB] Updated {count} directory tree nodes")
+    except Exception as e:
+        conn.rollback()
+        print(f"[PATH-TREE-DB] ERROR: {e}")
+        raise
+    finally:
+        conn.close()
+
+
+DEPGRAPH_DB_PATH = (
+    PROJECT_ROOT / "data" / "databases" / "depgraph.db"
 )
 
-SCAN_ROOTS = ["src/zephyr", "scripts", "tests", "config", "docs"]
+SCAN_ROOTS = ["src/zephyr", "scripts", "tests", "config", "docs", "data"]
 SKIP_DIRS = {
     "__pycache__",
     ".git",
@@ -56,6 +215,8 @@ SKIP_DIRS = {
     ".vs",
     ".eggs",
     "*.egg-info",
+    "cache",
+    "telemetry",
 }
 SKIP_EXTENSIONS = {".pyc", ".pyo", ".so", ".dll", ".exe", ".obj", ".pdb", ".idb"}
 MAX_DEPTH = 8
@@ -71,9 +232,191 @@ def _should_skip_dir(name: str) -> bool:
     return False
 
 
-def scan_directory(root: Path, prefix: str = "", depth: int = 0) -> dict:
+def load_domain_derivation() -> dict:
+    """Load domain derivation from panorama's domains section.
+
+    Panorama has 35 flat functional domains, each with:
+      - domain_id: functional domain name (e.g., "capacity-assurance")
+      - ssot_path: target directory path
+      - parent_domain: parent domain name (for architecture_layer)
+
+    Returns:
+        {path_prefix: {domain_id, subdomain_id}} sorted by prefix length desc.
+    """
+    if not DEPGRAPH_DB_PATH.exists():
+        return {}
+    try:
+        data = _load_panorama_from_db(DEPGRAPH_DB_PATH)
+    except Exception:
+        return {}
+    if not data:
+        return {}
+
+    derivation = {}
+
+    # From domains section (35 flat functional domains)
+    domains_data = data.get("domains", {})
+    for func_domain_name, func_domain_val in domains_data.items():
+        if not isinstance(func_domain_val, dict):
+            continue
+        domain_id = func_domain_val.get("domain_id", func_domain_name)
+        subdomain_id = func_domain_val.get("subdomain_id", "")
+        ssot_path = (func_domain_val.get("ssot_path") or "").replace("\\", "/").rstrip("/") + "/"
+        if ssot_path and domain_id:
+            derivation[ssot_path] = {
+                "domain_id": domain_id,
+                "subdomain_id": subdomain_id,
+            }
+
+    # From tree section (current operational paths with __domain_id__)
+    tree_data = data.get("tree", {})
+    _extract_tree_domain_ids(tree_data, "", derivation)
+
+    # From path design sections (blueprint_paths, test_paths, etc.)
+    # These define design-state paths for non-code areas
+    path_sections = [
+        "blueprint_paths", "test_paths", "script_paths",
+        "knowledge_paths", "data_paths", "gate_paths", "frontend_paths",
+    ]
+    for section_name in path_sections:
+        section_data = data.get(section_name)
+        if not section_data or not isinstance(section_data, dict):
+            continue
+        _extract_path_section_domains(section_data, section_name, derivation)
+
+    # Sort by key length descending for best prefix match
+    derivation = dict(sorted(derivation.items(), key=lambda x: len(x[0]), reverse=True))
+
+    # Fallback: add path prefixes not covered by domains table ssot_path
+    # These directories contain governance/utility/config files, mapped to closest domain
+    PATH_DOMAIN_FALLBACK = {
+        # scripts/ — governance/utility scripts
+        "scripts/governance/": "D-GOVERNANCE",
+        "scripts/data/": "D-DATA_ENG",
+        "scripts/construction/": "D-GOVERNANCE",
+        "scripts/autonomy_core/": "D-AUTONOMY_CORE",
+        "scripts/cleanup/": "D-GOVERNANCE",
+        "scripts/connect/": "D-INTEGRATION",
+        "scripts/database/": "D-DATA_ENG",
+        "scripts/repair/": "D-GOVERNANCE",
+        "scripts/": "D-GOVERNANCE",
+        # data/ — data files and databases
+        "data/databases/": "D-DATA_ENG",
+        "data/asset_index/": "D-GOVERNANCE",
+        "data/metrics/": "D-GOVERNANCE",
+        "data/reports/": "D-GOVERNANCE",
+        "data/": "D-DATA_ENG",
+        # docs/ — governance documentation
+        "docs/03_modules/": "D-GOVERNANCE",
+        "docs/01_policies_and_standards/": "D-GOVERNANCE",
+        "docs/02_enterprise_architecture/": "D-GOVERNANCE",
+        "docs/": "D-GOVERNANCE",
+        # tests/ — quality assurance
+        "tests/": "D-GOVERNANCE",
+        # config/ — configuration
+        "config/": "D-GOVERNANCE",
+        # agent_spec/ — agent specifications
+        "agent_spec/": "D-AUTONOMY_CORE",
+    }
+    for prefix, did in PATH_DOMAIN_FALLBACK.items():
+        if prefix not in derivation:
+            derivation[prefix] = {"domain_id": did, "subdomain_id": ""}
+
+    # Re-sort after adding fallbacks
+    derivation = dict(sorted(derivation.items(), key=lambda x: len(x[0]), reverse=True))
+
+    return derivation
+
+
+def _extract_tree_domain_ids(tree_node: dict, current_path: str, derivation: dict) -> None:
+    """Recursively extract domain_id from panorama tree section."""
+    if not isinstance(tree_node, dict):
+        return
+    domain_id = tree_node.get("__domain_id__", "")
+    subdomain_id = tree_node.get("__subdomain_id__", "")
+    if domain_id and current_path:
+        prefix = (current_path or "").replace("\\", "/")
+        if not prefix.endswith("/"):
+            prefix += "/"
+        if prefix not in derivation:
+            derivation[prefix] = {"domain_id": domain_id, "subdomain_id": subdomain_id}
+    for key, val in tree_node.items():
+        if key.startswith("__") or not isinstance(val, dict):
+            continue
+        child_path = f"{current_path}/{key}" if current_path else key
+        _extract_tree_domain_ids(val, child_path, derivation)
+
+
+def _extract_path_section_domains(section_data: dict, section_name: str, derivation: dict) -> None:
+    """Extract domain derivation entries from path design sections.
+
+    Path sections like blueprint_paths define design_root and structure patterns
+    like '{design_root}{domain_id}/'. We expand these patterns using the 35
+    functional domains to create derivation entries for each domain's path.
+    """
+    design_root = (section_data.get("design_root") or "").replace("\\", "/").rstrip("/") + "/"
+    if not design_root or design_root == "/":
+        return
+
+    # Map section names to domain derivation
+    # blueprint_paths → registry_management (blueprints are governance artifacts)
+    # test_paths → code_dedup (tests are quality assurance)
+    # script_paths → script_governance
+    # etc.
+    SECTION_DOMAIN_MAP = {
+        "blueprint_paths": "registry_management",
+        "test_paths": "code_dedup",
+        "script_paths": "script_governance",
+        "knowledge_paths": "knowledge_management",
+        "data_paths": "persistence",
+        "gate_paths": "gate_orchestration",
+        "frontend_paths": "runtime_integration",
+    }
+    section_domain = SECTION_DOMAIN_MAP.get(section_name, "")
+
+    # Add the design_root itself with the section's domain
+    if section_domain:
+        derivation[design_root] = {"domain_id": section_domain, "subdomain_id": ""}
+
+    # If structure contains {domain_id}, expand for each known domain
+    structure = section_data.get("structure") or ""
+    if "{domain_id}" in structure and section_domain:
+        # Load domain IDs from panorama domains section
+        panorama = {}
+        try:
+            panorama = _load_panorama_from_db(DEPGRAPH_DB_PATH) or {}
+        except Exception:
+            pass
+        domains_data = panorama.get("domains", {})
+        for func_domain_name, func_domain_val in domains_data.items():
+            if not isinstance(func_domain_val, dict):
+                continue
+            domain_id = func_domain_val.get("domain_id") or func_domain_name
+            expanded = structure.replace("{design_root}", design_root).replace("{domain_id}", domain_id)
+            expanded = (expanded or "").replace("\\", "/").rstrip("/") + "/"
+            if expanded not in derivation:
+                derivation[expanded] = {"domain_id": domain_id, "subdomain_id": ""}
+
+
+def derive_domain_for_path(rel_path: str, domain_derivation: dict) -> tuple:
+    """Derive domain_id and subdomain_id from path using panorama derivation.
+
+    Returns: (domain_id, subdomain_id)
+    """
+    rp = (rel_path or "").replace("\\", "/") + "/"
+    for prefix, info in domain_derivation.items():
+        if rp.startswith(prefix):
+            return info["domain_id"], info["subdomain_id"]
+    return "", ""
+
+
+def scan_directory(root: Path, prefix: str = "", depth: int = 0,
+                   domain_derivation: dict = None) -> dict:
     if depth > MAX_DEPTH:
         return {"__truncated__": True}
+
+    if domain_derivation is None:
+        domain_derivation = {}
 
     dirs: dict[str, dict] = {}
     files: list[str] = []
@@ -84,12 +427,17 @@ def scan_directory(root: Path, prefix: str = "", depth: int = 0) -> dict:
         return {"__permission_denied__": True}
 
     for entry in entries:
-        if entry.name.startswith(".") and entry.name not in {".env", ".pre-commit-config.yaml"}:
+        if entry.name.startswith(".") and entry.name not in {".env", ".pre_commit-config.yaml"}:
             continue
         if entry.is_dir():
             if _should_skip_dir(entry.name):
                 continue
-            subdir = scan_directory(entry, prefix=f"{prefix}/{entry.name}", depth=depth + 1)
+            subdir = scan_directory(
+                entry,
+                prefix=f"{prefix}/{entry.name}",
+                depth=depth + 1,
+                domain_derivation=domain_derivation,
+            )
             if subdir:
                 dirs[entry.name] = subdir
         elif entry.is_file():
@@ -98,6 +446,14 @@ def scan_directory(root: Path, prefix: str = "", depth: int = 0) -> dict:
             files.append(entry.name)
 
     result: dict = {}
+    result["lifecycle"] = "operational"
+
+    # Derive domain info for this directory
+    domain_id, subdomain_id = derive_domain_for_path(prefix, domain_derivation)
+    result["__domain_id__"] = domain_id
+    result["__subdomain_id__"] = subdomain_id
+    result["__target_path__"] = None
+
     if files:
         result["__files__"] = files
         result["__file_count__"] = len(files)
@@ -120,113 +476,405 @@ def count_tree(tree: dict) -> tuple[int, int]:
     return file_count, dir_count
 
 
-def tree_to_yaml(tree: dict, indent: int = 4) -> str:
-    lines: list[str] = []
+def merge_with_design_nodes(new_tree: dict, old_tree: dict) -> dict:
+    """Merge new operational tree with old tree, preserving design-state nodes.
 
-    file_list = tree.get("__files__")
-    if file_list:
-        lines.append(" " * indent + "__files__:")
-        for f in file_list:
-            escaped = f.replace("'", "''")
-            lines.append(" " * (indent + 2) + f"- '{escaped}'")
+    For each directory node in old_tree:
+    - If lifecycle == "design", preserve it entirely (don't overwrite)
+    - If lifecycle == "operational" or no lifecycle, use new_tree's version
+    - If a node exists in old_tree but not in new_tree and is design-state, keep it
+    - If lifecycle == "pending_deletion", preserve it (migration in progress)
+    - If lifecycle is a dict (legacy from __state__ migration), fix it
+    """
+    if not old_tree:
+        return new_tree
 
-    for key in sorted(tree.keys()):
+    merged = dict(new_tree)
+
+    for key, old_val in old_tree.items():
         if key.startswith("__"):
             continue
-        val = tree[key]
-        if isinstance(val, dict):
-            lines.append(" " * indent + f"{key}/:")
-            lines.append(tree_to_yaml(val, indent + 2))
+        if not isinstance(old_val, dict):
+            continue
 
-    return "\n".join(lines)
+        # Fix legacy dict lifecycle values
+        _fix_dict_lifecycle(old_val)
+
+        if key not in merged:
+            # Node exists in old but not new — preserve if design-state or pending_deletion
+            if old_val.get("lifecycle") in ("design", "pending_deletion"):
+                merged[key] = old_val
+        else:
+            # Node exists in both — recurse, but preserve design-state children
+            new_val = merged[key]
+            if isinstance(new_val, dict):
+                if old_val.get("lifecycle") in ("design", "pending_deletion"):
+                    # Old node is design/pending_deletion, preserve it entirely
+                    merged[key] = old_val
+                else:
+                    # Both operational, merge children recursively
+                    merged[key] = merge_with_design_nodes(new_val, old_val)
+
+    return merged
 
 
-def generate_yaml() -> str:
-    now = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
-    total_files = 0
-    total_dirs = 0
-    sections: list[str] = []
+def _fix_dict_lifecycle(node: dict) -> None:
+    """Fix legacy dict lifecycle values from __state__→lifecycle migration.
 
+    Some old design-state nodes had their entire metadata dict as the __state__ value.
+    After renaming __state__→lifecycle, the lifecycle field became a dict like:
+      lifecycle: {lifecycle: operational, __domain_id__: ..., ...}
+    This function extracts the string lifecycle value and merges remaining keys.
+    """
+    lc = node.get("lifecycle")
+    if not isinstance(lc, dict):
+        return
+    # Extract the nested string lifecycle value
+    nested_lc = lc.get("lifecycle", "")
+    if isinstance(nested_lc, str) and nested_lc:
+        node["lifecycle"] = nested_lc
+        # Merge remaining keys from the dict into the node (if not already present)
+        for k, v in lc.items():
+            if k != "lifecycle" and k not in node:
+                node[k] = v
+    elif "__truncated__" in lc:
+        node["lifecycle"] = "operational"
+    else:
+        # Fallback: just set to operational
+        node["lifecycle"] = "operational"
+
+
+def _fix_all_dict_lifecycle(tree: dict) -> int:
+    """Walk entire tree and fix all dict lifecycle values. Returns count fixed."""
+    fixed = 0
+    if not isinstance(tree, dict):
+        return 0
+    _fix_dict_lifecycle(tree)
+    if isinstance(tree.get("lifecycle"), str):
+        # Was just fixed
+        pass
+    for key, val in tree.items():
+        if key.startswith("__") or not isinstance(val, dict):
+            continue
+        fixed += _fix_all_dict_lifecycle(val)
+    return fixed
+
+
+def generate_tree(domain_derivation: dict) -> dict:
+    """Generate the full tree structure from disk scan."""
+    tree = {}
     for root_name in SCAN_ROOTS:
         root_path = PROJECT_ROOT / root_name
         if not root_path.exists():
-            sections.append(f"  {root_name}/:\n    _status: absent")
+            tree[root_name] = {"lifecycle": "absent"}
             continue
-        tree = scan_directory(root_path, prefix=root_name)
-        fc, dc = count_tree(tree)
-        total_files += fc
-        total_dirs += dc
-        section = f"  {root_name}/:\n{tree_to_yaml(tree, 4)}"
-        sections.append(section)
+        subtree = scan_directory(root_path, prefix=root_name, domain_derivation=domain_derivation)
+        tree[root_name] = subtree
+    return tree
 
-    header = (
-        "# ============================================================================\n"
-        "# ZephyrAlpha 物理路径树快照 — 自动生成，禁止手写\n"
-        "# 生成工具: scripts/governance/generate_project_path_tree.py\n"
-        "# 用途: AI 冷启动第一步——'项目现在长什么样'\n"
-        "# ============================================================================\n\n"
-    )
 
-    meta = (
-        f"meta:\n"
-        f"  generated_at: '{now}'\n"
-        f"  auto_generated_by: 'scripts/governance/generate_project_path_tree.py'\n"
-        f"  total_files: {total_files}\n"
-        f"  total_directories: {total_dirs}\n"
-        f"  scan_roots: {SCAN_ROOTS}\n"
-        f"  max_depth: {MAX_DEPTH}\n\n"
-    )
+def _mark_pending_deletion(tree: dict, target_path: str) -> bool:
+    """Mark an operational node as pending_deletion if its files have been migrated.
 
-    body = "tree:\n" + "\n".join(sections) + "\n"
+    target_path is a relative path like 'src/zephyr/old_module/file.py'.
+    Walk the tree to find the node and mark it.
+    Returns True if marked, False if not found or already marked.
+    """
+    parts = (target_path or "").replace("\\", "/").split("/")
+    current = tree
+    # Walk to the parent directory
+    for part in parts[:-1]:
+        if not isinstance(current, dict) or part not in current:
+            return False
+        current = current[part]
+    # The last part is the file or directory name
+    last = parts[-1]
+    if not isinstance(current, dict):
+        return False
 
-    return header + meta + body
+    # Check if it's a file in __files__ list
+    if "__files__" in current and last in current["__files__"]:
+        # File exists in this directory — mark the directory as pending_deletion
+        # if it's operational and the specific file has been migrated
+        if current.get("lifecycle") == "operational":
+            current["lifecycle"] = "pending_deletion"
+            return True
+        return False
+
+    # Check if it's a subdirectory
+    if last in current and isinstance(current[last], dict):
+        node = current[last]
+        if node.get("lifecycle") == "operational":
+            node["lifecycle"] = "pending_deletion"
+            return True
+        return False
+
+    return False
 
 
 def cmd_write() -> None:
-    content = generate_yaml()
-    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = f"{OUTPUT_FILE}.{os.getpid()}.tmp"
-    try:
-        Path(tmp_path).write_text(content, encoding="utf-8")
-        os.replace(tmp_path, OUTPUT_FILE)
-    except PermissionError:
+    """Write tree section to panorama YAML, preserving design-state nodes.
+
+    Concurrent strategy: compute first (no lock), then lock only for read-merge-write.
+    This allows multiple AI sessions to compute in parallel, only serializing the
+    final write step (which is fast).
+    """
+    print("[DEPRECATED] --write is deprecated. DB is now the SSoT. YAML output will be removed in a future version.")
+
+    if not DEPGRAPH_DB_PATH.exists():
+        print(f"[FAIL] Panorama file not found: {DEPGRAPH_DB_PATH}")
+        sys.exit(1)
+
+    # === PHASE 1: Compute (no lock needed) ===
+    # These steps are read-only or pure computation — safe to run in parallel.
+
+    # Load domain derivation (reads panorama path sections — read-only)
+    domain_derivation = load_domain_derivation()
+    print(f"[PATH-TREE] Loaded {len(domain_derivation)} domain derivation entries")
+
+    # Generate new tree from disk scan (pure computation)
+    new_tree = generate_tree(domain_derivation)
+
+    # Load migration registry for pending_deletion marking (read-only)
+    migration_registry_path = (
+        PROJECT_ROOT / "docs" / "02_enterprise_architecture" / "migration-registry.yaml"
+    )
+    pending_entries = []
+    if migration_registry_path.exists():
         try:
-            os.remove(tmp_path)
-        except OSError:
+            reg = _yaml_load(migration_registry_path)
+            if reg and "entries" in reg:
+                for entry in reg["entries"]:
+                    if entry.get("status") == "completed":
+                        continue
+                    old_p = (entry.get("old_path") or "").replace("\\", "/")
+                    new_p = (entry.get("new_path") or "").replace("\\", "/")
+                    if not old_p or not new_p:
+                        continue
+                    new_disk = PROJECT_ROOT / new_p
+                    if new_disk.exists():
+                        pending_entries.append(old_p)
+        except Exception:
             pass
-        raise
-    print(f"[OK] Written to {OUTPUT_FILE}")
+
+    print(f"[PATH-TREE] Computation done. Ready to write (lock needed).")
+
+    # === PHASE 2: Lock → Read → Merge → Write → Unlock ===
+    # Only this phase needs the lock. It's fast (read YAML + merge dicts + write YAML).
+
+    session_id = os.environ.get("ZEPHYR_SESSION_ID", f"path-tree-{os.getpid()}")
+    lock_acquired = False
+    lock_script = PROJECT_ROOT / "scripts" / "lock_files.py"
+
+    # Acquire lock with retry
+    max_retries = 3
+    retry_delay = 5
+    for attempt in range(1, max_retries + 1):
+        if not lock_script.exists():
+            break
+        result = subprocess.run(
+            [sys.executable, str(lock_script), "acquire",
+             str(DEPGRAPH_DB_PATH), session_id, "--task", "path-tree generation"],
+            capture_output=True, text=True
+        )
+        if result.returncode == 0:
+            lock_acquired = True
+            print(f"[LOCK] Acquired write lock on panorama (owner={session_id})")
+            break
+        if attempt < max_retries:
+            print(f"[LOCK] Panorama locked by another session (attempt {attempt}/{max_retries}), waiting {retry_delay}s...")
+            import time
+            time.sleep(retry_delay)
+        else:
+            print(f"[LOCKED] Cannot acquire lock after {max_retries} attempts: {result.stdout.strip()}")
+            print(f"         Another AI session is writing. Retry later.")
+            sys.exit(1)
+
+    try:
+        # Read latest panorama (under lock — guaranteed latest state)
+        try:
+            panorama = _load_panorama_from_db(DEPGRAPH_DB_PATH)
+        except Exception as e:
+            print(f"[FAIL] Cannot load panorama: {e}")
+            sys.exit(1)
+
+        if not panorama:
+            print("[FAIL] Panorama is empty")
+            sys.exit(1)
+
+        # Merge: new operational tree + existing design-state nodes
+        old_tree = panorama.get("tree", {})
+        merged_tree = merge_with_design_nodes(new_tree, old_tree)
+
+        # Fix any remaining dict lifecycle values
+        _fix_all_dict_lifecycle(merged_tree)
+
+        # Mark pending_deletion
+        pending_count = 0
+        for old_p in pending_entries:
+            if _mark_pending_deletion(merged_tree, old_p):
+                pending_count += 1
+        if pending_count:
+            print(f"[PATH-TREE] Marked {pending_count} nodes as pending_deletion")
+
+        # Count
+        total_files = 0
+        total_dirs = 0
+        for root_name, subtree in merged_tree.items():
+            if isinstance(subtree, dict):
+                fc, dc = count_tree(subtree)
+                total_files += fc
+                total_dirs += dc
+
+        # Update panorama — write merged tree to DB
+        panorama["tree"] = merged_tree
+        panorama["meta"]["generated_at"] = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+        panorama["meta"]["total_files"] = total_files
+        panorama["meta"]["total_directories"] = total_dirs
+
+        # Write tree to DB (update arch_directory_tree)
+        _write_tree_to_db(DEPGRAPH_DB_PATH, merged_tree, total_files, total_dirs)
+
+        print(f"[OK] Tree written to {DEPGRAPH_DB_PATH}")
+        print(f"     Files: {total_files} | Directories: {total_dirs}")
+    finally:
+        if lock_acquired and lock_script.exists():
+            subprocess.run(
+                [sys.executable, str(lock_script), "release",
+                 str(DEPGRAPH_DB_PATH), session_id],
+                capture_output=True, text=True
+            )
+            print(f"[LOCK] Released write lock on panorama")
 
 
 def cmd_check() -> None:
-    if not OUTPUT_FILE.exists():
-        print("[FAIL] project-path-tree.yaml does not exist. Run with --write first.")
+    """Check if panorama tree is in sync with disk."""
+    if not DEPGRAPH_DB_PATH.exists():
+        print(f"[FAIL] Panorama file not found: {DEPGRAPH_DB_PATH}")
         sys.exit(1)
-    generated = generate_yaml()
-    current = OUTPUT_FILE.read_text(encoding="utf-8")
-    gen_stripped = re.sub(r"generated_at: '[^']*'", "generated_at: ''", generated)
-    cur_stripped = re.sub(r"generated_at: '[^']*'", "generated_at: ''", current)
-    if cur_stripped.strip() != gen_stripped.strip():
-        print("[FAIL] project-path-tree.yaml is OUT OF SYNC with disk.")
+
+    try:
+        panorama = _load_panorama_from_db(DEPGRAPH_DB_PATH)
+    except Exception as e:
+        print(f"[FAIL] Cannot load panorama: {e}")
+        sys.exit(1)
+
+    domain_derivation = load_domain_derivation()
+    new_tree = generate_tree(domain_derivation)
+    old_tree = panorama.get("tree", {})
+
+    # Compare only operational nodes (strip design-state from old_tree for comparison)
+    def strip_design(tree: dict) -> dict:
+        result = {}
+        for key, val in tree.items():
+            if key.startswith("__"):
+                if key != "lifecycle":
+                    result[key] = val
+                continue
+            if isinstance(val, dict):
+                if val.get("lifecycle") in ("design", "pending_deletion"):
+                    continue
+                result[key] = strip_design(val)
+            else:
+                result[key] = val
+        return result
+
+    new_stripped = strip_design(new_tree)
+    old_stripped = strip_design(old_tree)
+
+    new_yaml = yaml.dump(new_stripped, allow_unicode=True, default_flow_style=False, sort_keys=True)
+    old_yaml = yaml.dump(old_stripped, allow_unicode=True, default_flow_style=False, sort_keys=True)
+
+    if new_yaml != old_yaml:
+        print("[FAIL] Panorama tree is OUT OF SYNC with disk.")
         print("       Run: python scripts/governance/generate_project_path_tree.py --write")
         sys.exit(1)
     else:
-        print("[OK] project-path-tree.yaml is in sync with disk.")
+        print("[OK] Panorama tree is in sync with disk.")
+
+
+def cmd_write_db(db_path: str) -> None:
+    """Write tree to SQLite database (DM-100025)"""
+    import sqlite3
+    import json
+
+    print(f"[PATH-TREE-DB] Writing to {db_path}...")
+
+    domain_derivation = load_domain_derivation()
+    tree = generate_tree(domain_derivation)
+
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    try:
+        # Clear existing operational data (preserve design-state)
+        cursor.execute("DELETE FROM arch_directory_tree WHERE COALESCE(design_maturity, '') != 'design'")
+
+        def insert_tree_node(path: str, node_data: dict, parent_path: str = None):
+            """Recursively insert tree nodes"""
+            state = node_data.get("lifecycle", "operational")
+
+            # Skip design-state nodes (already in DB)
+            if state == "design":
+                return
+
+            cursor.execute("""INSERT OR IGNORE INTO arch_directory_tree
+                (path, parent_path, path_type, domain_id, design_maturity, blueprint_id,
+                 change_policy, modification_permission, build_status, last_scanned)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    path,
+                    parent_path,
+                    "directory" if "children" in node_data else "file",
+                    node_data.get("__domain_id__", ""),
+                    state,
+                    node_data.get("__blueprint_id__", ""),
+                    node_data.get("__stability__", ""),
+                    node_data.get("__ai_autonomy__", ""),
+                    "unbuilt",
+                    datetime.now(UTC).isoformat()
+                ))
+
+            # Recurse into children
+            for child_name, child_data in node_data.get("children", {}).items():
+                child_path = f"{path}/{child_name}" if path else child_name
+                insert_tree_node(child_path, child_data, path)
+
+        # Insert all root nodes
+        for root_name, root_data in tree.items():
+            insert_tree_node(root_name, root_data)
+
+        conn.commit()
+        count = cursor.execute("SELECT COUNT(*) FROM arch_directory_tree").fetchone()[0]
+        print(f"[PATH-TREE-DB] Inserted {count} directory tree nodes")
+
+    except Exception as e:
+        conn.rollback()
+        print(f"[PATH-TREE-DB] ERROR: {e}")
+        raise
+    finally:
+        conn.close()
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate project-path-tree.yaml")
+    parser = argparse.ArgumentParser(description="Generate panorama tree section")
     group = parser.add_mutually_exclusive_group()
-    group.add_argument("--write", action="store_true", help="Overwrite registry file")
+    group.add_argument("--write", action="store_true", help="[DEPRECATED] Write tree to panorama YAML (DB is now the SSoT)")
     group.add_argument("--check", action="store_true", help="CI mode: exit 1 if mismatch")
+    parser.add_argument("--output-db", type=str, default="", help="Write tree to SQLite database (DM-100025)")
     args = parser.parse_args()
 
     if args.check:
         cmd_check()
+    elif args.output_db:
+        cmd_write_db(args.output_db)
     elif args.write:
         cmd_write()
     else:
-        print(generate_yaml())
+        print("[DEPRECATED] Default stdout YAML output is deprecated. DB is now the SSoT. YAML output will be removed in a future version.")
+        domain_derivation = load_domain_derivation()
+        tree = generate_tree(domain_derivation)
+        print(yaml.dump({"tree": tree}, allow_unicode=True, default_flow_style=False, sort_keys=False))
 
 
 if __name__ == "__main__":

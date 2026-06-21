@@ -1,0 +1,20 @@
+# [A_module] module_id=MOD-GOV_observability_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+__all__ = [
+    "benchmark_integrity",
+    "observability_dashboard",
+    "performance_baseline",
+    "provenance_tracker",
+    "LatencySegment",
+    "get_segment",
+    "validate_e2e",
+    "IntegrityDim",
+    "DashboardPanel",
+    "SLI",
+    "DashboardConfig",
+    "ProvenanceRecord",
+    "generate_provenance",
+    "embed_provenance",
+    "extract_provenance",
+    "is_session_owned",
+    "provenance_key",
+]

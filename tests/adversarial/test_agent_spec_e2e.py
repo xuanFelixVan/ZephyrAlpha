@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0008 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-203 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_agent_spec_e2e
 # [STABILITY] evolving
 # [SAFETY] L
@@ -21,9 +22,9 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.agent_spec.engine import SpecEngine, UpgradePhase, UpgradeResult
-from zephyr.agent_spec.skill_loader import SkillLoader
-from zephyr.agent_spec.skill_freshness import FreshnessDecayModel
+from zephyr.autonomy_core.engine import SpecEngine, UpgradePhase, UpgradeResult
+from zephyr.autonomy_core.skill_loader import SkillLoader
+from zephyr.autonomy_core.skill_freshness import FreshnessDecayModel
 
 
 class TestSpecEngineDryRun:
@@ -31,7 +32,7 @@ class TestSpecEngineDryRun:
 
     def test_dry_run_does_not_modify_files(self, tmp_path):
         engine = SpecEngine()
-        bp = "docs/03_modules/l01_infrastructure/agent-spec/blueprint.md"
+        bp = "docs/03_modules/_domain-infra_ops/agent-spec/blueprint.md"
         result = engine.upgrade(bp, dry_run=True)
 
         assert result.phase == UpgradePhase.COMPLETE
@@ -42,7 +43,7 @@ class TestSpecEngineDryRun:
 
     def test_dry_run_on_real_blueprint(self):
         engine = SpecEngine()
-        bp_path = "docs/03_modules/l01_infrastructure/agent-spec/blueprint.md"
+        bp_path = "docs/03_modules/_domain-infra_ops/agent-spec/blueprint.md"
         result = engine.upgrade(bp_path, dry_run=True)
         assert result.phase == UpgradePhase.COMPLETE
         assert len(result.module_name) > 0
@@ -54,7 +55,7 @@ class TestSpecEngineDiscover:
 
     def test_discover_from_agent_spec_blueprint(self):
         engine = SpecEngine()
-        result = UpgradeResult("docs/03_modules/l01_infrastructure/agent-spec/blueprint.md")
+        result = UpgradeResult("docs/03_modules/_domain-infra_ops/agent-spec/blueprint.md")
         name = engine._discover(result.blueprint_path, result)
         assert len(name) > 0
 

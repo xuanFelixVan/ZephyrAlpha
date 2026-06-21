@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/rebuild_audit_index.py | §
 """
-scripts/governance/rebuild_audit_index.py — 重建 audit_trail SQLite 派生索引
+scripts/governance/rebuild_audit_index.py — 重建 audit-trail SQLite 派生索引
 ==============================================================================
 对标: MOD-INF-012 数据库 + MOD-INF-020 audit-trail
 
@@ -10,6 +10,15 @@ scripts/governance/rebuild_audit_index.py — 重建 audit_trail SQLite 派生�
     python scripts/governance/rebuild_audit_index.py --warn-only  # 重建+警告模式
 """
 from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.constants import EXIT_PASS
 
 
@@ -23,13 +32,13 @@ sys.path.insert(0, str(_PROJECT_ROOT / "src"))
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(description="Rebuild audit_trail SQLite index")
+    parser = argparse.ArgumentParser(description="Rebuild audit-trail SQLite index")
     parser.add_argument("--stats", action="store_true", help="Only show stats, don't rebuild")
     parser.add_argument("--warn-only", action="store_true", help="Warn on errors, don't fail")
     args = parser.parse_args()
 
     try:
-        from zephyr.audit_trail.indexer import AuditIndexer
+        from zephyr.governance.audit_trail.indexer import AuditIndexer
 
         indexer = AuditIndexer()
 

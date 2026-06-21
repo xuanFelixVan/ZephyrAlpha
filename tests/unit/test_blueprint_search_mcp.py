@@ -1,16 +1,17 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1981 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-598 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_blueprint_search_mcp
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """BlueprintSearchServer（BaseMCPServer）轻量单测。"""
 
-from __future__ import annotations
 
 import json
 
-from zephyr.mcp.blueprint_search_server import BlueprintSearchServer
+from zephyr.infrastructure.blueprint_search_server import BlueprintSearchServer
 
 
 def test_find_relevant_blueprint_returns_structure() -> None:

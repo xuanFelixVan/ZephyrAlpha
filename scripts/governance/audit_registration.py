@@ -9,7 +9,9 @@
   - __init__.py 缺 __all__: 有模块文件但包级 __init__.py 无 __all__
 
 用法:
-    python scripts/governance/audit_registration.py           # 报告孤儿清单
+    python scripts/governance/audit_registration.py           # 报告孤儿清单（全量）
+    python scripts/governance/audit_registration.py --full    # 显式全量扫描
+    python scripts/governance/audit_registration.py --incremental  # 仅扫描 git 变更文件
     python scripts/governance/audit_registration.py --fix     # 交互式修复
 
 返回码:
@@ -23,12 +25,21 @@
 """
 
 from __future__ import annotations
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.constants import EXIT_ERROR
 
 
 import argparse
 import ast
 import re
+import subprocess
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -122,8 +133,12 @@ class ZombieEntry:
     detail: str = ""
 
 
-def audit() -> AuditResult:
-    """执行完整注册审计扫描。"""
+def audit(changed_files: set[Path] | None = None) -> AuditResult:
+    """执行完整注册审计扫描。
+
+    Args:
+        changed_files: 增量模式下传入的变更文件集合。None 表示全量扫描。
+    """
     result = AuditResult()
 
     # ── 1. 构建已注册集合 ──
@@ -132,19 +147,19 @@ def audit() -> AuditResult:
     registered_gates = _build_gate_registry()
 
     # ── 2. 扫描 src/zephyr/ 模块孤儿 ──
-    _scan_module_orphans(registered_modules, result)
+    _scan_module_orphans(registered_modules, result, changed_files)
 
     # ── 3. 扫描 scripts/ 脚本孤儿 ──
-    _scan_script_orphans(registered_scripts, result)
+    _scan_script_orphans(registered_scripts, result, changed_files)
 
     # ── 4. 扫描 gates/ 门禁孤儿 ──
-    _scan_gate_orphans(registered_gates, result)
+    _scan_gate_orphans(registered_gates, result, changed_files)
 
     # ── 5. 检测僵尸引用 ──
     _detect_zombie_references(registered_modules, registered_scripts, registered_gates, result)
 
     # ── 6. 检测缺 __all__ 的 __init__.py ──
-    _detect_missing_all(result)
+    _detect_missing_all(result, changed_files)
 
     return result
 
@@ -179,13 +194,20 @@ def _extract_all_entries(source: str) -> set[str]:
     try:
         tree = ast.parse(source)
         for node in ast.walk(tree):
+            # Handle both __all__ = [...] and __all__: list[str] = [...]
+            all_value = None
             if isinstance(node, ast.Assign):
                 for target in node.targets:
                     if isinstance(target, ast.Name) and target.id == "__all__":
-                        if isinstance(node.value, (ast.List, ast.Tuple)):
-                            for elt in node.value.elts:
-                                if isinstance(elt, ast.Constant) and isinstance(elt.value, str):
-                                    entries.add(elt.value)
+                        all_value = node.value
+                        break
+            elif isinstance(node, ast.AnnAssign):
+                if isinstance(node.target, ast.Name) and node.target.id == "__all__":
+                    all_value = node.value
+            if all_value is not None and isinstance(all_value, (ast.List, ast.Tuple)):
+                for elt in all_value.elts:
+                    if isinstance(elt, ast.Constant) and isinstance(elt.value, str):
+                        entries.add(elt.value)
     except SyntaxError:
         pattern = r'"([^"]+)"'
         for match in re.finditer(pattern, source):
@@ -221,14 +243,22 @@ def _build_gate_registry() -> set[str]:
 def _scan_module_orphans(
     registered: dict[str, set[str]],
     result: AuditResult,
+    changed_files: set[Path] | None = None,
 ) -> None:
-    """扫描 src/zephyr/ 下所有 .py 文件，找出不在 __all__ 中的。"""
+    """扫描 src/zephyr/ 下所有 .py 文件，找出不在 __all__ 中的。
+
+    Args:
+        changed_files: 增量模式下仅扫描此集合中的文件。None 表示全量扫描。
+    """
     for py_file in SRC_ZEPHYR.rglob("*.py"):
         if any(ex in py_file.parts for ex in EXCLUDE_PATTERNS):
             continue
         if py_file.name in EXCLUDE_FROM_MODULE_AUDIT:
             continue
         if py_file.name.startswith("_"):
+            continue
+        # 增量模式：跳过未变更文件
+        if changed_files is not None and py_file not in changed_files:
             continue
 
         rel = py_file.relative_to(SRC_ZEPHYR)
@@ -262,10 +292,18 @@ def _scan_module_orphans(
 def _scan_script_orphans(
     registered: set[str],
     result: AuditResult,
+    changed_files: set[Path] | None = None,
 ) -> None:
-    """扫描 scripts/ 下所有 .py 文件，找出不在 script_manifest.yaml 中的。"""
+    """扫描 scripts/ 下所有 .py 文件，找出不在 script_manifest.yaml 中的。
+
+    Args:
+        changed_files: 增量模式下仅扫描此集合中的文件。None 表示全量扫描。
+    """
     for py_file in SCRIPTS_DIR.rglob("*.py"):
         if any(ex in py_file.parts for ex in EXCLUDE_PATTERNS):
+            continue
+        # 增量模式：跳过未变更文件
+        if changed_files is not None and py_file not in changed_files:
             continue
 
         rel = py_file.relative_to(SCRIPTS_DIR)
@@ -286,13 +324,21 @@ def _scan_script_orphans(
 def _scan_gate_orphans(
     registered: set[str],
     result: AuditResult,
+    changed_files: set[Path] | None = None,
 ) -> None:
-    """扫描 gates/ 下所有 .yaml 文件，找出不在 _registry.yaml 中的。"""
+    """扫描 gates/ 下所有 .yaml 文件，找出不在 _registry.yaml 中的。
+
+    Args:
+        changed_files: 增量模式下仅扫描此集合中的文件。None 表示全量扫描。
+    """
     if not GATES_DIR.is_dir():
         return
 
     for yaml_file in GATES_DIR.glob("*.yaml"):
         if yaml_file.name.startswith("_"):
+            continue
+        # 增量模式：跳过未变更文件
+        if changed_files is not None and yaml_file not in changed_files:
             continue
 
         if yaml_file.name not in registered:
@@ -343,11 +389,24 @@ def _detect_zombie_references(
 # __init__.py 缺 __all__
 # ===================================================================
 
-def _detect_missing_all(result: AuditResult) -> None:
-    """检测有 .py 模块但包级 __init__.py 无 __all__ 的包。"""
+def _detect_missing_all(result: AuditResult, changed_files: set[Path] | None = None) -> None:
+    """检测有 .py 模块但包级 __init__.py 无 __all__ 的包。
+
+    Args:
+        changed_files: 增量模式下仅扫描此集合中文件所属的 __init__.py。None 表示全量扫描。
+    """
     for init_py in SRC_ZEPHYR.rglob("__init__.py"):
         if any(ex in init_py.parts for ex in EXCLUDE_PATTERNS):
             continue
+        # 增量模式：仅检查变更文件所在目录的 __init__.py，或 __init__.py 自身变更
+        if changed_files is not None:
+            parent_dir = init_py.parent
+            relevant = any(
+                cf == init_py or cf.parent == parent_dir
+                for cf in changed_files
+            )
+            if not relevant:
+                continue
 
         pkg_dir = init_py.parent
         py_files = [
@@ -419,6 +478,69 @@ def print_report(ar: AuditResult, compact: bool = False) -> str:
 
 
 # ===================================================================
+# 增量扫描支持
+# ===================================================================
+
+def _get_changed_files_from_git() -> set[Path]:
+    """通过 git diff 获取相对于 HEAD 的变更文件集合。
+
+    包含已暂存和未暂存的变更，以及未跟踪的新文件。
+    返回绝对路径集合，仅包含 src/zephyr/ 和 scripts/ 下的文件。
+    """
+    changed: set[Path] = set()
+    try:
+        # 已跟踪文件的变更（已暂存 + 未暂存）
+        result = subprocess.run(
+            ["git", "diff", "--name-only", "HEAD"],
+            cwd=str(PROJECT_ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=30,
+        )
+        if result.returncode == 0:
+            for line in result.stdout.splitlines():
+                line = line.strip()
+                if line:
+                    p = PROJECT_ROOT / line
+                    if p.exists():
+                        changed.add(p)
+
+        # 未跟踪的新文件
+        result = subprocess.run(
+            ["git", "ls-files", "--others", "--exclude-standard"],
+            cwd=str(PROJECT_ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=30,
+        )
+        if result.returncode == 0:
+            for line in result.stdout.splitlines():
+                line = line.strip()
+                if line:
+                    p = PROJECT_ROOT / line
+                    if p.exists():
+                        changed.add(p)
+    except (subprocess.SubprocessError, FileNotFoundError) as e:
+        print(f"WARNING: git diff 失败，回退到全量扫描: {e}", file=sys.stderr)
+        return set()
+
+    # 仅保留 src/zephyr/ 和 scripts/ 下的文件
+    filtered: set[Path] = set()
+    for p in changed:
+        try:
+            rel = p.relative_to(PROJECT_ROOT)
+            rel_str = rel.as_posix()
+            if rel_str.startswith("src/zephyr/") or rel_str.startswith("scripts/"):
+                filtered.add(p)
+        except ValueError:
+            continue
+
+    return filtered
+
+
+# ===================================================================
 # CLI
 # ===================================================================
 
@@ -427,13 +549,28 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="RULE-TWO 注册审计——检测孤儿模块/脚本/门禁",
     )
+    scan_mode = parser.add_mutually_exclusive_group()
+    scan_mode.add_argument("--full", action="store_true", help="全量扫描（默认）")
+    scan_mode.add_argument("--incremental", action="store_true", help="增量扫描：仅扫描 git 变更文件")
     parser.add_argument("--compact", action="store_true", help="紧凑输出")
     parser.add_argument("--json", action="store_true", help="JSON 格式输出（供 AI/MCP 消费）")
     parser.add_argument("--fix", action="store_true", help="交互式修复孤儿")
     args = parser.parse_args()
 
+    # 确定扫描模式
+    changed_files: set[Path] | None = None
     try:
-        ar = audit()
+        if args.incremental:
+            changed_files = _get_changed_files_from_git()
+            if not changed_files:
+                print("[INCREMENTAL] 无变更文件或 git 不可用，扫描结果为空（CLEAN）")
+                # 无变更文件 = 无新增孤儿 = CLEAN
+                ar = AuditResult()
+            else:
+                print(f"[INCREMENTAL] 检测到 {len(changed_files)} 个变更文件，仅扫描这些文件")
+                ar = audit(changed_files=changed_files)
+        else:
+            ar = audit()
     except Exception as e:
         print(f"ERROR: 审计失败: {e}", file=sys.stderr)
         sys.exit(EXIT_ERROR)

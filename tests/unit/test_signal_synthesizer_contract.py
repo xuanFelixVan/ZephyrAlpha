@@ -1,19 +1,20 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-2065 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-682 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_signal_synthesizer_contract
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """SignalSynthesizerBase — FactorSignal 入参 / SynthesizedSignal 出站对齐。"""
 
-from __future__ import annotations
 
 import uuid
 from datetime import datetime, timezone
 
-from zephyr.l03_signal_generation.signal_synthesizer import SignalSynthesizerBase
-from zephyr.trading_contracts.market.factor_signal import FactorSignal
-from zephyr.trading_contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizerBase
+from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
+from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
 
 
 class _EqualWeightTestSynthesizer(SignalSynthesizerBase):

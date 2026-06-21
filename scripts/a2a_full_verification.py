@@ -20,8 +20,8 @@ print("=" * 60)
 
 # === 验证2: AutoRuntimeCore启动链路 ===
 print("\n[验证2] AutoRuntimeCore启动链路A2A集成")
-from zephyr.runtime.auto_runtime_core import AutoRuntimeCore
-from zephyr.runtime.runtime_config import RuntimeConfig
+from zephyr.infrastructure.runtime.auto_runtime_core import AutoRuntimeCore
+from zephyr.infrastructure.config.runtime_config import RuntimeConfig
 c = AutoRuntimeCore(RuntimeConfig())
 c._registry.load_from_dir()
 
@@ -60,7 +60,7 @@ check("AGENTS.md 包含 A2A 触发关键词说明", "a2a" in agents_md.lower())
 
 # === 验证5: 三套注册体系桥接 ===
 print("\n[验证5] 三套注册体系桥接")
-from zephyr.l01_infrastructure.a2a_protocol.layer1_discovery.agent_card import AgentCard, AgentCapability
+from zephyr.integration.a2a_protocol.agent_card import AgentCard, AgentCapability
 test_card = AgentCard(
     agent_id="agent-verify-bridge", name="Bridge Verify", description="test",
     version="1.0", capabilities=[AgentCapability.WRITE], skill_ids=[],
@@ -77,7 +77,7 @@ if bridge_cap:
 
 # === 验证6: 红白对抗链路 ===
 print("\n[验证6] 红白对抗链路")
-from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.a2a_red_team import A2ARedTeam
+from zephyr.integration.a2a_protocol.a2a_red_team import A2ARedTeam
 rt = A2ARedTeam()
 vectors = rt.list_vectors()
 check("红队攻击向量 >= 6", len(vectors) >= 6, f"vectors={len(vectors)}")
@@ -90,33 +90,33 @@ check("包含 HIGH 级别向量", "high" in severities)
 print("\n[验证7] 跨系统全链路打通")
 
 # Layer 1
-from zephyr.l01_infrastructure.a2a_protocol.layer1_discovery.a2a_registry import A2ARegistry
-from zephyr.l01_infrastructure.a2a_protocol.layer1_discovery.identity_verifier import IdentityVerifier
+from zephyr.integration.a2a_protocol.a2a_registry import A2ARegistry
+from zephyr.integration.a2a_protocol.identity_verifier import IdentityVerifier
 reg = A2ARegistry()
 iv = IdentityVerifier()
 check("Layer 1: A2ARegistry 可用", True)
 check("Layer 1: IdentityVerifier 可用", True)
 
 # Layer 2
-from zephyr.l01_infrastructure.a2a_protocol.layer2_communication.a2a_schemas import A2AMessage
-from zephyr.l01_infrastructure.a2a_protocol.layer2_communication.a2a_state import A2AStateMachine
-from zephyr.l01_infrastructure.a2a_protocol.layer2_communication.message_router import MessageRouter
-from zephyr.l01_infrastructure.a2a_protocol.layer2_communication.handoff_manager import HandoffManager
+from zephyr.integration.a2a_protocol.a2a_schemas import A2AMessage
+from zephyr.integration.a2a_protocol.a2a_state import A2AStateMachine
+from zephyr.integration.a2a_protocol.message_router import MessageRouter
+from zephyr.integration.a2a_protocol.handoff_manager import HandoffManager
 check("Layer 2: A2AMessage 可用", True)
 check("Layer 2: A2AStateMachine 可用", True)
 check("Layer 2: MessageRouter 可用", True)
 check("Layer 2: HandoffManager 可用", True)
 
 # Layer 3
-from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.conflict_detector import ConflictDetector
-from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.arbitrator import Arbitrator
-from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.a2a_negotiation import A2ANegotiation
-from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.a2a_voting import A2AVoting
-from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.a2a_debate import A2ADebate
-from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.a2a_saga import A2ASaga
-from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.supervisor import Supervisor
-from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.deadlock_guard import DeadlockGuard
-from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.a2a_protocol_gateway import A2AProtocolGateway
+from zephyr.integration.a2a_protocol.conflict_detector import ConflictDetector
+from zephyr.integration.a2a_protocol.arbitrator import Arbitrator
+from zephyr.integration.a2a_protocol.a2a_negotiation import A2ANegotiation
+from zephyr.integration.a2a_protocol.a2a_voting import A2AVoting
+from zephyr.integration.a2a_protocol.a2a_debate import A2ADebate
+from zephyr.integration.a2a_protocol.a2a_saga import A2ASaga
+from zephyr.integration.a2a_protocol.supervisor import Supervisor
+from zephyr.integration.a2a_protocol.deadlock_guard import DeadlockGuard
+from zephyr.integration.a2a_protocol.a2a_protocol_gateway import A2AProtocolGateway
 check("Layer 3: ConflictDetector 可用", True)
 check("Layer 3: Arbitrator 可用", True)
 check("Layer 3: A2ANegotiation 可用", True)
@@ -128,9 +128,9 @@ check("Layer 3: DeadlockGuard 可用", True)
 check("Layer 3: A2AProtocolGateway 可用", True)
 
 # 治理桥接
-from zephyr.l01_infrastructure.a2a_protocol.governance.governance_adapter import GovernanceAdapter
-from zephyr.l01_infrastructure.a2a_protocol.governance.auditor import A2AAuditor
-from zephyr.agent_rbac.governance_bridges.a2a_check import verify_a2a_pair
+from zephyr.integration.a2a_protocol.governance_adapter import GovernanceAdapter
+from zephyr.governance.audit_trail.auditor import A2AAuditor
+from zephyr.security.access_control.a2a_check import verify_a2a_pair
 check("Governance: GovernanceAdapter 可用", True)
 check("Governance: A2AAuditor 可用", True)
 check("Governance: verify_a2a_pair 可用", True)
@@ -138,7 +138,7 @@ check("Governance: verify_a2a_pair 可用", True)
 # L8 安全层
 try:
     import importlib
-    l8_mod = importlib.import_module("zephyr.llm_security.layers.l8_multi_agent")
+    l8_mod = importlib.import_module("zephyr.security.llm_defense.llm_security.l8_multi_agent")
     check("Security: L8 MultiAgentSecurityLayer 可用", hasattr(l8_mod, "MultiAgentSecurityLayer"))
 except Exception as e:
     check("Security: L8 MultiAgentSecurityLayer 可用", False, str(e))
@@ -147,7 +147,7 @@ except Exception as e:
 print("\n[验证8] 残余断裂点扫描")
 
 # 检查 ConstructionVerifier
-from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.construction_verifier import ConstructionVerifier
+from zephyr.integration.a2a_protocol.construction_verifier import ConstructionVerifier
 cv = ConstructionVerifier()
 result = cv.verify()
 is_verified = result.get("passed", False) if isinstance(result, dict) else getattr(result, "passed", False)
@@ -156,10 +156,10 @@ stub_ratio = result.get("stub_ratio", 1.0) if isinstance(result, dict) else geta
 check("ConstructionVerifier 自检通过", is_verified and stub_ratio < 0.1, f"issues={issue_count} stub_ratio={stub_ratio}")
 
 # 检查 SpecSync
-from zephyr.l01_infrastructure.a2a_protocol.layer3_coordination.spec_sync import SpecSync
+from zephyr.integration.a2a_protocol.spec_sync import SpecSync
 ss = SpecSync()
-ss.register("a2a-protocol", "docs/03_modules/l01_infrastructure/a2a-protocol/blueprint.md",
-            ["src/zephyr/l01_infrastructure/a2a_protocol/"])
+ss.register("a2a-protocol", "docs/03_modules/infrastructure.runtime_integration/a2a-protocol/blueprint.md",
+            ["src/zephyr/infrastructure.runtime_integration/a2a_protocol/"])
 sync_result = ss.check("a2a-protocol")
 check("SpecSync a2a-protocol 注册成功", sync_result["status"] == "synced")
 

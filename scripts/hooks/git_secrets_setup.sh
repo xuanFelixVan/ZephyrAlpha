@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# git-secrets-setup.sh — 部署 git-secrets pre-commit hook
+# git_secrets_setup.sh — 部署 git-secrets pre_commit hook
 #
-# 对标 06-security-architecture.md §6.3 Secret 三道防线 L2-Pre-commit
-#      architecture-principles.md §1bis R1 门禁
+# 对标 06-security_architecture.md §6.3 Secret 三道防线 L2-Pre-commit
+#      architecture_principles.md §1bis R1 门禁
 #
 # 功能：
 #   1. 检查 git-secrets 是否已安装
@@ -10,7 +10,7 @@
 #   3. 添加 ZEPHYR_SECRET_* 自定义 pattern
 #   4. 验证 hook 已正确安装
 #
-# 用法: bash scripts/hooks/git-secrets-setup.sh [--check]
+# 用法: bash scripts/hooks/git_secrets_setup.sh [--check]
 #   --check: 仅检查安装状态，不执行安装
 
 set -euo pipefail
@@ -40,7 +40,7 @@ check_git_secrets_installed() {
 }
 
 check_hook_installed() {
-    local hook_file="$REPO_ROOT/.git/hooks/pre-commit"
+    local hook_file="$REPO_ROOT/.git/hooks/pre_commit"
     if [[ -f "$hook_file" ]] && grep -q "git-secrets" "$hook_file" 2>/dev/null; then
         return 0
     fi
@@ -71,9 +71,9 @@ do_check() {
     fi
 
     if check_hook_installed; then
-        info "pre-commit hook 已安装"
+        info "pre_commit hook 已安装"
     else
-        error "pre-commit hook 未安装"
+        error "pre_commit hook 未安装"
         rc=1
     fi
 

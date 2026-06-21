@@ -4,7 +4,7 @@
 
 
 分析修改一个 CTR 字段后，哪些层/模块会受影响。
-基于 cross-layer-contracts.yaml 的 target_layers 字段进行静态影响分析。
+基于 cross_layer_contracts.yaml 的 target_layers 字段进行静态影响分析。
 
 用法:
     python scripts/governance/d5_architecture/analyze_contract_impact.py CTR-001
@@ -45,7 +45,7 @@ import yaml
 
 CONTRACTS_YAML = (
     REPO_ROOT
-    / "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross-layer-contracts.yaml"
+    / "docs/02_enterprise_architecture/target-architecture/architecture-model/contracts/cross_layer_contracts.yaml"
 )
 
 
@@ -184,7 +184,7 @@ def main() -> None:
             for c in consumers:
                 print(f"  - {c}")
     print("\n建议操作:")
-    print("  1. 更新 cross-layer-contracts.yaml 并 bump schema_version")
+    print("  1. 更新 cross_layer_contracts.yaml 并 bump schema_version")
     print("  2. 运行 python scripts/context/generate_architecture_context.py 重新生成上下文包")
     print("  3. 运行 pytest tests/architecture/ 确认架构适应度函数仍然通过")
     print("  4. 运行 python -m pytest tests/unit/test_enforcer.py 确认 enforcer 测试通过")

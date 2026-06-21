@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_metrics | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.metrics
 
@@ -19,10 +20,10 @@
 # [TESTS]
 
 """
-metrics.py —— Re-export wrapper → canonical: zephyr.shared.observability.metrics
+metrics.py —— Re-export wrapper → canonical: zephyr.ops.observability.metrics
 
 本文件是向后兼容的顶层别名。规范实现位于 observability/metrics.py。
 修改指标收集逻辑请编辑 observability/metrics.py，不要编辑本文件。
 """
 
-from zephyr.shared.observability.metrics import *  # noqa: F401, F403
+from zephyr.ops.observability.metrics import *  # noqa: F401, F403

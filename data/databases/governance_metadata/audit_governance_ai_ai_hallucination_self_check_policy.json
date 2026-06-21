@@ -1,0 +1,131 @@
+{
+  "task_id": "DM-100076",
+  "source_file": "docs/01_policies_and_standards/governance/ai/ai_hallucination_self_check_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_039_ai_hallucination_detection.yaml",
+  "module_id": "GOV-AI-003",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "CHECK_1_FILE_PATH": {
+      "rule": "引用任何文件路径前，必须通过Glob/LS/Read确认文件实际存在",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "CHECK_2_MODULE_ID": {
+      "rule": "使用的所有模块ID必须在metadata-registry.md或document-metadata-index-registry.yaml中确认存在",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "CHECK_3_INTERFACE": {
+      "rule": "引用的接口必须在src/zephyr/shared/contracts/中确认存在，禁止幻觉补全参数类型/超时值/异常类型",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "CHECK_4_DEPENDENCY": {
+      "rule": "依赖方向必须符合项目分层架构，禁止创建循环依赖",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "CHECK_5_SSOT": {
+      "rule": "修改字段前确认权威来源在meta/metadata-registry.md §2.5，只在权威来源文件中修改",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "CHECK_6_NUMBERING": {
+      "rule": "模块ID使用GOV-XXX/PS-XXX/OPS-XXX/META-XXX格式，编号引用使用module_id精确引用",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "CHECK_7_PERMISSION": {
+      "rule": "操作路径在model-capability-contract.yaml允许列表中，新建文件≤5个",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "CHECK_8_ENCODING": {
+      "rule": "编辑器编码设置为UTF-8，files.autoGuessEncoding=false，无两个编辑器同时打开同一文件",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "CHECK_9_TASK_SCOPE": {
+      "rule": "任务在document-metadata-index-registry.yaml中有对应，前置条件已满足",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "CHECK_10_REFERENCE": {
+      "rule": "能指出信息的具体来源文件和行号，禁止从'记忆'中引用",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "FAILURE_HANDLING": {
+      "rule": "自检失败处理：停止操作→说明原因→幻觉类失败走OPS-VC-006→其他请求Owner→禁止用'合理推断'替代验证",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "MID_SESSION_RECHECK": {
+      "rule": "Context用量达60%时MUST执行二次自检（检查项1/2/5/7/10），失败则停止+走OPS-VC-006",
+      "type": "mandatory",
+      "status": "COVERED"
+    },
+    "PROHIBIT_HALLUCINATE_PATH": {
+      "rule": "禁止编造任何文件路径（即使路径'看起来合理'）",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_INVENT_ID": {
+      "rule": "禁止自行发明模块ID",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_HALLUCINATE_INTERFACE": {
+      "rule": "禁止幻觉补全接口的参数类型、超时值、异常类型",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_CIRCULAR_DEP": {
+      "rule": "禁止创建循环依赖",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_MODIFY_NON_AUTHORITY": {
+      "rule": "禁止在非权威文件中修改权威字段",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_FORBIDDEN_PATHS": {
+      "rule": "禁止操作禁止路径（.cursor/rules/、AGENTS.md、.roomodes）",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_RATIONAL_INFERENCE": {
+      "rule": "禁止用'合理推断'替代实际验证",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_MEMORY_REFERENCE": {
+      "rule": "禁止从'记忆'中引用（每次session都是全新的，没有跨session记忆）",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_PRETEND_EXISTS": {
+      "rule": "禁止在文件不存在时假装它存在",
+      "type": "prohibition",
+      "status": "COVERED"
+    },
+    "PROHIBIT_CONTEXT_HALLUCINATION": {
+      "rule": "禁止在无完整上下文时幻觉补全路径/接口/依赖",
+      "type": "prohibition",
+      "status": "COVERED"
+    }
+  },
+  "summary": {
+    "total_rules": 22,
+    "COVERED": 22,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "原YAML仅有占位action'遵守GOV-AI-003'，无实际规则内容",
+    "新增section gov_ai_003_self_check：10项自检清单+失败处理+二次自检全部写入actions",
+    "新增conditions：Session开始前触发+Context 60%触发",
+    "新增prohibitions：10条禁止项（路径幻觉/ID编造/接口补全/循环依赖/非权威修改/禁止路径/合理推断/记忆引用/假装存在/上下文幻觉）"
+  ]
+}

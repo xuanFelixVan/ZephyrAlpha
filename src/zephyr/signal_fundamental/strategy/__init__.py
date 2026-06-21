@@ -1,0 +1,16 @@
+# [A_module] module_id=MOD-UNK_strategy | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain-signal/signal-generation-core/blueprint.md
+# [MODULE] zephyr.signal_fundamental.strategy
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+"""Signal Strategy sub-package"""
+from __future__ import annotations
+
+from zephyr.signal_fundamental.strategy.capital_allocator import CapitalAllocatorBase, CapitalAllocationResult
+
+__all__ = [
+    "CapitalAllocatorBase",
+    "CapitalAllocationResult",
+    "capital_allocator",
+]

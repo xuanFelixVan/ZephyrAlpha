@@ -1,0 +1,55 @@
+{
+  "task_id": "DM-100164",
+  "source_file": "docs/01_policies_and_standards/meta/rule_lifecycle_and_change_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "std_009_state_machine": {
+      "title": "规则状态机",
+      "rules": [
+        "规则生命周期状态：draft→review→active→deprecated→retired",
+        "状态转换必须按顺序执行，禁止跳过",
+        "禁止：从draft直接到active（必须经过review）",
+        "禁止：从active直接到retired（必须经过deprecated）"
+      ]
+    },
+    "std_009_change_levels": {
+      "title": "P0-P3变更分级",
+      "rules": [
+        "P0: 紧急变更（安全漏洞/数据丢失风险），需Owner即时审批",
+        "P1: 高优先变更（系统阻塞），需Owner 24h内审批",
+        "P2: 常规变更（功能增强），需评审委员会审批",
+        "P3: 低优先变更（文档/样式），AI可自主执行",
+        "禁止：P0/P1变更不经Owner审批",
+        "禁止：将P0降级为P3以绕过审批"
+      ]
+    },
+    "std_009_retirement": {
+      "title": "退役级联",
+      "rules": [
+        "规则退役时必须级联检查所有依赖规则",
+        "依赖规则的退役必须同步处理",
+        "禁止：退役规则而不处理依赖"
+      ]
+    },
+    "std_009_emergency": {
+      "title": "紧急变更",
+      "rules": [
+        "紧急变更可跳过常规审批流程",
+        "紧急变更必须在48h内补办审批",
+        "紧急变更必须记录原因和影响范围",
+        "禁止：以紧急变更为由永久跳过审批"
+      ]
+    }
+  },
+  "summary": {
+    "total_rules": 17,
+    "COVERED": 17,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "TRAE-042 enriched in current session: added std_009_state_machine(4 rules), std_009_change_levels(6 rules), std_009_retirement(3 rules), std_009_emergency(4 rules)",
+    "All PS-STD-009 rules from MD now covered in YAML sections"
+  ]
+}

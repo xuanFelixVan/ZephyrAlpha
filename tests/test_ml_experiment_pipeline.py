@@ -1,0 +1,165 @@
+# [A_test] module_id: SRC-TST-1279 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md | §
+# [MODULE] tests.test_ml_experiment_pipeline
+# [INVARIANTS] must test all public classes and methods of ml_experiment_pipeline
+# [MODIFY-GUARD] ml_experiment_pipeline.py changes require sync
+# [CONSUMERS] pytest
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] pytest exit 0 on pass, non-zero on fail
+# [TESTS] tests/test_ml_experiment_pipeline.py
+
+import pytest
+from unittest.mock import MagicMock, patch
+from zephyr.cross_asset.cross_market_data_adapter.ml_experiment_pipeline import (
+    MLExperimentPipeline,
+    PipelineStage,
+    ExperimentResult,
+    PipelineError,
+)
+
+
+class TestPipelineStage:
+    def test_enum_values(self):
+        assert PipelineStage.MODEL_DISCOVERY.value == "model_discovery"
+        assert PipelineStage.INFERENCE_EXEC.value == "inference_exec"
+        assert PipelineStage.METRIC_COLLECTION.value == "metric_collection"
+        assert PipelineStage.STATISTICS_VALIDATE.value == "statistics_validate"
+        assert PipelineStage.PRODUCTION_PROMOTE.value == "production_promote"
+
+    def test_enum_count(self):
+        assert len(PipelineStage) == 5
+
+
+class TestPipelineError:
+    def test_instantiation(self):
+        err = PipelineError(PipelineStage.INFERENCE_EXEC, "test")
+        assert err.stage == PipelineStage.INFERENCE_EXEC
+        assert "[inference_exec]" in str(err)
+
+    def test_with_detail(self):
+        err = PipelineError(PipelineStage.MODEL_DISCOVERY, "fail", detail={"x": 1})
+        assert err.detail == {"x": 1}
+
+
+class TestExperimentResult:
+    def test_default_values(self):
+        r = ExperimentResult(
+            pipeline_id="e1",
+            status="running",
+            stage=PipelineStage.MODEL_DISCOVERY,
+        )
+        assert r.models_discovered == 0
+        assert r.inferences_run == 0
+        assert r.inferences_failed == 0
+        assert r.metrics_collected == 0
+        assert r.significant_results == 0
+        assert r.best_model is None
+        assert r.best_effect_size == 0.0
+        assert r.promoted is False
+        assert r.errors == []
+
+    def test_custom_values(self):
+        r = ExperimentResult(
+            pipeline_id="e2",
+            status="completed",
+            stage=PipelineStage.PRODUCTION_PROMOTE,
+            models_discovered=3,
+            inferences_run=2,
+            significant_results=1,
+            best_model="model_a",
+            best_effect_size=0.5,
+            promoted=True,
+        )
+        assert r.models_discovered == 3
+        assert r.promoted is True
+
+
+class TestMLExperimentPipeline:
+    def setup_method(self):
+        MLExperimentPipeline._global_run_count = 0
+        MLExperimentPipeline._seen_idempotency_keys = set()
+
+    def test_instantiation(self):
+        pipe = MLExperimentPipeline()
+        assert pipe._models == []
+        assert pipe._engines == []
+
+    def test_run_no_models(self):
+        pipe = MLExperimentPipeline()
+        result = pipe.run()
+        assert result.status == "no_models"
+        assert result.models_discovered == 0
+
+    def test_run_with_custom_idempotency_key(self):
+        pipe = MLExperimentPipeline()
+        result = pipe.run(idempotency_key="key-abc")
+        assert result.idempotency_key == "key-abc"
+
+    def test_p_hacking_warning(self):
+        MLExperimentPipeline._global_run_count = 10
+        pipe = MLExperimentPipeline()
+        result = pipe.run()
+        assert result.status == "p_hacking_warning"
+        assert any("p_hacking" in e.get("message", "") or "p-hacking" in e.get("message", "") for e in result.errors)
+
+    def test_snapshot_builtins(self):
+        snap = MLExperimentPipeline._snapshot_builtins()
+        assert isinstance(snap, frozenset)
+        assert "print" in snap
+
+    def test_check_builtins_integrity_clean(self):
+        snap = MLExperimentPipeline._snapshot_builtins()
+        violations = MLExperimentPipeline._check_builtins_integrity(snap)
+        assert violations == []
+
+    def test_run_significance_test_empty(self):
+        result = MLExperimentPipeline._run_significance_test([])
+        assert result["significant_count"] == 0
+        assert result["best_model"] is None
+
+    def test_run_significance_test_with_data(self):
+        preds = [
+            {"model_id": "m1", "prediction": 0.5, "confidence": 0.96},
+            {"model_id": "m2", "prediction": 0.3, "confidence": 0.8},
+        ]
+        result = MLExperimentPipeline._run_significance_test(preds)
+        assert result["significant_count"] == 1
+        assert result["best_model"] == "m1"
+
+    def test_register_model(self):
+        pipe = MLExperimentPipeline()
+        meta = MagicMock()
+        pipe.register_model(meta)
+        assert len(pipe._models) == 1
+
+    def test_register_engine(self):
+        pipe = MLExperimentPipeline()
+        engine = type("TestEngine", (), {})
+        pipe.register_engine(engine)
+        assert len(pipe._engines) == 1
+
+    def test_run_with_mock_model_and_engine(self):
+        pipe = MLExperimentPipeline()
+
+        model_meta = MagicMock()
+        model_meta.model_id = "test_model"
+        model_meta.model_version = "1.0"
+        model_meta.model_type = "classifier"
+        model_meta.framework = "sklearn"
+        model_meta.features = ["f1"]
+        model_meta.target = "label"
+
+        class MockEngine:
+            __name__ = "test_model"
+            def predict(self, features):
+                pred = MagicMock()
+                pred.prediction = 0.9
+                pred.confidence = 0.97
+                return pred
+
+        pipe.register_model(model_meta)
+        pipe.register_engine(MockEngine)
+        result = pipe.run()
+        assert result.models_discovered == 1

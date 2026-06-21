@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-2040 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-657 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_kg_interface
 # [STABILITY] evolving
 # [SAFETY] L
@@ -6,7 +7,7 @@
 # [TESTS] —
 import pytest
 
-from zephyr.shared.kg_interface import (
+from zephyr.integration.shared_08.kg_interface import (
     InMemoryKnowledgeGraph,
     KGEntity,
     KGPath,

@@ -16,12 +16,12 @@ INVARIANTS_PATH = REPO_ROOT / (
 )
 CONTRACTS_PATH = REPO_ROOT / (
     "docs/02_enterprise_architecture/target-architecture/"
-    "architecture-model/contracts/cross-layer-contracts.yaml"
+    "architecture-model/contracts/cross_layer_contracts.yaml"
 )
 RISK_PARAMS_PATH = REPO_ROOT / "config" / "risk_params.yaml"
 SURVIVORSHIP_POLICY_PATH = REPO_ROOT / "config" / "data" / "survivorship_policy.yaml"
 OCP_MANIFEST_PATH = REPO_ROOT / (
-    "src/zephyr/shared/contracts/_frozen_signatures/ocp_manifest.json"
+    "src/zephyr/shared/contracts/_frozen_signatures/ocp-manifest.json"
 )
 
 

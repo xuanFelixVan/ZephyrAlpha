@@ -1,0 +1,925 @@
+# 规则文件关键事实清单 — SSoT 基准
+# 用途：check_rule_coverage.py 读取此文件，验证 .trae/rules/*.md 和 AGENTS.md 是否与项目实际状态对齐
+# 维护原则：事实变更时先改此文件 → 再改规则文件 → 最后跑 check_rule_coverage.py 验证
+# 判定：must_appear_in 中的文件必须包含 fact 字符串；must_not_appear_as 中的文件不得包含 pattern
+
+version: "1.0.0"
+last_updated: "2026-06-19"
+description: "规则文件漂移检测基准——模拟 AI 冷启动时必须看到的一致事实"
+
+# ============================================================
+# 数字类事实
+# ============================================================
+numeric_facts:
+  - id: python_version
+    fact: ">=3.11"
+    description: "Python 版本要求（pyproject.toml SSoT）"
+    ssot_source: "pyproject.toml requires-python"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - "AGENTS.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "3.12+"
+        reason: "project_rules.md 错误声明 3.12+，实际 SSoT 是 >=3.11"
+
+  - id: mcp_server_count
+    fact: "10 个"
+    description: "MCP server 数量（config/mcp.json servers section 实际计数：task_manager/knowledge_base/gate_engine/session_handoff/intent_router/blueprint_search/sandbox/governance/vector_memory/red_blue_validator）"
+    ssot_source: "config/mcp.json servers section"
+    must_appear_in:
+      - "AGENTS.md"
+    must_not_appear_as:
+      - file: "AGENTS.md"
+        pattern: "9 个"
+        reason: "AGENTS.md 错误声明 9 个 MCP，实际 10 个"
+      - file: ".trae/rules/onboarding_detail.md"
+        pattern: "7 MCP"
+        reason: "onboarding_detail.md RULE-EIGHT 后果量化段过时数字，实际 10 个"
+
+  - id: module_count
+    fact: "4,639"
+    description: "模块数量（depgraph.db total_modules，extract_depgraph.py --summary 输出）"
+    ssot_source: "data/databases/depgraph.db via extract_depgraph.py --summary"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "1,623 模块"
+        reason: "project_rules.md 过时数字，实际 4,639 模块"
+      - file: ".trae/rules/project_rules.md"
+        pattern: "| 模块 | 1,623"
+        reason: "project_rules.md 资产表过时数字，实际 4,639"
+      - file: ".trae/rules/onboarding_detail.md"
+        pattern: "1,623 模块"
+        reason: "onboarding_detail.md 过时数字，实际 4,639 模块"
+
+  - id: domain_count
+    fact: "39 域"
+    description: "功能域数量（depgraph.db 实际计数，extract_depgraph.py --summary 输出 39 个域）"
+    ssot_source: "data/databases/depgraph.db via extract_depgraph.py --summary"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "35 域"
+        reason: "project_rules.md 域归属铁律过时数字，实际 39 域"
+      - file: ".trae/rules/project_rules.md"
+        pattern: "30域"
+        reason: "project_rules.md RULE-SIXTEEN 过时数字，实际 39 域"
+      - file: ".trae/rules/project_rules.md"
+        pattern: "30 个域文件"
+        reason: "project_rules.md RULE-SIXTEEN 过时数字，实际 39 域"
+
+  - id: script_count
+    fact: "483"
+    description: "脚本数量（script_manifest.yaml total_scripts: 483）"
+    ssot_source: "scripts/script_manifest.yaml total_scripts"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "388 脚本"
+        reason: "project_rules.md 过时数字，实际 483 脚本"
+      - file: ".trae/rules/project_rules.md"
+        pattern: "| 脚本 | 388"
+        reason: "project_rules.md 资产表过时数字，实际 483"
+      - file: ".trae/rules/onboarding_detail.md"
+        pattern: "388 脚本"
+        reason: "onboarding_detail.md 过时数字，实际 483 脚本"
+      - file: ".trae/rules/onboarding_detail.md"
+        pattern: "388 个脚本"
+        reason: "onboarding_detail.md 过时数字，实际 483 脚本"
+
+  - id: gate_count
+    fact: "43"
+    description: "门禁数量（_registry.yaml gate_id: 计数 43）"
+    ssot_source: "src/zephyr/governance/rule_enforcement/_registry.yaml gate_id count"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "| 门禁 | 20"
+        reason: "project_rules.md 资产表过时数字，实际 43"
+      - file: ".trae/rules/onboarding_detail.md"
+        pattern: "20 门禁"
+        reason: "onboarding_detail.md 过时数字，实际 43 门禁"
+
+  - id: blueprint_count
+    fact: "60"
+    description: "蓝图数量（blueprint_registry.yaml total_blueprints: 60）"
+    ssot_source: "docs/03_modules/blueprint_registry.yaml total_blueprints"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "| 蓝图 | 41"
+        reason: "project_rules.md 资产表过时数字，实际 60"
+
+  - id: registry_count
+    fact: "48 个注册表"
+    description: "注册表数量（registry_of_registries.yaml registry_id: REG- 计数 48）"
+    ssot_source: "docs/registry_of_registries.yaml registry_id count"
+    must_appear_in:
+      - ".trae/rules/onboarding_detail.md"
+    must_not_appear_as:
+      - file: ".trae/rules/onboarding_detail.md"
+        pattern: "29 个注册表"
+        reason: "onboarding_detail.md 过时数字，实际 48 个注册表"
+
+# ============================================================
+# 路径类事实
+# ============================================================
+path_facts:
+  - id: depgraph_db
+    fact: "data/databases/depgraph.db"
+    description: "依赖图+全景图唯一真源（2026-06-13 取代 panorama.yaml）"
+    ssot_source: "data/databases/depgraph.db"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"
+
+  - id: unified_asset_index
+    fact: "unified_asset_index.yaml"
+    description: "统一资产索引文件名（下划线，非连字符）"
+    ssot_source: "data/asset_index/unified_asset_index.yaml"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "unified-asset-index.yaml"
+        reason: "连字符写法错误，实际文件名用下划线"
+      - file: ".trae/rules/onboarding_detail.md"
+        pattern: "unified-asset-index.yaml"
+        reason: "连字符写法错误，实际文件名用下划线"
+
+  - id: task_repo_path
+    fact: "zephyr.governance.task_repo"
+    description: "TaskRepository import 路径（文件在 src/zephyr/governance/task_repo.py）"
+    ssot_source: "src/zephyr/governance/task_repo.py"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - "AGENTS.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "zephyr.data.persistence.task_repo"
+        reason: "project_rules.md 错误路径"
+      - file: "AGENTS.md"
+        pattern: "zephyr.autonomy_core.db.task_repo"
+        reason: "AGENTS.md 错误路径"
+
+  - id: capability_cards_path
+    fact: "data/capability_cards"
+    description: "agent_spec 数据层落地位置（22 个 skill yaml）"
+    ssot_source: "data/capability_cards/"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"
+
+  - id: depgraph_yaml_read_prohibition
+    fact: "extract_depgraph.py --paths"
+    description: "文件级依赖关系提取命令（替代已删除的 project-entity-depgraph.yaml 读取）"
+    ssot_source: "scripts/governance/extract_depgraph.py"
+    must_appear_in:
+      - ".trae/rules/onboarding_detail.md"
+    must_not_appear_as:
+      - file: ".trae/rules/onboarding_detail.md"
+        pattern: "读 D:/ZephyrAlpha/data/asset_index/project-entity-depgraph.yaml"
+        reason: "该 yaml 文件已不存在，文件级依赖应通过 extract_depgraph.py --paths 从 depgraph.db 提取"
+
+  - id: vibe_coding_gate_runbook
+    fact: "vibe-coding-gate-runbook.md"
+    description: "会话门禁 runbook 文件名（index.md SSoT，非 -checklist.md）"
+    ssot_source: "docs/01_policies_and_standards/rules/trae_048_ops_vibe_coding_session.yaml"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "vibe-coding-gate-checklist.md"
+        reason: "project_rules.md 错误文件名，index.md SSoT 为 vibe-coding-gate-runbook.md"
+
+  - id: ai_incident_runbook
+    fact: "ai-incident-and-emergency-runbook.md"
+    description: "AI 事故响应 runbook 文件名（index.md SSoT，非 -playbook.md）"
+    ssot_source: "docs/01_policies_and_standards/rules/trae_048_ops_vibe_coding_session.yaml"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "ai-incident-and-emergency-playbook.md"
+        reason: "project_rules.md 错误文件名，index.md SSoT 为 ai-incident-and-emergency-runbook.md"
+
+  - id: governance_methodology_yaml
+    fact: "trae_024_methodology_diagnosis.yaml"
+    description: "治理方法论标准文件（MTH-001~013，PS-STD-011，已从 governance-methodology-standard.md 迁移到 YAML）"
+    ssot_source: "docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"
+      - "AGENTS.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "governance-methodology-standard.md"
+        reason: "已迁移到 trae_024_methodology_diagnosis.yaml"
+      - file: ".trae/rules/onboarding_detail.md"
+        pattern: "governance-methodology-standard.md"
+        reason: "已迁移到 trae_024_methodology_diagnosis.yaml"
+      - file: "AGENTS.md"
+        pattern: "governance_methodology_standard.md"
+        reason: "已迁移到 trae_024_methodology_diagnosis.yaml"
+
+  - id: quality_standard_underscore
+    fact: "quality_standard.md"
+    description: "脚本质量标准文件名（下划线，非连字符）"
+    ssot_source: "scripts/governance/quality_standard.md"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"
+      - "AGENTS.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "quality-standard.md"
+        reason: "连字符写法错误，实际文件名用下划线 quality_standard.md"
+      - file: ".trae/rules/onboarding_detail.md"
+        pattern: "quality-standard.md"
+        reason: "连字符写法错误，实际文件名用下划线 quality_standard.md"
+      - file: "AGENTS.md"
+        pattern: "quality-standard.md"
+        reason: "连字符写法错误，实际文件名用下划线 quality_standard.md"
+
+  - id: code_construction_yaml
+    fact: "trae_010_code_naming_organization.yaml"
+    description: "代码构建标准文件（GOV-ENG-001，已从 code_construction_standards.md 迁移到 YAML）"
+    ssot_source: "docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml"
+    must_appear_in:
+      - "AGENTS.md"
+    must_not_appear_as:
+      - file: "AGENTS.md"
+        pattern: "code_construction_standards.md"
+        reason: "已迁移到 trae_010_code_naming_organization.yaml"
+
+  - id: compression_workflow_yaml
+    fact: "trae_030_doc_numbering_metadata.yaml"
+    description: "产出物规格化标准文件（GOV-DOC-011，已从 compression_workflow_standard.md 迁移到 YAML）"
+    ssot_source: "docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml"
+    must_appear_in:
+      - "AGENTS.md"
+    must_not_appear_as:
+      - file: "AGENTS.md"
+        pattern: "compression_workflow_standard.md"
+        reason: "已迁移到 trae_030_doc_numbering_metadata.yaml"
+
+  - id: task_card_standard_yaml
+    fact: "trae_034_task_card_standard.yaml"
+    description: "任务卡标准文件（已从 task-card-standard.md 迁移到 YAML）"
+    ssot_source: "docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "task-card-standard.md"
+        reason: "已迁移到 trae_034_task_card_standard.yaml"
+      - file: ".trae/rules/onboarding_detail.md"
+        pattern: "task-card-standard.md"
+        reason: "已迁移到 trae_034_task_card_standard.yaml"
+
+  - id: registry_of_registries_underscore
+    fact: "registry_of_registries.yaml"
+    description: "注册表索引文件名（下划线，非连字符）"
+    ssot_source: "docs/registry_of_registries.yaml"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "registry-of-registries.yaml"
+        reason: "连字符写法错误，实际文件名用下划线 registry_of_registries.yaml"
+      - file: ".trae/rules/onboarding_detail.md"
+        pattern: "registry-of-registries.yaml"
+        reason: "连字符写法错误，实际文件名用下划线 registry_of_registries.yaml"
+
+  - id: template_registry_underscore
+    fact: "template_registry.yaml"
+    description: "模板注册表文件名（下划线，非连字符）"
+    ssot_source: "docs/03_modules/template_registry.yaml"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "template-registry.yaml"
+        reason: "连字符写法错误，实际文件名用下划线 template_registry.yaml"
+      - file: ".trae/rules/onboarding_detail.md"
+        pattern: "template-registry.yaml"
+        reason: "连字符写法错误，实际文件名用下划线 template_registry.yaml"
+
+  - id: blueprint_registry_underscore
+    fact: "blueprint_registry.yaml"
+    description: "蓝图注册表文件名（下划线，非连字符）"
+    ssot_source: "docs/03_modules/blueprint_registry.yaml"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "blueprint-registry.yaml"
+        reason: "连字符写法错误，实际文件名用下划线 blueprint_registry.yaml"
+
+  - id: sys_master_underscore
+    fact: "_sys_master"
+    description: "系统主蓝图目录名（下划线，非连字符）"
+    ssot_source: "docs/03_modules/_sys_master/blueprint.md"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "_sys-master"
+        reason: "连字符写法错误，实际目录名用下划线 _sys_master"
+
+  - id: migration_registry_underscore
+    fact: "migration_registry.yaml"
+    description: "迁移注册表文件名（下划线，非连字符）"
+    ssot_source: "docs/02_enterprise_architecture/migration_registry.yaml"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "migration-registry.yaml"
+        reason: "连字符写法错误，实际文件名用下划线 migration_registry.yaml"
+
+  - id: script_manifest_underscore
+    fact: "script_manifest.yaml"
+    description: "脚本清单文件名（下划线，非连字符）"
+    ssot_source: "scripts/script_manifest.yaml"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "script-manifest.yaml"
+        reason: "连字符写法错误，实际文件名用下划线 script_manifest.yaml"
+
+  - id: session_logs_underscore
+    fact: "session_logs/"
+    description: "会话日志目录名（下划线，非连字符）"
+    ssot_source: "session_logs/"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "session-logs/"
+        reason: "连字符写法错误，实际目录名用下划线 session_logs/"
+
+  - id: blueprint_construction_template_underscore
+    fact: "blueprint_construction_template.md"
+    description: "蓝图施工模板文件名（下划线，非连字符）"
+    ssot_source: "docs/01_policies_and_standards/templates/blueprint_construction_template.md"
+    must_appear_in:
+      - ".trae/rules/onboarding_detail.md"
+    must_not_appear_as:
+      - file: ".trae/rules/onboarding_detail.md"
+        pattern: "blueprint-construction-template.md"
+        reason: "连字符写法错误，实际文件名用下划线 blueprint_construction_template.md"
+
+  - id: trading_package_path
+    fact: "src/zephyr/trading/"
+    description: "AutoRuntime Core 实现路径（trading 包，非 runtime 包）"
+    ssot_source: "src/zephyr/trading/"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"
+      - "AGENTS.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "src/zephyr/runtime/"
+        reason: "runtime 包已迁移到 trading 包"
+      - file: ".trae/rules/onboarding_detail.md"
+        pattern: "src/zephyr/runtime/"
+        reason: "runtime 包已迁移到 trading 包"
+      - file: "AGENTS.md"
+        pattern: "src/zephyr/runtime/"
+        reason: "runtime 包已迁移到 trading 包"
+
+  - id: architecture_model_underscore
+    fact: "architecture_model/"
+    description: "架构模型目录名（下划线，非连字符）"
+    ssot_source: "architecture_model/"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "architecture-model/"
+        reason: "连字符写法错误，实际目录名用下划线 architecture_model/"
+
+  - id: infra_runtime_package
+    fact: "zephyr.infra_runtime"
+    description: "基础设施运行时包名（infra_runtime，非 l01_infrastructure）"
+    ssot_source: "src/zephyr/infra_runtime/"
+    must_appear_in:
+      - "AGENTS.md"
+    must_not_appear_as:
+      - file: "AGENTS.md"
+        pattern: "zephyr.l01_infrastructure"
+        reason: "l01_infrastructure 包已迁移到 infra_runtime"
+
+  - id: escalation_engine_import
+    fact: "zephyr.governance.escalation_engine"
+    description: "EscalationEngine 导入路径（governance.escalation_engine，非 escalation）"
+    ssot_source: "src/zephyr/governance/escalation_engine.py"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "from zephyr.escalation import"
+        reason: "zephyr.escalation 不存在，实际在 zephyr.governance.escalation_engine"
+
+  - id: budget_engine_import
+    fact: "zephyr.governance.budget_engine"
+    description: "BudgetEngine 导入路径（governance.budget_engine，非 budget_enforcer）"
+    ssot_source: "src/zephyr/governance/budget_engine.py"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "from zephyr.budget_enforcer import"
+        reason: "zephyr.budget_enforcer 不存在，实际在 zephyr.governance.budget_engine"
+
+  - id: autopilot_import
+    fact: "zephyr.trading.autopilot"
+    description: "AutoPilot 导入路径（trading.autopilot，非 autopilot）"
+    ssot_source: "src/zephyr/trading/autopilot.py"
+    must_appear_in:
+      - ".trae/rules/onboarding_detail.md"
+    must_not_appear_as:
+      - file: ".trae/rules/onboarding_detail.md"
+        pattern: "from zephyr.autopilot import"
+        reason: "zephyr.autopilot 不存在，实际在 zephyr.trading.autopilot"
+
+  - id: a2a_card_registry_import
+    fact: "a2a_card_registry"
+    description: "A2A card registry 导入名（a2a_card_registry，非 card_registry）"
+    ssot_source: "src/zephyr/infra_runtime/a2a_protocol/a2a_card_registry.py"
+    must_appear_in:
+      - "AGENTS.md"
+    must_not_appear_as:
+      - file: "AGENTS.md"
+        pattern: "import card_registry"
+        reason: "实际文件名为 a2a_card_registry.py，不是 card_registry.py"
+
+  - id: pipeline_orchestrator_package
+    fact: "zephyr.integration.pipeline_orchestrator"
+    description: "PipelineOrchestrator 包路径（integration.pipeline_orchestrator，非 pipeline）"
+    ssot_source: "src/zephyr/integration/pipeline_orchestrator.py"
+    must_appear_in:
+      - "AGENTS.md"
+    must_not_appear_as:
+      - file: "AGENTS.md"
+        pattern: "zephyr.pipeline"
+        reason: "zephyr.pipeline 包不存在，实际在 zephyr.integration.pipeline_orchestrator"
+
+  - id: agent_orchestrator_package
+    fact: "zephyr.trading.orchestrator"
+    description: "AgentOrchestrator 包路径（trading.orchestrator，非 orchestrator）"
+    ssot_source: "src/zephyr/trading/orchestrator/agent_orchestrator.py"
+    must_appear_in:
+      - "AGENTS.md"
+    must_not_appear_as:
+      - file: "AGENTS.md"
+        pattern: "zephyr.orchestrator"
+        reason: "zephyr.orchestrator 包不存在，实际在 zephyr.trading.orchestrator"
+
+  - id: functional_domain_registry_underscore
+    fact: "functional_domain_registry.yaml"
+    description: "功能域注册表文件名（下划线，非连字符）"
+    ssot_source: "docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+    must_not_appear_as:
+      - file: ".trae/rules/project_rules.md"
+        pattern: "functional-domain-registry.yaml"
+        reason: "连字符写法错误，实际文件名用下划线 functional_domain_registry.yaml"
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "functional-domain-registry.yaml"
+        reason: "registry_of_registries.yaml 内部引用连字符写法错误"
+
+  - id: depgraph_db_in_registry
+    fact: "data/databases/depgraph.db"
+    description: "架构全景图+依赖全景图真源（在 registry_of_registries.yaml 中，非 project-architecture-panorama.yaml 或 project-entity-depgraph.yaml）"
+    ssot_source: "data/databases/depgraph.db"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "project-architecture-panorama.yaml"
+        reason: "该文件不存在，真源已迁移到 depgraph.db"
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "project-entity-depgraph.yaml"
+        reason: "该文件不存在，真源已迁移到 depgraph.db"
+
+  - id: migration_registry_in_registry
+    fact: "migration_registry.yaml"
+    description: "迁移注册表文件名（在 registry_of_registries.yaml 中，下划线非连字符）"
+    ssot_source: "docs/02_enterprise_architecture/migration_registry.yaml"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "migration-registry.yaml"
+        reason: "连字符写法错误，实际文件名用下划线 migration_registry.yaml"
+
+  - id: script_manifest_in_registry
+    fact: "script_manifest.yaml"
+    description: "脚本清单文件名（在 registry_of_registries.yaml 中，下划线非连字符）"
+    ssot_source: "scripts/script_manifest.yaml"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "script-manifest.yaml"
+        reason: "连字符写法错误，实际文件名用下划线 script_manifest.yaml"
+
+  - id: blueprint_registry_in_registry
+    fact: "blueprint_registry.yaml"
+    description: "蓝图注册表文件名（在 registry_of_registries.yaml 中，下划线非连字符）"
+    ssot_source: "docs/03_modules/blueprint_registry.yaml"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "blueprint-registry.yaml"
+        reason: "连字符写法错误，实际文件名用下划线 blueprint_registry.yaml"
+
+  - id: architecture_model_in_registry
+    fact: "architecture_model/index.yaml"
+    description: "架构模型索引路径（在 registry_of_registries.yaml 中，下划线非连字符）"
+    ssot_source: "architecture_model/index.yaml"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "architecture-model/index.yaml"
+        reason: "连字符写法错误，实际目录名用下划线 architecture_model/"
+
+  - id: total_registries_count
+    fact: "total_registries: 48"
+    description: "注册表总数（registry_of_registries.yaml summary 字段）"
+    ssot_source: "docs/registry_of_registries.yaml 实际清点"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "total_registries: 30"
+        reason: "过时数字，实际 48 个注册表"
+
+  - id: blueprint_entry_count_in_registry
+    fact: "entry_count: 60"
+    description: "蓝图注册表条目数（registry_of_registries.yaml REG-BLUEPRINT-001）"
+    ssot_source: "docs/03_modules/blueprint_registry.yaml total_blueprints: 60"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "description: 41 个施工蓝图汇总"
+        reason: "过时数字，实际 60 个蓝图"
+
+  - id: quality_standard_in_registry
+    fact: "quality_standard.md"
+    description: "审计脚本质量标准文件名（在 registry_of_registries.yaml 中，下划线非连字符）"
+    ssot_source: "scripts/governance/quality_standard.md"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "quality-standard.md"
+        reason: "连字符写法错误，实际文件名用下划线 quality_standard.md"
+
+  - id: sys_master_dir_in_registry
+    fact: "_sys_master/"
+    description: "系统总蓝图目录名（在 registry_of_registries.yaml 中，下划线非连字符）"
+    ssot_source: "docs/03_modules/_sys_master/"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "_sys-master/"
+        reason: "连字符写法错误，实际目录名用下划线 _sys_master/"
+
+  - id: master_blueprint_dir_in_registry
+    fact: "_master_blueprint/"
+    description: "集成闭环总蓝图目录名（在 registry_of_registries.yaml 中，下划线非连字符）"
+    ssot_source: "docs/03_modules/_master_blueprint/"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "_master-blueprint/"
+        reason: "连字符写法错误，实际目录名用下划线 _master_blueprint/"
+
+  - id: domain_governance_dir_in_registry
+    fact: "_domain_governance/"
+    description: "Agent治理八件套目录名（在 registry_of_registries.yaml 中，下划线非连字符）"
+    ssot_source: "docs/03_modules/_domain_governance/"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "_domain-governance/"
+        reason: "连字符写法错误，实际目录名用下划线 _domain_governance/"
+
+  - id: unified_asset_index_in_registry
+    fact: "unified_asset_index.yaml"
+    description: "统一资产索引文件名（在 registry_of_registries.yaml 中，下划线非连字符）"
+    ssot_source: "data/asset_index/unified_asset_index.yaml"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "unified-asset-index.yaml"
+        reason: "连字符写法错误，实际文件名用下划线 unified_asset_index.yaml"
+
+  - id: template_registry_in_registry
+    fact: "template_registry.yaml"
+    description: "模板注册表文件名（在 registry_of_registries.yaml 中，下划线非连字符）"
+    ssot_source: "docs/03_modules/template_registry.yaml"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "template-registry.yaml"
+        reason: "连字符写法错误，实际文件名用下划线 template_registry.yaml"
+
+  - id: detector_registry_in_registry
+    fact: "_detector_registry.yaml"
+    description: "漂移检测器注册表文件名（在 registry_of_registries.yaml 中，下划线非连字符）"
+    ssot_source: "src/zephyr/governance/drift_detection/_detector_registry.yaml"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "_detector-registry.yaml"
+        reason: "连字符写法错误，实际文件名用下划线 _detector_registry.yaml"
+
+  # === 12 个漂移路径修复检查项（2026-06-20 新增） ===
+
+  - id: reg_pipe_001_path
+    fact: "config/blueprint_routing.yaml"
+    description: "REG-PIPE-001 Pipeline 路由清单实际位置（包迁移 pipeline→integration + 拼写错误 routemanifest）"
+    ssot_source: "config/blueprint_routing.yaml"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "src/zephyr/pipeline/routemanifest.yaml"
+        reason: "pipeline 包已迁移，routemanifest 拼写错误，实际文件为 config/blueprint_routing.yaml"
+
+  - id: reg_cap_001_path
+    fact: "config/capacity/tech_stack_manifest.yaml"
+    description: "REG-CAP-001 技术栈清单文件名（下划线非连字符）"
+    ssot_source: "config/capacity/tech_stack_manifest.yaml"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "tech_stackmanifest.yaml"
+        reason: "拼写错误缺下划线，实际文件名 tech_stack_manifest.yaml"
+
+  - id: reg_skill_001_path
+    fact: "data/capability_cards/"
+    description: "REG-SKILL-001 Agent 技能注册表目录（原 skill-registry.yaml 已拆分为 22 个 skill_*.yaml）"
+    ssot_source: "data/capability_cards/"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "src/zephyr/orchestration/agent_lifecycle/skill-registry.yaml"
+        reason: "skill-registry.yaml 已拆分迁移到 data/capability_cards/ 目录"
+
+  - id: reg_afx_fixer_001_path
+    fact: "src/zephyr/infra_runtime/auto_fix_engine/engine.py"
+    description: "REG-AFX-FIXER-001 修复器注册表实际位置（包迁移+文件未创建，代码内联注册）"
+    ssot_source: "src/zephyr/infra_runtime/auto_fix_engine/engine.py"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "src/zephyr/infrastructure/runtime_integration/auto_fix_engine/_fixer-registry.yaml"
+        reason: "infrastructure 包已迁移到 infra_runtime，_fixer-registry.yaml 从未创建，fixer 通过 engine.py fixer_map 字典内联注册"
+
+  - id: reg_std_001_path
+    fact: "docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml"
+    description: "REG-STD-001 治理方法论标准实际位置（原 .md 已迁移为 YAML 规则）"
+    ssot_source: "docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "docs/01_policies_and_standards/meta/governance-methodology-standard.md"
+        reason: "governance-methodology-standard.md 已迁移为 trae_024_methodology_diagnosis.yaml"
+
+  - id: reg_std_002_path
+    fact: "docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml"
+    description: "REG-STD-002 代码构建标准实际位置（原 .md 已迁移为 YAML 规则）"
+    ssot_source: "docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "docs/01_policies_and_standards/governance/engineering/code-construction-standards.md"
+        reason: "code-construction-standards.md 已迁移为 trae_010_code_naming_organization.yaml"
+
+  - id: reg_std_005_path
+    fact: "docs/01_policies_and_standards/rules/trae_048_ops_vibe_coding_session.yaml"
+    description: "REG-STD-005 Session状态机规则实际位置（原 .md 已合并到 trae_048 YAML 规则）"
+    ssot_source: "docs/01_policies_and_standards/rules/trae_048_ops_vibe_coding_session.yaml"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "vibe-coding-session-state-runbook.md"
+        reason: "vibe-coding-session-state-runbook.md 已合并到 trae_048_ops_vibe_coding_session.yaml"
+
+  - id: reg_std_006_path
+    fact: "docs/01_policies_and_standards/rules/trae_048_ops_vibe_coding_session.yaml"
+    description: "REG-STD-006 会话门禁检查清单实际位置（原 .md 已合并到 trae_048 YAML 规则）"
+    ssot_source: "docs/01_policies_and_standards/rules/trae_048_ops_vibe_coding_session.yaml"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "vibe-coding-gate-runbook.md"
+        reason: "vibe-coding-gate-runbook.md 已合并到 trae_048_ops_vibe_coding_session.yaml"
+
+  - id: reg_std_007_path
+    fact: "docs/01_policies_and_standards/rules/trae_048_ops_vibe_coding_session.yaml"
+    description: "REG-STD-007 AI事故响应手册实际位置（原 .md 已合并到 trae_048 YAML 规则）"
+    ssot_source: "docs/01_policies_and_standards/rules/trae_048_ops_vibe_coding_session.yaml"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "ai-incident-and-emergency-runbook.md"
+        reason: "ai-incident-and-emergency-runbook.md 已合并到 trae_048_ops_vibe_coding_session.yaml"
+
+  - id: reg_freeze_001_path
+    fact: "src/zephyr/shared/contracts/freeze_manifest.yaml"
+    description: "REG-FREEZE-001 契约冻结清单文件名（下划线非连字符）"
+    ssot_source: "src/zephyr/shared/contracts/freeze_manifest.yaml"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "freezemanifest.yaml"
+        reason: "拼写错误缺下划线，实际文件名 freeze_manifest.yaml"
+
+  - id: reg_sm_001_path
+    fact: "src/zephyr/shared/_state_machine_registry.yaml"
+    description: "REG-SM-001 状态机实例注册表文件名（有下划线前缀）"
+    ssot_source: "src/zephyr/shared/_state_machine_registry.yaml"
+    must_appear_in:
+      - "docs/registry_of_registries.yaml"
+    must_not_appear_as:
+      - file: "docs/registry_of_registries.yaml"
+        pattern: "src/zephyr/shared/state_machine_registry.yaml"
+        reason: "文件名有下划线前缀，实际为 _state_machine_registry.yaml"
+
+# ============================================================
+# 命令类事实
+# ============================================================
+command_facts:
+  - id: lock_files_cmd
+    fact: "scripts/lock_files.py"
+    description: "文件锁协议入口（RULE-ZERO）"
+    ssot_source: "scripts/lock_files.py"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"
+
+  - id: scaffold_cmd
+    fact: "scripts/scaffold.py"
+    description: "唯一创建入口（RULE-FOUR）"
+    ssot_source: "scripts/scaffold.py"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"
+
+  - id: generate_depgraph_param
+    fact: "generate_project_depgraph.py --max-workers 8"
+    description: "depgraph 生成器正常期运行命令（必须带 --max-workers 8 参数）"
+    ssot_source: "scripts/governance/generate_project_depgraph.py"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"
+
+# ============================================================
+# 文件存在性检查
+# ============================================================
+file_existence_checks:
+  - id: depgraph_db_exists
+    path: "data/databases/depgraph.db"
+    must_exist: true
+    description: "depgraph.db 必须存在——依赖图+全景图唯一真源"
+
+  - id: unified_asset_index_exists
+    path: "data/asset_index/unified_asset_index.yaml"
+    must_exist: true
+    description: "unified_asset_index.yaml 必须存在（下划线）"
+
+  - id: panorama_yaml_deleted
+    path: "data/asset_index/project-architecture-panorama.yaml"
+    must_exist: false
+    description: "panorama.yaml 已于 2026-06-13 废弃删除，不得存在"
+
+  - id: task_repo_exists
+    path: "src/zephyr/governance/task_repo.py"
+    must_exist: true
+    description: "task_repo.py 必须存在——TaskRepository 物理位置"
+
+  - id: capability_cards_dir_exists
+    path: "data/capability_cards"
+    must_exist: true
+    description: "capability_cards 目录必须存在——agent_spec 数据层"
+
+  - id: project_rules_exists
+    path: ".trae/rules/project_rules.md"
+    must_exist: true
+    description: "L0 首关页面必须存在"
+
+  - id: onboarding_detail_exists
+    path: ".trae/rules/onboarding_detail.md"
+    must_exist: true
+    description: "L1 施工指导必须存在"
+
+  - id: agents_md_exists
+    path: "AGENTS.md"
+    must_exist: true
+    description: "非 Trae AI 入口必须存在"
+
+# ============================================================
+# 规则类事实 — 18 条 RULE 核心约束必须出现在 L0
+# ============================================================
+rule_facts:
+  - id: rule_zero
+    fact: "RULE-ZERO"
+    description: "写入文件锁协议"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+
+  - id: rule_one
+    fact: "RULE-ONE"
+    description: "原子写入"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+
+  - id: rule_two
+    fact: "RULE-TWO"
+    description: "反孤儿功能"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+
+  - id: rule_three
+    fact: "RULE-THREE"
+    description: "删除文件协议"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+
+  - id: rule_four
+    fact: "RULE-FOUR"
+    description: "创建文件协议"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+
+  - id: rule_five
+    fact: "RULE-FIVE"
+    description: "零残留"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+
+  - id: rule_six
+    fact: "RULE-SIX"
+    description: "任务粒度边界"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+
+  - id: rule_seven
+    fact: "RULE-SEVEN"
+    description: "强制 ThreadPoolExecutor"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+
+  - id: rule_eight
+    fact: "RULE-EIGHT"
+    description: "搜索先行协议"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+
+  - id: rule_seventeen
+    fact: "RULE-SEVENTEEN"
+    description: "禁止 PowerShell 语法"
+    must_appear_in:
+      - ".trae/rules/project_rules.md"
+      - ".trae/rules/onboarding_detail.md"

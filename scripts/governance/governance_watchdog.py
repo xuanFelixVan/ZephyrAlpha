@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §3.9
+# [BLUEPRINT] GOV-075 | docs/03_modules/_domain-governance/blueprint.md | §3.9
 # [MODULE] scripts.governance.governance_watchdog
 # [INVARIANTS] 服务不可用时必须尝试重启;重启次数超限必须通知Owner
 # [MODIFY-GUARD] 重启策略变更需同步escalation_engine

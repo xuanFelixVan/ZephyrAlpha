@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [A_test] module_id: SRC-TST-0037 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §
 # [MODULE] tests.agent_rbac.test_forensic_b
 # [STABILITY] evolving
 # [SAFETY] L
@@ -8,9 +9,9 @@
 from __future__ import annotations
 
 import pytest
-from zephyr.agent_rbac.path_guard import PathGuard
-from zephyr.agent_rbac.shell_dialect_detector import ShellDialectDetector
-from zephyr.agent_rbac.rule_injection_guard import RuleInjectionGuard
+from zephyr.security.access_control.path_guard import PathGuard
+from zephyr.security.access_control.shell_dialect_detector import ShellDialectDetector
+from zephyr.security.access_control.rule_injection_guard import RuleInjectionGuard
 
 
 class TestForensicB:

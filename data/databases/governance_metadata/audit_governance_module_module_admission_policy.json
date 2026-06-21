@@ -1,0 +1,80 @@
+{
+  "task_id": "DM-100132",
+  "source_file": "docs/01_policies_and_standards/governance/module/module_admission_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_032_module_lifecycle.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "MAD-001_架构必要性": {
+      "source_section": "§5 MAD-001",
+      "type": "pre_condition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_001",
+      "details": "层归属唯一且_index.yaml中已定义→无层归属/模糊/冲突拒绝注入"
+    },
+    "MAD-002_Phase相关性": {
+      "source_section": "§5 MAD-002",
+      "type": "pre_condition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_001",
+      "details": "模块在当前Phase P0/P1优先级列表中→不在范围延迟注入"
+    },
+    "MAD-003_依赖关系合规": {
+      "source_section": "§5 MAD-003",
+      "type": "pre_condition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_001",
+      "details": "depends_on所有ID存在+无环+方向合规→引用不存在/循环/违反方向延迟注入"
+    },
+    "MAD-004_接口可定义性": {
+      "source_section": "§5 MAD-004",
+      "type": "pre_condition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_001",
+      "details": "接口来源于已有文档或Owner说明→依赖AI推测暂停等待"
+    },
+    "MAD-005_P0额外条件": {
+      "source_section": "§6 MAD-005",
+      "type": "pre_condition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_001",
+      "details": "接口契约frozen+KB决策记录+runtime_plane"
+    },
+    "准入否决5条件": {
+      "source_section": "§7 准入否决条件",
+      "type": "prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_001",
+      "details": "module_id重复+依赖不存在+status非法+P0无runtime_plane+功能域重叠"
+    },
+    "功能域重叠四步判定": {
+      "source_section": "§7.1 功能域重叠判定流程",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_001",
+      "details": "关键词扫描→responsibility_domain匹配→covers[]交叉→输出否决建议"
+    },
+    "紧急豁免路径": {
+      "source_section": "§9 紧急豁免路径",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_001",
+      "details": "Owner发起+记录否决原因+风险接受声明+限时当前Phase有效+豁免记录"
+    },
+    "第三方模块4项检查": {
+      "source_section": "§10 第三方模块专项检查",
+      "type": "mandatory+prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_001",
+      "details": "来源信任+许可证合规+安全审计+隔离声明"
+    }
+  },
+  "summary": {
+    "total_rules": 9,
+    "COVERED": 9,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "trae_032_module_lifecycle.yaml: 在mod_001 section中添加5条pre_conditions+5条actions+5条prohibitions覆盖module_admission_policy.md全部MAD规则+否决条件+豁免路径+第三方检查"
+  ]
+}

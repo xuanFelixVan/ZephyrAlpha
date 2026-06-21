@@ -1,5 +1,15 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py | §
 """Module docstring — see module-level docstring for details."""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 #!/usr/bin/env python3
@@ -9,7 +19,7 @@ GATE-19: validate_static_manifest_drift.py
 
 __manifest__ = """
 args:
-- {flag: --check, type: bool, description: "only detect drift (pre-commit mode)"}
+- {flag: --check, type: bool, description: "only detect drift (pre_commit mode)"}
 description: "run all generators --check, hard-block any drift between auto-generated vs disk. Anchored to AGENTS.md section 6.16"
 dimensions:
 - D5
@@ -28,7 +38,7 @@ is 'entry list + count' must be auto-generated (Type A) or schema input (Type B)
 
 Checks:
   1. script_manifest.yaml -- via generate_script_manifest.py --check
-  2. gate-registry.yaml    -- via generate_gate_registry.py --check
+  2. gate-registry.md    -- via generate_gate_registry.py --check
 
 Usage:
     python validate_static_manifest_drift.py --check

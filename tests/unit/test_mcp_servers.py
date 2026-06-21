@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-2045 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-662 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_mcp_servers
 # [STABILITY] evolving
 # [SAFETY] L
@@ -22,17 +23,17 @@ import io
 import json
 from typing import Any
 
-from zephyr.mcp._base_server import (
+from zephyr.infrastructure._base_server import (
     ERR_METHOD_NOT_FOUND,
     ERR_TOOL_NOT_FOUND,
     BaseMCPServer,
 )
-from zephyr.mcp.doc_guard_server import create_server as make_doc_server
-from zephyr.mcp.gate_engine_server import create_server as make_gate_server
-from zephyr.mcp.knowledge_base_server import (
+from zephyr.infrastructure.doc_guard_server import create_server as make_doc_server
+from zephyr.infrastructure.gate_engine_server import create_server as make_gate_server
+from zephyr.infrastructure.knowledge_base_server import (
     create_server as make_kb_server,
 )
-from zephyr.mcp.sentinel_server import create_server as make_sentinel_server
+from zephyr.infrastructure.sentinel_server import create_server as make_sentinel_server
 
 # ---------------------------------------------------------------------------
 # 辅助函数
@@ -258,7 +259,7 @@ class TestGateEngineServer:
             self.server,
             "gate_engine.run_g1_write",
             {
-                "target_path": "src/zephyr/context_engine/prompt_registry.py",
+                "target_path": "src/zephyr/context-engine/prompt_registry.py",
                 "content_preview": "# clean file",
             },
         )
@@ -373,7 +374,7 @@ class TestDocGuardServer:
                 "to_model": "claude-sonnet",
                 "completed_tasks": ["T-2-27"],
                 "next_tasks": ["T-2-28", "T-3-04"],
-                "open_files": ["src/zephyr/context_engine/prompt_registry.py"],
+                "open_files": ["src/zephyr/context-engine/prompt_registry.py"],
             },
         )
         assert result["from_session"] == "session-001"

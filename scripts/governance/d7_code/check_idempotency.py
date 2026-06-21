@@ -41,7 +41,7 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
-L06_DIRS = ["l06_trade_execution"]
+L06_DIRS = ["ex_core"]
 
 IDEMPOTENCY_MARKERS = ["idempotency_key", "idempotent", "idempotency", "Idempotency-Key"]
 
@@ -81,14 +81,14 @@ def check_file_idempotency(filepath: Path) -> list[str]:
     return findings
 
 
-def scan_l06_directory() -> list[str]:
-    """scan_l06_directory implementation."""
+def scan_ex_core() -> list[str]:
+    """scan_ex_core implementation."""
     findings = []
-    for l06_name in L06_DIRS:
-        l06_dir = SRC_ROOT / l06_name
-        if not l06_dir.exists():
+    for ex_core in L06_DIRS:
+        ex_core = SRC_ROOT / ex_core
+        if not ex_core.exists():
             continue
-        for py_file in l06_dir.rglob("*.py"):
+        for py_file in ex_core.rglob("*.py"):
             if py_file.name.startswith("_"):
                 continue
             findings.extend(check_file_idempotency(py_file))
@@ -114,10 +114,10 @@ def main() -> None:
             all_findings.extend(check_file_idempotency(p))
 
     if args.scan_all:
-        all_findings.extend(scan_l06_directory())
+        all_findings.extend(scan_ex_core())
 
     if not any([args.module, args.scan_all]):
-        all_findings.extend(scan_l06_directory())
+        all_findings.extend(scan_ex_core())
 
     for finding in all_findings:
         print(finding)

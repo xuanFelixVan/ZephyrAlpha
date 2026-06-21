@@ -1,7 +1,7 @@
-﻿﻿﻿﻿﻿﻿﻿﻿# PRE-COMMIT HOOK — 蓝图-代码对齐闸门
+﻿﻿﻿﻿﻿﻿﻿# PRE-COMMIT HOOK — 蓝图-代码对齐闸门
 # 铁律六 + L3 预防层：任何模块代码变更时，强制验证蓝图 construction_progress 与磁盘对齐
 #
-# 安装：Copy-Item scripts/governance/d5_architecture/pre-commit-hook.ps1 .git/hooks/pre-commit
+# 安装：Copy-Item scripts/governance/d5_architecture/pre_commit_hook.ps1 .git/hooks/pre_commit
 #
 # 逻辑：
 #   1. 检测 staged 变更中涉及哪些 src/zephyr/ 子模块

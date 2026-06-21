@@ -1,0 +1,998 @@
+rule_id: TRAE-050
+title: 域策略-数据源与因子层
+aliases:
+- DOM-L00-001
+- DOM-L02-001
+layer: L2
+severity: warning
+scope: domain_data_factor
+domain: TRAE
+triggers:
+- operation: domain_data_factor
+sections:
+  abs_001_auth:
+    section_type: rule
+    title: 所有数据源连接必须认证
+    original_rules:
+    - DOM-L00-001-ABS-001
+    conditions:
+    - type: pre_condition
+      check: 数据源连接是否使用认证凭据
+      pass: 连接已认证
+      fail: 禁止匿名连接
+    actions:
+    - type: mandatory
+      step: 认证方式：API Key+Secret / OAuth Token / 证书双向认证
+    - type: mandatory
+      step: 凭据存储在密钥管理服务中（GOV-SEC-001 ABS-002）
+    - type: mandatory
+      step: 凭据至少每90天轮换一次，轮换期间旧凭据保留24小时宽限期
+    prohibitions:
+    - 匿名连接任何数据源
+  abs_002_no_hardcode:
+    section_type: rule
+    title: 禁止硬编码连接凭据
+    original_rules:
+    - DOM-L00-001-ABS-002
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 通过环境变量或密钥管理服务注入凭据
+    prohibitions:
+    - 在代码或配置文件中硬编码密码/Token
+    - 违反此规则等同于密钥泄露
+  abs_003_tier:
+    section_type: rule
+    title: 数据源必须按重要性分级管理
+    original_rules:
+    - DOM-L00-001-ABS-003
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 核心级：交易/风控必需，双活冗余+自动切换(<10s)
+    - type: mandatory
+      step: 重要级：策略/分析依赖，主备切换(<60s)
+    - type: mandatory
+      step: 可选级：增强/辅助，静默降级+次日补录
+    - type: mandatory
+      step: 分级名单维护在 数据源注册表(待创建)，新增数据源时必须声明级别
+    prohibitions:
+    - 核心数据源无容灾方案直接上线
+  abs_004_disaster_recovery:
+    section_type: rule
+    title: 核心数据源必须具备容灾能力
+    original_rules:
+    - DOM-L00-001-ABS-004
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 核心级：同城双活，切换<10s
+    - type: mandatory
+      step: 重要级：主备切换<60s 或 缓存降级即时
+    prohibitions:
+    - 核心数据源无容灾方案直接上线
+  cond_001_timeout:
+    section_type: rule
+    title: 超时配置必须与数据源SLA对齐
+    original_rules:
+    - DOM-L00-001-COND-001
+    conditions:
+    - type: constraint
+      check: 实时行情：连接5s/读取3s/重试3/间隔1s
+      pass: 超时配置合规
+      fail: 超时配置不合规
+    - type: constraint
+      check: 历史数据：连接10s/读取30s/重试3/间隔5s
+      pass: 超时配置合规
+      fail: 超时配置不合规
+    - type: constraint
+      check: 基本面数据：连接10s/读取30s/重试2/间隔10s
+      pass: 超时配置合规
+      fail: 超时配置不合规
+    - type: constraint
+      check: 另类数据：连接15s/读取60s/重试2/间隔30s
+      pass: 超时配置合规
+      fail: 超时配置不合规
+    actions:
+    - type: mandatory
+      step: 超时后必须触发断线事件通知
+    prohibitions:
+    - 超时后静默失败不触发告警
+  cond_002_exponential_backoff:
+    section_type: rule
+    title: 重连策略必须使用指数退避
+    original_rules:
+    - DOM-L00-001-COND-002
+    conditions:
+    - type: constraint
+      check: 重连间隔：1s→2s→4s→8s→16s→30s(封顶)
+      pass: 指数退避合规
+      fail: 重连策略不合规
+    actions:
+    - type: mandatory
+      step: 最大退避时间不超过30秒
+    prohibitions: []
+  cond_003_degradation:
+    section_type: rule
+    title: 降级策略必须按数据源级别差异化执行
+    original_rules:
+    - DOM-L00-001-COND-003
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 核心数据源故障→暂停所有依赖策略的新开仓指令
+    - type: mandatory
+      step: 重要数据源故障→暂停依赖该数据源的非关键策略
+    - type: mandatory
+      step: 可选数据源故障→静默降级，使用缓存或跳过
+    - type: mandatory
+      step: 降级事件必须记录审计日志（GOV-CMP-002）
+    prohibitions: []
+  cond_004_fallback:
+    section_type: rule
+    title: 生产数据源异常时必须执行回退流程
+    original_rules:
+    - DOM-L00-001-COND-004
+    conditions:
+    - type: trigger
+      check: 数据源持续异常30分钟内无法恢复
+      pass: 触发回退流程
+      fail: 继续重连
+    actions:
+    - type: mandatory
+      step: 自动切换到备用数据源（如已配置）
+    - type: mandatory
+      step: 如无备用源，触发降级策略（COND-003）
+    - type: mandatory
+      step: 切换/降级后通知Owner
+    - type: mandatory
+      step: 主数据源恢复后，在非交易时段执行回切（T+1盘前）
+    - type: mandatory
+      step: 回切前必须通过30分钟稳定性验证
+    prohibitions:
+    - 在交易时段执行数据源上线切换
+  admission_check:
+    section_type: verification
+    title: 数据源准入条件
+    original_rules:
+    - DOM-L00-001-§6
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 准入1：数据源有正式API文档（人工审查）
+    - type: mandatory
+      step: 准入2：数据源有SLA承诺可用率≥99.5%（合同/协议审查）
+    - type: mandatory
+      step: 准入3：连接测试通过（连续24小时无断连，自动化测试）
+    - type: mandatory
+      step: 准入4：数据质量抽样通过（GOV-DATA-001，自动化检查）
+    - type: mandatory
+      step: 准入5：凭据已注册到密钥管理服务（配置检查）
+    prohibitions:
+    - 使用未经准入检查的数据源
+  disconnect_procedure:
+    section_type: procedure
+    title: 断线处理流程
+    original_rules:
+    - DOM-L00-001-§7
+    steps:
+    - order: 1
+      action: 标记该数据源为disconnected
+      pre_condition: 数据源连接断开
+      expected_result: 状态已更新
+      on_failure: 强制标记
+    - order: 2
+      action: 通知风控系统（DOM-L04-001）
+      pre_condition: 状态已标记disconnected
+      expected_result: 风控系统收到通知
+      on_failure: 重复通知
+    - order: 3
+      action: 暂停依赖该数据源的所有策略
+      pre_condition: 风控系统已通知
+      expected_result: 依赖策略已暂停
+      on_failure: 强制暂停
+    - order: 4
+      action: 自动重连（按COND-001超时策略配置）
+      pre_condition: 策略已暂停
+      expected_result: 重连尝试开始
+      on_failure: 继续重试
+    - order: 5
+      action: 重连成功后标记为connected，恢复策略
+      pre_condition: 重连成功
+      expected_result: 策略恢复运行
+      on_failure: 保持暂停
+    - order: 6
+      action: 30分钟内无法重连→升级为P1事故（GOV-SEC-003）
+      pre_condition: 重连30分钟未成功
+      expected_result: P1事故已申报
+      on_failure: 强制升级
+  data_source_tier_system:
+    section_type: principles
+    title: 数据源三级分级体系
+    original_rules:
+    - DOM-L00-001-§2
+    items:
+    - id: CORE
+      statement: 交易/风控必需数据源，系统必须暂停新交易
+      rationale: 核心数据源断裂直接影响交易安全
+      applies_to: 行情数据源(实时)
+    - id: IMPORTANT
+      statement: 策略/分析依赖数据源，降级运行暂停非关键策略
+      rationale: 重要数据源断裂影响策略质量但不危及交易安全
+      applies_to: 历史数据/基本面数据
+    - id: OPTIONAL
+      statement: 增强/辅助数据源，不影响核心功能
+      rationale: 可选数据源断裂仅降低分析精度
+      applies_to: 另类数据/辅助数据
+  timeout_config:
+    section_type: examples
+    title: 超时与重连配置参数
+    original_rules:
+    - DOM-L00-001-§4
+    items:
+    - title: 实时行情超时配置
+      code: 'connect_timeout: 5s
+
+        read_timeout: 3s
+
+        retry_count: 3
+
+        retry_interval: 1s'
+      language: yaml
+      note: 核心级数据源适用
+    - title: 历史数据超时配置
+      code: 'connect_timeout: 10s
+
+        read_timeout: 30s
+
+        retry_count: 3
+
+        retry_interval: 5s'
+      language: yaml
+      note: 重要级数据源适用
+    - title: 基本面数据超时配置
+      code: 'connect_timeout: 10s
+
+        read_timeout: 30s
+
+        retry_count: 2
+
+        retry_interval: 10s'
+      language: yaml
+      note: 重要级数据源适用
+    - title: 另类数据超时配置
+      code: 'connect_timeout: 15s
+
+        read_timeout: 60s
+
+        retry_count: 2
+
+        retry_interval: 30s'
+      language: yaml
+      note: 可选级数据源适用
+    - title: 指数退避重连间隔
+      code: 'backoff_intervals: [1, 2, 4, 8, 16, 30]
+
+        max_backoff: 30s'
+      language: yaml
+      note: 所有数据源统一使用指数退避，封顶30秒
+  ssot_declarations:
+    section_type: context
+    title: SSoT声明
+    original_rules:
+    - DOM-L00-001-§8
+    summary: 本文件是数据源连接认证规则、超时重连策略、容灾降级策略、准入条件、断线处理流程的唯一真源
+    impact_on_rules:
+    - 全局密钥管理与凭据轮换→GOV-SEC-001
+    - 全局审计追踪与日志留存→GOV-CMP-002
+    key_decisions:
+    - 任何与本文件冲突的定义以本文件为准
+    - 发现冲突时应提KB决策记录记录并修正冲突方
+  consumer_registry:
+    section_type: examples
+    title: 消费者注册表
+    original_rules:
+    - DOM-L00-001-§9
+    items:
+    - title: DOM-L00-002 connector-onboarding-runbook.md(待创建)
+      code: 'tier: 1
+
+        consumption: 引用ABS-001~004/COND-001~004作为操作前置条件'
+      language: yaml
+      note: Tier1消费者
+    - title: DOM-L04-001 risk-limits-policy.md
+      code: 'tier: 1
+
+        consumption: 断线时引用§7断线处理流程触发风控动作'
+      language: yaml
+      note: Tier1消费者
+    - title: DOM-L07-002 analytics-pipeline-runbook.md
+      code: 'tier: 2
+
+        consumption: 引用数据源就绪检查作为管线启动前置条件'
+      language: yaml
+      note: Tier2消费者
+    - title: src/zephyr/connectors/ 所有连接器模块
+      code: 'tier: 1
+
+        consumption: 实现超时/重连/容灾参数'
+      language: yaml
+      note: Tier1消费者
+  change_sync_rules:
+    section_type: context
+    title: 变更同步规则
+    original_rules:
+    - DOM-L00-001-§13
+    summary: 变更本文件时必须同步Tier1/Tier2消费者
+    impact_on_rules:
+    - 新增/修改ABS规则→同步DOM-L00-002+通知DOM-L04-001
+    - 修改超时/重连参数→同步所有连接器模块代码
+    - 修改数据源分级名单→同步数据源注册表(待创建)+通知DOM-L04-001
+    - 修改容灾配置→同步基础设施配置
+    key_decisions: []
+  modification_conditions:
+    section_type: context
+    title: 修改条件
+    original_rules:
+    - DOM-L00-001-§14
+    summary: 不同修改类型有不同审批和同步要求
+    impact_on_rules:
+    - 新增ABS规则→Owner批准+更新本文+同步Tier1消费者
+    - 修改阈值参数→Owner批准+同步连接器模块代码
+    - 新增COND规则→Owner批准+更新本文
+    - 编辑性修改→AI可自主修改+记录变更
+    key_decisions: []
+  review_cycles:
+    section_type: context
+    title: 审查周期
+    original_rules:
+    - DOM-L00-001-§16
+    summary: 三项定期审查
+    impact_on_rules: []
+    key_decisions:
+    - 数据源分级名单是否需更新→每30天→Owner
+    - 超时/重连参数是否仍合理→每90天→Owner
+    - ABS/COND规则是否覆盖所有已知风险→每90天→Owner
+  normative_references:
+    section_type: context
+    title: 标准间引用规则
+    original_rules:
+    - DOM-L00-001-§10
+    summary: Normative引用(GOV-SEC-001密钥管理/GOV-CMP-002审计日志)和Informative引用(PS-STD-001/PS-STD-003/GOV-DATA-001)
+    impact_on_rules:
+    - GOV-SEC-001→本文ABS-001和凭据轮换宽限期以此为准
+    - GOV-CMP-002→降级/断线事件的审计日志以此为基
+    key_decisions: []
+  self_check_checklist:
+    section_type: verification
+    title: 完整性自检清单
+    original_rules:
+    - DOM-L00-001-§18
+    checks:
+    - step: §1目的与范围
+      command: 检查文件包含目的与范围章节
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §2数据源分级(ABS-003)
+      command: 检查文件包含数据源分级章节
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §3连接认证规则(ABS-001,ABS-002)
+      command: 检查文件包含连接认证规则
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §4超时与重连策略(COND-001,COND-002)
+      command: 检查文件包含超时重连策略
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §5容灾与降级(ABS-004,COND-003)
+      command: 检查文件包含容灾降级章节
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §6数据源准入条件
+      command: 检查文件包含准入条件
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §7断线处理(COND-004)
+      command: 检查文件包含断线处理流程
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §8-§16完整性章节
+      command: 检查SSoT/消费者/引用/禁止/同步/修改/废弃/审查章节
+      expected_exit: 全部存在
+      on_fail: 补充缺失章节
+  connector_onboarding_procedure:
+    section_type: procedure
+    title: 连接器入职操作步骤
+    original_rules:
+    - DOM-L00-002-§2
+    steps:
+    - order: 0
+      action: 安全审查——确认无硬编码凭据/使用TLS1.3+/凭据已注册密钥管理
+      pre_condition: 新连接器上线前
+      expected_result: 安全审查通过
+      on_failure: 禁止进入后续步骤
+    - order: 1
+      action: 确认数据源准入——API文档/SLA≥99.5%/获取凭据/注册密钥管理
+      pre_condition: 安全审查通过
+      expected_result: 准入条件全部满足
+      on_failure: 不满足则无法继续
+    - order: 2
+      action: 创建连接器模块——src/zephyr/connectors/下创建/实现connect()disconnect()subscribe()ping()/配置超时/编写单元测试
+      pre_condition: 准入通过
+      expected_result: 连接器代码+单元测试完成
+      on_failure: 修复代码问题
+    - order: 3
+      action: 连接测试——单次认证+24h连续测试+记录断连/重连率+数据质量抽样
+      pre_condition: 连接器代码完成
+      expected_result: P50≤100ms/P99≤500ms/字段缺失率<0.01%/错误率≤0.1%
+      on_failure: 修复后重测
+    - order: 4
+      action: 极端场景测试——空数据推送/超大行情波动(>10%)/非交易时段/数据格式异常
+      pre_condition: 连接测试通过
+      expected_result: 5项极端场景全部通过
+      on_failure: 修复后重新执行全部5项
+    - order: 5
+      action: 注册到系统——连接器注册表(待创建)注册/配置监控告警/更新数据源清单
+      pre_condition: 极端场景测试通过
+      expected_result: 注册完成
+      on_failure: 检查注册表格式
+    - order: 6
+      action: 上线验证——dev 72h→Owner审批→prod切换(盘后15:30后或周末)→监控48h
+      pre_condition: 注册完成
+      expected_result: dev断连≤3次/重连100%/P99≤500ms; prod异常≤1次
+      on_failure: 回滚到suspended状态
+  connector_verification:
+    section_type: verification
+    title: 连接器验证清单
+    original_rules:
+    - DOM-L00-002-§3
+    checks:
+    - step: 连接器可正常连接
+      command: 执行connect()并读取数据
+      expected_exit: 认证通过，数据可读取
+      on_fail: 检查凭据和网络
+    - step: 24小时连续测试
+      command: 运行24h连续连接测试
+      expected_exit: 断连≤3次，重连成功率100%
+      on_fail: 修复连接稳定性
+    - step: 超时配置正确
+      command: 模拟超时场景
+      expected_exit: 超时触发告警，重连自动恢复
+      on_fail: 检查超时参数配置
+    - step: 凭据未硬编码
+      command: 'Grep工具: pattern=''password|secret|token|api_key'' path=''src/zephyr/connectors/'' output_mode=''content'' -i=true -n=true 检查代码中明文密码/Token'
+      expected_exit: 无匹配
+      on_fail: 移除硬编码凭据
+    - step: 单元测试通过
+      command: 运行pytest
+      expected_exit: 覆盖率≥80%
+      on_fail: 补充测试用例
+    - step: 数据质量达标
+      command: 运行GOV-DATA-001数据质量脚本
+      expected_exit: 缺失率<0.1%
+      on_fail: 检查数据源质量
+  connector_rollback:
+    section_type: rollback
+    title: 连接器回滚方案
+    original_rules:
+    - DOM-L00-002-§4
+    steps:
+    - order: 1
+      action: 在连接器注册表(待创建)中设置status:suspended
+      verify: 检查注册表状态已更新
+      on_fail: 手动更新注册表
+    - order: 2
+      action: 通知风控系统暂停依赖该数据源的策略
+      verify: 风控系统确认策略已暂停
+      on_fail: 直接联系风控团队
+    - order: 3
+      action: 通知Owner回滚完成
+      verify: Owner确认收到通知
+      on_fail: 升级通知渠道
+    - order: 4
+      action: 如无法修复，从注册表中移除连接器
+      verify: 注册表中无该连接器条目
+      on_fail: 手动删除注册表条目
+  connector_ai_autonomy:
+    section_type: examples
+    title: 连接器入职AI自治权限标注
+    original_rules:
+    - DOM-L00-002-§5
+    items:
+    - title: Step0安全审查
+      code: 'ai_permission: needs_confirmation
+
+        action: AI执行检查后输出结果，Owner确认'
+      language: yaml
+      note: 需确认
+    - title: Step1-2创建连接器
+      code: 'ai_permission: auto
+
+        action: AI可自动生成代码和目录结构'
+      language: yaml
+      note: 可自动
+    - title: Step3-3.5测试
+      code: 'ai_permission: needs_confirmation
+
+        action: AI生成测试脚本并执行，结果由Owner确认'
+      language: yaml
+      note: 需确认
+    - title: Step4注册
+      code: 'ai_permission: auto
+
+        action: AI可自动在注册表中写入条目'
+      language: yaml
+      note: 可自动
+    - title: Step6上线验证
+      code: 'ai_permission: needs_confirmation
+
+        action: AI注册监控规则，Owner确认阈值'
+      language: yaml
+      note: 需确认
+    - title: 回滚方案
+      code: 'ai_permission: needs_confirmation
+
+        action: AI可执行前两项，通知Owner必须Owner知悉'
+      language: yaml
+      note: 需确认
+  l00_change_history:
+    section_type: examples
+    title: 变更记录
+    original_rules:
+    - DOM-L00-001-§17
+    items:
+    - title: v0.1.0
+      code: 'date: 2026-04-30
+
+        change: 初始草案——创建数据源连接策略'
+      language: yaml
+      note: 初始版本
+    - title: v0.2.0
+      code: 'date: 2026-06-19
+
+        change: RQ审查修复——L04(风控)+L07(盘后)sections迁移至trae_051；references移除自引用TRAE-050；provenance源文件标记deprecated(D56裁定SSoT)'
+      language: yaml
+      note: L04+L07内容迁移至trae_051
+  dom_l02_001:
+    section_type: rule
+    title: 因子质量门控
+    original_rules:
+    - DOM-L02-001-ABS-001
+    - DOM-L02-001-ABS-002
+    - DOM-L02-001-ABS-003
+    - DOM-L02-001-COND-001
+    - DOM-L02-001-COND-002
+    - DOM-L02-001-COND-003
+    conditions:
+    - type: constraint
+      check: 四维质量检查：年化夏普≥1.0(扣费后) / 最大回撤≤15% / Rank IC均值≥0.03 / IC_IR≥0.5
+      pass: 因子通过四维质量门控
+      fail: 任一维度未达标，拒绝上线
+    - type: constraint
+      check: 实盘可行性：日均单边换手率≤30%(量价≤20%,基本面≤50%) / 策略容量/AUM≤5倍 / 计算延迟≤50ms
+      pass: 因子通过实盘可行性检查
+      fail: 未通过实盘可行性检查，拒绝上线
+    - type: constraint
+      check: 衰减监控：IC连续20日<0.01→decaying / 滚动60日夏普<0.3→underperforming / IC连续60日=0→deprecated
+        / 相关系数从<0.3升至>0.7→converging
+      pass: 因子无衰减信号
+      fail: 触发衰减处置（降权/通知/退役）
+    - type: constraint
+      check: 市场状态回测：牛市夏普≥0.8 / 熊市最大回撤≤25% / 震荡IC均值≥0.02 / 极端行情最大回撤≤35%
+      pass: 所有市场状态通过
+      fail: 任一状态未通过→标记market_state_risk，拒绝上线
+    actions:
+    - type: mandatory
+      step: ABS-001：因子上线前必须通过四维质量检查（收益能力/风险控制/预测能力/稳定性）
+    - type: mandatory
+      step: ABS-002：未通过质量门控的因子禁止进入prod环境，必须在因子注册表标记quality_gate:failed
+    - type: mandatory
+      step: ABS-003：因子上线前必须通过实盘可行性检查（换手率/容量/延迟）
+    - type: mandatory
+      step: COND-001：已上线因子必须持续监控衰减（IC衰减/夏普衰减/完全失效/相关性漂移）
+    - type: mandatory
+      step: COND-002：新因子上线前必须执行准入流程：回测验证(≥3年)→样本外测试(≥6月)→四维质量检查→实盘可行性检查→相关性检查(<0.7)→Owner审批
+    - type: mandatory
+      step: COND-003：回测必须覆盖牛市/熊市/震荡/极端行情四种市场状态
+    prohibitions:
+    - 禁止上线未通过四维质量检查的因子
+    - 禁止不执行实盘可行性检查即上线因子
+    - 禁止衰减因子继续以原权重运行
+    - 禁止跳过市场状态分段回测
+    - 禁止上线与现有因子相关性>0.7的新因子
+  dom_l02_002:
+    section_type: rule
+    title: 因子入职操作手册
+    original_rules:
+    - DOM-L02-002
+    conditions:
+    - type: constraint
+      check: 样本外偏差<30%（回测vs样本外）
+      pass: 样本外测试通过
+      fail: 标记overfitting，返回Step1
+    - type: constraint
+      check: 与现有因子相关系数<0.7
+      pass: 相关性检查通过
+      fail: 标记redundant，考虑合并或替换
+    - type: constraint
+      check: 灰度发布每阶段通过标准：因子信号日变化率<50% / 收益率在回测±2σ内 / 无风控事件触发
+      pass: 灰度阶段通过
+      fail: 降回上一阶段权重，排查原因
+    actions:
+    - type: mandatory
+      step: Step1：在src/zephyr/factors/下创建因子类，实现calculate()/get_metadata()，编写单元测试
+    - type: mandatory
+      step: Step2：使用至少3年历史数据回测，计算四维质量指标，确认所有维度达标
+    - type: mandatory
+      step: Step3：使用最近6个月数据进行样本外测试，确认偏差<30%
+    - type: mandatory
+      step: Step4：计算与现有因子相关系数矩阵，确认<0.7
+    - type: mandatory
+      step: Step5：灰度发布1%→5%→20%→50%→100%，每阶段至少10个交易日
+    - type: mandatory
+      step: Step6：在因子注册表(待创建)注册（因子ID/名称/类型/回测指标/换手率/容量/质量门控状态），验证延迟≤50ms，配置衰减监控和告警
+    prohibitions:
+    - 灰度发布涉及实盘配置变更，禁止AI自动执行（必须Owner手动）
+    - 回滚涉及活跃因子配置变更，禁止AI自动执行（必须Owner手动）
+  l02_factor_onboarding_procedure:
+    section_type: procedure
+    title: 因子入职操作步骤
+    original_rules:
+    - DOM-L02-002-§2
+    steps:
+    - order: 1
+      action: 在src/zephyr/factors/下创建因子类，实现calculate()/get_metadata()，编写单元测试
+      pre_condition: 因子概念已确认
+      expected_result: 因子代码+单元测试完成
+      on_failure: 修复代码问题
+    - order: 2
+      action: 使用至少3年历史数据回测，计算四维质量指标，确认所有维度达标
+      pre_condition: 因子代码完成
+      expected_result: 年化夏普≥1.0/最大回撤≤15%/Rank IC≥0.03/IC_IR≥0.5
+      on_failure: 标记quality_gate:failed，返回Step1
+    - order: 3
+      action: 使用最近6个月数据进行样本外测试，确认偏差<30%
+      pre_condition: 回测通过
+      expected_result: 样本外偏差<30%
+      on_failure: 标记overfitting，返回Step1
+    - order: 4
+      action: 计算与现有因子相关系数矩阵，确认<0.7
+      pre_condition: 样本外测试通过
+      expected_result: 所有关联系数<0.7
+      on_failure: 标记redundant，考虑合并或替换
+    - order: 5
+      action: 灰度发布1%→5%→20%→50%→100%，每阶段至少10个交易日
+      pre_condition: 相关性检查通过
+      expected_result: 每阶段因子信号日变化率<50%/收益率在回测±2σ内/无风控事件
+      on_failure: 降回上一阶段权重，排查原因
+    - order: 6
+      action: 在因子注册表(待创建)注册+验证延迟≤50ms+配置衰减监控和告警
+      pre_condition: 灰度发布完成
+      expected_result: 注册完成+监控就绪
+      on_failure: 检查注册表格式和监控配置
+  l02_factor_verification:
+    section_type: verification
+    title: 因子入职验证清单
+    original_rules:
+    - DOM-L02-002-§3
+    checks:
+    - step: 四维质量检查通过
+      command: 运行因子质量门控脚本
+      expected_exit: 年化夏普≥1.0/最大回撤≤15%/Rank IC≥0.03/IC_IR≥0.5
+      on_fail: 标记quality_gate:failed
+    - step: 样本外偏差<30%
+      command: 对比回测vs样本外结果
+      expected_exit: 偏差<30%
+      on_fail: 标记overfitting
+    - step: 与现有因子相关系数<0.7
+      command: 计算相关系数矩阵
+      expected_exit: 所有关联系数<0.7
+      on_fail: 标记redundant
+    - step: 灰度发布全部通过
+      command: 检查各灰度阶段指标
+      expected_exit: 信号变化率<50%/收益率在±2σ内/无风控事件
+      on_fail: 降回上一阶段
+    - step: 衰减监控已配置
+      command: 检查因子注册表(待创建)中衰减监控配置
+      expected_exit: IC衰减/夏普衰减/完全失效/相关性漂移4种监控已配置
+      on_fail: 补充监控配置
+  l02_factor_rollback:
+    section_type: rollback
+    title: 因子回滚方案
+    original_rules:
+    - DOM-L02-002-§4
+    steps:
+    - order: 1
+      action: 权重降为0%
+      verify: 因子注册表中权重=0%
+      on_fail: 手动设置权重
+    - order: 2
+      action: 通知风控系统
+      verify: 风控系统确认收到通知
+      on_fail: 直接联系风控团队
+    - order: 3
+      action: 分析异常原因
+      verify: 异常原因已记录
+      on_fail: 标记原因不明
+    - order: 4
+      action: 修复后从Step2重新开始
+      verify: 重新通过四维质量检查
+      on_fail: 考虑废弃因子
+  l02_factor_ai_autonomy:
+    section_type: examples
+    title: 因子入职AI自治权限标注
+    original_rules:
+    - DOM-L02-002-§5
+    items:
+    - title: Step1因子开发
+      code: 'ai_permission: auto
+
+        action: AI可自动生成因子代码'
+      language: yaml
+      note: 可自动
+    - title: Step2回测集成
+      code: 'ai_permission: auto
+
+        action: AI可自动运行回测'
+      language: yaml
+      note: 可自动
+    - title: Step3质量门控
+      code: 'ai_permission: needs_confirmation
+
+        action: AI执行质量检查，Owner确认结果'
+      language: yaml
+      note: 需确认
+    - title: Step6灰度发布
+      code: 'ai_permission: prohibited
+
+        action: 禁止AI自动执行，必须Owner手动'
+      language: yaml
+      note: 禁止自动
+    - title: 回滚方案
+      code: 'ai_permission: prohibited
+
+        action: 禁止AI自动执行，必须Owner手动'
+      language: yaml
+      note: 禁止自动
+  l02_ssot_declarations:
+    section_type: context
+    title: 因子质量SSoT声明
+    original_rules:
+    - DOM-L02-001-§5
+    summary: 本文件是因子质量四维检查标准、衰减检测规则、实盘可行性检查、因子准入流程的唯一真源
+    impact_on_rules:
+    - 数据质量校验→GOV-DATA-001
+    - 数据血缘→GOV-DATA-002
+    key_decisions:
+    - 任何与本文件冲突的定义以本文件为准
+  l02_consumer_registry:
+    section_type: examples
+    title: 因子质量消费者注册表
+    original_rules:
+    - DOM-L02-001-§6
+    items:
+    - title: DOM-L02-002 factor-onboarding-runbook.md
+      code: 'tier: 1
+
+        consumption: 引用四维质量检查/实盘可行性/衰减监控作为入职前置条件'
+      language: yaml
+      note: Tier1消费者
+    - title: DOM-L04-001 risk-limits-policy.md
+      code: 'tier: 2
+
+        consumption: 引用因子相关性限制作为风控输入'
+      language: yaml
+      note: Tier2消费者
+    - title: 所有因子实现模块(src/zephyr/factors/)
+      code: 'tier: 1
+
+        consumption: 实现四维质量指标计算和衰减监控'
+      language: yaml
+      note: Tier1消费者
+    - title: 因子注册表(待创建)
+      code: 'tier: 1
+
+        consumption: 存储因子质量门控状态和衰减参数'
+      language: yaml
+      note: Tier1消费者
+  l02_change_sync_rules:
+    section_type: context
+    title: 因子质量变更同步规则
+    original_rules:
+    - DOM-L02-001-§10
+    summary: 变更本文件时必须同步Tier1/Tier2消费者
+    impact_on_rules:
+    - 修改质量阈值→同步DOM-L02-002+通知策略团队
+    - 新增ABS/COND→同步DOM-L02-002
+    - 修改衰减参数→同步监控系统
+    - 修改实盘可行性→同步DOM-L02-002+因子注册表
+    key_decisions: []
+  l02_modification_conditions:
+    section_type: context
+    title: 因子质量修改条件
+    original_rules:
+    - DOM-L02-001-§11
+    summary: 不同修改类型有不同审批和同步要求
+    impact_on_rules:
+    - 修改阈值→Owner批准+同步Tier1
+    - 新增ABS→Owner批准+更新+同步DOM-L02-002
+    - 新增COND→Owner批准
+    - 编辑性→AI可自主+记录
+    key_decisions: []
+  l02_review_cycles:
+    section_type: context
+    title: 因子质量审查周期
+    original_rules:
+    - DOM-L02-001-§13
+    summary: 三项定期审查
+    impact_on_rules: []
+    key_decisions:
+    - 质量阈值是否需调整→每90天→Owner
+    - ABS/COND规则是否覆盖所有已知风险→每90天→Owner
+    - 衰减参数是否仍合理→每60天→Owner
+  l02_normative_references:
+    section_type: context
+    title: 因子质量标准间引用
+    original_rules:
+    - DOM-L02-001-§7
+    summary: Normative引用(GOV-DATA-001数据质量/GOV-DATA-002数据血缘)和Informative引用(PS-STD-001/PS-STD-003/DOM-L04-001)
+    impact_on_rules:
+    - GOV-DATA-001→准入Step4数据质量抽样以此为准
+    - GOV-DATA-002→因子计算血缘以此为基准
+    key_decisions: []
+  l02_self_check_checklist:
+    section_type: verification
+    title: 因子质量完整性自检清单
+    original_rules:
+    - DOM-L02-001-§15
+    checks:
+    - step: §1目的与范围
+      command: 检查文件包含目的与范围章节
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §2四维质量检查(ABS-001,ABS-002)
+      command: 检查文件包含四维质量检查章节
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §3衰减监控(COND-001)
+      command: 检查文件包含衰减监控章节
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §4市场状态回测(COND-003)
+      command: 检查文件包含市场状态回测章节
+      expected_exit: 存在
+      on_fail: 补充
+    - step: §5-§15完整性章节
+      command: 检查SSoT/消费者/引用/禁止/同步/修改/废弃/审查章节
+      expected_exit: 全部存在
+      on_fail: 补充缺失章节
+  l02_change_history:
+    section_type: examples
+    title: 因子质量变更记录
+    original_rules:
+    - DOM-L02-001-§14
+    items:
+    - title: v0.1.0
+      code: 'date: 2026-04-30
+
+        change: 初始草案——创建因子质量策略'
+      language: yaml
+      note: 初始版本
+    - title: v0.1.1
+      code: 'date: 2026-05-02
+
+        change: 审计修复——重命名+depends_on格式对齐'
+      language: yaml
+      note: 审计修复
+  l02_factor_onboarding_change_history:
+    section_type: examples
+    title: 因子入职变更记录
+    original_rules:
+    - DOM-L02-002-§7
+    items:
+    - title: v0.1.0
+      code: 'date: 2026-04-30
+
+        change: 初始草案——创建因子入职流程'
+      language: yaml
+      note: 初始版本
+    - title: v0.1.1
+      code: 'date: 2026-05-01
+
+        change: 元规则合规对齐——frontmatter补ai_autonomy+补齐PS-STD-002 L3模板缺失章节'
+      language: yaml
+      note: 合规对齐
+  l02_ai_consumability:
+    section_type: context
+    title: 因子质量AI可消费性声明
+    original_rules:
+    - DOM-L02-001-§8
+    summary: 本文件规则格式和AI自治声明
+    impact_on_rules:
+    - 所有规则以### ABS-NNN/### COND-NNN格式声明，AI可通过正则自动提取
+    - 所有质量阈值以Markdown表格定义（含最低阈值和检测方法），AI可直接解析为自动化门禁逻辑
+    - ai_autonomy: human_gated——AI可提议修改质量阈值，需Owner审批后执行
+    - stability: evolving——内容可能频繁变更，AI每次session应重新读取
+    - verifiability: automated——质量指标可通过回测自动计算，无需人工判断
+    key_decisions: []
+  l02_deprecation_procedure:
+    section_type: procedure
+    title: 因子质量策略废弃流程
+    original_rules:
+    - DOM-L02-001-§12
+    steps:
+    - order: 1
+      action: Owner明确批准废弃
+      pre_condition: 策略需废弃
+      expected_result: Owner书面批准
+      on_failure: 禁止废弃
+    - order: 2
+      action: 创建KB决策记录，记录废弃原因和替代方案
+      pre_condition: Owner已批准
+      expected_result: KB决策记录已创建
+      on_failure: 补充决策记录
+    - order: 3
+      action: 更新所有Tier1消费者的depends_on移除对本文件的引用
+      pre_condition: 决策记录已创建
+      expected_result: 所有消费者已更新
+      on_failure: 逐一确认消费者
+    - order: 4
+      action: 本文件状态改为deprecated，填写superseded_by
+      pre_condition: 消费者已更新
+      expected_result: 文件状态已更新
+      on_failure: 手动更新状态
+    - order: 5
+      action: 保留90天后可归档删除
+      pre_condition: deprecated状态已持续90天
+      expected_result: 文件已归档
+      on_failure: 等待90天期满
+  l02_factor_ttl_lifecycle:
+    section_type: context
+    title: 因子入职TTL与生命周期
+    original_rules:
+    - DOM-L02-002-§6
+    summary: 因子入职手册的有效期和生命周期管理
+    impact_on_rules:
+    - 有效期以factor_ttl_registry.yaml实际配置为准
+    - 失效条件：因子质量门控标准重大变更/回测框架升级导致不兼容/新增必须同步的质量检查维度
+    - 过期后动作：标记status:deprecated+superseded_by指向新版，旧版保留90天后归档
+    - 审查触发：每次新因子入职时审查步骤是否仍适用；每60天例行有效期审查
+    key_decisions: []
+references:
+  rule_ids:
+  - TRAE-050
+  - TRAE-031
+  - TRAE-025
+  scripts: []
+  modules: []
+  blueprints: []
+enforcement:
+  type: doc
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: evolving
+  impact_level: L
+  modification_permission: ai_modifiable
+  superseded_by: null
+  change_history:
+  - version: 0.2.4
+    date: '2026-06-21'
+    by: AI-Assistant
+    changes: '重新审查修复——l02_factor_ttl_lifecycle硬编码日期(有效期至2026-07-30)改为动态引用(factor_ttl_registry.yaml实际配置为准)；consumer_registry中connector-onboarding-runbook.md标记为(待创建)；change_history统一为changes字段并补充by字段'
+  - version: 0.2.3
+    date: '2026-06-21'
+    by: AI-Assistant
+    changes: '删除4个actions格式重复section，保留steps格式section（Owner批准裁定）——删除disconnect_handling(保留disconnect_procedure)/connector_onboarding(保留connector_onboarding_procedure)/verification_checklist(保留connector_verification)/rollback_procedure(保留connector_rollback)'
+  - version: 0.2.2
+    date: '2026-06-21'
+    by: session-20260621-fix4
+    changes: 'P1修复——references.rule_ids补充TRAE-050(本文件rule_id，原缺失)；移除不存在的文件引用(connector-registry.yaml/data-source-registry.yaml/factor-registry.yaml→连接器注册表(待创建)/数据源注册表(待创建)/因子注册表(待创建))。注：4对重复section(disconnect_handling/disconnect_procedure等)需Owner确认合并方案，本次仅记录未修复'
+  - version: 0.2.1
+    date: '2026-06-21'
+    by: session-20260621-fix4
+    changes: 'RULE-SEVENTEEN修复——将shell命令grep改为Grep工具引用格式(1处)'
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

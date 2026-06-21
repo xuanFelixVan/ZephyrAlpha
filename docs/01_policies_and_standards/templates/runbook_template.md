@@ -1,26 +1,26 @@
 ---
-module_id: ""
-title: ""
-doc_type: operational_rule
-status: Draft
-version: "0.1.0"
-layer: cross_layer
-owner: ZephyrAlpha-Owner
+ai_autonomy: human_gated
 classification: confidential
-language: zh
+completeness: unknown
 created_by: human_plus_agent
-date: ""
-ttl: permanent
-summary: "Runbook 创建模板——过程式操作规则，定义具体操作的步骤化流程，新建 runbook 类文档时使用此模板"
-completeness: "unknown"
-template_for: operational_rule
-tags: []
+date: ''
+depends_on: []
+doc_type: template
+language: zh
+layer: cross_layer
+module_id: OPS-008
+owner: ZephyrAlpha-Owner
 rule_form: procedural
 scope: global
 stability: evolving
+status: Draft
+summary: Runbook 创建模板——过程式操作规则，定义具体操作的步骤化流程，新建 runbook 类文档时使用此模板
+tags: []
+template_for: operational_rule
+title: Runbook Template
+ttl: permanent
 verifiability: manual
-depends_on: []
-ai_autonomy: human_gated
+version: 0.1.0
 ---
 
 <!--

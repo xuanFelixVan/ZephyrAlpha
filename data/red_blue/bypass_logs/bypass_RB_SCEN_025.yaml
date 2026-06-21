@@ -1,0 +1,20 @@
+- attack_payload: ''
+  count: 1
+  defense_response: 'BLOCKED by sandbox_enforcer.enforce: sandbox_enforcer.enforce'
+  entry_id: BY-f58984b6
+  escalated: false
+  gate_id: sandbox_enforcer.enforce
+  occurred_at: '2026-05-23T14:30:34.292676+00:00'
+  root_cause: 'BLOCKED by sandbox_enforcer.enforce: sandbox_enforcer.enforce'
+  scenario_id: RB-SCEN-025
+  tier: TIER_1
+- attack_payload: ''
+  count: 1
+  defense_response: 'BLOCKED by sandbox_enforcer.enforce: sandbox_enforcer.enforce'
+  entry_id: BY-8586839b
+  escalated: false
+  gate_id: sandbox_enforcer.enforce
+  occurred_at: '2026-05-23T14:30:52.938312+00:00'
+  root_cause: 'BLOCKED by sandbox_enforcer.enforce: sandbox_enforcer.enforce'
+  scenario_id: RB-SCEN-025
+  tier: TIER_1

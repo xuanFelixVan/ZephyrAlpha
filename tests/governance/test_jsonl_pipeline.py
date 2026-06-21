@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0135 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-292 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.governance.test_jsonl_pipeline
 # [STABILITY] evolving
 # [SAFETY] L
@@ -33,7 +34,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.base import BaseAuditScript
 try:
-    from zephyr.l01_infrastructure.script_system.finding import Dimension, Severity
+    from zephyr.infrastructure.script_system.finding import Dimension, Severity
 except ImportError:
     class Dimension: D7 = "D7"; label = "测试"
     class Severity: MEDIUM = "MEDIUM"

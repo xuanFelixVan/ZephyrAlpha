@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/check_registry_consistency.py | §
 """check_registry_consistency — 跨登记表一致性校验。
 
-读取 registry-of-registries.yaml，按 cross_registry_rules 比对多登记表共享字段。
+读取 registry_of_registries.yaml，按 cross_registry_rules 比对多登记表共享字段。
 可将 Finding 写入 scripts/governance/reports/findings.jsonl。
 """
 
@@ -31,7 +31,7 @@ from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 sys.path.insert(0, str(REPO_ROOT / "src"))
 try:
-    from zephyr.l01_infrastructure.script_system.finding import (
+    from zephyr.infrastructure.finding import (
         BlastRadius,
         Dimension,
         Finding,
@@ -49,7 +49,7 @@ ROR_PATH = (
     / "01_policies_and_standards"
     / "_registry"
     / "catalogs"
-    / "registry-of-registries.yaml"
+    / "registry_of_registries.yaml"
 )
 from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.yaml_utils import load_yaml
@@ -246,7 +246,7 @@ def main() -> None:
     parser.add_argument("--warn-only", action="store_true", help="警告模式（不阻塞流程）")
     args = parser.parse_args()
     if not ROR_PATH.exists():
-        print(f"[SKIP] registry-of-registries.yaml 不存在: {ROR_PATH}", file=sys.stderr)
+        print(f"[SKIP] registry_of_registries.yaml 不存在: {ROR_PATH}", file=sys.stderr)
         sys.exit(EXIT_PASS)
     ror = load_yaml(ROR_PATH)
     rules = ror.get("cross_registry_rules", [])

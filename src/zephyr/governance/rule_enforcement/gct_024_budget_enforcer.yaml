@@ -1,0 +1,77 @@
+schema_version: "1.0"
+gate_id: "gct_024_budget_enforcer"
+title: "GCT-024 Budget Enforcer — MOD-INF-024 · v0.13.0 · Token/Cost/Time 3D Seven-Level Budget"
+category: "governance"
+status: active
+scope: global
+execution_plane: warm
+module_id: MOD-INF-024
+blueprint: "docs/03_modules/infra_ops/budget-enforcer/blueprint.md"
+construction_progress: "core_implemented"
+rule_ids:
+  - TRAE-019
+
+checks:
+  - check_id: "gct024_self_test"
+    description: "BudgetEngine 实例化 + pre_flight_check 基本通路自检"
+    severity: hard
+    rule_ids:
+      - TRAE-019
+    runner: "python -c \"from zephyr.budget_enforcer import BudgetEngine; be=BudgetEngine(); r=be.pre_flight_check('gct024-check',1000,0.1); assert r.decision.name=='ALLOW'; print('GCT-024 PASS')\""
+
+  - check_id: "gct024_dimension_coverage"
+    description: "三维预算（Token/Cost/Time）全部已注册"
+    severity: hard
+    rule_ids:
+      - TRAE-019
+    runner: "python -c \"from zephyr.budget_enforcer import BudgetEngine; be=BudgetEngine(); assert len(be._policies)==3; print('3D OK')\""
+
+  - check_id: "gct024_policy_file"
+    description: "config/budget_policy.yaml SSoT 配置文件存在且可解析"
+    severity: hard
+    rule_ids:
+      - TRAE-019
+    path: "config/budget_policy.yaml"
+    parser: yaml
+
+  - check_id: "gct024_escalation_bridge"
+    description: "G-CT-006 Budget→Escalation 桥接通路"
+    severity: hard
+    rule_ids:
+      - TRAE-019
+    runner: "python -c \"from zephyr.escalation_engine.budget_handler import on_budget_alert; from zephyr.shared.contracts.escalation.budget_alert import BudgetAlert; a=BudgetAlert(alert_id='B001'); r=on_budget_alert(a); assert r is not None; print('G-CT-006 OK')\""
+
+  - check_id: "gct024_rbac_bridge"
+    description: "G-CT-007 Budget→RBAC 桥接通路"
+    severity: hard
+    rule_ids:
+      - TRAE-019
+    runner: "python -c \"from zephyr.budget_enforcer.rbac_bridge import BudgetRBACBridge; b=BudgetRBACBridge(); r=b.check_budget('a1',500,1000); assert r['action']=='ALLOW'; print('G-CT-007 OK')\""
+
+  - check_id: "gct024_burn_rate"
+    description: "BurnRateMonitor 四窗口监控功能"
+    severity: soft
+    rule_ids:
+      - TRAE-019
+    runner: "python -c \"from zephyr.budget_enforcer import BurnRateMonitor; bm=BurnRateMonitor(); bm.record_consumption(100); bm.compute_burn_rates(1000000); assert bm.get_severity().name=='NORMAL'; print('Burn OK')\""
+
+  - check_id: "gct024_missing_files"
+    description: "蓝图 §0.1 代码文件清单与磁盘 46 文件对齐"
+    severity: info
+    rule_ids:
+      - TRAE-019
+    runner: "python scripts/governance/d5_architecture/check_blueprint_code_alignment.py --warn-only"
+
+  - check_id: "gct024_health_check"
+    description: "Budget Enforcer 8项健康检查全部通过"
+    severity: hard
+    rule_ids:
+      - TRAE-019
+    runner: "python scripts/governance/d5_architecture/check_budget_health.py --warn-only"
+
+  - check_id: "gct024_blueprint_code_alignment"
+    description: "蓝图-代码对齐验证（API签名/依赖/版本/时态内容）"
+    severity: soft
+    rule_ids:
+      - TRAE-019
+    runner: "python scripts/governance/d5_architecture/check_blueprint_code_alignment.py --warn-only"

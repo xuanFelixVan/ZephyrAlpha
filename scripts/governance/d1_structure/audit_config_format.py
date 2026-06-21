@@ -17,7 +17,7 @@ audit_config_format.py — config/ 目录格式/注释/边界快速扫描
 与 validate_config_integrity.py 的关系：
 本脚本是 L1-L9 纵深审计的轻量版，仅扫描 config/ 目录，
 不加载代码消费者、不检查 CBAC、不做 manifest 对账。
-适合快速格式检查或 CI pre-commit hook。
+适合快速格式检查或 CI pre_commit hook。
 
 exit codes: 0=pass, 1=findings
 """
@@ -26,7 +26,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: config/ 格式/注释/边界快速扫描（F1-F4轻量版，CI pre-commit适用）
+description: config/ 格式/注释/边界快速扫描（F1-F4轻量版，CI pre_commit适用）
 dimensions:
 - D1
 - D4
@@ -203,7 +203,7 @@ def main() -> None:
                     f"trigger_router.yaml: {trigger_name} safety={safety!r} (expected L/M/H)",
                 )
 
-    ctx_path = CONFIG_DIR / "context_rules_v1.yaml"
+    ctx_path = CONFIG_DIR / "context-rules.yaml"
     if ctx_path.exists():
         ctx_data = yaml.safe_load(ctx_path.read_text(encoding="utf-8"))
         for rule in ctx_data.get("rules", []):
@@ -214,7 +214,7 @@ def main() -> None:
                         issues,
                         "ISSUE",
                         "F3-THRESHOLD",
-                        f"context_rules_v1.yaml: rule '{rule.get('name', '?')}' threshold={threshold}",
+                        f"context-rules.yaml: rule '{rule.get('name', '?')}' threshold={threshold}",
                     )
 
     ssm_path = CONFIG_DIR / "session_state_machine.yaml"

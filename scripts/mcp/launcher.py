@@ -87,7 +87,7 @@ def start_server(server_id: str, gateway) -> bool:
 
 
 def launch_all() -> dict[str, bool]:
-    from zephyr.shared.infra.process_lifecycle_gateway import ProcessLifecycleGateway
+    from zephyr.integration.infra.process_lifecycle_gateway import ProcessLifecycleGateway
 
     print("MCP DAG Launcher — MOD-INF-013 §14 (via ProcessLifecycleGateway)")
     print("=" * 50)

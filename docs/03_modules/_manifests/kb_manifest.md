@@ -1,6 +1,7 @@
 ---
 blueprint_id: DOM-GOV-001
----
+title: Kb.Manifest
+module_id: MOD-060---
 
 # kb/ 文件清单（自动生成 2026-05-09）
 

@@ -1,0 +1,56 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+module_id: MOD-INF-007
+schema_version: "1.0"
+doc_type: gate
+title: "G6 Blueprint Compliance Gate"
+status: active
+ttl: permanent
+
+gate_id: G6_BP
+gate_name: blueprint_compliance
+description: "beta hard compliance gate — AI agent MUST read the relevant blueprint BEFORE modifying code. Blocks any code change where the blueprint was not consulted first."
+rule_ids:
+  - TRAE-013
+  - TRAE-014
+
+entry_conditions:
+  - id: G6-C00
+    name: blueprint_read_check
+    type: blueprint_read_check
+    description: "Verify that the AI agent has read the blueprint document corresponding to the target module BEFORE making any code changes. This check queries blueprint_reads.jsonl for a read event matching the target blueprint_id."
+    check: "blueprint_reads.jsonl contains a record with event='blueprint_read' AND blueprint_id matches the target module's blueprint ID"
+    severity: error
+    on_failure: reject
+    verifiable: true
+    verification_method: "Unit test: simulate code change without blueprint read → expect G6 rejection"
+    rule_ids:
+      - TRAE-013
+      - TRAE-014
+    params:
+      phase: "P2"
+      hard_compliance: true
+      block_on_missing: true
+      grace_sessions: 0
+    anti_pattern:
+      description: "AI agent modifies code without first reading the corresponding blueprint — leads to uninformed decisions, architectural violations, and blueprint drift"
+      example: "AI fixes a bug in gate_engine.py without reading MOD-INF-007 Gate Engine blueprint → misses safety constraints documented in the blueprint"
+
+severity_levels:
+  error: "Hard block — task is REJECTED, AI MUST read the specified blueprint and retry"
+  warning: "Soft warning — experimental only (deprecated in beta)"
+
+failure_actions:
+  reject: "Return GateViolationError with list of unread blueprints"
+  hint: "AI agent: invoke blueprint_search.find_relevant_blueprint(your_task_description) to discover which blueprint to read"
+
+change_log:
+  - version: "0.1.0"
+    date: "2026-05-04"
+    author: "ZephyrAlpha-Owner"
+    change: "beta hard compliance activation — G6 created with severity=error, blueprint_read_check type, block_on_missing=true"

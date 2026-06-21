@@ -1,5 +1,5 @@
----
-module_id: AI-ENG-ORC-001
+﻿---
+module_id: GOV-AI-ENG-ORC-001
 title: Agent Orchestrator Interface / Agent 编排器接口规范
 doc_type: service_interface_spec
 status: Active
@@ -14,13 +14,13 @@ last_updated: "2026-05-06"
 ttl: permanent
 template_source: "vector-memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
 truth_source:
-  - "03_modules/l01_infrastructure/task-system/blueprint.md（MOD-INF-006 — Agent Orchestrator / 任务生命周期与状态机真源）"
+  - "03_modules/infra_ops/task-system/blueprint.md（MOD-INF-006 — Agent Orchestrator / 任务生命周期与状态机真源）"
   - "architecture-model/layers/b_orchestrator.yaml（Orchestrator YAML SSoT）"
 supersedes:
   - "archive/reorg-2026-04-24/08_ai_engineering/workflow-interface-contract.md (archived 2026-04-24)"
-related_adrs:
-  - "ADR-0017 Agent Orchestrator 任务队列与状态机（pending B-e）"
-  - "ADR-0018 Agent Sandbox（pending B-e）"
+related_kb:
+  - "KBG-0017 Agent Orchestrator 任务队列与状态机（pending B-e）"
+  - "KBG-0018 Agent Sandbox（pending B-e）"
 integration_points:
   - "Context Engine (upstream, 任务开始前拉上下文)"
   - "LLM Security Gateway (upstream, 入参/出参 Schema 校验)"
@@ -125,7 +125,7 @@ tags:
 ### 1.3 实施策略：Protocol + 双实现
 
 ```python
-# src/zephyr/orchestrator/protocol.py (experimental 产出)
+# src/zephyr/infrastructure/runtime_integration/a2a_protocol/governance/protocol.py (experimental 产出)
 
 from typing import Protocol
 
@@ -169,16 +169,16 @@ class DistributedOrchestrator:
 
 ## 2. 技术选型表（真源锁定）
 
-| 组件 | 首选 | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 ADR |
+| 组件 | 首选 | 备选 | 不推荐 | 选型理由 | 升级触发 | 相关 KB 决策记录 |
 |------|----------------|------|-------|---------|---------|----------|
-| 任务队列 | **SQLite (WAL) + asyncio.Queue** | Redis + arq | Celery（重）/ Airflow（重） | 零外部依赖，Windows 原生 | 任务量 > 100/天 或并发 > 10 | ADR-0017 |
-| 状态机 | **Python enum + dataclass** | `transitions` 库 | FSM 框架 | 最小依赖，静态类型可校验 | 状态数 > 20 | ADR-0017 |
-| 任务存储 | **SQLite（WAL）** | PostgreSQL | Markdown 文件 | 事务、崩溃恢复、易备份 | 数据 > 5GB | ADR-0017 |
-| Agent 通信 | **SQLite 共享状态表 + asyncio.Event** | NATS JetStream | 文件锁 | 零外部依赖 | 跨进程/跨机通信 | ADR-0017 |
-| 沙箱（Windows 首选） | **Windows ACL + 只读挂载** | Docker Desktop（升级） | gVisor（Windows 兼容差）| 当前平台 Windows，轻量 | 需要完整容器隔离 | ADR-0018 |
-| 沙箱（Linux/CI） | Docker Desktop | Firejail | - | 一致性 | - | ADR-0018 |
-| 幻觉检测 | **规则引擎 + 阈值（N 次无进展即终止）** | 轻量 ML 分类器 | LLM 自己判（成本高）| 确定性，可审计 | 误报率 > 30% | ADR-0017 |
-| 健康监控 | **内存指标 + SQLite** | Prometheus | 外部 APM | 零外部依赖 | 跨机部署 | ADR-0017 |
+| 任务队列 | **SQLite (WAL) + asyncio.Queue** | Redis + arq | Celery（重）/ Airflow（重） | 零外部依赖，Windows 原生 | 任务量 > 100/天 或并发 > 10 | KBG-0017 |
+| 状态机 | **Python enum + dataclass** | `transitions` 库 | FSM 框架 | 最小依赖，静态类型可校验 | 状态数 > 20 | KBG-0017 |
+| 任务存储 | **SQLite（WAL）** | PostgreSQL | Markdown 文件 | 事务、崩溃恢复、易备份 | 数据 > 5GB | KBG-0017 |
+| Agent 通信 | **SQLite 共享状态表 + asyncio.Event** | NATS JetStream | 文件锁 | 零外部依赖 | 跨进程/跨机通信 | KBG-0017 |
+| 沙箱（Windows 首选） | **Windows ACL + 只读挂载** | Docker Desktop（升级） | gVisor（Windows 兼容差）| 当前平台 Windows，轻量 | 需要完整容器隔离 | KBG-0018 |
+| 沙箱（Linux/CI） | Docker Desktop | Firejail | - | 一致性 | - | KBG-0018 |
+| 幻觉检测 | **规则引擎 + 阈值（N 次无进展即终止）** | 轻量 ML 分类器 | LLM 自己判（成本高）| 确定性，可审计 | 误报率 > 30% | KBG-0017 |
+| 健康监控 | **内存指标 + SQLite** | Prometheus | 外部 APM | 零外部依赖 | 跨机部署 | KBG-0017 |
 | 进程内并发 | **`asyncio.Lock`** | - | `threading.Lock`（阻塞事件循环） | 项目全异步栈 | 服务化后废除 | - |
 | 跨进程并发 | **`filelock.FileLock`** | SQLite 事务 | 全局单例 | pytest 并发 + 多 Agent | 服务化后废除 | - |
 
@@ -189,7 +189,7 @@ class DistributedOrchestrator:
 ### 3.1 Task 状态机
 
 ```python
-# src/zephyr/orchestrator/state.py (experimental 产出)
+# src/zephyr/orchestration/runtime_core/orchestrator/state.py (experimental 产出)
 
 from enum import Enum
 
@@ -224,7 +224,7 @@ ALLOWED_TRANSITIONS: dict[TaskState, set[TaskState]] = {
 ### 3.2 Pydantic Schemas
 
 ```python
-# src/zephyr/orchestrator/schemas.py
+# src/zephyr/integration/shared/schema/schemas.py
 
 from pydantic import BaseModel, Field
 from typing import Literal, Optional
@@ -320,7 +320,7 @@ class Sandbox(BaseModel):
 ### 3.3 幻觉循环检测规则
 
 ```python
-# src/zephyr/orchestrator/hallucination.py (experimental 产出)
+# src/zephyr/orchestration/runtime_core/orchestrator/hallucination.py (experimental 产出)
 
 # 基础规则：Agent 连续 N 次 AgentProgress.observation_hash 相同 → 陷入循环
 HALLUCINATION_RULES = {
@@ -562,7 +562,7 @@ review 拒绝 → REVIEWING → RUNNING 或 FAILED（看 retryable）
 | Context Engine（上游，拉任务上下文） | ⏳ B-a-2 产出 + experimental 实现 |
 | LSG Protocol（审查 complete 结果 schema） | ⏳ B-a-5 产出 + beta 实现 |
 | VMS（任务完成写 task_history） | ⏳ B-a-1 产出 + experimental 实现 |
-| ADR-0017 / ADR-0018 批准 | ⏳ pending B-e |
+| KBG-0017 / KBG-0018 批准 | ⏳ pending B-e |
 
 **Python 依赖**：
 
@@ -606,9 +606,9 @@ orchestrator = [
 │
 ├── .runtime/
 │   ├── orchestrator/
-│   │   ├── tasks.db                                # SQLite WAL
-│   │   ├── tasks.db-wal
-│   │   └── tasks.db-shm
+│   │   ├── data/databases/governance.db                                # SQLite WAL
+│   │   ├── data/databases/governance.db-wal
+│   │   └── data/databases/governance.db-shm
 │   ├── sandboxes/
 │   │   └── <sandbox_id>/                           # 各任务独立沙箱
 │   │       └── writable/                           # overlay 可写目录
@@ -655,7 +655,7 @@ orchestrator = [
 ### 9.3 FLE 单向依赖（Protocol 引用）
 
 ```python
-# src/zephyr/orchestrator/feedback_sink.py
+# src/zephyr/orchestration/runtime_core/orchestrator/feedback_sink.py
 
 from typing import Protocol
 
@@ -675,7 +675,7 @@ class FeedbackSinkProtocol(Protocol):
 
 | Phase | 范围 | 验收标准 |
 |:-:|------|---------|
-| **scaffold**（当前） | 接口规范 + ADR-0017/0018 | status=Active |
+| **scaffold**（当前） | 接口规范 + KBG-0017/0018 | status=Active |
 | **experimental** | `InProcessOrchestrator` + Windows ACL sandbox + 幻觉基础规则 | ① §13 P0 用例通过<br>② 单进程 5 Agent 并发不死锁<br>③ 沙箱越界检测无漏报 |
 | **beta** | LSG 接入 + FLE 反馈通道接入 + VMS task_history 归档 | 完整闭环；Docker Desktop 沙箱可选启用 |
 | **beta** | `DistributedOrchestrator`（ARQ + Redis） | 任务量 > 100/天 触发；兼容单进程 API |
@@ -842,4 +842,4 @@ except VMError:
 
 | 日期 | 版本 | 说明 |
 |------|:-:|------|
-| 2026-04-24 | 1.0.0 | 初版（B-a-3）。基于 VMS v1.2 模板 + ADR-0017/0018。重点：① 完整 TaskState 状态机强校验；② §3.3 幻觉检测规则引擎；③ §6 Windows ACL 沙箱+ Docker Desktop 升级；④ §11.2 DEGRADE-003 沙箱创建失败不降级（安全红线）；⑤ FLE/VMS 单向 Protocol 依赖，挂了可降级不阻塞。 |
+| 2026-04-24 | 1.0.0 | 初版（B-a-3）。基于 VMS v1.2 模板 + KBG-0017/0018。重点：① 完整 TaskState 状态机强校验；② §3.3 幻觉检测规则引擎；③ §6 Windows ACL 沙箱+ Docker Desktop 升级；④ §11.2 DEGRADE-003 沙箱创建失败不降级（安全红线）；⑤ FLE/VMS 单向 Protocol 依赖，挂了可降级不阻塞。 |

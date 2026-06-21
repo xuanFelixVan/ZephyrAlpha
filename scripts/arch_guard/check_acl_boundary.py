@@ -2,12 +2,12 @@
 """
 check_acl_boundary.py — Broker ACL 边界强制执行 (INV-005)
 
-INV-005: 只有 l06_trade_execution/adapters/ 可调用 Broker API，其他层禁止直接访问。
+INV-005: 只有 ex_core/adapters/ 可调用 Broker API，其他层禁止直接访问。
 
 检测方式：
   - 扫描 src/zephyr/ 下所有 .py 文件
   - 搜索 Broker API 相关 import/call 模式
-  - 排除 l06_trade_execution/adapters/ 目录、broker_interface.py 与 l06/__init__.py（公开重导出，无 SDK）
+  - 排除 ex_core/adapters/ 目录、broker_interface.py 与 l06/__init__.py（公开重导出，无 SDK）
 
 Broker API 特征模式（匹配以下任一即标记）：
   - from .*broker.* import ...
@@ -25,7 +25,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
-L06_ROOT = SRC_ROOT / "l06_trade_execution"
+L06_ROOT = SRC_ROOT / "ex_core"
 # INV-005：仅 adapters/ 可直接触达券商 SDK；OCP 接口定义文件不含 SDK 调用，免检
 ADAPTERS_DIR = L06_ROOT / "adapters"
 L06_SDK_EXEMPT_FILES = frozenset(

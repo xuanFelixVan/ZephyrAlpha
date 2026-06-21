@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1824 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-454 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.audit_trail.test_audit_core
 # [STABILITY] evolving
 # [SAFETY] L
@@ -14,7 +15,7 @@ import tempfile
 
 import pytest
 
-from zephyr.audit_trail.models import (
+from zephyr.governance.audit_trail.models import (
     AuditEntryV1,
     AuditEventType,
     AuditMetrics,
@@ -27,7 +28,7 @@ from zephyr.audit_trail.models import (
     ProvenanceStandard,
     TaskAuditSummary,
 )
-from zephyr.audit_trail.writer import AuditWriter
+from zephyr.governance.audit_trail.writer import AuditWriter
 
 
 class TestAuditWriterCreation:

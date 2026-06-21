@@ -199,3 +199,13 @@ temp/
 
 # Code dedup benchmark
 data/code_dedup_benchmark_history.json
+
+# Generated dependency graph (regenerate with generate_project_depgraph.py)
+# v2.3.0: 4.57MB, previously 150MB+ excluded — now small enough for git
+data/asset_index/archive/
+
+# ML model files (4GB+, Trae indexing OOM risk)
+models/
+
+# Runtime cache (walk_cache.json 400MB+, regenerate on demand)
+data/cache/

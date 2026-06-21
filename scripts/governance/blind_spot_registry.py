@@ -27,18 +27,18 @@ logger = logging.getLogger(__name__)
 
 BLUEPRINTS_TO_SCAN = [
     ("pipeline", "docs/03_modules/_cross_layer/pipeline/blueprint.md"),
-    ("feedback_loop", "docs/03_modules/_cross_layer/feedback-loop/blueprint.md"),
+    ("feedback-loop", "docs/03_modules/_cross_layer/feedback-loop/blueprint.md"),
 ]
 
 _BLIND_PIPELINE = re.compile(r"\bB(\d+)\b")
 _BLIND_FLE = re.compile(r"盲点[\s]*(\d+)")
 
 CODE_DIRS = [
-    "src/zephyr/feedback_loop",
+    "src/zephyr/feedback-loop",
     "src/zephyr/pipeline",
     "src/zephyr/resilience",
     "src/zephyr/security",
-    "src/zephyr/l01_infrastructure/code_dedup_engine",
+    "src/zephyr/testing/code_dedup",
 ]
 
 
@@ -51,7 +51,7 @@ def extract_ids_from_blueprint(bp_path: str, subsystem: str) -> set[str]:
     content = bp_full.read_text(encoding="utf-8")
     if subsystem == "pipeline":
         return {f"B{m.group(1)}" for m in _BLIND_PIPELINE.finditer(content)}
-    elif subsystem == "feedback_loop":
+    elif subsystem == "feedback-loop":
         return {f"R{m.group(1)}" for m in _BLIND_FLE.finditer(content)}
     return set()
 
@@ -147,7 +147,7 @@ def main() -> None:
     uncovered_count = 0
     for subsystem, ids in {k: v for k, v in {
         "pipeline": extract_ids_from_blueprint("docs/03_modules/_cross_layer/pipeline/blueprint.md", "pipeline"),
-        "feedback_loop": extract_ids_from_blueprint("docs/03_modules/_cross_layer/feedback-loop/blueprint.md", "feedback_loop"),
+        "feedback-loop": extract_ids_from_blueprint("docs/03_modules/_cross_layer/feedback-loop/blueprint.md", "feedback-loop"),
     }.items()}.items():
         code_refs = scan_codebase_for_references(ids)
         uncovered = [bid for bid in ids if bid not in code_refs]

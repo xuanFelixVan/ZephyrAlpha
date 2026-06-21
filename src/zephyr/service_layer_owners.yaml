@@ -1,16 +1,17 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-002 | docs/03_modules/_cross_layer/SERVICE_LAYER_OWNERS.yaml/blueprint.md | §
+# blueprint: MOD-INF-002 | docs/03_modules/_cross_layer/service-layer-owners.yaml/blueprint.md | §
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
-# SERVICE_LAYER_OWNERS.yaml — 服务层模块技术 Owner 登记
+# service-layer-owners.yaml — 服务层模块技术 Owner 登记
 # schema_version: "1.0.0"  |  updated: "2026-05-06"
 #
 # 当前阶段：单人全栈项目，primary owner 统一为 ZephyrAlpha。
 # 团队扩容后按模块责任拆分为具体自然人。
 
+module_id: MOD-INF-002
 org: ZephyrAlpha
 primary_owner: ZephyrAlpha
 
@@ -35,16 +36,16 @@ modules:
     - G5_extract:         src/zephyr/kb/extract.py
 
   feedback_loop:
-    - evolution:          src/zephyr/feedback_loop/evolution_engine.py
-    - backpressure:       src/zephyr/feedback_loop/backpressure_bridge.py
-    - metrics:            src/zephyr/feedback_loop/metrics_collector.py
-    - eval_harness:       src/zephyr/feedback_loop/eval_harness.py
-    - fitness:            src/zephyr/feedback_loop/fitness_functions.py
-    - collector:          src/zephyr/feedback_loop/feedback_collector.py
-    - auto_evolution:     src/zephyr/feedback_loop/auto_evolution.py
+    - evolution:          src/zephyr/feedback-loop/evolution_engine.py
+    - backpressure:       src/zephyr/feedback-loop/backpressure_bridge.py
+    - metrics:            src/zephyr/feedback-loop/metrics_collector.py
+    - eval_harness:       src/zephyr/feedback-loop/eval_harness.py
+    - fitness:            src/zephyr/feedback-loop/fitness_functions.py
+    - collector:          src/zephyr/feedback-loop/feedback_collector.py
+    - auto_evolution:     src/zephyr/feedback-loop/auto_evolution.py
 
   vector_memory:
-    - adapter:            src/zephyr/vector_memory/
+    - adapter:            src/zephyr/vector-memory/
 
   telemetry:
-    - contract_metrics:   src/zephyr/system_telemetry/contract_metrics.py
+    - contract_metrics:   src/zephyr/system-telemetry/contract_metrics.py

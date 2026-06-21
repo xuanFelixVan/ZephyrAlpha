@@ -15,9 +15,10 @@
 # 用途: Phase B 完成后，声明所有跨层契约、层接口文件及其冻结版本。
 #       任何对冻结接口的修改 MUST 通过 ContractImpactAnalyzer 评估影响范围。
 #
-# SSoT: cross-layer-contracts.yaml v3.0
+# SSoT: cross_layer_contracts.yaml v3.0
 # ============================================================================
 
+module_id: MOD-INF-016
 freeze_version: "1.0.0"
 frozen_date: "2026-05-05"
 phase: "C"
@@ -141,7 +142,7 @@ backpressure_contracts:
     desc: "熔断状态 全层消费"
     status: "frozen"
 
-# ── P1 蓝图级数据合约（与 cross-layer-contracts.yaml CTR-P1-001~015 对齐）──
+# ── P1 蓝图级数据合约（与 cross_layer_contracts.yaml CTR-P1-001~015 对齐）──
 p1_blueprint_contracts:
   - contract_id: "CTR-P1-001"
     name: "FactorMonitorReport"
@@ -238,19 +239,19 @@ extension_contracts:
   - contract_id: "OCP-001"
     name: "FactorBase"
     desc: "因子扩展 L02 因子基类"
-    physical_path: "src/zephyr/l02_alpha_factor/factor_base.py"
+    physical_path: "src/zephyr/factor/factor_base.py"
     status: "frozen"
 
   - contract_id: "OCP-002"
     name: "StrategyBase"
     desc: "策略扩展 L05 策略基类"
-    physical_path: "src/zephyr/l05_portfolio_construction/strategy_base.py"
+    physical_path: "src/zephyr/pf_core/strategy_base.py"
     status: "frozen"
 
   - contract_id: "OCP-003"
     name: "BrokerInterface"
     desc: "券商接口扩展 L06 适配器基类"
-    physical_path: "src/zephyr/l06_trade_execution/broker_interface.py"
+    physical_path: "src/zephyr/ex_core/broker_interface.py"
     status: "frozen"
 
 # ── 外部系统合约 ──
@@ -278,76 +279,76 @@ external_contracts:
 # ── 层接口文件冻结清单（Phase B 产物）──
 frozen_layer_interfaces:
   L00:
-    file: "src/zephyr/l00_data_source/provider_base.py"
+    file: "src/zephyr/data/provider_base.py"
     class: "DataSourceBase"
     version: "1.0"
     status: "skeleton_frozen"
     note: "Phase B 就位 provider_base 接口完整"
 
   L03:
-    file: "src/zephyr/l03_signal_generation/aggregator_base.py"
+    file: "src/zephyr/signal/aggregator_base.py"
     classes: ["SignalAggregatorBase", "CapitalAllocatorBase", "DegradationMonitorBase"]
     version: "1.0"
     status: "skeleton_frozen"
     note: "Phase B 对齐 SynthesizedSignal 契约对齐 + 新增 2 接口"
 
   L05:
-    file: "src/zephyr/l05_portfolio_construction/strategy_base.py"
+    file: "src/zephyr/pf_core/strategy_base.py"
     classes: ["StrategyBase", "StrategyRegistry"]
     version: "1.0"
     status: "skeleton_frozen"
     note: "Phase B 对齐 OCP-002 codegen"
 
   L06:
-    file: "src/zephyr/l06_trade_execution/broker_interface.py"
+    file: "src/zephyr/ex_core/broker_interface.py"
     classes: ["BrokerInterface"]
     version: "1.1"
     status: "skeleton_frozen"
     note: "Phase B 方法签名修复 补参"
 
   L07:
-    file: "src/zephyr/l07_post_trade_analytics/analytics_base.py"
+    file: "src/zephyr/reporting/analytics_base.py"
     classes: ["TCAEngineBase", "AttributionEngineBase"]
     version: "1.0"
     status: "skeleton_frozen"
     note: "Phase B 对齐 ExecutionReport/PerformanceAttributionReport"
 
   L09:
-    file: "src/zephyr/l09_research_innovation/backtest_base.py"
+    file: "src/zephyr/research/backtest_base.py"
     classes: ["BacktestEngineBase", "FactorDiscovery"]
     version: "1.0"
     status: "skeleton_frozen"
 
   L10:
-    file: "src/zephyr/l10_compliance/security_gateway_base.py"
+    file: "src/zephyr/compliance/security_gateway_base.py"
     classes: ["SecurityGateway", "ComplianceEngine"]
     version: "1.0"
     status: "skeleton_frozen"
     note: "Phase B 补齐 ComplianceEngine + ComplianceRule"
 
   L11:
-    file: "src/zephyr/l11_ml_platform/inference_base.py"
+    file: "src/zephyr/ml_train/inference_base.py"
     classes: ["InferenceEngineBase", "ModelTrainerBase", "ModelRegistry"]
     version: "1.0"
     status: "skeleton_frozen"
     note: "Phase B 补齐 ModelServingRequest/Response 对齐"
 
   L13:
-    file: "src/zephyr/l13_experimentation/pipeline_base.py"
+    file: "src/zephyr/simulation/pipeline_base.py"
     classes: ["ExperimentPipelineBase", "ScoutAgentBase"]
     version: "1.0"
     status: "skeleton_frozen"
     note: "Phase B 对齐 ExperimentResult 冲突修复"
 
   VMS:
-    file: "src/zephyr/vector_memory/interface.py"
+    file: "src/zephyr/vector-memory/interface.py"
     classes: ["VectorMemoryBase", "EmbeddingEngineBase"]
     version: "1.0"
     status: "skeleton_frozen"
     note: "Phase B 新建 VMS 接口骨架"
 
   L00_meta:
-    file: "src/zephyr/l00_data_source/provider_base.py"
+    file: "src/zephyr/data/provider_base.py"
     classes: ["DataSourceMeta"]
     version: "1.0"
     status: "skeleton_frozen"
@@ -369,5 +370,5 @@ change_control:
     - "1. 提交 ADR（Architecture Decision Record）"
     - "2. 运行 ContractImpactAnalyzer 评估影响范围"
     - "3. 通知所有 consumer 和 owner"
-    - "4. 更新 cross-layer-contracts.yaml + codegen 重新生成"
-    - "5. 更新 freeze_manifest.yaml"
+    - "4. 更新 cross_layer_contracts.yaml + codegen 重新生成"
+    - "5. 更新 freezemanifest.yaml"

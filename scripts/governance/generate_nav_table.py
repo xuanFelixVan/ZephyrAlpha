@@ -15,6 +15,14 @@ generate_nav_table.py — 全流程导航表自动生成器 v1.0.0
 """
 
 from __future__ import annotations
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 from _shared.constants import EXIT_FINDINGS
@@ -43,14 +51,14 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 MAPPING_FILE = PROJECT_ROOT / "config" / "nav_table_mapping.yaml"
 AGENTS_FILE = PROJECT_ROOT.parent / "AGENTS.md"
 DOC_META_INDEX = (
-    PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index.yaml"
+    PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "document-metadata-index-registry.yaml"
 )
 SCRIPT_MANIFEST = PROJECT_ROOT / "scripts" / "governance" / "script_manifest.yaml"
 SECTION_START = "## 5.2 全流程导航表"
 SECTION_END = "## 6. AI 施工执行原则"
 
 def load_registry_paths(registry_path) -> dict:
-    """从 document-metadata-index.yaml 提取所有已知文件路径。"""
+    """从 document-metadata-index-registry.yaml 提取所有已知文件路径。"""
     data = load_yaml(registry_path)
     paths = set()
     for entry in data.get("documents", []):
@@ -60,7 +68,7 @@ def load_registry_paths(registry_path) -> dict:
     return paths
 
 def load_registry_modules(registry_path) -> dict:
-    """从 document-metadata-index.yaml 提取 module_id → {path, title, status, version} 映射。"""
+    """从 document-metadata-index-registry.yaml 提取 module_id → {path, title, status, version} 映射。"""
     data = load_yaml(registry_path)
     modules = {}
     for entry in data.get("documents", []):
@@ -123,7 +131,7 @@ def format_scripts_list(script_items, known_scripts) -> None:
             parts.append(f"`{name}`")
         elif (
             name.startswith("p")
-            and "pre-commit" in name.lower()
+            and "pre_commit" in name.lower()
             or ("CI " in name or name.startswith("CI "))
             or ("run_all.py" in name or name == "人工")
         ):

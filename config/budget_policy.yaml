@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-024 | docs/03_modules/l01_infrastructure/budget-enforcer/blueprint.md | §2.1
+# blueprint: MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §2.1
 # module_id: MOD-INF-024
 # stability: evolving
 # safety_level: M
@@ -7,12 +7,13 @@
 # --- 治理锚定结束 ---
 # ZephyrAlpha — Budget Policy as Code SSoT
 # 模块：MOD-INF-024 Budget Enforcer v0.7.0
-# 蓝图：docs/03_modules/l01_infrastructure/budget-enforcer/blueprint.md §2.1
+# 蓝图：docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md §2.1
 # 维护：本文件是预算策略的唯一真源——任何 AI agent 修改本文件需 Ed25519 签名（v0.7.0 Trust Ring）
 
+module_id: MOD-INF-024
 schema_version: "1.0.0"
 policy_version: "0.1.0-seed"
-last_updated: "2026-05-08"
+last_updated: "2026_05_08"
 maintainer: "ZephyrAlpha-Owner"
 
 budget_levels:

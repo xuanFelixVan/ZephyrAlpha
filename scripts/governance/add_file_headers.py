@@ -3,7 +3,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/add_file_headers.py | §7
 # [MODULE] scripts.governance.add_file_headers
 # [INVARIANTS] --dry-run MUST NOT modify any file; --apply MUST modify files atomically
-# [MODIFY-GUARD] file-header-standard.md; frontmatter-field-registry.yaml
+# [MODIFY-GUARD] file-header-standard.md; frontmatter-field-registry.md
 # [CONSUMERS] CI pipeline; governance automation
 # [STABILITY] evolving
 # [SAFETY] M
@@ -25,17 +25,17 @@ from typing import Optional
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 DIR_TO_BLUEPRINT = {
-    "src/zephyr/agent_rbac": ("MOD-INF-018", "docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md"),
+    "src/zephyr/agent-rbac": ("MOD-INF-018", "docs/03_modules/infrastructure.runtime_integration/agent-rbac/blueprint.md"),
     "src/zephyr/gates": ("MOD-INF-007", "docs/03_modules/_cross_layer/gate-engine/blueprint.md"),
     "src/zephyr/gate_engine": ("MOD-INF-007", "docs/03_modules/_cross_layer/gate-engine/blueprint.md"),
-    "src/zephyr/feedback_loop": ("MOD-INF-010", "docs/03_modules/_cross_layer/feedback-loop/blueprint.md"),
-    "src/zephyr/kb": ("MOD-KB-001", "docs/03_modules/l01_infrastructure/knowledge-base/blueprint.md"),
+    "src/zephyr/feedback-loop": ("MOD-INF-010", "docs/03_modules/_cross_layer/feedback-loop/blueprint.md"),
+    "src/zephyr/kb": ("MOD-KB-001", "docs/03_modules/infrastructure.runtime_integration/knowledge-base/blueprint.md"),
     "src/zephyr/rollback": ("MOD-INF-015", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
-    "src/zephyr/audit_trail": ("MOD-INF-011", "docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md"),
-    "src/zephyr/escalation_engine": ("MOD-INF-017", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
-    "src/zephyr/budget_enforcer": ("MOD-INF-024", "docs/03_modules/l01_infrastructure/budget-enforcer/blueprint.md"),
-    "src/zephyr/llm_security": ("MOD-INF-014", "docs/03_modules/_cross_layer/llm-security/blueprint.md"),
-    "src/zephyr/context_engine": ("MOD-INF-008", "docs/03_modules/_cross_layer/context-engine/blueprint.md"),
+    "src/zephyr/audit-trail": ("MOD-INF-011", "docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md"),
+    "src/zephyr/escalation-engine": ("MOD-INF-017", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
+    "src/zephyr/budget-enforcer": ("MOD-INF-024", "docs/03_modules/infrastructure.runtime_integration/budget-enforcer/blueprint.md"),
+    "src/zephyr/llm-security": ("MOD-INF-014", "docs/03_modules/_cross_layer/llm-security/blueprint.md"),
+    "src/zephyr/context-engine": ("MOD-INF-008", "docs/03_modules/_cross_layer/context-engine/blueprint.md"),
     "src/zephyr/mcp": ("MOD-INF-013", "docs/03_modules/_cross_layer/mcp-servers/blueprint.md"),
     "src/zephyr/mcp_servers": ("MOD-INF-013", "docs/03_modules/_cross_layer/mcp-servers/blueprint.md"),
     "src/zephyr/pipeline": ("MOD-INF-009", "docs/03_modules/_cross_layer/pipeline/blueprint.md"),
@@ -44,43 +44,43 @@ DIR_TO_BLUEPRINT = {
     "src/zephyr/runtime": ("MOD-INF-035", "docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md"),
     "src/zephyr/core": ("MOD-INF-035", "docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md"),
     "src/zephyr/db": ("MOD-INF-012", "docs/03_modules/_cross_layer/database/blueprint.md"),
-    "src/zephyr/a2a": ("MOD-INF-025", "docs/03_modules/l01_infrastructure/a2a-protocol/blueprint.md"),
-    "src/zephyr/agent_spec": ("MOD-INF-019", "docs/03_modules/_sys-master/blueprint-agent-spec.md"),
-    "src/zephyr/asset_inventory": ("MOD-INF-016", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
-    "src/zephyr/behavioral_auditor": ("MOD-INF-011", "docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md"),
-    "src/zephyr/capacity_assurance": ("MOD-INF-001", "docs/03_modules/l01_infrastructure/capacity-assurance/blueprint.md"),
+    "src/zephyr/a2a": ("MOD-INF-025", "docs/03_modules/infrastructure.runtime_integration/a2a-protocol/blueprint.md"),
+    "src/zephyr/agent-spec": ("MOD-INF-019", "docs/03_modules/_sys-master/blueprint_agent_spec.md"),
+    "src/zephyr/asset-inventory": ("MOD-INF-016", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
+    "src/zephyr/behavioral-auditor": ("MOD-INF-011", "docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md"),
+    "src/zephyr/capacity-assurance": ("MOD-INF-001", "docs/03_modules/infrastructure.runtime_integration/capacity-assurance/blueprint.md"),
     "src/zephyr/code_dedup_engine": ("MOD-INF-031", "docs/03_modules/_cross_layer/auto-fix-engine/blueprint.md"),
     "src/zephyr/contracts": ("MOD-INF-016", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
-    "src/zephyr/drift_detector": ("MOD-INF-026", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
+    "src/zephyr/drift-detector": ("MOD-INF-026", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
     "src/zephyr/escalation": ("MOD-INF-017", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
     "src/zephyr/governance": ("DOM-GOV-001", "docs/03_modules/_domain-governance/blueprint.md"),
     "src/zephyr/hooks": ("MOD-INF-035", "docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md"),
-    "src/zephyr/infrastructure": ("MOD-INF-002", "docs/03_modules/l01_infrastructure/governance-automation/blueprint.md"),
+    "src/zephyr/infrastructure": ("MOD-INF-002", "docs/03_modules/infrastructure.runtime_integration/governance-automation/blueprint.md"),
     "src/zephyr/infrastructure/escalation_protocol": ("MOD-INF-017", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
-    "src/zephyr/l00_data_source": ("MOD-L00-001", "docs/03_modules/l00_data_source/datasource-core/blueprint.md"),
-    "src/zephyr/l01_infrastructure": ("MOD-INF-002", "docs/03_modules/l01_infrastructure/governance-automation/blueprint.md"),
-    "src/zephyr/l02_alpha_factor": ("MOD-L02-001", "docs/03_modules/_alpha-signal-domain/blueprint.md"),
-    "src/zephyr/l03_signal_generation": ("MOD-L03-001", "docs/03_modules/l03_signal_generation/signal-generation-core/blueprint.md"),
-    "src/zephyr/l04_risk_management": ("MOD-L04-001", "docs/03_modules/l04_risk_management/risk-management-core/blueprint.md"),
-    "src/zephyr/l05_portfolio_construction": ("MOD-L05-001", "docs/03_modules/l05_portfolio_construction/portfolio-core/blueprint.md"),
-    "src/zephyr/l06_trade_execution": ("MOD-L06-001", "docs/03_modules/l06_trade_execution/execution-core/blueprint.md"),
-    "src/zephyr/l07_post_trade_analytics": ("MOD-L07-001", "docs/03_modules/l07_post_trade_analytics/analytics-core/blueprint.md"),
-    "src/zephyr/l10_compliance": ("MOD-L10-001", "docs/03_modules/l10_compliance/compliance-core/blueprint.md"),
-    "src/zephyr/l11_ml_platform": ("MOD-L11-001", "docs/03_modules/l13_experimentation/experiment-core/blueprint.md"),
-    "src/zephyr/l13_experimentation": ("MOD-L13-001", "docs/03_modules/l13_experimentation/experiment-core/blueprint.md"),
-    "src/zephyr/l08_human_ai_interface": ("MOD-L08-001", "docs/03_modules/l01_infrastructure/governance-automation/blueprint.md"),
-    "src/zephyr/l09_research_innovation": ("MOD-L09-001", "docs/03_modules/l01_infrastructure/governance-automation/blueprint.md"),
+    "src/zephyr/data": ("MOD-L00-001", "docs/03_modules/data/datasource-core/blueprint.md"),
+    "src/zephyr/infrastructure.runtime_integration": ("MOD-INF-002", "docs/03_modules/infrastructure.runtime_integration/governance-automation/blueprint.md"),
+    "src/zephyr/factor": ("MOD-L02-001", "docs/03_modules/_alpha-signal-domain/blueprint.md"),
+    "src/zephyr/signal": ("MOD-L03-001", "docs/03_modules/signal/signal-generation-core/blueprint.md"),
+    "src/zephyr/risk": ("MOD-L04-001", "docs/03_modules/risk/risk-management-core/blueprint.md"),
+    "src/zephyr/pf_core": ("MOD-L05-001", "docs/03_modules/pf_core/portfolio-core/blueprint.md"),
+    "src/zephyr/ex_core": ("MOD-L06-001", "docs/03_modules/ex_core/execution-core/blueprint.md"),
+    "src/zephyr/pf_core": ("MOD-L07-001", "docs/03_modules/pf_core/analytics-core/blueprint.md"),
+    "src/zephyr/compliance": ("MOD-L10-001", "docs/03_modules/_domain-compliance/compliance-core/blueprint.md"),
+    "src/zephyr/ml_train": ("MOD-L11-001", "docs/03_modules/_domain-ml_train/ml-core/blueprint.md"),
+    "src/zephyr/integration": ("MOD-L13-001", "docs/03_modules/integration/experiment-core/blueprint.md"),
+    "src/zephyr/frontend": ("MOD-L08-001", "docs/03_modules/infrastructure.runtime_integration/governance-automation/blueprint.md"),
+    "src/zephyr/research": ("MOD-L09-001", "docs/03_modules/infrastructure.runtime_integration/governance-automation/blueprint.md"),
     "src/zephyr/telemetry": ("MOD-INF-027", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
-    "src/zephyr/vector_memory": ("MOD-INF-028", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
-    "tests/agent_rbac": ("MOD-INF-018", "docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md"),
-    "tests/audit_trail": ("MOD-INF-011", "docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md"),
-    "tests/budget_enforcer": ("MOD-INF-024", "docs/03_modules/l01_infrastructure/budget-enforcer/blueprint.md"),
-    "tests/context_engine": ("MOD-INF-008", "docs/03_modules/_cross_layer/context-engine/blueprint.md"),
-    "tests/feedback_loop": ("MOD-INF-010", "docs/03_modules/_cross_layer/feedback-loop/blueprint.md"),
+    "src/zephyr/vector-memory": ("MOD-INF-028", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
+    "tests/agent-rbac": ("MOD-INF-018", "docs/03_modules/infrastructure.runtime_integration/agent-rbac/blueprint.md"),
+    "tests/audit-trail": ("MOD-INF-011", "docs/03_modules/_cross_layer/audit-orchestrator/blueprint.md"),
+    "tests/budget-enforcer": ("MOD-INF-024", "docs/03_modules/infrastructure.runtime_integration/budget-enforcer/blueprint.md"),
+    "tests/context-engine": ("MOD-INF-008", "docs/03_modules/_cross_layer/context-engine/blueprint.md"),
+    "tests/feedback-loop": ("MOD-INF-010", "docs/03_modules/_cross_layer/feedback-loop/blueprint.md"),
     "tests/gate_engine": ("MOD-INF-007", "docs/03_modules/_cross_layer/gate-engine/blueprint.md"),
     "tests/governance": ("DOM-GOV-001", "docs/03_modules/_domain-governance/blueprint.md"),
-    "tests/kb": ("MOD-KB-001", "docs/03_modules/l01_infrastructure/knowledge-base/blueprint.md"),
-    "tests/llm_security": ("MOD-INF-014", "docs/03_modules/_cross_layer/llm-security/blueprint.md"),
+    "tests/kb": ("MOD-KB-001", "docs/03_modules/infrastructure.runtime_integration/knowledge-base/blueprint.md"),
+    "tests/llm-security": ("MOD-INF-014", "docs/03_modules/_cross_layer/llm-security/blueprint.md"),
     "tests/mcp": ("MOD-INF-013", "docs/03_modules/_cross_layer/mcp-servers/blueprint.md"),
     "tests/orchestrator": ("MOD-INF-035", "docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md"),
     "tests/pipeline": ("MOD-INF-009", "docs/03_modules/_cross_layer/pipeline/blueprint.md"),
@@ -91,28 +91,28 @@ DIR_TO_BLUEPRINT = {
     "tests/e2e": ("DOM-GOV-001", "docs/03_modules/_domain-governance/blueprint.md"),
     "tests": ("DOM-GOV-001", "docs/03_modules/_domain-governance/blueprint.md"),
     "src/zephyr/lifecycle_manager": ("MOD-INF-035", "docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md"),
-    "src/zephyr/model_capability_exam": ("MOD-INF-034", "docs/03_modules/_cross_layer/model-profiler/blueprint.md"),
-    "src/zephyr/model_profiler": ("MOD-INF-034", "docs/03_modules/_cross_layer/model-profiler/blueprint.md"),
-    "src/zephyr/orphan_judge": ("MOD-INF-031", "docs/03_modules/_cross_layer/orphan-judge/blueprint.md"),
-    "src/zephyr/red_blue_validator": ("MOD-INF-030", "docs/03_modules/_cross_layer/red-blue-validator/blueprint.md"),
-    "src/zephyr/semantic_auditor": ("MOD-INF-011", "docs/03_modules/_cross_layer/semantic-auditor/blueprint.md"),
-    "src/zephyr/script_system": ("MOD-INF-005", "docs/03_modules/l01_infrastructure/governance-automation/blueprint.md"),
+    "src/zephyr/model-capability-exam": ("MOD-INF-034", "docs/03_modules/_cross_layer/model-profiler/blueprint.md"),
+    "src/zephyr/model-profiler": ("MOD-INF-034", "docs/03_modules/_cross_layer/model-profiler/blueprint.md"),
+    "src/zephyr/orphan-judge": ("MOD-INF-031", "docs/03_modules/_cross_layer/orphan-judge/blueprint.md"),
+    "src/zephyr/red-blue-validator": ("MOD-INF-030", "docs/03_modules/_cross_layer/red-blue-validator/blueprint.md"),
+    "src/zephyr/semantic-auditor": ("MOD-INF-011", "docs/03_modules/_cross_layer/semantic-auditor/blueprint.md"),
+    "src/zephyr/script_system": ("MOD-INF-005", "docs/03_modules/infrastructure.runtime_integration/governance-automation/blueprint.md"),
     "src/zephyr/_cross_layer": ("MOD-INF-016", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
-    "scripts": ("MOD-INF-005", "docs/03_modules/l01_infrastructure/governance-automation/blueprint.md"),
-    "config/capacity": ("MOD-INF-001", "docs/03_modules/l01_infrastructure/capacity-assurance/blueprint.md"),
-    "config/compression": ("GOV-DOC-011", "docs/01_policies_and_standards/governance/document/compression-workflow-standard.md"),
+    "scripts": ("MOD-INF-005", "docs/03_modules/infrastructure.runtime_integration/governance-automation/blueprint.md"),
+    "config/capacity": ("MOD-INF-001", "docs/03_modules/infrastructure.runtime_integration/capacity-assurance/blueprint.md"),
+    "config/compression": ("GOV-DOC-011", "docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml"),
     "config/data": ("MOD-INF-016", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
-    "config": ("MOD-INF-002", "docs/03_modules/l01_infrastructure/governance-automation/blueprint.md"),
+    "config": ("MOD-INF-002", "docs/03_modules/infrastructure.runtime_integration/governance-automation/blueprint.md"),
     "data/capability_cards": ("MOD-INF-035", "docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md"),
     "data/work_dags": ("MOD-INF-035", "docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md"),
-    "data/security_baselines": ("MOD-INF-018", "docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md"),
+    "data/security_baselines": ("MOD-INF-018", "docs/03_modules/infrastructure.runtime_integration/agent-rbac/blueprint.md"),
     "data/health_snapshots": ("MOD-INF-035", "docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md"),
     "data/drift_checkpoints": ("MOD-INF-026", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
     "data/drift_handoffs": ("MOD-INF-026", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
     "data/drift_runbooks": ("MOD-INF-026", "docs/03_modules/_cross_layer/shared-core/blueprint.md"),
     "data/feedback_proposals": ("MOD-INF-010", "docs/03_modules/_cross_layer/feedback-loop/blueprint.md"),
     "data/circadian_tasks": ("MOD-INF-035", "docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md"),
-    "data/classified": ("MOD-INF-018", "docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md"),
+    "data/classified": ("MOD-INF-018", "docs/03_modules/infrastructure.runtime_integration/agent-rbac/blueprint.md"),
     "data/dream_archive": ("MOD-INF-035", "docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md"),
     "data/metrics": ("MOD-INF-035", "docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md"),
     "data": ("MOD-INF-035", "docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md"),
@@ -164,7 +164,7 @@ def classify_file(rel_path: str) -> str:
         return "script"
     if rel_path.startswith("tests/") and rel_path.endswith(".py"):
         return "test"
-    if any(p in rel_path for p in ("_registry.yaml", "_manifest.yaml")):
+    if any(p in rel_path for p in ("_registry.yaml", "manifest.yaml")):
         return "registry"
     if rel_path.startswith("data/") and rel_path.endswith(".yaml"):
         return "data"
@@ -259,9 +259,9 @@ def generate_py_header(result: ScanResult) -> str:
         return (
             f"# [BLUEPRINT] {result.blueprint_id} | {result.blueprint_path} | §\n"
             f"# [MODULE] {module_path}\n"
-            f"# [STABILITY] evolving\n"
+            f"# [CHANGE_POLICY] evolving\n"
             f"# [SAFETY] L\n"
-            f"# [AI_AUTONOMY] ai_modifiable\n"
+            f"# [MODIFICATION_PERMISSION] ai_modifiable\n"
             f"# [TESTS] —\n"
         )
     return (
@@ -270,9 +270,9 @@ def generate_py_header(result: ScanResult) -> str:
         f"# [INVARIANTS] \n"
         f"# [MODIFY-GUARD] \n"
         f"# [CONSUMERS] \n"
-        f"# [STABILITY] evolving\n"
+        f"# [CHANGE_POLICY] evolving\n"
         f"# [SAFETY] M\n"
-        f"# [AI_AUTONOMY] ai_modifiable\n"
+        f"# [MODIFICATION_PERMISSION] ai_modifiable\n"
         f"# [ERROR_CONTRACT] \n"
         f"# [TESTS] \n"
     )
@@ -283,9 +283,9 @@ def generate_yaml_header(result: ScanResult) -> str:
         f"# --- 治理锚定 ---\n"
         f"# blueprint: {result.blueprint_id} | {result.blueprint_path} | §\n"
         f"# module_id: {result.blueprint_id}\n"
-        f"# stability: evolving\n"
-        f"# safety_level: M\n"
-        f"# ai_autonomy: ai_modifiable\n"
+        f"# change_policy: evolving\n"
+        f"# impact_level: M\n"
+        f"# modification_permission: ai_modifiable\n"
         f"# --- 治理锚定结束 ---\n"
     )
 
@@ -293,9 +293,9 @@ def generate_yaml_header(result: ScanResult) -> str:
 def generate_shell_header(result: ScanResult) -> str:
     return (
         f"# [BLUEPRINT] {result.blueprint_id} | {result.blueprint_path} | §\n"
-        f"# [STABILITY] evolving\n"
+        f"# [CHANGE_POLICY] evolving\n"
         f"# [SAFETY] L\n"
-        f"# [AI_AUTONOMY] ai_modifiable\n"
+        f"# [MODIFICATION_PERMISSION] ai_modifiable\n"
     )
 
 

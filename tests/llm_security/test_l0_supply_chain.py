@@ -1,3 +1,4 @@
+# [A_test] module_id: SRC-TST-0190 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
 # [MODULE] tests.llm_security.test_l0_supply_chain
 # [STABILITY] evolving
@@ -11,7 +12,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.llm_security.layers.l0_supply_chain import (
+from zephyr.security.llm_defense.llm_security.layers.l0_supply_chain import (
     AuditResult,
     MCPDeepSupplyChainScanner,
     MCPSTDIORCEResult,
@@ -24,7 +25,7 @@ from zephyr.llm_security.layers.l0_supply_chain import (
     SupplyChainGuard,
     VerifyResult,
 )
-from zephyr.llm_security.protocol import SecurityContext, SecurityDecision
+from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
 
 
 class TestSupplyChainGuard:

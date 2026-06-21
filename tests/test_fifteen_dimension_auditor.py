@@ -1,0 +1,36 @@
+# [A_test] module_id: SRC-TST-0906 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-017 | docs/03_modules/_domain-governance/code-dedup-engine/blueprint.md | §
+# [MODULE] tests.test_fifteen_dimension_auditor
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
+# [CONSUMERS]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT]
+# [TESTS]
+import pytest
+from zephyr.governance.fifteen_dimension_auditor import (
+    FifteenDimensionAuditor, DimensionAudit, AuditCertificate,
+)
+
+class TestFifteenDimensionAuditor:
+    def test_instantiation(self):
+        auditor = FifteenDimensionAuditor()
+        assert auditor is not None
+
+    def test_audit(self):
+        auditor = FifteenDimensionAuditor()
+        result = auditor.audit({})
+        assert isinstance(result, AuditCertificate)
+
+    def test_generate_certificate(self):
+        auditor = FifteenDimensionAuditor()
+        cert = auditor.audit({})
+        result = auditor.generate_certificate(cert)
+        assert isinstance(result, str)
+
+    def test_audit_empty(self):
+        auditor = FifteenDimensionAuditor()
+        result = auditor.audit({})
+        assert result is not None

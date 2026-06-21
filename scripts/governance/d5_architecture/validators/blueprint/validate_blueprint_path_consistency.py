@@ -47,10 +47,10 @@ ensure_utf8_stdout()
 DOCS_MODULES = REPO_ROOT / "docs" / "03_modules"
 C_TRACK_PATTERN = re.compile(r"^src/zephyr/l\d{2}_")
 B_TRACK_NAMES = {
-    "llm_security", "vector_memory", "context_engine", "orchestrator",
-    "feedback_loop", "gates", "pipeline", "core", "db", "kb", "mcp",
-    "shared", "hooks", "agent_rbac", "agent_spec", "audit_trail",
-    "rollback", "escalation", "drift_detector", "budget_enforcer", "a2a",
+    "llm-security", "vector-memory", "context-engine", "orchestrator",
+    "feedback-loop", "gates", "pipeline", "core", "db", "kb", "mcp",
+    "shared", "hooks", "agent-rbac", "agent-spec", "audit-trail",
+    "rollback", "escalation", "drift-detector", "budget-enforcer", "a2a",
     "telemetry",
 }
 

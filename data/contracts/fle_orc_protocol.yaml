@@ -1,0 +1,85 @@
+# CT-FLE-ORC-001: Feedback Loop → Orchestrator 反馈回路契约
+# 蓝图: MOD-MASTER-001 | blueprint_baseline.md
+# 状态: IMPLEMENTED (OPS-12)
+
+contract:
+  id: CT-FLE-ORC-001
+  title: "Feedback Loop → Orchestrator 告警分派回路"
+  direction: "feedback-loop → orchestrator"
+  phase: 1
+  status: IMPLEMENTED
+
+protocol:
+  data_unit: AlertEvent
+  transport: Python 内存调用 (dataclass)
+
+  schema:
+    AlertEvent:
+      event_id:
+        type: str
+        format: UUID4
+        required: true
+      source:
+        type: str
+        default: "feedback-loop"
+      severity:
+        type: str
+        enum: [CRITICAL, HIGH, MEDIUM, LOW]
+        required: true
+      category:
+        type: str
+        enum: [metric_anomaly, gate_failure, script_critical, health_degraded, dlq_overflow, resource_exhaustion]
+        required: true
+      title:
+        type: str
+        max_length: 200
+        required: true
+      detail:
+        type: str
+        max_length: 2000
+      detected_at:
+        type: str
+        format: ISO8601
+      metric_ref:
+        type: dict
+        optional: true
+        format: {metric_name, current_value, threshold}
+      affected_systems:
+        type: list[str]
+
+  dispatch_strategy:
+    CRITICAL:
+      action: "创建 P0 OPS 修复任务 + block 同 category 活跃任务"
+    HIGH:
+      action: "创建 P1 OPS 修复任务"
+    MEDIUM:
+      action: "写入 events 表, 不创建任务"
+    LOW:
+      action: "仅日志记录"
+
+producer:
+  module: zephyr.feedback_loop.alert_dispatcher
+  interface:
+    dispatch:
+      params: "event: AlertEvent"
+      returns: DispatchResult
+
+consumer:
+  module: zephyr.orchestrator.alert_handler
+  interface:
+    handle_alert:
+      params: "event: AlertEvent"
+      returns: "TaskCard | None"
+
+verification:
+  cli: scripts/connect/fle_orc.py
+  commands:
+    - python scripts/connect/fle_orc.py --verify
+    - python scripts/connect/fle_orc.py --trigger --severity CRITICAL
+    - python scripts/connect/fle_orc.py --trigger --severity HIGH
+    - python scripts/connect/fle_orc.py --trigger --severity MEDIUM
+    - python scripts/connect/fle_orc.py --warn-only
+
+downstream_contracts:
+  - CT-ORC-CE-001    # OPS-14
+  - CT-ORC-SCRIPT-001 # OPS-17

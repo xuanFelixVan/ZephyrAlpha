@@ -1,0 +1,78 @@
+# [A_config] module_id=CFG-hard-boundaries | layer=config | stability=stable | safety=H | ai_autonomy=human_gated
+# 治理锚定
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: CFG-hard-boundaries
+# stability: frozen
+# safety_level: H
+# ai_autonomy: immutable_core
+# 治理锚定结束
+module_id: CFG-hard-boundaries
+schema_version: "1.0.0"
+doc_type: register
+title: 硬边界登记表
+status: active
+owner: ZephyrAlpha-Owner
+created: "2026-06-18"
+last_updated: "2026-06-18"
+ai_autonomy: immutable_core
+ttl: permanent
+description: "架构核心硬边界——不可违反的约束。对标 K8s Hard Limits。"
+
+boundaries:
+  - id: HB-001
+    category: architectural
+    constraint: "YAML 是规则数据唯一真源，DB 是只读缓存"
+    parameters:
+      ssot: "YAML"
+      readonly_tables: 9
+    impact: "违反→双源数据不一致→AI 困惑"
+
+  - id: HB-002
+    category: architectural
+    constraint: "禁止 PowerShell 语法（RULE-SEVENTEEN）"
+    parameters:
+      allowed_commands: ["python", "git", "pytest"]
+    impact: "违反→引号转义问题→文件损坏"
+
+  - id: HB-003
+    category: domain
+    constraint: "跨域依赖必须在 domain_dependencies 表中声明"
+    parameters:
+      check_table: "domain_dependencies"
+    impact: "违反→隐式跨域耦合→架构腐化"
+
+  - id: HB-004
+    category: data
+    constraint: "禁止直接修改 DB 规则表（只读触发器保护）"
+    parameters:
+      protected_tables: 9
+      sync_script: "sync_yaml_to_depgraph.py"
+    impact: "违反→绕过 SSoT→数据不一致"
+
+  - id: HB-005
+    category: security
+    constraint: "敏感操作必须有权限控制（PermissionGuard）"
+    parameters:
+      guard: "PermissionGuard.check()"
+    impact: "违反→越权操作→安全漏洞"
+
+  - id: HB-006
+    category: operational
+    constraint: "Session 结束前必须释放所有文件锁"
+    parameters:
+      ttl_minutes: 30
+    impact: "违反→死锁→其他 session 无法写入"
+
+  - id: HB-007
+    category: architectural
+    constraint: "新建文件必须通过 scaffold.py（RULE-FOUR）"
+    parameters:
+      entry: "scaffold.py"
+    impact: "违反→孤儿文件→未注册"
+
+  - id: HB-008
+    category: operational
+    constraint: "for+subprocess 必须用 ThreadPoolExecutor（RULE-SEVEN）"
+    parameters:
+      max_workers: 8
+    impact: "违反→串行卡死（296脚本40分钟）"

@@ -1,0 +1,53 @@
+# [A_module] module_id=MOD-ORC_checkpoint_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+from __future__ import annotations
+
+# [BLUEPRINT] MOD-INF-008 | docs/03_modules/_cross_layer/context-engine/blueprint.md
+
+# [MODULE] zephyr.autonomy_core.checkpoint_manager
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+"""checkpoint_manager.py — Inject 前快照 (DD100, TASK-019)"""
+
+import json
+from dataclasses import dataclass, field
+from pathlib import Path
+
+@dataclass
+class Checkpoint:
+    id: str
+    context_snapshot: str
+    ke_ids: list[str]
+    token_count: int
+
+class CheckpointManager:
+    """Inject 前 snapshot; 回滚到注入前 (DD100)."""
+    def __init__(self, store_dir: str | Path = ".ce_checkpoints") -> None:
+        self._store = Path(store_dir)
+        self._store.mkdir(parents=True, exist_ok=True)
+
+    def save(self, ckpt: Checkpoint) -> str:
+        path = self._store / f"{ckpt.id}.json"
+        path.write_text(json.dumps(ckpt.__dict__, ensure_ascii=False), encoding="utf-8")
+        return str(path)
+
+    def restore(self, checkpoint_id: str) -> Checkpoint | None:
+        path = self._store / f"{checkpoint_id}.json"
+        if not path.exists():
+            return None
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return Checkpoint(**data)

@@ -1,0 +1,65 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-007 | docs/03_modules/_cross_layer/gates/blueprint.md | §
+# module_id: MOD-INF-007
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+# G0 — CT-ORC-GATE-001 / schemas.Task 可执行最小子集
+# 真源：task_id 模式见 shared/schemas.py _TASK_ID_PATTERN
+# 说明：叙事规则与人读条目仍以 task/g0-entry.yaml 为准；本文件仅供 GateEngine.load。
+
+module_id: MOD-INF-007
+gate_id: G0
+title: G0 Task Entry Gate（Orc 最小硬校验）
+gate_name: task_entry_orc
+description: >
+  任务进入执行队列前的可自动化校验：priority 枚举、核心字段非空、task_id 正则。
+  Orc 契约中的 assignee / deadline 等字段待在 Task 模型落地后再增补 checks。
+phase: task_entry
+auto: true
+on_failure: reject
+on_pass: pass
+rule_ids:
+  - TRAE-002
+  - TRAE-005
+
+checks:
+  - id: G0-ORC-PRIORITY
+    name: priority_valid
+    type: classification
+    severity: error
+    description: priority MUST ∈ GOV-TASK-004（P0–P4）
+    rule_ids:
+      - TRAE-002
+      - TRAE-005
+    params:
+      field: priority
+      allowed_values: ["P0", "P1", "P2", "P3", "P4"]
+
+  - id: G0-ORC-CORE-FIELDS
+    name: core_field_presence
+    type: field_presence
+    severity: error
+    description: task_id / title / execution_model / safety_level MUST 非空
+    rule_ids:
+      - TRAE-002
+      - TRAE-005
+    params:
+      required_fields:
+        - task_id
+        - title
+        - execution_model
+        - safety_level
+
+  - id: G0-ORC-TASK-ID-PATTERN
+    name: task_id_regex
+    type: regex_pattern
+    severity: error
+    description: task_id MUST match schemas.Task _TASK_ID_PATTERN
+    rule_ids:
+      - TRAE-002
+      - TRAE-005
+    params:
+      field: task_id
+      pattern: '^(ADR|CP|DM|KE|STD|DW|SRC|OPS)-\d+$'

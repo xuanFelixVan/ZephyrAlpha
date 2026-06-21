@@ -1,0 +1,93 @@
+{
+  "task_id": "DM-100132",
+  "source_file": "docs/01_policies_and_standards/governance/engineering/code_construction_standards.md",
+  "yaml_files": [
+    "docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml",
+    "docs/01_policies_and_standards/rules/trae_011_code_type_import.yaml",
+    "docs/01_policies_and_standards/rules/trae_012_code_test_security.yaml"
+  ],
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "CODE-001_命名规范": {
+      "source_section": "§1 命名约定",
+      "type": "mandatory+prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_010_code_naming_organization.yaml:code_001",
+      "details": "文件命名(snake_case.py/test_{module}.py等)+标识符命名(PascalCase/snake_case/UPPER_SNAKE_CASE等)+4条禁止命名规则"
+    },
+    "CODE-002_文件组织": {
+      "source_section": "§2 文件组织",
+      "type": "mandatory+prohibition+constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_010_code_naming_organization.yaml:code_002",
+      "details": "文件大小约束(300/50/200行)+__init__.py最小原则+文档拆分阈值(40K/60K tokens, 800/1200行)+3条禁止行为"
+    },
+    "CODE-003_包结构": {
+      "source_section": "§2.2 __init__.py",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_010_code_naming_organization.yaml:code_003",
+      "details": "每个子包MUST声明__all__"
+    },
+    "CODE-004_模块职责单一": {
+      "source_section": "§2.4 一个文件一个类",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_010_code_naming_organization.yaml:code_004",
+      "details": "一个文件一个主类+超300行拆分"
+    },
+    "CODE-005_类型注解强制层级": {
+      "source_section": "§3 类型注解强制层级",
+      "type": "mandatory+prohibition+constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_011_code_type_import.yaml:code_005",
+      "details": "分层mypy要求(L00-L01 strict/L02-L08关键接口strict/L09-L15 public API strict)+Decimal/Timestamp/Money强制+5条禁止写法"
+    },
+    "CODE-006_导入规范": {
+      "source_section": "§4 导入规范",
+      "type": "mandatory+prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_011_code_type_import.yaml:code_006",
+      "details": "4组导入排序+3条禁止导入(import*/下层导入上层/裸dict跨模块)"
+    },
+    "CODE-007_SSoT守卫": {
+      "source_section": "§5 SSoT守卫",
+      "type": "mandatory+prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_011_code_type_import.yaml:code_007",
+      "details": "YAML是SSoT+修改数据结构4步流程+2条禁止"
+    },
+    "CODE-008_测试规范与防幻觉": {
+      "source_section": "§8.1/#7 禁止占位符 + §8.6/#13 自审闭环 + §8.7/#14 新代码必测",
+      "type": "mandatory+prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_012_code_test_security.yaml:code_008",
+      "details": "新建模块必测+修改函数更新测试+Bug回归测试+自审5项+6条禁止占位符"
+    },
+    "CODE-009_编辑优先与最小变更": {
+      "source_section": "§8.2/#8 编辑优先 + §8.3/#9 最小变更 + §8.4/#10 假设显式化",
+      "type": "mandatory+prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_012_code_test_security.yaml:code_009",
+      "details": "surgical edit+最小变更+[ASSUMPTION]标记+5条禁止"
+    },
+    "CODE-010_安全编码": {
+      "source_section": "§8.8/#15 安全最低通过 + §8.9/#16 计划先行 + §8.10/#17 跨文件影响 + §8.11/#18 上下文新鲜度",
+      "type": "mandatory+prohibition+trigger",
+      "status": "COVERED",
+      "yaml_section": "trae_012_code_test_security.yaml:code_010",
+      "details": "认证/注入/数据暴露3项检查+计划先行触发条件+跨文件影响检查+上下文新鲜度+3条禁止"
+    }
+  },
+  "summary": {
+    "total_rules": 10,
+    "COVERED": 10,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "trae_010_code_naming_organization.yaml: 从占位符扩展为详细规则——code_001添加4条prohibitions+2条conditions+6条actions; code_002添加5条conditions+7条actions+3条prohibitions; code_003添加1条condition+1条action; code_004添加2条actions",
+    "trae_011_code_type_import.yaml: 从占位符扩展为详细规则——code_005添加3条conditions+7条actions+5条prohibitions; code_006添加1条condition+2条actions+3条prohibitions; code_007新增SSoT守卫section+2条conditions+4条actions+2条prohibitions",
+    "trae_012_code_test_security.yaml: 从占位符扩展为详细规则——code_008添加3条conditions+4条actions+2条prohibitions; code_009添加2条conditions+3条actions+5条prohibitions; code_010添加4条conditions+6条actions+3条prohibitions"
+  ]
+}

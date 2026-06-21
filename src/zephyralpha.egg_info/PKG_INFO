@@ -1,0 +1,21 @@
+Metadata-Version: 2.4
+Name: zephyralpha
+Version: 2.0.0
+Summary: ZephyrAlpha 2.0 — AI-native quantitative research platform
+Requires-Python: >=3.11
+License-File: LICENSE
+Requires-Dist: pydantic>=2.0.0
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: pandas>=2.0.0
+Requires-Dist: chromadb>=0.4.24
+Requires-Dist: mcp>=1.0.0
+Provides-Extra: dev
+Requires-Dist: ruff>=0.4.0; extra == "dev"
+Requires-Dist: mypy>=1.10.0; extra == "dev"
+Requires-Dist: pytest>=8.0.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.23.0; extra == "dev"
+Requires-Dist: pytest-cov>=5.0.0; extra == "dev"
+Requires-Dist: pre-commit>=3.7.0; extra == "dev"
+Provides-Extra: demo
+Requires-Dist: akshare>=1.12.0; extra == "demo"
+Dynamic: license-file

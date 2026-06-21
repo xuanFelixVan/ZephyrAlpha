@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0094 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-252 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.contract.test_schema_stability
 # [STABILITY] evolving
 # [SAFETY] L
@@ -94,7 +95,7 @@ class TestTaskSchemaStability:
     """Task 模型的字段稳定性快照测试。"""
 
     def test_task_field_count(self) -> None:
-        from zephyr.gates.task_types import Task
+        from zephyr.governance.rule_enforcement.task_types import Task
 
         fields = _pydantic_fields(Task)
         actual_count = len(fields)
@@ -107,7 +108,7 @@ class TestTaskSchemaStability:
         )
 
     def test_task_required_fields_present(self) -> None:
-        from zephyr.gates.task_types import Task
+        from zephyr.governance.rule_enforcement.task_types import Task
 
         fields = _pydantic_fields(Task)
         field_names = set(fields.keys())
@@ -120,7 +121,7 @@ class TestTaskSchemaStability:
             )
 
     def test_extra_fields_warned(self) -> None:
-        from zephyr.gates.task_types import Task
+        from zephyr.governance.rule_enforcement.task_types import Task
 
         fields = _pydantic_fields(Task)
         extra = set(fields.keys()) - set(TASK_EXPECTED_FIELDS.keys())
@@ -146,8 +147,8 @@ class TestTaskCardInheritance:
     """TaskCard 继承 Task 的完整性验证。"""
 
     def test_taskcard_inherits_task(self) -> None:
-        from zephyr.gates.task_types import Task
-        from zephyr.core.models import TaskCard
+        from zephyr.governance.rule_enforcement.task_types import Task
+        from zephyr.shared.shared_services.models import TaskCard
 
         assert issubclass(TaskCard, Task), (
             f"TaskCard 必须继承 schemas.py Task。\n"
@@ -156,8 +157,8 @@ class TestTaskCardInheritance:
         )
 
     def test_taskcard_has_all_task_fields(self) -> None:
-        from zephyr.gates.task_types import Task
-        from zephyr.core.models import TaskCard
+        from zephyr.governance.rule_enforcement.task_types import Task
+        from zephyr.shared.shared_services.models import TaskCard
 
         task_fields = set(Task.model_fields.keys())
         taskcard_fields = set(TaskCard.model_fields.keys())
@@ -169,8 +170,8 @@ class TestTaskCardInheritance:
         )
 
     def test_taskcard_no_field_shadow_conflict(self) -> None:
-        from zephyr.gates.task_types import Task
-        from zephyr.core.models import TaskCard
+        from zephyr.governance.rule_enforcement.task_types import Task
+        from zephyr.shared.shared_services.models import TaskCard
 
         task_types = {
             name: info.annotation for name, info in Task.model_fields.items()

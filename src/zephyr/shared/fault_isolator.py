@@ -1,0 +1,46 @@
+# [A_module] module_id=MOD-SHR_fault_isolator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from enum import Enum
+
+
+class IsolationState(Enum):
+    HEALTHY = "healthy"
+    SUSPECT = "suspect"
+    ISOLATED = "isolated"
+
+
+@dataclass
+class FaultDomain:
+    name: str
+    state: IsolationState
+    failure_count: int = 0
+    dependencies: list[str] = field(default_factory=list)
+
+
+class FaultIsolator:
+    def __init__(self, failure_threshold: int = 3):
+        self._threshold = failure_threshold
+        self._domains: dict[str, FaultDomain] = {}
+
+    def register(self, name: str, dependencies: list[str] | None = None) -> None:
+        self._domains[name] = FaultDomain(name, IsolationState.HEALTHY, 0, dependencies or [])
+
+    def report_failure(self, name: str) -> FaultDomain:
+        domain = self._domains.get(name)
+        if not domain:
+            return FaultDomain(name, IsolationState.HEALTHY)
+        domain.failure_count += 1
+        if domain.failure_count >= self._threshold:
+            domain.state = IsolationState.ISOLATED
+        elif domain.failure_count >= self._threshold // 2:
+            domain.state = IsolationState.SUSPECT
+        return domain
+
+    def is_isolated(self, name: str) -> bool:
+        domain = self._domains.get(name)
+        return domain.state == IsolationState.ISOLATED if domain else False
+
+    def get_isolated(self) -> list[str]:
+        return [n for n, d in self._domains.items() if d.state == IsolationState.ISOLATED]

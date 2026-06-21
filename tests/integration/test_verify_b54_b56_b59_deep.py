@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0179 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-336 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.integration.test_verify_b54_b56_b59_deep
 # [STABILITY] evolving
 # [SAFETY] L
@@ -13,13 +14,13 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.db.task_repo import (
+from zephyr.governance.persistence.task_repo import (
     P0InflationFrozenError,
     TaskRepository,
 )
-from zephyr.shared.schema.severity_types import Priority as P
-from zephyr.core.models import TaskCard
-from zephyr.gates.task_types import TaskNamespace, TaskStatus
+from zephyr.integration.shared.schema.severity_types import Priority as P
+from zephyr.shared.shared_services.models import TaskCard
+from zephyr.governance.rule_enforcement.task_types import TaskNamespace, TaskStatus
 
 now = datetime.now(UTC)
 

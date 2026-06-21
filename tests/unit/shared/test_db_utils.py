@@ -1,9 +1,11 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1945 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-562 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.shared.test_db_utils
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
+from __future__ import annotations
 """
 =============================================
 覆盖矩阵：
@@ -17,13 +19,12 @@
     - 类型正确 × 1
 =============================================
 """
-from __future__ import annotations
 
 from pathlib import Path
 
 import pytest
 
-from zephyr.shared.utils.db_utils import DB_PATH, ensure_schema, get_db_connection
+from zephyr.integration.shared_08.utils.db_utils import DB_PATH, ensure_schema, get_db_connection
 
 
 class TestEnsureSchema:

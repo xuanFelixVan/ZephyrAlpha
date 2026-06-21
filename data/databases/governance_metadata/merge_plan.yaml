@@ -1,0 +1,938 @@
+# merge_plan.yaml — 规则合并去重方案
+# 135条原规则 → ~40条合并后YAML
+# 合并原则：按AI执行的操作分组，不按域标签分组
+# 语义近似裁定：选后者更丰富版本，合并前者独有优点
+# 命名规范：{domain_lower}_{number_padded}.yaml，TRAE补3位其余补2位
+
+version: "1.0.0"
+created_at: "2026-06-13"
+description: "Phase E Step 2: 规则合并去重方案，135条→~40条YAML"
+
+merge_groups:
+
+  # ============================================================
+  # TRAE域铁律（11条→5条YAML）
+  # ============================================================
+
+  - rule_id: TRAE-001
+    title: "文件操作安全协议"
+    target_file: trae_001_file_operation_security.yaml
+    layer: L0
+    severity: critical
+    scope: file_operation
+    merged_from:
+      - original_id: RULE-ZERO
+        source: ".trae/rules/project_rules.md"
+        section: "RULE-ZERO：文件锁协议"
+      - original_id: RULE-ONE
+        source: ".trae/rules/project_rules.md"
+        section: "RULE-ONE：Python脚本并发写入安全"
+      - original_id: RULE-THREE
+        source: ".trae/rules/project_rules.md"
+        section: "RULE-THREE：删除前置确认"
+      - original_id: RULE-FOUR
+        source: ".trae/rules/project_rules.md"
+        section: "RULE-FOUR：创建即注册"
+      - original_id: RULE-FIVE
+        source: ".trae/rules/project_rules.md"
+        section: "RULE-FIVE：零残留"
+    merge_rationale: "5条规则全部围绕文件操作（写/创/删/残留），AI做文件操作时应只读一个YAML"
+    aliases: [RULE-ZERO, RULE-ONE, RULE-THREE, RULE-FOUR, RULE-FIVE, "文件锁", "原子写入", "删除审判", "创建入口", "零残留"]
+
+  - rule_id: TRAE-002
+    title: "反孤儿与搜索先行协议"
+    target_file: trae_002_anti_orphan_search_first.yaml
+    layer: L0
+    severity: critical
+    scope: feature_creation
+    merged_from:
+      - original_id: RULE-TWO
+        source: ".trae/rules/project_rules.md"
+        section: "RULE-TWO：反孤儿功能"
+      - original_id: RULE-EIGHT
+        source: ".trae/rules/project_rules.md"
+        section: "RULE-EIGHT：搜索先行"
+    merge_rationale: "RULE-TWO规定创建后必须注册，RULE-EIGHT规定创建前必须搜索已有，两者是创建新功能的pre/post对"
+    aliases: [RULE-TWO, RULE-EIGHT, "反孤儿", "搜索先行"]
+
+  - rule_id: TRAE-003
+    title: "任务粒度与完成门槛协议"
+    target_file: trae_003_task_granularity_threshold.yaml
+    layer: L0
+    severity: critical
+    scope: task_management
+    merged_from:
+      - original_id: RULE-SIX
+        source: ".trae/rules/project_rules.md"
+        section: "RULE-SIX：任务粒度边界"
+      - original_id: RULE-THIRTEEN
+        source: ".trae/rules/project_rules.md"
+        section: "RULE-THIRTEEN：粒度门禁"
+    merge_rationale: "RULE-SIX定义何时建卡，RULE-THIRTEEN定义建卡粒度限制，两者是任务卡创建的完整约束"
+    aliases: [RULE-SIX, RULE-THIRTEEN, "任务粒度", "完成门槛"]
+
+  - rule_id: TRAE-004
+    title: "并行执行与原子事务协议"
+    target_file: trae_004_parallel_atomic_transaction.yaml
+    layer: L0
+    severity: critical
+    scope: script_execution
+    merged_from:
+      - original_id: RULE-SEVEN
+        source: ".trae/rules/project_rules.md"
+        section: "RULE-SEVEN：强制ThreadPoolExecutor"
+      - original_id: RULE-ONE
+        source: ".trae/rules/project_rules.md"
+        section: "RULE-ONE事务部分"
+    merge_rationale: "RULE-SEVEN强制并行，RULE-ONE原子写入是事务安全基础，两者是脚本执行的完整约束"
+    aliases: [RULE-SEVEN, "并行执行", "ThreadPoolExecutor", "原子事务"]
+
+  - rule_id: TRAE-005
+    title: "修改原则与治理施工协议"
+    target_file: trae_005_modification_governance.yaml
+    layer: L0
+    severity: critical
+    scope: code_modification
+    merged_from:
+      - original_id: RULE-NINE
+        source: ".trae/rules/project_rules.md"
+        section: "RULE-NINE：修改原则"
+      - original_id: RULE-TEN
+        source: ".trae/rules/project_rules.md"
+        section: "RULE-TEN：治理施工流程"
+    merge_rationale: "RULE-NINE定义修改原则，RULE-TEN定义结构变更流程，两者是代码修改的完整约束"
+    aliases: [RULE-NINE, RULE-TEN, "修改原则", "治理施工"]
+
+  # ============================================================
+  # 防幻觉规则（18条→4条YAML）
+  # ============================================================
+
+  - rule_id: TRAE-006
+    title: "防幻觉-结构追溯层"
+    target_file: trae_006_anti_hallucination_structure.yaml
+    layer: L0
+    severity: critical
+    scope: code_structure
+    merged_from:
+      - original_id: ANTI-HALL-01
+        description: "十字段头部必填"
+      - original_id: ANTI-HALL-02
+        description: "BLUEPRINT字段指向蓝图"
+      - original_id: ANTI-HALL-03
+        description: "MODULE字段完整路径"
+      - original_id: ANTI-HALL-04
+        description: "INVARIANTS不变量声明"
+      - original_id: ANTI-HALL-05
+        description: "MODIFY-GUARD修改守卫"
+      - original_id: ANTI-HALL-06
+        description: "CONSUMERS消费者声明"
+    merge_rationale: "6条规则全部是代码文件头部十字段的结构追溯要求"
+    aliases: [ANTI-HALL-01, ANTI-HALL-02, ANTI-HALL-03, ANTI-HALL-04, ANTI-HALL-05, ANTI-HALL-06, "结构追溯"]
+
+  - rule_id: TRAE-007
+    title: "防幻觉-行为约束层"
+    target_file: trae_007_anti_hallucination_behavior.yaml
+    layer: L0
+    severity: critical
+    scope: code_behavior
+    merged_from:
+      - original_id: ANTI-HALL-07
+        description: "禁止占位符(TODO/.../pass)"
+      - original_id: ANTI-HALL-08
+        description: "编辑优先(禁止删+建)"
+      - original_id: ANTI-HALL-09
+        description: "最小变更(禁止顺手重构)"
+      - original_id: ANTI-HALL-10
+        description: "假设显式化(标记ASSUMPTION)"
+    merge_rationale: "4条规则全部是AI写代码时的行为约束"
+    aliases: [ANTI-HALL-07, ANTI-HALL-08, ANTI-HALL-09, ANTI-HALL-10, "行为约束"]
+
+  - rule_id: TRAE-008
+    title: "防幻觉-输出验证层"
+    target_file: trae_008_anti_hallucination_output.yaml
+    layer: L0
+    severity: critical
+    scope: output_verification
+    merged_from:
+      - original_id: ANTI-HALL-11
+        description: "步骤验证门(每步验证后才进下一步)"
+      - original_id: ANTI-HALL-12
+        description: "导入验证(确认import目标存在)"
+      - original_id: ANTI-HALL-13
+        description: "自审闭环(产出代码后逐项检查)"
+      - original_id: ANTI-HALL-14
+        description: "新代码必测(新建/修改必须测试)"
+    merge_rationale: "4条规则全部是产出后的验证要求"
+    aliases: [ANTI-HALL-11, ANTI-HALL-12, ANTI-HALL-13, ANTI-HALL-14, "输出验证"]
+
+  - rule_id: TRAE-009
+    title: "防幻觉-安全防护层"
+    target_file: trae_009_anti_hallucination_safety.yaml
+    layer: L0
+    severity: critical
+    scope: security_guard
+    merged_from:
+      - original_id: ANTI-HALL-15
+        description: "安全最低通过(认证+注入+数据暴露)"
+      - original_id: ANTI-HALL-16
+        description: "计划先行(>3文件/>50行先计划)"
+      - original_id: ANTI-HALL-17
+        description: "跨文件影响检查(读CONSUMERS字段)"
+      - original_id: ANTI-HALL-18
+        description: "上下文新鲜度(>30轮开新会话)"
+    merge_rationale: "4条规则全部是安全防护和风险管理"
+    aliases: [ANTI-HALL-15, ANTI-HALL-16, ANTI-HALL-17, ANTI-HALL-18, "安全防护"]
+
+  # ============================================================
+  # 代码构建标准（10条→3条YAML）
+  # ============================================================
+
+  - rule_id: TRAE-010
+    title: "代码构建-命名与组织"
+    target_file: trae_010_code_naming_organization.yaml
+    layer: L1
+    severity: error
+    scope: code_naming
+    merged_from:
+      - original_id: CODE-001
+        description: "命名规范(snake_case/UPPER_CASE)"
+      - original_id: CODE-002
+        description: "文件组织(目录结构/模块划分)"
+      - original_id: CODE-003
+        description: "包结构(__init__.py/__all__)"
+      - original_id: CODE-004
+        description: "模块职责单一原则"
+    merge_rationale: "4条规则全部是代码命名和组织规范"
+    aliases: [CODE-001, CODE-002, CODE-003, CODE-004]
+
+  - rule_id: TRAE-011
+    title: "代码构建-类型与导入"
+    target_file: trae_011_code_type_import.yaml
+    layer: L1
+    severity: error
+    scope: code_type_import
+    merged_from:
+      - original_id: CODE-005
+        description: "类型注解(函数签名/返回类型)"
+      - original_id: CODE-006
+        description: "导入规范(绝对导入/排序)"
+      - original_id: CODE-007
+        description: "依赖管理(避免循环导入)"
+    merge_rationale: "3条规则全部是类型系统和导入管理"
+    aliases: [CODE-005, CODE-006, CODE-007]
+
+  - rule_id: TRAE-012
+    title: "代码构建-测试与安全"
+    target_file: trae_012_code_test_security.yaml
+    layer: L1
+    severity: error
+    scope: code_test_security
+    merged_from:
+      - original_id: CODE-008
+        description: "测试规范(pytest/覆盖率)"
+      - original_id: CODE-009
+        description: "错误处理(异常层级/日志)"
+      - original_id: CODE-010
+        description: "安全编码(参数化/脱敏)"
+    merge_rationale: "3条规则全部是测试和安全编码规范"
+    aliases: [CODE-008, CODE-009, CODE-010]
+
+  # ============================================================
+  # 架构约束规则（27条→5条YAML）
+  # ============================================================
+
+  - rule_id: TRAE-013
+    title: "架构约束-跨包依赖"
+    target_file: trae_013_arch_cross_package_dep.yaml
+    layer: L1
+    severity: error
+    scope: architecture_dependency
+    merged_from:
+      - original_id: ARCH-001
+        description: "跨包依赖方向(向下依赖)"
+      - original_id: ARCH-002
+        description: "循环依赖禁止"
+      - original_id: ARCH-003
+        description: "shared包职责限制"
+      - original_id: ARCH-004
+        description: "基础设施层隔离"
+      - original_id: ARCH-005
+        description: "God模块分解"
+      - original_id: ARCH-006
+        description: "fan_out/fan_in限制"
+    merge_rationale: "6条规则全部是跨包依赖和模块间关系约束"
+    aliases: [ARCH-001, ARCH-002, ARCH-003, ARCH-004, ARCH-005, ARCH-006]
+
+  - rule_id: TRAE-014
+    title: "架构约束-蓝图对齐"
+    target_file: trae_014_arch_blueprint_alignment.yaml
+    layer: L1
+    severity: error
+    scope: architecture_blueprint
+    merged_from:
+      - original_id: ARCH-007
+        description: "蓝图-代码双向对齐"
+      - original_id: ARCH-008
+        description: "蓝图§4文件清单完整性"
+      - original_id: ARCH-009
+        description: "蓝图版本与代码版本同步"
+      - original_id: ARCH-010
+        description: "蓝图变更门控"
+      - original_id: ARCH-011
+        description: "蓝图模板合规"
+      - original_id: ARCH-012
+        description: "蓝图-代码-路径树三方对齐"
+    merge_rationale: "6条规则全部是蓝图与代码的对齐约束"
+    aliases: [ARCH-007, ARCH-008, ARCH-009, ARCH-010, ARCH-011, ARCH-012]
+
+  - rule_id: TRAE-015
+    title: "架构约束-路径与注册"
+    target_file: trae_015_arch_path_registration.yaml
+    layer: L1
+    severity: error
+    scope: architecture_path_registry
+    merged_from:
+      - original_id: ARCH-013
+        description: "路径规范(7区域路径设计)"
+      - original_id: ARCH-014
+        description: "注册表完整性"
+      - original_id: ARCH-015
+        description: "注册表同步(多表一致性)"
+      - original_id: ARCH-016
+        description: "目录结构合规"
+      - original_id: ARCH-017
+        description: "文件位置归属正确"
+      - original_id: ARCH-018
+        description: "导入路径与物理路径一致"
+    merge_rationale: "6条规则全部是路径和注册表管理约束"
+    aliases: [ARCH-013, ARCH-014, ARCH-015, ARCH-016, ARCH-017, ARCH-018]
+
+  - rule_id: TRAE-016
+    title: "架构约束-漂移检测"
+    target_file: trae_016_arch_drift_detection.yaml
+    layer: L1
+    severity: error
+    scope: architecture_drift
+    merged_from:
+      - original_id: ARCH-019
+        description: "漂移检测器(39个检测器)"
+      - original_id: ARCH-020
+        description: "漂移预算管理"
+      - original_id: ARCH-021
+        description: "契约代码漂移检查"
+      - original_id: ARCH-022
+        description: "LoadPath完整性验证"
+      - original_id: ARCH-023
+        description: "schema变更同步"
+      - original_id: ARCH-024
+        description: "配置漂移检测"
+    merge_rationale: "6条规则全部是漂移检测和预防"
+    aliases: [ARCH-019, ARCH-020, ARCH-021, ARCH-022, ARCH-023, ARCH-024]
+
+  - rule_id: TRAE-017
+    title: "架构约束-治理顺序"
+    target_file: trae_017_arch_governance_order.yaml
+    layer: L1
+    severity: error
+    scope: architecture_governance_order
+    merged_from:
+      - original_id: ARCH-025
+        description: "治理按因果链执行(不按数量)"
+      - original_id: ARCH-026
+        description: "先架构后测试(重构改代码测试白写)"
+      - original_id: ARCH-027
+        description: "价值判定原则(零消费者≠无价值)"
+    merge_rationale: "3条规则全部是治理执行顺序约束"
+    aliases: [ARCH-025, ARCH-026, ARCH-027]
+
+  # ============================================================
+  # 行为边界规则（ABS-01~48 + COND-01~52 → 6条YAML）
+  # ============================================================
+
+  - rule_id: TRAE-018
+    title: "行为边界-代码操作绝对禁止"
+    target_file: trae_018_behavior_code_prohibition.yaml
+    layer: L0
+    severity: critical
+    scope: code_operation_prohibition
+    merged_from:
+      - original_ids: [ABS-01, ABS-02, ABS-03, ABS-04, ABS-05, ABS-06, ABS-07, ABS-08]
+        source: "meta/behavior_boundaries_standard.md"
+        description: "代码操作类绝对禁止(直接写/绕锁/删注册/留临时文件等)"
+    merge_rationale: "8条ABS规则全部是代码操作的绝对禁止项"
+    aliases: [ABS-01, ABS-02, ABS-03, ABS-04, ABS-05, ABS-06, ABS-07, ABS-08]
+
+  - rule_id: TRAE-019
+    title: "行为边界-系统安全绝对禁止"
+    target_file: trae_019_behavior_security_prohibition.yaml
+    layer: L0
+    severity: critical
+    scope: security_prohibition
+    merged_from:
+      - original_ids: [ABS-09, ABS-10, ABS-11, ABS-12, ABS-13, ABS-14, ABS-15, ABS-16]
+        source: "meta/behavior_boundaries_standard.md"
+        description: "安全类绝对禁止(泄露密钥/绕过认证/注入等)"
+    merge_rationale: "8条ABS规则全部是安全相关绝对禁止项"
+    aliases: [ABS-09, ABS-10, ABS-11, ABS-12, ABS-13, ABS-14, ABS-15, ABS-16]
+
+  - rule_id: TRAE-020
+    title: "行为边界-治理纪律绝对禁止"
+    target_file: trae_020_behavior_governance_prohibition.yaml
+    layer: L0
+    severity: critical
+    scope: governance_prohibition
+    merged_from:
+      - original_ids: [ABS-17, ABS-18, ABS-19, ABS-20, ABS-21, ABS-22, ABS-23, ABS-24]
+        source: "meta/behavior_boundaries_standard.md"
+        description: "治理纪律类绝对禁止(跳过验证/不推演/不检查蓝图等)"
+    merge_rationale: "8条ABS规则全部是治理纪律绝对禁止项"
+    aliases: [ABS-17, ABS-18, ABS-19, ABS-20, ABS-21, ABS-22, ABS-23, ABS-24]
+
+  - rule_id: TRAE-021
+    title: "行为边界-其余绝对禁止"
+    target_file: trae_021_behavior_other_prohibition.yaml
+    layer: L0
+    severity: critical
+    scope: other_prohibition
+    merged_from:
+      - original_ids: [ABS-25, ABS-26, ABS-27, ABS-28, ABS-29, ABS-30, ABS-31, ABS-32, ABS-33, ABS-34, ABS-35, ABS-36, ABS-37, ABS-38, ABS-39, ABS-40, ABS-41, ABS-42, ABS-43, ABS-44, ABS-45, ABS-46, ABS-47, ABS-48]
+        source: "meta/behavior_boundaries_standard.md"
+        description: "其余绝对禁止项(数据/文档/架构/模块等)"
+    merge_rationale: "24条ABS规则按主题分组后的剩余项"
+    aliases: [ABS-25~ABS-48]
+
+  - rule_id: TRAE-022
+    title: "行为边界-条件禁止(代码与安全)"
+    target_file: trae_022_behavior_conditional_code.yaml
+    layer: L1
+    severity: error
+    scope: conditional_prohibition_code_security
+    merged_from:
+      - original_ids: [COND-01~COND-26]
+        source: "meta/behavior_boundaries_standard.md"
+        description: "代码和安全类条件禁止项"
+    merge_rationale: "26条COND规则按主题分组"
+    aliases: [COND-01~COND-26]
+
+  - rule_id: TRAE-023
+    title: "行为边界-条件禁止(治理与文档)"
+    target_file: trae_023_behavior_conditional_governance.yaml
+    layer: L1
+    severity: error
+    scope: conditional_prohibition_governance_doc
+    merged_from:
+      - original_ids: [COND-27~COND-52]
+        source: "meta/behavior_boundaries_standard.md"
+        description: "治理和文档类条件禁止项"
+    merge_rationale: "26条COND规则按主题分组"
+    aliases: [COND-27~COND-52]
+
+  # ============================================================
+  # 方法论规则（MTH-001~013 → 4条YAML）
+  # ============================================================
+
+  - rule_id: TRAE-024
+    title: "方法论-诊断与根因分析"
+    target_file: trae_024_methodology_diagnosis.yaml
+    layer: L2
+    severity: warning
+    scope: methodology_diagnosis
+    merged_from:
+      - original_ids: [MTH-001, MTH-002, MTH-003, MTH-006]
+        source: "meta/governance_methodology_standard.md"
+        description: "诊断类方法论(问题定义/根因分析/追问到底)"
+    merge_rationale: "4条方法论全部是诊断和根因分析"
+    aliases: [MTH-001, MTH-002, MTH-003, MTH-006]
+
+  - rule_id: TRAE-025
+    title: "方法论-决策与执行"
+    target_file: trae_025_methodology_decision.yaml
+    layer: L2
+    severity: warning
+    scope: methodology_decision
+    merged_from:
+      - original_ids: [MTH-004, MTH-005, MTH-007, MTH-008]
+        source: "meta/governance_methodology_standard.md"
+        description: "决策与执行类方法论(决策链/执行验证/分层治理/增量推进)"
+    merge_rationale: "4条方法论全部是决策和执行"
+    aliases: [MTH-004, MTH-005, MTH-007, MTH-008]
+
+  - rule_id: TRAE-026
+    title: "方法论-质量与度量"
+    target_file: trae_026_methodology_quality.yaml
+    layer: L2
+    severity: warning
+    scope: methodology_quality
+    merged_from:
+      - original_ids: [MTH-009, MTH-010, MTH-011]
+        source: "meta/governance_methodology_standard.md"
+        description: "质量与度量类方法论(质量门控/度量驱动/回归测试)"
+    merge_rationale: "3条方法论全部是质量和度量"
+    aliases: [MTH-009, MTH-010, MTH-011]
+
+  - rule_id: TRAE-027
+    title: "方法论-协作与演进"
+    target_file: trae_027_methodology_collaboration.yaml
+    layer: L2
+    severity: warning
+    scope: methodology_collaboration
+    merged_from:
+      - original_ids: [MTH-012, MTH-013]
+        source: "meta/governance_methodology_standard.md"
+        description: "协作与演进类方法论(知识共享/持续改进)"
+    merge_rationale: "2条方法论全部是协作和演进"
+    aliases: [MTH-012, MTH-013]
+
+  # ============================================================
+  # 文档治理规则（DOC-001~025 → 4条YAML）
+  # ============================================================
+
+  - rule_id: TRAE-028
+    title: "文档治理-结构与命名"
+    target_file: trae_028_doc_structure_naming.yaml
+    layer: L1
+    severity: error
+    scope: doc_structure_naming
+    merged_from:
+      - original_ids: [DOC-001, DOC-002, DOC-003, DOC-004, DOC-005, DOC-006]
+        source: "governance/document/"
+        description: "文档结构与命名规范(目录结构/命名/路径/编码/生命周期/控制)"
+    merge_rationale: "6条规则全部是文档结构和命名"
+    aliases: [DOC-001, DOC-002, DOC-003, DOC-004, DOC-005, DOC-006]
+
+  - rule_id: TRAE-029
+    title: "文档治理-操作安全"
+    target_file: trae_029_doc_operation_security.yaml
+    layer: L1
+    severity: error
+    scope: doc_operation_safety
+    merged_from:
+      - original_ids: [DOC-007, DOC-008, DOC-009, DOC-010]
+        source: "governance/document/"
+        description: "文档操作安全(删除移动门禁/发现策略/SSoT原则/压缩工作流)"
+    merge_rationale: "4条规则全部是文档操作安全"
+    aliases: [DOC-007, DOC-008, DOC-009, DOC-010]
+
+  - rule_id: TRAE-030
+    title: "文档治理-编号与元数据"
+    target_file: trae_030_doc_numbering_metadata.yaml
+    layer: L1
+    severity: error
+    scope: doc_numbering_metadata
+    merged_from:
+      - original_ids: [DOC-011, DOC-012, DOC-013, DOC-014, DOC-015]
+        source: "governance/document/"
+        description: "编号与元数据规范(统一编号/元数据登记/压缩标准等)"
+    merge_rationale: "5条规则全部是编号和元数据"
+    aliases: [DOC-011, DOC-012, DOC-013, DOC-014, DOC-015]
+
+  # ============================================================
+  # 安全治理规则（SEC-001~003 + 模块治理 MOD-001~007 → 3条YAML）
+  # ============================================================
+
+  - rule_id: TRAE-031
+    title: "安全治理-密钥与访问控制"
+    target_file: trae_031_security_key_access.yaml
+    layer: L1
+    severity: error
+    scope: security_access
+    merged_from:
+      - original_ids: [SEC-001, SEC-002, SEC-003]
+        source: "governance/security/"
+        description: "安全治理(密钥管理/访问控制/事件响应)"
+    merge_rationale: "3条安全规则合并为1条"
+    aliases: [SEC-001, SEC-002, SEC-003]
+
+  - rule_id: TRAE-032
+    title: "模块治理-准入与生命周期"
+    target_file: trae_032_module_lifecycle.yaml
+    layer: L1
+    severity: error
+    scope: module_governance
+    merged_from:
+      - original_ids: [MOD-001, MOD-002, MOD-003, MOD-004, MOD-005]
+        source: "governance/module/"
+        description: "模块治理(准入/行为铁律/生命周期/接口契约/注入检查)"
+    merge_rationale: "5条模块规则合并为1条"
+    aliases: [MOD-001, MOD-002, MOD-003, MOD-004, MOD-005]
+
+  - rule_id: TRAE-033
+    title: "模块治理-注册与同步"
+    target_file: trae_033_module_registration_sync.yaml
+    layer: L1
+    severity: error
+    scope: module_registry_sync
+    merged_from:
+      - original_ids: [MOD-006, MOD-007]
+        source: "governance/module/"
+        description: "注册与同步(多注册表同步/注册表完整性)"
+    merge_rationale: "2条注册同步规则合并为1条"
+    aliases: [MOD-006, MOD-007]
+
+  # ============================================================
+  # 任务系统规则（TASK-001~005 → 2条YAML）
+  # ============================================================
+
+  - rule_id: TRAE-034
+    title: "任务系统-卡片标准与生命周期"
+    target_file: trae_034_task_card_standard.yaml
+    layer: L1
+    severity: error
+    scope: task_card_lifecycle
+    merged_from:
+      - original_ids: [TASK-001, TASK-004, TASK-005]
+        source: "governance/task/"
+        description: "任务卡标准/生命周期/关闭标准"
+    merge_rationale: "3条任务规则合并为1条"
+    aliases: [TASK-001, TASK-004, TASK-005]
+
+  - rule_id: TRAE-035
+    title: "任务系统-施工与验证"
+    target_file: trae_035_task_construction_verification.yaml
+    layer: L1
+    severity: error
+    scope: task_construction_verification
+    merged_from:
+      - original_ids: [TASK-002, TASK-003]
+        source: "governance/task/"
+        description: "任务施工与验证标准"
+    merge_rationale: "2条施工验证规则合并为1条"
+    aliases: [TASK-002, TASK-003]
+
+  # ============================================================
+  # 架构治理规则（ARCH治理文件 → 3条YAML）
+  # ============================================================
+
+  - rule_id: TRAE-036
+    title: "架构治理-门禁与过渡"
+    target_file: trae_036_arch_gate_transition.yaml
+    layer: L1
+    severity: error
+    scope: architecture_gate_transition
+    merged_from:
+      - original_ids: [GOV-ARCH-002, GOV-ARCH-005, GOV-ARCH-006]
+        source: "governance/architecture/"
+        description: "架构评审/阶段过渡/门禁策略"
+    merge_rationale: "3条架构治理规则合并为1条"
+    aliases: [GOV-ARCH-002, GOV-ARCH-005, GOV-ARCH-006]
+
+  - rule_id: TRAE-037
+    title: "架构治理-合格与版本化"
+    target_file: trae_037_arch_qualification_versioning.yaml
+    layer: L1
+    severity: error
+    scope: architecture_qualification
+    merged_from:
+      - original_ids: [GOV-ARCH-003, GOV-ARCH-004, GOV-ARCH-010]
+        source: "governance/architecture/"
+        description: "架构版本化/系统合格/基础设施依赖"
+    merge_rationale: "3条架构治理规则合并为1条"
+    aliases: [GOV-ARCH-003, GOV-ARCH-004, GOV-ARCH-010]
+
+  - rule_id: TRAE-038
+    title: "架构治理-CTR注入规则"
+    target_file: trae_038_arch_ctr_injection.yaml
+    layer: L1
+    severity: error
+    scope: architecture_ctr_injection
+    merged_from:
+      - original_ids: [GOV-ARC-CTR-001]
+        source: "governance/architecture/ctr_injection_rules_policy.md"
+        description: "CTR承重墙注入规则"
+    merge_rationale: "独立规则，不与其他规则重叠"
+    aliases: [GOV-ARC-CTR-001]
+
+  # ============================================================
+  # AI治理规则（AI治理文件 → 3条YAML）
+  # ============================================================
+
+  - rule_id: TRAE-039
+    title: "AI治理-幻觉检测与自检"
+    target_file: trae_039_ai_hallucination_detection.yaml
+    layer: L1
+    severity: error
+    scope: ai_hallucination
+    merged_from:
+      - original_ids: [GOV-AI-003, GOV-AI-009]
+        source: "governance/ai/"
+        description: "AI幻觉自检清单/幻觉自动检测规则"
+    merge_rationale: "2条AI幻觉规则合并为1条"
+    aliases: [GOV-AI-003, GOV-AI-009]
+
+  - rule_id: TRAE-040
+    title: "AI治理-模型路由与协作"
+    target_file: trae_040_ai_model_routing.yaml
+    layer: L1
+    severity: error
+    scope: ai_model_routing
+    merged_from:
+      - original_ids: [GOV-AI-002, PSP-005, GOV-AI-008]
+        source: "governance/ai/"
+        description: "模型路由策略/双编辑器协作/Session Handoff"
+    merge_rationale: "3条AI协作规则合并为1条"
+    aliases: [GOV-AI-002, PSP-005, GOV-AI-008]
+
+  # ============================================================
+  # 元规则（META规则 → 3条YAML）
+  # ============================================================
+
+  - rule_id: TRAE-041
+    title: "元规则-规则分类与裁决"
+    target_file: trae_041_meta_rule_classification.yaml
+    layer: L2
+    severity: warning
+    scope: meta_rule_classification
+    merged_from:
+      - original_ids: [PS-STD-004, STD-007, STD-008]
+        source: "meta/"
+        description: "规则分类与冲突裁决/规则生命周期/规则验证标准"
+    merge_rationale: "3条元规则全部是规则自身的治理"
+    aliases: [PS-STD-004, STD-007, STD-008]
+
+  - rule_id: TRAE-042
+    title: "元规则-标准体系与模板"
+    target_file: trae_042_meta_rule_standard.yaml
+    layer: L2
+    severity: warning
+    scope: meta_standard_template
+    merged_from:
+      - original_ids: [PS-STD-002, PS-STD-005, STD-009]
+        source: "meta/"
+        description: "文档模板标准/蓝图体系标准/标准文档模板"
+    merge_rationale: "3条元规则全部是标准和模板体系"
+    aliases: [PS-STD-002, PS-STD-005, STD-009]
+
+  - rule_id: TRAE-043
+    title: "元规则-元数据与度量"
+    target_file: trae_043_meta_rule_metadata.yaml
+    layer: L2
+    severity: warning
+    scope: meta_metadata_metrics
+    merged_from:
+      - original_ids: [PS-STD-001, STD-004, STD-005, GOV-024]
+        source: "meta/"
+        description: "元数据登记表/治理度量/元标准宪法/术语表"
+    merge_rationale: "4条元规则全部是元数据和度量"
+    aliases: [PS-STD-001, STD-004, STD-005, GOV-024]
+
+  # ============================================================
+  # 合规与数据治理（→ 2条YAML）
+  # ============================================================
+
+  - rule_id: TRAE-044
+    title: "合规治理-审计与监管"
+    target_file: trae_044_compliance_audit.yaml
+    layer: L1
+    severity: error
+    scope: compliance_audit
+    merged_from:
+      - original_ids: [GOV-CMP-001, GOV-CMP-002, GOV-CMP-003]
+        source: "governance/compliance/"
+        description: "监管分类法/审计追踪/审计协议"
+    merge_rationale: "3条合规规则合并为1条"
+    aliases: [GOV-CMP-001, GOV-CMP-002, GOV-CMP-003]
+
+  - rule_id: TRAE-045
+    title: "数据治理-质量与血缘"
+    target_file: trae_045_data_quality_lineage.yaml
+    layer: L1
+    severity: error
+    scope: data_governance
+    merged_from:
+      - original_ids: [GOV-DATA-001, GOV-DATA-002, GOV-DATA-003]
+        source: "governance/data/"
+        description: "数据质量/数据血缘/数据保留"
+    merge_rationale: "3条数据治理规则合并为1条"
+    aliases: [GOV-DATA-001, GOV-DATA-002, GOV-DATA-003]
+
+  # ============================================================
+  # 工程治理（→ 2条YAML）
+  # ============================================================
+
+  - rule_id: TRAE-046
+    title: "工程治理-代码与重组安全"
+    target_file: trae_046_engineering_code_restructure.yaml
+    layer: L1
+    severity: error
+    scope: engineering_code_restructure
+    merged_from:
+      - original_ids: [GOV-ENG-001, GOV-ENG-004]
+        source: "governance/engineering/"
+        description: "代码构建标准/代码重组安全策略"
+    merge_rationale: "2条工程规则合并为1条"
+    aliases: [GOV-ENG-001, GOV-ENG-004]
+
+  - rule_id: TRAE-047
+    title: "工程治理-文件头部与扩展"
+    target_file: trae_047_engineering_file_header.yaml
+    layer: L1
+    severity: error
+    scope: engineering_header_expansion
+    merged_from:
+      - original_ids: [GOV-ENG-002, GOV-ENG-003]
+        source: "governance/engineering/"
+        description: "文件头部标准/1500模块扩展规范"
+    merge_rationale: "2条工程规则合并为1条"
+    aliases: [GOV-ENG-002, GOV-ENG-003]
+
+  # ============================================================
+  # 操作手册（→ 2条YAML）
+  # ============================================================
+
+  - rule_id: TRAE-048
+    title: "操作-Vibe Coding会话管理"
+    target_file: trae_048_ops_vibe_coding_session.yaml
+    layer: L2
+    severity: warning
+    scope: operational_vibe_coding
+    merged_from:
+      - original_ids: [OPS-VC-002, OPS-VC-004, OPS-VC-005]
+        source: "operational/vibe_coding/"
+        description: "Session状态机/事故响应/会话门禁"
+    merge_rationale: "3条Vibe Coding操作规则合并为1条"
+    aliases: [OPS-VC-002, OPS-VC-004, OPS-VC-005]
+
+  - rule_id: TRAE-049
+    title: "操作-领域操作手册"
+    target_file: trae_049_ops_domain_manual.yaml
+    layer: L2
+    severity: warning
+    scope: operational_domain
+    merged_from:
+      - original_ids: [OPS-001, OPS-002, OPS-003, OPS-004, OPS-DEV-002]
+        source: "operational/"
+        description: "连接器入职/因子入职/止损配置/分析管线/架构变更"
+    merge_rationale: "5条领域操作规则合并为1条"
+    aliases: [OPS-001, OPS-002, OPS-003, OPS-004, OPS-DEV-002]
+
+  # ============================================================
+  # 域策略（→ 2条YAML）
+  # ============================================================
+
+  - rule_id: TRAE-050
+    title: "域策略-数据源与因子层"
+    target_file: trae_050_domain_policy_data_factor.yaml
+    layer: L2
+    severity: warning
+    scope: domain_data_factor
+    merged_from:
+      - original_ids: [DOM-L00-001, DOM-L02-001]
+        source: "domains/"
+        description: "数据源连接策略/因子质量门控"
+    merge_rationale: "2条域策略合并为1条"
+    aliases: [DOM-L00-001, DOM-L02-001]
+
+  - rule_id: TRAE-051
+    title: "域策略-风控与盘后层"
+    target_file: trae_051_domain_policy_risk_backtest.yaml
+    layer: L2
+    severity: warning
+    scope: domain_risk_analytics
+    merged_from:
+      - original_ids: [DOM-L04-001, DOM-L07-001]
+        source: "domains/"
+        description: "风控限额策略/盘后报告策略"
+    merge_rationale: "2条域策略合并为1条"
+    aliases: [DOM-L04-001, DOM-L07-001]
+
+  # ============================================================
+  # 补充铁律（RULE-ELEVEN~RULE-SIXTEEN → 2条YAML）
+  # ============================================================
+
+  - rule_id: TRAE-052
+    title: "铁律补充-编码安全与产出标准"
+    target_file: trae_052_cross_blueprint_change_cleanup.yaml
+    layer: L0
+    severity: critical
+    scope: coding_safety_output
+    merged_from:
+      - original_id: RULE-ELEVEN
+        description: "编码安全(UTF-8/禁止双编辑器)"
+      - original_id: RULE-TWELVE
+        description: "极简产出标准(表格>命令>一句话>段落)"
+    merge_rationale: "2条铁律补充规则合并为1条"
+    aliases: [RULE-ELEVEN, RULE-TWELVE, "编码安全", "极简产出"]
+
+  - rule_id: TRAE-053
+    title: "铁律补充-根源分析与性能诊断"
+    target_file: trae_053_automation_dual_track.yaml
+    layer: L0
+    severity: critical
+    scope: root_cause_performance
+    merged_from:
+      - original_id: RULE-FOURTEEN
+        description: "步骤验证门"
+      - original_id: RULE-FIFTEEN
+        description: "施工三步(两轨分类)"
+      - original_id: RULE-SIXTEEN
+        description: "depgraph大文件操作规范"
+    merge_rationale: "3条铁律补充规则合并为1条"
+    aliases: [RULE-FOURTEEN, RULE-FIFTEEN, RULE-SIXTEEN]
+
+# ============================================================
+# 统计
+# ============================================================
+summary:
+  total_merge_groups: 53
+  total_target_yaml_files: 53
+  original_rule_count: 135
+  merged_rule_count: 53
+  compression_ratio: "2.5:1"
+  layer_distribution:
+    L0_critical: 14
+    L1_error: 25
+    L2_warning: 14
+  scope_coverage:
+    - file_operation
+    - feature_creation
+    - task_management
+    - script_execution
+    - code_modification
+    - code_structure
+    - code_behavior
+    - output_verification
+    - security_guard
+    - code_naming
+    - code_type_import
+    - code_test_security
+    - architecture_dependency
+    - architecture_blueprint
+    - architecture_path_registry
+    - architecture_drift
+    - architecture_governance_order
+    - code_operation_prohibition
+    - security_prohibition
+    - governance_prohibition
+    - other_prohibition
+    - conditional_prohibition_code_security
+    - conditional_prohibition_governance_doc
+    - methodology_diagnosis
+    - methodology_decision
+    - methodology_quality
+    - methodology_collaboration
+    - doc_structure_naming
+    - doc_operation_safety
+    - doc_numbering_metadata
+    - security_access
+    - module_governance
+    - module_registry_sync
+    - task_card_lifecycle
+    - task_construction_verification
+    - architecture_gate_transition
+    - architecture_qualification
+    - architecture_ctr_injection
+    - ai_hallucination
+    - ai_model_routing
+    - meta_rule_classification
+    - meta_standard_template
+    - meta_metadata_metrics
+    - compliance_audit
+    - data_governance
+    - engineering_code_restructure
+    - engineering_header_expansion
+    - operational_vibe_coding
+    - operational_domain
+    - domain_data_factor
+    - domain_risk_analytics
+    - coding_safety_output
+    - root_cause_performance

@@ -13,11 +13,11 @@
   5. 其余所有 key=value 形式的关键字参数均视为 structlog-style 混用
 
 防护层级：
-  --ci          硬阻断模式（exit 1 = 拒绝提交），pre-commit / CI 中启用
+  --ci          硬阻断模式（exit 1 = 拒绝提交），pre_commit / CI 中启用
   (默认)        报告模式（exit 0 但打印违规，用于手动审计）
 
 注册位置：11_d12_ai_hallucination 线下 — 对标 IRN-011 ZR-007 (自净检测)
-            GATE-SLOG: .pre-commit-config.yaml + CI governance.yml
+            GATE-SLOG: .pre_commit-config.yaml + CI governance.yml
 """
 
 from __future__ import annotations

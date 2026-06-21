@@ -46,6 +46,7 @@ import argparse
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 LEGAL_DIRS: tuple[str, ...] = ("scripts/governance", "src/zephyr", "tests")
+EXCLUDE_NAMES: frozenset[str] = frozenset({"__init__.py", "conftest.py", "setup.py"})
 
 def find_orphan_py_files() -> list[Path]:
     """find orphan py files"""

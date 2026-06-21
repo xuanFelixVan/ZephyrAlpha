@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0178 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-335 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.integration.test_rollback_e2e
 # [STABILITY] evolving
 # [SAFETY] L
@@ -30,13 +31,13 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from zephyr.rollback.rollback_executor import (
+from zephyr.governance.rollback_executor import (
     DiscardDecision,
     RollbackExecutor,
     RollbackOp,
     RollbackResult,
 )
-from zephyr.rollback.rollback_lock import RollbackLock, LockAcquireResult
+from zephyr.governance.rollback_lock import RollbackLock, LockAcquireResult
 
 
 @contextmanager
@@ -202,13 +203,13 @@ class TestKillSwitchIntegrationE2E:
     """kill_switch 集成：KillSwitchManager"""
 
     def test_kill_switch_manager_l3_requires_token(self):
-        from zephyr.rollback.kill_switch import KillSwitchManager, KillLevel
+        from zephyr.ops.kill_switch import KillSwitchManager, KillLevel
         mgr = KillSwitchManager(project_root=Path(tempfile.mkdtemp()))
         with pytest.raises(ValueError, match="BREAK_GLASS"):
             mgr.activate(KillLevel.L3_GLOBAL, "*", "test", token="")
 
     def test_kill_switch_activate_deactivate(self):
-        from zephyr.rollback.kill_switch import KillSwitchManager, KillLevel
+        from zephyr.ops.kill_switch import KillSwitchManager, KillLevel
         mgr = KillSwitchManager(project_root=Path(tempfile.mkdtemp()))
         entry = mgr.activate(KillLevel.L1_SESSION, "session-X", "test")
         assert entry.level == KillLevel.L1_SESSION

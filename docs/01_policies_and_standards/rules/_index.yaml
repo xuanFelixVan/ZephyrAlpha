@@ -1,0 +1,928 @@
+version: 2.1.0
+generated_at: '2026-06-21T00:00:00'
+description: ZephyrAlpha规则YAML总索引（Phase E迁移产物；v2.1.0审查修复trae_029/031/034 aliases对齐）
+schema_version: 2.0.0
+total_rules: 55
+layer_distribution:
+  L0_critical: 17
+  L1_error: 27
+  L2_warning: 11
+
+schema:
+  section_types:
+    rule:
+      description: A类规则（禁止/必须/约束）— 第一轮已实现
+      fields:
+        title:
+          type: str
+          required: true
+        original_rules:
+          type: list[str]
+          required: true
+        conditions:
+          type: list[dict]
+          item_fields: [type, check, pass, fail]
+          required: false
+        actions:
+          type: list[dict]
+          item_fields: [type, step]
+          required: false
+        prohibitions:
+          type: list[str]
+          required: false
+    procedure:
+      description: B1 步骤式程序
+      fields:
+        title:
+          type: str
+          required: true
+        original_rules:
+          type: list[str]
+          required: true
+        steps:
+          type: list[dict]
+          item_fields: [order, action, pre_condition, expected_result, on_failure]
+          required: true
+        prohibitions:
+          type: list[str]
+          required: false
+    decision_tree:
+      description: B3 决策树
+      fields:
+        title:
+          type: str
+          required: true
+        original_rules:
+          type: list[str]
+          required: true
+        nodes:
+          type: list[dict]
+          item_fields: [condition, if_true, if_false]
+          required: true
+        default_action:
+          type: str
+          required: false
+    escalation:
+      description: B4 升级流程
+      fields:
+        title:
+          type: str
+          required: true
+        original_rules:
+          type: list[str]
+          required: true
+        levels:
+          type: list[dict]
+          item_fields: [trigger, level, action, timeout]
+          required: true
+    rollback:
+      description: B5 回滚程序
+      fields:
+        title:
+          type: str
+          required: true
+        original_rules:
+          type: list[str]
+          required: true
+        steps:
+          type: list[dict]
+          item_fields: [order, action, verify, on_fail]
+          required: true
+    verification:
+      description: B7 验证流程
+      fields:
+        title:
+          type: str
+          required: true
+        original_rules:
+          type: list[str]
+          required: true
+        checks:
+          type: list[dict]
+          item_fields: [step, command, expected_exit, on_fail]
+          required: true
+    onboarding:
+      description: B8 入职流程
+      fields:
+        title:
+          type: str
+          required: true
+        original_rules:
+          type: list[str]
+          required: true
+        steps:
+          type: list[dict]
+          item_fields: [order, action, purpose]
+          required: true
+    incident_response:
+      description: B10 事件响应
+      fields:
+        title:
+          type: str
+          required: true
+        original_rules:
+          type: list[str]
+          required: true
+        scenarios:
+          type: list[dict]
+          item_fields: [scenario, severity, steps]
+          required: true
+    symptom_mapping:
+      description: D3 症状-原因映射
+      fields:
+        title:
+          type: str
+          required: true
+        original_rules:
+          type: list[str]
+          required: true
+        mappings:
+          type: list[dict]
+          item_fields: [symptom, root_cause, treatment]
+          required: true
+    error_patterns:
+      description: F1 错误模式
+      fields:
+        title:
+          type: str
+          required: true
+        original_rules:
+          type: list[str]
+          required: true
+        patterns:
+          type: list[dict]
+          item_fields: [pattern, description, example, detection]
+          required: true
+    diagnosis:
+      description: F2 诊断程序
+      fields:
+        title:
+          type: str
+          required: true
+        original_rules:
+          type: list[str]
+          required: true
+        steps:
+          type: list[dict]
+          item_fields: [order, check, pass_criteria, action]
+          required: true
+    root_cause_analysis:
+      description: F3 根因分析
+      fields:
+        title:
+          type: str
+          required: true
+        original_rules:
+          type: list[str]
+          required: true
+        methodology:
+          type: list[str]
+          required: true
+        reasoning_chain:
+          type: list[dict]
+          item_fields: [decision, evidence, conclusion]
+          required: true
+    principles:
+      description: I1 原则
+      fields:
+        title:
+          type: str
+          required: true
+        original_rules:
+          type: list[str]
+          required: true
+        items:
+          type: list[dict]
+          item_fields: [id, statement, rationale, applies_to]
+          required: true
+    context:
+      description: I2 背景
+      fields:
+        title:
+          type: str
+          required: true
+        original_rules:
+          type: list[str]
+          required: true
+        summary:
+          type: str
+          required: true
+        impact_on_rules:
+          type: list[str]
+          required: false
+        key_decisions:
+          type: list[str]
+          required: false
+    examples:
+      description: I3 示例
+      fields:
+        title:
+          type: str
+          required: true
+        original_rules:
+          type: list[str]
+          required: true
+        items:
+          type: list[dict]
+          item_fields: [title, code, language, note]
+          required: true
+
+rules:
+- rule_id: TRAE-001
+  title: 文件操作安全协议
+  layer: L0
+  severity: critical
+  scope: file_operation
+  file: trae_001_file_operation_security.yaml
+  aliases:
+  - RULE-ZERO
+  - RULE-ONE
+  - RULE-THREE
+  - RULE-FOUR
+  - RULE-FIVE
+  - RULE-FOURTEEN
+  - 文件锁
+  - 原子写入
+  - 删除审判
+  - 创建入口
+  - 零残留
+  - 根目录清爽
+  section_count: 6
+- rule_id: TRAE-002
+  title: 反孤儿与搜索先行协议
+  layer: L0
+  severity: critical
+  scope: feature_creation
+  file: trae_002_anti_orphan_search_first.yaml
+  aliases:
+  - RULE-TWO
+  - RULE-EIGHT
+  - 反孤儿
+  - 搜索先行
+  section_count: 2
+- rule_id: TRAE-003
+  title: 任务粒度与完成门槛协议
+  layer: L0
+  severity: critical
+  scope: task_management
+  file: trae_003_task_granularity_threshold.yaml
+  aliases:
+  - RULE-SIX
+  - RULE-THIRTEEN
+  - 任务粒度
+  - 完成门槛
+  section_count: 2
+- rule_id: TRAE-004
+  title: 并行执行与原子事务协议
+  layer: L0
+  severity: critical
+  scope: script_execution
+  file: trae_004_parallel_atomic_transaction.yaml
+  aliases:
+  - RULE-SEVEN
+  - 并行执行
+  - ThreadPoolExecutor
+  - 原子事务
+  section_count: 2
+- rule_id: TRAE-005
+  title: 修改原则与治理施工协议
+  layer: L0
+  severity: critical
+  scope: code_modification
+  file: trae_005_modification_governance.yaml
+  aliases:
+  - RULE-NINE
+  - RULE-TEN
+  - 修改原则
+  - 治理施工
+  section_count: 2
+- rule_id: TRAE-006
+  title: 防幻觉-结构追溯层
+  layer: L0
+  severity: critical
+  scope: code_structure
+  file: trae_006_anti_hallucination_structure.yaml
+  aliases:
+  - ANTI-HALL-01
+  - ANTI-HALL-02
+  - ANTI-HALL-03
+  - ANTI-HALL-04
+  - ANTI-HALL-05
+  - ANTI-HALL-06
+  section_count: 6
+- rule_id: TRAE-007
+  title: 防幻觉-行为约束层
+  layer: L0
+  severity: critical
+  scope: code_behavior
+  file: trae_007_anti_hallucination_behavior.yaml
+  aliases:
+  - ANTI-HALL-07
+  - ANTI-HALL-08
+  - ANTI-HALL-09
+  - ANTI-HALL-10
+  section_count: 4
+- rule_id: TRAE-008
+  title: 防幻觉-输出验证层
+  layer: L0
+  severity: critical
+  scope: output_verification
+  file: trae_008_anti_hallucination_output.yaml
+  aliases:
+  - ANTI-HALL-11
+  - ANTI-HALL-12
+  - ANTI-HALL-13
+  - ANTI-HALL-14
+  section_count: 4
+- rule_id: TRAE-009
+  title: 防幻觉-安全防护层
+  layer: L0
+  severity: critical
+  scope: security_guard
+  file: trae_009_anti_hallucination_safety.yaml
+  aliases:
+  - ANTI-HALL-15
+  - ANTI-HALL-16
+  - ANTI-HALL-17
+  - ANTI-HALL-18
+  section_count: 4
+- rule_id: TRAE-010
+  title: 代码构建-命名与组织
+  layer: L1
+  severity: error
+  scope: code_naming
+  file: trae_010_code_naming_organization.yaml
+  aliases:
+  - CODE-001
+  - CODE-002
+  - CODE-003
+  - CODE-004
+  section_count: 4
+- rule_id: TRAE-011
+  title: 代码构建-类型与导入
+  layer: L1
+  severity: error
+  scope: code_type_import
+  file: trae_011_code_type_import.yaml
+  aliases:
+  - CODE-005
+  - CODE-006
+  - CODE-007
+  section_count: 3
+- rule_id: TRAE-012
+  title: 代码构建-测试与安全
+  layer: L1
+  severity: error
+  scope: code_test_security
+  file: trae_012_code_test_security.yaml
+  aliases:
+  - CODE-008
+  - CODE-009
+  - CODE-010
+  section_count: 3
+- rule_id: TRAE-013
+  title: 架构约束-跨包依赖
+  layer: L1
+  severity: error
+  scope: architecture_dependency
+  file: trae_013_arch_cross_package_dep.yaml
+  aliases:
+  - ARCH-001
+  - ARCH-002
+  - ARCH-003
+  - ARCH-004
+  - ARCH-005
+  - ARCH-006
+  section_count: 6
+- rule_id: TRAE-014
+  title: 架构约束-蓝图对齐
+  layer: L1
+  severity: error
+  scope: architecture_blueprint
+  file: trae_014_arch_blueprint_alignment.yaml
+  aliases:
+  - ARCH-007
+  - ARCH-008
+  - ARCH-009
+  - ARCH-010
+  - ARCH-011
+  - ARCH-012
+  section_count: 6
+- rule_id: TRAE-015
+  title: 架构约束-路径与注册
+  layer: L1
+  severity: error
+  scope: architecture_path_registry
+  file: trae_015_arch_path_registration.yaml
+  aliases:
+  - ARCH-013
+  - ARCH-014
+  - ARCH-015
+  - ARCH-016
+  - ARCH-017
+  - ARCH-018
+  section_count: 6
+- rule_id: TRAE-016
+  title: 架构约束-漂移检测
+  layer: L1
+  severity: error
+  scope: architecture_drift
+  file: trae_016_arch_drift_detection.yaml
+  aliases:
+  - ARCH-019
+  - ARCH-020
+  - ARCH-021
+  - ARCH-022
+  - ARCH-023
+  - ARCH-024
+  section_count: 6
+- rule_id: TRAE-017
+  title: 架构约束-治理顺序
+  layer: L1
+  severity: error
+  scope: architecture_governance_order
+  file: trae_017_arch_governance_order.yaml
+  aliases:
+  - ARCH-025
+  - ARCH-026
+  - ARCH-027
+  section_count: 3
+- rule_id: TRAE-018
+  title: 行为边界-代码操作绝对禁止
+  layer: L0
+  severity: critical
+  scope: code_operation_prohibition
+  file: trae_018_behavior_code_prohibition.yaml
+  aliases:
+  - ABS-01
+  - ABS-02
+  - ABS-03
+  - ABS-04
+  - ABS-05
+  - ABS-06
+  - ABS-07
+  - ABS-08
+  section_count: 8
+- rule_id: TRAE-019
+  title: 行为边界-系统安全绝对禁止
+  layer: L0
+  severity: critical
+  scope: security_prohibition
+  file: trae_019_behavior_security_prohibition.yaml
+  aliases:
+  - ABS-09
+  - ABS-10
+  - ABS-11
+  - ABS-12
+  - ABS-13
+  - ABS-14
+  - ABS-15
+  - ABS-16
+  section_count: 8
+- rule_id: TRAE-020
+  title: 行为边界-治理纪律绝对禁止
+  layer: L0
+  severity: critical
+  scope: governance_prohibition
+  file: trae_020_behavior_governance_prohibition.yaml
+  aliases:
+  - ABS-17
+  - ABS-18
+  - ABS-19
+  - ABS-20
+  - ABS-21
+  - ABS-22
+  - ABS-23
+  - ABS-24
+  section_count: 8
+- rule_id: TRAE-021
+  title: 行为边界-其余绝对禁止
+  layer: L0
+  severity: critical
+  scope: other_prohibition
+  file: trae_021_behavior_other_prohibition.yaml
+  aliases:
+  - ABS-25
+  - ABS-26
+  - ABS-27
+  - ABS-28
+  - ABS-29
+  - ABS-30
+  - ABS-31
+  - ABS-32
+  - ABS-33
+  - ABS-34
+  - ABS-35
+  - ABS-36
+  - ABS-37
+  - ABS-38
+  - ABS-39
+  - ABS-40
+  - ABS-41
+  - ABS-42
+  - ABS-43
+  - ABS-44
+  - ABS-45
+  - ABS-46
+  - ABS-47
+  - ABS-48
+  - ABS-49
+  - ABS-50
+  - ABS-51
+  - ABS-52
+  section_count: 28
+- rule_id: TRAE-022
+  title: 行为边界-条件禁止(代码与安全)
+  layer: L1
+  severity: error
+  scope: conditional_prohibition_code_security
+  file: trae_022_behavior_conditional_code.yaml
+  aliases:
+  - COND-05~COND-26
+  section_count: 8
+- rule_id: TRAE-023
+  title: 行为边界-条件禁止(治理与文档)
+  layer: L1
+  severity: error
+  scope: conditional_prohibition_governance_doc
+  file: trae_023_behavior_conditional_governance.yaml
+  aliases:
+  - COND-27~COND-52
+  section_count: 10
+- rule_id: TRAE-024
+  title: 方法论-诊断与根因分析
+  layer: L2
+  severity: warning
+  scope: methodology_diagnosis
+  file: trae_024_methodology_diagnosis.yaml
+  aliases:
+  - MTH-001
+  - MTH-002
+  - MTH-003
+  - MTH-006
+  - PS-STD-011
+  section_count: 9
+- rule_id: TRAE-025
+  title: 方法论-决策与执行
+  layer: L2
+  severity: warning
+  scope: methodology_decision
+  file: trae_025_methodology_decision.yaml
+  aliases:
+  - MTH-004
+  - MTH-005
+  - MTH-007
+  - MTH-008
+  - MTH-009
+  section_count: 5
+- rule_id: TRAE-026
+  title: 方法论-质量与度量
+  layer: L2
+  severity: warning
+  scope: methodology_quality
+  file: trae_026_methodology_quality.yaml
+  aliases:
+  - MTH-010
+  - MTH-011
+  - MTH-014
+  section_count: 3
+- rule_id: TRAE-027
+  title: 方法论-协作与演进
+  layer: L2
+  severity: warning
+  scope: methodology_collaboration
+  file: trae_027_methodology_collaboration.yaml
+  aliases:
+  - MTH-012
+  - MTH-013
+  section_count: 2
+- rule_id: TRAE-028
+  title: 文档治理-结构与命名
+  layer: L1
+  severity: error
+  scope: doc_structure_naming
+  file: trae_028_doc_structure_naming.yaml
+  aliases:
+  - DOC-001
+  - DOC-002
+  - DOC-003
+  - DOC-004
+  - DOC-005
+  - DOC-006
+  - DOC-008
+  section_count: 6
+- rule_id: TRAE-029
+  title: 文档治理-操作安全
+  layer: L1
+  severity: error
+  scope: doc_operation_safety
+  file: trae_029_doc_operation_security.yaml
+  aliases:
+  - DOC-007
+  - DOC-009
+  - DOC-010
+  section_count: 4
+- rule_id: TRAE-030
+  title: 文档治理-编号与元数据
+  layer: L1
+  severity: error
+  scope: doc_numbering_metadata
+  file: trae_030_doc_numbering_metadata.yaml
+  aliases:
+  - DOC-011
+  - DOC-012
+  - DOC-013
+  - DOC-014
+  - DOC-015
+  - DOC-016
+  - DOC-017
+  section_count: 7
+- rule_id: TRAE-031
+  title: 安全治理-密钥与访问控制
+  layer: L1
+  severity: error
+  scope: security_access
+  file: trae_031_security_key_access.yaml
+  aliases:
+  - SEC-001
+  - SEC-002
+  - SEC-003
+  - ACS-001
+  - ACS-002
+  - ACS-003
+  - ACS-004
+  - ACS-005
+  - SEC-004
+  - SEC-005
+  - SEC-006
+  - SIR-001
+  - SIR-002
+  - SIR-003
+  - SIR-004
+  section_count: 3
+- rule_id: TRAE-032
+  title: 模块治理-准入与生命周期
+  layer: L1
+  severity: error
+  scope: module_governance
+  file: trae_032_module_lifecycle.yaml
+  aliases:
+  - MOD-001
+  - MOD-002
+  - MOD-003
+  - MOD-004
+  - MOD-005
+  section_count: 5
+- rule_id: TRAE-033
+  title: 模块治理-注册与同步
+  layer: L1
+  severity: error
+  scope: module_registry_sync
+  file: trae_033_module_registration_sync.yaml
+  aliases:
+  - MOD-006
+  - MOD-007
+  section_count: 2
+- rule_id: TRAE-034
+  title: 任务系统-卡片标准与生命周期
+  layer: L1
+  severity: error
+  scope: task_card_lifecycle
+  file: trae_034_task_card_standard.yaml
+  aliases:
+  - TASK-001
+  - TASK-004
+  - TASK-005
+  - GOV-TASK-001
+  - GOV-TASK-004
+  - GOV-TASK-005
+  section_count: 3
+- rule_id: TRAE-035
+  title: 任务系统-施工与验证
+  layer: L1
+  severity: error
+  scope: task_construction_verification
+  file: trae_035_task_construction_verification.yaml
+  aliases:
+  - TASK-002
+  - TASK-003
+  section_count: 2
+- rule_id: TRAE-036
+  title: 架构治理-门禁与过渡
+  layer: L1
+  severity: error
+  scope: architecture_gate_transition
+  file: trae_036_arch_gate_transition.yaml
+  aliases:
+  - GOV-ARCH-002
+  - GOV-ARCH-005
+  - GOV-ARCH-006
+  section_count: 3
+- rule_id: TRAE-037
+  title: 架构治理-合格与版本化
+  layer: L1
+  severity: error
+  scope: architecture_qualification
+  file: trae_037_arch_qualification_versioning.yaml
+  aliases:
+  - GOV-ARCH-003
+  - GOV-ARCH-004
+  - GOV-ARCH-010
+  section_count: 3
+- rule_id: TRAE-038
+  title: 架构治理-CTR注入规则
+  layer: L1
+  severity: error
+  scope: architecture_ctr_injection
+  file: trae_038_arch_ctr_injection.yaml
+  aliases:
+  - GOV-ARC-CTR-001
+  section_count: 1
+- rule_id: TRAE-039
+  title: AI治理-幻觉检测与自检
+  layer: L1
+  severity: error
+  scope: ai_hallucination
+  file: trae_039_ai_hallucination_detection.yaml
+  aliases:
+  - GOV-AI-003
+  - GOV-AI-009
+  section_count: 2
+- rule_id: TRAE-040
+  title: AI治理-模型路由与协作
+  layer: L1
+  severity: error
+  scope: ai_model_routing
+  file: trae_040_ai_model_routing.yaml
+  aliases:
+  - GOV-AI-002
+  - PSP-005
+  - GOV-AI-008
+  section_count: 3
+- rule_id: TRAE-041
+  title: 元规则-规则分类与裁决
+  layer: L2
+  severity: warning
+  scope: meta_rule_classification
+  file: trae_041_meta_rule_classification.yaml
+  aliases:
+  - PS-STD-004
+  - PS-STD-012
+  - STD-007
+  - STD-008
+  section_count: 4
+- rule_id: TRAE-042
+  title: 元规则-标准体系与模板
+  layer: L2
+  severity: warning
+  scope: meta_standard_template
+  file: trae_042_meta_rule_standard.yaml
+  aliases:
+  - PS-STD-002
+  - PS-STD-005
+  - STD-009
+  section_count: 3
+- rule_id: TRAE-043
+  title: 元规则-元数据与度量
+  layer: L2
+  severity: warning
+  scope: meta_metadata_metrics
+  file: trae_043_meta_rule_metadata.yaml
+  aliases:
+  - PS-STD-001
+  - STD-004
+  - STD-005
+  - GOV-024
+  section_count: 4
+- rule_id: TRAE-044
+  title: 合规治理-审计与监管
+  layer: L1
+  severity: error
+  scope: compliance_audit
+  file: trae_044_compliance_audit.yaml
+  aliases:
+  - GOV-CMP-001
+  - GOV-CMP-002
+  - GOV-CMP-003
+  section_count: 3
+- rule_id: TRAE-045
+  title: 数据治理-质量与血缘
+  layer: L1
+  severity: error
+  scope: data_governance
+  file: trae_045_data_quality_lineage.yaml
+  aliases:
+  - GOV-DATA-001
+  - GOV-DATA-002
+  - GOV-DATA-003
+  section_count: 3
+- rule_id: TRAE-046
+  title: 工程治理-代码与重组安全
+  layer: L1
+  severity: error
+  scope: engineering_code_restructure
+  file: trae_046_engineering_code_restructure.yaml
+  aliases:
+  - GOV-ENG-001
+  - GOV-ENG-004
+  section_count: 2
+- rule_id: TRAE-047
+  title: 工程治理-文件头部与扩展
+  layer: L1
+  severity: error
+  scope: engineering_header_expansion
+  file: trae_047_engineering_file_header.yaml
+  aliases:
+  - GOV-ENG-002
+  - GOV-ENG-003
+  section_count: 2
+- rule_id: TRAE-048
+  title: 操作-Vibe Coding会话管理
+  layer: L2
+  severity: warning
+  scope: operational_vibe_coding
+  file: trae_048_ops_vibe_coding_session.yaml
+  aliases:
+  - OPS-VC-002
+  - OPS-VC-004
+  - OPS-VC-005
+  section_count: 3
+- rule_id: TRAE-049
+  title: 操作-领域操作手册
+  layer: L2
+  severity: warning
+  scope: operational_domain
+  file: trae_049_ops_domain_manual.yaml
+  aliases:
+  - OPS-001
+  - OPS-002
+  - OPS-003
+  - OPS-004
+  - OPS-DEV-002
+  section_count: 5
+- rule_id: TRAE-050
+  title: 域策略-数据源与因子层
+  layer: L2
+  severity: warning
+  scope: domain_data_factor
+  file: trae_050_domain_policy_data_factor.yaml
+  aliases:
+  - DOM-L00-001
+  - DOM-L02-001
+  section_count: 2
+- rule_id: TRAE-051
+  title: 域策略-风控与盘后层
+  layer: L2
+  severity: warning
+  scope: domain_risk_analytics
+  file: trae_051_domain_policy_risk_backtest.yaml
+  aliases:
+  - DOM-L04-001
+  - DOM-L07-001
+  section_count: 2
+- rule_id: TRAE-052
+  title: 铁律补充-跨蓝图变更与项目瘦身
+  layer: L0
+  severity: critical
+  scope: cross_blueprint_change_cleanup
+  file: trae_052_cross_blueprint_change_cleanup.yaml
+  aliases:
+  - RULE-ELEVEN
+  - RULE-TWELVE
+  section_count: 2
+- rule_id: TRAE-053
+  title: 铁律补充-自动化双轨判定
+  layer: L0
+  severity: critical
+  scope: automation_dual_track
+  file: trae_053_automation_dual_track.yaml
+  aliases:
+  - RULE-FIFTEEN
+  section_count: 1
+- rule_id: TRAE-054
+  title: depgraph 程序化访问协议
+  layer: L0
+  severity: critical
+  scope: depgraph_access_protocol
+  file: trae_054_depgraph_access_protocol.yaml
+  aliases:
+  - RULE-SIXTEEN
+  section_count: 1
+- rule_id: TRAE-055
+  title: 架构容量与域治理规则
+  layer: L0
+  severity: critical
+  scope: arch_domain_capacity_governance
+  file: trae_055_arch_domain_capacity.yaml
+  aliases:
+  - ARCH-CAP-000
+  - ARCH-CAP-001
+  - ARCH-CAP-002
+  - ARCH-CAP-003
+  - ARCH-CAP-004
+  - ARCH-CAP-005
+  - ARCH-CAP-006
+  - ARCH-CAP-007
+  - ARCH-CAP-008
+  - ARCH-CAP-009
+  section_count: 11

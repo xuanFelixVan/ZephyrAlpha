@@ -21,7 +21,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-VMS_DIR = PROJECT_ROOT / "src" / "zephyr" / "vector_memory"
+VMS_DIR = PROJECT_ROOT / "src" / "zephyr" / "vector-memory"
 
 EXPECTED_COLLECTIONS = frozenset({
     "decisions", "code_context", "lessons", "knowledge",

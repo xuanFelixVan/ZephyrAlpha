@@ -1,0 +1,141 @@
+# 模型路由策略（临时文件，非规则文件）
+# 生命周期：模型更新后可删除。当 GLM 系列或国产模型在深度代码审查/大规模迁移上达到 Claude 水平时，本文件可删除。
+# 可删除条件：见 deletion_conditions
+
+file_type: temporary_strategy
+file_name: model_routing_strategy
+is_rule: false
+created: 2026-06-21
+last_updated: 2026-06-21
+next_evaluation: 2026-09-21
+evaluation_cycle: 3个月
+
+lifecycle:
+  description: 模型更新后可删除。当 GLM 系列或国产模型在深度代码审查/大规模迁移上达到 Claude 水平时，本文件可删除。
+  deletion_conditions:
+    - id: 1
+      condition: GLM 系列在深度代码审查上达到 Claude 水平
+      verification: 用相同审查任务测试两个模型，GLM 能发现 Claude 发现的全部问题
+    - id: 2
+      condition: 国产模型在大规模物理迁移上达到 Claude 水平
+      verification: 用相同迁移任务测试，GLM 能无错误完成>100文件迁移
+    - id: 3
+      condition: 项目不再使用 Claude
+      verification: 项目配置中移除 Claude 路由
+    - id: 4
+      condition: 模型能力评估周期到期
+      verification: 每3个月重新评估一次（下次评估 2026-09-21）
+  deletion_process:
+    - 评估条件满足
+    - 删除本文件
+    - 从 project_memory.md 移除引用
+    - 记录删除原因到 git log
+
+trigger_conditions:
+  description: AI 在执行任务时，遇到以下任一情况 MUST 提醒用户考虑换 Claude
+  conditions:
+    - id: 1
+      name: 深度代码审查
+      judgment: 任务涉及审查>3个文件的逻辑一致性
+      reminder: 此任务涉及深度代码审查，建议换 Claude 执行（历史证据：Claude 发现过生成器DELETE安全问题）
+    - id: 2
+      name: 大规模物理迁移
+      judgment: 任务涉及迁移/重命名>100个文件
+      reminder: 此任务涉及大规模物理迁移（N个文件），建议换 Claude 执行（历史证据：Claude 成功执行485节点迁移）
+    - id: 3
+      name: depgraph.db SQL操作
+      judgment: 任务涉及直接操作 depgraph.db
+      reminder: 此任务涉及 depgraph.db SQL操作，建议换 Claude 执行（历史证据：Claude 熟悉DB结构）
+    - id: 4
+      name: 跨文件一致性验证
+      judgment: 任务涉及验证>5个文件的字段/路径一致性
+      reminder: 此任务涉及跨文件一致性验证，建议换 Claude 执行
+    - id: 5
+      name: 方案制定后的自审
+      judgment: AI制定的方案涉及>3个文件变更
+      reminder: 此方案涉及多文件变更，建议交 Claude 审查后再执行（历史证据：AI制定方案曾出现4个P1/P2错误）
+
+decision_table:
+  principle: 执行类任务（迁移/审查/验证）用 Claude；制定类任务（规则/文档/讨论）用 GLM-5.2；Claude 执行后由 GLM-5.2 验证+记录
+  scenarios:
+    - scenario: 深度代码审查
+      recommended_model: Claude
+      reason: 历史证据：发现生成器安全问题
+    - scenario: 大规模物理迁移（>100文件）
+      recommended_model: Claude
+      reason: 历史证据：485节点迁移成功
+    - scenario: 跨文件一致性验证（>5文件）
+      recommended_model: Claude
+      reason: 历史证据：发现4个P1/P2矛盾
+    - scenario: depgraph.db 操作
+      recommended_model: Claude
+      reason: 历史证据：熟悉DB结构
+    - scenario: 规则文档制定/修改
+      recommended_model: GLM-5.2
+      reason: 参与制定，熟悉上下文
+    - scenario: 快速文件编辑/创建
+      recommended_model: GLM-5.2
+      reason: 直接工具调用，无需中转
+    - scenario: 中文讨论/裁定
+      recommended_model: GLM-5.2
+      reason: 中文原生
+    - scenario: 简单查询/验证命令
+      recommended_model: GLM-5.2
+      reason: 直接执行
+    - scenario: 方案制定后的审查
+      recommended_model: Claude
+      reason: AI制定方案需Claude审查
+    - scenario: 架构决策讨论
+      recommended_model: 两者皆可
+      reason: 都能提供专业视角
+
+quantified_differences:
+  description: 基于本项目实测证据
+  dimensions:
+    - dimension: 深度代码审查
+      claude: 强
+      glm_5_2: 中
+      evidence: Claude发现生成器第2405行DELETE安全问题，GLM遗漏
+    - dimension: 跨文件一致性检查
+      claude: 强
+      glm_5_2: 中
+      evidence: Claude发现4个P1/P2级口径矛盾，这些是GLM造成的错误
+    - dimension: 大规模物理迁移
+      claude: 强
+      glm_5_2: 未验证
+      evidence: Claude成功执行485节点path更新
+    - dimension: 方案制定
+      claude: 中
+      glm_5_2: 中
+      evidence: GLM制定方案出现4个错误，Claude审查才发现
+    - dimension: 项目规则熟悉度
+      claude: 中
+      glm_5_2: 强
+      evidence: GLM参与制定trae_055/GOV-016/017
+    - dimension: 直接工具调用
+      claude: 需中转
+      glm_5_2: 直接
+      evidence: GLM能直接RunCommand/Edit/Write
+    - dimension: 中文理解
+      claude: 中
+      glm_5_2: 强
+      evidence: GLM中文原生
+    - dimension: 规则文档撰写
+      claude: 中
+      glm_5_2: 强
+      evidence: GLM参与制定多个规则文件
+
+historical_evidence:
+  events:
+    - event: Claude 发现生成器DELETE安全问题
+      date: 2026-06-21
+      source: 记忆 session 6a36d528
+    - event: Claude 发现4个P1/P2口径矛盾
+      date: 2026-06-21
+      source: 记忆 session 6a37a6cc
+    - event: Claude 成功执行485节点迁移
+      date: 2026-06-21
+      source: 记忆 session 6a36d528
+    - event: GLM 制定方案出现4个错误
+      date: 2026-06-21
+      source: 记忆 session 6a37a6cc（P1-1/P1-2/P2-1/P2-2）

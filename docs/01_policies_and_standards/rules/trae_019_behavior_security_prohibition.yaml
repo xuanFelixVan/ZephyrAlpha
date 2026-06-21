@@ -1,0 +1,176 @@
+rule_id: TRAE-019
+title: 行为边界-系统安全绝对禁止
+aliases:
+- ABS-09
+- ABS-10
+- ABS-11
+- ABS-12
+- ABS-13
+- ABS-14
+- ABS-15
+- ABS-16
+layer: L0
+severity: critical
+scope: security_prohibition
+domain: TRAE
+triggers:
+- operation: security_prohibition
+sections:
+  abs_09:
+    title: "AI 修改 `AGENTS.md`"
+    section_type: rule
+    original_rules:
+    - ABS-09
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-09 违规
+      pass: 操作合规
+      fail: AGENTS.md 是跨工具基准约束，AI 修改将影响所有工具
+    actions:
+    - type: mandatory
+      step: 仅 Owner 可修改
+    prohibitions:
+    - AI 修改 `AGENTS.md`
+  abs_10:
+    title: "AI 修改 `.roomodes`"
+    section_type: rule
+    original_rules:
+    - ABS-10
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-10 违规
+      pass: 操作合规
+      fail: .roomodes 是 Trae 专用配置，AI 修改将影响所有 Trae session
+    actions:
+    - type: mandatory
+      step: 仅 Owner 可修改
+    prohibitions:
+    - AI 修改 `.roomodes`
+  abs_11:
+    title: "AI 在不知道当前Phase的情况下开始工作"
+    section_type: rule
+    original_rules:
+    - ABS-11
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-11 违规
+      pass: 操作合规
+      fail: Phase 决定任务范围和优先级，不知道 Phase = 盲目操作
+    actions:
+    - type: mandatory
+      step: 先读取 project_rules.md 确认 Phase
+    prohibitions:
+    - AI 在不知道当前 Phase 的情况下开始工作
+  abs_12:
+    title: "AI 在不知道能力边界的情况下操作文件"
+    section_type: rule
+    original_rules:
+    - ABS-12
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-12 违规
+      pass: 操作合规
+      fail: 超出能力边界的操作可能产生不可逆损失
+    actions:
+    - type: mandatory
+      step: 先读取 data/model_routing_strategy.yaml
+    prohibitions:
+    - AI 在不知道能力边界的情况下操作文件
+  abs_13:
+    title: "AI 跳过幻觉自检直接开始工作"
+    section_type: rule
+    original_rules:
+    - ABS-13
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-13 违规
+      pass: 操作合规
+      fail: 幻觉是 AI 的系统性风险，不自检 = 放任错误传播
+    actions:
+    - type: mandatory
+      step: 逐项执行 trae_006/007/008/009 防幻觉规则
+    prohibitions:
+    - AI 跳过幻觉自检直接开始工作
+  abs_14:
+    title: 删除锚点文件
+    section_type: rule
+    original_rules:
+    - ABS-14
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-14 违规
+      pass: 操作合规
+      fail: 锚点文件是治理系统的骨架，删除将导致治理体系崩溃
+    actions:
+    - type: mandatory
+      step: 不可删除，如需变更走 KB 决策记录流程
+    prohibitions:
+    - 删除锚点文件
+  abs_15:
+    title: "先删文件后清引用（分两次commit）"
+    section_type: rule
+    original_rules:
+    - ABS-15
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-15 违规
+      pass: 操作合规
+      fail: 中间状态产生断链，其他 session 可能引用到不存在的文件
+    actions:
+    - type: mandatory
+      step: 同一 commit 内完成删除和引用更新
+    prohibitions:
+    - 先删文件后清引用（分两次 commit）
+  abs_16:
+    title: "使用 `--no-verify` 跳过pre-commit检查"
+    section_type: rule
+    original_rules:
+    - ABS-16
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-16 违规
+      pass: 操作合规
+      fail: pre-commit 是最后一道门禁，跳过 = 绕过所有自动化检查
+    actions:
+    - type: mandatory
+      step: 修复 pre-commit 报错后正常提交
+    prohibitions:
+    - 使用 `--no-verify` 跳过 pre-commit 检查
+  change_history:
+    title: 修订记录
+    section_type: examples
+    items:
+    - version: "3.4.0"
+      date: "2026-06-21"
+      change: "循环审查修复（Owner批准）：abs_11/12/13移除3个不存在文件引用（pre-model-onboarding-master/model-capability-contract.yaml/ai-hallucination-self-check-policy.md），替换为存在的文件（project_rules.md/data/model_routing_strategy.yaml/trae_006/007/008/009）"
+    - version: "3.3.0"
+      date: "2026-06-19"
+      change: "RQ审查修复——修复编码损坏(mojibake)；移除错位的ds_*章节(文档结构标准内容不属于安全禁止范畴)；provenance路径改为正斜杠+添加migration_status；补充change_history"
+    - version: "3.2.0"
+      date: "2026-06-13"
+      change: "从behavior_boundaries_standard.md提取为TRAE-019规则YAML"
+    - version: "3.1.0"
+      date: "2026-05-02"
+      change: "L1引入标准子类型——行为规则型、数据注册表型、宪法原则型、格式定义型"
+references:
+  rule_ids:
+  - TRAE-018
+  - TRAE-020
+  - TRAE-021
+  scripts: []
+  modules: []
+  blueprints: []
+enforcement:
+  type: hook
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+  version: "3.4.0"
+  last_modified: "2026-06-21"
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

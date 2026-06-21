@@ -1,6 +1,7 @@
 ---
 blueprint_id: DOM-GOV-001
----
+title: Mcp.Manifest
+module_id: MOD-062---
 
 # mcp/ 文件清单（自动生成 2026-05-09）
 
@@ -24,5 +25,5 @@ blueprint_id: DOM-GOV-001
 - sentinel_server.py
 - task_manager_server.py
 - telemetry_server.py
-- tool_contracts.yaml
+- tool-contracts.yaml
 - vector_memory_server.py

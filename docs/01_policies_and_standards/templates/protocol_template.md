@@ -1,27 +1,27 @@
 ---
-module_id: ""
-title: ""
-doc_type: protocol
-status: Draft
-version: "0.1.0"
-layer: cross_layer
-owner: ZephyrAlpha-Owner
+ai_autonomy: human_gated
 classification: confidential
-language: zh
+completeness: unknown
 created_by: human_plus_agent
-date: ""
-ttl: permanent
-summary: "协议文档创建模板——定义交互流程和消息时序，新建 protocol 类文档时使用此模板"
-completeness: "unknown"
-template_for: protocol
-tags: []
+date: ''
+depends_on: []
+doc_type: template
+evolution_policy: ''
+language: zh
+layer: cross_layer
+module_id: GOV-031
+owner: ZephyrAlpha-Owner
 rule_form: declarative
 scope: global
 stability: evolving
+status: Draft
+summary: 协议文档创建模板——定义交互流程和消息时序，新建 protocol 类文档时使用此模板
+tags: []
+template_for: protocol
+title: Protocol Template
+ttl: permanent
 verifiability: manual
-depends_on: []
-ai_autonomy: human_gated
-evolution_policy: ""
+version: 0.1.0
 ---
 
 <!--

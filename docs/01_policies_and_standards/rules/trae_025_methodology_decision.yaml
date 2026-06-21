@@ -1,0 +1,147 @@
+rule_id: TRAE-025
+title: 方法论-决策与执行
+aliases:
+- MTH-004
+- MTH-005
+- MTH-007
+- MTH-008
+- MTH-009
+layer: L2
+severity: warning
+scope: methodology_decision
+domain: TRAE
+triggers:
+- operation: methodology_decision
+sections:
+  mth_004:
+    title: 对标=架构标准非机构冗余
+    section_type: rule
+    original_rules:
+    - MTH-004
+    conditions:
+    - type: trigger
+      check: 进行架构对标时
+      pass: 复刻架构容量和治理体系而非人力冗余
+      fail: 过于豪华或过于简陋导致规模崩溃
+    actions:
+    - type: mandatory
+      step: 应复刻：架构容量(模块间接口/依赖管理)/分层设计/治理体系；不应复刻：人力冗余/合规冗余/容灾冗余；判断标准：为减少耦合提高可测试性→适用；为让两个团队不互相踩脚→冗余
+    prohibitions: []
+  mth_005:
+    title: 模块天花板与自治预留
+    section_type: rule
+    original_rules:
+    - MTH-005
+    conditions:
+    - type: trigger
+      check: 设计模块架构时
+      pass: 当前设计考虑1500+规模且预留AI自治接口
+      fail: 50模块时合理的设计200模块时成为瓶颈
+    actions:
+    - type: mandatory
+      step: 当前设计必须考虑1500+规模(接口清晰/依赖树不爆炸/命名空间不冲突)；为AI自治预留接口(低成本不实现：模块元数据标准化/清晰状态机/机器可读策略契约)；当前不开发AI自治模块(预留接口是声明式标记不是实现)
+    prohibitions: []
+  mth_007:
+    title: 决策质量四问
+    section_type: rule
+    original_rules:
+    - MTH-007
+    conditions:
+    - type: pre_condition
+      check: 每次向Owner提交方案时
+      pass: 方案经过四维检查
+      fail: 方案埋雷导致未来返工
+    actions:
+    - type: mandatory
+      step: 1.埋雷检查(这个选择会不会给未来埋雷？纠正需重写架构吗？)→2.容量检查(会不会限制未来容量？余量多少？)→3.专业对标(专业机构/社区怎么做的？)→4.最终建议(带推理：A在埋雷维度无风险/容量有余量/对标有先例→推荐A)
+    prohibitions:
+    - '"这个看着顺眼就选它"(跳过四问)'
+    - '"我觉得没问题"(跳过对标)'
+    - '"以后再说"(跳过埋雷检查)'
+  mth_008:
+    title: SSoT冲突裁决协议
+    section_type: rule
+    original_rules:
+    - MTH-008
+    conditions:
+    - type: trigger
+      check: 发现同一概念在多个文件中被定义时
+      pass: 按协议裁决出唯一真源
+      fail: 两个AI session读到不同定义执行不同规则
+    actions:
+    - type: mandatory
+      step: 1.时序优先(谁先注册？查frontmatter date)→2.职责归属(语义属于哪个文件的自然领域？)→3.专业先例(IETF/OWASP做法)→4.裁决输出(真源文件X/冲突文件Y/修复方式)；编号空间(ABS-/LFC-/MTH-)只属于一个文件；字段定义真源是PS-STD-001
+    prohibitions: []
+  mth_009:
+    title: 先裁定后确认原则
+    section_type: rule
+    original_rules:
+    - MTH-009
+    conditions:
+    - type: pre_condition
+      check: AI遇到需要Owner决策的问题时
+      pass: AI先给出明确裁定结果+理由，再请Owner确认
+      fail: AI直接问Owner"你选哪个"把决策权推给Owner
+    actions:
+    - type: mandatory
+      step: 1.专业分析(基于项目文档/专业实践/量化数据给出分析过程)→2.明确裁定(给出推荐结论+理由，不是选择题)→3.请Owner确认(Owner确认或否决，否决则给出否决理由后AI重新裁定)
+    - type: mandatory
+      step: 裁定输出格式MUST包含三段——分析过程(基于什么文档/数据/实践)+裁定结果(推荐A，因为X)+确认请求(请Owner确认或否决)
+    - type: mandatory
+      step: 专业对标MUST引用至少一个来源(项目规则文件/专业机构实践/量化社区实践/氛围编程社区做法)
+    prohibitions:
+    - 禁止遇到决策直接问Owner"你选哪个/你想怎么做"——MUST先给出专业裁定
+    - 禁止只给选项不给推荐——MUST明确推荐其中一个并说明理由
+    - 禁止以"我不确定"为由把决策推给Owner——MUST基于现有信息做出最优判断
+    - 禁止跳过专业对标(专业机构/社区怎么做)直接给结论
+    - 禁止跳过MTH-007决策质量四问(埋雷检查/容量检查/专业对标/最终建议)
+  ps_std_004_reference:
+    title: PS-STD-004规则分类与仲裁标准引用
+    section_type: context
+    original_rules:
+    - PS-STD-004
+    summary: "PS-STD-004(规则分类与仲裁标准)的scope/normative_refs/change_history已迁移至权威文件trae_041_meta_rule_classification.yaml(ps_std_004_scope/ps_std_004_normative_refs/ps_std_004_change_history章节)。本文件仅保留MTH-004/005/007/008方法论规则。"
+    authoritative_source: trae_041_meta_rule_classification.yaml
+references:
+  rule_ids:
+  - TRAE-024
+  scripts: []
+  modules: []
+  blueprints: []
+enforcement:
+  type: doc
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: evolving
+  impact_level: L
+  modification_permission: ai_modifiable
+  superseded_by: null
+  version: "1.2.1"
+  last_modified: "2026-06-21"
+  change_history:
+  - version: "1.0.0"
+    date: "2026-06-13"
+    change: "初始创建——从governance_methodology_standard.md提取MTH-004/005/007/008规则"
+  - version: "1.0.1"
+    date: "2026-06-19"
+    change: "RQ-14合规：metadata新增version/last_modified/change_history字段记录文件级修改历史"
+  - version: "1.0.2"
+    date: "2026-06-19"
+    change: "RQ-03散布标注：rca_scope新增dispersion_note标注PS-STD-004散布内容，权威文件为trae_041"
+  - version: "1.0.3"
+    date: "2026-06-19"
+    change: "RQ-03散布根治：rca_scope/rca_normative_refs/rca_change_history章节已迁移至trae_041(ps_std_004_scope/normative_refs/change_history)，本文件替换为ps_std_004_reference引用章节"
+  - version: "1.1.0"
+    date: "2026-06-21"
+    change: "新增MTH-009先裁定后确认原则——AI遇到决策MUST先给出专业裁定+理由，再请Owner确认，禁止直接问Owner选哪个"
+  - version: "1.2.0"
+    date: "2026-06-21"
+    change: "循环审查修复（Owner批准）：aliases添加MTH-009（MTH-009权威定义归属trae_025，因project_rules.md RULE-NINETEEN引用trae_025 §mth_009）"
+  - version: "1.2.1"
+    date: "2026-06-21"
+    author: "AI-Assistant"
+    change: "审查修复：metadata.version对齐change_history最新版本(1.2.0→1.2.1)；修正last_modified未来日期(2026-06-22→2026-06-21)；change_history按版本号升序排列(1.1.0移至1.2.0之前)"
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

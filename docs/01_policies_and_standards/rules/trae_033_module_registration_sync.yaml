@@ -1,0 +1,254 @@
+rule_id: TRAE-033
+title: 模块治理-注册与同步
+aliases:
+- MOD-006
+- MOD-007
+layer: L1
+severity: error
+scope: module_registry_sync
+domain: TRAE
+triggers:
+- operation: artifact_creation
+- operation: artifact_modification
+- operation: registry_update
+sections:
+  mod_006:
+    section_type: rule
+    title: 多注册表同步标准(GOV-MOD-007 MRS-001)
+    original_rules:
+    - MOD-006
+    conditions:
+    - type: trigger
+      check: 创建/修改任何项目工件(模块/脚本/KB决策记录/文档/目录/门禁/知识/字段)
+      pass: 执行MRS-001注册表写入
+      fail: 未同步写入对应注册表
+    actions:
+    - type: mandatory
+      step: 'MRS-001: 创建/修改工件后MUST同步写入对应注册表——修改的字段值MUST与SSoT源一致'
+    - type: mandatory
+      step: 通用操作5步：1.查MRS-001映射确认哪些注册表 2.创建工件文件+frontmatter 3.写入对应注册表(同一操作中完成) 4.更新工件目录index.md
+        5.运行MRS-003校验脚本
+    - type: mandatory
+      step: 新模块10步：1.分配module_id 2.创建目录+文件 3.注册MODULE 4.注册BPR 5.注册DOC-INV 6.注册MOD-ID
+        7.注册DIR 8.注册AI-AUTH 9.更新上层index.md 10.运行校验
+    prohibitions: []
+    gov_mod_006_scope:
+      section_type: context
+      applies_to: 创建/修改任何项目工件(模块/脚本/KB决策记录/文档/目录/门禁/知识/字段)时必须同步写入这些注册表
+      not_applies_to: 不在registry-master-index.yaml中登记的注册表; _DO_NOT_USE_old_tree/下的任何文件(AGENTS.md
+        §2禁止引用)
+      out_of_scope: 注册表字段的具体定义(→各注册表的_schema); 共享字段的SSoT归属(→registry_of_registries.yaml
+        cross_registry_rules); 注册表清单(→registry-master-index.yaml); AI工具链的具体使用方式(→AGENTS.md);
+        各工种标准(准入=GOV-MOD-001/命名=PS-STD-004/KB决策记录=KB决策记录流程); 注册表物理迁移(→migration_plan)
+    gov_mod_006_registry_map:
+      section_type: examples
+      registries:
+      - code: GOV-RULES
+        name: 治理规则
+        path: _registry/catalogs/document-metadata-index-registry.yaml
+      - code: DOC-INV
+        name: 文档清单
+        path: _registry/catalogs/document-metadata-index-registry.yaml
+      - code: MOD-ID
+        name: 模块ID
+        path: 02_enterprise_architecture/.../architecture-model/module_id_registry.yaml
+      - code: MODULE
+        name: 模块
+        path: 03_modules/module-registry.yaml
+      - code: BPR
+        name: 蓝图
+        path: 03_modules/blueprint-registry.yaml
+      - code: TASK-META
+        name: 任务卡元数据
+        path: _registry/catalogs/task-card-meta-registry.md
+      - code: SCRIPT
+        name: 脚本
+        path: _registry/catalogs/script-health-registry.md
+      - code: KMS
+        name: 知识
+        path: _registry/catalogs/knowledge-article-registry.md
+      - code: DIR
+        name: 目录
+        path: _registry/catalogs/directory-registry.md
+      - code: GATE
+        name: 门禁
+        path: _registry/catalogs/gate-registry.md
+      - code: FIELD
+        name: frontmatter字段
+        path: _registry/catalogs/frontmatter-field-registry.md
+      - code: AI-AUTH
+        name: AI自治权限
+        path: governance/ai/ai-autonomy-authority-registry.md
+      - code: INFRA
+        name: 基础设施
+        path: _registry/catalogs/infrastructure-registry.md
+    gov_mod_006_artifact_matrix:
+      section_type: context
+      note: 工件→注册表写入映射(14×14矩阵)——创建/修改某类工件时必须写入的注册表(详见MD源文件§5.1完整矩阵表)
+      key_rows:
+      - artifact: 创建治理规则
+        must_write: GOV-RULES + DOC-INV + DIR
+      - artifact: 创建新模块
+        must_write: MODULE + BPR + TASK-META + SCRIPT + KMS + DIR + GATE + FIELD +
+          AI-AUTH
+      - artifact: 创建新脚本
+        must_write: GOV-RULES + MOD-ID + MODULE + BPR + TASK-META + KMS + DIR + GATE
+          + FIELD + AI-AUTH
+      - artifact: 修改共享字段
+        must_write: GOV-RULES + DOC-INV + MOD-ID + KMS + DIR + GATE + FIELD + AI-AUTH
+      - artifact: 模块version/status/归档
+        must_write: GOV-RULES + DOC-INV + MOD-ID + MODULE + BPR + TASK-META + SCRIPT
+          + KMS + DIR + GATE + FIELD + AI-AUTH
+    gov_mod_006_normative_refs:
+      section_type: principles
+      refs:
+      - target: AGENTS.md §6.2
+        role: 原子操作模式——跨注册表同步必须在同一操作中完成
+      - target: registry_of_registries.yaml cross_registry_rules
+        role: 共享字段段SSoT归属——本标准内CR规则的施措依据
+      - target: registry-master-index.yaml §2
+        role: 注册表清单——MRS-001映射行据此生成
+      - target: PS-STD-001 §2
+        role: frontmatter字段合法性——所有文件的frontmatter格式遵循其约束
+    gov_mod_006_cross_refs:
+      section_type: context
+      refs:
+      - target: GOV-MOD-001
+        role: 模块准入门控——创建模块前的准入流程
+      - target: GOV-MOD-003 §3
+        role: status枚举值——module-registry.yaml和blueprint.status值来源
+      - target: PS-REG-002
+        role: registry_of_registries.yaml中的CR规则——共享字段SSoT归属
+      - target: PS-REG-005 §2
+        role: 注册表数量total_registries动态记录——本标准MRS-001覆盖全部注册表类别
+    gov_mod_006_change_history:
+      section_type: context
+      entries:
+      - version: 2.1.1
+        date: '2026-05-06'
+        change: 重构registry-master-index.yaml; 移除过时的24号条目; total_registries为源+MRS-001映射说明+完整性清单同步
+      - version: 2.0.0
+        date: '2026-05-02'
+        change: '重大扩展: MRS-001映射从3行扩展到14行; 新增8种工件类型; MRS-004禁止行为从4条扩展到6条'
+      - version: 1.0.0
+        date: '2026-05-02'
+        change: '初始版本: MRS-001~004基础规则'
+  mod_007:
+    section_type: rule
+    title: 同步原则与校验(GOV-MOD-007 MRS-002~004)
+    original_rules:
+    - MOD-007
+    conditions:
+    - type: constraint
+      check: MRS-002原子性——所有注册表修改是否同一操作完成
+      pass: 同一SearchReplace/Write操作覆盖所有目标文件
+      fail: 分批更新不同注册表
+    - type: constraint
+      check: MRS-003校验——修改后是否运行校验脚本
+      pass: check_registry_consistency.py+check_frontmatter_metadata.py通过
+      fail: 未运行校验或FAIL未修复
+    actions:
+    - type: mandatory
+      step: 'MRS-002: 所有注册表修改MUST在同一操作中完成——禁止先改A再改B'
+    - type: mandatory
+      step: 'MRS-003: 修改后运行校验——check_registry_consistency.py(CR-001~006)+check_frontmatter_metadata.py+check_architecture_gates.py+validate_directory_registry.py'
+    - type: mandatory
+      step: 校验脚本不可用时MUST手动对照SSoT源验证
+    - type: mandatory
+      step: 任何FAIL必须在commit前修复
+    prohibitions:
+    - 'MRS-004#1: 禁止创建工件但不写入对应注册表'
+    - 'MRS-004#2: 禁止只修改工件文件但不更新注册表'
+    - 'MRS-004#3: 禁止只更新注册表但不修改工件文件'
+    - 'MRS-004#4: 禁止只改A注册表不改B注册表(同一字段)'
+    - 'MRS-004#5: 禁止SearchReplace模板不唯一导致错误匹配'
+    - 'MRS-004#6: 禁止新建注册表但不注册到registry-master-index.yaml'
+    gov_mod_007_scope:
+      section_type: context
+      applies_to: 所有执行MRS-001映射后的同步操作——原子性原则(MRS-002)和校验步骤(MRS-003)
+      principle: 'MRS-002原子性: 所有注册表修改MUST在同一操作中完成——禁止先改A再改B; MRS-003校验: 任何涉及MRS-001映射的操作完成后MUST运行对应校验脚本'
+    gov_mod_007_verification_timing:
+      section_type: verification
+      checks:
+      - script: check_registry_consistency.py
+        scope: 注册表间字段一致性(CR-001~006)
+        run_when: 任何涉及module-registry.yaml / blueprint-registry.yaml / 各blueprint.md的操作后
+      - script: check_frontmatter_metadata.py
+        scope: frontmatter字段合法性
+        run_when: 创建/修改任何文档后
+      - script: check_architecture_gates.py
+        scope: KB决策记录/模块/架构一致性
+        run_when: 创建/修改KB决策记录或模块后
+      - script: validate_directory_registry.py
+        scope: 物理目录vs注册表漂移
+        run_when: 创建/删除目录后
+      fallback: 校验脚本不可用时MUST手动对照SSoT源验证
+      hard_rule: 任何FAIL必须在commit前修复
+    gov_mod_007_normative_refs:
+      section_type: principles
+      refs:
+      - target: AGENTS.md §6.2
+        role: 原子操作模式——跨注册表同步必须在同一操作中完成
+      - target: registry_of_registries.yaml cross_registry_rules
+        role: 共享字段段SSoT归属——本标准内CR规则的施措依据
+      - target: registry-master-index.yaml §2
+        role: 注册表清单——MRS-001映射行据此生成
+      - target: PS-STD-001 §2
+        role: frontmatter字段合法性——所有文件的frontmatter格式遵循其约束
+    gov_mod_007_cross_refs:
+      section_type: context
+      refs:
+      - target: GOV-MOD-001
+        role: 模块准入门控——创建模块前的准入流程
+      - target: GOV-MOD-003 §3
+        role: status枚举值——module-registry.yaml和blueprint.status值来源
+      - target: check_registry_consistency.py
+        role: 校验脚本——MRS-003的执行目标
+      - target: PS-STD-004
+        role: 命名标准——创建工件前的命名要求
+    gov_mod_007_change_history:
+      section_type: context
+      entries:
+      - version: 2.2.0
+        date: '2026-06-19'
+        change: RQ审查修复：mod_006.prohibitions字符串[]改为空列表；provenance源文件标记status=migrated；references.scripts路径更新为实际位置（4个脚本）；validate_directory_registry.py→validate_directory_structure.py
+      - version: 2.1.1
+        date: '2026-05-06'
+        change: 重构registry-master-index.yaml; MRS-003校验时机表完善
+      - version: 2.0.0
+        date: '2026-05-02'
+        change: MRS-004禁止行为从4条扩展到6条; 校验脚本适用时机表
+      - version: 1.0.0
+        date: '2026-05-02'
+        change: '初始版本: MRS-002原子性+MRS-003校验+MRS-004禁止行为'
+references:
+  rule_ids:
+  - TRAE-033
+  - TRAE-033
+  scripts:
+  - scripts/governance/check_registry_consistency.py
+  - scripts/governance/d3_metadata/check_frontmatter_metadata.py
+  - scripts/governance/d5_architecture/checkers/check_architecture_gates.py
+  - scripts/governance/d5_architecture/validators/validate_directory_structure.py
+  - scripts/governance/generators/generate_registry_master_index.py
+  modules:
+  - GOV-MOD-007
+  blueprints: []
+enforcement:
+  type: code
+  executors:
+  - scripts/governance/check_registry_consistency.py
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: ai_modifiable
+  superseded_by: null
+  change_history:
+  - version: 1.0.0
+    date: '2026-06-13'
+    change: '初始提取——从module_registration_sync相关.md提取模块注册与同步规则；源文件已迁移为本规则文件（status:
+      migrated）'
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

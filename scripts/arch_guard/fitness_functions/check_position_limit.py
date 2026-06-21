@@ -4,7 +4,7 @@ check_position_limit.py — 单一持仓限制 ≤ 5% NAV (INV-002)
 
   - SSoT：config/risk_params.yaml → max_single_position_nav_ratio
   - 验证 risk_params.yaml 中存在 P0 级持仓限制且值 ≤ 5%
-  - 验证 l04_risk_management 中有限额检查代码存在
+  - 验证 risk 中有限额检查代码存在
 
 exit: 0=pass, 1=fail, 2=config error
 """
@@ -40,9 +40,9 @@ def main() -> int:
         print(f"FAIL: max_single_position_nav_ratio={limit_ratio} 超出安全范围（0 < x ≤ 0.05）")
         return 1
 
-    limits_dir = REPO_ROOT / "src" / "zephyr" / "l04_risk_management" / "limits"
+    limits_dir = REPO_ROOT / "src" / "zephyr" / "risk" / "limits"
     if not limits_dir.is_dir():
-        limits_dir = REPO_ROOT / "src" / "zephyr" / "l04_risk_management"
+        limits_dir = REPO_ROOT / "src" / "zephyr" / "risk"
 
     position_check_files = list(limits_dir.rglob("*.py")) if limits_dir.is_dir() else []
     has_position_check = any(
@@ -51,7 +51,7 @@ def main() -> int:
     )
 
     if not has_position_check:
-        print("WARN: l04_risk_management 目录未发现持仓限额检查模块（Phase B 补齐）")
+        print("WARN: risk 目录未发现持仓限额检查模块（Phase B 补齐）")
 
     print(f"OK: INV-002 单一持仓限制 — max_single_position_nav_ratio={limit_ratio}（≤ 5% NAV）")
     return 0

@@ -49,20 +49,20 @@ from _shared.constants import EXIT_PASS, REPO_ROOT, SRC_DIR
 TESTS_DIR = REPO_ROOT / "tests"
 
 SKIP_MODULES = {
-    "l00_data_source",
-    "l01_infrastructure",
-    "l02_alpha_factor",
-    "l03_signal_generation",
-    "l04_risk_management",
-    "l05_portfolio_construction",
-    "l06_trade_execution",
-    "l07_post_trade_analytics",
-    "l08_human_ai_interface",
-    "l09_research_innovation",
-    "l10_compliance",
-    "l11_ml_platform",
-    "system_telemetry",
-    "l13_experimentation",
+    "data",
+    "infrastructure.runtime_integration",
+    "factor",
+    "signal",
+    "risk",
+    "pf_core",
+    "ex_core",
+    "pf_core",
+    "frontend",
+    "research",
+    "compliance",
+    "ml_train",
+    "observability",
+    "integration",
 }
 
 def _is_skeleton_module(filepath: Path) -> bool:

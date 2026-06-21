@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0174 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-331 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.integration.test_phase_e_main_flow
 # [STABILITY] evolving
 # [SAFETY] L
@@ -35,34 +36,34 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from zephyr.l00_data_source.implementations.memory_provider import MemoryProvider
-from zephyr.l00_data_source.implementations.default_quality_gate import DefaultQualityGate
-from zephyr.l02_alpha_factor.factor_base import FactorBase, FactorRegistry, FactorMeta, autodiscover_factors
-from zephyr.l03_signal_generation.implementations.default_signal_aggregator import DefaultSignalAggregator
-from zephyr.l04_risk_management.implementations.default_risk_validator import DefaultRiskValidator
-from zephyr.l04_risk_management.risk_manager import RiskLimits
-from zephyr.l05_portfolio_construction.strategies.default_equity_strategy import (
+from zephyr.governance.memory_provider import MemoryProvider
+from zephyr.governance.default_quality_gate import DefaultQualityGate
+from zephyr.factor.factor_base import FactorBase, FactorRegistry, FactorMeta, autodiscover_factors
+from zephyr.signal_fundamental.gen.implementations.default_signal_aggregator import DefaultSignalAggregator
+from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
+from zephyr.risk.risk_manager import RiskLimits
+from zephyr.pf_core.default_equity_strategy import (
     DefaultEquityStrategy,
     RebalanceMode,
 )
-from zephyr.l06_trade_execution.adapters.simulation_broker import SimulationBroker
-from zephyr.l06_trade_execution.order_manager import OrderManager
-from zephyr.l07_post_trade_analytics.implementations.default_tca_engine import DefaultTCAEngine
-from zephyr.pipeline.layer_consumer_registry import register_all_consumers, get_registry_summary
-from zephyr.pipeline.layer_router import (
+from zephyr.ex_core.adapters.simulation_broker import SimulationBroker
+from zephyr.ex_core.order_manager import OrderManager
+from zephyr.pf_core.default_tca_engine import DefaultTCAEngine
+from zephyr.integration.layer_consumer_registry import register_all_consumers, get_registry_summary
+from zephyr.integration.layer_router import (
     LayerDataRouter,
     get_layer_router,
     reset_layer_router,
     handle_layer_onboarding,
 )
-from zephyr.trading_contracts.market.market_data import NormalizedMarketData
-from zephyr.trading_contracts.market.factor_signal import FactorSignal
-from zephyr.trading_contracts.execution.fill import Fill
-from zephyr.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
-from zephyr.trading_contracts.execution.position import PositionSnapshot
-from zephyr.trading_contracts.market.synthesized_signal import SynthesizedSignal
-from zephyr.trading_contracts.execution.execution_report import ExecutionReport
-from zephyr.shared.contracts.core.trace_context import TraceContext
+from zephyr.trading.trading_contracts.market.market_data import NormalizedMarketData
+from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
+from zephyr.trading.trading_contracts.execution.fill import Fill
+from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
+from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
+from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
 
 
 TEST_SYMBOLS = ["600519", "000858", "601318", "600036", "000333"]

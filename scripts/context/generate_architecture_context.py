@@ -5,12 +5,12 @@ generate_architecture_context.py — 预编译架构上下文包生成器
 从 SSoT YAML + ADR + 治理文档中提取关键架构信息，压缩为 AI 可直接消费的
 JSON 上下文包。解决 "每个 AI session 重新学习架构" 的问题。
 
-输出: src/zephyr/context_engine/architecture_context.json
+输出: src/zephyr/context-engine/architecture-context.json
 
 用法: python scripts/context/generate_architecture_context.py
       python scripts/context/generate_architecture_context.py --watch  # 文件变更自动重生成
 
-SSoT: cross-layer-contracts.yaml + invariants.yaml + architecture-model/layers/*.yaml
+SSoT: cross_layer_contracts.yaml + invariants.yaml + architecture-model/layers/*.yaml
        + ADR + governance + session/handoff + capacity_slo + gate/module registry + capability-heatmap
        + arch_guard manifest
 """
@@ -31,7 +31,7 @@ if not REPO_ROOT.exists():
 import yaml
 
 CONTRACTS_YAML = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target-architecture/" "architecture-model/contracts/cross-layer-contracts.yaml"
+    "docs/02_enterprise_architecture/target-architecture/" "architecture-model/contracts/cross_layer_contracts.yaml"
 )
 INVARIANTS_YAML = REPO_ROOT / (
     "docs/02_enterprise_architecture/target-architecture/"
@@ -41,18 +41,18 @@ LAYERS_DIR = REPO_ROOT / (
     "docs/02_enterprise_architecture/target-architecture/architecture-model/layers"
 )
 ADR_DIR = REPO_ROOT / "docs/02_enterprise_architecture/adr"
-OUTPUT_PATH = REPO_ROOT / "src/zephyr/context_engine/architecture_context.json"
+OUTPUT_PATH = REPO_ROOT / "src/zephyr/context-engine/architecture-context.json"
 HANDOFF_DIR = REPO_ROOT / "docs/19_development_workspace/handoff-logs"
 CAPACITY_SLO_YAML = REPO_ROOT / "config" / "capacity" / "capacity_slo.yaml"
 GATE_REGISTRY_YAML = (
-    REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/gate-registry.yaml"
+    REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/gate-registry.md"
 )
 MODULE_REGISTRY_YAML = REPO_ROOT / "docs/03_modules/module-registry.yaml"
 CAPABILITY_HEATMAP_YAML = (
     REPO_ROOT
-    / "docs/02_enterprise_architecture/target-architecture/architecture-model/cross-cutting/capability-heatmap.yaml"
+    / "docs/02_enterprise_architecture/target-architecture/architecture-model/cross-cutting/capability_heatmap.yaml"
 )
-ARCH_GUARD_MANIFEST = REPO_ROOT / "scripts/arch_guard/_manifest.yaml"
+ARCH_GUARD_MANIFEST = REPO_ROOT / "scripts/arch_guard/manifest.yaml"
 
 LAYER_NAMES = {
     "l00": "数据源层",
@@ -129,7 +129,7 @@ def main() -> None:
 
 def _extract_contracts_summary(context: dict) -> None:
     if not CONTRACTS_YAML.exists():
-        context["contracts"] = {"error": "cross-layer-contracts.yaml 未找到"}
+        context["contracts"] = {"error": "cross_layer_contracts.yaml 未找到"}
         return
 
     data = yaml.safe_load(CONTRACTS_YAML.read_text(encoding="utf-8"))
@@ -340,7 +340,7 @@ def _extract_capacity_slo(context: dict) -> None:
 
 def _extract_gate_registry(context: dict) -> None:
     if not GATE_REGISTRY_YAML.is_file():
-        context["gate_registry"] = {"error": "未找到 gate-registry.yaml"}
+        context["gate_registry"] = {"error": "未找到 gate-registry.md"}
         return
     data = yaml.safe_load(GATE_REGISTRY_YAML.read_text(encoding="utf-8")) or {}
     gates = data.get("gates") or []
@@ -371,7 +371,7 @@ def _extract_module_registry(context: dict) -> None:
 
 def _extract_capability_heatmap(context: dict) -> None:
     if not CAPABILITY_HEATMAP_YAML.is_file():
-        context["capability_heatmap"] = {"error": "未找到 capability-heatmap.yaml"}
+        context["capability_heatmap"] = {"error": "未找到 capability_heatmap.yaml"}
         return
     data = yaml.safe_load(CAPABILITY_HEATMAP_YAML.read_text(encoding="utf-8")) or {}
     part = data.get("partition") or {}
@@ -389,7 +389,7 @@ def _extract_capability_heatmap(context: dict) -> None:
 
 def _extract_arch_guard_manifest(context: dict) -> None:
     if not ARCH_GUARD_MANIFEST.is_file():
-        context["arch_guard"] = {"error": "未找到 _manifest.yaml"}
+        context["arch_guard"] = {"error": "未找到 manifest.yaml"}
         return
     data = yaml.safe_load(ARCH_GUARD_MANIFEST.read_text(encoding="utf-8")) or {}
     ffs = data.get("fitness_functions") or []

@@ -1,0 +1,147 @@
+# [A_config] module_id=CFG-l10-compliance | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: DOM-GOV-001
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# --- 治理锚定结束 ---
+schema_version: "2.0"
+partition:
+  id: l10
+  name: Governance & Compliance
+  layer_position: 10
+  runtime_plane: warm
+  view_file: 03-application_architecture.md
+  view_section: "§4.1 compliance/"
+
+modules:
+
+  - id: l10-rules
+    module_id: MOD-CMP-001
+    name: Compliance Rule Definitions
+    submodule_path: src/zephyr/compliance/rules/
+    status: planned
+    priority: P0
+    runtime_plane: warm
+    description: 合规规则定义（监管、内部政策、辖区分片）；规则库，OCP 扩展，每辖区独立规则�?
+    interfaces:
+      - contract_id: CTR-P1-012
+        role: producer
+        description: 生产ComplianceRule契约，提供规则注册和评估接口
+    kb_ref: [KBG-0010]
+
+  - id: l10-validators
+    module_id: MOD-L10-002
+    name: Runtime Compliance Validators
+    submodule_path: src/zephyr/compliance/validators/
+    status: planned
+    priority: P0
+    runtime_plane: warm
+    description: 运行时合规校验，对照 rules/ 执行校验逻辑；pre-trade 合规拦截与运行时强制检�?
+    interfaces:
+      - contract_id: CTR-P1-012
+        role: consumer
+        description: 消费ComplianceRule进行合规校验
+      - contract_id: CTR-004
+        role: consumer
+        description: 消费Order进行pre-trade合规检�?
+      - contract_id: CTR-005
+        role: consumer
+        description: 消费Fill进行post-trade合规检�?
+      - contract_id: CTR-006
+        role: consumer
+      - contract_id: CTR-P1-013
+        role: both
+        description: 消费 TelemetryEmitter 发送合规遥�?
+        description: 消费PositionSnapshot进行持仓合规检�?
+    kb_ref: [KBG-0010]
+
+  - id: l10-audit-trail
+    module_id: MOD-L10-003
+    name: Audit Trail
+    submodule_path: src/zephyr/compliance/audit-trail/
+    status: planned
+    priority: P1
+    runtime_plane: cold
+    description: 产品级审计痕迹生成；append-only policy_decision_ledger.jsonl（INV-016），不可篡改
+    interfaces: []
+    kb_ref: [KBG-0010]
+
+  - id: l10-policies-sbom
+    module_id: MOD-L10-004
+    name: Jurisdiction Policy Packs
+    submodule_path: src/zephyr/compliance/policies/
+    status: planned
+    priority: P1
+    runtime_plane: cold
+    description: 辖区分片政策包（cn_a_share/ / us_share/ / eu_mifid2/ / crypto_global/）；含供应链 SBOM 扫描，Cold batch
+    interfaces: []
+    kb_ref: [KBG-0010]
+
+  - id: l10-policy-engine
+    module_id: MOD-L10-005
+    name: Policy Engine
+    submodule_path: src/zephyr/compliance/policy_engine/
+    status: planned
+    priority: P1
+    runtime_plane: warm
+    description: 政策评估器接口（Python 规则评估�?+ OPA 预留）；调用 rules/ + policies/ 执行策略裁决
+    interfaces: []
+    kb_ref: [KBG-0010]
+
+  - id: l10-security-gateway
+    module_id: MOD-L10-006
+    name: AI Security Gateway (AISG)
+    submodule_path: src/zephyr/compliance/ai_security/
+    status: planned
+    priority: P0
+    runtime_plane: warm
+    description: >
+      AI 安全网关防泄密子系统（脱敏引擎、映射注册表、推理路由、Prompt Guard & Audit、红队检测）�?
+      security_gateway 子模�?Hot-adjacent�? 50ms），其余 5 模块 Warm�?
+      预留依据：OQ-076 / J0-a / KBG-0009 v1.1.0 §3.5；激活触发器�?OQ-081�?
+      治理归属�?09-GOV 全三层（Policy 白名�?/ Factory 脱敏编译�?/ Runtime 拦截审计）�?
+    interfaces:
+      - contract_id: EXT-003
+        role: consumer
+        description: 消费 LLM Providers 外部接口，经 AISG 脱敏/路由后转发到外部 AI 服务
+      - contract_id: CTR-004
+        role: consumer
+        description: 消费 Order 契约进行 pre-trade 安全审查（敏感信息检测）
+    kb_ref: [KBG-0009, KBG-0010]
+    plane_note: security_gateway 子模�?Hot-adjacent�? 50ms INV-015）；其余 5 子模�?Warm
+
+  - id: l10-ai-security-others
+    module_id: MOD-L10-007
+    name: AISG Non-Gateway Modules
+    submodule_path: src/zephyr/compliance/ai_security/
+    status: planned
+    priority: P1
+    runtime_plane: warm
+    description: AISG �?security_gateway 之外�?5 个模块（脱敏引擎、映射注册表、推理路由、Prompt Guard & Audit、红队检测）
+    interfaces: []
+    kb_ref: [KBG-0009, KBG-0010]
+    note: 本条目与 l10-security-gateway 共用同一目录，通过子模块区分；此处指非 gateway �?5 个模�?
+
+summary:
+  total: 7
+  by_status:
+    planned: 7
+    active: 0
+    deferred: 0
+    deprecated: 0
+  by_priority:
+    P0: 3
+    P1: 4
+    P2: 0
+    P3: 0
+  by_runtime_plane:
+    hot: 0
+    warm: 5
+    cold: 2
+  boundary_note: >
+    本层处理产品级合规运行�?
+    仓库级治理（pre-commit/CI/文档扫描）属�?scripts/，见 §5�?
+    内部治理（IPS/IC 决议/AI 自治/39 治理系统）属�?docs/07_governance_and_compliance/META_GOVERNANCE/ + scripts/governance/�?
+    命名依据（R32）：业界绝大多数顶级机构（Goldman/Citadel/Two Sigma/BlackRock/JPM）L10 均命名为 compliance�?

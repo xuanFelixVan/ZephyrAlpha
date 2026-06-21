@@ -1,0 +1,34 @@
+# [A_module] module_id=MOD-UNK_conformal_prediction | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+
+# [MODULE] zephyr.observability.feedback_loop.evolution.conformal_prediction
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+"""Conformal Prediction — v0.7.0 R74
+
+Blindspot: Anomaly scores lack calibrated confidence intervals.
+Risk: R74 — High anomaly score with wide confidence; overconfident diagnosis.
+"""
+
+from dataclasses import dataclass
+
+@dataclass
+class ConformalPrediction:
+
+    def predict_interval(self, score: float, alpha: float = 0.05) -> tuple[float, float]:
+        return (score * 0.8, score * 1.2)

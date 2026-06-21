@@ -10,6 +10,15 @@ P1 · 比对蓝图版本号与模块代码版本号一致性
 """
 
 from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 
@@ -20,8 +29,8 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-VMS_DIR = PROJECT_ROOT / "src" / "zephyr" / "vector_memory"
-BLUEPRINT = PROJECT_ROOT / "docs" / "03_modules" / "l01_infrastructure" / "vector-memory" / "blueprint.md"
+VMS_DIR = PROJECT_ROOT / "src" / "zephyr" / "vector-memory"
+BLUEPRINT = PROJECT_ROOT / "docs" / "03_modules" / "infrastructure.runtime_integration" / "vector-memory" / "blueprint.md"
 
 EXPECTED_BLUEPRINT_VERSION = "v0.7.0"
 EXPECTED_MODULE_VERSION = "v0.1.0"

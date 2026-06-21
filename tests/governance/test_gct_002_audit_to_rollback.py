@@ -1,8 +1,9 @@
-# [BLUEPRINT] DOM-GOV-001 | tests/governance/test_gct_002_audit_to_rollback.py | §
+# [A_test] module_id: SRC-TST-0125 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-282 | tests/governance/test_gct_002_audit_to_rollback.py | §
 from __future__ import annotations
 
 """
-[BLUEPRINT] MOD-INF-021 | docs/03_modules/l01_infrastructure/rollback-system/blueprint.md
+[BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-infra_ops/rollback-system/blueprint.md
 [MODULE] tests.governance.test_gct_002_audit_to_rollback
 [INVARIANTS] G-CT-002: Audit→Rollback 集成契约
 [MODIFY-GUARD] anomaly.py; contracts.py
@@ -21,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 
 def test_anomaly_event_creation():
-    from zephyr.audit_trail.anomaly import AnomalyEvent, AnomalySignature
+    from zephyr.governance.audit_trail.anomaly import AnomalyEvent, AnomalySignature
     event = AnomalyEvent(
         signature=AnomalySignature.UNAUTHORIZED_ACCESS,
         severity="high",
@@ -35,7 +36,7 @@ def test_anomaly_event_creation():
 
 
 def test_anomaly_detector_positive():
-    from zephyr.audit_trail.anomaly import AnomalyDetector
+    from zephyr.governance.audit_trail.anomaly import AnomalyDetector
     import tempfile, json
     with tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False, encoding="utf-8") as f:
         f.write(json.dumps({
@@ -55,7 +56,7 @@ def test_anomaly_detector_positive():
 
 
 def test_anomaly_detector_negative():
-    from zephyr.audit_trail.anomaly import AnomalyDetector
+    from zephyr.governance.audit_trail.anomaly import AnomalyDetector
     import tempfile, json
     with tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False, encoding="utf-8") as f:
         f.write(json.dumps({
@@ -73,8 +74,8 @@ def test_anomaly_detector_negative():
 
 
 def test_rollback_on_anomaly():
-    from zephyr.audit_trail.anomaly import AnomalyEvent, AnomalySignature
-    from zephyr.rollback.contracts import RollbackHandler
+    from zephyr.governance.audit_trail.anomaly import AnomalyEvent, AnomalySignature
+    from zephyr.governance.contracts import RollbackHandler
     handler = RollbackHandler()
     event = AnomalyEvent(
         signature=AnomalySignature.UNAUTHORIZED_ACCESS,

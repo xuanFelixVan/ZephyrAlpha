@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0176 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-333 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.integration.test_phase_g_perf
 # [STABILITY] evolving
 # [SAFETY] L
@@ -7,7 +8,7 @@
 """Phase G — Performance Benchmarks & SLA Validation
 
 性能基准与 SLA 验证。测量 14 层全链路延迟、吞吐量与内存占用，
-对照 cross-layer-contracts.yaml 中声明的 p99_latency_ms 阈值进行合规检查。
+对照 cross_layer_contracts.yaml 中声明的 p99_latency_ms 阈值进行合规检查。
 
 SLA 阈值（来自 SSoT）：
   CTR-001 NormalizedMarketData   : p99 ≤ 10ms
@@ -44,42 +45,42 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from zephyr.l00_data_source.implementations.memory_provider import MemoryProvider
-from zephyr.l02_alpha_factor.factor_base import FactorRegistry, autodiscover_factors
-from zephyr.l03_signal_generation.implementations.default_signal_aggregator import DefaultSignalAggregator
-from zephyr.l04_risk_management.implementations.default_risk_validator import DefaultRiskValidator
-from zephyr.l05_portfolio_construction.strategies.default_equity_strategy import (
+from zephyr.governance.memory_provider import MemoryProvider
+from zephyr.factor.factor_base import FactorRegistry, autodiscover_factors
+from zephyr.signal_fundamental.gen.implementations.default_signal_aggregator import DefaultSignalAggregator
+from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
+from zephyr.pf_core.default_equity_strategy import (
     DefaultEquityStrategy,
     RebalanceMode,
 )
-from zephyr.l06_trade_execution.adapters.simulation_broker import SimulationBroker
-from zephyr.l06_trade_execution.order_manager import OrderManager
-from zephyr.l07_post_trade_analytics.implementations.default_tca_engine import DefaultTCAEngine
-from zephyr.l09_research_innovation.backtest_base import (
+from zephyr.ex_core.adapters.simulation_broker import SimulationBroker
+from zephyr.ex_core.order_manager import OrderManager
+from zephyr.pf_core.default_tca_engine import DefaultTCAEngine
+from zephyr.simulation.backtest_base import (
     BacktestEngineBase,
     BacktestResult,
     FactorDiscovery,
 )
-from zephyr.l09_research_innovation.implementations.default_backtest_engine import (
+from zephyr.simulation.default_backtest_engine import (
     BacktestConfig,
     DefaultBacktestEngine,
 )
-from zephyr.l10_compliance.implementations.default_security_gateway import DefaultSecurityGateway
-from zephyr.l11_ml_platform.implementations.default_inference_engine import DefaultInferenceEngine
-from zephyr.l01_infrastructure.system_telemetry.contract_metrics import ContractMetricsCollector, get_contract_metrics
-from zephyr.l13_experimentation.implementations.default_experiment_pipeline import DefaultExperimentPipeline
-from zephyr.pipeline.backpressure_manager import BackpressureManager, emit_pause, emit_resume
-from zephyr.shared.contracts.backpressure.pause import BackpressurePause
-from zephyr.shared.contracts.backpressure.resume import BackpressureResume
-from zephyr.shared.contracts.backpressure.throttle import BackpressureThrottle
-from zephyr.trading_contracts.market.factor_signal import FactorSignal
-from zephyr.trading_contracts.execution.fill import Fill
-from zephyr.trading_contracts.market.market_data import NormalizedMarketData
-from zephyr.trading_contracts.execution.model_serving_request import ModelServingRequest
-from zephyr.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
-from zephyr.trading_contracts.execution.position import PositionSnapshot
-from zephyr.trading_contracts.market.synthesized_signal import SynthesizedSignal
-from zephyr.shared.contracts.core.trace_context import TraceContext
+from zephyr.governance.compliance_gate_a6.default_security_gateway import DefaultSecurityGateway
+from zephyr.intelligence.model_evaluation.implementations.default_inference_engine import DefaultInferenceEngine
+from zephyr.infrastructure.system_telemetry.contract_metrics import ContractMetricsCollector, get_contract_metrics
+from zephyr.simulation.implementations.default_experiment_pipeline import DefaultExperimentPipeline
+from zephyr.integration.backpressure_manager import BackpressureManager, emit_pause, emit_resume
+from zephyr.integration.shared_08.contracts.backpressure.pause import BackpressurePause
+from zephyr.integration.shared_08.contracts.backpressure.resume import BackpressureResume
+from zephyr.integration.shared_08.contracts.backpressure.throttle import BackpressureThrottle
+from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
+from zephyr.trading.trading_contracts.execution.fill import Fill
+from zephyr.trading.trading_contracts.market.market_data import NormalizedMarketData
+from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
+from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
+from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
+from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.integration.shared_08.contracts.core.trace_context import TraceContext
 
 ALL_SYMBOLS = [
     "600519", "000858", "601318", "600036", "000333",
@@ -561,7 +562,7 @@ class TestPhaseGLatencyByLayer:
         collector = PerfCollector()
         pipeline = DefaultExperimentPipeline()
 
-        from zephyr.l13_experimentation.pipeline_base import ExperimentConfig
+        from zephyr.simulation.pipeline_base import ExperimentConfig
 
         config = ExperimentConfig(
             experiment_id="exp-perf",

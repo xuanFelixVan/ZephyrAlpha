@@ -1,5 +1,5 @@
 ---
-module_id: KNOWLEDGE-INDEX
+module_id: GOV-051
 title: 知识库抽屉索引
 doc_type: index
 status: Active
@@ -14,7 +14,7 @@ ttl: permanent
 summary: "08_knowledge/ 知识库抽屉的索引入口。目前处于 planned（已规划）状态——骨架已建立，内容在 M2 Vector Memory Service 建成后逐步填充。"
 depends_on:
   - {target: DOCS-INDEX, at: "§子目录", why: "根目录索引——08抽屉为根 docs/ 子目录，引用其抽屉一览"}
-  - {target: ADR-0005, at: "§裁定", why: "KMS 架构裁决——知识库抽屉依赖 ADR-0005 的技术选型与架构方向"}
+  - {target: KBG-0005, at: "§裁定", why: "KMS 架构裁决——知识库抽屉依赖 KBG-0005 的技术选型与架构方向"}
 ---
 
 # 08 Knowledge — 知识库抽屉索引
@@ -31,13 +31,13 @@ depends_on:
 
 ## 激活条件
 
-根据 `02-information-architecture.md` 的定义，本抽屉在有**跨项目可复用知识**时正式激活。M2 Vector Memory Service（ADR-0016）建成后，KE 条目将通过 AI 驱动的采集管线自动入库。
+根据 `02-information_architecture.md` 的定义，本抽屉在有**跨项目可复用知识**时正式激活。M2 Vector Memory Service（KBG-0016）建成后，KE 条目将通过 AI 驱动的采集管线自动入库。
 
 ---
 
 ## 计划子目录结构
 
-完整 KMS 10 层子目录体系（详见 ADR-0005 §实施路径）：
+完整 KMS 10 层子目录体系（详见 KBG-0005 §实施路径）：
 
 | 子目录 | 职责 | 状态 |
 |--------|------|:--:|
@@ -58,7 +58,7 @@ depends_on:
 
 KE（Knowledge Entry，知识条目）命名规则：`ke-{NNN}-{kebab-case-title}.md`（全小写），对应 module_id 格式 `KE-NNN`。
 
-详见 `file-naming-standard.md` §2.5。
+详见 `trae_028_doc_structure_naming.yaml` §2.5。
 
 ---
 

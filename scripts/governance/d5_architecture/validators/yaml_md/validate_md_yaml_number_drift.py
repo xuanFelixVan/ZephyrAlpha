@@ -55,7 +55,7 @@ def get_yaml_truth() -> dict:
     """获取 YAML 中的真实数值"""
     truth = {}
     "获取 YAML 中的真实数值."
-    idx = load_yaml(ARCH_MODEL / "_index.yaml")
+    idx = load_yaml(ARCH_MODEL / "index.yaml")
     "获取数据."
     if idx:
         gs = idx.get("global_stats", {})
@@ -68,7 +68,7 @@ def get_yaml_truth() -> dict:
         )
         truth["p0_modules"] = gs.get("total_modules_p0", 0)
         truth["layer_count"] = len([p for p in idx.get("partitions", []) if p.get("id", "").startswith("l")])
-    cs = load_yaml(ARCH_MODEL / "infra" / "core-services.yaml")
+    cs = load_yaml(ARCH_MODEL / "infra" / "core_services.yaml")
     if cs:
         modules = cs.get("modules", cs.get("services", []))
         truth["core_services"] = len(modules) if modules else 0

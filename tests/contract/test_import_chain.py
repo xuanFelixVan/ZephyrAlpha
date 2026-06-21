@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0093 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-251 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.contract.test_import_chain
 # [STABILITY] evolving
 # [SAFETY] L
@@ -48,13 +49,13 @@ CONSUMERS: list[Consumer] = [
     Consumer("mcp.task_manager_server", "src/zephyr/mcp/task_manager_server.py", "MCP Task 管理服务端"),
     Consumer("mcp.blueprint_search_server", "src/zephyr/mcp/blueprint_search_server.py", "MCP 蓝图搜索服务端"),
     Consumer("orchestrator.trigger_router", "src/zephyr/orchestrator/trigger_router.py", "管线触发路由器"),
-    Consumer("feedback_loop", "src/zephyr/feedback_loop/__init__.py", "Feedback Loop MOD-INF-010", is_package=True),
-    Consumer("kb", "src/zephyr/kb/__init__.py", "Knowledge Base MOD-KB-001", is_package=True),
+    Consumer("feedback-loop", "src/zephyr/feedback-loop/__init__.py", "Feedback Loop MOD-INF-010", is_package=True),
+    Consumer("kb", "src/zephyr/knowledge/kb/__init__.py", "Knowledge Base MOD-KB-001", is_package=True),
 ]
 
 
 def _extract_shared_imports(file_path: pathlib.Path) -> list[str]:
-    """从源文件中提取所有 zephyr.shared / zephyr.core 导入语句。
+    """从源文件中提取所有 zephyr.shared / zephyr.trading.orchestrator.core 导入语句。
 
     如果是 package 消费者（is_package=True），递归扫描整个包目录。
     """

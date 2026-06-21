@@ -1,9 +1,9 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/check_blueprint_code_alignment.py | §
 """
-[BLUEPRINT] MOD-INF-024 | docs/03_modules/l01_infrastructure/budget-enforcer/blueprint.md | S10.2
+[BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md | S10.2
 [MODULE] scripts.governance.d5_architecture.check_blueprint_code_alignment
 [INVARIANTS] blueprint-code alignment check cannot be skipped; drift must be reported
-[MODIFY-GUARD] docs/03_modules/l01_infrastructure/budget-enforcer/blueprint.md
+[MODIFY-GUARD] docs/03_modules/infrastructure.runtime_integration/budget-enforcer/blueprint.md
 [CONSUMERS] CI pipeline; gct_024 gate; CircadianScheduler
 [STABILITY] evolving
 [SAFETY] L
@@ -21,8 +21,8 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
-BLUEPRINT_PATH = REPO_ROOT / "docs" / "03_modules" / "l01_infrastructure" / "budget-enforcer" / "blueprint.md"
-CODE_DIR = REPO_ROOT / "src" / "zephyr" / "budget_enforcer"
+BLUEPRINT_PATH = REPO_ROOT / "docs" / "03_modules" / "infrastructure.runtime_integration" / "budget-enforcer" / "blueprint.md"
+CODE_DIR = REPO_ROOT / "src" / "zephyr" / "budget-enforcer"
 
 
 def parse_frontmatter(content: str) -> dict:
@@ -130,7 +130,7 @@ def check_api_signature_alignment(content: str) -> dict:
     if "PreFlightVerdict" in content:
         drifts.append("S4 still references PreFlightVerdict (should be GateDecision)")
     try:
-        from zephyr.budget_enforcer.budget_models import GateResult, GateDecision
+        from zephyr.governance.budget_enforcement.budget_models import GateResult, GateDecision
     except ImportError:
         drifts.append("GateResult/GateDecision not importable from code")
     if not drifts:

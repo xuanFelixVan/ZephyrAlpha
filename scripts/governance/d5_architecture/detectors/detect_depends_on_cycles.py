@@ -33,7 +33,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import REPO_ROOT, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 from _shared.encoding import ensure_utf8_stdout
-from _shared.frontmatter import parse_frontmatter_from_file, parse_yaml_header
+from _shared.frontmatter import parse_frontmatter_from_file
 from _shared.walk import iter_files
 
 ensure_utf8_stdout()
@@ -53,7 +53,8 @@ def build_depends_on_graph() -> tuple[dict[str, list[str]], dict[str, str]]:
         rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
         ext = filepath.suffix.lower()
         if ext == ".md":
-            fm = parse_frontmatter_from_file(filepath)
+            fm_raw = parse_frontmatter_from_file(filepath)
+            fm = fm_raw[0] if isinstance(fm_raw, tuple) else fm_raw
             if not fm:
                 continue
             module_id = fm.get("module_id", "")
@@ -63,7 +64,8 @@ def build_depends_on_graph() -> tuple[dict[str, list[str]], dict[str, str]]:
                 content = filepath.read_text(encoding="utf-8", errors="replace")
             except (OSError, UnicodeDecodeError):
                 continue
-            fm = parse_yaml_header(content)
+            fm_raw = parse_frontmatter_from_file(filepath)
+            fm = fm_raw[0] if isinstance(fm_raw, tuple) else fm_raw
             if not fm:
                 continue
             module_id = fm.get("module_id", "")

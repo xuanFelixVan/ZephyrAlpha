@@ -1,0 +1,89 @@
+rule_id: TRAE-052
+title: 铁律补充-跨蓝图变更与项目瘦身
+aliases:
+- RULE-ELEVEN
+- RULE-TWELVE
+layer: L0
+severity: critical
+scope: cross_blueprint_change_cleanup
+domain: TRAE
+triggers:
+- operation: cross_blueprint_change_notification
+- operation: project_slimming_auto_cleanup
+sections:
+  rule_eleven:
+    section_type: rule
+    title: 跨蓝图变更通知(RULE-ELEVEN)
+    original_rules:
+    - RULE-ELEVEN
+    conditions:
+    - type: trigger
+      check: 修改任何蓝图的接口契约(Collection名/API签名/数据格式/依赖方向)时
+      pass: 执行强制三步(识别消费方→同步更新→验证)
+      fail: 只改提供方不改消费方导致消费方静默降级/断路
+    actions:
+    - type: mandatory
+      step: STEP1识别消费方→Grep全项目引用该接口的所有蓝图/代码
+    - type: mandatory
+      step: STEP2同步更新→所有消费方蓝图§4+代码常量/调用同步修改
+    - type: mandatory
+      step: STEP3验证→端到端测试确认消费方仍能正常调用
+    prohibitions:
+    - 只改提供方，不改消费方(消费方静默降级/断路)
+    - 改了接口但不Grep消费方(遗漏消费方→生产故障)
+    - 消费方蓝图不更新§4契约(下个AI session看到旧契约→幻觉)
+  rule_twelve:
+    section_type: rule
+    title: 项目瘦身与自动清理(RULE-TWELVE)
+    original_rules:
+    - RULE-TWELVE
+    conditions:
+    - type: trigger
+      check: 发现候选清理物(零消费者/版本旧/孤儿)时
+      pass: 先判定价值→有价值则接通系统，无价值才删除
+      fail: 仅凭"零消费者"或"版本旧"直接删除
+    actions:
+    - type: mandatory
+      step: 价值判定→有价值→接入系统(归属蓝图+对齐依赖图+对齐路径树+对齐代码表头)；无价值→走RULE-THREE三步审判→确认无价值→删除
+    - type: mandatory
+      step: 过时蓝图版本→新版本缺失旧版本独有内容→保留/合并不删；新版本完全覆盖→归档
+    - type: mandatory
+      step: 零消费者→判功能价值(不看消费者数)→有价值→接入；无价值→删除
+    - type: mandatory
+      step: 清理后验证三步→audit_registration.py(exit 0)+generate_project_path_tree.py --write+generate_project_depgraph.py --max-workers 8
+    prohibitions:
+    - 仅凭"零消费者"判定删除(误删有价值的安全/治理组件)
+    - 仅凭"时间旧"删除蓝图版本(丢失新版本未覆盖的内容)
+    - 清理后不跑验证三步(注册表/路径树/依赖图漂移)
+    - 只做一次性清理，不建常驻机制(垃圾持续累积)
+references:
+  rule_ids:
+  - TRAE-001
+  scripts:
+  - scripts/governance/audit_registration.py
+  - scripts/governance/generate_project_path_tree.py
+  - scripts/governance/generate_project_depgraph.py
+  modules: []
+  blueprints: []
+enforcement:
+  type: hook
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-19T00:00:00'
+  extracted_by: session-20260619-001
+change_history:
+- version: '1.2.0'
+  date: '2026-06-19'
+  change: '文件重命名:trae_052_iron_law_coding_standard.yaml→trae_052_cross_blueprint_change_cleanup.yaml(匹配scope和title);修复rule_twelve.actions中generate_depmap.py→generate_project_depgraph.py(RQ-12引用完整性)'
+- version: '1.1.0'
+  date: '2026-06-19'
+  change: 'RQ-01/RQ-09/RQ-14修复:修正rule_eleven内容从"编码安全"改为"跨蓝图变更通知"(匹配project_rules.md RULE-ELEVEN实际定义);修正rule_twelve内容从"极简产出标准"改为"项目瘦身与自动清理"(匹配RULE-TWELVE实际定义);更新title/aliases/scope;更新provenance哈希;移除错误的onboarding_detail.md§七/§十引用;新增change_history;补充references和conditions/prohibitions实际内容'
+- version: '1.0.0'
+  date: '2026-06-13'
+  change: '初始创建——从project_rules.md和onboarding_detail.md提取RULE-ELEVEN/RULE-TWELVE(注:初始版本错误映射了规则内容)'

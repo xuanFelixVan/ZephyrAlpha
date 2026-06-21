@@ -1,0 +1,62 @@
+{
+  "task_id": "DM-100086",
+  "source_file": "docs/01_policies_and_standards/governance/architecture/phase_transition_protocol.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_036_arch_gate_transition.yaml",
+  "yaml_section": "gov_arch_005",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "PTP-001": {
+      "type": "mandatory",
+      "content": "双门同时声明：每个stage必须在frontmatter同时声明exit_criteria + next_stage_entry_criteria",
+      "status": "COVERED"
+    },
+    "PTP-002": {
+      "type": "mandatory",
+      "content": "机器可验证优先：每条criterion必须能被validate_stage_*.py自动校验；不可机器验证的标注manual:true",
+      "status": "COVERED"
+    },
+    "PTP-003": {
+      "type": "mandatory+prohibition",
+      "content": "HiL强制节点：Stage过渡必须有用户显式点头，不可跳过",
+      "status": "COVERED"
+    },
+    "PTP-004": {
+      "type": "mandatory",
+      "content": "回滚协议配套：每个stage都有rollback_snapshot_path，过渡失败可回退",
+      "status": "COVERED"
+    },
+    "PTP-005": {
+      "type": "mandatory+prohibition",
+      "content": "零暗门原则：next_stage_entry_criteria必须是前一stage的exit_criteria子集，由validate_phase_transition.py --check zero-backdoor校验",
+      "status": "COVERED"
+    },
+    "PTP-EXIT-FORMAT": {
+      "type": "constraint",
+      "content": "exit_criteria格式约束：id格式EXIT-<stage>-<seq>，validator在machine_verifiable:true时必填，blocking默认true",
+      "status": "COVERED"
+    },
+    "PTP-ACCEPTANCE": {
+      "type": "mandatory",
+      "content": "HiL审核产出docs/09_audit/phase-N-acceptance.md，包含退出门校验结果、准入门校验结果、用户签字、日期、已知风险清单",
+      "status": "COVERED"
+    },
+    "PTP-SCRIPTS": {
+      "type": "mandatory",
+      "content": "校验脚本：validate_phase_exit.py --phase N / validate_phase_entry.py --phase N / validate_phase_transition.py --from N --to N+1",
+      "status": "COVERED"
+    }
+  },
+  "summary": {
+    "total_rules": 8,
+    "COVERED": 8,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "原YAML section gov_arch_005仅有占位action'遵守GOV-ARCH-005'，无具体规则",
+    "补充PTP-001~PTP-005到original_rules",
+    "补充4条conditions（1条trigger+3条constraint）",
+    "补充8条actions（8条mandatory）",
+    "补充4条prohibitions（零暗门/跳过HiL/跨stage偷跑/stable例外）"
+  ]
+}

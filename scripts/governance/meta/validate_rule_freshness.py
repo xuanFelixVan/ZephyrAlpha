@@ -43,7 +43,7 @@ from _shared.constants import EXIT_PASS, REPO_ROOT
 
 DEFAULT_MAX_AGE_DAYS = 7
 INJECTED_FILES = [
-    REPO_ROOT / "scripts" / "governance" / "QUICKSTART.md",
+    REPO_ROOT / "scripts" / "governance" / "quickstart.md",
     REPO_ROOT / "AGENTS.md",
     REPO_ROOT / ".trae" / "rules" / "project_rules.md",
 ]

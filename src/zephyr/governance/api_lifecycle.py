@@ -1,24 +1,16 @@
-# [BLUEPRINT] DOM-GOV-001 | 03_modules/_domain-governance/blueprint.md | §
-
-# [MODULE] zephyr.governance.api_lifecycle
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
-# [CONSUMERS]
-
-# [STABILITY] evolving
-
-# [SAFETY] L
-
-# [AI_AUTONOMY] ai_modifiable
-
-# [ERROR_CONTRACT]
-
-# [TESTS]
-
+# [A_module] module_id=MOD-UNK_api_lifecycle | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 from __future__ import annotations
+
+# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md
+# [MODULE] zephyr.governance.audit_trail
+# [INVARIANTS] 不可变审计记录;密码学完整性;只追加
+# [MODIFY-GUARD] docs/03_modules/_domain-governance/audit-trail/blueprint.md;src/zephyr/audit-trail/__init__.py
+# [CONSUMERS] MOD-INF-027;MOD-INF-015;MOD-INF-010
+# [STABILITY] stable
+# [SAFETY] H
+# [AI_AUTONOMY] immutable_core
+# [ERROR_CONTRACT] IntegrityError;WriteError
+# [TESTS] tests/test_audit_trail/
 
 from datetime import datetime, timezone, timedelta
 from enum import Enum
@@ -26,12 +18,10 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-
 class APIState(str, Enum):
     ACTIVE = "Active"
     DEPRECATED = "Deprecated"
     REMOVED = "Removed"
-
 
 class DeprecationNotice(BaseModel):
     api_name: str
@@ -55,14 +45,12 @@ class DeprecationNotice(BaseModel):
     def expired(self) -> bool:
         return self.days_until_removal == 0
 
-
 class APIEndpoint(BaseModel):
     name: str
     version: str
     state: APIState = APIState.ACTIVE
     deprecation: Optional[DeprecationNotice] = None
     sunset_date: Optional[str] = None
-
 
 def deprecate_api(
     endpoint: APIEndpoint,
@@ -79,7 +67,6 @@ def deprecate_api(
     endpoint.state = APIState.DEPRECATED
     endpoint.deprecation = notice
     return notice
-
 
 def remove_api(endpoint: APIEndpoint) -> None:
     endpoint.state = APIState.REMOVED

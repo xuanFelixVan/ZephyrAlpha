@@ -1,3 +1,4 @@
+# [A_config] module_id=CFG-ai-risk-register | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: DOM-GOV-001
@@ -16,6 +17,7 @@
 # 对标: NIST AI RMF 1.0 / ISO 42001 §8 / OWASP LLM Top 10
 # ============================================================================
 
+module_id: DOM-GOV-001
 schema_version: "1.0.0"
 doc_type: register
 title: "AI 风险登记簿"
@@ -86,11 +88,11 @@ risks:
     trigger_condition: "读取外部或用户提供的 .md 时"
     blast_radius: module
     mitigation:
-      - "governance-automation 审查与 LSG（ADR-0020）"
+      - "governance-automation 审查与 LSG（KBG-0020）"
       - "ai-hallucination-self-check-policy"
     mitigation_status: partially_addressed
     related_gate: null
-    related_kb_ref: "ADR-0020"
+    related_kb_ref: "KBG-0020"
     last_reviewed: "2026-05-02"
 
   - risk_id: "AI-RSK-003"
@@ -126,7 +128,7 @@ risks:
       - "Provenance 三件套"
     mitigation_status: addressed_with_auto
     related_gate: ["GATE-12", "GATE-15", "GATE-16"]
-    related_kb_ref: "ADR-0003"
+    related_kb_ref: "KBG-0003"
     last_reviewed: "2026-05-02"
 
   - risk_id: "AI-RSK-005"

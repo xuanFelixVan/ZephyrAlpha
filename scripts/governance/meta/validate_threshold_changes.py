@@ -3,7 +3,7 @@
 
 对标 B16（关键阈值变更审计）+ ITIL 4 Configuration Change Audit。
 每次阈值文件被修改时，记录 old→new 的 diff 到 append-only 审计日志。
-由 pre-commit 钩子自动触发。
+由 pre_commit 钩子自动触发。
 
 Usage:
     python scripts/governance/meta/validate_threshold_changes.py
@@ -11,6 +11,14 @@ Usage:
 """
 
 from __future__ import annotations
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.constants import EXIT_PASS
 
 
@@ -18,7 +26,7 @@ __manifest__ = """
 args: []
 description: >
   阈值变更审计——每次阈值文件被修改时，记录 old→new 的 diff 到 append-only 审计日志，
-  由 pre-commit 钩子自动触发。
+  由 pre_commit 钩子自动触发。
 dimensions:
 - D1
 - D5

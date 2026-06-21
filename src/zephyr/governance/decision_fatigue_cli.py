@@ -1,22 +1,14 @@
-# [BLUEPRINT] DOM-GOV-001 | 03_modules/_domain-governance/blueprint.md | §
-
-# [MODULE] zephyr.governance.decision_fatigue_cli
-
-# [INVARIANTS] none
-
-# [MODIFY-GUARD] none
-
-# [CONSUMERS]
-
+# [A_module] module_id=MOD-RES_decision_fatigue_cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
+# [MODULE] zephyr.infrastructure.escalation
+# [INVARIANTS] 升级裁决;四级约束;Kill Switch
+# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md;src/zephyr/escalation-engine/__init__.py
+# [CONSUMERS] MOD-INF-027;MOD-INF-020;MOD-INF-018
 # [STABILITY] evolving
-
-# [SAFETY] L
-
-# [AI_AUTONOMY] ai_modifiable
-
-# [ERROR_CONTRACT]
-
-# [TESTS]
+# [SAFETY] H
+# [AI_AUTONOMY] human_gated
+# [ERROR_CONTRACT] EscalationError;TimeoutError
+# [TESTS] tests/test_escalation_engine/
 
 from __future__ import annotations
 

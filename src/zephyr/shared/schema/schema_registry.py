@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_schema_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.schema.schema_registry
 
@@ -155,7 +156,7 @@ class SchemaRegistry:
     def compatible_versions_for(self, consumer_version: str, schema_name: str) -> list[SchemaEntry]:
         """查找与 consumer_version 兼容的所有 schema 版本。
 
-        cross-layer-contracts.yaml VER-R1：同 MAJOR MUST 前后兼容。
+        cross_layer_contracts.yaml VER-R1：同 MAJOR MUST 前后兼容。
 
         Args:
             consumer_version: 消费者当前版本（如 "0.7.0"）。

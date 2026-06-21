@@ -13,6 +13,7 @@
 # 最后更新：2026-05-06
 # =============================================================================
 
+module_id: MOD-INF-035
 strategy:
   name: "git-native + SQLite dump dual-track"
   version: "0.10.0"

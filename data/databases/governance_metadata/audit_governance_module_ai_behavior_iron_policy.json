@@ -1,0 +1,101 @@
+{
+  "task_id": "DM-100132",
+  "source_file": "docs/01_policies_and_standards/governance/module/ai_behavior_iron_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_032_module_lifecycle.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "IRN-001_编码扫描": {
+      "source_section": "§5 IRN-001",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_002",
+      "details": "YAML/Markdown写入后必须运行check_encoding.py确认UTF-8"
+    },
+    "IRN-002_Session预算": {
+      "source_section": "§5 IRN-002",
+      "type": "constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_002",
+      "details": "新创建文件≤8个+新建目录≤3个+Phase Gate期间翻倍"
+    },
+    "IRN-003_SSoT唯一": {
+      "source_section": "§5 IRN-003",
+      "type": "constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_002",
+      "details": "每个架构事实有且仅有一份权威来源"
+    },
+    "IRN-004_断链清零": {
+      "source_section": "§5 IRN-004",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_002",
+      "details": "删除或移动文件后同一commit中更新所有引用"
+    },
+    "IRN-005_Phase_Gate": {
+      "source_section": "§5 IRN-005",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_002",
+      "details": "scaffold未完成前禁止进入beta+落日条款"
+    },
+    "IRN-006_模型能力边界": {
+      "source_section": "§5 IRN-006",
+      "type": "constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_002",
+      "details": "AI模型必须在其能力契约定义的边界内操作"
+    },
+    "IRN-007_架构终局锁定": {
+      "source_section": "§5 IRN-007",
+      "type": "constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_002",
+      "details": "架构模型锁定后变更必须走Emergency Change Board"
+    },
+    "IRN-008_先读后写": {
+      "source_section": "§5 IRN-008",
+      "type": "mandatory",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_002",
+      "details": "修改任何文件前必须Read该文件当前内容"
+    },
+    "IRN-009_双工具互斥": {
+      "source_section": "§5 IRN-009",
+      "type": "prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_002",
+      "details": "禁止Cursor和Trae同时打开同一文件编辑"
+    },
+    "IRN-010_受保护路径不可写": {
+      "source_section": "§5 IRN-010",
+      "type": "prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_002",
+      "details": ".git/只读+AGENTS.md重大修改需Owner审批+meta/下.md+architecture-model/"
+    },
+    "IRN-011_零残留原则": {
+      "source_section": "§5 IRN-011",
+      "type": "mandatory+prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_002",
+      "details": "ZR-001~009九条规则+临时文件即删+被替代即删+孤儿即查+废墟禁引+残留学债零容忍+文件生命周期闭环+新文件准入+Session终了自净+代码级残留自检+不可删除例外清单"
+    },
+    "P0_P1_P2_违反处置": {
+      "source_section": "§6 违反铁律的处置",
+      "type": "constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_032_module_lifecycle.yaml:mod_002",
+      "details": "P0(铁律1,8,10,11)立即中止+P1(铁律2-4,9)警告自纠+P2(铁律5-7)记录违规"
+    }
+  },
+  "summary": {
+    "total_rules": 12,
+    "COVERED": 12,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "trae_032_module_lifecycle.yaml: 在mod_002 section中添加5条conditions+4条actions+5条prohibitions覆盖ai_behavior_iron_policy.md全部IRN铁律和违反处置规则"
+  ]
+}

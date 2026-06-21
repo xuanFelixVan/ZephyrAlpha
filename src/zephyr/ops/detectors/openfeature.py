@@ -1,0 +1,31 @@
+# [A_module] module_id=MOD-UNK_openfeature | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-010 | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
+
+# [MODULE] zephyr.observability.feedback_loop.detectors.openfeature
+
+# [INVARIANTS] none
+
+# [MODIFY-GUARD] none
+
+# [CONSUMERS]
+
+# [STABILITY] evolving
+
+# [SAFETY] L
+
+# [AI_AUTONOMY] ai_modifiable
+
+# [ERROR_CONTRACT]
+
+# [TESTS]
+
+"""OpenFeature Integration — v0.13.0 R181
+
+Blindspot: Flag evaluation not standardized; vendor lock-in.
+"""
+
+from dataclasses import dataclass
+
+@dataclass
+class OpenFeature:
+    provider: str = "flagd"

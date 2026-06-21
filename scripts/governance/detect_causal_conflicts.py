@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §3.9
+# [BLUEPRINT] GOV-073 | docs/03_modules/_domain-governance/blueprint.md | §3.9
 # [MODULE] scripts.governance.detect_causal_conflicts
 # [INVARIANTS] 冲突检测不可遗漏;冲突必须包含因果链
 # [MODIFY-GUARD] 冲突类型变更需同步conflict_detector.py
@@ -21,8 +21,36 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Optional
 
+import sqlite3
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-DEFAULT_DEPGRAPH_PATH = PROJECT_ROOT / "data" / "asset_index" / "project-entity-depgraph.yaml"
+DEFAULT_DEPGRAPH_PATH = PROJECT_ROOT / "data" / "databases" / "depgraph.db"
+
+
+def _load_depgraph_from_db(db_path: Path) -> dict:
+    """从 SQLite 数据库加载 depgraph，返回与原 YAML 结构兼容的 dict。"""
+    conn = sqlite3.connect(str(db_path))
+    conn.row_factory = sqlite3.Row
+    data: dict = {"nodes": {}, "edges": [], "domains": {}, "metadata": {}}
+    for row in conn.execute("SELECT * FROM nodes"):
+        node = dict(row)
+        nid = node.pop("node_id")
+        if "node_type" in node:
+            node["type"] = node.pop("node_type")
+        data["nodes"][nid] = node
+    for row in conn.execute("SELECT * FROM edges"):
+        edge = dict(row)
+        if "from_node" in edge:
+            edge["from"] = edge.pop("from_node")
+        if "to_node" in edge:
+            edge["to"] = edge.pop("to_node")
+        data["edges"].append(edge)
+    for row in conn.execute("SELECT * FROM domains"):
+        domain = dict(row)
+        did = domain.pop("domain_id")
+        data["domains"][did] = domain
+    conn.close()
+    return data
 
 
 class CausalChainBrokenError(Exception):
@@ -62,17 +90,7 @@ class CausalConflictDetector:
             self._loaded = True
             return
         try:
-            import yaml
-            def _tuple_constructor(loader, node):
-                return tuple(loader.construct_sequence(node))
-            yaml.SafeLoader.add_constructor("tag:yaml.org,2002:python/tuple", _tuple_constructor)
-            with open(str(self._depgraph_path), "r", encoding="utf-8") as f:
-                self._depgraph = yaml.safe_load(f) or {}
-        except ImportError:
-            json_path = self._depgraph_path.with_suffix(".json")
-            if json_path.exists():
-                with open(str(json_path), "r", encoding="utf-8") as f:
-                    self._depgraph = json.load(f)
+            self._depgraph = _load_depgraph_from_db(self._depgraph_path)
         except Exception:
             self._depgraph = {}
         nodes = self._depgraph.get("nodes", {})
@@ -128,10 +146,10 @@ class CausalConflictDetector:
         self._load_depgraph()
         conflicts: list[dict[str, Any]] = []
         layer_order = {
-            "l01_infrastructure": 1,
-            "l02_platform": 2,
-            "l03_domain": 3,
-            "l04_application": 4,
+            "infrastructure.runtime_integration": 1,
+            "infrastructure.runtime_integration": 2,
+            "governance": 3,
+            "governance": 4,
         }
         for node_id, path in self._node_to_path.items():
             parts = path.replace("\\", "/").split("/")
@@ -239,7 +257,7 @@ class CausalConflictDetector:
         conflicts: list[dict[str, Any]] = []
         priority_map: dict[str, str] = {}
         for node_id, node_data in self._depgraph.get("nodes", {}).items():
-            safety = node_data.get("safety", "")
+            safety = node_data.get("impact_level", node_data.get("safety", ""))
             if safety:
                 priority_map[node_id] = safety
         safety_order = {"H": 3, "M": 2, "L": 1}

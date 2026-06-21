@@ -1,0 +1,215 @@
+rule_id: TRAE-009
+title: 防幻觉-安全防护层
+aliases:
+- ANTI-HALL-15
+- ANTI-HALL-16
+- ANTI-HALL-17
+- ANTI-HALL-18
+layer: L0
+severity: critical
+scope: security_guard
+domain: TRAE
+triggers:
+- operation: code_write
+- operation: code_modify
+sections:
+  anti_hall_15:
+    title: 安全最低通过——认证+注入+数据暴露
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-15
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 交付前MUST通过：认证/注入/数据暴露三项检查
+    prohibitions:
+    - 安全漏洞交付
+  anti_hall_16:
+    title: 计划先行——>3文件/>50行先计划
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-16
+    conditions:
+    - type: pre_condition
+      check: 涉及>3文件或>50行
+      pass: MUST先输出计划
+      fail: 可直接执行
+    actions:
+    - type: mandatory
+      step: 先输出计划→确认→执行→验证
+    prohibitions:
+    - 无计划大范围修改
+  anti_hall_17:
+    title: 跨文件影响检查——读CONSUMERS字段
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-17
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 修改前MUST检查[CONSUMERS]+Grep所有引用
+    prohibitions:
+    - 改一处忘其他，集成断裂
+  anti_hall_18:
+    title: 上下文新鲜度——>30轮开新会话
+    section_type: rule
+    original_rules:
+    - ANTI-HALL-18
+    conditions: []
+    actions:
+    - type: mandatory
+      step: 对话>30轮或AI出现重复/矛盾→开新会话
+    prohibitions:
+    - 上下文退化继续操作
+  gov_eng_009_security_check:
+    title: 安全最低通过检查流程
+    section_type: procedure
+    original_rules:
+    - ANTI-HALL-15
+    items:
+    - order: 1
+      action: "认证检查——敏感操作是否有权限控制"
+      pre_condition: "代码涉及敏感操作"
+      expected_result: "有权限控制机制"
+      on_failure: "缺失→必须添加"
+    - order: 2
+      action: "注入检查——SQL/命令/路径是否有参数化"
+      pre_condition: "代码涉及SQL/命令/路径操作"
+      expected_result: "使用参数化而非字符串拼接"
+      on_failure: "拼接→必须参数化"
+    - order: 3
+      action: "数据暴露检查——日志/错误信息是否泄露敏感数据"
+      pre_condition: "代码涉及日志/错误输出"
+      expected_result: "敏感数据已脱敏"
+      on_failure: "泄露→必须脱敏"
+  gov_eng_009_plan_trigger:
+    title: 计划先行触发条件决策树
+    section_type: decision_tree
+    original_rules:
+    - ANTI-HALL-16
+    items:
+    - condition: "修改>3个文件"
+      if_true: "触发计划先行——输出计划→确认→执行→验证"
+      if_false: "继续检查下一个条件"
+    - condition: "新增>50行代码"
+      if_true: "触发计划先行"
+      if_false: "继续检查下一个条件"
+    - condition: "涉及>2个模块的接口变更"
+      if_true: "触发计划先行"
+      if_false: "继续检查下一个条件"
+    - condition: "数据库Schema变更"
+      if_true: "触发计划先行"
+      if_false: "可直接执行"
+  gov_eng_009_cross_file_check:
+    title: 跨文件影响检查流程
+    section_type: procedure
+    original_rules:
+    - ANTI-HALL-17
+    items:
+    - order: 1
+      action: "读取文件头部[CONSUMERS]字段→列出所有消费者"
+      pre_condition: "准备修改文件"
+      expected_result: "消费者清单已获取"
+      on_failure: "[CONSUMERS]缺失→必须先补充"
+    - order: 2
+      action: "Grep项目中所有import/引用该文件的位置"
+      pre_condition: "消费者清单已获取"
+      expected_result: "所有引用点已列出"
+      on_failure: "引用遗漏→集成断裂风险"
+    - order: 3
+      action: "评估修改对每个消费者的影响→无影响→继续/有影响→同步修改"
+      pre_condition: "所有引用点已列出"
+      expected_result: "影响评估完成，相关消费者已同步修改"
+      on_failure: "有影响未同步→集成断裂"
+  gov_eng_009_context_freshness:
+    title: 上下文新鲜度判定
+    section_type: decision_tree
+    original_rules:
+    - ANTI-HALL-18
+    items:
+    - condition: "对话轮数>30"
+      if_true: "上下文退化风险——建议开新会话"
+      if_false: "继续检查下一个条件"
+    - condition: "AI输出与之前矛盾"
+      if_true: "上下文已污染——必须开新会话"
+      if_false: "继续检查下一个条件"
+    - condition: "AI重复相同输出"
+      if_true: "陷入循环——必须开新会话"
+      if_false: "继续检查下一个条件"
+    - condition: "AI忘记之前确认的决策"
+      if_true: "上下文溢出——必须开新会话"
+      if_false: "上下文新鲜度正常"
+  gov_eng_009_cross_refs:
+    title: 交叉引用
+    section_type: context
+    original_rules:
+    - ANTI-HALL-15
+    - ANTI-HALL-16
+    - ANTI-HALL-17
+    - ANTI-HALL-18
+    summary: 安全防护层(#15-#18)是防幻觉十八条的最外层，也是交付前的最后防线
+    impact_on_rules: 安全检查不通过=禁止交付
+    key_decisions:
+    - 安全最低通过是交付的硬性门槛
+    - 计划先行防止大范围修改失控
+    - 跨文件影响检查依赖[CONSUMERS]字段完整性
+  gov_eng_009_scope:
+    title: 适用范围
+    section_type: context
+    original_rules:
+    - ANTI-HALL-15
+    - ANTI-HALL-16
+    - ANTI-HALL-17
+    - ANTI-HALL-18
+    summary: 安全防护层(#15-#18)适用于所有代码交付前的安全检查，是防幻觉十八条的最外层防线
+    impact_on_rules: 安全检查不通过=禁止交付
+    key_decisions:
+    - 安全最低通过是交付的硬性门槛
+    - 计划先行防止大范围修改失控
+    - 跨文件影响检查依赖[CONSUMERS]字段完整性
+    - 上下文新鲜度防止退化上下文产生幻觉
+  gov_eng_009_change_history:
+    title: 变更历史
+    section_type: context
+    original_rules:
+    - ANTI-HALL-15
+    - ANTI-HALL-16
+    - ANTI-HALL-17
+    - ANTI-HALL-18
+    summary: 安全防护层#15-#18提取自GOV-ENG-001§8.8-§8.11
+    impact_on_rules: 无结构性变更
+    key_decisions:
+    - "#15-#18从GOV-ENG-001§8独立提取为规则条目"
+    items:
+    - version: '1.1.0'
+      date: '2026-06-19'
+      change: 'RQ审查修复：移除provenance中已删除的code_construction_standards.md源文件引用（RQ-04引用断裂）；同步project_rules.md和onboarding_detail.md哈希到当前值（RQ-09哈希不匹配）'
+    - version: '1.0.0'
+      date: '2026-06-13'
+      change: '初始提取——#15-#18从GOV-ENG-001§8独立提取为规则条目'
+references:
+  rule_ids: []
+  scripts: []
+  modules: []
+  blueprints:
+  - GOV-ENG-001
+  - GOV-ENG-002
+enforcement:
+  type: code
+  executors:
+  - ruff
+  - mypy
+  - pre-commit
+  - audit_registration.py
+  bypass_allowed: false
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001
+  note: '2026-06-19 RQ审查：移除已删除的 code_construction_standards.md 源文件引用（内容已迁移到
+    trae_006/007/008/009 + project_rules.md + onboarding_detail.md）；同步 project_rules.md
+    和 onboarding_detail.md 的哈希到当前值'

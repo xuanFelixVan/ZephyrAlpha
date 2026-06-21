@@ -7,10 +7,11 @@
 # --- 治理锚定结束 ---
 # MOD-INF-005 §7.2 脚本质量标准 → 验证脚本映射矩阵
 # 自动生成于 2026-05-07
-# 来源: quality-standard.md 38 条款 (22 MUST + 16 SHOULD) × scripts/governance/
+# 来源: quality_standard.md 38 条款 (22 MUST + 16 SHOULD) × scripts/governance/
 
+module_id: MOD-INF-005
 generated_at: "2026-05-07T00:00:00Z"
-source: "scripts/governance/quality-standard.md"
+source: "scripts/governance/quality_standard.md"
 total_clauses: 38
 must_clauses: 22
 should_clauses: 16

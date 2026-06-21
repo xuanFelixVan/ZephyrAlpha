@@ -1,0 +1,56 @@
+{
+  "task_id": "DM-100152",
+  "source_file": "docs/01_policies_and_standards/governance/security/access_control_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_031_security_key_access.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "ACS-001": {
+      "title": "最小权限原则",
+      "type": "mandatory",
+      "content": "每个角色/用户/AI只授予完成其任务所需的最小权限集",
+      "coverage": "COVERED",
+      "yaml_section": "acs_001"
+    },
+    "ACS-002": {
+      "title": "禁止共享账号",
+      "type": "prohibition",
+      "content": "每个人/AI必须使用独立账号，禁止共享凭证",
+      "coverage": "COVERED",
+      "yaml_section": "acs_002"
+    },
+    "ACS-003": {
+      "title": "AI代理权限必须受控",
+      "type": "mandatory+prohibition",
+      "content": "AI代理的权限必须在GOV-AI-001中明确注册，未注册的权限默认禁止",
+      "coverage": "COVERED",
+      "yaml_section": "acs_003"
+    },
+    "ACS-004": {
+      "title": "权限审批流程",
+      "type": "mandatory+constraint",
+      "content": "新增权限必须Owner审批/临时权限最长7天/权限变更24小时内更新矩阵",
+      "coverage": "COVERED",
+      "yaml_section": "acs_004"
+    },
+    "ACS-005": {
+      "title": "权限周期性审查",
+      "type": "mandatory",
+      "content": "所有活跃权限每季度复审一次，不再需要的权限7天内收回",
+      "coverage": "COVERED",
+      "yaml_section": "acs_005"
+    }
+  },
+  "summary": {
+    "total_rules": 5,
+    "COVERED": 5,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "新增acs_001节：最小权限原则（原YAML仅有SEC-001/002/003占位符，无ACS规则）",
+    "新增acs_002节：禁止共享账号",
+    "新增acs_003节：AI代理权限必须受控",
+    "新增acs_004节：权限审批流程（含3个约束条件）",
+    "新增acs_005节：权限周期性审查"
+  ]
+}

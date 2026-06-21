@@ -4,7 +4,7 @@
 # doc_type: policy_config
 # status: active
 # version: "1.0.0"
-# layer: l01_infrastructure
+# layer: l01-infrastructure
 # owner: ZephyrAlpha-Owner
 # classification: confidential
 # language: zh
@@ -84,8 +84,8 @@ tiers:
 # ═══════════════════════════════════════════════════════════════════
 
 file_permissions:
-  - paths: ["AGENTS.md", "docs/**", "scripts/governance/QUICKSTART.md",
-            "scripts/governance/quality-standard.md",
+  - paths: ["AGENTS.md", "docs/**", "scripts/governance/quickstart.md",
+            "scripts/governance/quality_standard.md",
             "scripts/governance/_shared/thresholds.yaml",
             "scripts/governance/meta/trust_tier_policy.yaml",
             "scripts/governance/meta/kill_switch_state.yaml"]

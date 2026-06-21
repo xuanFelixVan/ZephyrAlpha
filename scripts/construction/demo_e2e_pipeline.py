@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-005 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md | §
 # [MODULE] scripts.construction.demo_e2e_pipeline
 # [INVARIANTS] 
 # [MODIFY-GUARD] 
@@ -72,13 +72,13 @@ def verdict(step: str, ok: bool, note: str = "") -> str:
 #  L00: Data Source — 真实行情获取 + Quality Gate
 # ═══════════════════════════════════════════════════════════
 
-def run_l00_data_source() -> dict[str, Any]:
+def run_data() -> dict[str, Any]:
     banner("L00: DataSource — 真实行情获取 + Quality Gate")
 
-    from zephyr.l00_data_source.implementations.akshare_provider import (
+    from zephyr.data.akshare_provider import (
         AkshareProvider,
     )
-    from zephyr.l00_data_source.implementations.default_quality_gate import (
+    from zephyr.data.default_quality_gate import (
         DefaultQualityGate,
     )
 
@@ -125,10 +125,10 @@ def run_l00_data_source() -> dict[str, Any]:
 #  L02: Alpha Factor — 动量因子计算
 # ═══════════════════════════════════════════════════════════
 
-def run_l02_factor(market_data: dict[str, Any]) -> dict[str, Any]:
+def run_factor(market_data: dict[str, Any]) -> dict[str, Any]:
     banner("L02: Alpha Factor — 因子计算 + 注册")
 
-    from zephyr.l02_alpha_factor.factor_base import (
+    from zephyr.governance.factor.factor_base import (
         FactorBase,
         FactorMeta,
         FactorRegistry,
@@ -160,16 +160,16 @@ def run_l02_factor(market_data: dict[str, Any]) -> dict[str, Any]:
 #  L03: Signal Generation — 信号合成 + 资金分配
 # ═══════════════════════════════════════════════════════════
 
-def run_l03_signals(factor_scores: dict[str, dict[str, float]]) -> dict[str, Any]:
+def run_signal(factor_scores: dict[str, dict[str, float]]) -> dict[str, Any]:
     banner("L03: Signal Generation — 信号合成 + 资金分配")
 
-    from zephyr.l03_signal_generation.implementations.default_signal_aggregator import (
+    from zephyr.signal_fundamental.default_signal_aggregator import (
         DefaultSignalAggregator,
     )
-    from zephyr.l03_signal_generation.implementations.default_capital_allocator import (
+    from zephyr.signal_fundamental.default_capital_allocator import (
         DefaultCapitalAllocator,
     )
-    from zephyr.shared.contracts.factor_signal import FactorSignal
+    from zephyr.integration.contracts.factor_signal import FactorSignal
     from datetime import datetime, timezone
 
     aggregator = DefaultSignalAggregator()
@@ -212,14 +212,14 @@ def run_l03_signals(factor_scores: dict[str, dict[str, float]]) -> dict[str, Any
 #  L04: Risk Management — 风控校验 + 止损
 # ═══════════════════════════════════════════════════════════
 
-def run_l04_risk(symbols: list[str]) -> dict[str, Any]:
+def run_risk(symbols: list[str]) -> dict[str, Any]:
     banner("L04: Risk Management — 风控校验 + 止损")
 
-    from zephyr.l04_risk_management.implementations.default_risk_validator import (
+    from zephyr.risk.default_risk_validator import (
         DefaultRiskValidator,
     )
-    from zephyr.l04_risk_management.risk_manager import RiskLimits
-    from zephyr.l04_risk_management.stop_loss import evaluate_stop_loss
+    from zephyr.risk.risk_manager import RiskLimits
+    from zephyr.risk.stop_loss import evaluate_stop_loss
 
     limits = RiskLimits(
         as_of_date=datetime.now(timezone.utc),
@@ -271,18 +271,18 @@ def run_l04_risk(symbols: list[str]) -> dict[str, Any]:
 #  L05+L06: Portfolio → Execution — 策略→订单→执行
 # ═══════════════════════════════════════════════════════════
 
-def run_l05_l06_execution(symbols: list[str]) -> dict[str, Any]:
+def run_pf_core06_execution(symbols: list[str]) -> dict[str, Any]:
     banner("L05+L06: Strategy → Broker → ExecutionEngine")
 
-    from zephyr.l05_portfolio_construction.strategies.default_equity_strategy import (
+    from zephyr.governance.core.default_equity_strategy import (
         DefaultEquityStrategy,
         RebalanceMode,
     )
-    from zephyr.l06_trade_execution.adapters.simulation_broker import (
+    from zephyr.governance.core.adapters.simulation_broker import (
         SimulationBroker,
     )
-    from zephyr.l06_trade_execution.order_manager import OrderManager
-    from zephyr.l06_trade_execution.execution_engine import (
+    from zephyr.ex_core.src.zephyr.order_manager import OrderManager
+    from zephyr.ex_core.src.zephyr.execution_engine import (
         ExecutionEngine,
         AlgoType,
         ExecutionConfig,
@@ -347,14 +347,14 @@ def run_l05_l06_execution(symbols: list[str]) -> dict[str, Any]:
 #  L07: Post-Trade Analytics — TCA
 # ═══════════════════════════════════════════════════════════
 
-def run_l07_tca(fills: int) -> None:
+def run_pf_core(fills: int) -> None:
     banner("L07: Post-Trade Analytics — TCA")
 
-    from zephyr.l07_post_trade_analytics.implementations.default_tca_engine import (
+    from zephyr.governance.core.default_tca_engine import (
         DefaultTCAEngine,
     )
-    from zephyr.shared.contracts.fill import Fill
-    from zephyr.shared.contracts.order import Order, OrderSide, OrderType
+    from zephyr.integration.contracts.fill import Fill
+    from zephyr.integration.contracts.order import Order, OrderSide, OrderType
 
     engine = DefaultTCAEngine()
 
@@ -391,10 +391,10 @@ def run_l07_tca(fills: int) -> None:
 #  L09: Research & Innovation — Backtest
 # ═══════════════════════════════════════════════════════════
 
-def run_l09_backtest(symbols: list[str]) -> None:
+def run_research(symbols: list[str]) -> None:
     banner("L09: Research & Innovation — Backtest")
 
-    from zephyr.l09_research_innovation.implementations.default_backtest_engine import (
+    from zephyr.simulation.simulation.default_backtest_engine import (
         DefaultBacktestEngine,
     )
 
@@ -424,13 +424,13 @@ def run_l09_backtest(symbols: list[str]) -> None:
 #  L10: Compliance — 安全网关
 # ═══════════════════════════════════════════════════════════
 
-def run_l10_compliance() -> None:
+def run_compliance() -> None:
     banner("L10: Compliance — Security Gateway")
 
-    from zephyr.l10_compliance.implementations.default_security_gateway import (
+    from zephyr.security.llm_defense.llm_security.default_security_gateway import (
         DefaultSecurityGateway,
     )
-    from zephyr.l10_compliance.security_gateway_base import AuditAction
+    from zephyr.security.llm_defense.llm_security.security_gateway_base import AuditAction
 
     gateway = DefaultSecurityGateway()
 
@@ -453,13 +453,13 @@ def run_l10_compliance() -> None:
 #  L11: ML Platform — Inference
 # ═══════════════════════════════════════════════════════════
 
-def run_l11_inference() -> None:
+def run_ml_inference() -> None:
     banner("L11: ML Platform — Inference")
 
-    from zephyr.l11_ml_platform.implementations.default_inference_engine import (
+    from zephyr.intelligence.model_evaluation.implementations.default_inference_engine import (
         DefaultInferenceEngine,
     )
-    from zephyr.shared.contracts.model_serving_request import ModelServingRequest
+    from zephyr.integration.contracts.model_serving_request import ModelServingRequest
 
     engine = DefaultInferenceEngine()
     request = ModelServingRequest(
@@ -478,13 +478,13 @@ def run_l11_inference() -> None:
 #  L13: Experimentation — A/B Pipeline
 # ═══════════════════════════════════════════════════════════
 
-def run_l13_experiment() -> None:
+def run_experiment() -> None:
     banner("L13: Experimentation — A/B Pipeline")
 
-    from zephyr.l13_experimentation.implementations.default_experiment_pipeline import (
+    from zephyr.integration.zephyr.default_experiment_pipeline import (
         DefaultExperimentPipeline,
     )
-    from zephyr.l13_experimentation.pipeline_base import ExperimentConfig
+    from zephyr.integration.zephyr.infrastructure.pipeline_base import ExperimentConfig
 
     pipeline = DefaultExperimentPipeline()
     config = ExperimentConfig(
@@ -514,38 +514,38 @@ def main() -> int:
     print("=" * 60)
 
     # L00
-    l00 = run_l00_data_source()
+    l00 = run_data()
     symbols = l00["symbols"]
     if len(symbols) < 3:
         print("\n[ABORT] 不足 3 只股票有足够数据，终止演示")
         return 1
 
     # L02
-    l02 = run_l02_factor(l00["market_data"])
+    l02 = run_factor(l00["market_data"])
 
     # L03
-    l03 = run_l03_signals(l02["factor_scores"])
+    l03 = run_signal(l02["factor_scores"])
 
     # L04
-    run_l04_risk(symbols)
+    run_risk(symbols)
 
     # L05+L06
-    l56 = run_l05_l06_execution(symbols)
+    l56 = run_pf_core06_execution(symbols)
 
     # L07
-    run_l07_tca(l56["fills"])
+    run_pf_core(l56["fills"])
 
     # L09
-    run_l09_backtest(symbols)
+    run_research(symbols)
 
     # L10
-    run_l10_compliance()
+    run_compliance()
 
     # L11
-    run_l11_inference()
+    run_ml_inference()
 
     # L13
-    run_l13_experiment()
+    run_experiment()
 
     # Final verdict
     total = len(DEMO_VERDICT)

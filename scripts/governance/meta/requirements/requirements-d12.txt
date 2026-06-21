@@ -1,6 +1,0 @@
-# requirements-d12.txt — D12 AI幻觉检测维度
-# v1 SelfCheckGPT 零资源方案——仅需 numpy
-# v2 entity-graph 完全体——需额外 transformers/torch
-numpy>=1.24
-# transformers>=4.30  # v2 启用
-# torch>=2.0        # v2 启用

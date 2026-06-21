@@ -1,0 +1,45 @@
+gate_id: "EN-001"
+name: "EN-001 Circular Dependency Scanner"
+description: >
+  扫描 14 层 + shared/contracts 的全部 Python 导入，构建依赖 DAG，
+  Kahn's algorithm 拓扑排序——若存在环则 P0 阻断。
+phase: "Phase D"
+auto: true
+on_failure: "reject"
+on_pass: "pass"
+rule_ids:
+  - TRAE-013
+  - TRAE-015
+
+checks:
+  - id: "EN-001-CHK-01"
+    name: "Topological sort over layer import DAG"
+    type: "circular_dependency_scan"
+    severity: "error"
+    rule_ids:
+      - TRAE-013
+      - TRAE-015
+    description: "对所有层的 __init__.py 中的 import 语句解析后执行拓扑排序，检测环路"
+    params:
+      scan_targets:
+        - "zephyr.data_pipeline"
+        - "zephyr.data_govern"
+        - "zephyr.infrastructure"
+        - "zephyr.factor"
+        - "zephyr.signal_gen"
+        - "zephyr.signal_quality"
+        - "zephyr.signal_synth"
+        - "zephyr.signal_strategy"
+        - "zephyr.signal_ashare"
+        - "zephyr.risk"
+        - "zephyr.pf_core"
+        - "zephyr.ex_core"
+        - "zephyr.reporting"
+        - "zephyr.frontend"
+        - "zephyr.simulation"
+        - "zephyr.compliance"
+        - "zephyr.ml_train"
+        - "zephyr.infrastructure.runtime_integration.system_telemetry"
+        - "zephyr.research"
+        - "zephyr.shared.contracts"
+      max_layers: 15

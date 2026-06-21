@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SEC_ssot_guard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.security.ssot_guard
 
@@ -28,12 +29,12 @@ safety_level : H（治理层代码）
 
 功能
 ----
-检查 ``document-metadata-index.yaml``（文档元数据索引）与暂存区治理敏感文件之间的一致性，
+检查 ``document-metadata-index-registry.yaml``（文档元数据索引）与暂存区治理敏感文件之间的一致性，
 防止注册表与磁盘状态脱节。
 
 真源
 ----
-- ``REGISTRY_REL_PATH`` → ``docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml``
+- ``REGISTRY_REL_PATH`` → ``docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml``
 
 检查项
 ------
@@ -86,7 +87,7 @@ def _fix_windows_console() -> None:
 # 常量
 # ---------------------------------------------------------------------------
 
-REGISTRY_REL_PATH = "docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml"
+REGISTRY_REL_PATH = "docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml"
 
 WATCHED_PREFIXES: tuple[str, ...] = (
     "scripts/hooks/",

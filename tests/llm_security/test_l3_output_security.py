@@ -1,3 +1,4 @@
+# [A_test] module_id: SRC-TST-0194 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
 # [MODULE] tests.llm_security.test_l3_output_security
 # [STABILITY] evolving
@@ -6,7 +7,7 @@
 # [TESTS] —
 import pytest
 
-from zephyr.llm_security.layers.l3_output import (
+from zephyr.security.llm_defense.llm_security.layers.l3_output import (
     AIGeneratedCodeTrustBoundary,
     AgentPublicInteractionGuard,
     HallucinationResult,
@@ -16,7 +17,7 @@ from zephyr.llm_security.layers.l3_output import (
     SafetyResult,
     SchemaResult,
 )
-from zephyr.llm_security.protocol import SecurityContext, SecurityDecision
+from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
 
 
 class TestOutputSecurityLayer:

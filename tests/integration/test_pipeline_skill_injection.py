@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0177 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-334 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.integration.test_pipeline_skill_injection
 # [STABILITY] evolving
 # [SAFETY] L
@@ -19,14 +20,14 @@ from __future__ import annotations
 import pytest
 from datetime import datetime
 
-from zephyr.core.models import TaskCard
-from zephyr.agent_spec.integration.pipeline_bridge import (
+from zephyr.shared.shared_services.models import TaskCard
+from zephyr.autonomy_core.integration.pipeline_bridge import (
     PipelineSkillBridge,
     SkillContextInjector,
     SkillInjectionResult,
 )
-from zephyr.agent_spec.skill_loader import SkillLoader
-from zephyr.agent_spec.engine import SpecEngine, UpgradeResult
+from zephyr.autonomy_core.skill_loader import SkillLoader
+from zephyr.autonomy_core.engine import SpecEngine, UpgradeResult
 
 
 class TestSkillBridgeIntegration:
@@ -102,7 +103,7 @@ class TestPipelineOrchestratorSkillFlow:
     def test_dispatch_includes_skill_injection(self):
         """PipelineOrchestrator.dispatch(dry_run=True) 结果含 skill_injection 字段."""
         try:
-            from zephyr.pipeline.pipeline_orchestrator import (
+            from zephyr.integration.pipeline_orchestrator import (
                 PipelineOrchestrator,
                 PipelineOrchestratorConfig,
             )
@@ -144,14 +145,14 @@ class TestPipelineOrchestratorSkillFlow:
     def test_call_model_includes_skill_context(self):
         """_call_model 输出含 skill_context 字段."""
         try:
-            from zephyr.pipeline.pipeline_orchestrator import (
+            from zephyr.integration.pipeline_orchestrator import (
                 PipelineOrchestrator,
                 PipelineOrchestratorConfig,
             )
         except ImportError:
             pytest.skip("PipelineOrchestrator not available")
 
-        from zephyr.agent_spec.integration.pipeline_bridge import PipelineSkillBridge
+        from zephyr.autonomy_core.integration.pipeline_bridge import PipelineSkillBridge
 
         bridge = PipelineSkillBridge()
         injection = bridge.inject_for_task(

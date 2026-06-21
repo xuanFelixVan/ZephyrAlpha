@@ -1,12 +1,12 @@
 ---
-
-doc_type: index
-status: Draft
-title: "pipeline — 目录索引"
-version: "1.0.0"
-created: "2026-05-03"
-updated: "2026-05-03"
 blueprint_id: DOM-GOV-001
+created: '2026-05-03'
+doc_type: index
+module_id: MOD-INF-054
+status: Draft
+title: pipeline — 目录索引
+updated: '2026-05-03'
+version: 1.0.0
 ---
 
 

@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0170 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-327 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.integration.test_kb_pipeline_gate_order
 # [STABILITY] evolving
 # [SAFETY] L
@@ -10,12 +11,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.gates.gate_engine import GateResult
-from zephyr.kb.activate import ActivateGate
-from zephyr.kb.analyze import AnalyzeGate
-from zephyr.kb.extract import ExtractGate
-from zephyr.kb.ingest import IngestGate
-from zephyr.kb.triage import TriageGate
+from zephyr.governance.rule_enforcement.gate_engine import GateResult
+from zephyr.intelligence.model_evaluation.activate import ActivateGate
+from zephyr.governance.kb.analyze import AnalyzeGate
+from zephyr.governance.kb.extract import ExtractGate
+from zephyr.governance.ingest import IngestGate
+from zephyr.governance.triage import TriageGate
 
 
 class _RecordingGateBackend:

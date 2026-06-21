@@ -8,6 +8,15 @@ RULE-TWO/RULE-FOUR/RULE-EIGHT 自动化执行器。
 """
 
 from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 
@@ -31,9 +40,9 @@ REGISTRIES = {
     "cross_dep": PROJECT_ROOT / "docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml",
 }
 
-FLE_GATES_DIR = PROJECT_ROOT / "src/zephyr/feedback_loop/gates"
+FLE_GATES_DIR = PROJECT_ROOT / "src/zephyr/feedback-loop/gates"
 FLE_BLUEPRINT = PROJECT_ROOT / "docs/03_modules/_cross_layer/feedback-loop/blueprint.md"
-FEEDBACK_LOOP_DIR = PROJECT_ROOT / "src/zephyr/feedback_loop"
+FEEDBACK_LOOP_DIR = PROJECT_ROOT / "src/zephyr/feedback-loop"
 
 FLE_GATE_CATEGORY = "fle_self_defense"
 FLE_MODULE_ID = "MOD-INF-010"
@@ -89,11 +98,11 @@ def _discover_fle_gates() -> list[dict]:
             "gate_name": stem,
             "title": f"{gate_id} {title}",
             "category": FLE_GATE_CATEGORY,
-            "file": f"../feedback_loop/gates/{py_file.name}",
+            "file": f"../feedback-loop/gates/{py_file.name}",
             "status": "active",
             "scope": "fle",
             "execution_plane": "warm",
-            "note": f"Auto-registered by auto_sync_all_registries.py — FLE self-defense gate (physical: src/zephyr/feedback_loop/gates/{py_file.name})",
+            "note": f"Auto-registered by auto_sync_all_registries.py — FLE self-defense gate (physical: src/zephyr/feedback-loop/gates/{py_file.name})",
         })
     return gates
 
@@ -260,9 +269,9 @@ def sync_dependencies(dry_run: bool = False) -> int:
 
     for dep in raw_deps:
         mod_name = dep["module"]
-        if not mod_name.startswith("zephyr.feedback_loop"):
+        if not mod_name.startswith("zephyr.governance.feedback_loop"):
             continue
-        target = mod_name.replace("zephyr.feedback_loop.", "").split(".")[0]
+        target = mod_name.replace("zephyr.governance.feedback_loop.", "").split(".")[0]
         target_id = f"fle-{target}"
         if target_id in existing_sources:
             continue
@@ -276,7 +285,7 @@ def sync_dependencies(dry_run: bool = False) -> int:
             "target_name": target,
             "type": "runtime",
             "strength": "hard",
-            "description": f"FLE scheduler imports from feedback_loop.{target}",
+            "description": f"FLE scheduler imports from feedback-loop.{target}",
             "direction": "downstream",
             "valid_since": "2026-05-08",
         }

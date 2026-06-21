@@ -5,7 +5,7 @@
      INJ-005（运行平面已分配）、INJ-006（KB 决策记录已关联）
 
 检测内容：
-- --check-contracts: 模块是否定义了接口契约（cross-layer-contracts.yaml 或 contracts/ 目录）
+- --check-contracts: 模块是否定义了接口契约（cross_layer_contracts.yaml 或 contracts/ 目录）
 - --check-field: 模块 frontmatter 指定字段值是否在合法枚举内
 - --check-adr: 模块是否关联了 KB 决策记录
 
@@ -22,7 +22,7 @@ args:
 - {flag: --check-adr, type: str, description: "检查指定 module_id 的 KB 决策记录关联"}
 description: >
   模块 Schema 校验（INJ-003/004/005/006）——契约定义、字段枚举、KB 决策记录关联。
-  对标 GOV-MOD-001 module-injection-rules.yaml。
+  对标 GOV-MOD-001 module-injection-rules-policy.md。
 dimensions:
 - D5
 priority: P1
@@ -65,7 +65,7 @@ def find_module_file(module_id: str) -> Path | None:
 def check_contracts(module_id: str) -> list[str]:
     """Check compliance and report findings."""
     findings = []
-    contracts_yaml = CONTRACTS_DIR / "cross-layer-contracts.yaml"
+    contracts_yaml = CONTRACTS_DIR / "cross_layer_contracts.yaml"
     has_contract = False
     if contracts_yaml.exists():
         import yaml
@@ -84,7 +84,7 @@ def check_contracts(module_id: str) -> list[str]:
                     has_contract = True
                     break
     if not has_contract:
-        findings.append(f"INJ-003 FAIL: module '{module_id}' has no interface contract defined in cross-layer-contracts.yaml or contracts/ directory")
+        findings.append(f"INJ-003 FAIL: module '{module_id}' has no interface contract defined in cross_layer_contracts.yaml or contracts/ directory")
     return findings
 
 
@@ -165,7 +165,7 @@ def check_invariants(module_id: str = None) -> list[str]:
     """Check compliance and report findings."""
     import re as re_mod
     findings = []
-    contracts_yaml = CONTRACTS_DIR / "cross-layer-contracts.yaml"
+    contracts_yaml = CONTRACTS_DIR / "cross_layer_contracts.yaml"
     if not contracts_yaml.exists():
         return findings
     import yaml

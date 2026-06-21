@@ -10,6 +10,15 @@ verify_audit_integrity.py — MOD-INF-020 · 零依赖外部独立验证器
 """
 
 from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS
 
 
@@ -65,8 +74,8 @@ def verify_jsonl_chain(jsonl_path: str) -> dict:
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Zero-dependency audit trail integrity verifier")
-    parser.add_argument("jsonl", nargs="?", default="data/audit_trail/events.jsonl",
-                        help="Path to events.jsonl (default: data/audit_trail/events.jsonl)")
+    parser.add_argument("jsonl", nargs="?", default="data/audit-trail/events.jsonl",
+                        help="Path to events.jsonl (default: data/audit-trail/events.jsonl)")
     parser.add_argument("--warn-only", action="store_true",
                         help="Always exit 0 (for safety in automated scans)")
     args = parser.parse_args()

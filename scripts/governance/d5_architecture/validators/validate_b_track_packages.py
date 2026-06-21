@@ -41,11 +41,11 @@ ensure_utf8_stdout()
 import argparse
 
 B_TRACK_DIRS = {
-    "llm_security",
-    "vector_memory",
-    "context_engine",
+    "llm-security",
+    "vector-memory",
+    "context-engine",
     "orchestrator",
-    "feedback_loop",
+    "feedback-loop",
     "gates",
     "db",
     "kb",

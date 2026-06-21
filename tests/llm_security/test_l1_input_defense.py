@@ -1,3 +1,4 @@
+# [A_test] module_id: SRC-TST-0191 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
 # [MODULE] tests.llm_security.test_l1_input_defense
 # [STABILITY] evolving
@@ -6,14 +7,14 @@
 # [TESTS] —
 import pytest
 
-from zephyr.llm_security.layers.l1_input import (
+from zephyr.security.llm_defense.llm_security.layers.l1_input import (
     DefenseResult,
     EncodingBypassDefender,
     InputDefenseLayer,
     SourceType,
     ToolResultTransformGuard,
 )
-from zephyr.llm_security.protocol import SecurityContext, SecurityDecision
+from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
 
 
 class TestInputDefenseLayer:

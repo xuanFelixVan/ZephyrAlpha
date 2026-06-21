@@ -34,8 +34,8 @@ _logger = logging.getLogger("vms_cron")
 
 def run_cycle() -> dict[str, Any]:
     """run_cycle implementation."""
-    from zephyr.vector_memory.collection_manager import CollectionManager
-    from zephyr.vector_memory.index_health_monitor import IndexHealthMonitor
+    from zephyr.governance.knowledge_management.vector_memory.collection_manager import CollectionManager
+    from zephyr.governance.knowledge_management.vector_memory.index_health_monitor import IndexHealthMonitor
 
     now = datetime.now(UTC).isoformat()
     cm = CollectionManager()

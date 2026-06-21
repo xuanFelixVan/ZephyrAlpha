@@ -1,0 +1,104 @@
+{
+  "task_id": "DM-100188",
+  "source_file": "docs/01_policies_and_standards/operational/vibe_coding/ai_incident_and_emergency_runbook.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_048_ops_vibe_coding_session.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "incident_classification": {
+      "content": "事故分级：P0(数据/资金/安全不可逆损失)立即响应、P1(架构/规则被破坏但可恢复)5分钟内响应、P2(操作质量下降但无破坏)30分钟内响应",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_004_classification"
+    },
+    "isolation_steps": {
+      "content": "隔离步骤(所有事故通用)：停止session文件操作→标记session为suspended→如涉及交易触发kill switch(PS-STD-003 ABS-47)→如涉及密钥确认未泄露(GOV-SEC-001 §3)→评估影响范围",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_004_classification"
+    },
+    "p0_key_leak": {
+      "content": "P0密钥泄露：停止session→触发kill switch→执行密钥泄露响应(撤销→生成新密钥→搜索残留→通知→记录→复盘)→通知Owner(GOV-SEC-003 COND-001)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_004_p0"
+    },
+    "p0_trading_anomaly": {
+      "content": "P0交易系统异常下单：触发kill switch→检查异常订单→未成交撤销→已成交评估损失通知Owner→Session Log记录",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_004_p0"
+    },
+    "p0_kill_switch_bypass": {
+      "content": "P0 kill switch被绕过：物理断开交易系统网络→通知Owner→排查绕过原因→修复漏洞→恢复网络前需Owner明确批准",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_004_p0"
+    },
+    "ai_anomaly_diagnosis": {
+      "content": "AI异常诊断4类：幻觉(对照SSoT验证)、越权(对照GOV-AI-001验证)、规则违反(对照具体规则验证)、性能异常(监控系统告警)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_004_ai_anomaly"
+    },
+    "ai_hallucination_response": {
+      "content": "AI幻觉响应8步：识别→查阅SSoT→评估是否写入→回滚或标记→记录→分析根因→制定预防措施",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_004_ai_anomaly"
+    },
+    "ai_overreach_response": {
+      "content": "AI越权响应6步：确认越权内容→对照GOV-AI-001确认正确权限→回滚→检查连带影响→记录→通知Owner",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_004_ai_anomaly"
+    },
+    "p1_abs_modification": {
+      "content": "P1 AI修改ABS规则：停止session→git diff确认→回滚→检查连带修改→Session Log记录→通知Owner",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_004_p1"
+    },
+    "p1_batch_file_damage": {
+      "content": "P1批量文件损坏：停止session→列出被修改文件→逐个检查→回滚→运行编码检查(GOV-DOC-005)→Session Log记录",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_004_p1"
+    },
+    "p2_hallucinated_interface": {
+      "content": "P2幻觉补全接口/路径：标记→查阅SSoT确认→修正→Session Log记录",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_004_p2"
+    },
+    "p2_misplaced_file": {
+      "content": "P2文件放错位置/命名不规范：确认正确位置(GOV-DOC-002)→移动→更新引用→运行命名检查(GOV-DOC-003)",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_004_p2"
+    },
+    "rule_violation_response": {
+      "content": "规则违反事故响应：确认规则编号→评估后果→P0回滚整个session→P1停止修复后继续→P2记录继续→记录到Session Log",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_004_rule_violation"
+    },
+    "general_rollback": {
+      "content": "通用回滚4步：确认正确版本→回滚→重新执行被覆盖的正确修改→验证文件完整",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_004_rollback_recovery"
+    },
+    "recovery_operations": {
+      "content": "恢复操作5步：确认异常已修复→确认文件正确→运行门禁检查清单(OPS-VC-005)→标记session为resumed→继续操作",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_004_rollback_recovery"
+    },
+    "post_incident_review": {
+      "content": "事故后复盘必须记录：事故时间/等级/类型、发现方式、影响范围、响应步骤、根因分析、诊断反转验证、表达检查(MTH-006规则7)、预防措施、是否需更新规则",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_004_review"
+    },
+    "prohibition_network_reconnect_without_owner": {
+      "content": "kill switch被绕过时恢复网络连接前必须获Owner明确批准",
+      "status": "COVERED",
+      "yaml_section": "ops_vc_004_p0"
+    }
+  },
+  "summary": {
+    "total_rules": 17,
+    "COVERED": 17,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "原ops_vc_004 section仅有通用占位文本'遵守 OPS-VC-004: Session状态机/事故响应/会话门禁'",
+    "替换为7个详细section：ops_vc_004_classification(事故分级与隔离)、ops_vc_004_p0(P0事故响应含3个触发条件)、ops_vc_004_ai_anomaly(AI异常诊断与幻觉响应)、ops_vc_004_p1(P1事故响应)、ops_vc_004_p2(P2事故响应)、ops_vc_004_rule_violation(规则违反事故响应)、ops_vc_004_rollback_recovery(通用回滚与恢复)、ops_vc_004_review(事故后复盘)",
+    "新增1条prohibition：kill switch被绕过时恢复网络前必须获Owner批准"
+  ]
+}

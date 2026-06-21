@@ -92,7 +92,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
     },
     "context-engine": {
         "module_id": "MOD-INF-008",
-        "source_dirs": ["src/zephyr/context_engine"],
+        "source_dirs": ["src/zephyr/context-engine"],
         "extra_source_files": [],
         "test_patterns": [
             "tests/unit/test_context_injector.py",
@@ -126,7 +126,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
     },
     "feedback-loop": {
         "module_id": "MOD-INF-010",
-        "source_dirs": ["src/zephyr/feedback_loop"],
+        "source_dirs": ["src/zephyr/feedback-loop"],
         "extra_source_files": [],
         "test_patterns": [
             "tests/unit/test_metrics_collector.py",
@@ -183,7 +183,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
     },
     "llm-security": {
         "module_id": "MOD-INF-014",
-        "source_dirs": ["src/zephyr/llm_security"],
+        "source_dirs": ["src/zephyr/llm-security"],
         "extra_source_files": [],
         "test_patterns": [
             "tests/unit/test_input_sanitizer.py",
@@ -244,7 +244,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
     },
     "script-system": {
         "module_id": "MOD-INF-005",
-        "source_dirs": ["src/zephyr/l01_infrastructure/script_system"],
+        "source_dirs": ["src/zephyr/infrastructure.runtime_integration/script_system"],
         "extra_source_files": [],
         "test_patterns": [],
         "config_files": [],
@@ -268,7 +268,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
     },
     "system-telemetry": {
         "module_id": "MOD-INF-015",
-        "source_dirs": ["src/zephyr/system_telemetry"],
+        "source_dirs": ["src/zephyr/observability/telemetry"],
         "extra_source_files": [],
         "test_patterns": [],
         "config_files": [],
@@ -319,7 +319,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
     },
     "vector-memory": {
         "module_id": "MOD-INF-011",
-        "source_dirs": ["src/zephyr/vector_memory"],
+        "source_dirs": ["src/zephyr/vector-memory"],
         "extra_source_files": [],
         "test_patterns": [],
         "config_files": [],

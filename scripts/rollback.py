@@ -23,8 +23,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from zephyr.rollback.rollback_executor import RollbackExecutor, RollbackOp
-from zephyr.rollback.rollback_verifier import RollbackVerifier
+from zephyr.governance.rollback.rollback_executor import RollbackExecutor, RollbackOp
+from zephyr.infrastructure.rollback.rollback_verifier import RollbackVerifier
 
 
 def _executor() -> RollbackExecutor:

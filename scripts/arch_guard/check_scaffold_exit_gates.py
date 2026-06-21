@@ -1,10 +1,10 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/check_scaffold_exit_gates.py | §
 """check_scaffold_exit_gates.py — scaffold→experimental 安全门禁检查
 
-对标 architecture-endgame-locked.md §6 + 06-security-architecture.md §10.2。
+对标 architecture_endgame_locked.md §6 + 06-security_architecture.md §10.2。
 4 条安全门禁：
 
-  G1: git-secrets pre-commit hook 已部署 (06-SEC SG-1)
+  G1: git-secrets pre_commit hook 已部署 (06-SEC SG-1)
   G2: 全库 secret 泄漏扫描已执行且无 P0 发现 (06-SEC SG-2)
   G3: audit.db schema 已物理创建 (06-SEC SG-3)
   G4: 06-SEC 视图 status=active 且被 00-overview.md §5 引用 (06-SEC SG-4)
@@ -20,7 +20,7 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-GIT_SECRETS_HOOK = REPO_ROOT / ".git" / "hooks" / "pre-commit"
+GIT_SECRETS_HOOK = REPO_ROOT / ".git" / "hooks" / "pre_commit"
 AUDIT_DB_PATH = REPO_ROOT / "data" / "audit.db"
 DETECT_SECRETS_SCRIPT = REPO_ROOT / "scripts" / "governance" / "d6_security" / "detect_secrets.py"
 SECRET_LEAK_SCAN_SCRIPT = REPO_ROOT / "scripts" / "governance" / "d6_security" / "scan_secret_leak.py"
@@ -28,15 +28,15 @@ SECRET_LEAK_SCAN_SCRIPT = REPO_ROOT / "scripts" / "governance" / "d6_security" /
 
 def check_git_secrets_hook() -> tuple[bool, str]:
     if not GIT_SECRETS_HOOK.exists():
-        return False, "git-secrets pre-commit hook 未部署 (.git/hooks/pre-commit 不存在)"
+        return False, "git-secrets pre_commit hook 未部署 (.git/hooks/pre_commit 不存在)"
     try:
         content = GIT_SECRETS_HOOK.read_text(encoding="utf-8", errors="ignore")
     except Exception as e:
-        return False, f"无法读取 pre-commit hook: {e}"
+        return False, f"无法读取 pre_commit hook: {e}"
     zephyr_patterns = ["ZEPHYR_SECRET", "ZEPHYR_API_KEY", "ZEPHYR_TOKEN"]
     found = [p for p in zephyr_patterns if p in content]
     if not found:
-        return False, "pre-commit hook 存在但未包含 ZEPHYR_SECRET_* pattern"
+        return False, "pre_commit hook 存在但未包含 ZEPHYR_SECRET_* pattern"
     return True, f"git-secrets hook 已部署 (含 {', '.join(found)})"
 
 
@@ -69,13 +69,13 @@ def check_audit_db() -> tuple[bool, str]:
     return False, "audit.db 未物理创建或为空"
 
 
-SEC_VIEW_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "06-security-architecture.md"
+SEC_VIEW_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "06-security_architecture.md"
 OVERVIEW_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "target-architecture" / "00-overview.md"
 
 
 def check_security_view_active() -> tuple[bool, str]:
     if not SEC_VIEW_PATH.exists():
-        return False, "06-security-architecture.md 不存在"
+        return False, "06-security_architecture.md 不存在"
     try:
         sec_content = SEC_VIEW_PATH.read_text(encoding="utf-8", errors="ignore")
     except Exception as e:
@@ -128,7 +128,7 @@ def main() -> int:
         for gid, gname, gmsg in failed:
             print(f"  - {gid} {gname}: {gmsg}")
         print("\n修复建议：")
-        print("  G1: 运行 scripts/hooks/git-secrets-setup.sh 部署 hook")
+        print("  G1: 运行 scripts/hooks/git_secrets_setup.sh 部署 hook")
         print("  G2: 运行 detect_secrets.py --warn-only 确认无 P0 发现")
         print("  G3: 运行 scripts/governance/d6_security/init_audit_db.py 创建 audit.db")
         print("  G4: 确认 detect_secrets.py 可正常执行")

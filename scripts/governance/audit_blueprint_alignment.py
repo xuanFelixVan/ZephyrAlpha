@@ -14,6 +14,14 @@ Usage:
 """
 
 from __future__ import annotations
+import sys
+from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
 from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 from _shared.constants import EXIT_FINDINGS
@@ -45,30 +53,30 @@ description: >
 ROOT = Path(__file__).resolve().parents[2]
 
 TC_DIRS = {
-    "MOD-INF-017": ROOT / "docs/03_modules/l01_infrastructure/code-dedup-engine/changes/MOD-INF-017",
-    "MOD-INF-018": ROOT / "docs/03_modules/l01_infrastructure/agent-rbac/changes/MOD-INF-018",
+    "MOD-INF-017": ROOT / "docs/03_modules/infrastructure.runtime_integration/code-dedup-engine/changes/MOD-INF-017",
+    "MOD-INF-018": ROOT / "docs/03_modules/infrastructure.runtime_integration/agent-rbac/changes/MOD-INF-018",
     "DOM-GOV-001": ROOT / "docs/03_modules/_domain-governance/_domain-governance/changes/DOM-GOV-001",
 }
 BP = {
-    "MOD-INF-017": ROOT / "docs/03_modules/l01_infrastructure/code-dedup-engine/blueprint.md",
-    "MOD-INF-018": ROOT / "docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md",
+    "MOD-INF-017": ROOT / "docs/03_modules/infrastructure.runtime_integration/code-dedup-engine/blueprint.md",
+    "MOD-INF-018": ROOT / "docs/03_modules/infrastructure.runtime_integration/agent-rbac/blueprint.md",
     "DOM-GOV-001": ROOT / "docs/03_modules/_domain-governance/blueprint.md",
 }
 SRC = {
-    "MOD-INF-017": ROOT / "src/zephyr/l01_infrastructure/code_dedup_engine",
-    "MOD-INF-018": ROOT / "src/zephyr/agent_rbac",
+    "MOD-INF-017": ROOT / "src/zephyr/testing/code_dedup",
+    "MOD-INF-018": ROOT / "src/zephyr/agent-rbac",
     "DOM-GOV-001": ROOT / "src/zephyr/governance",
 }
 
 GCT_MAP = {
-    "G-CT-001": ("agent_rbac", "audit_trail"),
-    "G-CT-002": ("audit_trail", "rollback"),
+    "G-CT-001": ("agent-rbac", "audit-trail"),
+    "G-CT-002": ("audit-trail", "rollback"),
     "G-CT-003": ("rollback", "escalation"),
-    "G-CT-004": ("escalation", "agent_rbac"),
-    "G-CT-005": ("drift_detector", "rollback"),
-    "G-CT-006": ("budget_enforcer", "escalation"),
-    "G-CT-007": ("agent_spec", "audit_trail"),
-    "G-CT-008": ("a2a", "agent_rbac"),
+    "G-CT-004": ("escalation", "agent-rbac"),
+    "G-CT-005": ("drift-detector", "rollback"),
+    "G-CT-006": ("budget-enforcer", "escalation"),
+    "G-CT-007": ("agent-spec", "audit-trail"),
+    "G-CT-008": ("a2a", "agent-rbac"),
 }
 
 

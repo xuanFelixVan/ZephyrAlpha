@@ -1,0 +1,158 @@
+rule_id: TRAE-014
+title: 架构约束-蓝图对齐
+aliases:
+- ARCH-007
+- ARCH-008
+- ARCH-009
+- ARCH-010
+- ARCH-011
+- ARCH-012
+layer: L1
+severity: error
+scope: architecture_blueprint
+domain: TRAE
+triggers:
+- operation: architecture_blueprint
+sections:
+  arch_007:
+    title: 蓝图-代码双向对齐
+    section_type: rule
+    original_rules:
+    - ARCH-007
+    conditions:
+    - type: trigger
+      check: 修改蓝图或代码时
+      pass: 蓝图§4文件清单与代码[BLUEPRINT]字段互相验证一致
+      fail: 蓝图与代码漂移
+    actions:
+    - type: mandatory
+      step: 蓝图§4文件清单↔代码[BLUEPRINT]字段互相验证；修改蓝图时同步更新代码头部[BLUEPRINT]字段；修改代码时同步更新蓝图§4文件清单；CI门禁validate_blueprint_code_sync.py自动校验
+    prohibitions:
+    - 蓝图与代码不对齐时关闭任务
+  arch_008:
+    title: 蓝图§4文件清单完整性
+    section_type: rule
+    original_rules:
+    - ARCH-008
+    conditions:
+    - type: trigger
+      check: 创建或修改蓝图时
+      pass: 蓝图§4列出覆盖范围内所有已实现代码的完整路径
+      fail: 蓝图文件清单不完整导致代码无归属
+    actions:
+    - type: mandatory
+      step: 蓝图§4必须包含完整路径表(模块ID/实现状态/源码路径/测试路径/配置路径)；CI门禁自动校验此表与磁盘实际一致
+    prohibitions:
+    - 蓝图§4文件清单与磁盘实际不一致
+  arch_009:
+    title: 蓝图版本与代码版本同步
+    section_type: rule
+    original_rules:
+    - ARCH-009
+    conditions:
+    - type: trigger
+      check: 蓝图或代码发生变更时
+      pass: 蓝图version与代码版本同步更新
+      fail: 版本不同步导致执行过期设计
+    actions:
+    - type: mandatory
+      step: 蓝图变更时必须更新frontmatter version和date字段；代码变更时必须更新代码头部[BLUEPRINT]字段中的版本引用
+    prohibitions:
+    - 修改蓝图后不更新version和date
+  arch_010:
+    title: 蓝图变更门控
+    section_type: rule
+    original_rules:
+    - ARCH-010
+    conditions:
+    - type: trigger
+      check: 修改蓝图内容时
+      pass: 蓝图变更经过门控审批
+      fail: 蓝图被随意修改导致设计不稳定
+    actions:
+    - type: mandatory
+      step: 蓝图变更必须遵循PS-STD-009变更分级(P0-P3)；stability=frozen的蓝图需Owner手动执行；stability=stable的蓝图需Owner批准后AI执行
+    prohibitions:
+    - 绕过变更门控直接修改蓝图
+  arch_011:
+    title: 蓝图模板合规
+    section_type: rule
+    original_rules:
+    - ARCH-011
+    conditions:
+    - type: trigger
+      check: 创建新蓝图时
+      pass: 蓝图遵循blueprint_construction_template.md模板
+      fail: 蓝图结构不合规
+    actions:
+    - type: mandatory
+      step: 新蓝图必须遵循blueprint_construction_template.md模板；L2设计模板包含§1-§11架构设计+§12施工指引；蓝图frontmatter必须包含belongs_to字段(PS-STD-005 §6)
+    prohibitions:
+    - 创建不遵循模板的蓝图
+    - 创建不含belongs_to字段的蓝图
+  arch_012:
+    title: 蓝图-代码-路径树三方对齐
+    section_type: rule
+    original_rules:
+    - ARCH-012
+    conditions:
+    - type: trigger
+      check: 结构变更后
+      pass: 蓝图§4↔代码[BLUEPRINT]↔路径树三方一致
+      fail: 任一方过时导致AI看到幻影或漏掉真实文件
+    actions:
+    - type: mandatory
+      step: 结构变更后MUST同步刷新：1.python scripts/governance/generate_project_depgraph.py(写入depgraph.db)→2.python scripts/governance/generate_project_path_tree.py --write→3.蓝图§4文件清单；任一步失败=回滚变更
+    prohibitions:
+    - 结构变更后不重新生成depgraph和path-tree
+    - 路径树过时状态下关闭任务
+  arch_scope:
+    title: 蓝图对齐约束的目的与范围
+    section_type: context
+    summary: 管理ZephyrAlpha项目蓝图与代码的双向对齐、蓝图§4文件清单完整性、版本同步、变更门控、模板合规、蓝图-代码-路径树三方对齐
+    applies_to:
+    - docs/03_modules/ 下所有蓝图文件
+    - 代码头部[BLUEPRINT]字段
+    - 结构变更后的depgraph和path-tree刷新
+    impact_on_rules:
+    - 蓝图§4文件清单与代码[BLUEPRINT]字段必须双向一致
+    - 结构变更后必须同步刷新depgraph+path-tree+蓝图§4
+    - 蓝图变更必须遵循PS-STD-009变更分级门控
+    key_decisions:
+    - 蓝图-代码-路径树三方对齐是结构变更后的强制验证
+    - 蓝图模板合规遵循blueprint_construction_template.md
+    - 蓝图frontmatter必须包含belongs_to字段
+  arch_change_history:
+    title: 修订记录
+    section_type: examples
+    items:
+    - version: "1.1.0"
+      date: "2026-06-19"
+      change: "RQ-01~RQ-14审查修复：删除错误的bb_scope/bb_normative_refs段落(行为边界内容混入蓝图对齐文件，违反RQ-01内部矛盾)；修复provenance源文件(原blueprint_architecture_standard.md不存在，改为onboarding_detail.md+project_rules.md)；修复references.scripts路径(validate_blueprint_code_sync.py实际路径在d5_architecture/validators/blueprint/下)；补充enforcement.executors；新增arch_scope；修正change_history内容；全量审查修复kebab-case引用(blueprint-construction-template.md→blueprint_construction_template.md，落地§2.2 snake_case裁定，修复RQ-04引用断裂+RQ-05裁定落地)"
+    - version: "1.0.0"
+      date: "2026-06-13"
+      change: "从onboarding_detail.md §十五和project_rules.md RULE-TEN提取为TRAE-014规则YAML"
+references:
+  rule_ids:
+  - TRAE-042
+  scripts:
+  - scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_code_sync.py
+  - scripts/governance/generate_project_depgraph.py
+  - scripts/governance/generate_project_path_tree.py
+  modules: []
+  blueprints: []
+enforcement:
+  type: code
+  executors:
+  - scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_code_sync.py
+  - scripts/governance/generate_project_depgraph.py
+  - scripts/governance/generate_project_path_tree.py
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

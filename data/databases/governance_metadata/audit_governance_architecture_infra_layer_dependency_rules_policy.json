@@ -1,0 +1,47 @@
+{
+  "task_id": "DM-100086",
+  "source_file": "docs/01_policies_and_standards/governance/architecture/infra_layer_dependency_rules_policy.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_037_arch_qualification_versioning.yaml",
+  "yaml_section": "gov_arch_010",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "ILDR-001": {
+      "type": "mandatory",
+      "content": "DEPTH_0：所有infra/cross_layer模块允许单向depends_on MOD-INF-019(shared-core)，不触发循环告警",
+      "status": "COVERED"
+    },
+    "ILDR-002": {
+      "type": "mandatory",
+      "content": "DEPTH_0：database(MOD-INF-012)↔system-telemetry(MOD-INF-015)双向依赖为合法循环LEGAL-001，telemetry写db走connection-pool直写不走ORM",
+      "status": "COVERED"
+    },
+    "ILDR-003": {
+      "type": "mandatory",
+      "content": "DEPTH_1：运行时调用关系应通过EventBus或Shared/Contract接口实现松耦合，12条候选边已列出",
+      "status": "COVERED"
+    },
+    "ILDR-004": {
+      "type": "mandatory+prohibition",
+      "content": "跨层依赖边界4条规则：cross_layer间仅单向depends_on shared-core；禁止直接双向depends_on（除LEGAL-001）；infra_ops→cross_layer仅允许depends_on shared-core/pipeline/database（需架构评审）；cross_layer→infra_ops仅允许depends_on具体l01模块（需架构评审，优先EventBus）",
+      "status": "COVERED"
+    },
+    "ILDR-AUTO": {
+      "type": "mandatory",
+      "content": "detect_depends_on_cycles.py消费本规则，DEPTH_0白名单边不触发循环告警，DEPTH_1边仍触发告警但附带recommendation",
+      "status": "COVERED"
+    }
+  },
+  "summary": {
+    "total_rules": 5,
+    "COVERED": 5,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "原YAML section gov_arch_010仅有占位action'遵守GOV-ARCH-010'，无具体规则",
+    "补充ILDR-001~ILDR-004到original_rules",
+    "补充4条conditions（4条constraint：DEPTH_0 shared-core/DEPTH_0 runtime triad/DEPTH_1 EventBus/跨层边界）",
+    "补充5条actions（5条mandatory）",
+    "补充3条prohibitions"
+  ]
+}

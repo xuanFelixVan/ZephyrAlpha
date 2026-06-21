@@ -55,7 +55,7 @@ if str(_src) not in sys.path:
     sys.path.insert(0, str(_src))
 
 try:
-    from zephyr.l01_infrastructure.script_system.finding import LIFECYCLE_STATUS_VALUES
+    from zephyr.infrastructure.finding import LIFECYCLE_STATUS_VALUES
 
     VALID_STATUSES = list(LIFECYCLE_STATUS_VALUES)
 except ImportError:

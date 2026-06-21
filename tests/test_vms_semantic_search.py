@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1796 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-442 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.test_vms_semantic_search
 # [STABILITY] evolving
 # [SAFETY] L
@@ -20,7 +21,7 @@ def main():
         shutil.rmtree(TEST_DIR)
     TEST_DIR.mkdir(parents=True)
 
-    from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
+    from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
     print("=" * 60)
     print("  端到端语义搜索验证 (真实嵌入模型)")

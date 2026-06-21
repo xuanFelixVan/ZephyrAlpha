@@ -1,0 +1,171 @@
+rule_id: TRAE-020
+title: 行为边界-治理纪律绝对禁止
+aliases:
+- ABS-17
+- ABS-18
+- ABS-19
+- ABS-20
+- ABS-21
+- ABS-22
+- ABS-23
+- ABS-24
+layer: L0
+severity: critical
+scope: governance_prohibition
+domain: TRAE
+triggers:
+- operation: governance_prohibition
+sections:
+  abs_17:
+    title: 不查搬迁历史直接移动文件
+    section_type: rule
+    original_rules:
+    - ABS-17
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-17 违规
+      pass: 操作合规
+      fail: 搬迁多次的文件需 Owner 确认，盲目移动增加追溯困难
+    actions:
+    - type: mandatory
+      step: 先执行 `git log --follow` 查询搬迁历史
+    prohibitions:
+    - 不查搬迁历史直接移动文件
+  abs_18:
+    title: "在废弃路径下写入新文件"
+    section_type: rule
+    original_rules:
+    - ABS-18
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-18 违规
+      pass: 操作合规
+      fail: 废弃路径是已声明不再使用的路径，写入将产生新的技术债
+    actions:
+    - type: mandatory
+      step: 使用 trae_028_doc_structure_naming.yaml doc_004 定义的合法路径
+    prohibitions:
+    - 在废弃路径下写入新文件
+  abs_19:
+    title: "在非权威文件中修改权威字段"
+    section_type: rule
+    original_rules:
+    - ABS-19
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-19 违规
+      pass: 操作合规
+      fail: 权威字段的定义权属于 SSoT 文件，其他文件修改将产生矛盾
+    actions:
+    - type: mandatory
+      step: 引用 SSoT 文件定义，不重复声明
+    prohibitions:
+    - 在非权威文件中修改权威字段
+  abs_20:
+    title: "在标准文档中重复定义PS-STD-001已定义的字段"
+    section_type: rule
+    original_rules:
+    - ABS-20
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-20 违规
+      pass: 操作合规
+      fail: 字段重复定义导致漂移，两个定义不一致时无法仲裁
+    actions:
+    - type: mandatory
+      step: 引用 PS-STD-001，以 PS-STD-001 为准
+    prohibitions:
+    - 在标准文档中重复定义 PS-STD-001 已定义的字段
+  abs_21:
+    title: "口头指令覆盖Level 1-3书面规则"
+    section_type: rule
+    original_rules:
+    - ABS-21
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-21 违规
+      pass: 操作合规
+      fail: 书面规则的可追溯性是治理基础，口头覆盖 = 治理失效
+    actions:
+    - type: mandatory
+      step: 先修改书面规则，再执行
+    prohibitions:
+    - 口头指令覆盖 Level 1-3 书面规则
+  abs_22:
+    title: "跨级降格文档状态（draft到deprecated）"
+    section_type: rule
+    original_rules:
+    - ABS-22
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-22 违规
+      pass: 操作合规
+      fail: 跳过 active 阶段意味着文档从未经过验证就被废弃
+    actions:
+    - type: mandatory
+      step: 先升格为 active，再走废弃流程
+    prohibitions:
+    - 跨级降格文档状态（draft 到 deprecated）
+  abs_23:
+    title: "用PowerShell echo/Out-File默认参数写.md文件"
+    section_type: rule
+    original_rules:
+    - ABS-23
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-23 违规
+      pass: 操作合规
+      fail: PowerShell 默认编码不是 UTF-8，会导致中文乱码
+    actions:
+    - type: mandatory
+      step: 使用 Python 写文件并指定 `encoding='utf-8'`
+    prohibitions:
+    - 用 PowerShell `echo`/`Out-File` 默认参数写 `.md` 文件
+  abs_24:
+    title: "Python写文件不指定encoding='utf-8'"
+    section_type: rule
+    original_rules:
+    - ABS-24
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-24 违规
+      pass: 操作合规
+      fail: Windows 默认编码是 GBK，不指定会写入乱码
+    actions:
+    - type: mandatory
+      step: 所有 `open()` 调用必须指定 `encoding='utf-8'`
+    prohibitions:
+    - Python 写文件不指定 `encoding='utf-8'`
+  change_history:
+    title: 修订记录
+    section_type: examples
+    items:
+    - version: "2.1.0"
+      date: "2026-06-19"
+      change: "RQ审查修复——修复编码损坏(mojibake)；移除错位的gloss_*章节(术语表内容不属于治理纪律范畴)；修复gloss_normative_refs重复YAML键；provenance路径改为正斜杠+添加migration_status；补充change_history"
+    - version: "2.0.0"
+      date: "2026-06-13"
+      change: "从behavior_boundaries_standard.md提取为TRAE-020规则YAML"
+    - version: "1.3.0"
+      date: "2026-05-02"
+      change: "depends_on从1层死规则升级为三级分层链深体系(T1≤1/T2≤2/T3≤3)"
+references:
+  rule_ids:
+  - TRAE-018
+  - TRAE-019
+  - TRAE-021
+  scripts: []
+  modules: []
+  blueprints: []
+enforcement:
+  type: hook
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

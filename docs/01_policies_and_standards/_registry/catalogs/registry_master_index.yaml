@@ -1,3 +1,4 @@
+# [A_config] module_id=CFG-registry-master-index | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: DOM-GOV-001
@@ -9,13 +10,14 @@
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表�?frontmatter
 
+module_id: DOM-GOV-001
 generated_at: '2026-05-07T06:52:14Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml �?frontmatter
 total_registries: 16
 registries:
 - registry_id: PS-REG-015
-  name: KB 决策记录登记表（原 ADR 状态登记表已删除，真源迁移至 KB）
+  name: KB 决策记录登记表（原 KB 决策记录 状态登记表已删除，真源迁移至 KB）
   category: governance_rule
   physical_path: DELETED
   format: yaml
@@ -49,7 +51,7 @@ registries:
 - registry_id: PS-REG-019
   name: 声明式契约跟踪登记表
   category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker.yaml
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker-registry.yaml
   format: yaml
   maintenance: manual
   entry_count: 11
@@ -65,7 +67,7 @@ registries:
 - registry_id: PS-REG-002
   name: 文档元数据索�?
   category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml
   format: yaml
   maintenance: manual
   entry_count: 154
@@ -105,7 +107,7 @@ registries:
 - registry_id: PS-REG-020
   name: 主文档清单（Master Document Inventory�?
   category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/master-document-inventory.yaml
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/master-document-inventory-registry.yaml
   format: yaml
   maintenance: manual
   entry_count: 0
@@ -113,7 +115,7 @@ registries:
 - registry_id: PS-REG-016
   name: 登记表的登记�?�?跨登记表一致性契�?
   category: contract
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/registry-of-registries.yaml
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/registry_of_registries.yaml
   format: yaml
   maintenance: manual
   entry_count: 22
@@ -121,7 +123,7 @@ registries:
 - registry_id: PS-REG-018
   name: 规则路径目录
   category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/rule-catalog.yaml
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/rule-catalog-registry.yaml
   format: yaml
   maintenance: manual
   entry_count: 154

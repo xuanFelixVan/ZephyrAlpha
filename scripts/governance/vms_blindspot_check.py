@@ -17,7 +17,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-VMS_DIR = PROJECT_ROOT / "src" / "zephyr" / "vector_memory"
+VMS_DIR = PROJECT_ROOT / "src" / "zephyr" / "vector-memory"
 
 R1_BLINDSPOTS = {
     "B-R1-001": "检索质量: Collection级k值差异化——已实现: HybridRetriever RRF fusion + score threshold",

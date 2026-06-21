@@ -4,7 +4,7 @@
 对标 B43（Rules File Backdoor）+ Snyk/Lasso Security 2025 年发现的
 AI 规则文件隐形投毒攻击。
 
-检测 AGENTS.md / QUICKSTART.md / thresholds.yaml / blueprint.md / kill_switch_state.yaml /
+检测 AGENTS.md / quickstart.md / thresholds.yaml / blueprint.md / kill_switch_state.yaml /
 shadow_mode_state.yaml / error_budget_state.yaml 等关键规则文件中的：
 - 零宽连接符 (Zero-Width Joiner: U+200D)
 - 零宽非连接符 (Zero-Width Non-Joiner: U+200C)
@@ -56,15 +56,15 @@ _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
 
 RULE_FILES: list[Path] = [
     _REPO_ROOT / "AGENTS.md",
-    _SCRIPTS_DIR / "QUICKSTART.md",
+    _SCRIPTS_DIR / "quickstart.md",
     _SCRIPTS_DIR / "_shared" / "thresholds.yaml",
     _SCRIPTS_DIR / "meta" / "kill_switch_state.yaml",
     _SCRIPTS_DIR / "meta" / "shadow_mode_state.yaml",
     _SCRIPTS_DIR / "meta" / "error_budget_state.yaml",
-    _SCRIPTS_DIR / "quality-standard.md",
+    _SCRIPTS_DIR / "quality_standard.md",
     _SCRIPTS_DIR / "script_manifest.yaml",
-    _REPO_ROOT / "docs" / "03_modules" / "l01_infrastructure" / "script-system" / "blueprint.md",
-    _REPO_ROOT / "docs" / "03_modules" / "l01_infrastructure" / "script-system" / "index.md",
+    _REPO_ROOT / "docs" / "03_modules" / "infrastructure.runtime_integration" / "script-system" / "blueprint.md",
+    _REPO_ROOT / "docs" / "03_modules" / "infrastructure.runtime_integration" / "script-system" / "index.md",
 ]
 
 # Unicode 不可见控制字符危险集

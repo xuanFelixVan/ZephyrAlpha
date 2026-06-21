@@ -1,3 +1,4 @@
+# [A_config] module_id=CFG-task-card-meta-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: DOM-GOV-001
@@ -49,7 +50,7 @@ systems:
       - {task_id: T-V2-003, title: "登记表 pre-commit 自检", priority: P0, status: ready}
 
   sqlite_task_db:
-    db_path: "data/zalpha_metadata.db"
+    db_path: "data/databases/governance.db"
     status: ACTIVE
     target_phase: Phase-1b
     items: 20

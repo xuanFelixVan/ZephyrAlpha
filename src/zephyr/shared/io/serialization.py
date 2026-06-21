@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_serialization | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.io.serialization
 
@@ -24,7 +25,7 @@ serialization.py —— 统一序列化/反序列化基础设施（Phase 7 新�
 痛点修复：Pydantic 的 .model_dump() 能干活，但跨模块序列化契约未统一——
   1. Decimal → str 还是 float？datetime → ISO 8601 还是 POSIX timestamp？
   2. 每个消费者自己决定序列化格式 → L00→L02→L09 管道中可能产生不同格式
-  3. cross-layer-contracts.yaml 定了类型但没定序列化规则 → 契约半成品
+  3. cross_layer_contracts.yaml 定了类型但没定序列化规则 → 契约半成品
 
 设计对标：
   - Google Proto canonical JSON mapping

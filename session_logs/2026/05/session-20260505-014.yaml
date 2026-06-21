@@ -1,0 +1,62 @@
+---
+session_id: "session-20260505-014"
+date: "2026-05-05"
+agent: "DeepSeek-V4-Pro"
+phase: "Phase E"
+status: completed
+
+summary: |
+  BLIND-CODEGEN-DATACLASS-ORDER 二次修复。
+  首次修复（session-009）未真正生效——排序逻辑仍依赖 YAML required flag，
+  导致 required=True 的 Dict 类型字段（如 contributing_factors）被错误排序。
+  本 session 完成正确的根因修复。
+
+decisions:
+  - decision_id: "DEC-014-001"
+    type: fix
+    subject: "codegen 排序逻辑最终修复"
+    rationale: |
+      原始排序用 f.get("required") 判断无默认值字段，但 YAML 的 required=True 与
+      codegen 渲染的实际默认值状态不一致：required=True + Dict 类型的字段会在
+      _format_default 中自动获得 field(default_factory=dict)，却在排序中被放入
+      无默认值 tier → 导致 Python dataclass 报 "non-default argument follows default argument"。
+    action: |
+      1. 新增 _has_effective_default() 函数，镜像 _format_default 的类型推导逻辑
+      2. 排序改为纯 _has_effective_default 判断——无默认值→先，有默认值→后
+      3. 以 f.get("name", "") 作为二级排序键保证确定性
+
+files_modified:
+  - path: "scripts/governance/d5_architecture/generate_contracts.py"
+    changes:
+      - "新增 _has_effective_default() 函数（检测 Optional/List/Dict 类型的自动默认值）"
+      - "generate_contract_file() 排序改为: (0 if not _has_effective_default(f) else 1, name)"
+      - "修正 tool 文档注释中的 encoding 声明"
+
+contracts_regenerated: 31
+contracts_verified: 31
+
+tests:
+  import_test:
+    status: pass
+    detail: "from zephyr.shared.contracts import * — 31/31 合约导入成功"
+  architecture_tests:
+    command: "pytest tests/architecture/ -q --tb=short"
+    result: "120 passed, 2 failed (pre-existing: float violations + frontmatter)"
+    contract_consistency: "3/3 passed"
+    layer_isolation: "117/117 passed"
+
+blind_spots_resolved:
+  - "BLIND-CODEGEN-DATACLASS-ORDER"
+
+git_state:
+  branch: trae-redteam-deadly-5
+  head: a432dc597
+
+handoff:
+  next_task: "Akshare 真实数据接入与端到端测试（L00 DataSource + L01 Infrastructure 集成验证）"
+  pending:
+    - "BLIND-LR-UNREGISTERED — LayerDataRouter 消费者注册"
+    - "BLIND-LR-GRAPH-CYCLE — 路由图环路检测"
+    - "L08/L12 Phase D 覆盖"
+    - "float→Decimal 迁移（9 处违规）"
+    - "frontmatter 补全（32 处缺失）"

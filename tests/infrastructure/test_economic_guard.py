@@ -1,11 +1,12 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0153 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-310 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.infrastructure.test_economic_guard
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """Test Economic Guard — SSoT validation via escalation_models."""
-from zephyr.escalation_engine.escalation_models import EconomicGuard
+from zephyr.governance.escalation_models import EconomicGuard
 
 
 def test_within_budget():

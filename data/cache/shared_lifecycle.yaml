@@ -1,11 +1,17 @@
-# --- 治理锚定 ---
-# blueprint: MOD-INF-035 | docs/03_modules/_cross_layer/auto-runtime-core/blueprint.md | §
-# module_id: MOD-INF-035
-# stability: evolving
-# safety_level: M
-# ai_autonomy: ai_modifiable
-# --- 治理锚定结束 ---
-version: "1.0.0"
-updated_at: ""
-total_functions: 0
-functions: []
+functions:
+- active_since: '2026-06-09T19:08:53.201036+00:00'
+  caller_count: 3
+  deprecated_at: '2026-06-09T19:08:53.201543+00:00'
+  function_name: func_a
+  grace_period_start: ''
+  graveyard_fingerprint: ''
+  lifecycle_stage: !!python/object/apply:zephyr.infrastructure.runtime_integration.code_dedup_engine.shared_lifecycle_manager.LifecycleStage
+  - deprecated
+  migration_diff: null
+  module_path: module_a
+  retired_at: ''
+  retirement_reason: ''
+  sunset_at: ''
+total_functions: 1
+updated_at: '2026-06-09T19:08:53.201543+00:00'
+version: 1.0.0

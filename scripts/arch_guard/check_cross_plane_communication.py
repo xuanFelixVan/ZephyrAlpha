@@ -3,7 +3,7 @@
 check_cross_plane_communication.py — INV-011 拓扑 + 静态越界 import 嗅探
 
   - 读取 capacity_slo.arch_guard.deployment_topology.cold_to_hot_requires_warm_shadow 须为 true
-  - 扫描 l00/l02/l13 路径下 Python：禁止 import zephyr.l06_trade_execution
+  - 扫描 l00/l02/l13 路径下 Python：禁止 import zephyr.ex_core
 
 exit: 0=pass, 1=fail
 """
@@ -20,10 +20,10 @@ if str(_ROOT) not in sys.path:
 from _arch_ssot import CAPACITY_SLO_PATH, REPO_ROOT, load_yaml  # noqa: E402
 
 _FORBIDDEN = re.compile(
-    r"from\s+zephyr\.l06_trade_execution\b|import\s+zephyr\.l06_trade_execution",
+    r"from\s+zephyr\.ex_core\b|import\s+zephyr\.ex_core",
     re.IGNORECASE,
 )
-_COLD_PREFIXES = ("l00_data_source", "l02_alpha_factor", "l13_experiment")
+_COLD_PREFIXES = ("data", "factor", "simulation")
 
 
 def main() -> int:
@@ -51,7 +51,7 @@ def main() -> int:
                 violations.append(str(py.relative_to(REPO_ROOT)))
 
     if violations:
-        print("FAIL: Cold/因子侧代码直接 import l06_trade_execution（疑似绕过 Warm/Shadow）:")
+        print("FAIL: Cold/因子侧代码直接 import ex_core（疑似绕过 Warm/Shadow）:")
         for v in violations:
             print(f"  - {v}")
         return 1

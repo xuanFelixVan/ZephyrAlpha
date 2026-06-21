@@ -1,0 +1,135 @@
+schema_version: "1.0.0"
+generated_at: "2026-05-06"
+# 施工树根摘要：`IMPL-T-*` ID 前缀仅在本文件生效，刻意�?EA �?
+# docs/02_enterprise_architecture/.../technology/technology_landscape.yaml �?`technologies[].id`
+#（如 T-A01 = Cursor）隔离，禁止跨文件按同号对齐�?
+#
+# ThoughtWorks Radar 条目真源仍为 EA YAML；语义对账字段（runtime/语言类等）必须与 EA 条目一致，
+# ID 不参与对账——参�?architecture_model/SCOPE.yaml�?
+#
+technology_radar:
+  adopt:
+    - id: IMPL-T-A01
+      name: Python >=3.11
+      category: language
+      description: 主语言运行时（对齐 pyproject.toml requires-python；ruff 当前 target-version=py311；EA 树同义项 id=T-A03�?
+      mirrors_ea_id: T-A03
+    - id: IMPL-T-A02
+      name: Pydantic V2
+      category: framework
+      description: 数据验证�?Schema 定义（KBG-0040�?
+      kb_ref: [KBG-0040]
+    - id: IMPL-T-A03
+      name: SQLite
+      category: storage
+      description: 本地元数据存�?�?任务/事件/知识/门禁（KBG-0030�?
+      kb_ref: [KBG-0030]
+    - id: IMPL-T-A04
+      name: pytest
+      category: testing
+      description: 测试框架 �?--strict-markers + 全量 1529 测试
+    - id: IMPL-T-A05
+      name: ruff
+      category: linter
+      description: Python linter �?py311 target（与 pyproject.toml 一致）, line-length 120
+    - id: IMPL-T-A06
+      name: YAML
+      category: data_format
+      description: 架构数据 Canonical SSoT 格式（AGENTS.md §6.9�?
+    - id: IMPL-T-A07
+      name: ChromaDB 0.6
+      category: vector_db
+      description: 向量数据�?�?VMS 存储后端（KBG-0031�?
+      kb_ref: [KBG-0031]
+    - id: IMPL-T-A08
+      name: OpenAI API
+      category: llm
+      description: LLM 推理接口
+    - id: IMPL-T-A09
+      name: asyncio
+      category: concurrency
+      description: 异步任务编排（KBG-0017�?
+      kb_ref: [KBG-0017]
+
+  trial:
+    - id: IMPL-T-T01
+      name: ChromaDB HTTP Service
+      category: vector_db
+      description: beta+ 升级 �?从进程内库迁移到 HTTP 服务
+    - id: IMPL-T-T02
+      name: NATS JetStream
+      category: messaging
+      description: beta+ 任务队列升级 �?替代 SQLite + asyncio.Queue
+    - id: IMPL-T-T03
+      name: Docker Desktop
+      category: sandbox
+      description: beta+ 沙箱升级 �?替代 Windows ACL 只读挂载
+    - id: IMPL-T-T04
+      name: InfluxDB
+      category: time_series
+      description: stable+ FLE 存储升级 �?替代 SQLite 时间序列
+
+  assess:
+    - id: IMPL-T-AS01
+      name: BGE-M3 ONNX
+      category: embedding
+      description: 本地嵌入模型 �?零外部依赖推�?
+    - id: IMPL-T-AS02
+      name: Qwen2.5-3B-Instruct ONNX
+      category: llm_local
+      description: 本地 LLM �?CE 上下文压�?
+    - id: IMPL-T-AS03
+      name: MCP Protocol
+      category: protocol
+      description: Model Context Protocol �?AI 工具集成标准（KBG-0033�?
+      kb_ref: [KBG-0033]
+
+  hold:
+    - id: IMPL-T-H01
+      name: Docker Compose
+      category: orchestration
+      description: 当前不必�?�?尚未到多服务部署阶段
+
+  build:
+    - id: IMPL-T-B01
+      name: LPC Dual-Track Architecture
+      category: architecture
+      description: 自研 �?C�?14层业务脊�? + B�?12横切能力) 双轨治理（KBG-0022�?
+      kb_ref: [KBG-0022]
+    - id: IMPL-T-B02
+      name: Governance Script Pipeline
+      category: tooling
+      description: 自研 �?89 脚本 12 维度审计体系 (run_all.py + manifest)
+    - id: IMPL-T-B03
+      name: Atomic Transaction Manager
+      category: infrastructure
+      description: 自研 �?�?SQLite + 文件系统两阶段提�?
+
+data_sources:
+  planned:
+    - DS01: Market Data (行情)
+    - DS02: Fundamental Data (基本�?
+    - DS03: Alternative Data (另类)
+    - DS04: Reference Data (参�?
+    - DS05: Derived Data (衍生)
+
+llm_providers:
+  - LLM01: OpenAI (GPT-4o / GPT-4o-mini)
+  - LLM02: Anthropic (Claude Sonnet 4)
+  - LLM03: DeepSeek (DeepSeek-V4-Pro)
+  - LLM04: Qwen (Qwen2.5-3B ONNX �?本地推理)
+
+infrastructure_summary:
+  vibe_coding_5_core_services:
+    - LSG (llm_security): LLM 安全网关 �?fail-closed
+    - CE (context_engine): 上下文引�?�?四阶段流水线
+    - VMS (vector_memory): 向量记忆服务 �?ChromaDB + BGE-M3
+    - Orc (orchestrator): Agent 编排�?�?任务生命周期 + 沙箱
+    - FLE (feedback_loop): 反馈循环 �?系统自调节闭�?
+  shared_infrastructure:
+    - db: 元数据持久化 (SQLite)
+    - gates: 门禁引擎 (circuit_breaker + gate_engine)
+    - mcp: MCP 协议服务�?
+    - pipeline: M1-M11 双管�?
+    - core: 蓝图分解�?
+    - kb: 知识�?(�?beta 整合�?VMS)

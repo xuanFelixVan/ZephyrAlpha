@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-002 | docs/03_modules/l01_infrastructure/governance-automation/blueprint.md | §
+# blueprint: MOD-INF-002 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: M
@@ -9,21 +9,22 @@
 # ============================================================
 # 任务编号 : T-V2-006（experimental CL-018 配套）
 # 权限层级 : Human-Gated（上下文规则修改 = 关键架构变更）
-# 真源声明 : ai-autonomy-authority-registry.md §2.9（RI-03）
-# 关联蓝图 : MOD-INF-008（Context Engine, §5 Core Flow + §6 DD1-DD10）
+# 真源声明 : ai_autonomy_authority_registry.md §2.9（RI-03）
+# 关联蓝图 : MOD_INF_008（Context Engine, §5 Core Flow + §6 DD1-DD10）
 # 关联决策 : DD2（三级 token 预算 80%/90%/95%）, DD6（默认 8000 token）
-# CBAC 注册 : capabilities.yaml deny: config/context_rules_v1.yaml
+# CBAC 注册 : capabilities.yaml deny: config/context_rules.yaml
 # 创建日期 : 2026-05-06
 #
 # 校验脚本 : scripts/governance/d1_structure/validate_config_integrity.py L9
 
+module_id: MOD-INF-002
 version: "1.0.0"
 schema_version: "1.0.0"
 doc_type: rule
 title: "Context Management Rules"
 status: active
 ttl: permanent
-belongs_to: MOD-INF-008
+belongs_to: MOD_INF_008
 description: "6 context management rules — token budget tiers, injection layers, eviction strategy, freshness decay, incremental injection, and LSG validation gate"
 implementation_status: "experimental active — consumed by context_budget_tracker.py and context_injector.py at runtime"
 

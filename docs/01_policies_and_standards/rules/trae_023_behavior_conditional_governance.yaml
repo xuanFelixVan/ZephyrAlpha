@@ -1,0 +1,200 @@
+rule_id: TRAE-023
+title: 行为边界-条件禁止(治理与文档)
+aliases:
+- COND-27~COND-52
+layer: L1
+severity: error
+scope: conditional_prohibition_governance_doc
+domain: TRAE
+triggers:
+- operation: conditional_prohibition_governance_doc
+sections:
+  cond_47:
+    title: 交接包完整性条件禁止
+    section_type: rule
+    original_rules:
+    - COND-47
+    conditions:
+    - type: trigger
+      check: 创建或修改交接包时
+      pass: HandoffPackage 8个必填字段完整
+      fail: 必填字段缺失导致半启用模式
+    actions:
+    - type: mandatory
+      step: HandoffPackage必须包含8个必填字段（v1.0锚定），缺任一进入半启用模式
+    prohibitions:
+    - HandoffPackage 8必填字段缺失
+  cond_48:
+    title: 架构视图创建审批条件禁止
+    section_type: rule
+    original_rules:
+    - COND-48
+    conditions:
+    - type: trigger
+      check: 创建架构视图时
+      pass: 经KB决策记录审批且对标业界先行机构
+      fail: 未经审批自创概念
+    actions:
+    - type: mandatory
+      step: 创建新正交视图必须经KB决策记录审批；必须至少对标2家业界先行机构公开实践；自创概念禁止入库
+    prohibitions:
+    - 未经KB决策记录审批创建新正交视图
+  cond_49:
+    title: 真实资金容器隔离条件禁止
+    section_type: rule
+    original_rules:
+    - COND-49
+    conditions:
+    - type: trigger
+      check: beta接入真实资金时
+      pass: 已升级到完整容器隔离
+      fail: 仍使用Windows ACL而非容器隔离
+    actions:
+    - type: mandatory
+      step: beta接入真实资金前必须从Windows ACL升级到完整容器隔离
+    prohibitions:
+    - beta接入真实资金前未升级容器隔离
+  cond_50:
+    title: 审计日志连续性条件禁止
+    section_type: rule
+    original_rules:
+    - COND-50
+    conditions:
+    - type: trigger
+      check: 任何时间点审计日志记录时
+      pass: 审计日志连续无间断
+      fail: 审计日志出现间断
+    actions:
+    - type: mandatory
+      step: 系统必须保证审计日志连续性，间断视为异常
+    prohibitions:
+    - 审计日志出现间断（gap）
+  cond_52:
+    title: 部署条件禁止
+    section_type: rule
+    original_rules:
+    - COND-52
+    conditions:
+    - type: trigger
+      check: 任何部署操作时
+      pass: 部署前已准备回滚方案并验证
+      fail: 无回滚方案直接部署
+    actions:
+    - type: mandatory
+      step: 部署前必须准备回滚方案并验证
+    prohibitions:
+    - 在无回滚方案的情况下部署
+  cond_30_32:
+    title: 架构分层条件禁止
+    section_type: rule
+    original_rules:
+    - COND-30
+    - COND-31
+    - COND-32
+    conditions:
+    - type: trigger
+      check: L08层代码调用LLM API/向治理SQLite写入数据/在shared/contracts/添加代码时
+      pass: 通过LSG代理/治理SQLite只存治理数据/contracts只放数据结构定义
+      fail: 违反架构分层约束
+    actions:
+    - type: mandatory
+      step: 必须通过L08 LSG代理调用LLM；治理SQLite只存治理数据；contracts目录只放dataclass/Protocol/Enum/Literal/TypedDict
+    prohibitions:
+    - L02-L07直接调用LLM Providers
+    - 业务数据写入治理SQLite
+    - 在contracts目录放业务逻辑
+  cond_33_37:
+    title: 门禁与校验条件禁止
+    section_type: rule
+    original_rules:
+    - COND-33
+    - COND-34
+    - COND-35
+    - COND-36
+    - COND-37
+    conditions:
+    - type: trigger
+      check: 运行时修改门禁级别/调用门禁引擎/生产环境启动/AI输出校验失败时
+      pass: 门禁规则合规
+      fail: 门禁规则被绕过或降级
+    actions:
+    - type: mandatory
+      step: 级别调整仅能通过修改YAML+二次review；task的gate_status字段必须按顺序推进；生产环境必须启用门禁；必须emit manual_event(priority=HIGH)等待Owner批复；三级失败后禁止静默继续
+    prohibitions:
+    - 门禁级别运行时动态升降级
+    - 门禁跳级（跳过G1/G2直接到G3）
+    - 生产环境关闭门禁disable开关
+    - AI自行签发门禁豁免
+    - Pydantic校验失败静默吞掉
+  cond_38_41:
+    title: SSoT与Schema一致性条件禁止
+    section_type: rule
+    original_rules:
+    - COND-38
+    - COND-39
+    - COND-40
+    - COND-41
+    conditions:
+    - type: trigger
+      check: 引用KB决策记录/注册module_id/修改schema字段/git commit涉及治理敏感文件时
+      pass: SSoT和Schema一致性合规
+      fail: SSoT或Schema不一致
+    actions:
+    - type: mandatory
+      step: 必须确认KB决策记录status为Active；module_id必须全局唯一；新增字段必须同时更新KB决策记录+SQLite DDL+Pydantic Model；新增/删除治理文件时注册表必须同步暂存
+    prohibitions:
+    - 引用Deprecated KB决策记录作为当前决策依据
+    - 同一module_id在两个Active文件中出现
+    - Schema三处（KB决策记录/DDL/Pydantic Model）不同步更新
+    - SSoT注册表与实际文件不同步
+  cond_42_46:
+    title: AI工程条件禁止
+    section_type: rule
+    original_rules:
+    - COND-42
+    - COND-43
+    - COND-44
+    - COND-45
+    - COND-46
+    conditions:
+    - type: trigger
+      check: 执行CoVe Step 2/FLE模块引用外部服务/FLE产出Action/服务降级/向知识库写入条目时
+      pass: AI工程规则合规
+      fail: AI工程规则被违反
+    actions:
+    - type: mandatory
+      step: CoVe Step 2必须异构cross-check；FLE必须定义本地Protocol；每个Action必须记录effective_from+TTL；必须写入结构化JSON日志；kb.write必须带provenance
+    prohibitions:
+    - CoVe Step 2使用与Step 1相同的模型
+    - FLE直接import实现类
+    - FLE Action不记录effective_from+ttl
+    - 服务降级不写入日志
+    - 知识库写入不带provenance
+  change_history:
+    title: 修订记录
+    section_type: examples
+    items:
+    - version: "1.1.0"
+      date: "2026-06-19"
+      change: "RQ-01~RQ-14审查修复——修复cond_50_21为cond_50(仅保留COND-50审计日志连续性，COND-21配置变更记录移至trae_022)；移除cond_23_25(属trae_022范围05-26)；移除错误的msc_scope/msc_normative_refs/msc_change_history(原内容为元标准宪法，与trae_023主题不符)；修复enforcement.type为doc(无executors)；修复provenance路径分隔符"
+    - version: "1.0.0"
+      date: "2026-06-13"
+      change: "初始提取——从behavior_boundaries_standard.md提取COND-27~COND-52条件禁止规则(治理与文档)"
+references:
+  rule_ids:
+  - TRAE-022
+  scripts: []
+  modules: []
+  blueprints: []
+enforcement:
+  type: doc
+  executors: []
+  bypass_allowed: false
+metadata:
+  change_policy: stable
+  impact_level: M
+  modification_permission: human_gated
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

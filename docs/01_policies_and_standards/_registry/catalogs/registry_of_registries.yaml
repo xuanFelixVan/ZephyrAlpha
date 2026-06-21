@@ -1,3 +1,4 @@
+# [A_config] module_id=CFG-registry_of_registries | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: DOM-GOV-001
@@ -114,7 +115,7 @@ registries:
   - id: "REG-003"
     name: "rule-catalog"
     title: "规则路径目录"
-    path: "docs/01_policies_and_standards/_registry/catalogs/rule-catalog.yaml"
+    path: "docs/01_policies_and_standards/_registry/catalogs/rule-catalog-registry.yaml"
     version: "1.0.0"
     description: "自动生成的规则文件路径目录（154 文件）"
     ssoT_for:
@@ -126,7 +127,7 @@ registries:
   - id: "REG-004"
     name: "frontmatter-field-registry"
     title: "Frontmatter 字段登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.yaml"
+    path: "docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.md"
     version: "1.0.0"
     description: "所有 frontmatter 字段的 SSoT 定义（字段名、类型、必填性、枚举值）"
     ssoT_for:
@@ -139,7 +140,7 @@ registries:
   - id: "REG-005"
     name: "directory-registry"
     title: "目录登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/directory-registry.yaml"
+    path: "docs/01_policies_and_standards/_registry/catalogs/directory-registry.md"
     version: "1.0.0"
     description: "项目目录结构的 SSoT（路径、职责、状态）"
     ssoT_for:
@@ -150,7 +151,7 @@ registries:
   - id: "REG-006"
     name: "gate-registry"
     title: "门禁登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/gate-registry.yaml"
+    path: "docs/01_policies_and_standards/_registry/catalogs/gate-registry.md"
     version: "1.0.0"
     description: "25 个 pre-commit 门禁定义（入口脚本、触发条件、分类）"
     ssoT_for:
@@ -163,7 +164,7 @@ registries:
   - id: "REG-007"
     name: "ai-risk-register"
     title: "AI 风险登记簿"
-    path: "docs/01_policies_and_standards/_registry/catalogs/ai-risk-register.yaml"
+    path: "docs/01_policies_and_standards/_registry/catalogs/ai-risk-registry.md"
     version: "1.0.1"
     description: "8 条 AI 风险登记（概率、影响、缓解、OWASP 映射）"
     ssoT_for:
@@ -176,7 +177,7 @@ registries:
   - id: "REG-008"
     name: "infrastructure-registry"
     title: "基础设施登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.yaml"
+    path: "docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.md"
     version: "1.0.0"
     description: "9 个基础设施组件登记（事件总线、消息队列、数据库等）"
     ssoT_for:
@@ -199,7 +200,7 @@ registries:
   - id: "REG-010"
     name: "script-health-registry"
     title: "脚本健康登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/script-health-registry.yaml"
+    path: "docs/01_policies_and_standards/_registry/catalogs/script-health-registry.md"
     version: "1.0.0"
     description: "39 个治理脚本的健康登记（维度、入口、依赖）"
     ssoT_for:
@@ -210,7 +211,7 @@ registries:
   - id: "REG-011"
     name: "ai-session-registry"
     title: "AI 会话登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/ai-session-registry.yaml"
+    path: "docs/01_policies_and_standards/_registry/catalogs/ai-session-registry.md"
     version: "1.0.0"
     description: "AI 会话生命周期登记"
     ssoT_for:
@@ -221,7 +222,7 @@ registries:
   - id: "REG-012"
     name: "declarative-contract-tracker"
     title: "声明式契约跟踪登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker.yaml"
+    path: "docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker-registry.md"
     version: "1.5.0"
     description: "11 条声明式契约的跟踪（YAML 承诺→代码兑现）"
     ssoT_for:
@@ -233,7 +234,7 @@ registries:
   - id: "REG-013"
     name: "document-metadata-index"
     title: "文档元数据索引"
-    path: "docs/01_policies_and_standards/_registry/catalogs/document-metadata-index.yaml"
+    path: "docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml"
     version: "1.0.0"
     description: "154 个文档的元数据索引（自动生成）"
     ssoT_for:
@@ -244,7 +245,7 @@ registries:
   - id: "REG-014"
     name: "task-card-meta-registry"
     title: "任务卡元数据登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.yaml"
+    path: "docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md"
     version: "1.0.0"
     description: "任务卡体系元层登记"
     ssoT_for:
@@ -254,7 +255,7 @@ registries:
   - id: "REG-015"
     name: "knowledge-article-registry"
     title: "知识文章登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/knowledge-article-registry.yaml"
+    path: "docs/01_policies_and_standards/_registry/catalogs/knowledge-article-registry.md"
     version: "1.0.0"
     description: "知识库文章登记"
     ssoT_for:
@@ -264,7 +265,7 @@ registries:
   - id: "REG-016"
     name: "master-document-inventory"
     title: "主文档清单"
-    path: "docs/01_policies_and_standards/_registry/catalogs/master-document-inventory.yaml"
+    path: "docs/01_policies_and_standards/_registry/catalogs/master-document-inventory-registry.md"
     version: "1.0.0"
     description: "项目全部文档的清单索引"
     ssoT_for:

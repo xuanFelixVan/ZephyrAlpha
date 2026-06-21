@@ -1,3 +1,4 @@
+# [A_test] module_id: SRC-TST-0200 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-014 | docs/03_modules/_cross_layer/llm-security/blueprint.md | §
 # [MODULE] tests.llm_security.test_l8_multi_agent
 # [STABILITY] evolving
@@ -6,7 +7,7 @@
 # [TESTS] —
 import pytest
 
-from zephyr.llm_security.layers.l8_multi_agent import (
+from zephyr.security.llm_defense.llm_security.layers.l8_multi_agent import (
     AgentCommunicationItem,
     AgentIdentityResolver,
     CrossAgentPermission,
@@ -98,7 +99,7 @@ class TestMultiAgentSecurityLayer:
 
     @pytest.mark.asyncio
     async def test_evaluate_without_agents_allowed(self):
-        from zephyr.llm_security.protocol import SecurityContext, SecurityDecision
+        from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
         layer = MultiAgentSecurityLayer()
         ctx = SecurityContext(
             request_id="test-l8-eval-1",
@@ -112,7 +113,7 @@ class TestMultiAgentSecurityLayer:
 
     @pytest.mark.asyncio
     async def test_evaluate_with_authorized_agents(self):
-        from zephyr.llm_security.protocol import SecurityContext, SecurityDecision
+        from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
         layer = MultiAgentSecurityLayer()
         ctx = SecurityContext(
             request_id="test-l8-eval-2",
@@ -125,7 +126,7 @@ class TestMultiAgentSecurityLayer:
 
     @pytest.mark.asyncio
     async def test_evaluate_denies_unauthorized_cross_agent(self):
-        from zephyr.llm_security.protocol import SecurityContext, SecurityDecision
+        from zephyr.infrastructure.a2a_protocol.governance.protocol import SecurityContext, SecurityDecision
         layer = MultiAgentSecurityLayer()
         layer.authenticate_cross_agent = lambda *a, **kw: (False, "unauthorized")
         ctx = SecurityContext(

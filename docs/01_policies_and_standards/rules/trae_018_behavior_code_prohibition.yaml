@@ -1,0 +1,202 @@
+rule_id: TRAE-018
+title: 行为边界-代码操作绝对禁止
+aliases:
+- ABS-01
+- ABS-02
+- ABS-03
+- ABS-04
+- ABS-05
+- ABS-06
+- ABS-07
+- ABS-08
+layer: L0
+severity: critical
+scope: code_operation_prohibition
+domain: TRAE
+triggers:
+- operation: code_operation_prohibition
+sections:
+  classification_system:
+    title: 行为边界三级分类体系
+    section_type: rule
+    original_rules:
+    - PS-STD-003 §2
+    conditions:
+    - type: pre_condition
+      check: 定义或判断行为边界级别时
+      pass: 按三级分类正确标记和处理
+      fail: 行为边界级别混乱导致执行不一致
+    actions:
+    - type: mandatory
+      step: 三级分类——ABS绝对禁止(任何情况下均不可违反，违反则即时阻断+事件记录，仅Owner可修改需KB决策记录) / COND条件禁止(特定条件下不可违反，条件由领域规则定义，违反则条件触发时阻断+事件记录，领域规则负责人可修改) / REC推荐做法(建议遵守但不强制，违反则记录但不阻断，任何规则负责人可修改)
+    prohibitions: []
+  classification_principles:
+    title: 行为边界分类原则
+    section_type: rule
+    original_rules:
+    - PS-STD-003 §2.2
+    conditions:
+    - type: constraint
+      check: 新增行为边界条目时
+      pass: 遵循三条分类原则
+      fail: 条目级别不当导致执行偏差
+    actions:
+    - type: mandatory
+      step: 三条分类原则——1.最小化绝对禁止(只有跨域/跨session/影响系统完整性的禁止才列为绝对禁止) / 2.领域禁止下沉(仅适用于特定领域的禁止行为由领域规则定义，本标准不重复) / 3.单一真源(同一行为只在一个地方定义为禁止，其他地方引用而非重复定义)
+    prohibitions: []
+  abs_01:
+    title: AI 自主修改 immutable_core 文件
+    section_type: rule
+    original_rules:
+    - ABS-01
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-01 违规
+      pass: 操作合规
+      fail: 不可变核心文件定义了系统宪法，AI 自主修改将导致治理体系失效
+    actions:
+    - type: mandatory
+      step: 需 Owner 直接审批 + KB 决策记录
+    prohibitions:
+    - AI 自主修改 immutable_core 文件
+  abs_02:
+    title: AI 自主删除任何文档
+    section_type: rule
+    original_rules:
+    - ABS-02
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-02 违规
+      pass: 操作合规
+      fail: 删除操作不可逆，AI 无法评估知识的长期价值
+    actions:
+    - type: mandatory
+      step: 提取知识到知识库后，交 Owner 审批删除
+    prohibitions:
+    - AI 自主删除任何文档
+  abs_03:
+    title: AI 自行裁决规则冲突
+    section_type: rule
+    original_rules:
+    - ABS-03
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-03 违规
+      pass: 操作合规
+      fail: AI 选择对自己更方便的规则将导致不可预测行为
+    actions:
+    - type: mandatory
+      step: 停止操作，上报 Owner 手动裁决
+    prohibitions:
+    - AI 自行裁决规则冲突
+  abs_04:
+    title: AI 忽略高优先级规则
+    section_type: rule
+    original_rules:
+    - ABS-04
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-04 违规
+      pass: 操作合规
+      fail: 高优先级规则的存在理由是防止系统性风险
+    actions:
+    - type: mandatory
+      step: 遵循优先级层级，或上报 Owner
+    prohibitions:
+    - AI 忽略高优先级规则
+  abs_05:
+    title: AI 执行 P0 变更（修改Level 1-4规则）
+    section_type: rule
+    original_rules:
+    - ABS-05
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-05 违规
+      pass: 操作合规
+      fail: P0 变更影响全局治理，必须 Owner 手动执行
+    actions:
+    - type: mandatory
+      step: 在 Session Log 中提出变更请求，由 Owner 执行
+    prohibitions:
+    - AI 执行 P0 变更（修改 Level 1-4 规则）
+  abs_06:
+    title: AI 在未经Owner批准的情况下修改P0条款
+    section_type: rule
+    original_rules:
+    - ABS-06
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-06 违规
+      pass: 操作合规
+      fail: P0 条款（必须禁止类）是治理红线
+    actions:
+    - type: mandatory
+      step: 提出变更请求，Owner 明确批准后方可执行
+    prohibitions:
+    - AI 在未经 Owner 批准的情况下修改 P0 条款
+  abs_07:
+    title: AI 自行判断紧急并绕过审批流程
+    section_type: rule
+    original_rules:
+    - ABS-07
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-07 违规
+      pass: 操作合规
+      fail: AI 的紧急判断不可信，可能被利用绕过安全机制
+    actions:
+    - type: mandatory
+      step: 立即停止操作，在 Session Log 记录，等 Owner 确认
+    prohibitions:
+    - AI 自行判断紧急并绕过审批流程
+  abs_08:
+    title: AI 修改 .cursor/rules/ 下任何文件
+    section_type: rule
+    original_rules:
+    - ABS-08
+    conditions:
+    - type: pre_condition
+      check: 检测 ABS-08 违规
+      pass: 操作合规
+      fail: Cursor 规则是 Level 2 优先级，AI 修改将影响所有 Cursor session
+    actions:
+    - type: mandatory
+      step: Trae 禁止操作；Cursor 需 Owner 批准
+    prohibitions:
+    - AI 修改 .cursor/rules/ 下任何文件
+references:
+  rule_ids:
+  - TRAE-019
+  - TRAE-020
+  - TRAE-021
+  scripts:
+  - scripts/governance/d1_structure/validate_immutable_core.py
+  - scripts/governance/pre_delete_safety_check.py
+  - scripts/governance/d5_architecture/validators/validate_autonomy_gate.py
+  - scripts/lock_files.py
+  modules:
+  - src/zephyr/shared/contracts/identity
+  blueprints: []
+enforcement:
+  type: hook
+  executors:
+  - scripts/governance/d1_structure/validate_immutable_core.py
+  - scripts/governance/pre_delete_safety_check.py
+  - scripts/governance/d5_architecture/validators/validate_autonomy_gate.py
+  - scripts/lock_files.py
+  bypass_allowed: false
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+  change_history:
+  - version: "1.1.0"
+    date: "2026-06-19"
+    change: "RQ审查修复——修复abs_01~abs_08全部乱码(RQ-08)；删除3个污染section(bp_scope/bp_normative_refs/bp_change_history，内容为蓝图架构标准不属于本文件)；补充references和enforcement.executors实际脚本(RQ-04/RQ-06)；修复provenance路径(RQ-04)；新增change_history(RQ-14)"
+  - version: "1.0.0"
+    date: "2026-06-13"
+    change: "初始提取——从behavior-boundaries-standard.md提取ABS-01~08代码操作绝对禁止规则"
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

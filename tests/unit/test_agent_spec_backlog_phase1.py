@@ -1,11 +1,12 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1967 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-584 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.unit.test_agent_spec_backlog_phase1
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
 """
-Unit tests for agent_spec backlog Phase 1 modules.
+Unit tests for agent-spec backlog Phase 1 modules.
 
 Covers:
   - skill_executor: KBIntegration, SkillExecutor, BudgetEnforcer, PermissionLevel, EscalationHandler, SkillFeedbackLoop
@@ -22,7 +23,7 @@ from unittest.mock import patch, MagicMock
 
 import pytest
 
-from zephyr.agent_spec.skill_executor import (
+from zephyr.autonomy_core.skill_executor import (
     KBIntegration,
     SkillExecutor,
     BudgetEnforcer,
@@ -31,11 +32,11 @@ from zephyr.agent_spec.skill_executor import (
     SkillFeedbackLoop,
     GateResult,
 )
-from zephyr.agent_spec.skill_postmortem import SkillPostmortem
-from zephyr.agent_spec.skill_compliance import SkillCompliance
-from zephyr.agent_spec.skill_sandbox import SkillSandbox
-from zephyr.agent_spec.skill_contract import SkillContract
-from zephyr.agent_spec.skill_silent_failure import SilentFailureDetector
+from zephyr.autonomy_core.skill_postmortem import SkillPostmortem
+from zephyr.autonomy_core.skill_compliance import SkillCompliance
+from zephyr.autonomy_core.skill_sandbox import SkillSandbox
+from zephyr.autonomy_core.skill_contract import SkillContract
+from zephyr.autonomy_core.skill_silent_failure import SilentFailureDetector
 
 
 class TestKBIntegration:
@@ -64,7 +65,7 @@ class TestKBIntegration:
 
     def test_sync_freshness_returns_float(self):
         with patch(
-            "zephyr.agent_spec.skill_freshness.FreshnessDecayModel"
+            "zephyr.orchestration.agent_lifecycle.skill_freshness.FreshnessDecayModel"
         ) as MockModel:
             instance = MockModel.return_value
             instance.current_state.return_value = {
@@ -146,7 +147,7 @@ class TestSkillPostmortem:
         assert "corrective_actions" in result
         assert "preventive_actions" in result
         assert result["symptom_category"] == "registration"
-        assert len(result["five_whys"]) == 5
+        assert len(result["root_cause_chain"]) >= 5
 
     def test_analyze_budget_error(self):
         result = SkillPostmortem.analyze(

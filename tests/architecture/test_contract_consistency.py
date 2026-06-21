@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0062 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-220 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.architecture.test_contract_consistency
 # [STABILITY] evolving
 # [SAFETY] L
@@ -8,7 +9,7 @@
 架构适应度函数：YAML ↔ Python 契约一致性
 ============================================
 
-验证 cross-layer-contracts.yaml 中的契约定义与实际 Python dataclass 实现
+验证 cross_layer_contracts.yaml 中的契约定义与实际 Python dataclass 实现
 完全一致。防止 SSoT 和代码实现之间的漂移。
 
 架构不变式
@@ -33,7 +34,7 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 YAML_PATH = REPO_ROOT / (
-    "docs/02_enterprise_architecture/target-architecture/" "architecture-model/contracts/cross-layer-contracts.yaml"
+    "docs/02_enterprise_architecture/target-architecture/" "architecture-model/contracts/cross_layer_contracts.yaml"
 )
 
 TYPE_MAP = {

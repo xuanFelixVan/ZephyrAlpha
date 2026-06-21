@@ -1,0 +1,41 @@
+---
+phase: experimental
+
+session_id: 06
+
+date: 2026-05-05
+
+summary: "Phase C — 模型冻结与路由串联（freeze_manifest + route_manifest 创建）"
+
+outcome: completed
+
+files_changed:
+
+  - { path: "src/zephyr/shared/contracts/freeze-manifest.yaml", change: "新建 — 31条契约 + 11层接口文件冻结清单 + 变更控制规则" }
+
+  - { path: "src/zephyr/pipeline/route-manifest.yaml", change: "新建 — 7管线/25跳转全系统端到端路由拓扑（主管线/研究/ML/合规/遥测/VMS/反馈环）" }
+
+  - { path: "_phase_c_import_test.py", change: "被 GATE-17 自动清理（根目录孤儿.py）" }
+
+  - { path: "_phase_c_validate.py", change: "被 GATE-17 自动清理（根目录孤儿.py）" }
+
+next_task: "Phase D — 首层实现启动（L00 DataSource 真实数据接入）"
+
+blockers: none
+
+alerts:
+
+  - "GATE-17 自动清理了根目录的 _phase_c_import_test.py 和 _phase_c_validate.py——按设计预期工作"
+
+  - "L04 使用函数式 API（evaluate_stop_loss 等），无类级接口——不影响路由串联"
+
+validation:
+
+  - "freeze-manifest.yaml: 31 contracts / 11 frozen interfaces — YAML 合法"
+
+  - "route-manifest.yaml: 7 routes / 25 hops — YAML 合法"
+
+  - "全 12 层导入通过（L00-L13 + VMS）"
+
+  - "pytest 收集: 1883 tests（零导入错误，较 Phase B +87 tests）"
+

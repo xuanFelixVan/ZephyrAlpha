@@ -1,0 +1,91 @@
+rule_id: TRAE-002
+title: 反孤儿与搜索先行协议
+aliases:
+- RULE-TWO
+- RULE-EIGHT
+- 反孤儿
+- 搜索先行
+layer: L0
+severity: critical
+scope: feature_creation
+domain: TRAE
+triggers:
+- operation: feature_create
+- operation: file_create
+- skill_id: SKILL-DOM-DED-001
+sections:
+  anti_orphan:
+    section_type: rule
+    title: 反孤儿功能
+    original_rules:
+    - RULE-TWO
+    conditions:
+    - type: pre_condition
+      check: AI产出新功能时强制五问
+      pass: 五问全答→可关闭任务
+      fail: 缺少回答→不能关闭
+    actions:
+    - type: mandatory
+      step: 1.谁调用它？入口在哪？2.谁发现它？3.谁维护它？4.谁校验它？5.谁更新它？
+    - type: mandatory
+      step: 注册管理单元（不注册文件）：独立生命周期/跨域消费者/需治理决策/无法自然发现→必须注册
+    - type: mandatory
+      step: 按强制集成清单注册到对应注册表
+    prohibitions:
+    - 创建 .py 文件但不注册到 script-manifest.yaml
+    - 写了新功能但不建立任何调用入口
+    - 新增 gate 只写名字不写实现
+    - 完成任务卡后不检查下游有没有人用
+  search_first:
+    section_type: procedure
+    title: 搜索先行
+    original_rules:
+    - RULE-EIGHT
+    conditions:
+    - type: pre_condition
+      check: SearchCodebase + Grep 全局搜索 + 注册表精确匹配
+      pass: 确认无覆盖→可新建
+      fail: 有覆盖→复用决策
+    actions:
+    - type: mandatory
+      step: 'STEP 1: 关键词全局搜索 → STEP 2: 注册表精确匹配 → STEP 3: 复用决策四选一'
+    - type: mandatory
+      step: 复用四选一：完全覆盖→直接用 / 80%→扩展已有 / 50%→重构+扩展 / 0%→scaffold新建
+    - type: mandatory
+      step: 放弃新建时写 [REUSE-DECISION] 放弃新建 X，因为已有 Y 覆盖了 Z
+    prohibitions:
+    - 不搜索直接创建新脚本
+    - 搜到了但不复用坚持新建
+    - 新建后不写 [REUSE-DECISION]
+    - 用'我觉得没有'替代'我搜了没有'
+  change_history:
+    section_type: examples
+    title: 反孤儿与搜索先行协议修订记录
+    items:
+    - version: '1.1.0'
+      date: '2026-06-19'
+      change: 'RQ审查修复: provenance哈希同步(project_rules.md+onboarding_detail.md); 新增change_history(RQ-14)'
+    - version: '1.0.0'
+      date: '2026-06-13'
+      change: '从project_rules.md(RULE-TWO/RULE-EIGHT)+onboarding_detail.md(§三/§四)提取初始版本'
+references:
+  rule_ids: []
+  scripts:
+  - scripts/scaffold.py
+  - scripts/governance/audit_registration.py
+  modules: []
+  blueprints: []
+enforcement:
+  type: hook
+  executors:
+  - audit_registration.py
+  - scaffold.py
+  bypass_allowed: false
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+provenance:
+  extracted_at: '2026-06-13T00:00:00'
+  extracted_by: session-20260613-001

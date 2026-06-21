@@ -39,8 +39,8 @@ def main() -> int:
         passed += 1
 
     aisg_paths = [
-        REPO_ROOT / "src" / "zephyr" / "l10_compliance" / "security_gateway_base.py",
-        REPO_ROOT / "src" / "zephyr" / "l10_compliance" / "aisg_sandbox.py",
+        REPO_ROOT / "src" / "zephyr" / "compliance" / "security_gateway_base.py",
+        REPO_ROOT / "src" / "zephyr" / "compliance" / "aisg_sandbox.py",
         REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry"
         / "catalogs" / "ai-autonomy-authority-registry.md",
     ]
@@ -54,7 +54,7 @@ def main() -> int:
             errors.append(f"AISG 文件缺失: {rel}")
 
     # ── 功能检查：AISG sandbox 测试 ──
-    sandbox_path = REPO_ROOT / "src" / "zephyr" / "l10_compliance" / "aisg_sandbox.py"
+    sandbox_path = REPO_ROOT / "src" / "zephyr" / "compliance" / "aisg_sandbox.py"
     if sandbox_path.exists():
         import importlib.util
 

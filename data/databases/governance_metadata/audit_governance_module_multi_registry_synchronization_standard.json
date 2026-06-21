@@ -1,0 +1,45 @@
+{
+  "task_id": "DM-100132",
+  "source_file": "docs/01_policies_and_standards/governance/module/multi_registry_synchronization_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_033_module_registration_sync.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "MRS-001_注册表写入映射": {
+      "source_section": "§5.1 MRS-001",
+      "type": "mandatory+trigger",
+      "status": "COVERED",
+      "yaml_section": "trae_033_module_registration_sync.yaml:mod_006",
+      "details": "创建/修改工件后MUST同步写入对应注册表+13个注册表写入映射+12种操作类型×14个注册表矩阵+通用5步+新模块10步"
+    },
+    "MRS-002_原子性原则": {
+      "source_section": "§5.4 MRS-002",
+      "type": "mandatory+constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_033_module_registration_sync.yaml:mod_007",
+      "details": "所有注册表修改MUST在同一操作中完成——禁止先改A再改B"
+    },
+    "MRS-003_同步后校验": {
+      "source_section": "§5.5 MRS-003",
+      "type": "mandatory+constraint",
+      "status": "COVERED",
+      "yaml_section": "trae_033_module_registration_sync.yaml:mod_007",
+      "details": "4个校验脚本(check_registry_consistency.py+check_frontmatter_metadata.py+check_architecture_gates.py+validate_directory_registry.py)+脚本不可用时手动SSoT验证+FAIL必须commit前修复"
+    },
+    "MRS-004_6条禁止行为": {
+      "source_section": "§6 MRS-004",
+      "type": "prohibition",
+      "status": "COVERED",
+      "yaml_section": "trae_033_module_registration_sync.yaml:mod_007",
+      "details": "6条禁止：创建不写注册表/只改文件不改注册表/只改注册表不改文件/只改A不改B/SearchReplace不唯一/新注册表不注册master-index"
+    }
+  },
+  "summary": {
+    "total_rules": 4,
+    "COVERED": 4,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "trae_033_module_registration_sync.yaml: 从占位符扩展为2个详细section——mod_006(MRS-001注册表写入映射+1条trigger+3条actions)+mod_007(MRS-002/003/004+2条constraints+4条actions+6条prohibitions)"
+  ]
+}

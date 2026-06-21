@@ -1,28 +1,22 @@
 ---
-
 doc_type: index
 status: active
-title: "old_tasks — 目录索引"
-version: "1.0.0"
-created: "2026-05-08"
-updated: "2026-05-08"
-blueprint_id: DOM-GOV-001
+generated: '2026-05-28'
 ---
 
+# Old Tasks — 目录索引
 
-# old_tasks
+## 责任声明（Single Responsibility）
 
-> 本文件由 `generate_missing_index_md.py` 自动生成
-> 生成日期：2026-05-08
+本目录只存放：**old tasks**。
 
-## 目录内容
+## 文件清单
 
-| 文件/目录 | 类型 | 说明 |
-|-----------|------|------|
-| [T-REAL-001.json](T-REAL-001.json) | JSON | |
-| [T-REAL-002.json](T-REAL-002.json) | JSON | |
+| 文件 | 说明 |
+|------|------|
+| T-REAL-001.json | JSON Schema |
+| T-REAL-002.json | JSON Schema |
 
-## 导航
+## 父级目录
 
-- [上级目录](../index.md)
-- [项目根](../../index.md)
+- 父级：[archived](../index.md)

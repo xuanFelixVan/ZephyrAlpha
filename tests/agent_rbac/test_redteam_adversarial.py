@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-018 | docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md | §
+# [A_test] module_id: SRC-TST-0054 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain-autonomy_core/agent-rbac/blueprint.md | §
 # [MODULE] tests.agent_rbac.test_redteam_adversarial
 # [STABILITY] evolving
 # [SAFETY] L
@@ -25,32 +26,32 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.agent_rbac.identity import AgentIdentity, AgentRole, MaturityLevel, IDESource
-from zephyr.agent_rbac.permission_guard import PermissionGuard, GuardDecision, GuardResult
-from zephyr.agent_rbac.immutable_core import ImmutableCore, ALWAYS_BLOCKED_OPERATIONS
-from zephyr.agent_rbac.kill_switch import KillSwitch, KillSwitchState
-from zephyr.agent_rbac.engine_degradation import EngineDegradationManager, DegradationLevel
-from zephyr.agent_rbac.rbac_guard import RBACGuard, PermissionDecision
-from zephyr.agent_rbac.abac_guard import ABACGuard, ABACContext, TemporalCategory
-from zephyr.agent_rbac.input_guard import InputGuard
-from zephyr.agent_rbac.sequence_guard import SequenceGuard, SequenceEvent, FORBIDDEN_SEQUENCES
-from zephyr.agent_rbac.output_guard import OutputGuard
-from zephyr.agent_rbac.cold_start_lock import ColdStartLock
-from zephyr.agent_rbac.intent_binder import IntentBinder
-from zephyr.agent_rbac.context_drift_detector import ContextDriftDetector
-from zephyr.agent_rbac.adversarial_resilience import AdversarialResilience
-from zephyr.agent_rbac.multi_agent_collusion_detector import MultiAgentCollusionDetector
-from zephyr.agent_rbac.false_completion_detector import FalseCompletionDetector
-from zephyr.agent_rbac.cross_session_detector import CrossSessionDetector
-from zephyr.agent_rbac.replay_attack_guard import ReplayAttackGuard
-from zephyr.agent_rbac.non_repudiation import NonRepudiation
-from zephyr.agent_rbac.path_guard import PathGuard
-from zephyr.agent_rbac.monotonic_clock import MonotonicClock
-from zephyr.agent_rbac.toctou_guard import TOCTOUGuard
-from zephyr.agent_rbac.agent_creation_policy import AgentCreationPolicy
-from zephyr.agent_rbac.emergency_override import EmergencyOverride
-from zephyr.agent_rbac.permission_hooks import PermissionHooks
-from zephyr.agent_rbac.auto_maintenance import AutoMaintenance
+from zephyr.security.access_control.identity import AgentIdentity, AgentRole, MaturityLevel, IDESource
+from zephyr.security.access_control.permission_guard import PermissionGuard, GuardDecision, GuardResult
+from zephyr.security.access_control.immutable_core import ImmutableCore, ALWAYS_BLOCKED_OPERATIONS
+from zephyr.security.access_control.kill_switch import KillSwitch, KillSwitchState
+from zephyr.security.access_control.engine_degradation import EngineDegradationManager, DegradationLevel
+from zephyr.security.access_control.rbac_guard import RBACGuard, PermissionDecision
+from zephyr.security.access_control.abac_guard import ABACGuard, ABACContext, TemporalCategory
+from zephyr.security.access_control.input_guard import InputGuard
+from zephyr.security.access_control.sequence_guard import SequenceGuard, SequenceEvent, FORBIDDEN_SEQUENCES
+from zephyr.security.access_control.output_guard import OutputGuard
+from zephyr.security.access_control.cold_start_lock import ColdStartLock
+from zephyr.security.access_control.intent_binder import IntentBinder
+from zephyr.security.access_control.context_drift_detector import ContextDriftDetector
+from zephyr.security.access_control.adversarial_resilience import AdversarialResilience
+from zephyr.security.access_control.multi_agent_collusion_detector import MultiAgentCollusionDetector
+from zephyr.security.access_control.false_completion_detector import FalseCompletionDetector
+from zephyr.security.access_control.cross_session_detector import CrossSessionDetector
+from zephyr.security.access_control.replay_attack_guard import ReplayAttackGuard
+from zephyr.security.access_control.non_repudiation import NonRepudiation
+from zephyr.security.access_control.path_guard import PathGuard
+from zephyr.security.access_control.monotonic_clock import MonotonicClock
+from zephyr.security.access_control.toctou_guard import TOCTOUGuard
+from zephyr.security.access_control.agent_creation_policy import AgentCreationPolicy
+from zephyr.security.access_control.emergency_override import EmergencyOverride
+from zephyr.security.access_control.permission_hooks import PermissionHooks
+from zephyr.security.access_control.auto_maintenance import AutoMaintenance
 
 
 def _make_agent(
@@ -212,7 +213,7 @@ class TestPhase4_CrossCuttingBypass:
         assert total >= 8, f"Cross-A FAIL: only {total} hooks registered (expected >=8)"
 
     def test_crosscut_b_permission_topology(self):
-        from zephyr.agent_rbac.cross_cutting import PermissionTopology
+        from zephyr.security.access_control.cross_cutting import PermissionTopology
         topology = PermissionTopology()
         topology.add_node("read:docs")
         topology.add_node("read:src")

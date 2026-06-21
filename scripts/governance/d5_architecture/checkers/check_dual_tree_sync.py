@@ -12,8 +12,8 @@ docs/02_enterprise_architecture/target-architecture/architecture-model/（企业
 
 检测内容（按严重性）：
 - P0: partition.id 在施工树存在但企业架构树缺失（C 轨层）
-- P0: 同一 partition.id 两侧文件名不一致（如 l13_experimentation vs l13-experiment-pipeline）
-- P1: 施工树 technology-landscape.yaml 未声明 deprecated（企业架构树已有完整版）
+- P0: 同一 partition.id 两侧文件名不一致（如 integration vs l13-experiment-pipeline）
+- P1: 施工树 technology_landscape.yaml 未声明 deprecated（企业架构树已有完整版）
 - P2: B 轨分区在施工树存在但企业架构树缺失（SCOPE.yaml R3 允许，仅提醒）
 - P2: 两侧 YAML 的 module_id 集合差异（同名 partition 下模块不一致）
 
@@ -69,20 +69,20 @@ SCOPE_YAML = IMPL_TREE / "SCOPE.yaml"
 # 施工树使用下划线（与 src/ 目录命名一致），企业架构树使用连字符（与视图文档命名一致）
 # 这是有意设计差异——SCOPE.yaml R3 明确允许同一 partition.id 两侧各有不同文件名的 YAML
 FILENAME_MAP: dict[str, str] = {
-    "l00_data_source.yaml": "l00-data-source.yaml",
-    "l01_infrastructure.yaml": "l01-infrastructure.yaml",
-    "l02_alpha_factor.yaml": "l02-alpha-factor.yaml",
-    "l03_signal_generation.yaml": "l03-signal-generation.yaml",
-    "l04_risk_management.yaml": "l04-risk-management.yaml",
-    "l05_portfolio_construction.yaml": "l05-portfolio-construction.yaml",
-    "l06_trade_execution.yaml": "l06-trade-execution.yaml",
-    "l07_post_trade_analytics.yaml": "l07-post-trade-analytics.yaml",
-    "l08_human_ai_interface.yaml": "l08-human-ai-interface.yaml",
-    "l09_research_innovation.yaml": "l09-research-innovation.yaml",
-    "l10_compliance.yaml": "l10-governance-compliance.yaml",
-    "l11_ml_platform.yaml": "l11-ml-platform.yaml",
-    "l12_system_telemetry.yaml": "l12-system-telemetry.yaml",
-    "l13_experimentation.yaml": "l13-experiment-pipeline.yaml",
+    "data.yaml": "l00_data_source.yaml",
+    "infrastructure.runtime_integration.yaml": "l01_infrastructure.yaml",
+    "factor.yaml": "l02_alpha_factor.yaml",
+    "signal.yaml": "l03_signal_generation.yaml",
+    "risk.yaml": "l04_risk_management.yaml",
+    "pf_core.yaml": "l05_portfolio_construction.yaml",
+    "ex_core.yaml": "l06_trade_execution.yaml",
+    "pf_core.yaml": "l07_post_trade_analytics.yaml",
+    "frontend.yaml": "l08_human_ai_interface.yaml",
+    "research.yaml": "l09_research_innovation.yaml",
+    "compliance.yaml": "l10-governance-compliance.yaml",
+    "ml_train.yaml": "l11_ml_platform.yaml",
+    "observability.yaml": "l12_system_telemetry.yaml",
+    "integration.yaml": "l13-experiment-pipeline.yaml",
     "b_shared.yaml": "shared.yaml",
 }
 
@@ -206,9 +206,9 @@ def check_p0_b_track_sync() -> list[str]:
 
 
 def check_p1_tech_landscape_deprecated() -> list[str]:
-    """P1: 施工树 technology-landscape.yaml 应声明 deprecated。"""
+    """P1: 施工树 technology_landscape.yaml 应声明 deprecated。"""
     errs: list[str] = []
-    tl_impl = IMPL_TREE / "technology-landscape.yaml"
+    tl_impl = IMPL_TREE / "technology_landscape.yaml"
     if not tl_impl.exists():
         return errs
 
@@ -220,7 +220,7 @@ def check_p1_tech_landscape_deprecated() -> list[str]:
     if status != "deprecated":
         errs.append(
             f"P1: 施工树 {tl_impl.relative_to(REPO_ROOT)} 未声明 status: deprecated — "
-            f"企业架构树已有完整版（{EA_TREE / 'technology/technology-landscape.yaml'})"
+            f"企业架构树已有完整版（{EA_TREE / 'technology/technology_landscape.yaml'})"
         )
 
     return errs

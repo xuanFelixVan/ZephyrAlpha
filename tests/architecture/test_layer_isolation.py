@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-0064 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-222 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.architecture.test_layer_isolation
 # [STABILITY] evolving
 # [SAFETY] L
@@ -27,20 +28,20 @@ from pathlib import Path
 import pytest
 
 LAYER_ORDER = [
-    "l00_data_source",
-    "l01_infrastructure",
-    "l02_alpha_factor",
-    "l03_signal_generation",
-    "l04_risk_management",
-    "l05_portfolio_construction",
-    "l06_trade_execution",
-    "l07_post_trade_analytics",
-    "l08_human_ai_interface",
-    "l09_research_innovation",
-    "l10_compliance",
-    "l11_ml_platform",
-    "system_telemetry",
-    "l13_experimentation",
+    "l00-data-source",
+    "l01-infrastructure",
+    "l02-alpha-factor",
+    "l03-signal-generation",
+    "l04-risk-management",
+    "l05-portfolio-construction",
+    "l06-trade-execution",
+    "l07-post-trade-analytics",
+    "l08-human-ai-interface",
+    "l09-research-innovation",
+    "l10-compliance",
+    "l11-ml-platform",
+    "system-telemetry",
+    "l13-experimentation",
 ]
 
 LAYER_INDEX = {name: i for i, name in enumerate(LAYER_ORDER)}
@@ -48,16 +49,16 @@ LAYER_INDEX = {name: i for i, name in enumerate(LAYER_ORDER)}
 SHARED_DIRS = {
     "shared",
     "core",
-    "context_engine",
+    "context-engine",
     "kb",
     "db",
     "orchestrator",
     "gates",
     "mcp",
-    "feedback_loop",
-    "llm_security",
+    "feedback-loop",
+    "llm-security",
     "pipeline",
-    "vector_memory",
+    "vector-memory",
 }
 
 REPO_ROOT = Path(__file__).resolve().parents[2]

@@ -1,5 +1,5 @@
 ---
-module_id: AUD-FINDINGS-IDX
+module_id: GOV-052
 title: 审计与安全事件 Finding 目录
 doc_type: index
 status: Active
@@ -10,7 +10,7 @@ classification: confidential
 language: zh
 date: "2026-05-06"
 ttl: permanent
-summary: "安全泄漏类与事件响应 Finding Markdown 落盘目录（对齐 06-security-architecture.md）"
+summary: "安全泄漏类与事件响应 Finding Markdown 落盘目录（对齐 06-security_architecture.md）"
 tags: [audit, findings, security-incident]
 ---
 
@@ -25,4 +25,4 @@ tags: [audit, findings, security-incident]
 | Secret 泄漏类 | `secret-leak-<short-id>.md` |
 | 通用安全事件（24h 内初稿） | `incident-YYYYMMDD-<id>.md` |
 
-具体内容结构见 `docs/02_enterprise_architecture/target-architecture/06-security-architecture.md` 对应章节。
+具体内容结构见 `docs/02_enterprise_architecture/target-architecture/06-security_architecture.md` 对应章节。

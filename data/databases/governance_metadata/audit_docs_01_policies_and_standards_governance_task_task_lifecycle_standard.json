@@ -1,0 +1,64 @@
+{
+  "task_id": "DM-100152",
+  "source_file": "docs/01_policies_and_standards/governance/task/task_lifecycle_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "TASK-004-CANCEL": {
+      "title": "取消权限",
+      "type": "mandatory+prohibition",
+      "content": "P0/P1需Owner审批/P2-P4 AI可自主但须记录/终态不可取消",
+      "coverage": "COVERED",
+      "yaml_section": "task_004_cancel"
+    },
+    "TASK-004-PRIORITY": {
+      "title": "优先级裁决规则",
+      "type": "mandatory",
+      "content": "P0>P1>P2>P3>P4→safety_level H>M>L→created_at先到先得→Owner最终裁定",
+      "coverage": "COVERED",
+      "yaml_section": "task_004_priority"
+    },
+    "TASK-004-PRIORITY-CHANGE": {
+      "title": "优先级变更权限",
+      "type": "mandatory+prohibition",
+      "content": "升级AI提议Owner审批/降级Owner独占/拒绝后48h冷却期",
+      "coverage": "COVERED",
+      "yaml_section": "task_004_priority_change"
+    },
+    "TASK-004-P0-INFLATION": {
+      "title": "P0通胀保护",
+      "type": "mandatory+prohibition",
+      "content": "≥3黄色警戒(需论证)/≥5红色冻结(禁止新增P0)/解除后48h冷却期",
+      "coverage": "COVERED",
+      "yaml_section": "task_004_p0_inflation"
+    },
+    "TASK-004-TIMEOUT-EXEMPTION": {
+      "title": "超时豁免治理",
+      "type": "constraint",
+      "content": "Owner标注长期阻塞(exempt:timeout)/依赖外部第三方(外部依赖)可豁免",
+      "coverage": "COVERED",
+      "yaml_section": "task_004_timeout_exemption"
+    },
+    "TASK-004-ESCALATION": {
+      "title": "升级治理",
+      "type": "mandatory+prohibition",
+      "content": "P0 BLOCKED>2session/任何BLOCKED>5session/P0 FAILED×2必须升级/AI不得跳过升级",
+      "coverage": "COVERED",
+      "yaml_section": "task_004_escalation"
+    }
+  },
+  "summary": {
+    "total_rules": 6,
+    "COVERED": 6,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    "新增task_004_cancel节：取消权限（2个约束条件+2条禁止项）",
+    "新增task_004_priority节：优先级裁决规则（1个约束条件+4条强制步骤）",
+    "新增task_004_priority_change节：优先级变更权限（2个约束条件+2条强制步骤+1条禁止项）",
+    "新增task_004_p0_inflation节：P0通胀保护（1个约束条件+3条强制步骤+1条禁止项）",
+    "新增task_004_timeout_exemption节：超时豁免治理（2个约束条件）",
+    "新增task_004_escalation节：升级治理（3个触发条件+4条强制步骤+1条禁止项）"
+  ]
+}

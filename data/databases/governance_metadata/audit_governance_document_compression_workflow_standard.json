@@ -1,0 +1,39 @@
+{
+  "task_id": "DM-100100",
+  "source_file": "docs/01_policies_and_standards/governance/document/compression_workflow_standard.md",
+  "yaml_file": "docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml",
+  "scan_date": "2026-06-13",
+  "rules_extracted": {
+    "doc_011": {
+      "title": "AI产出物压缩工作流-产出物规格",
+      "conditions_count": 7,
+      "actions_count": 3,
+      "prohibitions_count": 5
+    },
+    "doc_012": {
+      "title": "AI产出物压缩工作流-施工流程",
+      "conditions_count": 5,
+      "actions_count": 2,
+      "prohibitions_count": 4
+    },
+    "doc_013": {
+      "title": "AI产出物压缩工作流-安全原则与策略",
+      "conditions_count": 7,
+      "actions_count": 2,
+      "prohibitions_count": 4
+    }
+  },
+  "summary": {
+    "total_rules": 39,
+    "COVERED": 39,
+    "PARTIAL": 0,
+    "MISSING": 0
+  },
+  "actions_taken": [
+    {
+      "action": "YAML_UPDATE",
+      "target": "trae_030_doc_numbering_metadata.yaml sections doc_011/doc_012/doc_013",
+      "detail": "从空壳更新为包含完整规则提取:时态判定§0+可删清单§1(11类)+不可删清单§2(18类)+必须补充§3(10类)+蓝图铁律B-00~B-22+十字段标准§5+强制七步流程§8+安全原则§10"
+    }
+  ]
+}

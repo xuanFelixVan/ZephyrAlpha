@@ -1,8 +1,9 @@
-# [BLUEPRINT] MOD-INF-002 | 03_modules/l01_infrastructure/runtime-integration/blueprint.md | §
+# [A_module] module_id=MOD-SHR_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain-infra_runtime/runtime-integration/blueprint.md
 # [MODULE] zephyr.shared.contracts.gate
-# [INVARIANTS] re-export only — canonical source is zephyr.gates.gate_types
+# [INVARIANTS] re-export only — canonical source is zephyr.governance.rule_enforcement.gate_types
 # [MODIFY-GUARD] do not add business logic here
-# [CONSUMERS] zephyr.db.task_repo; zephyr.db.transition; zephyr.kb.pipeline.*
+# [CONSUMERS] zephyr.infrastructure.db.task_repo; zephyr.infrastructure.db.transition; zephyr.knowledge.kb.pipeline.*
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -21,4 +22,5 @@ __all__ = [
     "GateResult",
     "GateEngineError",
     "GateViolationError",
+    "gate_result",
 ]

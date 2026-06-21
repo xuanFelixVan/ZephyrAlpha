@@ -1,4 +1,5 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# [A_test] module_id: SRC-TST-1797 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] SRC-443 | docs/03_modules/_domain-governance/blueprint.md | §
 # [MODULE] tests.test_vms_smoke
 # [STABILITY] evolving
 # [SAFETY] L
@@ -7,7 +8,7 @@
 import sys, tempfile, warnings
 sys.path.insert(0,'src')
 from pathlib import Path
-from zephyr.vector_memory.in_process_vector_memory import InProcessVectorMemory
+from zephyr.governance.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
 vms = InProcessVectorMemory(persist_dir=Path(tempfile.mkdtemp()) / 'vms_test')
 print('[1] init OK')

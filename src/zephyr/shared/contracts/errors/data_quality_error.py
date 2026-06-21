@@ -1,4 +1,5 @@
-# [BLUEPRINT] MOD-INF-016 | 03_modules/_cross_layer/shared-core/blueprint.md | §
+# [A_module] module_id=MOD-SHR_data_quality_error | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md | §
 
 # [MODULE] zephyr.shared.contracts.errors.data_quality_error
 
@@ -6,7 +7,7 @@
 
 # [MODIFY-GUARD] none
 
-# [CONSUMERS]
+# [CONSUMERS] data.default_quality_gate
 
 # [STABILITY] evolving
 
@@ -23,7 +24,7 @@ CTR-ERR-001: DataQualityError / 行情质量门禁不通过错误
 
 L00 行情质量门禁不通过时抛出的错误。包含具体的质量缺陷分类和恢复建议。
 
-SSoT: cross-layer-contracts.yaml → CTR-ERR-001
+SSoT: cross_layer_contracts.yaml → CTR-ERR-001
 Version: 1.0
 Status: AUTO-GENERATED — DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.
@@ -45,7 +46,7 @@ from zephyr.shared.contracts.core.trace_context import TraceContext
 # category: data_contract
 # status: auto_generated
 # created: "2026-05-05"
-# generated_by: codegen from cross-layer-contracts.yaml
+# generated_by: codegen from cross_layer_contracts.yaml
 # ---
 """
 ZephyrAlpha — shared/contracts/data_quality_error.py
@@ -54,7 +55,7 @@ CTR-ERR-001: DataQualityError / 行情质量门禁不通过错误
 
 L00 行情质量门禁不通过时抛出的错误。包含具体的质量缺陷分类和恢复建议。
 
-SSoT: cross-layer-contracts.yaml -> CTR-ERR-001
+SSoT: cross_layer_contracts.yaml -> CTR-ERR-001
 Version: 1.0
 Status: AUTO-GENERATED -- DO NOT EDIT BY HAND
        Any manual changes will be overwritten by codegen.
