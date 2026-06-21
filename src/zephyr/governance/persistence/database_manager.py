@@ -2,6 +2,7 @@
 from zephyr.governance.database_manager import (
     DatabaseManager,
     DatabaseManagerError,
+    DatabaseHealthStatus,
 )
 
-__all__ = ["DatabaseManager", "DatabaseManagerError"]
+__all__ = ["DatabaseManager", "DatabaseManagerError", "DatabaseHealthStatus"]

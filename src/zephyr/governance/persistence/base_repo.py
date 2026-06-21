@@ -8,6 +8,7 @@ from zephyr.governance.base_repo import (
     _ALLOWED_TRANSITIONS,
     _is_valid_transition,
     allowed_transitions,
+    now_iso,
 )
 
 __all__ = [
@@ -19,4 +20,5 @@ __all__ = [
     "_ALLOWED_TRANSITIONS",
     "_is_valid_transition",
     "allowed_transitions",
+    "now_iso",
 ]

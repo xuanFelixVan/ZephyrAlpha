@@ -3,6 +3,7 @@ from zephyr.governance.atomic_transaction_manager import (
     AtomicTransactionManager,
     TransactionError,
     _new_tx_id,
+    _utf8_lf_bytes,
 )
 
-__all__ = ["AtomicTransactionManager", "TransactionError", "_new_tx_id"]
+__all__ = ["AtomicTransactionManager", "TransactionError", "_new_tx_id", "_utf8_lf_bytes"]

@@ -2,6 +2,9 @@
 from zephyr.infrastructure.lifecycle.task_lifecycle_manager import (
     TaskLifecycleManager,
     GateID,
+    GateResult,
+    LifecycleState,
+    TaskStatus,
 )
 
-__all__ = ["TaskLifecycleManager", "GateID"]
+__all__ = ["TaskLifecycleManager", "GateID", "GateResult", "LifecycleState", "TaskStatus"]

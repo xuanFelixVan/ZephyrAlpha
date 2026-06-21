@@ -5,6 +5,7 @@ from zephyr.governance.task_repo import (
     InvalidTransitionError,
     P0InflationFrozenError,
     allowed_transitions,
+    is_terminal,
 )
 from zephyr.governance.rule_enforcement.gate_types import GateViolationError
 
@@ -15,4 +16,5 @@ __all__ = [
     "P0InflationFrozenError",
     "GateViolationError",
     "allowed_transitions",
+    "is_terminal",
 ]

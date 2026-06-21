@@ -4,6 +4,7 @@ from zephyr.infrastructure.observability.notifier import (
     Notification,
     NotificationLevel,
     NotificationChannel,
+    NotifyConfig,
 )
 
-__all__ = ["Notifier", "Notification", "NotificationLevel", "NotificationChannel"]
+__all__ = ["Notifier", "Notification", "NotificationLevel", "NotificationChannel", "NotifyConfig"]

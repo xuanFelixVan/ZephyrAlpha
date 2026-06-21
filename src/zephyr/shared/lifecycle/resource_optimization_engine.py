@@ -19,6 +19,9 @@ _RO_NAMES = {
     "ProcessPoolStats",
     "ResourceOptimizationEngine",
     "ResourceSnapshot",
+    "_HysteresisConfig",
+    "_PressureStateMachine",
+    "_PressureThresholds",
 }
 
 
@@ -45,4 +48,7 @@ __all__ = [
     "ProcessPoolStats",
     "ResourceOptimizationEngine",
     "ResourceSnapshot",
+    "_HysteresisConfig",
+    "_PressureStateMachine",
+    "_PressureThresholds",
 ]

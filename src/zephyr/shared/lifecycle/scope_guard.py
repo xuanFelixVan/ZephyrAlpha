@@ -2,6 +2,7 @@
 from zephyr.infrastructure.lifecycle.scope_guard import (
     ScopeGuard,
     ScopeDrift,
+    ScopeGuardConfig,
 )
 
-__all__ = ["ScopeGuard", "ScopeDrift"]
+__all__ = ["ScopeGuard", "ScopeDrift", "ScopeGuardConfig"]
