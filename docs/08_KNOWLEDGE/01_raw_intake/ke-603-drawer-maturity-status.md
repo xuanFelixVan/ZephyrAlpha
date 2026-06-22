@@ -13,7 +13,7 @@ category: documentation
 |----------------|--------------|-------------|
 | `00_governance` | planned | 当前最简政策已散落各处，待正式整理时激活 |
 | `01_policies_and_standards` | **partial** | 仅 `document-standards` 有 v2.0.0（workspace 版） |
-| `02_enterprise_architecture` | **partial** | `adr/` 已激活（KBG-0001/0002/0003）；`target-architecture/` 已激活（本文档组）|
+| `02_enterprise_architecture` | **partial** | `adr/` 已激活（KBG-0001/0002/0003）；`target_architecture/` 已激活（本文档组）|
 | `03_domain_architecture` | planned | 核心业务代码开始实施后激活 |
 | `03_modules` | planned | 按业务域激活（优先级对应业务价值链顺序），模块生命周期文档（蓝图含施工指引+交付） |
 | `06_security_and_identity` | deferred | 单人独立操作期不激活；接入真实资金或多用户后激活 |

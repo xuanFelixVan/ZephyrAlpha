@@ -15,7 +15,7 @@ category: agent_instruction
 
 | 你的任务 | 必须读的文件（只读这些） | Token 成本 | 禁止做的事 |
 |---------|------------------------|:---:|---------|
-| **首次入职 / 了解项目全貌** | `README.md` + `docs/02_enterprise_architecture/target-architecture/00-overview.md` + 本文件 §1~§5（项目根目录 → 架构概览 → AI 规则总纲）；若需了解治理体系 → `scripts/governance/quickstart.md` | ~4500 | ❌ 禁止一上来就读本文件 §6~§7 全部 19 条施工原则——先知道"是什么"再知道"怎么干" / ❌ 禁止施工后跳过审计——不审不清，不清不继续 |
+| **首次入职 / 了解项目全貌** | `README.md` + `docs/02_enterprise_architecture/target_architecture/00-overview.md` + 本文件 §1~§5（项目根目录 → 架构概览 → AI 规则总纲）；若需了解治理体系 → `scripts/governance/quickstart.md` | ~4500 | ❌ 禁止一上来就读本文件 §6~§7 全部 19 条施工原则——先知道"是什么"再知道"怎么干" / ❌ 禁止施工后跳过审计——不审不清，不清不继续 |
 | **修改/优化任何规则文件** | `meta/index.md` + `_registry/vocabularies/glossary.yaml` + `meta/rule_lifecycle_and_change_standard.yaml` | ~2000 | ❌ 禁止全量读取 meta/ 下 12 个文件 |
 | **创建新标准文档** | `meta/index.md` + `_registry/vocabularies/glossary.yaml` + `meta/document_structure_standard.yaml` + `meta/metadata_registry.yaml` §1~§4 | ~2500 | ❌ 禁止读 PS-STD-003 行为边界全文——仅按需查对应 ABS/COND 条目 |
 | **修改代码** | `_registry/vocabularies/glossary.yaml` + `src/zephyr/shared/contracts/`；若修改 `scripts/governance/` 脚本 → 加读 `scripts/governance/quality-standard.md` | ~1500 | ❌ 禁止读 meta/ 其他规则文件——代码已有 pre-commit/CI 强制 |

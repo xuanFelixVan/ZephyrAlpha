@@ -17,7 +17,7 @@ category: agent_instruction
 
   ```
   [实际代码]  ←→  [YAML SSoT]  ←→  [Markdown 视图]
-   src/zephyr/     architecture-     target-architecture/
+   src/zephyr/     architecture-     target_architecture/
    scripts/        model/            00-10*.md
        ↑              ↑                   ↑
        └── GATE-A ────┘                   │

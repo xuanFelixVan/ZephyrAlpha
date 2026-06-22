@@ -12,7 +12,7 @@ category: documentation
 
 | 文档 | 角色 | 当前状态 |
 |------|------|----------|
-| [`information_architecture.md`](./target-architecture/information_architecture.md) | 系统终局抽屉与目标信息架构（Stage A 后权威位置） | 主架构文档 |
+| [`information_architecture.md`](./target_architecture/information_architecture.md) | 系统终局抽屉与目标信息架构（Stage A 后权威位置） | 主架构文档 |
 | `organizational-memory-system-design.md` [已归档-见外部工作区] | 组织记忆系统专题设计稿（**已归档** archive/draft-abandoned/） | 专题主稿（历史） |
 | `memory-system-landing-v1-checklist.md` [已归档-见外部工作区] | 记忆系统专项主清单（**已归档** archive/one-shot-completed/） | 专项路线图（历史） |
 | `memory-system-landing-task-draft.md` [已迁出-见外部工作区] | 记忆系统细粒度任务草案 | 细项任务 |

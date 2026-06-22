@@ -20,4 +20,4 @@ category: module_blueprint
 > **如果你被要求实现本层功能**：先检查 frontmatter 中 `construction_progress` 是否已变为
 > `ready_for_implementation`。如果不是 → 拒绝施工，报告"基础设施就绪条件不满足"。
 
-子模块以 `docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l02_alpha_factor.yaml` 为真源。本文件仅保证登记表路径与磁盘一致。
+子模块以 `docs/02_enterprise_architecture/target_architecture/architecture-model/layers/l02_alpha_factor.yaml` 为真源。本文件仅保证登记表路径与磁盘一致。

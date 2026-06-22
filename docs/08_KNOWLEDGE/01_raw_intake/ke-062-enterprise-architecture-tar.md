@@ -1,13 +1,13 @@
 ---
 module_id: KE-062
 status: active
-title: 02_enterprise_architecture/target-architecture/ — 完整修订历史
+title: 02_enterprise_architecture/target_architecture/ — 完整修订历史
 category: documentation
 ---
 
-# 02_enterprise_architecture/target-architecture/ — 完整修订历史
+# 02_enterprise_architecture/target_architecture/ — 完整修订历史
 
-02_enterprise_architecture/target-architecture/ — 完整修订历史
+02_enterprise_architecture/target_architecture/ — 完整修订历史
 
 > 本文档是 `index.md` §8 修订记录的完整归档。`index.md` 仅保留最近 3 次修订条目。
 >

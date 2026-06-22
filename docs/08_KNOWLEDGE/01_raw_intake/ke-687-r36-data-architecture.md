@@ -9,7 +9,7 @@ category: documentation
 
 决策 R36：Data Architecture 独立成视图（v1.0.0 新建，非从 IA 迁移）
 
-**决策**：在 `02_enterprise_architecture/target-architecture/` 下新建 `data_architecture.md`，作为独立的 TOGAF DA 视图，与 02-IA 平级。**v1.0.0 是全新创建，0 字内容自 02-IA 搬走。**
+**决策**：在 `02_enterprise_architecture/target_architecture/` 下新建 `data_architecture.md`，作为独立的 TOGAF DA 视图，与 02-IA 平级。**v1.0.0 是全新创建，0 字内容自 02-IA 搬走。**
 
 **关键事实澄清（任务下达时的预设 vs 实际情况）**：
 
@@ -40,8 +40,8 @@ category: documentation
 **R 编号微调说明**：原任务指令写"R33"，但 rationale-log 里 R33 已被占用（L12 命名锁定，2026-04-19 S14 Phase 1）。本决策使用下一个可用编号 **R36**，符合"R 编号永不复用"约定。
 
 **落盘位置**：
-- `02_enterprise_architecture/target-architecture/data_architecture.md` v1.0.0（新建）
-- `02_enterprise_architecture/target-architecture/README.md` v1.2.0（文档清单加入 DA 行）
+- `02_enterprise_architecture/target_architecture/data_architecture.md` v1.0.0（新建）
+- `02_enterprise_architecture/target_architecture/README.md` v1.2.0（文档清单加入 DA 行）
 - 本日志 Stage 17 + 结论 R36
 
 **未关闭事项 / 后续衔接**：

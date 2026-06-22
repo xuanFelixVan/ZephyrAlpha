@@ -80,7 +80,7 @@ updated: "2026-06-22"
 | [ke-059-documentat.md](ke-059-documentat.md) | Markdown | 0.2 本文档不是 |
 | [ke-060-documentat.md](ke-060-documentat.md) | Markdown | 0.3 适用读者 |
 | [ke-061-enterprise-architecture.md](ke-061-enterprise-architecture.md) | Markdown | 02 Enterprise Architecture — 目录索引 |
-| [ke-062-enterprise-architecture-tar.md](ke-062-enterprise-architecture-tar.md) | Markdown | 02_enterprise_architecture/target-architecture/ — 完整修订历史 |
+| [ke-062-enterprise-architecture-tar.md](ke-062-enterprise-architecture-tar.md) | Markdown | 02_enterprise_architecture/target_architecture/ — 完整修订历史 |
 | [ke-063-safety-red-lines.md](ke-063-safety-red-lines.md) | Markdown | ke-063-safety-red-lines.md |
 | [ke-064-purpose-of-this-view.md](ke-064-purpose-of-this-view.md) | Markdown | 1. Purpose of this view / 本视图的用途 |
 | [ke-065-purpose-of-this-view.md](ke-065-purpose-of-this-view.md) | Markdown | 1. Purpose of this view / 本视图的用途 |

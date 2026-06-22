@@ -25,7 +25,7 @@ verifiability: manual
 
 本文件是 `01_policies_and_standards/` 的顶层导航入口。**新 AI session 的第一站**——读完此文件即理解整个规则体系的全貌。
 
-> **架构真源**：[architecture_upgrade_discussion.md](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_upgrade_discussion.md) §二（39域方案，14层降级为域属性）
+> **架构真源**：[architecture_upgrade_discussion.md](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_upgrade_discussion.md) §二（43域方案，14层降级为域属性）
 
 ---
 
@@ -68,7 +68,7 @@ verifiability: manual
 │   ├── catalogs/                ← 集中注册表（24 个 YAML/MD）
 │   │   ├── registry_of_registries.yaml             ← 注册表之注册表（48 个注册表总索引）
 │   │   ├── gate_registry.yaml                      ← 门禁注册表
-│   │   ├── functional_domain_registry.yaml         ← 功能域注册表（39域）
+│   │   ├── functional_domain_registry.yaml         ← 功能域注册表（43域）
 │   │   ├── frontmatter_field_registry.yaml         ← frontmatter 字段注册表
 │   │   ├── rule_catalog_registry.yaml              ← 规则目录注册表
 │   │   ├── project_path_tree.yaml                  ← 项目路径树

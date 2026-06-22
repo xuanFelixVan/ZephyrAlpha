@@ -1,0 +1,54 @@
+# 域架构同步更新报告
+# 生成时间: 2026-06-22T14:44:33.035460+00:00
+# 任务卡: DM-201020 (T4-STEP-0-SYNC)
+# 操作: 39域到43域 + D-TEST标注已废止
+
+meta:
+  generated_at: '2026-06-22T14:44:33.035460+00:00'
+  task_id: DM-201020
+  operation: domain_sync_39_to_43
+
+summary:
+  files_updated: 6
+  total_changes: 15
+
+file_changes:
+  .trae/rules/project_rules.md:
+    - "第639行: 当前 39 域 → 当前 43 域"
+    - "第931行注释: 39域+模块数 → 43域+模块数"
+  docs/registry_of_registries.yaml:
+    - "39域定义 → 43域定义"
+  docs/02_enterprise_architecture/architecture_upgrade_discussion.md:
+    - "§2.1标题: 39域到43域"
+    - "§2.1裁定: 39域到43域"
+    - "§2.1表格: 39域到43域"
+    - "§2.1: 39域唯一到43域唯一"
+    - "§2.1: 39域构成说明到43域构成说明"
+    - "容量描述: 39域到43域"
+    - "D77条目: 添加已废止标注"
+  docs/02_enterprise_architecture/architecture_diagram_construction_plan.md:
+    - "批量替换 39域到43域 (53处)"
+    - "批量替换 39个域到43个域 (6处)"
+  data/asset_index/target_path_tree.yaml:
+    - "删除D-TEST条目"
+  data/asset_index/blueprint_domain_mapping.yaml:
+    - "删除D-TEST引用: domain_id: D-TEST"
+    - "删除D-TEST引用: subdomain_id: D-TEST-CODE_DEDUP"
+
+verification:
+  grep_39_domain: pending
+  grep_d_test: pending
+
+domain_count:
+  before: 39
+  after: 43
+  added_domains:
+    - D-GOV_RULE (175模块, D48拆分追认)
+    - D-GOV_AUDIT (69模块, D48拆分追认)
+    - D-BEHAVIORAL_AUDIT (60模块, D-SECURITY拆分追认)
+    - D-GOV_DRIFT (22模块, D48拆分保留)
+  renamed_domains:
+    - D-INFRASTRUCTURE + D-INFRA-RUNTIME 合并为 D-INFRA_RUNTIME
+  deleted_domains:
+    - 11个连字符空壳域 (0模块)
+  d77_status: revoked

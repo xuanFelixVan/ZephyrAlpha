@@ -636,7 +636,7 @@ STEP 5  验证       → 三方对齐 + diagnose_depgraph.py，确认无回退
 
 ### 域归属铁律
 
-**模块归入已有域（当前 39 域，见 `extract_depgraph.py --summary`），不新建域。** 新建功能域/子域 MUST 经 Owner 书面审批。AI 遇到模块无域归属时，优先根据 `[BLUEPRINT]` 字段归入已有域；只有穷尽所有已有域仍无法合理归属时，才可提议新建域并等待 Owner 审批。
+**模块归入已有域（当前 43 域，见 `extract_depgraph.py --summary`），不新建域。** 新建功能域/子域 MUST 经 Owner 书面审批。AI 遇到模块无域归属时，优先根据 `[BLUEPRINT]` 字段归入已有域；只有穷尽所有已有域仍无法合理归属时，才可提议新建域并等待 Owner 审批。
 
 > 详见 [onboarding_detail.md §15](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)
 
@@ -648,7 +648,7 @@ STEP 5  验证       → 三方对齐 + diagnose_depgraph.py，确认无回退
 | ❌ | 按数量从大到小治理 | 前面的决定可能让后面的问题消失，白做 |
 | ❌ | 用"零消费者"判定删除 | 误删有价值的安全/治理组件 |
 | ❌ | 先补测试再重构 | 重构改代码，测试白写 |
-| ❌ | **新建功能域/子域未经 Owner 审批** | 域膨胀失控——模块应归入已有域（当前 39 域），新建域必须 Owner 书面同意 |
+| ❌ | **新建功能域/子域未经 Owner 审批** | 域膨胀失控——模块应归入已有域（当前 43 域），新建域必须 Owner 书面同意 |
 
 ---
 
@@ -928,7 +928,7 @@ STEP 3: 验证 → python scripts/ide_health_service.py --status
 读取 depgraph 数据:
   STEP 1: 确定需要什么数据（域摘要？指定域？指定模块？顶级元数据？路径列表？）
   STEP 2: 运行对应提取命令
-          python scripts/governance/extract_depgraph.py --summary     # 39域+模块数
+          python scripts/governance/extract_depgraph.py --summary     # 43域+模块数
           python scripts/governance/extract_depgraph.py --domains D-FACTOR,D-RISK
           python scripts/governance/extract_depgraph.py --modules D-FACTOR-01
           python scripts/governance/extract_depgraph.py --top          # 顶级元数据

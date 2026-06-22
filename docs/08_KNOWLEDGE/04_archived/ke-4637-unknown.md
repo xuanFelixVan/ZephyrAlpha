@@ -26,7 +26,7 @@ category: session_log
 | 编辑 | docs/01_policies_and_standards/_registry/catalogs/registry-master-index.yaml | PS-REG-015 标记 migrated |
 | 编辑 | docs/01_policies_and_standards/_registry/catalogs/rule-catalog-registry.yaml | ADR 条目标记 deleted |
 | 编辑 | docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml | ADR 条目标记 deleted |
-| 编辑 | docs/02_enterprise_architecture/target-architecture/architecture-model/module_id_registry.yaml | PS-REG-015 标记 migrated |
+| 编辑 | docs/02_enterprise_architecture/target_architecture/architecture-model/module_id_registry.yaml | PS-REG-015 标记 migrated |
 | 编辑 | docs/01_policies_and_standards/governance/module/multi-registry-synchronization-standard.md | ADR 行更新 |
 | 编辑 | docs/01_policies_and_standards/index.md | 模板目录数 11→10 |
 | 编辑 | docs/01_policies_and_standards/templates/index.md | 删除 ADR 行 |

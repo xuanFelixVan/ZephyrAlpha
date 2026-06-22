@@ -9,7 +9,7 @@ category: agent_instruction
 
 6.9 架构数据 Canonical SSoT 铁律（Architecture Data Canonical SSoT Mandate）
 
-> **v1.1.0（2026-05-06）**：增补双树口径——详见仓库根 **`architecture-model/SCOPE.yaml`**。简而言之：**EA 契约/不变量/完整技术雷达**在 `docs/02_enterprise_architecture/target-architecture/architecture-model/`；**施工分区（C/B 轨）与 GATE-A 对齐**在根目录 `architecture-model/`。本节泛称「`architecture-model/`」时，AI MUST 先读 SCOPE 再落笔，避免改错文件。
+> **v1.1.0（2026-05-06）**：增补双树口径——详见仓库根 **`architecture-model/SCOPE.yaml`**。简而言之：**EA 契约/不变量/完整技术雷达**在 `docs/02_enterprise_architecture/target_architecture/architecture-model/`；**施工分区（C/B 轨）与 GATE-A 对齐**在根目录 `architecture-model/`。本节泛称「`architecture-model/`」时，AI MUST 先读 SCOPE 再落笔，避免改错文件。
 
 > **v1.0.0（2026-05-02）**：架构数据的 canonical SSoT 必须是 YAML（`architecture-model/`），Markdown 视图（`00-10*.md`）是从 YAML 派生的人类可读呈现。对标 K8s CRD YAML / Terraform tf.json / OpenAPI spec.yaml —— 五家专业机构中四家用机器可读格式作为 canonical 真源。
 

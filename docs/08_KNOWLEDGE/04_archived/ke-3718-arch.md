@@ -12,7 +12,7 @@ category: governance_rule
 
 | 登记号 | 规则内容 | 对应 COND | 强制方式 | 来源路径 |
 |--------|---------|----------|---------|---------|
-| ARCH-001 | L02-L07 禁止直接调用 LLM Providers，必须通过 L08 LSG 代理 | COND-30 | doc | `02_enterprise_architecture/target-architecture/04-technology_architecture.md` L164 |
+| ARCH-001 | L02-L07 禁止直接调用 LLM Providers，必须通过 L08 LSG 代理 | COND-30 | doc | `02_enterprise_architecture/target_architecture/04-technology_architecture.md` L164 |
 | ARCH-002 | 业务数据不得写入治理 SQLite | COND-31 | doc | `02_enterprise_architecture/adr/adr-0030-sqlite-task-metadata-store.md` L175 |
 | ARCH-003 | 门禁级别禁止运行时动态升降级 | COND-33 | doc | `02_enterprise_architecture/gate-strategy-standard.md` L121 |
 | ARCH-004 | 门禁跳级禁止——task 的 gate_status 必须按顺序推进 | COND-34 | doc | `02_enterprise_architecture/gate-strategy-standard.md` L322-324 |
@@ -29,7 +29,7 @@ category: governance_rule
 | ARCH-015 | 服务降级必须写入日志 | COND-45 | doc | `03_modules/_b_track_interfaces/context-engine-interface.md` L712 |
 | ARCH-016 | 知识库写入必须传 provenance | COND-46 | code | `src/zephyr/kb/unified_memory_api.py` L17 |
 | ARCH-017 | HandoffPackage 8 必填字段不得删减 | COND-47 | doc | `02_enterprise_architecture/adr/adr-0041-session-handoff-protocol.md` L83 |
-| ARCH-018 | 未经 KB 决策记录 审批禁止创建新正交视图 | COND-48 | doc | `02_enterprise_architecture/target-architecture/README.md` L120 |
+| ARCH-018 | 未经 KB 决策记录 审批禁止创建新正交视图 | COND-48 | doc | `02_enterprise_architecture/target_architecture/README.md` L120 |
 | ARCH-019 | beta 接入真实资金前必须升级容器隔离 | COND-49 | doc | `02_enterprise_architecture/adr/adr-0018-agent-sandbox-windows-acl.md` L49 |
 | ARCH-020 | KMS G4 强制人工最终拍板，AI 不得自主激活知识 | — | doc | `02_enterprise_architecture/adr/adr-0005-kms-architecture.md` L172 |
 | ARCH-021 | YAML 门禁文件严禁直接写 P0/P1/P2，必须使用 error/warning/info | — | doc | `02_enterprise_architecture/gate-strategy-standard.md` L111 |

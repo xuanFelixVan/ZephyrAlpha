@@ -11,7 +11,7 @@ category: governance
 | 本规范章节 | 详细定义来源 |
 |------------|--------------|
 | §一 LPC 双轨架构 | ADR-0022（治理宪法）|
-| §三 src/zephyr 结构 | `docs/02_enterprise_architecture/target-architecture/03-application_architecture.md` §4 |
+| §三 src/zephyr 结构 | `docs/02_enterprise_architecture/target_architecture/03-application_architecture.md` §4 |
 | §四 归属决策树 | ADR-0022 §3.2 |
 | §五 `03_modules/_b_track_interfaces/` 准入 | `docs/03_modules/_b_track_interfaces/index.md` |
 | §五 ADR 文件名规则 | `trae_028_doc_structure_naming.yaml`（Stage F 升级到 v2.0.0 后完整定义）|

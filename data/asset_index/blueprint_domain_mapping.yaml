@@ -290,8 +290,6 @@ mappings:
     functional_domain: governance
     file_path: 03_modules/_domain_governance/code_dedup_engine/blueprint.md
     parent_domain: testing
-    domain_id: D-TEST
-    subdomain_id: D-TEST-CODE_DEDUP
     subdomain_name: code_dedup
     ssot_path: src/zephyr/testing/code_dedup/
     match_method: panorama_ssot_module

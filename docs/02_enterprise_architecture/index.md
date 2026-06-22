@@ -54,13 +54,14 @@ title: 02 Enterprise Architecture
 
 | 文件 | 说明 | 轨道 |
 |------|------|:---:|
-| architecture_upgrade_discussion.md | 架构升级深度讨论记录（39域方案+8层升级+D1-D78裁定清单+数据库架构） | 人类视图 |
+| architecture_upgrade_discussion.md | 架构升级深度讨论记录（43域方案+8层升级+D1-D78裁定清单+数据库架构） | 人类视图 |
 | 依赖与架构全景图能力定位书.md | 依赖与架构全景图能力定位书（双态模型+SSoT分层+生命周期+生成器覆盖矩阵） | 人类视图 |
 | architecture_decisions_pending.md | 待定决策清单（T1-T17 待定项与裁定状态） | 人类视图 |
 | ssot_authority_map.md | SSoT 权威映射 | 人类视图 |
 | migration_registry.yaml | 迁移注册表 | 机器视图 |
 | t18_implementation_plan.md | T18 实施计划 | 人类视图 |
 | AI团队模式完整配置.md | AI 团队模式完整配置 | 人类视图 |
+| phase_d_ai_prompts.md | 阶段D：18个AI完整提示词 | 人类视图 |
 
 ## 排除规则（严禁放入本目录的内容）
 

@@ -19,7 +19,7 @@ category: documentation
 | `adr` | `02_enterprise_architecture/adr/` | 其他所有目录 |
 | `blueprint` | `03_modules/l<NN>_<layer>/<module>/` | `01_policies_and_standards/` |
 | `construction_plan` | `03_modules/l<NN>_<layer>/<module>/` | `01_policies_and_standards/` |
-| `architecture_view` | `02_enterprise_architecture/target-architecture/` | `01_policies_and_standards/` `03_modules/` |
+| `architecture_view` | `02_enterprise_architecture/target_architecture/` | `01_policies_and_standards/` `03_modules/` |
 | `design` | `02_enterprise_architecture/` | | `01_policies_and_standards/` `03_modules/` |
 | `operational_rule` | `01_policies_and_standards/operational/` | `governance/` `03_modules/` |
 | `protocol` | `01_policies_and_standards/governance/` | `03_modules/` |

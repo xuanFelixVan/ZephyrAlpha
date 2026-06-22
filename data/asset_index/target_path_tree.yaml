@@ -79,14 +79,6 @@ domains:
     module_count: 0
     needs_migration_count: 0
     modules: []
-  D-TEST:
-    parent_domain: testing
-    ssot_path: src/zephyr/testing/code_dedup/
-    stability: stable
-    ai_autonomy: ai_modifiable
-    module_count: 0
-    needs_migration_count: 0
-    modules: []
   access_control:
     parent_domain: security
     ssot_path: src/zephyr/security/access_control/

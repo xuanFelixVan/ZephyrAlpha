@@ -11,7 +11,7 @@ category: documentation
 | 集中目录 | 数量 | 说明 |
 |---------|------|------|
 | `01_policies_and_standards/` | 18 | 标准文档普遍缺失 module_id |
-| `02_enterprise_architecture/target-architecture/architecture-model/` | 3 | 使用旧版 `doc_id` 而非 `module_id` |
+| `02_enterprise_architecture/target_architecture/architecture-model/` | 3 | 使用旧版 `doc_id` 而非 `module_id` |
 | `01_policies_and_standards/governance/ai/` | 3 | AI 治理策略文档 |
 | 其他 | 4 | migration-declaration.md、session log、index 等 |
 

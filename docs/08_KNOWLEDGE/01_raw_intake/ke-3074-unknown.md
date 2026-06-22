@@ -12,4 +12,4 @@ category: module_blueprint
 |-----------|--------|-----------|--------|-----------------------|
 | MOD-L13-001 | Experiment Core | [blueprint](experiment-core/blueprint.md) | Draft | blocked_by_infrastructure |
 
-**架构模型真源**：`docs/02_enterprise_architecture/target-architecture/architecture-model/layers/l13_experimentation.yaml`
+**架构模型真源**：`docs/02_enterprise_architecture/target_architecture/architecture-model/layers/l13_experimentation.yaml`

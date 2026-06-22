@@ -9,11 +9,11 @@ category: documentation
 
 五、Module ID 跨文件一致性
 
-**权威来源**：`docs/02_enterprise_architecture/target-architecture/architecture-model/module_id_registry.yaml`（Stage D 后统一到 YAML SSoT，替代旧体系 JSON 注册表）
+**权威来源**：`docs/02_enterprise_architecture/target_architecture/architecture-model/module_id_registry.yaml`（Stage D 后统一到 YAML SSoT，替代旧体系 JSON 注册表）
 
 ```yaml
 protected_field: module_id
-authority_file: docs/02_enterprise_architecture/target-architecture/architecture-model/module_id_registry.yaml
+authority_file: docs/02_enterprise_architecture/target_architecture/architecture-model/module_id_registry.yaml
 check_rules:
   - rule: no_duplicate_active   # 同一 module_id 不得在两个 Active 文件中出现
     severity: P0

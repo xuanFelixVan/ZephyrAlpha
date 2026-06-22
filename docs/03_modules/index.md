@@ -9,7 +9,7 @@ version: "3.0.0"
 language: zh
 created_by: human_plus_agent
 ttl: permanent
-summary: "模块蓝图目录索引。v3.0.0：对齐39域架构方案（27业务域+12平台域），统一下划线命名，移除14层并行分类引用。"
+summary: "模块蓝图目录索引。v3.0.0：对齐43域架构方案（27业务域+12平台域），统一下划线命名，移除14层并行分类引用。"
 tags: [modules, blueprint, index, domain, architecture]
 depends_on:
   - {target: GOV-DOC-002, at: "§一", why: "目录定位——模块蓝图在此目录；架构分类体系真源在 architecture_upgrade_discussion.md"}
@@ -17,7 +17,7 @@ depends_on:
 
 # 03_modules — 模块蓝图目录索引
 
-> **架构真源**：[architecture_upgrade_discussion.md](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_upgrade_discussion.md) §二（39域方案）+ §17.6（域方案 v4）
+> **架构真源**：[architecture_upgrade_discussion.md](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_upgrade_discussion.md) §二（43域方案）+ §17.6（域方案 v4）
 >
 > **命名规范**：全项目统一下划线（snake_case）。禁止连字符（kebab-case）。
 
@@ -36,9 +36,9 @@ depends_on:
 
 ---
 
-## 二、架构分类体系（39域方案）
+## 二、架构分类体系（43域方案）
 
-> **裁定**：D19/D21 — 14层降级为域属性，39域为唯一分类体系。
+> **裁定**：D19/D21 — 14层降级为域属性，43域为唯一分类体系。
 > **状态**：阶段4搬家基本完成；D-DATA/D-SIGNAL/D-SIMULATION 各拆4域（D44-D46）待阶段5-8执行。
 
 ### 2.1 业务域（27域，含3个待拆分域）

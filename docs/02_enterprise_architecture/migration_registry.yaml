@@ -1,10 +1,9 @@
-# [A_config] module_id=CFG-migration-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 entries:
 - domain_id: D-DATA
   file_type: module
   new_path: src/zephyr/data/vector_storage/__init__.py
   old_path: src/zephyr/alt_data/__init__.py
-  status: done
+  status: pending
   subdomain_id: vector_storage
 - domain_id: D-DATA
   file_type: module
@@ -100,7 +99,7 @@ entries:
   file_type: module
   new_path: src/zephyr/infrastructure/resource_optimization/__init__.py
   old_path: src/zephyr/ops/__init__.py
-  status: done
+  status: pending
   subdomain_id: resource_optimization
 - domain_id: D-SECURITY
   file_type: module
@@ -9058,25 +9057,25 @@ entries:
   file_type: module
   new_path: src/zephyr/risk/cross_asset/risk_manager_base.py
   old_path: src/zephyr/cross_asset/risk_manager_base.py
-  status: pending
+  status: removed
   subdomain_id: cross_asset
 - domain_id: D-RISK
   file_type: module
   new_path: src/zephyr/risk/cross_asset/risk_manager.py
   old_path: src/zephyr/cross_asset/risk_manager.py
-  status: pending
+  status: removed
   subdomain_id: cross_asset
 - domain_id: D-RISK
   file_type: module
   new_path: src/zephyr/risk/cross_asset/cross_asset_risk_decomposer/__init__.py
   old_path: src/zephyr/cross_asset/cross_asset_risk_decomposer/__init__.py
-  status: pending
+  status: removed
   subdomain_id: cross_asset
 - domain_id: D-RISK
   file_type: module
   new_path: src/zephyr/risk/cross_asset/cross_market_data_adapter/ml_experiment_pipeline.py
   old_path: src/zephyr/cross_asset/cross_market_data_adapter/ml_experiment_pipeline.py
-  status: pending
+  status: removed
   subdomain_id: cross_asset
 - domain_id: D-GOVERNANCE
   file_type: module
@@ -9088,7 +9087,7 @@ entries:
   file_type: module
   new_path: src/zephyr/risk/cross_asset/currency_hedger_and_fixed_income/__init__.py
   old_path: src/zephyr/cross_asset/currency_hedger_and_fixed_income/__init__.py
-  status: pending
+  status: removed
   subdomain_id: cross_asset
 - domain_id: D-DATA
   file_type: module
@@ -9100,7 +9099,7 @@ entries:
   file_type: module
   new_path: src/zephyr/risk/cross_asset/cross_market_data_adapter/__init__.py
   old_path: src/zephyr/cross_asset/cross_market_data_adapter/__init__.py
-  status: pending
+  status: removed
   subdomain_id: cross_asset
 - domain_id: D-DATA
   file_type: module
@@ -9316,13 +9315,13 @@ entries:
   file_type: module
   new_path: src/zephyr/execution/core/broker_interface.py
   old_path: src/zephyr/ex_core/broker_interface.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-EXECUTION
   file_type: module
   new_path: src/zephyr/execution/core/adapters/broker_interface.py
   old_path: src/zephyr/ex_core/adapters/broker_interface.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-EXECUTION
   file_type: module
@@ -9346,55 +9345,55 @@ entries:
   file_type: module
   new_path: src/zephyr/execution/core/adapters/risk_validation_bridge.py
   old_path: src/zephyr/ex_core/adapters/risk_validation_bridge.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-EXECUTION
   file_type: module
   new_path: src/zephyr/execution/core/adapters/__init__.py
   old_path: src/zephyr/ex_core/adapters/__init__.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-EXECUTION
   file_type: module
   new_path: src/zephyr/execution/core/adapters/simulation_broker.py
   old_path: src/zephyr/ex_core/adapters/simulation_broker.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/value_factor.py
   old_path: src/zephyr/factor/value_factor.py
-  status: done
+  status: pending
   subdomain_id: factor
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/alpha_signal_pipeline.py
   old_path: src/zephyr/factor/alpha_signal_pipeline.py
-  status: done
+  status: pending
   subdomain_id: factor
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/factor_base.py
   old_path: src/zephyr/factor/factor_base.py
-  status: done
+  status: pending
   subdomain_id: factor
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/base.py
   old_path: src/zephyr/factor/base.py
-  status: done
+  status: pending
   subdomain_id: factor
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/momentum_factor.py
   old_path: src/zephyr/factor/momentum_factor.py
-  status: done
+  status: pending
   subdomain_id: factor
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/__init__.py
   old_path: src/zephyr/factor/__init__.py
-  status: done
+  status: pending
   subdomain_id: factor
 - domain_id: D-PORTFOLIO
   file_type: module
@@ -9406,85 +9405,85 @@ entries:
   file_type: module
   new_path: src/zephyr/portfolio/factor/engine/__init__.py
   old_path: src/zephyr/factor/engine/__init__.py
-  status: done
+  status: pending
   subdomain_id: factor
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/factors/__init__.py
   old_path: src/zephyr/factor/factors/__init__.py
-  status: done
+  status: pending
   subdomain_id: factor
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/factors/momentum_factor.py
   old_path: src/zephyr/factor/factors/momentum_factor.py
-  status: done
+  status: pending
   subdomain_id: factor
 - domain_id: D-INFRASTRUCTURE
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/dashboard/__init__.py
   old_path: src/zephyr/frontend/dashboard/__init__.py
-  status: pending
+  status: no_move_needed
   subdomain_id: frontend
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/factor/factors/value_factor.py
   old_path: src/zephyr/factor/factors/value_factor.py
-  status: done
+  status: pending
   subdomain_id: factor
 - domain_id: D-INFRASTRUCTURE
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/__init__.py
   old_path: src/zephyr/frontend/__init__.py
-  status: pending
+  status: no_move_needed
   subdomain_id: frontend
 - domain_id: D-INFRASTRUCTURE
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/dashboard/app.py
   old_path: src/zephyr/frontend/dashboard/app.py
-  status: pending
+  status: no_move_needed
   subdomain_id: frontend
 - domain_id: D-INFRASTRUCTURE
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/interface_base.py
   old_path: src/zephyr/frontend/interface_base.py
-  status: pending
+  status: no_move_needed
   subdomain_id: frontend
 - domain_id: D-INFRASTRUCTURE
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/dashboard/components/gate_statistics.py
   old_path: src/zephyr/frontend/dashboard/components/gate_statistics.py
-  status: pending
+  status: no_move_needed
   subdomain_id: frontend
 - domain_id: D-INFRASTRUCTURE
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/dashboard/components/fitness_functions.py
   old_path: src/zephyr/frontend/dashboard/components/fitness_functions.py
-  status: pending
+  status: no_move_needed
   subdomain_id: frontend
 - domain_id: D-INFRASTRUCTURE
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/dashboard/components/olap_trend.py
   old_path: src/zephyr/frontend/dashboard/components/olap_trend.py
-  status: pending
+  status: no_move_needed
   subdomain_id: frontend
 - domain_id: D-INFRASTRUCTURE
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/dashboard/components/knowledge_overview.py
   old_path: src/zephyr/frontend/dashboard/components/knowledge_overview.py
-  status: pending
+  status: no_move_needed
   subdomain_id: frontend
 - domain_id: D-INFRASTRUCTURE
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/dashboard/components/__init__.py
   old_path: src/zephyr/frontend/dashboard/components/__init__.py
-  status: pending
+  status: no_move_needed
   subdomain_id: frontend
 - domain_id: D-INFRASTRUCTURE
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/dashboard/components/task_progress.py
   old_path: src/zephyr/frontend/dashboard/components/task_progress.py
-  status: pending
+  status: no_move_needed
   subdomain_id: frontend
 - domain_id: D-INFRASTRUCTURE
   file_type: module
@@ -12874,7 +12873,7 @@ entries:
   file_type: module
   new_path: src/zephyr/portfolio/allocation/strategy_lifecycle_event.py
   old_path: src/zephyr/pf_alloc/strategy_lifecycle_event.py
-  status: done
+  status: pending
   subdomain_id: allocation
 - domain_id: D-PORTFOLIO
   file_type: module
@@ -12904,7 +12903,7 @@ entries:
   file_type: module
   new_path: src/zephyr/portfolio/core/compliance_rule.py
   old_path: src/zephyr/pf_core/compliance_rule.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-PORTFOLIO
   file_type: module
@@ -12916,19 +12915,19 @@ entries:
   file_type: module
   new_path: src/zephyr/portfolio/core/default_equity_strategy.py
   old_path: src/zephyr/pf_core/default_equity_strategy.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/default_attribution_engine.py
   old_path: src/zephyr/pf_core/default_attribution_engine.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/analytics_base.py
   old_path: src/zephyr/pf_core/analytics_base.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-PORTFOLIO
   file_type: module
@@ -12940,97 +12939,97 @@ entries:
   file_type: module
   new_path: src/zephyr/portfolio/core/default_tca_engine.py
   old_path: src/zephyr/pf_core/default_tca_engine.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/performance_attribution_engine/__init__.py
   old_path: src/zephyr/pf_core/performance_attribution_engine/__init__.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/strategy_base.py
   old_path: src/zephyr/pf_core/strategy_base.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/performance_attribution_report.py
   old_path: src/zephyr/pf_core/performance_attribution_report.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/strategy_registry.py
   old_path: src/zephyr/pf_core/strategy_registry.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/risk_limits.py
   old_path: src/zephyr/pf_core/risk_limits.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/__init__.py
   old_path: src/zephyr/pf_core/__init__.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/strategies/default_equity_strategy.py
   old_path: src/zephyr/pf_core/strategies/default_equity_strategy.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-OBSERVABILITY
   file_type: module
   new_path: src/zephyr/observability/analytics_base.py
   old_path: src/zephyr/reporting/analytics_base.py
-  status: done
+  status: pending
   subdomain_id: observability
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/strategies/__init__.py
   old_path: src/zephyr/pf_core/strategies/__init__.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/core/strategy_engine/__init__.py
   old_path: src/zephyr/pf_core/strategy_engine/__init__.py
-  status: done
+  status: pending
   subdomain_id: core
 - domain_id: D-OBSERVABILITY
   file_type: module
   new_path: src/zephyr/observability/__init__.py
   old_path: src/zephyr/reporting/__init__.py
-  status: done
+  status: pending
   subdomain_id: observability
 - domain_id: D-OBSERVABILITY
   file_type: module
   new_path: src/zephyr/observability/implementations/default_attribution_engine.py
   old_path: src/zephyr/reporting/implementations/default_attribution_engine.py
-  status: done
+  status: pending
   subdomain_id: implementations
 - domain_id: D-OBSERVABILITY
   file_type: module
   new_path: src/zephyr/observability/implementations/default_tca_engine.py
   old_path: src/zephyr/reporting/implementations/default_tca_engine.py
-  status: done
+  status: pending
   subdomain_id: implementations
 - domain_id: D-OBSERVABILITY
   file_type: module
   new_path: src/zephyr/observability/implementations/__init__.py
   old_path: src/zephyr/reporting/implementations/__init__.py
-  status: done
+  status: pending
   subdomain_id: implementations
 - domain_id: D-PORTFOLIO
   file_type: module
   new_path: src/zephyr/portfolio/signal_ashare/__init__.py
   old_path: src/zephyr/signal_ashare/__init__.py
-  status: done
+  status: pending
   subdomain_id: signal_ashare
 - domain_id: D-PORTFOLIO
   file_type: module
@@ -13066,7 +13065,7 @@ entries:
   file_type: module
   new_path: src/zephyr/portfolio/signal_quality/__init__.py
   old_path: src/zephyr/signal_quality/__init__.py
-  status: done
+  status: pending
   subdomain_id: signal_quality
 - domain_id: D-PORTFOLIO
   file_type: module
@@ -13090,7 +13089,7 @@ entries:
   file_type: module
   new_path: src/zephyr/research/simulation/backtest_base.py
   old_path: src/zephyr/simulation/backtest_base.py
-  status: done
+  status: pending
   subdomain_id: simulation
 - domain_id: D-PORTFOLIO
   file_type: module
@@ -13108,25 +13107,25 @@ entries:
   file_type: module
   new_path: src/zephyr/research/simulation/pipeline_base.py
   old_path: src/zephyr/simulation/pipeline_base.py
-  status: done
+  status: pending
   subdomain_id: simulation
 - domain_id: D-RESEARCH
   file_type: module
   new_path: src/zephyr/research/simulation/__init__.py
   old_path: src/zephyr/simulation/__init__.py
-  status: done
+  status: pending
   subdomain_id: simulation
 - domain_id: D-RESEARCH
   file_type: module
   new_path: src/zephyr/research/simulation/default_backtest_engine.py
   old_path: src/zephyr/simulation/default_backtest_engine.py
-  status: done
+  status: pending
   subdomain_id: simulation
 - domain_id: D-RESEARCH
   file_type: module
   new_path: src/zephyr/research/simulation/implementations/__init__.py
   old_path: src/zephyr/simulation/implementations/__init__.py
-  status: done
+  status: pending
   subdomain_id: simulation
 - domain_id: D-EXECUTION
   file_type: module
@@ -13138,7 +13137,7 @@ entries:
   file_type: module
   new_path: src/zephyr/research/simulation/implementations/default_experiment_pipeline.py
   old_path: src/zephyr/simulation/implementations/default_experiment_pipeline.py
-  status: done
+  status: pending
   subdomain_id: simulation
 - domain_id: D-EXECUTION
   file_type: module
@@ -15010,7 +15009,7 @@ entries:
   file_type: package_init
   new_path: src/zephyr/data/knowledge_management/__init__.py
   old_path: src/zephyr/knowledge/__init__.py
-  status: done
+  status: pending
   subdomain_id: knowledge_management
   task_id: DM-321
 - domain_id: D-DATA

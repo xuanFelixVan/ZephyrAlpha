@@ -342,7 +342,7 @@ tiers:
         ssot_for: domain_definition, target_path, directory_structure, capacity_planning, blueprint_paths, test_paths, script_paths, knowledge_paths, data_paths, gate_paths, frontend_paths
         sections:
           - meta (含capacity_summary)
-          - domains (39域定义+capacity声明)
+          - domains (43域定义+capacity声明)
           - tree (运营态+设计态目录结构)
           - blueprint_paths (蓝图路径设计，1505容量)
           - test_paths (测试路径设计，1750容量)

@@ -14,7 +14,7 @@ category: governance
 **Stage F 漏网扫尾**：
 - **8 个 KE 文件**：`KE-NNN-*.md` → `ke-NNN-*.md` 全体小写化（`docs/08_knowledge/best-practices/`）
 - **1 个索引**：`docs/08_knowledge/index.md` → `index.md`
-- **29 处视图 module_id**：`target-architecture/` 系列 `EA-ARCH-*` / `EA-VIBE-*` / `EA-AUDIT-*` / `EA-SESSION-*` / `EA-PHASE-*` → `VIEW-*` / `STD-*` / `POL-*` 三族合法命名空间
+- **29 处视图 module_id**：`target_architecture/` 系列 `EA-ARCH-*` / `EA-VIBE-*` / `EA-AUDIT-*` / `EA-SESSION-*` / `EA-PHASE-*` → `VIEW-*` / `STD-*` / `POL-*` 三族合法命名空间
 - **2 个文件名真违规**：
   - `memory-system-landing-v1-task-draft.md` → 去 `-v1`（作者版本后缀，不属于技术产品版本）
   - `architecture-audit-final-verdict-20260421.md` → `-2026-04-21.md`（ISO 日期格式）

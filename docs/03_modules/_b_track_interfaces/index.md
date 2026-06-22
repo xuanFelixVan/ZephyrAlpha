@@ -11,7 +11,7 @@ language: zh
 created_by: human_plus_agent
 date: "2026-06-22"
 ttl: permanent
-summary: "B 轨 6 大核心服务接口索引。v2.3.0：统一下划线命名，对齐39域架构。"
+summary: "B 轨 6 大核心服务接口索引。v2.3.0：统一下划线命名，对齐43域架构。"
 tags: [b-track, service-interface, index, ai-engineering, interface-spec]
 depends_on:
   - {target: GOV-DOC-002, at: "§一", why: "目录定位——接口在此目录；对应模块蓝图在 docs/03_modules/_domain_infra_ops/ 与 docs/03_modules/_cross_layer/（以 module_registry path 为准）"}

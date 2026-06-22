@@ -21,7 +21,7 @@ docs/
 │   ├── domains/                         # 层域特定规则（L00/、L02/、L04/、L07/）
 │   └── templates/                       # 文档模板
 ├── 02_enterprise_architecture/          # C/B 轨共享：企业架构（TOGAF 视图 + 架构模型）
-│   ├── target-architecture/             # 目标架构视图（00-overview.md 等）
+│   ├── target_architecture/             # 目标架构视图（00-overview.md 等）
 │   │   └── architecture-model/          # 架构模型 YAML（layers/、contracts/、events/ 等）
 │   ├── architecture-rationale-log.md     # 架构决策推导链权威真源（ADR 已迁入 KB:decisions namespace）
 │   └── snapshots/                       # 架构快照（architecture-snapshot-*.yaml）
