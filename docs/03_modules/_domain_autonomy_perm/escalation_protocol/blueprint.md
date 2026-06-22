@@ -14,8 +14,8 @@ date: "2026-05-14"
 ttl: permanent
 construction_progress: partially_implemented
 actual_disk_path: D:\ZephyrAlpha\src\zephyr\governance\escalation_engine\
-last_updated: "2026-05-15"
-last_verified: "2026-05-15"
+last_updated: "2026-06-23"
+last_verified: "2026-06-23"
 generation: 3
 functional_domain: safety_escalation
 template_for: blueprint
