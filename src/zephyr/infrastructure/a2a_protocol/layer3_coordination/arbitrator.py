@@ -33,7 +33,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from enum import IntEnum
+from typing import Any
+
+
+class ArbitrationVerdict(IntEnum):
+    AUTONOMOUS = 0
+    AUTO_GUARD = 1
+    BLOCKED = 2
 
 
 class AgentRole(IntEnum):
@@ -97,6 +105,7 @@ class ArbitrationResult:
     escalation: bool = False
     escalation_message: str = ""
     compensation: str = ""
+    verdict: ArbitrationVerdict = ArbitrationVerdict.AUTONOMOUS
 
 
 class Arbitrator:
@@ -105,13 +114,45 @@ class Arbitrator:
     Tier 1: 角色优先级 — SUPERADMIN > SAFETY_OPERATOR > ... > BUILDER
     Tier 2: 文件归属 — 检查 file_ownership 规则
     Tier 3: 升级 — 无法自动解决 → 生成 ESC-A2A
+
+    扩展: 集成 EscalationEngine + DeadlockDetector + 审计日志
     """
 
     def __init__(
         self,
         ownership_rules: list[FileOwnership] | None = None,
+        escalation_engine: Any = None,
+        deadlock_detector: Any = None,
     ):
         self._ownership = ownership_rules or _DEFAULT_OWNERSHIP
+        self._escalation_engine = escalation_engine
+        self._deadlock_detector = deadlock_detector
+        self._audit_log: list[dict] = []
+
+    def _record_audit(
+        self,
+        agent_a: str,
+        agent_b: str,
+        result: ArbitrationResult,
+        conflicted_files: list[str],
+    ) -> None:
+        self._audit_log.append({
+            "timestamp": datetime.now(UTC).isoformat(),
+            "agent_a": agent_a,
+            "agent_b": agent_b,
+            "winner": result.winner,
+            "loser": result.loser,
+            "tier": result.tier,
+            "verdict": result.verdict.name,
+            "reason": result.reason,
+            "conflicted_files": list(conflicted_files),
+        })
+
+    def get_audit_log(self) -> list[dict]:
+        return list(self._audit_log)
+
+    def clear_audit_log(self) -> None:
+        self._audit_log.clear()
 
     def arbitrate(
         self,
@@ -121,13 +162,46 @@ class Arbitrator:
     ) -> ArbitrationResult:
         result = self._tier1_priority(agent_a, agent_b)
         if result is not None:
+            result.verdict = ArbitrationVerdict.AUTONOMOUS
+            self._record_audit(agent_a.agent_id, agent_b.agent_id, result, conflicted_files)
             return result
 
         result = self._tier2_ownership(agent_a, agent_b, conflicted_files)
         if result is not None:
+            result.verdict = ArbitrationVerdict.AUTONOMOUS
+            self._record_audit(agent_a.agent_id, agent_b.agent_id, result, conflicted_files)
             return result
 
-        return self._tier3_escalation(agent_a, agent_b, conflicted_files)
+        result = self._tier3_escalation(agent_a, agent_b, conflicted_files)
+        result.verdict = self._compute_verdict(agent_a, agent_b, conflicted_files)
+        self._record_audit(agent_a.agent_id, agent_b.agent_id, result, conflicted_files)
+        return result
+
+    def _compute_verdict(
+        self,
+        agent_a: AgentMeta,
+        agent_b: AgentMeta,
+        conflicted_files: list[str],
+    ) -> ArbitrationVerdict:
+        if self._deadlock_detector is not None:
+            try:
+                cycle = self._deadlock_detector.detect_cycle(agent_a.agent_id, agent_b.agent_id)
+                if cycle:
+                    return ArbitrationVerdict.BLOCKED
+            except Exception:
+                pass
+        if self._escalation_engine is not None:
+            try:
+                from zephyr.governance.escalation_models import RuleCategory
+                self._escalation_engine.evaluate(
+                    category=RuleCategory.DEADLOCK,
+                    description=f"A2A conflict: {agent_a.agent_id} vs {agent_b.agent_id} on {conflicted_files}",
+                    owner_id=agent_a.agent_id,
+                )
+                return ArbitrationVerdict.AUTO_GUARD
+            except Exception:
+                pass
+        return ArbitrationVerdict.AUTO_GUARD
 
     def _tier1_priority(self, a: AgentMeta, b: AgentMeta) -> ArbitrationResult | None:
         role_diff = a.role.value - b.role.value

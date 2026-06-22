@@ -65,8 +65,9 @@ def build_reference_graph() -> tuple[dict[str, set[str]], dict[str, str]]:
 
     all_files = []
     for filepath in iter_files(docs_dir, extensions=SCAN_EXTENSIONS_MD_YAML):
-        fm = parse_frontmatter_from_file(filepath)
+        fm_result = parse_frontmatter_from_file(filepath)
         rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
+        fm = fm_result[0] if fm_result else {}
         module_id = fm.get("module_id", "") if fm else ""
         depends_on = fm.get("depends_on", []) if fm else []
 
