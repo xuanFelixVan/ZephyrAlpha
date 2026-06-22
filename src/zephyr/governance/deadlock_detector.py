@@ -27,6 +27,7 @@ SSoT: 本模块是全项目死锁检测的唯一真源。A2A Protocol 消费本�
 
 from __future__ import annotations
 
+import time
 from typing import Any
 
 
@@ -34,52 +35,77 @@ class DeadlockDetector:
     def __init__(self):
         self._wait_graph: dict[str, set[str]] = {}
         self._locks: dict[str, str] = {}
+        self._lock_timestamps: dict[str, float] = {}
         self._preemption_order: list[str] = []
 
     def add_edge(self, waiter: str, holder: str):
         self._wait_graph.setdefault(waiter, set()).add(holder)
 
-    def detect_cycle(self) -> list[str]:
-        visited = set()
-        rec_stack = set()
-        cycle = []
+    def detect_cycle(self, waiter: str | None = None, holder: str | None = None) -> list[str]:
+        if waiter is not None and holder is not None:
+            self.add_edge(waiter, holder)
+        visited: set[str] = set()
+        rec_stack: set[str] = set()
+        path: list[str] = []
 
-        def dfs(node):
+        def dfs(node: str) -> list[str] | None:
             visited.add(node)
             rec_stack.add(node)
+            path.append(node)
             for neighbor in self._wait_graph.get(node, set()):
                 if neighbor not in visited:
                     result = dfs(neighbor)
                     if result:
                         return result
                 elif neighbor in rec_stack:
-                    return [neighbor]
+                    idx = path.index(neighbor)
+                    return path[idx:]
+            path.pop()
             rec_stack.discard(node)
             return None
 
         for node in self._wait_graph:
             if node not in visited:
+                path = []
                 result = dfs(node)
                 if result:
-                    cycle = result
-                    break
-        return cycle
+                    return result
+        return []
 
     def break_deadlock(self, node: str) -> bool:
         self._wait_graph.pop(node, None)
+        res_to_remove = [r for r, h in self._locks.items() if h == node]
+        for r in res_to_remove:
+            self._locks.pop(r, None)
+            self._lock_timestamps.pop(r, None)
         return True
 
     def try_acquire(self, resource: str, holder: str) -> bool:
         if resource in self._locks:
             return False
         self._locks[resource] = holder
+        self._lock_timestamps[resource] = time.monotonic()
         return True
 
     def release(self, resource: str, holder: str) -> bool:
         if self._locks.get(resource) == holder:
             del self._locks[resource]
+            self._lock_timestamps.pop(resource, None)
             return True
         return False
+
+    def break_timeout(self, timeout_seconds: float) -> list[str]:
+        now = time.monotonic()
+        expired = [
+            r for r, ts in self._lock_timestamps.items()
+            if now - ts >= timeout_seconds
+        ]
+        for r in expired:
+            holder = self._locks.pop(r, None)
+            self._lock_timestamps.pop(r, None)
+            if holder:
+                self._wait_graph.pop(holder, None)
+        return expired
 
     def dijkstra_order(self) -> list[str]:
         nodes = set(self._wait_graph.keys())
@@ -88,12 +114,7 @@ class DeadlockDetector:
         in_degree: dict[str, int] = {n: 0 for n in nodes}
         for waiter in self._wait_graph:
             for holder in self._wait_graph[waiter]:
-                in_degree[holder] = in_degree.get(holder, 0)
-            in_degree.setdefault(waiter, 0)
-
-        for waiter in self._wait_graph:
-            for holder in self._wait_graph[waiter]:
-                pass
+                in_degree[holder] = in_degree.get(holder, 0) + 1
 
         queue = [n for n in nodes if in_degree.get(n, 0) == 0]
         order = []

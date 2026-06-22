@@ -238,3 +238,176 @@ class TestSerialize:
         result = det.serialize()
         assert isinstance(result["wait_graph"]["A"], list)
         assert set(result["wait_graph"]["A"]) == {"B", "C"}
+
+
+class TestDetectCycleFullPath:
+    def test_returns_full_cycle_path(self):
+        det = DeadlockDetector()
+        det.add_edge("A", "B")
+        det.add_edge("B", "C")
+        det.add_edge("C", "A")
+        result = det.detect_cycle()
+        assert len(result) == 3
+        assert set(result) == {"A", "B", "C"}
+
+    def test_two_node_cycle_returns_both(self):
+        det = DeadlockDetector()
+        det.add_edge("A", "B")
+        det.add_edge("B", "A")
+        result = det.detect_cycle()
+        assert len(result) == 2
+        assert set(result) == {"A", "B"}
+
+    def test_self_loop_returns_single_node(self):
+        det = DeadlockDetector()
+        det.add_edge("A", "A")
+        result = det.detect_cycle()
+        assert result == ["A"]
+
+    def test_no_cycle_returns_empty_list(self):
+        det = DeadlockDetector()
+        det.add_edge("A", "B")
+        det.add_edge("B", "C")
+        result = det.detect_cycle()
+        assert result == []
+
+
+class TestDetectCycleWithArgs:
+    def test_detect_cycle_accepts_waiter_holder(self):
+        det = DeadlockDetector()
+        det.add_edge("A", "B")
+        det.add_edge("B", "A")
+        result = det.detect_cycle("C", "A")
+        assert len(result) > 0
+
+    def test_detect_cycle_with_args_adds_edge(self):
+        det = DeadlockDetector()
+        result = det.detect_cycle("X", "Y")
+        assert "Y" in det._wait_graph.get("X", set())
+
+    def test_detect_cycle_with_none_args_ignores(self):
+        det = DeadlockDetector()
+        det.add_edge("A", "B")
+        result = det.detect_cycle(None, None)
+        assert result == []
+
+
+class TestBreakTimeout:
+    def test_break_timeout_returns_expired_resources(self):
+        det = DeadlockDetector()
+        det.try_acquire("res1", "holder1")
+        result = det.break_timeout(0.0)
+        assert "res1" in result
+
+    def test_break_timeout_removes_expired_locks(self):
+        det = DeadlockDetector()
+        det.try_acquire("res1", "holder1")
+        det.break_timeout(0.0)
+        assert "res1" not in det._locks
+
+    def test_break_timeout_keeps_active_locks(self):
+        det = DeadlockDetector()
+        det.try_acquire("res1", "holder1")
+        result = det.break_timeout(100.0)
+        assert result == []
+        assert "res1" in det._locks
+
+    def test_break_timeout_clears_timestamps(self):
+        det = DeadlockDetector()
+        det.try_acquire("res1", "holder1")
+        det.break_timeout(0.0)
+        assert "res1" not in det._lock_timestamps
+
+    def test_break_timeout_empty_returns_empty(self):
+        det = DeadlockDetector()
+        result = det.break_timeout(10.0)
+        assert result == []
+
+
+class TestDijkstraOrderFixed:
+    def test_in_degree_calculated_correctly(self):
+        det = DeadlockDetector()
+        det.add_edge("A", "B")
+        det.add_edge("A", "C")
+        det.add_edge("B", "C")
+        order = det.dijkstra_order()
+        assert order.index("A") < order.index("B")
+        assert order.index("A") < order.index("C")
+        assert order.index("B") < order.index("C")
+
+    def test_diamond_dependency(self):
+        det = DeadlockDetector()
+        det.add_edge("A", "B")
+        det.add_edge("A", "C")
+        det.add_edge("B", "D")
+        det.add_edge("C", "D")
+        order = det.dijkstra_order()
+        assert order.index("A") < order.index("B")
+        assert order.index("A") < order.index("C")
+        assert order.index("B") < order.index("D")
+        assert order.index("C") < order.index("D")
+
+
+class TestBreakDeadlockCleansLocks:
+    def test_break_deadlock_removes_holder_locks(self):
+        det = DeadlockDetector()
+        det.try_acquire("res1", "holder1")
+        det.break_deadlock("holder1")
+        assert "res1" not in det._locks
+
+    def test_break_deadlock_clears_timestamps(self):
+        det = DeadlockDetector()
+        det.try_acquire("res1", "holder1")
+        det.break_deadlock("holder1")
+        assert "res1" not in det._lock_timestamps
+
+
+class TestReleaseCleansTimestamps:
+    def test_release_clears_timestamp(self):
+        det = DeadlockDetector()
+        det.try_acquire("res1", "holder1")
+        det.release("res1", "holder1")
+        assert "res1" not in det._lock_timestamps
+
+
+class TestDelegationEngineIntegration:
+    def test_delegation_engine_uses_deadlock_detector(self, monkeypatch):
+        from zephyr.governance.deadlock_detector import DeadlockDetector
+        from zephyr.governance.delegation_engine import DelegationEngine
+        from zephyr.governance.escalation_models import EscalationEvent, RuleCategory
+
+        det = DeadlockDetector()
+        engine = DelegationEngine(deadlock_detector=det)
+        monkeypatch.setattr(engine, "_lsg_verify_delegation", lambda event: None)
+        engine.register_delegate("delegate1", ["custom"])
+
+        event = EscalationEvent(
+            category=RuleCategory.CUSTOM,
+            description="test",
+            owner_id="owner1",
+        )
+        det.add_edge("owner1", "delegate1")
+        det.add_edge("delegate1", "owner1")
+
+        record = engine.delegate(event, task_id="task1")
+        assert record.deadlock_detected is True
+
+    def test_delegation_engine_no_deadlock_proceeds(self, monkeypatch):
+        from zephyr.governance.delegation_engine import DelegationEngine
+        from zephyr.governance.escalation_models import EscalationEvent, RuleCategory
+
+        from zephyr.governance.deadlock_detector import DeadlockDetector
+
+        det = DeadlockDetector()
+        engine = DelegationEngine(deadlock_detector=det)
+        monkeypatch.setattr(engine, "_lsg_verify_delegation", lambda event: None)
+        engine.register_delegate("delegate1", ["custom"])
+
+        event = EscalationEvent(
+            category=RuleCategory.CUSTOM,
+            description="test",
+            owner_id="owner1",
+        )
+        record = engine.delegate(event, task_id="task2")
+        assert record.deadlock_detected is False
+        assert record.to_delegate == "delegate1"
