@@ -12,7 +12,7 @@
 
 import pytest
 
-from zephyr.governance.identity_verifier import (
+from zephyr.infrastructure.a2a_protocol.layer1_discovery.identity_verifier import (
     IdentityVerifier,
 )
 from zephyr.infrastructure.a2a_protocol.layer1_discovery.a2a_registry import A2ARegistry
