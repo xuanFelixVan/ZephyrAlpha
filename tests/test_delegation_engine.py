@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0731 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md | §
+# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_delegation_engine
 # [INVARIANTS] must test all public classes and methods of delegation_engine
 # [MODIFY-GUARD] delegation_engine.py changes require sync
@@ -155,3 +155,85 @@ class TestDelegationEngine:
         engine = DelegationEngine()
         count = engine.cleanup_expired()
         assert count == 0
+
+
+class TestDelegationDepth:
+    def test_depth_limit_blocks_after_max(self):
+        engine = DelegationEngine()
+        engine.register_delegate("d1")
+        for _ in range(DelegationEngine.MAX_DELEGATION_DEPTH):
+            event = _make_event()
+            engine.delegate(event, task_id="task-1")
+        event = _make_event()
+        record = engine.delegate(event, task_id="task-1")
+        assert record.depth_exceeded is True
+        assert record.to_delegate == ""
+
+    def test_depth_tracks_per_task(self):
+        engine = DelegationEngine()
+        engine.register_delegate("d1")
+        engine.register_delegate("d2")
+        engine.delegate(_make_event(), task_id="task-A")
+        engine.delegate(_make_event(), task_id="task-B")
+        assert engine.get_delegation_depth("task-A") == 1
+        assert engine.get_delegation_depth("task-B") == 1
+
+    def test_get_delegation_depth_returns_zero_for_unknown(self):
+        engine = DelegationEngine()
+        assert engine.get_delegation_depth("unknown") == 0
+
+
+class TestDelegationHistory:
+    def test_history_records_delegations(self):
+        engine = DelegationEngine()
+        engine.register_delegate("d1")
+        engine.delegate(_make_event())
+        history = engine.get_delegation_history()
+        assert len(history) == 1
+
+    def test_get_delegation_history_returns_copy(self):
+        engine = DelegationEngine()
+        engine.register_delegate("d1")
+        engine.delegate(_make_event())
+        h1 = engine.get_delegation_history()
+        h2 = engine.get_delegation_history()
+        assert h1 is not h2
+        assert h1 == h2
+
+
+class TestDeadlockDetectorIntegration:
+    def test_deadlock_detected_blocks_delegation(self):
+        class MockDeadlockDetector:
+            def detect_cycle(self, owner_id, target_id):
+                return ["owner1", "d1", "owner1"]
+
+        engine = DelegationEngine(deadlock_detector=MockDeadlockDetector())
+        engine.register_delegate("d1")
+        event = _make_event(owner_id="owner1")
+        record = engine.delegate(event)
+        assert record.deadlock_detected is True
+        assert record.to_delegate == ""
+
+    def test_no_deadlock_allows_delegation(self):
+        class MockDeadlockDetector:
+            def detect_cycle(self, owner_id, target_id):
+                return None
+
+        engine = DelegationEngine(deadlock_detector=MockDeadlockDetector())
+        engine.register_delegate("d1")
+        event = _make_event(owner_id="owner1")
+        record = engine.delegate(event)
+        assert record.deadlock_detected is False
+        assert record.to_delegate == "d1"
+
+    def test_deadlock_detector_exception_does_not_block(self):
+        class FailingDeadlockDetector:
+            def detect_cycle(self, owner_id, target_id):
+                raise RuntimeError("detector error")
+
+        engine = DelegationEngine(deadlock_detector=FailingDeadlockDetector())
+        engine.register_delegate("d1")
+        event = _make_event(owner_id="owner1")
+        record = engine.delegate(event)
+        assert record.deadlock_detected is False
+        assert record.to_delegate == "d1"

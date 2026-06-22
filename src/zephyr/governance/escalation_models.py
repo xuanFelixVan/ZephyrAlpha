@@ -162,6 +162,8 @@ class DelegationRecord:
     expires_at: datetime | None = None
     accepted: bool = False
     completed: bool = False
+    depth_exceeded: bool = False
+    deadlock_detected: bool = False
 
 
 DEFAULT_ESCALATION_RULES: list[EscalationRule] = [

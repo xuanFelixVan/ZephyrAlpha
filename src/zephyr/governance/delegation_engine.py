@@ -44,14 +44,17 @@ from .escalation_models import (
 class DelegationEngine:
     MAX_LOAD_PER_DELEGATE = 5
     DELEGATION_TIMEOUT_HOURS = 24
+    MAX_DELEGATION_DEPTH = 3
 
-    def __init__(self):
+    def __init__(self, deadlock_detector=None):
         self._delegate_load: dict[str, int] = defaultdict(int)
         self._delegate_expertise: dict[str, set[str]] = defaultdict(set)
         self._active_delegations: dict[str, DelegationRecord] = {}
         self._delegation_history: list[DelegationRecord] = []
         self._round_robin_index: int = 0
         self._lock = threading.Lock()
+        self._deadlock_detector = deadlock_detector
+        self._delegation_depth: dict[str, int] = {}
 
     def register_delegate(self, delegate_id: str, expertise: list[str] | None = None) -> None:
         with self._lock:
@@ -74,6 +77,34 @@ class DelegationEngine:
         task_id: str | None = None,
     ) -> DelegationRecord:
         self._lsg_verify_delegation(event)
+
+        depth_key = task_id or event.event_id or ""
+        current_depth = self._delegation_depth.get(depth_key, 0)
+        if current_depth >= self.MAX_DELEGATION_DEPTH:
+            record = DelegationRecord(
+                from_owner=event.owner_id or "",
+                task_id=task_id,
+                strategy=strategy,
+                expires_at=datetime.now(UTC) + timedelta(hours=self.DELEGATION_TIMEOUT_HOURS),
+            )
+            record.depth_exceeded = True
+            return record
+
+        if self._deadlock_detector is not None:
+            try:
+                cycle = self._deadlock_detector.detect_cycle(event.owner_id or "", None)
+                if cycle:
+                    record = DelegationRecord(
+                        from_owner=event.owner_id or "",
+                        task_id=task_id,
+                        strategy=strategy,
+                        expires_at=datetime.now(UTC) + timedelta(hours=self.DELEGATION_TIMEOUT_HOURS),
+                    )
+                    record.deadlock_detected = True
+                    return record
+            except Exception:
+                pass
+
         delegate_id = self._select_delegate(event, strategy)
         if delegate_id is None or delegate_id == event.owner_id:
             record = DelegationRecord(
@@ -98,10 +129,19 @@ class DelegationEngine:
             self._delegate_load[delegate_id] += 1
             self._active_delegations[record.delegation_id] = record
             self._delegation_history.append(record)
+            if depth_key:
+                self._delegation_depth[depth_key] = current_depth + 1
 
         event.delegate_id = delegate_id
         event.state = EscalationState.DELEGATED
         return record
+
+    def get_delegation_history(self) -> list[DelegationRecord]:
+        with self._lock:
+            return list(self._delegation_history)
+
+    def get_delegation_depth(self, task_id: str) -> int:
+        return self._delegation_depth.get(task_id, 0)
 
     def accept_delegation(self, delegation_id: str) -> bool:
         with self._lock:
