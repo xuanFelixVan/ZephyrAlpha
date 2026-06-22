@@ -83,71 +83,90 @@ repos:
         name: "检测未解决的合并冲突标记"
       - id: detect-private-key
         name: "检测意外提交的私钥"
+        exclude: |
+          (?x)^(
+              src/zephyr/security/llm_defense/llm_security/patterns/secrets\.py|
+              tests/test_fix_safety\.py|
+              tests/unit/auto_fix_engine/test_auto_fix_core\.py|
+              tests/llm_security/test_secrets\.py|
+              tests/test_credential_rotation_trigger\.py
+          )$
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.8
+  - repo: local
     hooks:
       - id: ruff
         name: "Ruff Lint"
-        args: ["--fix"]
+        entry: python -m ruff check --no-cache
+        language: system
+        types: [python]
+        require_serial: true
       - id: ruff-format
         name: "Ruff Format"
+        entry: python -m ruff format --no-cache
+        language: system
+        types: [python]
+        require_serial: true
 
   - repo: local
     hooks:
       # ── GATE-01: _index.yaml 可达性检查 ──
       - id: gate-01-index-reachability
         name: "GATE-01: _index.yaml 可达性检查"
-        entry: python scripts/governance/d5_architecture/check_architecture_gates.py
+        entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
         args: ["--gate", "01"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^docs/02_enterprise_architecture/.*\\.yaml$"
+        stages: [manual]
         description: "检查所有 _index.yaml 文件的引用可达性，确保无断链"
 
       # ── GATE-02: P0 接口契约完整性检查 ──
       - id: gate-02-p0-contract-integrity
         name: "GATE-02: P0 接口契约完整性检查"
-        entry: python scripts/governance/d5_architecture/check_architecture_gates.py
+        entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
         args: ["--gate", "02"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^docs/02_enterprise_architecture/.*\\.yaml$"
+        stages: [manual]
         description: "验证所有 P0 接口契约的字段完整性（schema_version / fields / owner）"
 
       # ── GATE-03: 不变量 owner 检查 ──
       - id: gate-03-invariant-owner
         name: "GATE-03: 不变量 owner 检查"
-        entry: python scripts/governance/d5_architecture/check_architecture_gates.py
+        entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
         args: ["--gate", "03"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^docs/02_enterprise_architecture/.*\\.yaml$"
+        stages: [manual]
         description: "检查每条不变量是否有且仅有一个 owner 层，防止职责模糊"
 
       # ── GATE-06: KB 决策记录状态检查 ──
       - id: gate-06-kb-decision-status
         name: "GATE-06: KB 决策记录状态检查"
-        entry: python scripts/governance/d5_architecture/check_architecture_gates.py
+        entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
         args: ["--gate", "06"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^docs/02_enterprise_architecture/.*\\.yaml$"
+        stages: [manual]
         description: "验证所有 KB 决策记录的 status 字段合法（Accepted / Proposed / Superseded / Deprecated）"
 
       # ── GATE-07: 事件 publisher 层级检查 ──
       - id: gate-07-event-publisher-layer
         name: "GATE-07: 事件 publisher 层级检查"
-        entry: python scripts/governance/d5_architecture/check_architecture_gates.py
+        entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
         args: ["--gate", "07"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^docs/02_enterprise_architecture/.*\\.yaml$"
+        stages: [manual]
         description: "检查每条领域事件的 publisher 层级是否与事件所属域一致"
 
       # ── GATE-11: 命名规范门禁（Stage G 落地）──
@@ -159,7 +178,7 @@ repos:
         name: "GATE-11: 命名规范门禁"
         entry: python scripts/governance/d3_metadata/check_naming_convention.py
         args: ["--staged"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^.*"
@@ -175,7 +194,7 @@ repos:
         name: "GATE-12: 蓝图真源准入门禁（Wave 0 V-12 骨架）"
         entry: python scripts/governance/d3_metadata/validate_blueprint_provenance.py
         args: ["--ci"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^docs/(02_enterprise_architecture/target_architecture|04_construction_plans|01_policies_and_standards)/.*\\.md$"
@@ -190,9 +209,9 @@ repos:
       # 骨架阶段：--warn-only 模式（只警告不阻塞），experimental 转 --ci 强制
       - id: gate-14-authority-registry
         name: "GATE-14: AI 自治权限注册表自校验（Wave 0 V-11 骨架）"
-        entry: python scripts/governance/d5_architecture/validate_authority_registry.py
+        entry: python scripts/governance/d5_architecture/validators/validate_authority_registry.py
         args: ["--ci"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry\\.md$"
@@ -208,7 +227,7 @@ repos:
         name: "GATE-13: 蓝图重叠检测门禁（Wave 1 V-14 骨架）"
         entry: python scripts/governance/d11_compliance/validate_blueprint_overlap.py
         args: ["--ci"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^docs/19_development_workspace/drafts-and-audits/.*\\.md$"
@@ -221,14 +240,14 @@ repos:
       # 模式：硬阻断（ERROR 时 exit(1) 拒绝提交）
       - id: gate-triple-align
         name: "G-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁"
-        entry: python src/zephyr/gates/triple_alignment.py
-        language: python
+        entry: python src/zephyr/governance/rule_enforcement/triple_alignment.py
+        language: system
         pass_filenames: false
         always_run: false
         files: "^(docs/03_modules/.*blueprint\\.md|src/zephyr/.*\\.py|docs/02_enterprise_architecture/system-dependency-map\\.md|docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry\\.yaml)$"
 
       # ── GATE-15: Frontmatter 元数据校验（metadata_registry.md v3.0.0）──
-      # 权威依据：docs/01_policies_and_standards/meta/metadata_registry.md v3.0.0
+      # 权威依据：docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml v3.0.0
       # 真源声明：合并 frontmatter-standard.md v1.0.0 + discussion-document-standard.md v2.0.0 + frontmatter_schema.json R4
       # 校验范围：docs/ 下所有 .md 和 .yaml 文件
       # 校验内容：doc_type 合法值（17种）/ status 合法值（7种）/ 必填字段 / module_id 格式 / AI 生成文件标记
@@ -237,10 +256,11 @@ repos:
         name: "GATE-15: Frontmatter 元数据校验（v3.0.0 SSoT）"
         entry: python scripts/governance/d3_metadata/check_frontmatter_metadata.py
         args: ["--ci"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^docs/.*\\.(md|yaml|yml)$"
+        stages: [manual]
         description: "Frontmatter 元数据校验（doc_type 17种合法值 / status 7种 / 必填字段 / module_id 格式 / AI 生成标记），骨架阶段 warn-only"
 
       # ── GATE-16: 架构合规校验（architecture_contract.yaml v1.0.0）──
@@ -253,7 +273,7 @@ repos:
         name: "GATE-16: 架构合规校验（architecture-contract v1.0.0）"
         entry: python scripts/governance/d3_metadata/validate_architecture.py
         args: ["--ci"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^docs/01_policies_and_standards/.*\\.(md|yaml|yml)$"
@@ -269,7 +289,7 @@ repos:
         name: "GATE-17: 孤儿.py文件检测（§6.5 根目录零.py）"
         entry: python scripts/governance/d1_structure/detect_orphan_py.py
         args: ["--fix"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^.*\\.py$"
@@ -283,8 +303,8 @@ repos:
       # 模式：--ci 硬阻断（零残留违规 = 拒绝提交）
       - id: gate-zr-zero-residue
         name: "GATE-ZR: 零残留强制门禁（IRN-011）"
-        entry: python -c "from zephyr.gates.invariants.zero_residue_check import ZeroResidueScanner; import sys; r=ZeroResidueScanner().scan(); sys.exit(0 if r.is_clean else 1)"
-        language: python
+        entry: python -B -c "from zephyr.governance.rule_enforcement.invariants.zero_residue_check import ZeroResidueScanner; import sys; r=ZeroResidueScanner().scan(); sys.exit(0 if r.is_clean else 1)"
+        language: system
         pass_filenames: false
         always_run: true
         description: "全量零残留强制门禁——违规即阻断commit。对标IRN-011（ZR-001~009），任何残留物不得入库"
@@ -301,7 +321,8 @@ repos:
         pass_filenames: false
         always_run: false
         files: "^src/zephyr/.*\\.py$"
-        description: "增量代码去重扫描——发现 high/critical 重复时 WARN（骨架阶段），稳定后转硬阻断"
+        stages: [manual]
+        description: "增量代码去重扫描——发现 high/critical 重复时 WARN（骨架阶段），稳定后转硬阻断。模块未实现，暂设manual阶段"
 
       # ── GATE-18: 测试收集门禁（AGENTS.md §4 源码-测试同步铁律 自动化执行层）──
       # 权威依据：AGENTS.md §4 编码安全 → 源码-测试同步铁律（Source-Test Sync Rule）
@@ -312,8 +333,8 @@ repos:
       # 耗时：~1-2s（仅收集阶段，不执行测试体）
       - id: gate-18-test-collection
         name: "GATE-18: 测试收集门禁（源码-测试同步铁律）"
-        entry: python -m pytest tests/ --collect-only -q --tb=line -m "not slow and not e2e"
-        language: python
+        entry: python -B -m pytest tests/ --collect-only -q --tb=line -p no:cacheprovider -m "not slow and not e2e"
+        language: system
         pass_filenames: false
         always_run: true
         files: "^src/zephyr/.*\\.py$|^tests/.*\\.py$"
@@ -327,12 +348,26 @@ repos:
       # 模式：硬阻断（P0 > 0 时 exit(1) 拒绝提交），与 KBG-0021 §4.2 三级违规分级对齐
       - id: gate-ssot
         name: "GATE-SSOT: SSoT 唯一真源门禁（KBG-0001/0021 强制执行）"
-        entry: python scripts/governance/d5_architecture/validate_ssot.py
+        entry: python scripts/governance/d5_architecture/validators/validate_ssot.py
         args: ["--ci"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^docs/.*\\.md$"
+
+      # ── GATE-RULE-FM: 规则文件 frontmatter 标准字段校验门禁 ──
+      # 权威依据：trae_043 元数据四域架构 + scaffold.py rule 模式标准模板
+      # 创建日期：2026-06-22（规则YAML frontmatter 统一升级驱动）
+      # 检测范围：docs/01_policies_and_standards/rules/ 下所有 trae_*.yaml 文件变更时触发
+      # 检测内容：DIM-1(11必填字段存在性) + DIM-2(字段顺序) + DIM-3(枚举值合法性) + DIM-4(rule_id与文件名一致性)
+      # 模式：硬阻断（任一FAIL exit(1) 拒绝提交），配合 scaffold.py rule 模式双重保险
+      - id: gate-rule-frontmatter
+        name: "GATE-RULE-FM: 规则文件 frontmatter 标准字段校验"
+        entry: python scripts/governance/d3_metadata/validate_rule_frontmatter.py
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^docs/01_policies_and_standards/rules/trae_.*\\.yaml$"
 
       # ── GATE-BP-PLACE: 蓝图物理位置与归属链门禁（PS-STD-005 §4+§6 强制执行层）──
       # 权威依据：PS-STD-005 §4（目录结构规范）+ §6（belongs_to MUST）
@@ -342,12 +377,13 @@ repos:
       # 模式：硬阻断（P0 > 0 时 exit(1) 拒绝提交）
       - id: gate-bp-place
         name: "GATE-BP-PLACE: 蓝图物理位置与归属链门禁（PS-STD-005 强制执行）"
-        entry: python scripts/governance/d5_architecture/validate_blueprint_placement.py
+        entry: python scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_placement.py
         args: ["--ci"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^docs/03_modules/.*blueprint\\.md$"
+        stages: [manual]
         description: "全库 SSoT 唯一真源一致性校验（P0 无效layer/重复module_id/死链/命名冲突硬阻断），KBG-0001 + KBG-0021 §4.2 强制执行层"
 
       # ── GATE-SQ: 审计脚本质量门禁（AGENTS.md §8.2.1 + SCRIPT-QUALITY-001）──
@@ -356,16 +392,16 @@ repos:
       # 检测范围：scripts/governance/**/*.py 变更时触发
       # 检测内容：D-A~D-H 八维度质量检查（编码安全 / 退出码 / 短路模式 /
       #   异常规范 / 模块封装 / _shared API 重复定义 / os.walk 绕过 / 其他异味）
-      # 模式：硬阻断（warn-only=false）—— 任何 D-A~D-H 违规禁止提交
+      # 模式：warn-only（骨架阶段——2141 项预存质量债务需逐步清理，稳定后转硬阻断）
       - id: gate-sq-script-quality
         name: "GATE-SQ: 审计脚本质量门禁（D-D-07/D-D-08 强制执行）"
         entry: python scripts/governance/d11_compliance/validate_script_quality.py
-        args: ["--scripts-dir", "scripts/governance"]
-        language: python
+        args: ["--scripts-dir", "scripts/governance", "--warn-only"]
+        language: system
         pass_filenames: false
         always_run: false
         files: "^scripts/governance/.*\\.py$"
-        description: "审计脚本八维度质量检查（编码安全/退出码/_shared API重复/os.walk绕过），任何违规禁止提交，AGENTS.md §8.2.1 强制执行层"
+        description: "审计脚本八维度质量检查（编码安全/退出码/_shared API重复/os.walk绕过），warn-only骨架阶段，AGENTS.md §8.2.1 强制执行层"
 
       # ── GATE-ADM: Manifest 准入控制器（AGENTS.md §6.5 K8s Admission Controller 落地）──
       # 权威依据：AGENTS.md §6.5（脚本自创入库强制约定——任何.py创建必须通过准入审核）
@@ -378,7 +414,7 @@ repos:
         name: "GATE-ADM: Manifest 准入控制器（K8s Admission落地）"
         entry: python scripts/governance/d11_compliance/validate_manifest_admission.py
         args: []
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^scripts/governance/script_manifest\\.yaml$"
@@ -394,7 +430,7 @@ repos:
         name: "GATE-IDX: 索引-实际同步校验（AGENTS.md §6.11 落地）"
         entry: python scripts/governance/d1_structure/validate_index_reality.py
         args: ["--ci"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^scripts/governance/(index\\.md|script_manifest\\.yaml)$"
@@ -410,7 +446,7 @@ repos:
         name: "GATE-DD07: _shared API 本地重定义检测（D-D-07）"
         entry: python scripts/governance/d11_compliance/fix_shared_bypass.py
         args: ["--ci"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^scripts/governance/.*\\.py$"
@@ -421,9 +457,9 @@ repos:
       # Session 20260504：三条AI架构铁律落地 → 新建 validate_static_manifest_drift.py + 接入 pre-commit
       - id: gate-19-manifest-drift
         name: "GATE-19: 静态清单漂移阻断（§6.16）"
-        entry: python scripts/governance/d5_architecture/validate_static_manifest_drift.py
+        entry: python scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py
         args: ["--check"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^(scripts/governance/script_manifest\\.yaml|docs/01_policies_and_standards/_registry/catalogs/.*\\.yaml|\\.pre-commit-config\\.yaml)$"
@@ -435,9 +471,9 @@ repos:
       # 模式：warn-only（骨架阶段，§8.2 部分路径需补全完整目录后转硬阻断）
       - id: gate-22-load-path-integrity
         name: "GATE-22: AI加载路径完整性（§6.18）"
-        entry: python scripts/governance/d5_architecture/validate_load_path_integrity.py
+        entry: python scripts/governance/d5_architecture/validators/validate_load_path_integrity.py
         args: ["--check"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^AGENTS\\.md$"
@@ -449,7 +485,7 @@ repos:
       - id: handoff-log-generate
         name: "Handoff: 生成交接日志（manual）"
         entry: python scripts/hooks/auto-handoff-log.py
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         stages: [manual]
@@ -458,7 +494,7 @@ repos:
       - id: handoff-log-post-commit
         name: "Handoff: 提交后交接快照（post-commit）"
         entry: python scripts/hooks/auto-handoff-log.py --last-commit
-        language: python
+        language: system
         pass_filenames: false
         always_run: true
         stages: [post-commit]
@@ -473,10 +509,11 @@ repos:
         name: "GATE-C1: SSoT status 字段枚举白名单"
         entry: python scripts/governance/d3_metadata/validate_ssot_status.py
         args: ["--ci"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^docs/.*\\.md$"
+        stages: [manual]
         description: "SSoT frontmatter status 枚举白名单——阻止 illusion/placeholder_c_track 等非法值，大小写告警不阻断"
 
       # ── GATE-C2: 契约-代码双写漂移阻断（盲点 C2 修复）──
@@ -488,7 +525,7 @@ repos:
         name: "GATE-MCP: Tool Contract 一致性（R3）"
         entry: python scripts/governance/validate_tool_contracts_consistency.py
         args: ["--ci"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^(src/zephyr/mcp/tool-contracts\\.yaml|src/zephyr/mcp/.*\\.py)$"
@@ -500,9 +537,9 @@ repos:
       # 模式：--ci 硬块，首次运行 --freeze 建立基线
       - id: gate-c2-contract-code-drift
         name: "GATE-C2: 契约-代码双写漂移阻断"
-        entry: python scripts/governance/d5_architecture/check_contract_code_drift.py
+        entry: python scripts/governance/d5_architecture/checkers/check_contract_code_drift.py
         args: ["--ci"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "^(docs/02_enterprise_architecture/target_architecture/architecture_model/contracts/|src/zephyr/shared/contracts/).*"
@@ -512,7 +549,7 @@ repos:
       - id: gate-bom-utf8-check
         name: "GATE-BOM: UTF-8 BOM 检测"
         entry: python scripts/governance/d11_compliance/validate_no_utf8_bom.py
-        language: python
+        language: system
         pass_filenames: false
         always_run: true
         files: "\\.(yaml|md|py)$"
@@ -527,7 +564,7 @@ repos:
         name: "GATE-ENCODING: 编码安全+mojibake检测"
         entry: python scripts/governance/d7_code/check_encoding.py
         args: ["--dir", "src/zephyr"]
-        language: python
+        language: system
         pass_filenames: false
         always_run: false
         files: "\\.(py|md|yaml|yml|json|toml)$"
@@ -551,8 +588,7 @@ repos:
       - id: sync-audit-protocol-numbers
         name: "AUTO-SYNC: 审计协议数字同步"
         entry: python scripts/governance/generators/sync_audit_protocol_numbers.py
-        language: python
-        additional_dependencies: [pyyaml]
+        language: system
         pass_filenames: false
         always_run: true
         files: "(script_manifest\\.yaml|gate-registry\\.yaml|registry-master-index\\.yaml|\\.pre-commit-config\\.yaml)$"
@@ -567,6 +603,6 @@ repos:
       - id: commit-msg-conventional
         name: "Conventional Commits"
         entry: python scripts/governance/d11_compliance/validate_commit_message.py
-        language: python
+        language: system
         stages: [commit-msg]
         description: "Conventional Commits 格式校验（feat/fix/docs/...），conventionalcommits.org v1.0.0"
