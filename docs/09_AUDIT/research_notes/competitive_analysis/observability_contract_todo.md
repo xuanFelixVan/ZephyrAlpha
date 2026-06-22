@@ -1,5 +1,5 @@
 ---
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-023
 title: Observability Contract Todo
 module_id: GOV-071
 ---

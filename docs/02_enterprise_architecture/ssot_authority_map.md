@@ -34,16 +34,16 @@ tags:
 
 ## 一、层架构权威 (Layer Authority)
 
-> **🔷 双树声明（AUDIT-04 Remediation，对齐 `architecture-model/SCOPE.yaml`）**：仓库中存在两套 `architecture-model/`，职责**有意分离**，**禁止假定字节级一致**。
+> **🔷 双树声明（AUDIT-04 Remediation，对齐 `architecture_model/SCOPE.yaml`）**：仓库中存在两套 `architecture_model/`，职责**有意分离**，**禁止假定字节级一致**。
 >
 > | 树 | 路径 | SSoT 角色 |
 > |----|------|-----------|
-> | **EA 企业架构树** | `docs/02_enterprise_architecture/target_architecture/architecture-model/` | 跨层契约、不变量、能力热力图、`module_id_registry.yaml`（若仅存于此）、**完整** `technology/technology_landscape.yaml`、`events/`、`domain/`、`contracts/`、`cross-cutting/invariants.yaml` 等——**门禁与 validate_ssot 的层枚举权威仍以此树 `_index.yaml` + `layers/` 为真源**。 |
-> | **施工分区树** | 仓库根 `architecture-model/` | `implementation_partition_registry`：C/B 双轨分区、代码目录对齐状态、`layers/*` 施工视图（与 EA 同名 partition id 可对账，非同一份文件）。 |
+> | **EA 企业架构树** | `docs/02_enterprise_architecture/target_architecture/architecture_model/` | 跨层契约、不变量、能力热力图、`module_id_registry.yaml`（若仅存于此）、**完整** `technology/technology_landscape.yaml`、`events/`、`domain/`、`contracts/`、`cross-cutting/invariants.yaml` 等——**门禁与 validate_ssot 的层枚举权威仍以此树 `_index.yaml` + `layers/` 为真源**。 |
+> | **施工分区树** | 仓库根 `architecture_model/` | `implementation_partition_registry`：C/B 双轨分区、代码目录对齐状态、`layers/*` 施工视图（与 EA 同名 partition id 可对账，非同一份文件）。 |
 >
-> **`AGENTS.md` §6.9** 中的泛称 `architecture-model/` → 必须先读 **SCOPE.yaml** 再判断改哪一棵树；单纯说「layers YAML」在未限定路径时默认指 **施工树根** + **并列扫描 docs 树**（与 `check_architecture_gates` / GATE-SC 行为一致）。
+> **`AGENTS.md` §6.9** 中的泛称 `architecture_model/` → 必须先读 **SCOPE.yaml** 再判断改哪一棵树；单纯说「layers YAML」在未限定路径时默认指 **施工树根** + **并列扫描 docs 树**（与 `check_architecture_gates` / GATE-SC 行为一致）。
 
-**权威来源（层 ID / frontmatter `layer` 合法值）**：`docs/02_enterprise_architecture/target_architecture/architecture-model/index.yaml` + `layers/l{00..13}-*.yaml` + `layers/shared.yaml`（Stage D 后 14 层体系，L00~L13 + shared + cross_layer）
+**权威来源（层 ID / frontmatter `layer` 合法值）**：`docs/02_enterprise_architecture/target_architecture/architecture_model/index.yaml` + `layers/l{00..13}-*.yaml` + `layers/shared.yaml`（Stage D 后 14 层体系，L00~L13 + shared + cross_layer）
 
 > **大小写约定**：本节 `valid_values` 使用大写 `L00`~`L13`（架构标识符惯例）。`_index.yaml` 分区 `id` 使用小写 `l00`~`l13`（文件系统标识符惯例）。两者指代同一事物，大小写差异是有意设计：大写用于架构层 ID（受保护字段），小写用于 YAML 分区 id（文件系统路径组件）。（注：`_schema.yaml` v3.0.0 已移除 `layer` 字段——模块级 layer 冗余，层归属由 partition id 承载。此大小写约定仍适用于 frontmatter `layer` 字段。）
 
@@ -72,8 +72,8 @@ tags:
 
 ```yaml
 protected_field: layer
-authority_file: docs/02_enterprise_architecture/target_architecture/architecture-model/index.yaml
-authority_file_layers_dir: docs/02_enterprise_architecture/target_architecture/architecture-model/layers/
+authority_file: docs/02_enterprise_architecture/target_architecture/architecture_model/index.yaml
+authority_file_layers_dir: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/
 valid_values:
   - L00
   - L01
@@ -105,7 +105,7 @@ violation_severity: P0  # 层 ID 不在有效集合中
 ## 二、状态字段权威 (Status Authority) — 文档生命周期状态
 
 > ⚠️ **scope 声明**：本节定义的是【文档生命周期状态】（Markdown/YAML 文件的 frontmatter 元数据），适用于 `docs/` 下所有文档。
-> 这与 `architecture-model/layers/schema.yaml` 定义的【代码模块实现状态】（planned/candidate/approved/in_development/active/completed/deprecated）
+> 这与 `architecture_model/layers/schema.yaml` 定义的【代码模块实现状态】（planned/candidate/approved/in_development/active/completed/deprecated）
 > 是两套完全不同的枚举。字段名都叫 `status`，但适用对象不同——混淆会导致 CI 误报或不报。
 > 判断标准：看你读的文件是"文档本身"还是"描述代码模块的数据条目"。前者用本节枚举，后者用 `_schema.yaml`。
 
@@ -190,11 +190,11 @@ violation_severity: P1
 
 ## 五、Module ID 跨文件一致性
 
-**权威来源**：`docs/02_enterprise_architecture/target_architecture/architecture-model/module_id_registry.yaml`（Stage D 后统一到 YAML SSoT，替代旧体系 JSON 注册表）
+**权威来源**：`docs/02_enterprise_architecture/target_architecture/architecture_model/module_id_registry.yaml`（Stage D 后统一到 YAML SSoT，替代旧体系 JSON 注册表）
 
 ```yaml
 protected_field: module_id
-authority_file: docs/02_enterprise_architecture/target_architecture/architecture-model/module_id_registry.yaml
+authority_file: docs/02_enterprise_architecture/target_architecture/architecture_model/module_id_registry.yaml
 check_rules:
   - rule: no_duplicate_active   # 同一 module_id 不得在两个 Active 文件中出现
     severity: P0
@@ -263,7 +263,7 @@ violation_severity: P2
 | 版本  | 日期       | 变更                          |
 |-------|------------|------------------------------|
 | 1.0.0 | 2026-04-24 | 初版；覆盖 Layer/Status/Priority/KB 决策记录/ModuleID/Version 六类检查 |
-| 2.0.0 | 2026-04-25 | **Stage H 路径对齐大版本**：(1) `module_id` `ARCH_SSOT_AUTHORITY_MAP` → `STD-SSOT-AUTHORITY-MAP`（符合 file-naming-standard v2.0.1 §四 合法命名空间）；(2) Layer Authority 真源 `docs/02_ARCHITECTURE/module-inventory.md` → `architecture-model/index.yaml` + `layers/*.yaml`；(3) KB 决策记录 Authority 真源 `docs/02_ARCHITECTURE/tech-decision-records.md` → `docs/02_enterprise_architecture/adr/index.md`（41 条 KB 决策记录 扁平编号）；(4) Module ID Registry 真源 `docs/09_audit/state/module_id_registry.json` → `architecture-model/module_id_registry.yaml`（YAML SSoT 替代 JSON）；(5) Status 与 Priority 权威节点明确标注旧体系路径已归档 + Stage J 合并议程；(6) 第四节加入过渡说明，KBG-001~005 旧快照转为历史遗留表格，当前权威指向新索引。 |
+| 2.0.0 | 2026-04-25 | **Stage H 路径对齐大版本**：(1) `module_id` `ARCH_SSOT_AUTHORITY_MAP` → `STD-SSOT-AUTHORITY-MAP`（符合 file-naming-standard v2.0.1 §四 合法命名空间）；(2) Layer Authority 真源 `docs/02_ARCHITECTURE/module-inventory.md` → `architecture_model/index.yaml` + `layers/*.yaml`；(3) KB 决策记录 Authority 真源 `docs/02_ARCHITECTURE/tech-decision-records.md` → `docs/02_enterprise_architecture/adr/index.md`（41 条 KB 决策记录 扁平编号）；(4) Module ID Registry 真源 `docs/09_audit/state/module_id_registry.json` → `architecture_model/module_id_registry.yaml`（YAML SSoT 替代 JSON）；(5) Status 与 Priority 权威节点明确标注旧体系路径已归档 + Stage J 合并议程；(6) 第四节加入过渡说明，KBG-001~005 旧快照转为历史遗留表格，当前权威指向新索引。 |
 | 2.1.0 | 2026-04-28 | **14 层升级**：Layer 列表从 12 层（L00-L11 + cross_layer）升级到 14 层（L00-L13 + shared + cross_layer）；增补 L12 (System Telemetry)、L13 (Experiment Pipeline)、shared (Shared Concerns)；`valid_values` 同步更新；与 `validate_ssot.py` 的 `VALID_LAYERS` 对齐。原 Stage J 升级任务已完成。 |
 | 2.2.0 | 2026-05-01 | **融入清理**：§八 新增"已知 SSoT 矛盾追踪清单"，融入 `ssot-contradiction-fix-workorder.md` 的 7 条矛盾记录后删除该文件。 |
 | 2.3.0 | 2026-05-02 | **审计修复批次**：(1) §一 移除 `layer_01` 历史误标（旧体系过渡期已结束，不再需要保留错误值）；(2) §八 拆分为"活跃矛盾清单"（5 条未解决）+ "已解决归档"（2 条已修复），解决权威定义与审计报告混合的责任漂移问题；(3) frontmatter `date` 同步更新至 2026-05-02。 |

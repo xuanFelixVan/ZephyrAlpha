@@ -1,7 +1,7 @@
 # [A_config] module_id=CFG-category-vocabulary | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
-# module_id: DOM-GOV-001
+# blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-023
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -63,7 +63,7 @@ values:
 
   - value: architecture
     definition: "架构——系统设计文档"
-    ai_consumption: "架构条目须与 architecture-model/layers/ 中的模块定义对齐。"
+    ai_consumption: "架构条目须与 architecture_model/layers/ 中的模块定义对齐。"
     ai_keywords: ["架构", "系统设计", "模块", "接口"]
 
   - value: risk_control

@@ -13,7 +13,7 @@ category: module_blueprint
 
 ---
 task_id: "TASK-GOV-0022"
-source_blueprint: "DOM-GOV-001"
+source_blueprint: "MOD-023"
 source_section: "治理脚本去重与优化"
 
 title: "d5_architecture 根目录重复脚本清理 + test_all_scripts 分层改造"
@@ -74,4 +74,4 @@ status: "done"
 tags_fn: ["governance"]
 tags_ly: "cross_layer"
 tags_st: "active"
-tags_mo: ["DOM-GOV-001"]
+tags_mo: ["MOD-023"]

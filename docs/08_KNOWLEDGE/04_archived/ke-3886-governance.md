@@ -16,7 +16,7 @@ category: governance
 | 文档治理规则 | `docs/01_policies_and_standards/rules/` |
 | 企业架构视图（TOGAF） | `docs/02_enterprise_architecture/target_architecture/` |
 | ADR | **`KB:decisions`**（Git-backed；旧 `docs/02_enterprise_architecture/adr/` 物理树已移除） |
-| 架构模型 YAML | `docs/02_enterprise_architecture/target_architecture/architecture-model/` |
+| 架构模型 YAML | `docs/02_enterprise_architecture/target_architecture/architecture_model/` |
 | 架构快照 | `docs/02_enterprise_architecture/snapshots/` |
 | 模块生命周期文档 | `docs/03_modules/l{xx}_{layer}/{module}/` |
 | 知识库条目 | `docs/08_knowledge/` |

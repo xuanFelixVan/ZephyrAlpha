@@ -707,7 +707,7 @@ ZephyrAlpha AI Agent 在每次 Vibe Coding session 中从零开始，无法利�
 | 2 | `src/zephyr/data/knowledge_management/kb/kb_repo.py` | 核心仓储——10状态机 + SQLite + ChromaDB |
 | 3 | `src/zephyr/data/knowledge_management/kb/unified_memory_api.py` | RI-02 统一内存 API——remember/learn/forget/recall (deprecated → VMS) |
 | 4 | `src/zephyr/data/knowledge_management/kb/chromadb_init.py` | ChromaDB 4 Collection 初始化 (deprecated → VMS) |
-| 5 | `architecture-model/layers/b_kb.yaml` | 架构 YAML SSoT——KB 模块登记 |
+| 5 | `architecture_model/layers/b_kb.yaml` | 架构 YAML SSoT——KB 模块登记 |
 | 6 | MOD-INF-006 `task-system/blueprint.md` | 任务系统——KB 施工任务追踪格式 |
 
 ### 2.2 关键路径速查
@@ -716,7 +716,7 @@ ZephyrAlpha AI Agent 在每次 Vibe Coding session 中从零开始，无法利�
 |------|---------|
 | KB 代码 | `D:\ZephyrAlpha\src\zephyr\kb\` |
 | 知识数据 | `D:\ZephyrAlpha\docs\08_knowledge\` |
-| 架构 YAML SSoT | `D:\ZephyrAlpha\architecture-model\layers\b_kb.yaml` |
+| 架构 YAML SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_kb.yaml` |
 | 任务系统蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-system\blueprint.md` |
 | 上下文引擎 KB 决策记录 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0015-context-engine-architecture.md` |
 | VMS KB 决策记录 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0016-vector-memory-chromadb-bge-m3.md` |
@@ -3963,7 +3963,7 @@ jobs:
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本号+完整度 | 蓝图补全后更新 |
-| 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | KB 模块状态 | 代码施工后更新 |
+| 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | KB 模块状态 | 代码施工后更新 |
 | 3 | CE 蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\context-engine\blueprint.md` | CT-CE-KB 集成状态 | KB 实现后更新 |
 
 ---

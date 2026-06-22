@@ -130,7 +130,7 @@ body: '
 
   | 真源迁移 / 搬家 | Migration / Canonicalization | 从旧结构搬到新结构，并统一规范 | ~~`taskbook.md`~~（已归档任务卡系统） 仓库搬迁章节 |
 
-  | 文件夹规划 / 目录布局 | Information Architecture (IA) | 系统内容如何分层、分类、命名、存放的整体设计 | `docs/02_enterprise_architecture/target-architecture/02-information-architecture.md` |
+  | 文件夹规划 / 目录布局 | Information Architecture (IA) | 系统内容如何分层、分类、命名、存放的整体设计 | `docs/02_enterprise_architecture/target_architecture/02-information-architecture.md` |
 
   | 规矩 / 规范 | Standard / Policy / Rule | 对"合格产物"的明确要求 | `metadata_registry.yaml` |
 

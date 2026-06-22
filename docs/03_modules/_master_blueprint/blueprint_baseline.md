@@ -36,18 +36,18 @@ depends_on:
   - {target: "MOD-INF-005", at: "全篇", why: "脚本系统蓝图——本总蓝图定义脚本系统与任务系统/知识库的集成契约"}
   - {target: "MOD-INF-006", at: "全篇", why: "任务系统蓝图——本总蓝图定义任务系统与脚本系统/CE/FLE的集成契约"}
   - {target: "MOD-KB-001", at: "全篇", why: "知识库蓝图——本总蓝图定义知识库与CE/VMS/脚本系统的集成契约"}
-  - {target: "architecture-model/layers/b_gates.yaml", at: "全篇", why: "Gates YAML SSoT——契约CT-GATE-*的真源"}
-  - {target: "architecture-model/layers/b_context_engine.yaml", at: "全篇", why: "CE YAML SSoT——契约CT-CE-*的真源"}
-  - {target: "architecture-model/layers/b_pipeline.yaml", at: "全篇", why: "Pipeline YAML SSoT——契约CT-PIPE-*的真源"}
-  - {target: "architecture-model/layers/b_feedback_loop.yaml", at: "全篇", why: "FLE YAML SSoT——契约CT-FLE-*的真源"}
-  - {target: "architecture-model/layers/b_vector_memory.yaml", at: "全篇", why: "VMS YAML SSoT——契约CT-VMS-*的真源"}
-  - {target: "architecture-model/layers/b_db.yaml", at: "全篇", why: "DB YAML SSoT——契约CT-DB-*的真源"}
-  - {target: "architecture-model/layers/b_mcp.yaml", at: "全篇", why: "MCP YAML SSoT——契约CT-MCP-*的真源"}
-  - {target: "architecture-model/layers/b_llm_security.yaml", at: "全篇", why: "LSG YAML SSoT——契约CT-LSG-*的真源"}
-  - {target: "architecture-model/layers/system_telemetry.yaml", at: "全篇", why: "Telemetry YAML SSoT——契约CT-TELE-*的真源"}
-  - {target: "architecture-model/layers/b_core.yaml", at: "全篇", why: "Core YAML SSoT"}
-  - {target: "architecture-model/layers/b_shared.yaml", at: "全篇", why: "Shared YAML SSoT"}
-  - {target: "architecture-model/layers/b_orchestrator.yaml", at: "全篇", why: "Orchestrator YAML SSoT——边界定义"}
+  - {target: "architecture_model/layers/b_gates.yaml", at: "全篇", why: "Gates YAML SSoT——契约CT-GATE-*的真源"}
+  - {target: "architecture_model/layers/b_context_engine.yaml", at: "全篇", why: "CE YAML SSoT——契约CT-CE-*的真源"}
+  - {target: "architecture_model/layers/b_pipeline.yaml", at: "全篇", why: "Pipeline YAML SSoT——契约CT-PIPE-*的真源"}
+  - {target: "architecture_model/layers/b_feedback_loop.yaml", at: "全篇", why: "FLE YAML SSoT——契约CT-FLE-*的真源"}
+  - {target: "architecture_model/layers/b_vector_memory.yaml", at: "全篇", why: "VMS YAML SSoT——契约CT-VMS-*的真源"}
+  - {target: "architecture_model/layers/b_db.yaml", at: "全篇", why: "DB YAML SSoT——契约CT-DB-*的真源"}
+  - {target: "architecture_model/layers/b_mcp.yaml", at: "全篇", why: "MCP YAML SSoT——契约CT-MCP-*的真源"}
+  - {target: "architecture_model/layers/b_llm_security.yaml", at: "全篇", why: "LSG YAML SSoT——契约CT-LSG-*的真源"}
+  - {target: "architecture_model/layers/system_telemetry.yaml", at: "全篇", why: "Telemetry YAML SSoT——契约CT-TELE-*的真源"}
+  - {target: "architecture_model/layers/b_core.yaml", at: "全篇", why: "Core YAML SSoT"}
+  - {target: "architecture_model/layers/b_shared.yaml", at: "全篇", why: "Shared YAML SSoT"}
+  - {target: "architecture_model/layers/b_orchestrator.yaml", at: "全篇", why: "Orchestrator YAML SSoT——边界定义"}
   - {target: "PS-STD-001", at: "§7", why: "TaskCard 28字段模型——共享Schema真源"}
   - {target: "GOV-DOC-002", at: "§一~§二", why: "LPC双轨——B轨/C轨目录定位"}
 references:
@@ -116,7 +116,7 @@ codification_at: "2026-05-15"
 | 优先级 | 文档源 | 裁决范围 | 说明 |
 |:---:|------|------|------|
 | **Tier 0** | 本蓝图（MOD-MASTER-001） | 跨系统集成契约 | 所有 CT-* 契约的最终权威——inter-system 的"how to connect"以我为准 |
-| **Tier 1** | `architecture-model/layers/{module}.yaml` | 单模块结构定义 | 模块边界、组件清单、依赖声明的原子真源——intra-module 的"what exists"以此为准 |
+| **Tier 1** | `architecture_model/layers/{module}.yaml` | 单模块结构定义 | 模块边界、组件清单、依赖声明的原子真源——intra-module 的"what exists"以此为准 |
 | **Tier 2** | `docs/03_modules/{layer}/blueprint.md` | 模块级实现指引 | 模块的"how to implement"由蓝图指引——但不得覆盖 Tier 0/1 的结构定义 |
 | **Tier 3** | `docs/01_policies_and_standards/` | 通用规范与策略 | 编码规范、命名约定、流程定义——仅在没有 Tier 0-2 覆盖时适用 |
 | **Tier 4** | 实际代码 | 运行时现实 | 代码是执行真相——但若代码与 Tier 0-3 矛盾，代码为 bug，需修复代码而非文档 |
@@ -129,7 +129,7 @@ codification_at: "2026-05-15"
 
 **反模式（禁止）**：
 - ❌ "代码和蓝图不一致，我以代码为准"（除非代码是 Tier 4 且无 Tier 0-3 覆盖）
-- ❌ "architecture-model 说 X，蓝图说 Y，我选我觉得合理的"
+- ❌ "architecture_model 说 X，蓝图说 Y，我选我觉得合理的"
 - ❌ "我发现不一致就顺便改了蓝图"（必须先创建 Finding）
 
 ---
@@ -1321,7 +1321,7 @@ fields:
 | 检查项 | 状态 | 说明 |
 |-------|:---:|------|
 | 3个Shared Schema已在代码中实现 | ❌ | TaskCard / Finding / KE 三个数据类需要先定义 |
-| depends_on中的16个蓝图层文件已存在 | ✅ | architecture-model/layers/*.yaml全部存在 |
+| depends_on中的16个蓝图层文件已存在 | ✅ | architecture_model/layers/*.yaml全部存在 |
 | Python 3.11+ 环境就绪 | ✅ | 项目已有环境 |
 | module-registry.yaml已注册本蓝图 | ✅ | MOD-MASTER-001已注册 |
 
@@ -1532,14 +1532,14 @@ class TestIntegrationContract:
 | 1 | 子蓝图引用的 CT-* 合同编号在 MASTER-001 中不存在 | CI 扫描 |
 | 2 | 子蓝图声明的合同 payload 字段与 MASTER-001 CT-* YAML 不一致 | CI 扫描 |
 | 3 | 两个子蓝图对同一 CT-* 合同有互斥的理解 | CI 扫描 |
-| 4 | architecture-model/layers/*.yaml 的 `interfaces` 与 MASTER-001 CT-* 声明不一致 | CI 扫描 |
+| 4 | architecture_model/layers/*.yaml 的 `interfaces` 与 MASTER-001 CT-* 声明不一致 | CI 扫描 |
 
 **裁决优先级（从高到低）**：
 
 | 优先级 | 来源 | 说明 |
 |:---:|------|------|
 | **1** | **MASTER-001 的 CT-* YAML**（本蓝图 §二） | canonical SSoT——最高权威 |
-| 2 | `architecture-model/layers/*.yaml` | 架构模型层——子蓝图引用的 YAML 真源 |
+| 2 | `architecture_model/layers/*.yaml` | 架构模型层——子蓝图引用的 YAML 真源 |
 | 3 | 各子模块蓝图 | 本地理解——有冲突时以上方为准 |
 
 **CI 检测机制**：

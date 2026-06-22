@@ -126,7 +126,7 @@ Tick / OrderBookSnapshot → (聚合) → Bar
 ```
 
 > **与跨层数据契约的对齐**：上述 `Order`/`Fill`/`Position` 分别对应 P0 跨层数据契约 **CTR-004** (Order, mutable)、**CTR-005** (Fill, frozen)、**CTR-006** (PositionSnapshot, frozen)。
-> 契约真源：`architecture-model/contracts/cross_layer_contracts.yaml`。
+> 契约真源：`architecture_model/contracts/cross_layer_contracts.yaml`。
 
 每一条 → 都对应 §6 的一条**血缘边**（lineage edge），有 `lineage_root` 字段在实体里显式登记。
 

@@ -719,8 +719,8 @@ MOD-INF-015 在线6:运维保障线。上游: 系统运行时 → MOD-INF-015。
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本号+完整度 | 蓝图重构后更新 |
-| 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | Telemetry 模块状态 | 代码施工后更新 |
-| 3 | 跨层契约 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\contracts\cross_layer_contracts.yaml` | MCP 接口契约 | AI 可消费性设计落地 |
+| 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | Telemetry 模块状态 | 代码施工后更新 |
+| 3 | 跨层契约 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\contracts\cross_layer_contracts.yaml` | MCP 接口契约 | AI 可消费性设计落地 |
 
 ---
 
@@ -1048,7 +1048,7 @@ construction_status=completed | verification_status=passed | code_alignment_veri
 | 5 | 压缩工作流标准 | GOV-DOC-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 规格化流程 |
 | 6 | 蓝图模板 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-construction-template.md` | 蓝图结构合规 |
 | 7 | AI自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI操作权限 |
-| 8 | 模块ID注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 8 | 模块ID注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 
 ---
 

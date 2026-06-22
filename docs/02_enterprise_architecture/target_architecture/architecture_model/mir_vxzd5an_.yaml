@@ -1,7 +1,7 @@
 # [A_config] module_id=CFG-mir-vxzd5an- | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
-# module_id: DOM-GOV-001
+# blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-023
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -13,7 +13,7 @@
 # v2.0 更新说明（2026-04-30）：
 # - 新增 GOV-/DOM-/OPS-/PS- 前缀编号体系
 # - 注册 experimental~3 产出的 54 个 module_id
-# - 保留 MOD-{LAYER_CODE}-{SEQ} 作为代码模块编号（architecture-model 层面）
+# - 保留 MOD-{LAYER_CODE}-{SEQ} 作为代码模块编号（architecture_model 层面）
 # - 文档规则模块使用 GOV-/DOM-/OPS-/PS- 前缀
 #
 # === ID 体系分工（v2.1.1，2026-05-03）===
@@ -24,7 +24,7 @@
 # 架构模型 ID（CTR-/E-/AGG-/ENT-/VO-/T-/DS/LLM/CORE-/INFRA-）由 _index.yaml id_conventions 管辖。
 # 新增 ID 时先判断属于哪套体系，再到对应 canonical 源登记。
 
-module_id: DOM-GOV-001
+module_id: MOD-023
 registry_version: "2.2.0"
 last_updated: "2026-05-06"
 total_registered: 138
@@ -452,7 +452,7 @@ registered_ids:
 
 # 代码模块 ID 注册表
 # population_status: populated — 2026-05-06 AUDIT-04 P1-2 修复：从 EA 树 layers/*.yaml 批量提取 66 个代码模块
-# source: docs/02_enterprise_architecture/target-architecture/architecture-model/layers/*.yaml
+# source: docs/02_enterprise_architecture/target_architecture/architecture_model/layers/*.yaml
 registered_modules:
   # ── L00 Data Source ──
   - module_id: MOD-DS-001

@@ -40,7 +40,7 @@ depends_on:
   - target: "MOD-MASTER-001"
     at: "§一-§十二"
     why: "12基础设施系统集成蓝图——本蓝图的 Level 1 子蓝图"
-  - target: "architecture-model/index.yaml"
+  - target: "architecture_model/index.yaml"
     at: "全篇"
     why: "架构模型拓扑——35域新架构"
 references:
@@ -483,7 +483,7 @@ Worker → GPU Worker: 独立队列 (串行化 GPU 访问)
 
 ```
 SYS-MASTER-001 (本蓝图, Level 0)
-  ├── DOM-GOV-001 (Agent治理八件套集成蓝图, Level 1 域蓝图)
+  ├── MOD-023 (Agent治理八件套集成蓝图, Level 1 域蓝图)
   │     ├── MOD-INF-018~025 (8个治理模块——agent_rbac/agent-spec/audit-trail/rollback/escalation-engine/behavioral-auditor/budget-enforcer/a2a)
   │     ├── G-CT-001~008 (8条跨模块集成契约)
   │     └── governance_server.py (MCP统一入口——8工具)
@@ -539,7 +539,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | 运维成熟度 | 本蓝图 §四十三 | MOD-INF-001 + §0.0 | ~500 |
 | 氛围编程深层 | 本蓝图 §四十四 | §15.5 + MOD-INF-019 | ~600 |
 | Agent Spec / Skill系统 | MOD-INF-019 blueprint §1-§2 | skill-registry.yaml → `progressive_load(skill_id)` | ~600 |
-| Agent治理/八件套集成 | DOM-GOV-001 blueprint §1-§3 | 8模块G-CT-001~008八条跨模块契约 + governance_server.py MCP入口 | ~800 |
+| Agent治理/八件套集成 | MOD-023 blueprint §1-§3 | 8模块G-CT-001~008八条跨模块契约 + governance_server.py MCP入口 | ~800 |
 | 架构基础契约 | 本蓝图 §四十五 | MOD-MASTER-001 + §4.1 | ~600 |
 | 1人运营保障 | 本蓝图 §四十六 | §三十六 + §三十四 | ~400 |
 | 金融合规法律 | 本蓝图 §四十七 | §二十二 + §十九 | ~500 |
@@ -780,7 +780,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 |---------|---------|---------|---------|---------|
 | PS-STD-005 | 必须 | 定义本蓝图的合法位置 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_042_meta_rule_standard.yaml` |
 | MOD-MASTER-001 | 必须 | 12系统集成契约 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
-| architecture-model/index.yaml | 可选 | 拓扑数据 | — | `D:\ZephyrAlpha\architecture-model\_index.yaml` |
+| architecture_model/index.yaml | 可选 | 拓扑数据 | — | `D:\ZephyrAlpha\architecture_model\_index.yaml` |
 | blueprint-registry.yaml | 可选 | 蓝图健康度 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` |
 
 ### 5.2 依赖图对齐声明
@@ -804,7 +804,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 
 | 生产者 | 消费者 | 数据类型 | 传输方式 |
 |--------|--------|---------|---------|
-| architecture-model/index.yaml | 本蓝图 §一 | 拓扑数据 | YAML文件读取 |
+| architecture_model/index.yaml | 本蓝图 §一 | 拓扑数据 | YAML文件读取 |
 | blueprint-registry.yaml | 本蓝图 §七 | 蓝图健康度 | YAML文件读取 |
 
 ### 5.4 自动化规格
@@ -840,7 +840,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | 集成蓝图 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` |
 | 全部模块蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\*\blueprint.md` + `D:\ZephyrAlpha\docs\03_modules\_cross_layer\*\blueprint.md` |
 | 架构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_042_meta_rule_standard.yaml` |
-| 架构模型 | `D:\ZephyrAlpha\architecture-model\layers\*.yaml` |
+| 架构模型 | `D:\ZephyrAlpha\architecture_model\layers\*.yaml` |
 | 业务层代码 | `D:\ZephyrAlpha\src\zephyr\data\` ~ `D:\ZephyrAlpha\src\zephyr\simulation\` |
 | 基础设施代码 | `D:\ZephyrAlpha\src\zephyr\gates\`, `D:\ZephyrAlpha\src\zephyr\context-engine\`, ... |
 | 门禁定义 | `D:\ZephyrAlpha\src\zephyr\gates\*.yaml` |
@@ -3870,7 +3870,7 @@ Point-in-Time Universe:
 | 4 | 蓝图架构标准 | PS-STD-005 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_042_meta_rule_standard.yaml` | 三级金字塔规范 |
 | 5 | 蓝图模板 | — | v3.5/v3.6 | `D:\ZephyrAlpha\docs\01_policies_and_standards\templates\blueprint-template.md` | 蓝图编写模板 |
 | 6 | 压缩工作流标准 | GOV-DOC-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 产出物规格化 |
-| 7 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 7 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 8 | 集成总蓝图 | MOD-MASTER-001 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 12系统集成契约 |
 | 9 | 代码构建标准 | GOV-ENG-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 代码头部十字段标准 |
 

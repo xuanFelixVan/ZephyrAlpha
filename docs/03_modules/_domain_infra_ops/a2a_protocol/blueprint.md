@@ -902,7 +902,7 @@ class A2ATask(BaseModel):
 
 | 域契约ID | 域 | 契约内容 | 对方模块 | 同步更新规则 |
 |---------|-----|---------|---------|------------|
-| DOM-GOV-001 | 治理域 | A2A 协议安全规则纳入治理域 | MOD-INF-022 | 修改安全规则必须同步更新 |
+| MOD-023 | 治理域 | A2A 协议安全规则纳入治理域 | MOD-INF-022 | 修改安全规则必须同步更新 |
 
 ---
 
@@ -910,7 +910,7 @@ class A2ATask(BaseModel):
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | MOD-INF-025 版本+字段 | 蓝图升级 |
+| 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | MOD-INF-025 版本+字段 | 蓝图升级 |
 | 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本+路径更新 | 蓝图升级 |
 | 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | A2A 依赖关系 | 新增依赖 |
 

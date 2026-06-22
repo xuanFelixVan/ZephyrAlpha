@@ -20,19 +20,19 @@ actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_governance\\capaci
 template_for: blueprint
 generation: 2
 functional_domain: governance
-parent_module: "DOM-GOV-001"
-belongs_to: "DOM-GOV-001"
+parent_module: "MOD-023"
+belongs_to: "MOD-023"
 rule_form: structural
 scope: global
 stability: evolving
 verifiability: automated
 priority: P1
 runtime_plane: warm
-summary: "治理域容量升级蓝图——从DOM-GOV-001拆分。覆盖SLO/D-GAP/分层执行/熔断器/分片存储/GPU加速/施工路线图/测试矩阵。Phase C全部未完成。"
+summary: "治理域容量升级蓝图——从MOD-023拆分。覆盖SLO/D-GAP/分层执行/熔断器/分片存储/GPU加速/施工路线图/测试矩阵。Phase C全部未完成。"
 depends_on:
-  - target: "DOM-GOV-001"
+  - target: "MOD-023"
     at: "§3"
-    why: "治理域集成契约——容量升级的G-CT契约定义在DOM-GOV-001"
+    why: "治理域集成契约——容量升级的G-CT契约定义在MOD-023"
   - target: "MOD-INF-012"
     at: "§9"
     why: "Database——分片存储直接依赖"
@@ -54,13 +54,13 @@ ssot_claims:
 > **完整文件清单SSoT**：`python scripts/governance/extract_depgraph.py --modules DOM-GOV-CAP-001`
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
-> **module_id**: DOM-GOV-CAP-001 | **parent**: DOM-GOV-001 | **version**: 0.1.0
+> **module_id**: DOM-GOV-CAP-001 | **parent**: MOD-023 | **version**: 0.1.0
 >
-> 本蓝图从 DOM-GOV-001 拆分，专注容量升级设计。未包含的章节（§3.9 脚本生命周期、§3.14 可观测性、§3.15 维度扩展等）见 DOM-GOV-001 原蓝图。
+> 本蓝图从 MOD-023 拆分，专注容量升级设计。未包含的章节（§3.9 脚本生命周期、§3.14 可观测性、§3.15 维度扩展等）见 MOD-023 原蓝图。
 
 ### §0.1 代码文件清单
 
-> 本蓝图为纯设计蓝图，无直接管辖代码文件。相关代码归属 DOM-GOV-001（治理域集成蓝图）。
+> 本蓝图为纯设计蓝图，无直接管辖代码文件。相关代码归属 MOD-023（治理域集成蓝图）。
 
 ## 1. 容量升级设计与 SLO（v0.2.0 升版核心章节）
 
@@ -100,15 +100,15 @@ ssot_claims:
 | # | 缺失项 | 严重级别 | 影响范围 | 新增章节/契约 |
 |---|--------|:---:|------|------|
 | **D-GAP-01** | 无容量/SLO/SLA 定义——蓝图未声明治理域自身的性能承诺 | P0 | 扩容没有验收标准 | → **§1.2**（本节已补） |
-| **D-GAP-02** | 无脚本生命周期治理模型——10,000 脚本如何 onboarding、版本化、退役？ | P0 | 脚本腐化失控，存量脚本无人维护 | → DOM-GOV-001 **§3.9 脚本生命周期治理** |
+| **D-GAP-02** | 无脚本生命周期治理模型——10,000 脚本如何 onboarding、版本化、退役？ | P0 | 脚本腐化失控，存量脚本无人维护 | → MOD-023 **§3.9 脚本生命周期治理** |
 | **D-GAP-03** | 无模块→脚本映射契约——业务模块和治理脚本之间没有声明式绑定 | P0 | 增量扫描只能维度级（粗粒度），无法精准到脚本级 | → **G-CT-009: Module→Script 映射契约** |
 | **D-GAP-04** | 无 tiered execution model（分层执行模型）——所有脚本同等对待 | P0 | hot-path 慢脚本阻塞 quick 维度，单脚本超时拖垮整池 | → **§2 分层执行模型** |
 | **D-GAP-05** | 无熔断器策略定义——CircuitBreaker 代码存在但何时熔断、如何恢复无规范 | P1 | 连锁故障无防护，熔断后无人知道怎么恢复 | → **§3 熔断器策略** |
 | **D-GAP-06** | 无分片存储架构——ShardRouter 代码存在但蓝图未定义分片设计 | P1 | 1500 模块共享单 SQLite → 锁竞争吃掉所有并发收益 | → **§4 分片存储架构** |
 | **D-GAP-07** | 无多 AI 协调模型——100 AI 同时运行时如何避免相互踩踏 | P0 | L0 ProcessLock 是单进程锁，100 AI 排队等锁；且去掉 L0 后需要新的文件并发写入保护方案 | → **G-CT-010: 多 Agent 协调契约 + 文件写入三层防护** |
 | **D-GAP-08** | 无 GPU/异构计算策略——3090 24GB 完全闲置 | P1 | D12 AI 幻觉检测全 CPU，浪费 10-50× 加速潜力 | → **§5 GPU 加速策略** |
-| **D-GAP-09** | 无可观测性/告警架构——指标采集了但无告警规则、无 dashboard | P1 | 系统出问题靠人肉发现 | → DOM-GOV-001 **§3.14 可观测性架构** |
-| **D-GAP-10** | 12 维度模型缺 D10——性能治理 0 脚本，扩容后 D13/D14 也缺失 | P1 | 容量/依赖健康度无自动化覆盖 | → DOM-GOV-001 **§3.15 维度模型扩展** |
+| **D-GAP-09** | 无可观测性/告警架构——指标采集了但无告警规则、无 dashboard | P1 | 系统出问题靠人肉发现 | → MOD-023 **§3.14 可观测性架构** |
+| **D-GAP-10** | 12 维度模型缺 D10——性能治理 0 脚本，扩容后 D13/D14 也缺失 | P1 | 容量/依赖健康度无自动化覆盖 | → MOD-023 **§3.15 维度模型扩展** |
 | **D-GAP-11** | 无业务模块治理适配层——蓝图只覆盖 8 个基建治理模块，不管 1,500 业务模块 | P0 | 业务模块零治理覆盖，AI 改了业务代码没人管 | → **G-CT-011: 业务模块治理适配契约** |
 | **D-GAP-12** | 无 Finding 冲突仲裁模型——100 AI 同时产出冲突 Finding 如何合并/去重/仲裁 | P1 | Finding 数量爆炸，真假难辨 | → **G-CT-012: Finding 仲裁契约** |
 
@@ -117,13 +117,13 @@ ssot_claims:
 | 章节编号 | 章节名称 | 对应缺陷 | 预计篇幅 | 状态 |
 |:---:|------|:---:|:---:|:---:|
 | §1 | 容量升级设计与 SLO | D-GAP-01 | ~3 页 | ✅ 本章（已写） |
-| DOM-GOV-001 §3.9 | 脚本生命周期治理 | D-GAP-02 | ~2 页 | ✅ 已施工 |
+| MOD-023 §3.9 | 脚本生命周期治理 | D-GAP-02 | ~2 页 | ✅ 已施工 |
 | §2 | 分层执行模型（Tiered Execution） | D-GAP-04 | ~3 页 | ✅ 已施工 |
 | §3 | 熔断器策略（Circuit Breaker Policy） | D-GAP-05 | ~2 页 | ✅ 已施工 |
 | §4 | 分片存储架构（Sharded Storage） | D-GAP-06 | ~3 页 | ✅ 已施工 |
 | §5 | GPU 加速策略 | D-GAP-08 | ~1.5 页 | ✅ 已施工 |
-| DOM-GOV-001 §3.14 | 可观测性与告警架构 | D-GAP-09 | ~2 页 | ✅ 已施工 |
-| DOM-GOV-001 §3.15 | 维度模型扩展（D13 容量治理 / D14 依赖健康） | D-GAP-10 | ~1.5 页 | ✅ 已施工 |
+| MOD-023 §3.14 | 可观测性与告警架构 | D-GAP-09 | ~2 页 | ✅ 已施工 |
+| MOD-023 §3.15 | 维度模型扩展（D13 容量治理 / D14 依赖健康） | D-GAP-10 | ~1.5 页 | ✅ 已施工 |
 | §6 | 施工升级路线图 | — | ~2 页 | ✅ 已施工 |
 | §7 | 升级后测试矩阵（含容量压力测试） | — | ~1 页 | ✅ 已施工 |
 
@@ -318,7 +318,7 @@ ssot_claims:
 #### G-CT-011: 业务模块治理适配契约（Business Module Governance Adapter）
 
 ```
-方向：业务模块蓝图 → DOM-GOV-001 治理域
+方向：业务模块蓝图 → MOD-023 治理域
 触发时机：业务模块注册/变更时
 契约定义：
   每个业务模块蓝图 MUST 包含 governance 声明块：
@@ -328,7 +328,7 @@ ssot_claims:
       gates: ["gate_secret_leak_scan", ...]               # 必须通过的 phase gate
       sla_class: "critical" | "standard" | "best_effort"  # 治理 SLA 等级
 
-  DOM-GOV-001 侧：
+  MOD-023 侧：
     - 读取所有业务模块的 governance 声明 → 构建全局治理覆盖矩阵
     - 新增业务模块时自动注册到 ShardRouter（分配分片）
     - 退役模块时自动从所有索引中移除
@@ -411,18 +411,18 @@ ssot_claims:
 
 #### Phase B：蓝图章节施工（编写 §2~§5 + §6 + §7）
 
-- [x] **B1**: DOM-GOV-001 §3.9 脚本生命周期治理（含状态机、版本化规则、退役策略） ✅ 2026-05-10
+- [x] **B1**: MOD-023 §3.9 脚本生命周期治理（含状态机、版本化规则、退役策略） ✅ 2026-05-10
 - [x] **B2**: §2 分层执行模型（hot/warm/cold/frozen 四层 + 每层超时/SLA） ✅ 2026-05-10
 - [x] **B3**: §3 熔断器策略（四池独立阈值 + HALF_OPEN 探测策略 + 告警升级链） ✅ 2026-05-10
 - [x] **B4**: §4 分片存储架构（16 分片设计 + 一致性哈希路由 + 跨分片查询策略） ✅ 2026-05-10
 - [x] **B5**: §5 GPU 加速策略（BGE-M3 ONNX→CUDA 迁移 + D12 维度 GPU 卸载计划） ✅ 2026-05-10
-- [x] **B6**: DOM-GOV-001 §3.14 可观测性架构（指标 / 日志 / 追踪三层 + Dashboard 设计 + 告警规则） ✅ 2026-05-10
-- [x] **B7**: DOM-GOV-001 §3.15 维度模型扩展（D13 容量治理 + D14 依赖健康 + D10 补全） ✅ 2026-05-10
+- [x] **B6**: MOD-023 §3.14 可观测性架构（指标 / 日志 / 追踪三层 + Dashboard 设计 + 告警规则） ✅ 2026-05-10
+- [x] **B7**: MOD-023 §3.15 维度模型扩展（D13 容量治理 + D14 依赖健康 + D10 补全） ✅ 2026-05-10
 - [x] **B8**: §6 施工升级路线图（蓝图→代码施工的优先级排序） ✅ 2026-05-10
 - [x] **B9**: §7 升级后测试矩阵（43 项测试用例，含容量压力测试） ✅ 2026-05-10
-- [x] **B10**: 更新 DOM-GOV-001 §2 域内模块清单（GOV-SUB-001~004 已合并至 MOD-INF-018/020/021/023） ✅ 2026-05-10
-- [x] **B11**: 更新 DOM-GOV-001 §4 施工顺序（新增 Phase 5/Phase 6 两层 12 项施工任务） ✅ 2026-05-10
-- [x] **B12**: 更新 DOM-GOV-001 §6 风险表（新增 6 条升级后风险） ✅ 2026-05-10
+- [x] **B10**: 更新 MOD-023 §2 域内模块清单（GOV-SUB-001~004 已合并至 MOD-INF-018/020/021/023） ✅ 2026-05-10
+- [x] **B11**: 更新 MOD-023 §4 施工顺序（新增 Phase 5/Phase 6 两层 12 项施工任务） ✅ 2026-05-10
+- [x] **B12**: 更新 MOD-023 §6 风险表（新增 6 条升级后风险） ✅ 2026-05-10
 - [x] **B13**: Owner 审批 Phase B → 进入 Phase C ✅ 2026-05-10
 
 #### Phase C：蓝图与代码对齐验证（当前阶段）
@@ -446,12 +446,12 @@ ssot_claims:
 | **P1-1** | G-CT-013 (脚本生命周期) | 实现脚本状态机 + detect_script_rot / score_script_effectiveness | P0-2 |
 | **P1-2** | G-CT-012 (Finding仲裁) | 实现 Finding 去重合并 + 冲突仲裁器 | P0-2 |
 | **P1-3** | §2 (分层执行) + thresholds | 区分 hot/warm/cold/frozen 四层，按层分配池 | P0-2 |
-| **P1-4** | DOM-GOV-001 §3.14 (可观测性) | Dashboard + 告警规则 + error budget 仪表盘 | P0-2 |
+| **P1-4** | MOD-023 §3.14 (可观测性) | Dashboard + 告警规则 + error budget 仪表盘 | P0-2 |
 | **P2-1** | G-CT-011 (业务模块适配) | 1,500 模块 governance 声明标准化 | P1-1 |
 | **P2-2** | §4 (分片存储) | 16 Shard SQLite 上线 + ShardRouter 接入 AuditTrail | P0-2 |
 | **P2-3** | §3 (熔断器策略) | 四池独立的熔断阈值 + 自动恢复逻辑 | P0-2 |
 | **P3-1** | §5 (GPU加速) | BGE-M3 ONNX → CUDA，D12 维度加速 | P2-2 |
-| **P3-2** | DOM-GOV-001 §3.15 (D13/D14) | 新增容量治理 + 依赖健康维度脚本 | P2-1 |
+| **P3-2** | MOD-023 §3.15 (D13/D14) | 新增容量治理 + 依赖健康维度脚本 | P2-1 |
 | **P3-3** | G-CT-014 (压力测试) | 100 AI 模拟并发 + 10,000 脚本全量压力测试 | P2-2 |
 
 ---
@@ -852,7 +852,7 @@ if not torch.cuda.is_available():
 | IV-1 | [_concurrency.py](file:///d:/ZephyrAlpha/scripts/governance/_concurrency.py#L1003) | ShardRouter 分片数 4→16，对齐 thresholds.yaml | shard_count=16 |
 | IV-2 | 审计写入路径 | AuditTrail 所有 write 调用接入 `ShardRouter.route(module_id)` | 同分片零锁竞争 |
 | IV-3 | — | 各业务域蓝图逐一添加 `governance:` 声明块（对齐 G-CT-011） | 1,500 模块声明覆盖率达 100% |
-| IV-4 | — | DOM-GOV-001 侧读取所有 governance 声明 → 构建全局治理覆盖矩阵 | 矩阵生成成功 |
+| IV-4 | — | MOD-023 侧读取所有 governance 声明 → 构建全局治理覆盖矩阵 | 矩阵生成成功 |
 
 ### 6.6 阶段 V: 深度学习
 

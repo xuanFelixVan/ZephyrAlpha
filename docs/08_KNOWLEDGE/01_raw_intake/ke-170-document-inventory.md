@@ -24,10 +24,10 @@ category: documentation
 | `operations_architecture.md` | OPS | 运维域全景（部署/监控/备份/灾备/变更/事件/容量/成本）？Runbook 目录？ | SRE、运维工程师、架构师 | **draft** · v0.2.0 · 2026-04-19 |
 | `governance_architecture.md` | GOV | 治理体系三层边界（Policy/Factory/Runtime）？39 治理系统分层归属？AI 自治三层预留口子？激活路径？ | 架构师、合规、治理工程师、AI 协作者 | active · v1.0.0 · 2026-04-19 |
 | `frontend_architecture.md` | FE | 前端层（frontend/）的分层 / Module Federation / State / Design System / 构建部署 / Activation Triggers ？ | 前端开发者、架构师、产品设计 | active · v1.0.0 · 2026-04-19 |
-| `architecture-model/cross-cutting/capability_heatmap.yaml` | BA | 业务能力与成熟度条目（机器可读 SSoT） | 业务负责人、架构师 | active |
-| `architecture-model/index.yaml` + `architecture-model/layers/*.yaml` | AA | 应用/模块与分层属性（联邦制索引 + 各层清单） | 开发者、架构师 | active |
-| `architecture-model/technology/technology_landscape.yaml` | TA | 技术雷达与选型清单（Adopt/Trial/Hold） | SRE、实施者 | active |
+| `architecture_model/cross-cutting/capability_heatmap.yaml` | BA | 业务能力与成熟度条目（机器可读 SSoT） | 业务负责人、架构师 | active |
+| `architecture_model/index.yaml` + `architecture_model/layers/*.yaml` | AA | 应用/模块与分层属性（联邦制索引 + 各层清单） | 开发者、架构师 | active |
+| `architecture_model/technology/technology_landscape.yaml` | TA | 技术雷达与选型清单（Adopt/Trial/Hold） | SRE、实施者 | active |
 | `integration_architecture.md` §3.2 | AA/TA | 集成点枚举（EI 系列等；v1.1.0 起由本视图承载） | 开发者、SRE | active |
-| `architecture-model/` 🆕 | **YAML SSoT** | 联邦制 YAML 模型（24 分区：14 层 + shared + frontend + scripts + cross-cutting + contracts + events + ddd-model + technology + core-services + shared-infra），所有视图的模块属性数据源 | AI 协作者、架构师、CI 门禁 | active · v2.0.0 · 2026-04-21 |
-| `architecture-model/scripts/check_architecture_gates.py` 🆕 | CI | GATE-01~08 + GATE-SC + EXTRA-01~03 自动检查脚本（已迁移至 `scripts/governance/d5_architecture/`） | CI、架构师 | active · v2.1.0 · 2026-05-02 |
-| `architecture-model/cross-cutting/invariants.yaml` 🆕 | GOV | 不变核心（immutab
+| `architecture_model/` 🆕 | **YAML SSoT** | 联邦制 YAML 模型（24 分区：14 层 + shared + frontend + scripts + cross-cutting + contracts + events + ddd-model + technology + core-services + shared-infra），所有视图的模块属性数据源 | AI 协作者、架构师、CI 门禁 | active · v2.0.0 · 2026-04-21 |
+| `architecture_model/scripts/check_architecture_gates.py` 🆕 | CI | GATE-01~08 + GATE-SC + EXTRA-01~03 自动检查脚本（已迁移至 `scripts/governance/d5_architecture/`） | CI、架构师 | active · v2.1.0 · 2026-05-02 |
+| `architecture_model/cross-cutting/invariants.yaml` 🆕 | GOV | 不变核心（immutab

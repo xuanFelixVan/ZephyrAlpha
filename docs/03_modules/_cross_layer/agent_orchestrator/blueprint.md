@@ -522,7 +522,7 @@ class DetectionResult(BaseModel):
 | 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | B轨接口规范 | AI-ENG-ORC-001 | `D:\ZephyrAlpha\docs\03_modules\_b_track_interfaces\agent-orchestrator-interface.md` | 接口定义 |
 | 4 | AutoRuntime Core | MOD-INF-035 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` | 父模块蓝图 |
-| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 
 ---
 

@@ -51,7 +51,7 @@ generation: 2
 functional_domain: intelligence
 value_stream: line3
 value_stream_role: Skill加载
-governance_domain: DOM-GOV-001
+governance_domain: MOD-023
 parent_module: ""
 rule_form: structural
 scope: global
@@ -218,7 +218,7 @@ references: []
 
 ---
 
-## DOM-GOV-001 集成契约锚点 {temporal_type=permanent}
+## MOD-023 集成契约锚点 {temporal_type=permanent}
 
 > 权威定义见 [`../../_domain-governance/blueprint.md`](../../_domain-governance/blueprint.md) §3。
 
@@ -815,7 +815,7 @@ class ConstructionStage(str, Enum):
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | MOD-INF-019 条目 | 模块存在 |
+| 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | MOD-INF-019 条目 | 模块存在 |
 | 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | MOD-INF-019 条目 | 蓝图存在 |
 | 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | MOD-INF-019 文档元数据 | 文档注册 |
 | 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | MOD-INF-019 节点+依赖边 | 依赖关系 |
@@ -1323,7 +1323,7 @@ class ConstructionStage(str, Enum):
 |---|------|-----------|------------|----------|
 | 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则 |
 | 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
-| 3 | 模块ID注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 3 | 模块ID注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 4 | AI自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI操作权限 |
 | 5 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 十字段头部 |
 | 6 | 压缩工作流标准 | GOV-DOC-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 压缩规则 |

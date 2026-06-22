@@ -17,7 +17,7 @@ It describes the target architecture using the **ISO 42010 + TOGAF four-layer + 
 - **TOGAF** — defines the four view layers: Business / Information / Application / Technology.
 - **C4 Model** — defines application-level visualization: System Context (L1) and Container (L2).
 
-> **Relation to `AGENTS.md` §6.9**: Markdown views here are the narrative *Architecture Description Set*; machine-consumable facts live under `architecture-model/` YAML with the dual-tree split declared in repo-root **`architecture-model/SCOPE.yaml`**. On conflict, YAML + SCOPE win; record rationale in `architecture-rationale-log.md`.
+> **Relation to `AGENTS.md` §6.9**: Markdown views here are the narrative *Architecture Description Set*; machine-consumable facts live under `architecture_model/` YAML with the dual-tree split declared in repo-root **`architecture_model/SCOPE.yaml`**. On conflict, YAML + SCOPE win; record rationale in `architecture-rationale-log.md`.
 
 ---
 
@@ -29,7 +29,7 @@ It describes the target architecture using the **ISO 42010 + TOGAF four-layer + 
 - **TOGAF** — 定四层视图：Business / Information / Application / Technology。
 - **C4 Model** — 定应用视图的可视化：系统上下文（L1）和容器（L2）。
 
-> **与 `AGENTS.md` §6.9 的关系**：本目录下 **TOGAF/C4 视图 Markdown** 充当 *Architecture Description Set* 的阅读真源；**可机读事实**（分层登记、跨层契约、不变量、technology-landscape 全量等）以 `architecture-model/` 下 YAML + 仓库根 **`architecture-model/SCOPE.yaml`** 双树分工为准。二者冲突时——以 YAML + SCOPE 为机器裁决依据，并回写 rationale-log。
+> **与 `AGENTS.md` §6.9 的关系**：本目录下 **TOGAF/C4 视图 Markdown** 充当 *Architecture Description Set* 的阅读真源；**可机读事实**（分层登记、跨层契约、不变量、technology-landscape 全量等）以 `architecture_model/` 下 YAML + 仓库根 **`architecture_model/SCOPE.yaml`** 双树分工为准。二者冲突时——以 YAML + SCOPE 为机器裁决依据，并回写 rationale-log。
 
 ---
 

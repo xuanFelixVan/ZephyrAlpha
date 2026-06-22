@@ -1,5 +1,5 @@
 ---
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-023
 ---
 
 # MOD-INF-013 最终审计报告

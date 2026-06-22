@@ -8,7 +8,7 @@ category: documentation
 
 7.5.1 前端模块三平面归属快查表
 
-> **📋 SSoT 声明**：各模块的 `runtime_plane` 权威值定义在 [`frontend_model.yaml`](architecture-model/frontend/frontend_model.yaml)。下表为架构视角的快查索引。
+> **📋 SSoT 声明**：各模块的 `runtime_plane` 权威值定义在 [`frontend_model.yaml`](architecture_model/frontend/frontend_model.yaml)。下表为架构视角的快查索引。
 
 | 前端模块 | 所属 FE 层 | Runtime Plane | 延迟特征 | 技术栈 | 部署拓扑 |
 |---------|-----------|--------------|--------|-------|---------|

@@ -14,7 +14,7 @@ last_updated: "2026-05-06"
 ttl: permanent
 truth_source:
   - "03_modules/infra_ops/vector-memory/blueprint.md（MOD-INF-011 — 详细设计与 Collection 契约；蓝图真源）"
-  - "architecture-model/layers/b_vector_memory.yaml（Vector Memory YAML SSoT）"
+  - "architecture_model/layers/b_vector_memory.yaml（Vector Memory YAML SSoT）"
 supersedes:
   - "archive/reorg-2026-04-24/08_ai_engineering/memory-interface-contract.md (archived 2026-04-24)"
 related_kb:

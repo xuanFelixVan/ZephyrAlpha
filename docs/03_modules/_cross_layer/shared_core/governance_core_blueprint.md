@@ -91,4 +91,4 @@ depends_on:
 
 - 父蓝图: MOD-INF-016 (Shared+Core 集成蓝图)
 - 兄弟蓝图: MOD-INF-016-CONTRACTS / MOD-INF-016-SHARED
-- SSoT 映射: `architecture-model/layers/b_core.yaml`
+- SSoT 映射: `architecture_model/layers/b_core.yaml`

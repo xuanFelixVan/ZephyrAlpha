@@ -37,7 +37,7 @@ depends_on:
   - {target: "MOD-INF-005", at: "§6", why: "脚本系统——Gate判定输入源（脚本exit code）"}
   - {target: "MOD-INF-006", at: "§4", why: "任务系统——Gate判定输出目标（status→BLOCKED）"}
   - {target: "MOD-KB-001", at: "§3.2", why: "知识库——G1-G5 KMS门禁判定对象"}
-  - {target: "architecture-model/layers/b_gates.yaml", at: "全篇", why: "Gates YAML SSoT——本蓝图真源"}
+  - {target: "architecture_model/layers/b_gates.yaml", at: "全篇", why: "Gates YAML SSoT——本蓝图真源"}
   - {target: "MOD-INF-030", at: "§2", why: "Red-Blue Validator——通过 DefenseRunner GATE_MAP 17门禁映射消费 Gate Engine 判定"}
   - {target: "MOD-INF-001", at: "§13", why: "容量 SLO 注册表——门禁容量指标对齐 CAP-001~013"}
   - {target: "MOD-INF-001", at: "§5", why: "容量风险注册表——R1(SQLite) + R19(资产膨胀) + R20(元盘点) 与门禁容量联动"}
@@ -702,7 +702,7 @@ class ManualApprovalGate:
 | MOD-INF-015 (Telemetry) | emit_to | GATE-16 blueprint_read_check→BLUEPRINT-READ-FREQ SLI | v0.5+ | docs/03_modules/_cross_layer/telemetry/blueprint.md |
 | MOD-INF-009 (Session) | data_flow | session_id→Agent身份+配额管理 | v1.0+ | docs/03_modules/_cross_layer/session/blueprint.md |
 | MOD-INF-001 (Capacity) | data_consume | 容量SLO注册表+风险注册表 | v1.0+ | docs/03_modules/_master-blueprint/blueprint.md |
-| `architecture-model/layers/b_gates.yaml` | ssot | Gates YAML canonical source | — | architecture-model/layers/b_gates.yaml |
+| `architecture_model/layers/b_gates.yaml` | ssot | Gates YAML canonical source | — | architecture_model/layers/b_gates.yaml |
 
 ### §10.2 依赖图对齐声明
 
@@ -1319,7 +1319,7 @@ STEP 3: 拆分后验证
 | [trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml) | 压缩工作流标准 GOV-DOC-011 |
 | [code-construction-standards.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md) | 代码构建标准 GOV-ENG-001 |
 | [quality-standard.md](file:///d:/ZephyrAlpha/scripts/governance/quality-standard.md) | 脚本质量标准 SCRIPT-QUALITY-001 |
-| [b_gates.yaml](file:///d:/ZephyrAlpha/architecture-model/layers/b_gates.yaml) | Gates YAML SSoT |
+| [b_gates.yaml](file:///d:/ZephyrAlpha/architecture_model/layers/b_gates.yaml) | Gates YAML SSoT |
 | [MOD-MASTER-001 blueprint](file:///d:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint.md) | 总蓝图——CT-SCRIPT-GATE-001 + CT-ORC-GATE-001 |
 | [gate_engine.py](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/gate_engine.py) | 核心门禁引擎实现 |
 | [_registry.yaml](file:///d:/ZephyrAlpha/src/zephyr/gates/_registry.yaml) | 全部门禁注册表 SSoT |
@@ -1348,7 +1348,7 @@ STEP 3: 拆分后验证
 | `tests/unit/` | 5 | 门禁单元测试 |
 | `tests/integration/` | 1 | 门禁端到端测试 |
 | `scripts/governance/d6_security/` | 1 | validate_gate_discipline.py |
-| `architecture-model/layers/` | 1 | b_gates.yaml SSoT |
+| `architecture_model/layers/` | 1 | b_gates.yaml SSoT |
 
 ---
 
@@ -1833,5 +1833,5 @@ class GateEngineIntegrityGuard:
 | 源码路径 | `src/zephyr/gates/` |
 | 源码文件数 | 55个 .py/.yaml |
 | 测试路径 | `tests/integration/ + tests/architecture/` |
-| 配置文件 | `architecture-model/layers/b_gates.yaml` |
+| 配置文件 | `architecture_model/layers/b_gates.yaml` |
 | 关键入口 | `gates.registry.GateRegistry + gates.evaluator.GateEvaluator` |

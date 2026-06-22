@@ -18,7 +18,7 @@ updated: "2026-06-22"
 
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
-| [DOM_GOV_001/](DOM_GOV_001/index.md) | 目录 | DOM-GOV-001 — 目录索引 |
+| [DOM_GOV_001/](DOM_GOV_001/index.md) | 目录 | MOD-023 — 目录索引 |
 | [index.md](index.md) | Markdown | changes — 目录索引 |
 
 ## 导航

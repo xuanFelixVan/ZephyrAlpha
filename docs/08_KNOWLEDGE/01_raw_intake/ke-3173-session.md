@@ -26,5 +26,5 @@ category: session_log
   - L08/L12 的 Phase D 覆盖（目前跳过——遗留层）
 - **下一个 session 需要读取**：
   - cross_layer_contracts.yaml（v3.0）
-  - architecture-model/index.yaml（当前 8 层 phase_c_implemented）
+  - architecture_model/index.yaml（当前 8 层 phase_c_implemented）
   - session-logs/index.yaml

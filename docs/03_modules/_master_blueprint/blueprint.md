@@ -188,7 +188,7 @@ tags:
 | 1 | 元数据注册表 | PS-STD-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则 |
 | 2 | 目录结构标准 | GOV-DOC-002 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
-| 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 5 | 架构总览 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 6 | 基线蓝图 | MOD-MASTER-002 | v0.9.2 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_baseline.md` | 现存设计 |
 | 7 | 容量蓝图 | MOD-MASTER-003 | v1.1.0 | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint_capacity.md` | 升级设计 |

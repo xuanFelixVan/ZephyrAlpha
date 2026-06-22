@@ -521,7 +521,7 @@ class ViolationDetail(BaseModel):
 |---|------------|------------|---------|---------|
 | 1 | ~~YAML SSoT~~ | 已删除（迁移至35域架构） | — | 旧14层架构YAML已废弃 |
 | 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | construction_progress 更新为 phase_1_partial | 进度同步 |
-| 3 | 跨层契约 | `D:\ZephyrAlpha\architecture-model\cross_layer_contracts.yaml` | 确认 CTR-003/CTR-ERR-004/CTR-P1-008 状态 | 契约状态确认 |
+| 3 | 跨层契约 | `D:\ZephyrAlpha\architecture_model\cross_layer_contracts.yaml` | 确认 CTR-003/CTR-ERR-004/CTR-P1-008 状态 | 契约状态确认 |
 | 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | §3.10 子模块定义与实际代码对齐 | 4子模块 vs 1模块差异 |
 
 ---
@@ -848,7 +848,7 @@ class ViolationDetail(BaseModel):
 | 2 | 目录结构标准 | GOV-DOC-002 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012 + MTH-013 |
 | 4 | 文件命名规范 | GOV-DOC-003 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 命名规则 |
-| 5 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 5 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 6 | 架构总览 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限——L04=Immutable Core |
@@ -871,7 +871,7 @@ class ViolationDetail(BaseModel):
 | 3 | 契约 SSoT | `D:\ZephyrAlpha\src\zephyr\shared\contracts\risk\` | 读取 | 确认契约状态 |
 | 4 | 本蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain-risk\risk-management-core\blueprint.md` | 读取 | 本蓝图即SSoT |
 | 5 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 修改 | construction_progress 同步 |
-| 6 | 跨层契约 | `D:\ZephyrAlpha\architecture-model\cross_layer_contracts.yaml` | 修改 | 确认契约状态 |
+| 6 | 跨层契约 | `D:\ZephyrAlpha\architecture_model\cross_layer_contracts.yaml` | 修改 | 确认契约状态 |
 | 7 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 修改 | §3.10 子模块对齐 |
 
 ---

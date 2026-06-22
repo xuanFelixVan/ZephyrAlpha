@@ -360,10 +360,10 @@ STEP 5  两轮循环 → 新发现=0 → 关闭
 - **跨域源文件**: 00-总览与索引.md, 01-跨域交叉点与因果链.md, Agent架构.md
 - **状态**: 待执行
 
-### FA-023: D-INFRA-RUNTIME 运行时基础设施域
+### FA-023: D-INFRA_RUNTIME 运行时基础设施域
 
-- **域ID**: D-INFRA-RUNTIME
-- **主要源文件**: 24-D-INFRA-RUNTIME-运行时基础设施域.md
+- **域ID**: D-INFRA_RUNTIME
+- **主要源文件**: 24-D-INFRA_RUNTIME-运行时基础设施域.md
 - **跨域源文件**: 00-总览与索引.md, 01-跨域交叉点与因果链.md, 运维架构.md
 - **状态**: 待执行
 
@@ -596,10 +596,10 @@ STEP 5  两轮循环 → 新发现=0 → 关闭
 - **分层标注**: 待执行
 - **待执行**: STEP 1(标注) → STEP 3(核对) → STEP 5(验证)
 
-### RA-025: 24-D-INFRA-RUNTIME-运行时基础设施域.md
+### RA-025: 24-D-INFRA_RUNTIME-运行时基础设施域.md
 
-- **源文件**: `D:\ZephyrAlpha\临时工作区\依赖图\24-D-INFRA-RUNTIME-运行时基础设施域.md`
-- **域ID**: D-INFRA-RUNTIME
+- **源文件**: `D:\ZephyrAlpha\临时工作区\依赖图\24-D-INFRA_RUNTIME-运行时基础设施域.md`
+- **域ID**: D-INFRA_RUNTIME
 - **分层标注**: 待执行
 - **待执行**: STEP 1(标注) → STEP 3(核对) → STEP 5(验证)
 
@@ -732,7 +732,7 @@ STEP 5  两轮循环 → 新发现=0 → 关闭
 ### RA-044: 运维架构.md ✅ COMPLETED v5.0
 
 - **源文件**: `D:\ZephyrAlpha\临时工作区\架构图\运维架构.md`
-- **覆盖域**: D-INFRA-RUNTIME/D-INFRA-OPS/D-OPS
+- **覆盖域**: D-INFRA_RUNTIME/D-INFRA-OPS/D-OPS
 - **验证性审查**: ✅ 已完成
 - **v5.0深度审查**: ✅ R1完成(25项遗漏→8个annotation已写入+2项概念修正)
 
@@ -756,7 +756,7 @@ STEP 5  两轮循环 → 新发现=0 → 关闭
 | 1 | RA-003 | D-DATA | 2 |
 | 2 | RA-023 | D-AUTONOMY-CORE | 0 |
 | 3 | RA-024 | D-AUTONOMY-PERM | 1 |
-| 4 | RA-025 | D-INFRA-RUNTIME | 1 |
+| 4 | RA-025 | D-INFRA_RUNTIME | 1 |
 | 5 | RA-027 | D-SECURITY | 1 |
 | 6 | RA-028 | D-INTEGRATION | 1 |
 | 7 | RA-026 | D-INFRA-OPS | 2 |
@@ -795,7 +795,7 @@ STEP 5  两轮循环 → 新发现=0 → 关闭
 |:---:|------|------|:---:|
 | 1 | FA-021 | D-AUTONOMY-CORE | 0 |
 | 2 | FA-022 | D-AUTONOMY-PERM | 1 |
-| 3 | FA-023 | D-INFRA-RUNTIME | 1 |
+| 3 | FA-023 | D-INFRA_RUNTIME | 1 |
 | 4 | FA-025 | D-SECURITY | 1 |
 | 5 | FA-026 | D-INTEGRATION | 1 |
 | 6 | FA-008 | D-DATA | 2 |

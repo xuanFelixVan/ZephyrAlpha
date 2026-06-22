@@ -28,7 +28,7 @@ category: agent_instruction
 
 - **GATE-A：实际代码 ↔ YAML SSoT（对齐1）**：
   - **触发**：`src/zephyr/` 或 `scripts/` 下创建新目录/新 `.py` 模块时
-  - **检查**：扫描实际目录结构 → 交叉对比 `architecture-model/index.yaml` 中的模块登记
+  - **检查**：扫描实际目录结构 → 交叉对比 `architecture_model/index.yaml` 中的模块登记
     - 🔴 实际存在但 YAML 未登记 → **CI 失败（硬阻断）**——必须先 `python scripts/governance/.../register_module.py` 登记
     - 🟡 实际不存在但 YAML 标为 `implemented` → **CI 警告**——更新 YAML 状态为 `planned` 或 `removed`
   - **对标**：K8s Admission Controller → 集群中不允许存在未经 Controller 批准的 Pod
@@ -52,7 +52,7 @@ category: agent_instruction
   | **stable** | GATE-B 升级为自动生成：YAML 变更 → 触发 `generate_md_from_yaml.py` → MD 自动更新 | 📋 远期目标 |
 
 - **AI 施工即时约束（experimental 生效，无需等 CI 脚本）**：
-  1. **创建新 `src/zephyr/lXX/` 目录时** → AI MUST 同时更新对应 `architecture-model/layers/lXX.yaml` + `_index.yaml`（如该层是新层）
+  1. **创建新 `src/zephyr/lXX/` 目录时** → AI MUST 同时更新对应 `architecture_model/layers/lXX.yaml` + `_index.yaml`（如该层是新层）
   2. **修改 YAML 中模块状态/属性时** → AI MUST 同时检查对应 MD 视图是否需同步更新
   3. **发现 YAML 与 MD 不一致时** → AI MUST 按 §6.9 冲突裁决流程处理，以 YAML 为准
   4. **每次 session 结束时** → 在 Session Log 中注明"本次是否产出了代码↔YAML↔MD 任一层面的变更"，若有 → 注明已完成了对应层的对齐

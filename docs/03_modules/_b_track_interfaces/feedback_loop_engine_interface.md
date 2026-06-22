@@ -15,7 +15,7 @@ ttl: permanent
 template_source: "vector-memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
 truth_source:
   - "03_modules/_cross_layer/feedback-loop/blueprint.md（MOD-INF-010 — 详细设计与闭环契约；Phase 5 真源）"
-  - "architecture-model/layers/b_feedback_loop.yaml（Feedback Loop YAML SSoT）"
+  - "architecture_model/layers/b_feedback_loop.yaml（Feedback Loop YAML SSoT）"
 supersedes: []
 related_kb:
   - "KBG-0019 Feedback Loop Engine 架构与技术选型（pending B-e）"
@@ -40,7 +40,7 @@ mod_master_contracts:
 
 # Feedback Loop Engine Interface / 反馈闭环引擎接口规范
 
-> **定位**：反馈闭环引擎（FLE）——**接口与真源以 YAML frontmatter `truth_source` 为准**（`MOD-INF-010` 蓝图 + `architecture-model/layers/b_feedback_loop.yaml`）。补齐 Generate → Validate → **Analyze → Evolve** 四段的后两段，使系统能从历史数据学会自我调参。演进路线历史上曾以「VG-07 反馈闭环缺口」表述纳入优先级（仅作背景，**非**文档 SSoT）。
+> **定位**：反馈闭环引擎（FLE）——**接口与真源以 YAML frontmatter `truth_source` 为准**（`MOD-INF-010` 蓝图 + `architecture_model/layers/b_feedback_loop.yaml`）。补齐 Generate → Validate → **Analyze → Evolve** 四段的后两段，使系统能从历史数据学会自我调参。演进路线历史上曾以「VG-07 反馈闭环缺口」表述纳入优先级（仅作背景，**非**文档 SSoT）。
 >
 > **没有 FLE 的问题**：
 >

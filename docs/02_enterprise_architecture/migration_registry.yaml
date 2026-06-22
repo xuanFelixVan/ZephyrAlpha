@@ -95,7 +95,7 @@ entries:
   old_path: src/zephyr/alt_data/governance/data_quality.py
   status: done
   subdomain_id: vector_storage
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/resource_optimization/__init__.py
   old_path: src/zephyr/ops/__init__.py
@@ -1691,385 +1691,385 @@ entries:
   old_path: src/zephyr/autonomy_core/context-engine/support/__init__.py
   status: done
   subdomain_id: context_management
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/blueprint_code_sync.py
   old_path: src/zephyr/autonomy_core/core_06/blueprint_code_sync.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/blueprint_decomposer.py
   old_path: src/zephyr/autonomy_core/core_06/blueprint_decomposer.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/healthcheck_service.py
   old_path: src/zephyr/autonomy_core/core_06/healthcheck_service.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/context-engine.py
   old_path: src/zephyr/autonomy_core/core_06/context-engine.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/session_continuity.py
   old_path: src/zephyr/autonomy_core/core_06/session_continuity.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/__init__.py
   old_path: src/zephyr/autonomy_core/core_06/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/models.py
   old_path: src/zephyr/autonomy_core/core_06/models.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/adaptation/prompt_version_manager.py
   old_path: src/zephyr/autonomy_core/core_06/adaptation/prompt_version_manager.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/compensation/saga_compensator.py
   old_path: src/zephyr/autonomy_core/core_06/compensation/saga_compensator.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/adaptation/execution_tuner.py
   old_path: src/zephyr/autonomy_core/core_06/adaptation/execution_tuner.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/adaptation/__init__.py
   old_path: src/zephyr/autonomy_core/core_06/adaptation/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/dependency/dependency-graph.py
   old_path: src/zephyr/autonomy_core/core_06/dependency/dependency-graph.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/dependency/__init__.py
   old_path: src/zephyr/autonomy_core/core_06/dependency/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/events/event_bus.py
   old_path: src/zephyr/autonomy_core/core_06/events/event_bus.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/events/event_reactor.py
   old_path: src/zephyr/autonomy_core/core_06/events/event_reactor.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/events/event_store.py
   old_path: src/zephyr/autonomy_core/core_06/events/event_store.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/compensation/__init__.py
   old_path: src/zephyr/autonomy_core/core_06/compensation/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/draft/draft_assistant.py
   old_path: src/zephyr/autonomy_core/core_06/draft/draft_assistant.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/draft/__init__.py
   old_path: src/zephyr/autonomy_core/core_06/draft/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/events/hook_dispatcher.py
   old_path: src/zephyr/autonomy_core/core_06/events/hook_dispatcher.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/events/__init__.py
   old_path: src/zephyr/autonomy_core/core_06/events/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/knowledge/ke_linker.py
   old_path: src/zephyr/autonomy_core/core_06/knowledge/ke_linker.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/impact/__init__.py
   old_path: src/zephyr/autonomy_core/core_06/impact/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/impact/impact_propagator.py
   old_path: src/zephyr/autonomy_core/core_06/impact/impact_propagator.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/impact/llm_impact_analyzer.py
   old_path: src/zephyr/autonomy_core/core_06/impact/llm_impact_analyzer.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/knowledge/kms_interface.py
   old_path: src/zephyr/autonomy_core/core_06/knowledge/kms_interface.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/knowledge/ke_structurer.py
   old_path: src/zephyr/autonomy_core/core_06/knowledge/ke_structurer.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/lifecycle/resource_optimization_engine.py
   old_path: src/zephyr/autonomy_core/core_06/lifecycle/resource_optimization_engine.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/lifecycle/daemon_registry.py
   old_path: src/zephyr/autonomy_core/core_06/lifecycle/daemon_registry.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/knowledge/__init__.py
   old_path: src/zephyr/autonomy_core/core_06/knowledge/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/lifecycle/lazy_loader.py
   old_path: src/zephyr/autonomy_core/core_06/lifecycle/lazy_loader.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/lifecycle/scope_guard.py
   old_path: src/zephyr/autonomy_core/core_06/lifecycle/scope_guard.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/lifecycle/resource_optimization_models.py
   old_path: src/zephyr/autonomy_core/core_06/lifecycle/resource_optimization_models.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/lifecycle/hooks.py
   old_path: src/zephyr/autonomy_core/core_06/lifecycle/hooks.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/maintenance/autonomy_monitor.py
   old_path: src/zephyr/autonomy_core/core_06/maintenance/autonomy_monitor.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/maintenance/zero_config.py
   old_path: src/zephyr/autonomy_core/core_06/maintenance/zero_config.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/maintenance/dogfooding.py
   old_path: src/zephyr/autonomy_core/core_06/maintenance/dogfooding.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/lifecycle/task_lifecycle_manager.py
   old_path: src/zephyr/autonomy_core/core_06/lifecycle/task_lifecycle_manager.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/maintenance/__init__.py
   old_path: src/zephyr/autonomy_core/core_06/maintenance/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/lifecycle/__init__.py
   old_path: src/zephyr/autonomy_core/core_06/lifecycle/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/maintenance/handbook.py
   old_path: src/zephyr/autonomy_core/core_06/maintenance/handbook.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/observability/cli_summary.py
   old_path: src/zephyr/autonomy_core/core_06/observability/cli_summary.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/observability/cost_tracker.py
   old_path: src/zephyr/autonomy_core/core_06/observability/cost_tracker.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/observability/notifier.py
   old_path: src/zephyr/autonomy_core/core_06/observability/notifier.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/observability/trace_decorator.py
   old_path: src/zephyr/autonomy_core/core_06/observability/trace_decorator.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/quality/quality_monitor.py
   old_path: src/zephyr/autonomy_core/core_06/quality/quality_monitor.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/observability/__init__.py
   old_path: src/zephyr/autonomy_core/core_06/observability/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/quality/__init__.py
   old_path: src/zephyr/autonomy_core/core_06/quality/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/observability/failure_matcher.py
   old_path: src/zephyr/autonomy_core/core_06/observability/failure_matcher.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/queue/__init__.py
   old_path: src/zephyr/autonomy_core/core_06/queue/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/queue/task_scheduler.py
   old_path: src/zephyr/autonomy_core/core_06/queue/task_scheduler.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/queue/task_queue.py
   old_path: src/zephyr/autonomy_core/core_06/queue/task_queue.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/reliability/circuit_breaker.py
   old_path: src/zephyr/autonomy_core/core_06/reliability/circuit_breaker.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/reliability/context_guard.py
   old_path: src/zephyr/autonomy_core/core_06/reliability/context_guard.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/reliability/diff_planner.py
   old_path: src/zephyr/autonomy_core/core_06/reliability/diff_planner.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/reliability/__init__.py
   old_path: src/zephyr/autonomy_core/core_06/reliability/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/reliability/retry_handler.py
   old_path: src/zephyr/autonomy_core/core_06/reliability/retry_handler.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/session/session_continuity.py
   old_path: src/zephyr/autonomy_core/core_06/session/session_continuity.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/sla/__init__.py
   old_path: src/zephyr/autonomy_core/core_06/sla/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/session/__init__.py
   old_path: src/zephyr/autonomy_core/core_06/session/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/sla/sla_monitor.py
   old_path: src/zephyr/autonomy_core/core_06/sla/sla_monitor.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/session/session_boundary.py
   old_path: src/zephyr/autonomy_core/core_06/session/session_boundary.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/sync/__init__.py
   old_path: src/zephyr/autonomy_core/core_06/sync/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/sync/blueprint_code_sync.py
   old_path: src/zephyr/autonomy_core/core_06/sync/blueprint_code_sync.py
@@ -9419,7 +9419,7 @@ entries:
   old_path: src/zephyr/factor/factors/momentum_factor.py
   status: pending
   subdomain_id: factor
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/dashboard/__init__.py
   old_path: src/zephyr/frontend/dashboard/__init__.py
@@ -9431,1879 +9431,1879 @@ entries:
   old_path: src/zephyr/factor/factors/value_factor.py
   status: pending
   subdomain_id: factor
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/__init__.py
   old_path: src/zephyr/frontend/__init__.py
   status: no_move_needed
   subdomain_id: frontend
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/dashboard/app.py
   old_path: src/zephyr/frontend/dashboard/app.py
   status: no_move_needed
   subdomain_id: frontend
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/interface_base.py
   old_path: src/zephyr/frontend/interface_base.py
   status: no_move_needed
   subdomain_id: frontend
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/dashboard/components/gate_statistics.py
   old_path: src/zephyr/frontend/dashboard/components/gate_statistics.py
   status: no_move_needed
   subdomain_id: frontend
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/dashboard/components/fitness_functions.py
   old_path: src/zephyr/frontend/dashboard/components/fitness_functions.py
   status: no_move_needed
   subdomain_id: frontend
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/dashboard/components/olap_trend.py
   old_path: src/zephyr/frontend/dashboard/components/olap_trend.py
   status: no_move_needed
   subdomain_id: frontend
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/dashboard/components/knowledge_overview.py
   old_path: src/zephyr/frontend/dashboard/components/knowledge_overview.py
   status: no_move_needed
   subdomain_id: frontend
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/dashboard/components/__init__.py
   old_path: src/zephyr/frontend/dashboard/components/__init__.py
   status: no_move_needed
   subdomain_id: frontend
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/frontend/dashboard/components/task_progress.py
   old_path: src/zephyr/frontend/dashboard/components/task_progress.py
   status: no_move_needed
   subdomain_id: frontend
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/asset-inventory/classifier.py
   old_path: src/zephyr/infra_ops/asset-inventory/classifier.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/asset-inventory/dashboard.py
   old_path: src/zephyr/infra_ops/asset-inventory/dashboard.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/asset-inventory/index_generator.py
   old_path: src/zephyr/infra_ops/asset-inventory/index_generator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/asset-inventory/dependency.py
   old_path: src/zephyr/infra_ops/asset-inventory/dependency.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/asset-inventory/mcp_server.py
   old_path: src/zephyr/infra_ops/asset-inventory/mcp_server.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/asset-inventory/metadata.py
   old_path: src/zephyr/infra_ops/asset-inventory/metadata.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/asset-inventory/lifecycle.py
   old_path: src/zephyr/infra_ops/asset-inventory/lifecycle.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/asset-inventory/registry_adapter.py
   old_path: src/zephyr/infra_ops/asset-inventory/registry_adapter.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/asset-inventory/reconciler.py
   old_path: src/zephyr/infra_ops/asset-inventory/reconciler.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/asset-inventory/telemetry.py
   old_path: src/zephyr/infra_ops/asset-inventory/telemetry.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/asset-inventory/trust_anchor.py
   old_path: src/zephyr/infra_ops/asset-inventory/trust_anchor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/asset-inventory/models.py
   old_path: src/zephyr/infra_ops/asset-inventory/models.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/asset-inventory/__init__.py
   old_path: src/zephyr/infra_ops/asset-inventory/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/asset-inventory/scanner.py
   old_path: src/zephyr/infra_ops/asset-inventory/scanner.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/asset-inventory/__main__.py
   old_path: src/zephyr/infra_ops/asset-inventory/__main__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/alignment_syncer.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/alignment_syncer.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/compliance_auditor.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/compliance_auditor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/all_completer.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/all_completer.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/batch_fixer.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/batch_fixer.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/config_fixer.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/config_fixer.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/dedup_extractor.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/dedup_extractor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/drift_fixer.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/drift_fixer.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/dep_version_fixer.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/dep_version_fixer.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/event_hooks.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/event_hooks.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/engine.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/engine.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/fix_budget.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/fix_budget.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/escalation_bridge.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/escalation_bridge.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/fix_health_check.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/fix_health_check.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/fix_diff.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/fix_diff.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/fix_scheduler.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/fix_scheduler.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/fix_report.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/fix_report.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/fix_pattern_miner.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/fix_pattern_miner.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/fix_reliability.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/fix_reliability.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/fix_safety.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/fix_safety.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/import_fixer.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/import_fixer.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/interrupt_guard.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/interrupt_guard.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/llm_fix_adapter.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/llm_fix_adapter.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/models.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/models.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/state_machine.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/state_machine.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/scaffold_registrar.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/scaffold_registrar.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/__init__.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/shadow_workspace.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/shadow_workspace.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/self_heal_agent.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/self_heal_agent.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/zombie_cleaner.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/zombie_cleaner.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/__main__.py
   old_path: src/zephyr/infra_ops/auto-fix-engine/__main__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/risk_mitigation.py
   old_path: src/zephyr/infra_ops/capacity-assurance/risk_mitigation.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/cross_module_integration.py
   old_path: src/zephyr/infra_ops/capacity-assurance/cross_module_integration.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/tech_stack.py
   old_path: src/zephyr/infra_ops/capacity-assurance/tech_stack.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/sli_instrumentation.py
   old_path: src/zephyr/infra_ops/capacity-assurance/sli_instrumentation.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/schema.py
   old_path: src/zephyr/infra_ops/capacity-assurance/schema.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/__init__.py
   old_path: src/zephyr/infra_ops/capacity-assurance/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/contracts/batch1_infra.py
   old_path: src/zephyr/infra_ops/capacity-assurance/contracts/batch1_infra.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/contracts/batch3_integration.py
   old_path: src/zephyr/infra_ops/capacity-assurance/contracts/batch3_integration.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/contracts/contract_bus.py
   old_path: src/zephyr/infra_ops/capacity-assurance/contracts/contract_bus.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/contracts/batch2_governance.py
   old_path: src/zephyr/infra_ops/capacity-assurance/contracts/batch2_governance.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/cliff_detector.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/cliff_detector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/ai_skill_monitor.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/ai_skill_monitor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/capacity_testing_harness.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/capacity_testing_harness.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/contracts/__init__.py
   old_path: src/zephyr/infra_ops/capacity-assurance/contracts/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/dr_drill_scheduler.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/dr_drill_scheduler.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/cold_start_estimator.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/cold_start_estimator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/graceful_shutdown.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/graceful_shutdown.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/degradation_spiral_detector.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/degradation_spiral_detector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/context_budget_guard.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/context_budget_guard.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/config_reload_semantic.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/config_reload_semantic.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/hawthorne_blind.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/hawthorne_blind.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/multi_model_vendor_risk.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/multi_model_vendor_risk.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/owner_health_monitor.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/owner_health_monitor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/observer_effect_compensator.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/observer_effect_compensator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/sunk_cost_intervention.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/sunk_cost_intervention.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/startup_guard.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/startup_guard.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/time_partitioned_slo.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/time_partitioned_slo.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/per_task_token_budget.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/per_task_token_budget.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/trace_capacity_injector.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/trace_capacity_injector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/token_value_attribution.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/token_value_attribution.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/winfs_defense.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/winfs_defense.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/auto_diagnostics.py
   old_path: src/zephyr/infra_runtime/auto_diagnostics.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/contract_tester.py
   old_path: src/zephyr/infra_runtime/contract_tester.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/cost_tracker.py
   old_path: src/zephyr/infra_runtime/cost_tracker.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/capacity-assurance/modules/__init__.py
   old_path: src/zephyr/infra_ops/capacity-assurance/modules/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/config.py
   old_path: src/zephyr/infra_runtime/config.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/config_validator.py
   old_path: src/zephyr/infra_runtime/config_validator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/dry_run_simulator.py
   old_path: src/zephyr/infra_runtime/dry_run_simulator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/file_watcher.py
   old_path: src/zephyr/infra_runtime/file_watcher.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/event_store.py
   old_path: src/zephyr/infra_runtime/event_store.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/event_bus_upgrade.py
   old_path: src/zephyr/infra_runtime/event_bus_upgrade.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/registry_governance.py
   old_path: src/zephyr/infra_runtime/registry_governance.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pydantic_v2_migrator.py
   old_path: src/zephyr/infra_runtime/pydantic_v2_migrator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/finding_task_bridge.py
   old_path: src/zephyr/infra_runtime/finding_task_bridge.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/kill_switch_sim.py
   old_path: src/zephyr/infra_runtime/kill_switch_sim.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/infrastructure_base.py
   old_path: src/zephyr/infra_runtime/infrastructure_base.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/a2a_card_registry.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/a2a_card_registry.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/warm_hot_gate.py
   old_path: src/zephyr/infra_runtime/warm_hot_gate.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/legacy_protocol.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/legacy_protocol.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/legacy_auditor.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/legacy_auditor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/__init__.py
   old_path: src/zephyr/infra_runtime/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/market_data_pipeline.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/market_data_pipeline.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/legacy_governance_adapter.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/legacy_governance_adapter.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/local_first_arch.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/local_first_arch.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/migration_strategy.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/migration_strategy.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/multi_model_consensus.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/multi_model_consensus.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/multi_agent.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/multi_agent.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/offline_autonomy.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/offline_autonomy.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/offline_resilience.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/offline_resilience.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/phase_hold.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/phase_hold.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/realtime_streaming.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/realtime_streaming.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/__init__.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/prompt_lifecycle.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/prompt_lifecycle.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/governance/audit_logger.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/governance/audit_logger.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/governance/auditor.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/governance/auditor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/governance/phase_hold.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/governance/phase_hold.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/governance/governance_adapter.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/governance/governance_adapter.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/governance/policy_engine.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/governance/policy_engine.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/governance/protocol.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/governance/protocol.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/governance/error_codes.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/governance/error_codes.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer1_discovery/a2a_registry.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer1_discovery/a2a_registry.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/governance/session_manager.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/governance/session_manager.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/governance/__init__.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/governance/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/governance/_base_server.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/governance/_base_server.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer1_discovery/__init__.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer1_discovery/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/governance/rate_limiter.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/governance/rate_limiter.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer1_discovery/agent_card.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer1_discovery/agent_card.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer2_communication/a2a_schemas.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer2_communication/a2a_schemas.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer2_communication/context_package.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer2_communication/context_package.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer1_discovery/identity_verifier.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer1_discovery/identity_verifier.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer2_communication/a2a_state.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer2_communication/a2a_state.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer2_communication/handoff_manager.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer2_communication/handoff_manager.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer2_communication/push_notifier.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer2_communication/push_notifier.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer2_communication/streaming.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer2_communication/streaming.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer2_communication/message_router.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer2_communication/message_router.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer2_communication/trigger_monitor.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer2_communication/trigger_monitor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_behavior_fingerprint.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_behavior_fingerprint.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer2_communication/__init__.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer2_communication/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_anomaly_detector.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_anomaly_detector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_causal_trace.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_causal_trace.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_collusion_detector.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_collusion_detector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_carbon.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_carbon.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_blame_attribution.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_blame_attribution.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_checkpoint.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_checkpoint.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_consent.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_consent.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_cross_agent_semantic_flow.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_cross_agent_semantic_flow.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_dashboard.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_dashboard.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_constitutional.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_constitutional.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_debate.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_debate.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_formal_verification.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_formal_verification.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_context_rot.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_context_rot.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_economics.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_economics.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_delegation_chain.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_delegation_chain.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_forgetting.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_forgetting.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_governance_adapter.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_governance_adapter.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_frame_negotiation.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_frame_negotiation.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_idle_guard.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_idle_guard.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_hibernate.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_hibernate.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_idempotency.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_idempotency.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_hardware_router.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_hardware_router.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_knowledge_distill.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_knowledge_distill.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_immune.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_immune.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_latent_comm.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_latent_comm.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_metrics.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_metrics.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_protocol_security.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_protocol_security.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_saga.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_saga.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_protocol_gateway.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_protocol_gateway.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_security.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_security.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_temporal_admission.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_temporal_admission.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_negotiation.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_negotiation.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_voting.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_voting.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_tracing.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_tracing.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/arbitrator.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/arbitrator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/cascade_guard.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/cascade_guard.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_vector_reputation.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_vector_reputation.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/conflict_detector.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/conflict_detector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_red_team.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_red_team.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/a2a_work_steal.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/a2a_work_steal.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/construction_verifier.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/construction_verifier.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/deadlock_guard.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/deadlock_guard.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/session_smuggling_defense.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/session_smuggling_defense.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/semantic_diff.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/semantic_diff.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/_consensus.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/_consensus.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/spec_sync.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/spec_sync.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/livelock_detector.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/livelock_detector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/supervisor.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/supervisor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/_governance_integration.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/_governance_integration.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/_core_coordination.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/_core_coordination.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/_intelligence.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/_intelligence.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/annotations.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/annotations.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/__init__.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/a2a_protocol/layer3_coordination/_security_and_economics.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/a2a_protocol/layer3_coordination/_security_and_economics.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/atomic_fixer.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/atomic_fixer.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/ast_comparator.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/ast_comparator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/auto_test_generator.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/auto_test_generator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/behavioral_trust_checker.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/behavioral_trust_checker.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/auto_fixer.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/auto_fixer.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/blind_spot_tracker.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/blind_spot_tracker.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/behavioral_sampler.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/behavioral_sampler.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/canary_register.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/canary_register.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/cache_manager.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/cache_manager.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/canary_manager.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/canary_manager.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/cli.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/cli.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/code_simulator.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/code_simulator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/code_analyzer_runner.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/code_analyzer_runner.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/consequence_tracker.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/consequence_tracker.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/contract_consistency_checker.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/contract_consistency_checker.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/config.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/config.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/cross_boundary_detector.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/cross_boundary_detector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/diff_detector.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/diff_detector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/dead_module_detector.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/dead_module_detector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/decision_auditor.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/decision_auditor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/debt_projector.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/debt_projector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/degradation.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/degradation.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/doom_loop_guard.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/doom_loop_guard.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/exit_codes.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/exit_codes.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/extraction_safety.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/extraction_safety.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/file_creator.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/file_creator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/grandfather_manager.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/grandfather_manager.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/false_negative_auditor.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/false_negative_auditor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/function_discovery.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/function_discovery.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/hotspot_tracker.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/hotspot_tracker.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/health-monitor.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/health-monitor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/import_surface_tracker.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/import_surface_tracker.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/fifteen_dimension_auditor.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/fifteen_dimension_auditor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/integration_hub.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/integration_hub.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/integrations.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/integrations.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/micro_clone_detector.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/micro_clone_detector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/mock_duplicate_generator.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/mock_duplicate_generator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/monoculture_guard.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/monoculture_guard.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/observation_window_guard.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/observation_window_guard.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/phase_executor.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/phase_executor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/pre_apply_integrity_gate.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/pre_apply_integrity_gate.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/path_index_validator.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/path_index_validator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/policy_tree_validator.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/policy_tree_validator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/question_tracker.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/question_tracker.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/prioritizer.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/prioritizer.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/risk_mitigation_tracker.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/risk_mitigation_tracker.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/report.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/report.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/risk_mitigator.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/risk_mitigator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/recovery_manifest_writer.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/recovery_manifest_writer.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/scanner.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/scanner.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/self_benchmark.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/self_benchmark.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/self_scanner.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/self_scanner.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/shadow_verifier.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/shadow_verifier.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/shared_lifecycle_manager.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/shared_lifecycle_manager.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/shared_evolver.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/shared_evolver.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/sensitivity_sweeper.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/sensitivity_sweeper.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/shadow_trust_validator.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/shadow_trust_validator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/signature_matcher.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/signature_matcher.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/simplicity_auditor.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/simplicity_auditor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/stale_shared_detector.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/stale_shared_detector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/thematic_clusterer.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/thematic_clusterer.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/ssot_registrar.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/ssot_registrar.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/symbol_index.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/symbol_index.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/temporal_drift_tracker.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/temporal_drift_tracker.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/success_validator.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/success_validator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/verifier.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/verifier.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/_analysis.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/code_dedup_engine/_analysis.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/_detection.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/code_dedup_engine/_detection.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/_fix_and_lifecycle.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/code_dedup_engine/_fix_and_lifecycle.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/_cli_and_tools.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/code_dedup_engine/_cli_and_tools.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/__init__.py
   old_path: src/zephyr/infra_runtime/code_dedup_engine/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/script_system/finding.py
   old_path: src/zephyr/infra_runtime/script_system/finding.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/script_system/gate_bridge.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/script_system/gate_bridge.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/script_system/__init__.py
   old_path: src/zephyr/infra_runtime/script_system/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/facade.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/facade.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/script_system/kb_bridge.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/script_system/kb_bridge.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/metrics_bridge.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/metrics_bridge.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/contract_metrics.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/contract_metrics.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/health_aggregator.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/health_aggregator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/health_probes.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/health_probes.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/auto_bootstrap.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/auto_bootstrap.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/watchdog.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/watchdog.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/_budget_telemetry_bridge.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/_budget_telemetry_bridge.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/_trace_bridge.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/_trace_bridge.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/ai_behavior/event_sink.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/ai_behavior/event_sink.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/__init__.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/ai_behavior/__init__.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/ai_behavior/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/archive/cold_stub.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/archive/cold_stub.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/alerts/__init__.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/alerts/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/logs/structured_sink.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/logs/structured_sink.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/archive/__init__.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/archive/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/health/__init__.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/health/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/logs/__init__.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/logs/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/metrics/__init__.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/metrics/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/metrics/blueprint_metrics.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/metrics/blueprint_metrics.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/schema/__init__.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/schema/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/profiles/__init__.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/profiles/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/health-monitor/__init__.py
   old_path: src/zephyr/infra_ops/health-monitor/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/health-monitor/health_aggregator.py
   old_path: src/zephyr/infra_ops/health-monitor/health_aggregator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/traces/span_stub.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/traces/span_stub.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/system-telemetry/traces/__init__.py
   old_path: src/zephyr/infra_ops/cicd_pipeline/system-telemetry/traces/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/model-capability-exam/capability_passport.py
   old_path: src/zephyr/infra_ops/model-capability-exam/capability_passport.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/model-capability-exam/exam_test_cases.py
   old_path: src/zephyr/infra_ops/model-capability-exam/exam_test_cases.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/model-profiler/cli.py
   old_path: src/zephyr/infra_ops/model-profiler/cli.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/model-capability-exam/__init__.py
   old_path: src/zephyr/infra_ops/model-capability-exam/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/model-capability-exam/exam_orchestrator.py
   old_path: src/zephyr/infra_ops/model-capability-exam/exam_orchestrator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/model-profiler/deepseek_v4_chat.py
   old_path: src/zephyr/infra_ops/model-profiler/deepseek_v4_chat.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/model-profiler/capability_passport.py
   old_path: src/zephyr/infra_ops/model-profiler/capability_passport.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/model-profiler/benchmark_suite.py
   old_path: src/zephyr/infra_ops/model-profiler/benchmark_suite.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/model-profiler/exam_orchestrator.py
   old_path: src/zephyr/infra_ops/model-profiler/exam_orchestrator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/model-profiler/exam_test_cases.py
   old_path: src/zephyr/infra_ops/model-profiler/exam_test_cases.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/model-profiler/results_writer.py
   old_path: src/zephyr/infra_ops/model-profiler/results_writer.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/model-profiler/profiler.py
   old_path: src/zephyr/infra_ops/model-profiler/profiler.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/model-profiler/task_model_learner.py
   old_path: src/zephyr/infra_ops/model-profiler/task_model_learner.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/model-profiler/model_discovery.py
   old_path: src/zephyr/infra_ops/model-profiler/model_discovery.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/model-profiler/provider_data.py
   old_path: src/zephyr/infra_ops/model-profiler/provider_data.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/model-profiler/__init__.py
   old_path: src/zephyr/infra_ops/model-profiler/__init__.py
@@ -11327,7 +11327,7 @@ entries:
   old_path: src/zephyr/infra_ops/observability/span_stub.py
   status: done
   subdomain_id: telemetry
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/observability_02/health.py
   old_path: src/zephyr/infra_ops/shared/observability_02/health.py
@@ -11339,7 +11339,7 @@ entries:
   old_path: src/zephyr/infra_ops/observability/monitoring_stack/__init__.py
   status: done
   subdomain_id: telemetry
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/observability_02/health_discovery.py
   old_path: src/zephyr/infra_ops/shared/observability_02/health_discovery.py
@@ -11351,37 +11351,37 @@ entries:
   old_path: src/zephyr/infra_runtime/system-telemetry/__init__.py
   status: done
   subdomain_id: telemetry
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/observability_02/logging.py
   old_path: src/zephyr/infra_ops/shared/observability_02/logging.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/observability_02/metrics.py
   old_path: src/zephyr/infra_ops/shared/observability_02/metrics.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/observability_02/session_audit.py
   old_path: src/zephyr/infra_ops/shared/observability_02/session_audit.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/observability_02/token_utils.py
   old_path: src/zephyr/infra_ops/shared/observability_02/token_utils.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/observability_02/__init__.py
   old_path: src/zephyr/infra_ops/shared/observability_02/__init__.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/observability_02/tracing.py
   old_path: src/zephyr/infra_ops/shared/observability_02/tracing.py
@@ -11879,811 +11879,811 @@ entries:
   old_path: src/zephyr/infra_runtime/a2a_protocol/layer3_coordination/supervisor.py
   status: done
   subdomain_id: agent_communication
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/db/atomic_transaction_manager.py
   old_path: src/zephyr/infra_runtime/db/atomic_transaction_manager.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/config/shared/config/__init__.py
   old_path: src/zephyr/infra_runtime/config/shared/config/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/config/shared/config/loader.py
   old_path: src/zephyr/infra_runtime/config/shared/config/loader.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/db/audit_schema.py
   old_path: src/zephyr/infra_runtime/db/audit_schema.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/db/circuit_breaker_repo.py
   old_path: src/zephyr/infra_runtime/db/circuit_breaker_repo.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/db/circuit_breaker_types.py
   old_path: src/zephyr/infra_runtime/db/circuit_breaker_types.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/db/gate_repo.py
   old_path: src/zephyr/infra_runtime/db/gate_repo.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/db/base_repo.py
   old_path: src/zephyr/infra_runtime/db/base_repo.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/db/database_manager.py
   old_path: src/zephyr/infra_runtime/db/database_manager.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/db/query.py
   old_path: src/zephyr/infra_runtime/db/query.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/db/olap_engine.py
   old_path: src/zephyr/infra_runtime/db/olap_engine.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/db/query_metrics.py
   old_path: src/zephyr/infra_runtime/db/query_metrics.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/db/__init__.py
   old_path: src/zephyr/infra_runtime/db/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/hooks/event_hook.py
   old_path: src/zephyr/infra_runtime/hooks/event_hook.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/db/transition.py
   old_path: src/zephyr/infra_runtime/db/transition.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/db/sqlite_schema.py
   old_path: src/zephyr/infra_runtime/db/sqlite_schema.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/db/task_repo.py
   old_path: src/zephyr/infra_runtime/db/task_repo.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/hooks/__init__.py
   old_path: src/zephyr/infra_runtime/hooks/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/backpressure_manager.py
   old_path: src/zephyr/infra_runtime/pipeline/backpressure_manager.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/backpressure_types.py
   old_path: src/zephyr/infra_runtime/pipeline/backpressure_types.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/cost_tracker.py
   old_path: src/zephyr/infra_runtime/pipeline/cost_tracker.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/circuit_breaker_manager.py
   old_path: src/zephyr/infra_runtime/pipeline/circuit_breaker_manager.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/layer_consumer_registry.py
   old_path: src/zephyr/infra_runtime/pipeline/layer_consumer_registry.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/ct_pipe_routing.py
   old_path: src/zephyr/infra_runtime/pipeline/ct_pipe_routing.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/dead_letter_queue.py
   old_path: src/zephyr/infra_runtime/pipeline/dead_letter_queue.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/layer_router.py
   old_path: src/zephyr/infra_runtime/pipeline/layer_router.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/llm_gateway.py
   old_path: src/zephyr/infra_runtime/pipeline/llm_gateway.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/model_router.py
   old_path: src/zephyr/infra_runtime/pipeline/model_router.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/models.py
   old_path: src/zephyr/infra_runtime/pipeline/models.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_agent_bridge.py
   old_path: src/zephyr/infra_runtime/pipeline/pipeline_agent_bridge.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_orchestrator.py
   old_path: src/zephyr/infra_runtime/pipeline/pipeline_orchestrator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_lock.py
   old_path: src/zephyr/infra_runtime/pipeline/pipeline_lock.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/preemption_manager.py
   old_path: src/zephyr/infra_runtime/pipeline/preemption_manager.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_roadmap.py
   old_path: src/zephyr/infra_runtime/pipeline/pipeline_roadmap.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/__init__.py
   old_path: src/zephyr/infra_runtime/pipeline/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/routing_plugins.py
   old_path: src/zephyr/infra_runtime/pipeline/routing_plugins.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/model-profiler/deepseek_v4_chat.py
   old_path: src/zephyr/infra_runtime/pipeline/model-profiler/deepseek_v4_chat.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/model-profiler/benchmark_suite.py
   old_path: src/zephyr/infra_runtime/pipeline/model-profiler/benchmark_suite.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/model-profiler/capability_passport.py
   old_path: src/zephyr/infra_runtime/pipeline/model-profiler/capability_passport.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/model-profiler/cli.py
   old_path: src/zephyr/infra_runtime/pipeline/model-profiler/cli.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/model-profiler/exam_orchestrator.py
   old_path: src/zephyr/infra_runtime/pipeline/model-profiler/exam_orchestrator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/model-profiler/exam_test_cases.py
   old_path: src/zephyr/infra_runtime/pipeline/model-profiler/exam_test_cases.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/model-profiler/model_discovery.py
   old_path: src/zephyr/infra_runtime/pipeline/model-profiler/model_discovery.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/model-profiler/results_writer.py
   old_path: src/zephyr/infra_runtime/pipeline/model-profiler/results_writer.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/model-profiler/__init__.py
   old_path: src/zephyr/infra_runtime/pipeline/model-profiler/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/auditor.py
   old_path: src/zephyr/infra_runtime/rollback/auditor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/model-profiler/profiler.py
   old_path: src/zephyr/infra_runtime/pipeline/model-profiler/profiler.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/agent_cooldown.py
   old_path: src/zephyr/infra_runtime/rollback/agent_cooldown.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/model-profiler/task_model_learner.py
   old_path: src/zephyr/infra_runtime/pipeline/model-profiler/task_model_learner.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/autonomy_dashboard.py
   old_path: src/zephyr/infra_runtime/rollback/autonomy_dashboard.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/auto_rollback_trigger.py
   old_path: src/zephyr/infra_runtime/rollback/auto_rollback_trigger.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/checkpoint_gc.py
   old_path: src/zephyr/infra_runtime/rollback/checkpoint_gc.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/backtest_engine.py
   old_path: src/zephyr/infra_runtime/rollback/backtest_engine.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/commit_quality_gate.py
   old_path: src/zephyr/infra_runtime/rollback/commit_quality_gate.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/budget_tracker.py
   old_path: src/zephyr/infra_runtime/rollback/budget_tracker.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/complexity_budget.py
   old_path: src/zephyr/infra_runtime/rollback/complexity_budget.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/continuous_trust.py
   old_path: src/zephyr/infra_runtime/rollback/continuous_trust.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/confidence_quantifier.py
   old_path: src/zephyr/infra_runtime/rollback/confidence_quantifier.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/credential_rotation_trigger.py
   old_path: src/zephyr/infra_runtime/rollback/credential_rotation_trigger.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/contract.py
   old_path: src/zephyr/infra_runtime/rollback/contract.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/cross_agent_conflict_detector.py
   old_path: src/zephyr/infra_runtime/rollback/cross_agent_conflict_detector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/down_migration_generator.py
   old_path: src/zephyr/infra_runtime/rollback/down_migration_generator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/cross_platform_shell.py
   old_path: src/zephyr/infra_runtime/rollback/cross_platform_shell.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/contracts.py
   old_path: src/zephyr/infra_runtime/rollback/contracts.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/env_watcher.py
   old_path: src/zephyr/infra_runtime/rollback/env_watcher.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/drift_fix.py
   old_path: src/zephyr/infra_runtime/rollback/drift_fix.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/external_merkle_proof.py
   old_path: src/zephyr/infra_runtime/rollback/external_merkle_proof.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/fault_tolerance.py
   old_path: src/zephyr/infra_runtime/rollback/fault_tolerance.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/forward_fix_runner.py
   old_path: src/zephyr/infra_runtime/rollback/forward_fix_runner.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/fsm_verifier.py
   old_path: src/zephyr/infra_runtime/rollback/fsm_verifier.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/git_infra_snapshot.py
   old_path: src/zephyr/infra_runtime/rollback/git_infra_snapshot.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/forensic.py
   old_path: src/zephyr/infra_runtime/rollback/forensic.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/hallucination_guard.py
   old_path: src/zephyr/infra_runtime/rollback/hallucination_guard.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/intent_archiver.py
   old_path: src/zephyr/infra_runtime/rollback/intent_archiver.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/kill_switch.py
   old_path: src/zephyr/infra_runtime/rollback/kill_switch.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/knowngoodstate_ledger.py
   old_path: src/zephyr/infra_runtime/rollback/knowngoodstate_ledger.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/paper_live_transition.py
   old_path: src/zephyr/infra_runtime/rollback/paper_live_transition.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/model_drift_detector.py
   old_path: src/zephyr/infra_runtime/rollback/model_drift_detector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/llm_impact_analyzer.py
   old_path: src/zephyr/infra_runtime/rollback/llm_impact_analyzer.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/owner_absent.py
   old_path: src/zephyr/infra_runtime/rollback/owner_absent.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/phase_manager.py
   old_path: src/zephyr/infra_runtime/rollback/phase_manager.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/phase_check_registry.py
   old_path: src/zephyr/infra_runtime/rollback/phase_check_registry.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/post_live_verification.py
   old_path: src/zephyr/infra_runtime/rollback/post_live_verification.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/result_types.py
   old_path: src/zephyr/infra_runtime/rollback/result_types.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/rollback_budget.py
   old_path: src/zephyr/infra_runtime/rollback/rollback_budget.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/rollback_audit_nexus.py
   old_path: src/zephyr/infra_runtime/rollback/rollback_audit_nexus.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/right_to_be_forgotten.py
   old_path: src/zephyr/infra_runtime/rollback/right_to_be_forgotten.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/rollback_abuse_detector.py
   old_path: src/zephyr/infra_runtime/rollback/rollback_abuse_detector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/rollback_dashboard.py
   old_path: src/zephyr/infra_runtime/rollback/rollback_dashboard.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/rollback_context_restorer.py
   old_path: src/zephyr/infra_runtime/rollback/rollback_context_restorer.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/rollback_bootstrap.py
   old_path: src/zephyr/infra_runtime/rollback/rollback_bootstrap.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/rollback_lock.py
   old_path: src/zephyr/infra_runtime/rollback/rollback_lock.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/rollback_drill.py
   old_path: src/zephyr/infra_runtime/rollback/rollback_drill.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/rollback_executor.py
   old_path: src/zephyr/infra_runtime/rollback/rollback_executor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/rollback_integration.py
   old_path: src/zephyr/infra_runtime/rollback/rollback_integration.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/rollback_state_machine.py
   old_path: src/zephyr/infra_runtime/rollback/rollback_state_machine.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/rollback_loop_detector.py
   old_path: src/zephyr/infra_runtime/rollback/rollback_loop_detector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/rollback_simulator.py
   old_path: src/zephyr/infra_runtime/rollback/rollback_simulator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/rollback_target_staleness.py
   old_path: src/zephyr/infra_runtime/rollback/rollback_target_staleness.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/rollback_verifier.py
   old_path: src/zephyr/infra_runtime/rollback/rollback_verifier.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/runbook_generator.py
   old_path: src/zephyr/infra_runtime/rollback/runbook_generator.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/rollback_wal.py
   old_path: src/zephyr/infra_runtime/rollback/rollback_wal.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/s3_snapshot_lifecycle.py
   old_path: src/zephyr/infra_runtime/rollback/s3_snapshot_lifecycle.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/sandbox_enforcer.py
   old_path: src/zephyr/infra_runtime/rollback/sandbox_enforcer.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/secret_rotation_aware.py
   old_path: src/zephyr/infra_runtime/rollback/secret_rotation_aware.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/semantic_rollback_tag.py
   old_path: src/zephyr/infra_runtime/rollback/semantic_rollback_tag.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/semantic_similar_detector.py
   old_path: src/zephyr/infra_runtime/rollback/semantic_similar_detector.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/startup_shutdown.py
   old_path: src/zephyr/infra_runtime/rollback/startup_shutdown.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/startup_shutdown_cli.py
   old_path: src/zephyr/infra_runtime/rollback/startup_shutdown_cli.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/temporal_context_adapter.py
   old_path: src/zephyr/infra_runtime/rollback/temporal_context_adapter.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/submodule_sync.py
   old_path: src/zephyr/infra_runtime/rollback/submodule_sync.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/sqlite_dumper.py
   old_path: src/zephyr/infra_runtime/rollback/sqlite_dumper.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/trading_kill_switch.py
   old_path: src/zephyr/infra_runtime/rollback/trading_kill_switch.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/topology_change_log.py
   old_path: src/zephyr/infra_runtime/rollback/topology_change_log.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/vulnerability_rescanner.py
   old_path: src/zephyr/infra_runtime/rollback/vulnerability_rescanner.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/governance/auditor.py
   old_path: src/zephyr/infra_runtime/rollback/governance/auditor.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/venv_sync.py
   old_path: src/zephyr/infra_runtime/rollback/venv_sync.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/warm_standby.py
   old_path: src/zephyr/infra_runtime/rollback/warm_standby.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/__init__.py
   old_path: src/zephyr/infra_runtime/rollback/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/governance/contracts.py
   old_path: src/zephyr/infra_runtime/rollback/governance/contracts.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/governance/budget_tracker.py
   old_path: src/zephyr/infra_runtime/rollback/governance/budget_tracker.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/_manifest_.py
   old_path: src/zephyr/infra_runtime/rollback/_manifest_.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/governance/result_types.py
   old_path: src/zephyr/infra_runtime/rollback/governance/result_types.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/governance/drift_fix.py
   old_path: src/zephyr/infra_runtime/rollback/governance/drift_fix.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/infra_06/cache.py
   old_path: src/zephyr/infra_runtime/shared/infra_06/cache.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/runtime/startup_shutdown.py
   old_path: src/zephyr/infra_runtime/runtime/startup_shutdown.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/runtime_integration/rollback/governance/__init__.py
   old_path: src/zephyr/infra_runtime/rollback/governance/__init__.py
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/infra_06/idempotency.py
   old_path: src/zephyr/infra_runtime/shared/infra_06/idempotency.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/infra_06/lock.py
   old_path: src/zephyr/infra_runtime/shared/infra_06/lock.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/infra_06/limiter.py
   old_path: src/zephyr/infra_runtime/shared/infra_06/limiter.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/infra_06/observer.py
   old_path: src/zephyr/infra_runtime/shared/infra_06/observer.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/infra_06/outbox.py
   old_path: src/zephyr/infra_runtime/shared/infra_06/outbox.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/infra_06/process_pool.py
   old_path: src/zephyr/infra_runtime/shared/infra_06/process_pool.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/infra_06/process_lifecycle_gateway.py
   old_path: src/zephyr/infra_runtime/shared/infra_06/process_lifecycle_gateway.py
   status: done
   subdomain_id: shared_services
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/shared_services/infra_06/__init__.py
   old_path: src/zephyr/infra_runtime/shared/infra_06/__init__.py
@@ -13547,25 +13547,25 @@ entries:
   old_path: src/zephyr/compliance/behavioral-auditor/_detector-registry.yaml
   status: done
   subdomain_id: behavioral-auditor
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: registry
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/_fixer-registry.yaml
   old_path: src/zephyr/infra_ops/auto-fix-engine/_fixer-registry.yaml
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: config
   new_path: src/zephyr/infrastructure/runtime_integration/code_dedup_engine/config/policy-tree.yaml
   old_path: src/zephyr/infra_runtime/code_dedup_engine/config/policy-tree.yaml
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: config
   new_path: src/zephyr/infrastructure/runtime_integration/auto-fix-engine/auto-fix-config.yaml
   old_path: src/zephyr/infra_ops/auto-fix-engine/auto-fix-config.yaml
   status: done
   subdomain_id: runtime_integration
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: registry
   new_path: src/zephyr/infrastructure/runtime_integration/pipeline/routemanifest.yaml
   old_path: src/zephyr/infra_runtime/pipeline/routemanifest.yaml
@@ -14867,109 +14867,109 @@ entries:
   old_path: src/zephyr/security/red-blue-validator/game_day_runner.py
   status: done
   subdomain_id: adversarial_validation
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/audit_logger.py
   old_path: src/zephyr/security/mcp/audit_logger.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/blueprint_search_server.py
   old_path: src/zephyr/security/mcp/blueprint_search_server.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/doc_guard_server.py
   old_path: src/zephyr/security/mcp/doc_guard_server.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/error_codes.py
   old_path: src/zephyr/security/mcp/error_codes.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/gateway_server.py
   old_path: src/zephyr/security/mcp/gateway_server.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/gate_engine_server.py
   old_path: src/zephyr/security/mcp/gate_engine_server.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/governance_server.py
   old_path: src/zephyr/security/mcp/governance_server.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/handoff_auto_loader.py
   old_path: src/zephyr/security/mcp/handoff_auto_loader.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/knowledge_base_server.py
   old_path: src/zephyr/security/mcp/knowledge_base_server.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/prompt_provider.py
   old_path: src/zephyr/security/mcp/prompt_provider.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/rate_limiter.py
   old_path: src/zephyr/security/mcp/rate_limiter.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/resource_provider.py
   old_path: src/zephyr/security/mcp/resource_provider.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/sandbox_server.py
   old_path: src/zephyr/security/mcp/sandbox_server.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/sentinel_server.py
   old_path: src/zephyr/security/mcp/sentinel_server.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/task_manager_server.py
   old_path: src/zephyr/security/mcp/task_manager_server.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/telemetry_server.py
   old_path: src/zephyr/security/mcp/telemetry_server.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/vector_memory_server.py
   old_path: src/zephyr/security/mcp/vector_memory_server.py
   status: done
   subdomain_id: mcp_servers
-- domain_id: D-INFRASTRUCTURE
+- domain_id: D-INFRA_RUNTIME
   file_type: module
   new_path: src/zephyr/infrastructure/mcp_servers/_base_server.py
   old_path: src/zephyr/security/mcp/_base_server.py

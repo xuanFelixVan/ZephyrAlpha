@@ -95,7 +95,7 @@ ssot_claims:
 
 # Governance Domain 蓝图 — Agent治理八件套跨模块集成契约
 
-> module_id: DOM-GOV-001 | version: 0.5.1 | status: active | layer: domain | blueprint_level: domain
+> module_id: MOD-023 | version: 0.5.1 | status: active | layer: domain | blueprint_level: domain
 > actual_disk_path: D:\ZephyrAlpha\docs\03_modules\_domain-governance\blueprint.md | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
@@ -179,14 +179,14 @@ ssot_claims:
 
 | SSoT 声明 | 真源蓝图 | 委托蓝图 | 判定 |
 |-----------|---------|---------|------|
-| Agent治理八件套跨模块集成契约(G-CT-001~022) | DOM-GOV-001 | — | 真源 |
-| 治理域循环依赖裁定(ARB-1~9) | DOM-GOV-001 | — | 真源 |
-| 治理域设计缺失追踪(D-GAP-01~12索引) | DOM-GOV-001 | DOM-GOV-CAP-001(设计真源) | 索引+引用 |
-| 治理域设计缺失追踪(D-GAP-13~29设计) | DOM-GOV-001 | — | 真源 |
-| 治理域Phase施工路线图与进度 | DOM-GOV-001 | — | 真源 |
+| Agent治理八件套跨模块集成契约(G-CT-001~022) | MOD-023 | — | 真源 |
+| 治理域循环依赖裁定(ARB-1~9) | MOD-023 | — | 真源 |
+| 治理域设计缺失追踪(D-GAP-01~12索引) | MOD-023 | DOM-GOV-CAP-001(设计真源) | 索引+引用 |
+| 治理域设计缺失追踪(D-GAP-13~29设计) | MOD-023 | — | 真源 |
+| 治理域Phase施工路线图与进度 | MOD-023 | — | 真源 |
 | 治理域容量升级架构 | DOM-GOV-CAP-001 | — | 真源 |
 | 容量升级D-GAP-01~12设计方案 | DOM-GOV-CAP-001 | — | 真源 |
-| G-CT-* 契约（非 CT-*） | DOM-GOV-001 | MOD-MASTER-002 仅引用 | 真源 |
+| G-CT-* 契约（非 CT-*） | MOD-023 | MOD-MASTER-002 仅引用 | 真源 |
 
 ### §0.5 代码目录唯一性
 
@@ -1204,7 +1204,7 @@ P2-RESILIENCE（韧性保障）:
 
 ## G-CT 契约下游锚点（验收）（条件可选——下游模块蓝图可选择是否包含锚点表）
 
-以下模块蓝图 **MUST** 在正文前部包含「DOM-GOV-001 集成契约锚点」表，列出本模块作为 **G-CT-*** 的消费方或产出方：**MOD-INF-018、019、020、021、022、023、024、025**。
+以下模块蓝图 **MUST** 在正文前部包含「MOD-023 集成契约锚点」表，列出本模块作为 **G-CT-*** 的消费方或产出方：**MOD-INF-018、019、020、021、022、023、024、025**。
 
 | module_id | 已锚定 |
 |-----------|--------|
@@ -1219,7 +1219,7 @@ P2-RESILIENCE（韧性保障）:
 
 # 治理域集成蓝图 — Agent 治理八件套
 
-> **module_id**: DOM-GOV-001 | **Level**: 1 (域集成蓝图) | **version**: 0.2.0
+> **module_id**: MOD-023 | **Level**: 1 (域集成蓝图) | **version**: 0.2.0
 >
 > 本蓝图是 ZephyrAlpha 金字塔体系中的 **Level 1 治理域集成蓝图**。
 > 覆盖模块：MOD-INF-018 (RBAC) / 019 (Spec) / 020 (Audit) / 021 (Rollback) / 022 (Escalation) / 023 (Drift) / 024 (Budget) / 025 (A2A)
@@ -1882,7 +1882,7 @@ frozen    ██  ██  ██  ██  ██  ██  ██  ██  ██
 
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
-| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint DOM-GOV-001` |
+| 1 | §10.1 依赖声明 ↔ cross-module-dependency-registry.yaml | 蓝图声明的每个依赖在 registry 中有对应条目 | 已对齐 | `python scripts/governance/d5_architecture/validators/validate_path_alignment.py --blueprint MOD-023` |
 | 2 | §11 产出物路径 ↔ 依赖图 path_mappings | 路径一致 | 已对齐 | 同上 |
 
 ### 10.3 内部依赖图
@@ -2009,7 +2009,7 @@ STEP 3: 拆分后验证
 | 1 | 元数据注册表 | PS-STD-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则 |
 | 2 | 目录结构标准 | GOV-DOC-002 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
-| 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 5 | 系统总蓝图 | SYS-MASTER-001 | — | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` | 系统拓扑 |
 | 6 | 基础设施域蓝图 | MOD-MASTER-001 | — | `D:\ZephyrAlpha\docs\03_modules\_master-blueprint\blueprint.md` | 基础设施集成 |
 | 7 | 治理方法论标准 | REG-STD-001 / PS-STD-011 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-001~013 治理决策方法论 |
@@ -2238,7 +2238,7 @@ STEP 3: 拆分后验证
 | 2 | §0 代码对齐验证可执行 | 命令 exit 0 |
 | 3 | §3 所有 G-CT-* 有方向+触发时机 | 无空定义 |
 | 4 | §11 产出物路径与磁盘一致 | 每个路径可 Grep 到 |
-| 5 | 蓝图 `[BLUEPRINT]` 标注与代码头部双向对齐 | 代码头部有 DOM-GOV-001 |
+| 5 | 蓝图 `[BLUEPRINT]` 标注与代码头部双向对齐 | 代码头部有 MOD-023 |
 | 6 | construction_progress 与代码实际状态一致 | 无虚标 |
 | 7 | system-dependency-map.md G-CT-* 描述与蓝图一致 | 无冲突 |
 | 8 | MTH-006 三向触发器完整 | sync_rule_registry.py PASS |

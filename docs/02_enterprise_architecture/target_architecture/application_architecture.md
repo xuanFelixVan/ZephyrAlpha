@@ -44,7 +44,7 @@ tags:
 - vibe-coding-2.0
 - 6-core-services
 - l12-cross-cutting
-summary: TOGAF Application Architecture 视图（v2.0.0 重组织版）。模块属性详情已迁移至 architecture-model/
+summary: TOGAF Application Architecture 视图（v2.0.0 重组织版）。模块属性详情已迁移至 architecture_model/
   联邦 YAML 模型（SSoT），本视图保留：C4 系统上下文与容器图、 14 层设计理由与层间关系叙事、核心决策、OCP 扩展点、容错与幂等设计摘要。
 date: '2026-04-22'
 ttl: permanent
@@ -67,8 +67,8 @@ This view is **driven by** the Information Architecture (data distribution deter
 本视图由信息架构**驱动**（数据分布决定应用边界），并**驱动**技术架构（应用特性决定技术选型）。
 
 > **v2.0.0 重组织说明**：模块属性详情（子模块清单、接口签名、运行平面归属）已迁移至
-> `architecture-model/` 联邦 YAML 模型。本视图聚焦**设计理由 + 层间关系叙事 + 核心决策**。
-> 每层详细模块清单 → See `architecture-model/layers/lXX-*.yaml`。
+> `architecture_model/` 联邦 YAML 模型。本视图聚焦**设计理由 + 层间关系叙事 + 核心决策**。
+> 每层详细模块清单 → See `architecture_model/layers/lXX-*.yaml`。
 
 ---
 
@@ -183,7 +183,7 @@ This view is **driven by** the Information Architecture (data distribution deter
 
 ### 4.0 Runtime Plane Attribution / 运行平面归属
 
-> 运行平面（Hot / Warm / Cold）是与业务分层**正交**的标签维度。**runtime_planes.md §3.1 是 canonical SSoT**，YAML 模型 `architecture-model/cross-cutting/runtime_planes.yaml` 承载完整 14 层 × 三平面映射。
+> 运行平面（Hot / Warm / Cold）是与业务分层**正交**的标签维度。**runtime_planes.md §3.1 是 canonical SSoT**，YAML 模型 `architecture_model/cross-cutting/runtime_planes.yaml` 承载完整 14 层 × 三平面映射。
 
 | 平面 | 延迟 | 技术栈 | 本阶段状态 |
 |---|---|---|---|
@@ -191,17 +191,17 @@ This view is **driven by** the Information Architecture (data distribution deter
 | **Warm Path** 🌡️ | 10ms-1s | Python asyncio / FastAPI | **当前默认**（14 层业务代码全部跑在 Warm） |
 | **Cold Path** ❄️ | > 1s batch | Spark / Dask / Airflow | **部分激活**（L02 回算、L05 回测、L07 归因、L11 训练） |
 
-→ 完整 14 层归属速查表：See `architecture-model/cross-cutting/runtime_planes.yaml`
+→ 完整 14 层归属速查表：See `architecture_model/cross-cutting/runtime_planes.yaml`
 → 详细定义与标注规范：See `runtime_planes.md`
 
 ### 4.1 14-layer taxonomy / 14 层分层体系
 
 > **SSoT 声明**：模块属性（子模块清单、接口签名、优先级、运行平面归属）的
-> **Single Source of Truth** 是 [`architecture-model/layers/*.yaml`](architecture-model/layers/)。
+> **Single Source of Truth** 是 [`architecture_model/layers/*.yaml`](architecture_model/layers/)。
 > 本节及任何其他 Markdown 文件中的模块属性描述均为**只读引用**，不得作为权威来源。
 > 如有冲突，以 YAML 文件为准。
 
-> **📋 14 层模块完整清单**：见 [`architecture-model/layers/`](architecture-model/layers/) 目录下的 YAML 定义文件（L00~L13 + shared），每个文件包含模块 ID、职责、优先级、运行时平面归属等结构化数据。
+> **📋 14 层模块完整清单**：见 [`architecture_model/layers/`](architecture_model/layers/) 目录下的 YAML 定义文件（L00~L13 + shared），每个文件包含模块 ID、职责、优先级、运行时平面归属等结构化数据。
 
 **关键设计决策（永久保留）**：
 
@@ -256,7 +256,7 @@ This view is **driven by** the Information Architecture (data distribution deter
 ### 4.4 OCP Extension points / 扩展点设计
 
 > 三个扩展点遵循 Open-Closed Principle。契约（基类 + 注册表）锁死，实现无限扩展。
-> 完整接口签名 → `architecture-model/contracts/cross_layer_contracts.yaml`。
+> 完整接口签名 → `architecture_model/contracts/cross_layer_contracts.yaml`。
 
 系统定义三个核心 OCP 扩展点：
 
@@ -397,7 +397,7 @@ src/zephyr/
 
 - **架构总纲**：本视图 §4A
 - **接口规范**：`docs/03_modules/_b_track_interfaces/*-interface.md`（5 份）
-- **技术选型**：[`technology_landscape.yaml`](./architecture-model/technology/technology_landscape.yaml)
+- **技术选型**：[`technology_landscape.yaml`](./architecture_model/technology/technology_landscape.yaml)
 - **KB 决策记录**：KB:decisions namespace（KBG-0015 ~ KBG-0020，6 条，原物理文件已迁入）
 
 ---
@@ -405,7 +405,7 @@ src/zephyr/
 ## 5. `scripts/` — Governance code topology / 治理代码拓扑
 
 > `scripts/` 仅含**仓库级**治理自动化代码。产品级合规运行代码属于 `src/zephyr/compliance/`。
-> 模块详情 → See `architecture-model/scripts/scripts_model.yaml`
+> 模块详情 → See `architecture_model/scripts/scripts_model.yaml`
 
 ### 5.1 四域拓扑
 
@@ -464,12 +464,12 @@ graph LR
 
 ## 7. Key integration points / 关键集成点与接口契约
 
-> 完整契约签名 → `architecture-model/contracts/cross_layer_contracts.yaml`。本节为导读。
+> 完整契约签名 → `architecture_model/contracts/cross_layer_contracts.yaml`。本节为导读。
 
 ### 7.1 P0 核心数据契约
 
 > **SSoT 声明**：P0 数据契约的 **Single Source of Truth** 是
-> [`architecture-model/contracts/cross_layer_contracts.yaml`](architecture-model/contracts/cross_layer_contracts.yaml)。
+> [`architecture_model/contracts/cross_layer_contracts.yaml`](architecture_model/contracts/cross_layer_contracts.yaml)。
 > 下表中"codegen 目标"列所列的 Python 文件由 codegen 工具从该 YAML **自动生成**，
 > 不得手工编辑。任何字段变更必须先修改 YAML，再重新生成 Python 文件。
 
@@ -511,7 +511,7 @@ L07 ──[CTR-006: PositionSnapshot 🔒]──→ L04 (Risk Monitor) / L11 (St
 
 ### 7.5 Contract versioning / 契约版本管理
 
-> 完整策略 → `architecture-model/contracts/cross_layer_contracts.yaml`
+> 完整策略 → `architecture_model/contracts/cross_layer_contracts.yaml`
 
 四大原则：**只追加不修改** | **`schema_version` 字段** | **KB 决策记录 门禁** | **向后兼容**。所有 P0 契约当前版本均为 `1.0`（2026-04-18 锁定）。
 
@@ -585,7 +585,7 @@ idempotency_key = "ORD-" + SHA256(order_id + broker + price + quantity + timesta
 |------|-------------|
 | 2026-05-01 | **v2.2.0**：结构清理 — 融入 `by-domain/src-domain/` 三个详解文件（OCP 扩展点 + ACL 三段架构 + Vendor Registry 设计原则、容错策略矩阵 + 降级优先级、幂等设计与 Idempotency Guard 实现），合并到 §4.4 和 §8。删除 by-domain/ 目录。移除已冗余的 §4.5。 |
 | 2026-04-24 | **v2.1.0**：B-d-2 — 追加 §4A Vibe Coding 2.0 Infrastructure / 6 大核心服务（L12 跨层支撑）。含服务清单+依赖 DAG+与 14 层集成模式+5 个 Protocol 扩展点+命名约定说明。架构真源：本视图 §4A。 |
-| 2026-04-21 | **v2.0.0**：Architecture-as-Code 重组织——模块属性详情迁移至 `architecture-model/` 联邦 YAML 模型，视图正文从 1076 行压缩至 ≤600 行，保留设计理由+层间关系叙事+核心决策。 |
+| 2026-04-21 | **v2.0.0**：Architecture-as-Code 重组织——模块属性详情迁移至 `architecture_model/` 联邦 YAML 模型，视图正文从 1076 行压缩至 ≤600 行，保留设计理由+层间关系叙事+核心决策。 |
 | 2026-04-19 | v1.10.0：新增 §4.0 Runtime Plane Attribution Index（R69/KBG-0011）。 |
 | 2026-04-19 | v1.8.0-v1.9.1：批次 D 深加工（C4-L3 三图 + Vendor Registry + 容错矩阵 + 幂等设计）+ J0-sync（L10 ai_security + L11 scout）。 |
 

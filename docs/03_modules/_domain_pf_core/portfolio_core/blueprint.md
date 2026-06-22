@@ -39,7 +39,7 @@ depends_on:
     at: CTR-003
     why: 消费 RiskLimits
 references:
-  - path: "D:\\ZephyrAlpha\\architecture-model\\layers\\l05_portfolio_construction.yaml"
+  - path: "D:\\ZephyrAlpha\\architecture_model\\layers\\l05_portfolio_construction.yaml"
     section: "全篇"
     why: "YAML SSoT"
 ---
@@ -468,9 +468,9 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | l05_portfolio_construction.yaml | `D:\ZephyrAlpha\architecture-model\layers\l05_portfolio_construction.yaml` | (1) module id `l05-layer-ssot` → `portfolio-core`（ARB-20 统一）(2) files 列表应反映 `strategies/` 子目录 (3) source_layer 修正为 L03 | YAML 与蓝图/磁盘不一致 |
+| 1 | l05_portfolio_construction.yaml | `D:\ZephyrAlpha\architecture_model\layers\l05_portfolio_construction.yaml` | (1) module id `l05-layer-ssot` → `portfolio-core`（ARB-20 统一）(2) files 列表应反映 `strategies/` 子目录 (3) source_layer 修正为 L03 | YAML 与蓝图/磁盘不一致 |
 | 2 | blueprint-registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | construction_progress 更新为 phase_1_partial | 进度同步 |
-| 3 | cross_layer_contracts.yaml | `D:\ZephyrAlpha\architecture-model\cross_layer_contracts.yaml` | 确认 CTR-004/CTR-007/CTR-P1-006 状态 | 契约状态确认 |
+| 3 | cross_layer_contracts.yaml | `D:\ZephyrAlpha\architecture_model\cross_layer_contracts.yaml` | 确认 CTR-004/CTR-007/CTR-P1-006 状态 | 契约状态确认 |
 
 ---
 
@@ -612,7 +612,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §13 需要更新 |
-| 产出位置 | `D:\ZephyrAlpha\architecture-model\layers\l05_portfolio_construction.yaml` |
+| 产出位置 | `D:\ZephyrAlpha\architecture_model\layers\l05_portfolio_construction.yaml` |
 | 验收标准 | module id 统一为 portfolio-core；files 列表反映 strategies/ 子目录；source_layer 修正为 L03 |
 | 验证命令 | `python D:\ZephyrAlpha\scripts\governance\d5_architecture\checkers\check_contract_code_drift.py` |
 | G7 检查项 | YAML 与蓝图一致；YAML 与磁盘一致；cross_layer_contracts.yaml 状态同步 |
@@ -874,11 +874,11 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 2 | 目录结构标准 | GOV-DOC-002 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射、边界判据 |
 | 3 | 治理方法论 | PS-STD-011 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012 涌现式设计 + MTH-013 路径合规创建 |
 | 4 | 文件命名规范 | GOV-DOC-003 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 命名规则 |
-| 5 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 5 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 6 | 架构总览 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |
-| 9 | YAML SSoT | — | — | `D:\ZephyrAlpha\architecture-model\layers\l05_portfolio_construction.yaml` | 本蓝图真源 |
+| 9 | YAML SSoT | — | — | `D:\ZephyrAlpha\architecture_model\layers\l05_portfolio_construction.yaml` | 本蓝图真源 |
 | 10 | 系统依赖图 | — | v3.0.0 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 依赖对齐 |
 
 ---
@@ -898,9 +898,9 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 3 | default_equity_strategy.py | `D:\ZephyrAlpha\src\zephyr\pf_core\strategies\default_equity_strategy.py` | 读取 | 已存在 |
 | 4 | __init__.py | `D:\ZephyrAlpha\src\zephyr\pf_core\__init__.py` | 读取 | 已存在 |
 | 5 | order.py（契约 SSoT） | `D:\ZephyrAlpha\src\zephyr\shared\contracts\execution\order.py` | 读取 | 已存在 |
-| 6 | l05_portfolio_construction.yaml | `D:\ZephyrAlpha\architecture-model\layers\l05_portfolio_construction.yaml` | 修改 | ARB-20 统一 + source_layer 修正 |
+| 6 | l05_portfolio_construction.yaml | `D:\ZephyrAlpha\architecture_model\layers\l05_portfolio_construction.yaml` | 修改 | ARB-20 统一 + source_layer 修正 |
 | 7 | blueprint-registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 修改 | construction_progress 更新 |
-| 8 | cross_layer_contracts.yaml | `D:\ZephyrAlpha\architecture-model\cross_layer_contracts.yaml` | 修改 | 确认 CTR-004/CTR-007/CTR-P1-006 状态 |
+| 8 | cross_layer_contracts.yaml | `D:\ZephyrAlpha\architecture_model\cross_layer_contracts.yaml` | 修改 | 确认 CTR-004/CTR-007/CTR-P1-006 状态 |
 
 ---
 
@@ -915,7 +915,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | 本模块的接口契约 | **本文档 §4** | — |
 | 代码文件清单与对齐状态 | **本文档 §0** | blueprint-registry.yaml（派生） |
 | 容量升级方案 | **本文档 §17** | 独立升级文档（已废弃） |
-| YAML 架构定义 | `D:\ZephyrAlpha\architecture-model\layers\l05_portfolio_construction.yaml` | — |
+| YAML 架构定义 | `D:\ZephyrAlpha\architecture_model\layers\l05_portfolio_construction.yaml` | — |
 
 **任何与本蓝图冲突的定义，以本蓝图为准。**
 
@@ -926,7 +926,7 @@ ZephyrAlpha 量化架构需要从信号层（L03）和风控层（L04）的输�
 | Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain-ex_core\execution-core\blueprint.md` | §4 接口契约、§10 依赖关系 |
 | Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain-reporting\analytics-core\blueprint.md` | §4 接口契约（CTR-P1-006） |
 | Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_domain-compliance\compliance-core\blueprint.md` | §4 接口契约（CTR-P1-006） |
-| Tier 2 | `D:\ZephyrAlpha\architecture-model\cross_layer_contracts.yaml` | §12 集成点 |
+| Tier 2 | `D:\ZephyrAlpha\architecture_model\cross_layer_contracts.yaml` | §12 集成点 |
 | Tier 3 | `D:\ZephyrAlpha\src\zephyr\pf_core\strategy_base.py` | §4 数据模型、§11 产出物路径 |
 | Tier 3 | `D:\ZephyrAlpha\src\zephyr\pf_core\strategy_registry.py` | §4 数据模型、§11 产出物路径 |
 

@@ -70,7 +70,7 @@ sections:
     - 禁止功能域重叠——创建平行蓝图覆盖已有子域
     gov_mod_001_scope:
       section_type: context
-      applies_to: architecture-model/下所有新模块 + active模块的接口修改/依赖变更/status变化/优先级调整(变更视同重新注入) + 从候选池注入正式目录的迁移模块
+      applies_to: architecture_model/下所有新模块 + active模块的接口修改/依赖变更/status变化/优先级调整(变更视同重新注入) + 从候选池注入正式目录的迁移模块
       not_applies_to: '纯文档类文件(doc_type: template/register) + 临时草稿(status: draft且未申请注入)'
       third_party_extra: 第三方模块除四级筛选外还须通过§10专项安全检查(来源信任/许可证合规/安全审计/隔离声明)
     gov_mod_001_escalation:
@@ -163,7 +163,7 @@ sections:
       step: 'IRN-011: Phase结束时执行零残留自检(detect_temp_files.py+detect_orphan_py.py)'
     prohibitions:
     - IRN-009: 禁止Cursor和Trae同时打开同一文件编辑
-    - IRN-010: 禁止AI直接写入受保护路径(.git/、AGENTS.md重大修改、meta/下.md、architecture-model/)
+    - IRN-010: 禁止AI直接写入受保护路径(.git/、AGENTS.md重大修改、meta/下.md、architecture_model/)
     - 'IRN-011 ZR-001: 禁止临时文件(phase完成后不删除)'
     - 'IRN-011 ZR-004: 禁止引用已删除/废弃的路径'
     - 'IRN-011 ZR-009: 禁止AI代码含幻觉import/空壳stub/死代码块/调试残留'
@@ -299,7 +299,7 @@ sections:
     - 禁止重新分配archived模块的module_id
     gov_mod_003_scope:
       section_type: context
-      applies_to: architecture-model/下所有模块 + 01_policies_and_standards/下所有doc_type文件 + 候选池中的模块
+      applies_to: architecture_model/下所有模块 + 01_policies_and_standards/下所有doc_type文件 + 候选池中的模块
       not_applies_to: '临时草稿(ttl: session) + 纯引用文件'
     gov_mod_003_stage_details:
       section_type: context
@@ -548,7 +548,7 @@ sections:
     - 禁止绕过INJ检查直接注入模块
     gov_mod_005_scope:
       section_type: context
-      applies_to: 所有向architecture-model/注入模块的操作(新增+变更)
+      applies_to: 所有向architecture_model/注入模块的操作(新增+变更)
       principle: MUST通过注入检查后才能写入模块——无前置检查=ID重复+依赖错误+接口幻觉
     gov_mod_005_injection_flow:
       section_type: procedure

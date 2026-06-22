@@ -33,7 +33,7 @@ summary: ZephyrAlpha 2.0 **第二个正交视图（Orthogonal View）**。本视
   差距分析 + 每季度 review 机制。对标 ArchiMate Capability Map + Gartner IT Capability Framework
   + Goldman Sachs Enterprise Architecture Capability Dashboard 三家业界主流做法。回应 `tests/外部评审.md`
   四家 AI 外部评审共识指出的"缺少能力成熟度可视化（top-tier 机构必备）"P1 短板。本视图 v1.0.0 定义能力评分方法论 + 当前基线快照 +
-  目标状态（T1 真实资金 / T3 AI 自治升格 / T-ENDGAME 顶级机构对标）+ 与 03-AA `architecture-model/cross-cutting/capability_heatmap.yaml`
+  目标状态（T1 真实资金 / T3 AI 自治升格 / T-ENDGAME 顶级机构对标）+ 与 03-AA `architecture_model/cross-cutting/capability_heatmap.yaml`
   的数据承载关系。**热力图不承载代码**，是**元架构层面的可视化治理工具**，季度由架构师刷新评分。
 date: '2026-04-22'
 ttl: permanent
@@ -77,7 +77,7 @@ ttl: permanent
 | 其他视图 | 本视图与其关系 |
 |---|---|
 | `business_architecture.md` | 01-BA 定义"业务做什么"（能力边界 / Value Stream / RACI）；本视图给每项能力打成熟度分 |
-| `architecture-model/cross-cutting/capability_heatmap.yaml` | YAML 是**机器可读能力清单**（canonical schema）；本视图是**人类可读热力图视觉化**（引用该文件作为数据源）|
+| `architecture_model/cross-cutting/capability_heatmap.yaml` | YAML 是**机器可读能力清单**（canonical schema）；本视图是**人类可读热力图视觉化**（引用该文件作为数据源）|
 | `application_architecture.md` | 03-AA 14 层 **业务本体**；本视图 14 层 × 7 能力域**叠加评分**，承载热力图的数据源 |
 | `runtime_planes.md` | 04bis 是执行维度正交视图；本视图是成熟度维度正交视图。两视图**各切一把尺子**，协同刻画系统全貌 |
 | `archive/reorg-2026-04-24/draft-abandoned/working-designs/ai-autonomy-architecture-design.md`（ARC-20260424-007）| AI 自治层的能力评分由本视图 §3 第 7 能力域承载 |
@@ -163,7 +163,7 @@ ttl: permanent
 
 > **⚠️ 评分基准**：本基线由 Opus47 于 2026-04-19 J1 批次依据当前架构终局文档状态评分。**架构文档 ≠ 代码实现**，大多数能力当前为 L1/L2（设计或草稿级），**L3+ 需要施工后才能达到**。
 
-> **📋 能力成熟度完整数据**：见 [`architecture-model/cross-cutting/capability_heatmap.yaml`](architecture-model/cross-cutting/capability_heatmap.yaml)，包含 10 个能力域 × 32 条目的当前成熟度（L0-L5）、目标成熟度、Gap 分析（G-1~G-10）及 3 个目标状态定义。
+> **📋 能力成熟度完整数据**：见 [`architecture_model/cross-cutting/capability_heatmap.yaml`](architecture_model/cross-cutting/capability_heatmap.yaml)，包含 10 个能力域 × 32 条目的当前成熟度（L0-L5）、目标成熟度、Gap 分析（G-1~G-10）及 3 个目标状态定义。
 
 **v1.0.0 基线快照摘要**（详细逐条数据见上述 YAML）：
 
@@ -220,7 +220,7 @@ ttl: permanent
 
 ### 5.1 v1.0.0 基线 Gap 表（当前 → T1 目标差距）
 
-> **📋 Gap 完整数据**：见 [`architecture-model/cross-cutting/capability_heatmap.yaml`](architecture-model/cross-cutting/capability_heatmap.yaml) 的 `gap_analysis` 节，包含 G-1~G-10 的精确 from/to 档位、关联 CAP-ID 及优先级分类。
+> **📋 Gap 完整数据**：见 [`architecture_model/cross-cutting/capability_heatmap.yaml`](architecture_model/cross-cutting/capability_heatmap.yaml) 的 `gap_analysis` 节，包含 G-1~G-10 的精确 from/to 档位、关联 CAP-ID 及优先级分类。
 
 **Gap 分布摘要**：🔴 P0 × 4（G-1~G-4，T1 硬阻塞）| 🟡 P1 × 3（G-5~G-7）| 🟠 P2 × 3（G-8~G-10）
 
@@ -319,7 +319,7 @@ ttl: permanent
 ┌──────────────────────────────────────────────────────────────────┐
 │  01-BA (视图) — 定义"做什么"（能力边界 / Value Stream / RACI）    │
 │    ↓ 驱动                                                          │
-│  architecture-model/cross-cutting/capability_heatmap.yaml — 机器可读能力清单  │
+│  architecture_model/cross-cutting/capability_heatmap.yaml — 机器可读能力清单  │
 │    ↓ 驱动                                                          │
 │  capability_heatmap.md (本视图) — 人类可读热力图成熟度       │
 └──────────────────────────────────────────────────────────────────┘
@@ -327,7 +327,7 @@ ttl: permanent
 
 ### 8.2 `capability_heatmap.yaml` 联动
 
-当 `architecture-model/cross-cutting/capability_heatmap.yaml` 新增 / 修改能力条目时，本视图的 7 能力域 / 41 单元格**可能需要重构**。Review 时优先对齐该 YAML（**能力清单 SSoT**，本视图是**视觉化 + 成熟度评分**）。
+当 `architecture_model/cross-cutting/capability_heatmap.yaml` 新增 / 修改能力条目时，本视图的 7 能力域 / 41 单元格**可能需要重构**。Review 时优先对齐该 YAML（**能力清单 SSoT**，本视图是**视觉化 + 成熟度评分**）。
 
 ### 8.3 未来可能的扩展视图（不在本批次）
 

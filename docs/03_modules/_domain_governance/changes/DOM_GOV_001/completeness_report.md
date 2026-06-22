@@ -1,5 +1,5 @@
 ---
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-023
 ---
 
 # 蓝图分解完整性报告 · 二次审计版
@@ -8,7 +8,7 @@ blueprint_id: DOM-GOV-001
 
 | 字段 | 值 |
 |------|-----|
-| **蓝图** | DOM-GOV-001 — 治理域集成蓝图 |
+| **蓝图** | MOD-023 — 治理域集成蓝图 |
 | **路径** | D:\ZephyrAlpha\docs\03_modules\_domain-governance\blueprint.md |
 | **分解日期** | 2026-05-06 |
 | **二次审计日期** | 2026-05-06 |
@@ -23,7 +23,7 @@ blueprint_id: DOM-GOV-001
 
 | 字段 | 值 | 覆盖 task_id |
 |------|-----|------|
-| module_id | DOM-GOV-001 | 所有卡 source_blueprint |
+| module_id | MOD-023 | 所有卡 source_blueprint |
 | title | 治理域集成蓝图 | TASK-GOV-0001 |
 | version | 0.1.0 | TASK-GOV-0020 (§7) |
 | layer | cross_layer | TASK-GOV-0001 tags_ly |

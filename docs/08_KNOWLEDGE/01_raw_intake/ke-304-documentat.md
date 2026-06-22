@@ -28,7 +28,7 @@ MarketDataTick (raw)
 
 **图例**：🔒 = frozen（不可变契约） | 🔓 = mutable（可变契约，含状态机）
 
-所有层间数据对象均在 `src/zephyr/shared/contracts/` 定义（frozen dataclass），见 `architecture-model/contracts/cross_layer_contracts.yaml` 完整规格。
+所有层间数据对象均在 `src/zephyr/shared/contracts/` 定义（frozen dataclass），见 `architecture_model/contracts/cross_layer_contracts.yaml` 完整规格。
 
 > **📊 跨层契约可视化图表**：
 > - [`diagrams/data_flow.mmd`](diagrams/data_flow.mmd) — 核心数据流全景图（14 层体系 + CTR 标注）

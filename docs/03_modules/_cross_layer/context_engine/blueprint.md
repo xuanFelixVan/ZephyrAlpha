@@ -32,7 +32,7 @@ tags: [context-engine, ce, context-injection, rag, token-budget, build-compress-
 priority: P0
 runtime_plane: hot
 depends_on:
-- {target: architecture-model/layers/b_context_engine.yaml", at: "全篇", why: "CE YAML SSoT——本蓝图真源"}
+- {target: architecture_model/layers/b_context_engine.yaml", at: "全篇", why: "CE YAML SSoT——本蓝图真源"}
 child_modules:
 ---
 
@@ -60,7 +60,7 @@ child_modules:
 | **MOD-INF-008A** | Core Pipeline — build→compress→validate→inject 四阶段流水线 + Token预算三级管控 + VMS 4C检索桥接 + LSG安全审查 + MCP Agentic Pull接口 | 40 | [sub-blueprints/MOD-INF-008A-blueprint.md](sub-blueprints/MOD-INF-008A-blueprint.md) |
 | **MOD-INF-008B** | Governance & Operations — 健康评分(ContextHealthScore) + 生命周期(ContextEvictor/ContextRotModel/SessionLearner) + 安全防护(AdversarialRobustness/PoisoningMonitor) + 熔断监控(KillSwitch/OTel/SelfDiagnosis) + 运维支撑 | 47 | [sub-blueprints/MOD-INF-008B-blueprint.md](sub-blueprints/MOD-INF-008B-blueprint.md) |
 
-canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture-model/layers/b_context_engine.yaml)，代码落位 `src/zephyr/orchestration/context_management/`。
+canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_model/layers/b_context_engine.yaml)，代码落位 `src/zephyr/orchestration/context_management/`。
 
 ---
 
@@ -142,7 +142,7 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture-m
 
 | 资源 | 路径 |
 |------|------|
-| CE YAML SSoT | [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture-model/layers/b_context_engine.yaml) |
+| CE YAML SSoT | [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_model/layers/b_context_engine.yaml) |
 | 代码落位 | `src/zephyr/context-engine/` |
 | 总蓝图 | [MASTER-001](file:///D:/ZephyrAlpha/docs/03_modules/_master-blueprint/blueprint.md) |
 | VMS 蓝图 | MOD-INF-011 |

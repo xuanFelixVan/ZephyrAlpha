@@ -639,13 +639,13 @@ SELECT from_domain, to_domain, edge_count FROM (
 
 ### 6.1 关键依赖:depgraph.db域清理
 
-**当前问题**:depgraph.db domains表有55域(含重复),但架构升级裁定43域。
+**当前问题**:depgraph.db domains表有43域(含重复),但架构升级裁定43域。
 
 **重复域示例**(从extract_depgraph.py输出发现):
-- D-GOV_AUDIT vs D-GOV-AUDIT(下划线vs连字符)
+- D-GOV_AUDIT vs D-GOV_AUDIT(下划线vs连字符)
 - D-AUTONOMY_CORE vs D-AUTONOMY-CORE
 - D-INFRA_OPS vs D-INFRA-OPS
-- 空域:D-GOV-ENFORCEMENT/D-GOV-SCRIPTS/D-GOV-DRIFT/D-GOV-AUDIT/D-SECURITY-LLM等(module_count=0)
+- 空域:D-GOV-ENFORCEMENT/D-GOV-SCRIPTS/D-GOV_DRIFT/D-GOV_AUDIT/D-SECURITY-LLM等(module_count=0)
 
 **前置条件**:Phase 2开始前,必须先清理depgraph.db domains表:
 1. 合并连字符/下划线重复域
@@ -813,7 +813,7 @@ docs/02_enterprise_architecture/generated/
 
 D:\ZephyrAlpha\
 ├── docs/                              [D-DOCUMENTATION]
-│   ├── 01_policies_and_standards/    [D-GOV-RULES]
+│   ├── 01_policies_and_standards/    [D-GOV_RULES]
 │   ├── 02_enterprise_architecture/   [D-GOV-ARCHITECTURE]
 │   └── ...
 ├── src/zephyr/                        [D-TRADING]

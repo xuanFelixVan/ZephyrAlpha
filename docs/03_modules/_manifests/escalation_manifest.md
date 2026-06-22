@@ -1,5 +1,5 @@
 ---
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-023
 title: Escalation.Manifest
 module_id: MOD-055---
 

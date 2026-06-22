@@ -14,4 +14,4 @@ category: module_blueprint
 > ⚠️ **AI AGENT 注意**：本蓝图是 C 轨占位文件。本层的业务代码**尚未开工建设**。
 > **你不得**以此蓝图为依据生成任何数据接入业务代码。
 
-子模块与契约以 `docs/02_enterprise_architecture/target_architecture/architecture-model/layers/l00_data_source.yaml` 为真源。本文件仅保证登记表 `path` 与磁盘一致。
+子模块与契约以 `docs/02_enterprise_architecture/target_architecture/architecture_model/layers/l00_data_source.yaml` 为真源。本文件仅保证登记表 `path` 与磁盘一致。

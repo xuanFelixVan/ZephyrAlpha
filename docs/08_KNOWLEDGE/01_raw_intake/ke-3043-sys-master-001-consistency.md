@@ -10,7 +10,7 @@ SYS-MASTER-001 Consistency
 
 | Check | Result |
 |-------|--------|
-| DOM-GOV-001 appears in SYS-MASTER-001 | ✅ |
+| MOD-023 appears in SYS-MASTER-001 | ✅ |
 | All 8 MOD-INF-xxx IDs are consistent | ✅ |
 | Phase gate numbering matches | ✅ |
 | Depends_on chain respects hierarchy | ✅ |

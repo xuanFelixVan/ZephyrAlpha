@@ -138,9 +138,9 @@ Core capability domains / 核心能力域：
 | C09 | Compliance & legal / 合规与法务 | 监管映射、合规要求、留存要求 | `16_compliance_and_legal/` |
 | C10 | Knowledge management / 知识管理 | 最佳实践、经验教训、因子/策略知识库 | `08_knowledge/` |
 
-Detailed capability entries: → `architecture-model/cross-cutting/capability_heatmap.yaml`
+Detailed capability entries: → `architecture_model/cross-cutting/capability_heatmap.yaml`
 
-详细能力条目：→ `architecture-model/cross-cutting/capability_heatmap.yaml`
+详细能力条目：→ `architecture_model/cross-cutting/capability_heatmap.yaml`
 
 ---
 

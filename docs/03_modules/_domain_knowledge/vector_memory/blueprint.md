@@ -42,7 +42,7 @@ depends_on:
   - {target: "MOD-KB-001", at: "§1.5", why: "知识库——beta VMS整合目标"}
   - {target: "MOD-INF-008", at: "§2.1", why: "CE——VMS的主要消费方"}
   - {target: "MOD-INF-039", at: "§2.1", why: "本地模型推理——嵌入路由/缓存/Ollama/调度已拆分至MOD-INF-039"}
-  - {target: "architecture-model/layers/b_vector_memory.yaml", at: "全篇", why: "VMS YAML 派生格式——本蓝图为真源，YAML 为机器可读派生"}
+  - {target: "architecture_model/layers/b_vector_memory.yaml", at: "全篇", why: "VMS YAML 派生格式——本蓝图为真源，YAML 为机器可读派生"}
   - {target: "KBG-0016", at: "§3", why: "VMS生产级嵌入与分块契约——BGE-M3真源"}
   - {target: "KBG-0031", at: "§4.2", why: "Phase 2 ChromaDB基线选型——kb/ 4 Collection现有实现依据"}
 references:
@@ -132,7 +132,7 @@ VMS 是全系统统一向量记忆体——所有系统（Orc、KB、CE、FLE）
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
 > - 优化规则：先 Layer 1（蓝图模板合规）→ 后 Layer 2（规格化砍削）
 
-> **真源声明**：本蓝图是 VMS 架构设计、接口契约、施工指引的唯一真源。[b_vector_memory.yaml](file:///D:/ZephyrAlpha/architecture-model/layers/b_vector_memory.yaml) 是本蓝图的 YAML 派生格式。
+> **真源声明**：本蓝图是 VMS 架构设计、接口契约、施工指引的唯一真源。[b_vector_memory.yaml](file:///D:/ZephyrAlpha/architecture_model/layers/b_vector_memory.yaml) 是本蓝图的 YAML 派生格式。
 
 | `bm25_index.py` |
 | `bridge_layer.py` |
@@ -954,11 +954,11 @@ class FeedbackEntry(BaseModel):
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本号 0.9.0 + P0 | 蓝图 status → active |
-| 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | VMS 模块状态 active | 蓝图已定稿 |
+| 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | VMS 模块状态 active | 蓝图已定稿 |
 | 3 | CE 蓝图依赖 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\context-engine\blueprint.md` | CT-CE-VMS-001 集成状态 active | VMS 接口已定义 |
-| 4 | b_vector_memory.yaml SSoT | `D:\ZephyrAlpha\architecture-model\layers\b_vector_memory.yaml` | 8 Collection + 双嵌入维度 + Phase 0-4 | SSoT 反向同步 |
+| 4 | b_vector_memory.yaml SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_vector_memory.yaml` | 8 Collection + 双嵌入维度 + Phase 0-4 | SSoT 反向同步 |
 | 5 | KBG-0031 状态 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0031-chromadb-vector-retrieval.md` | 添加"已通向 VMS v0.9.0 8 Collection"注释 | 避免 KB 决策记录 与蓝图不一致 |
-| 6 | Tech Stack | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\technology\vibe_coding_infrastructure_tech_stack.yaml` | TECH-04/TECH-05 更新双嵌入维度 | 新增 bge-small-zh-v1.5 轻量路径 |
+| 6 | Tech Stack | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\technology\vibe_coding_infrastructure_tech_stack.yaml` | TECH-04/TECH-05 更新双嵌入维度 | 新增 bge-small-zh-v1.5 轻量路径 |
 
 ---
 
@@ -1410,7 +1410,7 @@ class FeedbackEntry(BaseModel):
 
 | # | 文件 | module_id | 完整绝对路径 | 编写时用途 |
 |---|------|-----------|------------|----------|
-| 1 | VMS YAML SSoT | — | `D:\ZephyrAlpha\architecture-model\layers\b_vector_memory.yaml` | 蓝图真源 |
+| 1 | VMS YAML SSoT | — | `D:\ZephyrAlpha\architecture_model\layers\b_vector_memory.yaml` | 蓝图真源 |
 | 2 | KBG-0016 嵌入契约 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0016-vms-embedding-contract.md` | 嵌入规格 |
 | 3 | KBG-0031 ChromaDB选型 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0031-chromadb-vector-retrieval.md` | 选型依据 |
 | 4 | CE 蓝图 | MOD-INF-008 | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\context-engine\blueprint.md` | 集成目标 |
@@ -1419,7 +1419,7 @@ class FeedbackEntry(BaseModel):
 | 7 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 代码规范 |
 | 8 | AI 压缩工作流标准 | GOV-DOC-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 压缩规则 |
 | 9 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则 |
-| 10 | 模块ID注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 10 | 模块ID注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 
 ---
 

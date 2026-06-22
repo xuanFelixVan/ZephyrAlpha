@@ -10,7 +10,7 @@ category: governance
 5.3 Architecture Model YAML
 
 ```
-architecture-model/layers/
+architecture_model/layers/
 ├── l00_data_source.yaml       # L00
 ├── l01_infrastructure.yaml    # L01
 ├── ...

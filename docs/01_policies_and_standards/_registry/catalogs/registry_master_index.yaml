@@ -1,7 +1,7 @@
 # [A_config] module_id=CFG-registry-master-index | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
-# module_id: DOM-GOV-001
+# blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-023
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -10,7 +10,7 @@
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表�?frontmatter
 
-module_id: DOM-GOV-001
+module_id: MOD-023
 generated_at: '2026-05-07T06:52:14Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml �?frontmatter

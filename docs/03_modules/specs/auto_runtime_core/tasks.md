@@ -245,7 +245,7 @@
 
 ### T-11.5 更新 b_execution_model.yaml
 - **依赖**: 无
-- **产出**: 更新 `architecture-model/layers/b_execution_model.yaml`
+- **产出**: 更新 `architecture_model/layers/b_execution_model.yaml`
 
 ---
 

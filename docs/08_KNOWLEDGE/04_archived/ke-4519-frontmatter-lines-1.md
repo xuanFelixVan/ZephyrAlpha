@@ -10,7 +10,7 @@ Frontmatter (lines 1-24)
 
 | 字段 | 值 | 覆盖 task_id |
 |------|-----|------|
-| module_id | DOM-GOV-001 | 所有卡 source_blueprint |
+| module_id | MOD-023 | 所有卡 source_blueprint |
 | title | 治理域集成蓝图 | TASK-GOV-0001 |
 | version | 0.1.0 | TASK-GOV-0020 (§7) |
 | layer | cross_layer | TASK-GOV-0001 tags_ly |

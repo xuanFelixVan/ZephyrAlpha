@@ -558,7 +558,7 @@ class WorkDAG(BaseModel):
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 确认 MOD-INF-035 v6.0.0 | 版本升级 |
+| 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 确认 MOD-INF-035 v6.0.0 | 版本升级 |
 | 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 更新版本+generation+codification_level | 规格化完成 |
 | 3 | spec.md | `D:\ZephyrAlpha\specs\auto-runtime-core\spec.md` | 追加容量需求章节 | spec 未含容量设计 |
 | 4 | capacity_params.yaml | `D:\ZephyrAlpha\configs\capacity_params.yaml` | 追加 brain_dream_cycle_memory_mb / boot_timeout_ms / recovery_timeout_ms | 容量升级参数 |
@@ -912,7 +912,7 @@ STEP 3: 拆分后验证
 | 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射、边界判据 |
 | 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012 涌现式设计 + MTH-013 路径合规创建 |
 | 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 命名规则 |
-| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |
@@ -998,7 +998,7 @@ STEP 3: 拆分后验证
 |------|------|---------|
 | 2026-05-14 | 6.1.0 | v3.5模板升级：§0前移至概述后；§7备选方案删除；§15后果删除（负面合并到§14）；§0.1新增存在性列；§5.3标注临时时态；§10拆为4子节；§14新增类型列；铁律#13-#15；蓝图拆分判定标准；压缩工作流执行 |
 | 2026-05-14 | 6.1.0 | 蓝图模板 v3.5 合规重构：新增概述段；章节重排（§0 移至 §15 后，规则参考段移至 §18 后）；frontmatter 新增 template_for、移除 codification_level/codification_at；§5.3 表格格式更新 |
-| 2026-05-13 | 6.0.0 | 规格化 Layer 1（蓝图模板 v3.2 合规）+ Layer 2（砍对标/散文/设计过程）；新增 §0-§18 全部必需章节；容量升级内容映射到 §17；DOM-GOV-001 映射到 §12.1；frontmatter 新增 generation/functional_domain/codification_level |
+| 2026-05-13 | 6.0.0 | 规格化 Layer 1（蓝图模板 v3.2 合规）+ Layer 2（砍对标/散文/设计过程）；新增 §0-§18 全部必需章节；容量升级内容映射到 §17；MOD-023 映射到 §12.1；frontmatter 新增 generation/functional_domain/codification_level |
 | 2026-05-12 | 5.2.0 | 容量补缺 7 项（GPU调度/RAM/I-O/自监控/冷启动/交互矩阵/降级链） |
 | 2026-05-10 | 5.1.0 | 容量升级方案 12 项压力测试 + 四拐点矩阵 + 下游接口衔接 |
 | 2026-05-10 | 5.0.0 | 基线蓝图——24 子组件完整实现 |

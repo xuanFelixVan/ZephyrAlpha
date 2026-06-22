@@ -40,7 +40,7 @@ depends_on:
 references:
   - {id: "MOD-INF-020", at: "全篇", why: "Decision Log——仅存 references（打破 009↔020↔022 环）"}
   - {id: "MOD-INF-018", at: "全篇", why: "SoD——仅存 references"}
-  - {id: "architecture-model/layers/b_pipeline.yaml", at: "全篇", why: "Pipeline YAML SSoT——本蓝图真源"}
+  - {id: "architecture_model/layers/b_pipeline.yaml", at: "全篇", why: "Pipeline YAML SSoT——本蓝图真源"}
 ---
 
 > module_id: MOD-INF-009 | version: 0.39.1 | status: active | layer: cross_layer
@@ -506,7 +506,7 @@ class ArtifactClassification(str, Enum):
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 版本→0.39.0 + status→Active | 蓝图升级 |
-| 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | construction_progress 更新 | 代码状态变更 |
+| 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | construction_progress 更新 | 代码状态变更 |
 | 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 版本更新 | 蓝图升级 |
 
 ---
@@ -954,7 +954,7 @@ STEP 3: 拆分后验证
 | 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/MTH-013 |
 | 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 命名规则 |
-| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |

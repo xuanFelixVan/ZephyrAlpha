@@ -50,7 +50,7 @@ category: agent_instruction
   - `capabilities.yaml` → YAML 结构化规则，AI 零歧义解析 allow/deny globs
   - `script-manifest.yaml` → YAML 注册表 + `run_all.py` 自动调度
   - `declarative-contract-tracker-registry.md` → YAML 五条契约（CT-001~006）+ 自动对账
-  - `architecture-model/layers/lXX.yaml` → YAML canonical SSoT（§6.9）
+  - `architecture_model/layers/lXX.yaml` → YAML canonical SSoT（§6.9）
 
 - **未来增强方向**：
   - "人类可读文档中硬编码的数字"改为从 YAML SSoT 自动派生（消除二次漂移）

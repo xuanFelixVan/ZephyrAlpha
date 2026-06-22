@@ -35,7 +35,7 @@ submodule_paths_scope: ml-experiment-domain
 submodule_paths_extra:
   - src/zephyr/ml_train/
   - src/zephyr/simulation/
-ssot_yaml: "architecture-model/layers/l11_ml_platform.yaml + l13_experimentation.yaml"
+ssot_yaml: "architecture_model/layers/l11_ml_platform.yaml + l13_experimentation.yaml"
 depends_on:
   - target: "SYS-MASTER-001"
     at: "§七十八~§八十四"
@@ -115,7 +115,7 @@ tags:
 | module_id | ML-EXPERIMENT-DOMAIN-001 |
 | actual_disk_path | `D:\ZephyrAlpha\src\zephyr\ml_train\` + `D:\ZephyrAlpha\src\zephyr\simulation\` |
 | 施工程度 | 部分实现（L11/L13模块骨架已就位，跨层管道未施工） |
-| ssot_yaml | `D:\ZephyrAlpha\architecture-model\layers\l11_ml_platform.yaml` + `l13_experimentation.yaml` |
+| ssot_yaml | `D:\ZephyrAlpha\architecture_model\layers\l11_ml_platform.yaml` + `l13_experimentation.yaml` |
 | blueprint_level | domain |
 | priority | P2 |
 
@@ -360,7 +360,7 @@ Feature Store (VMS/KB) → ML Core (L11) → Experiment Pipeline (L13)。子组�
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | l11_ml_platform.yaml | `D:\ZephyrAlpha\architecture-model\layers\l11_ml_platform.yaml` | 新模型类型注册 | 模型白名单 |
+| 1 | l11_ml_platform.yaml | `D:\ZephyrAlpha\architecture_model\layers\l11_ml_platform.yaml` | 新模型类型注册 | 模型白名单 |
 
 ---
 
@@ -602,7 +602,7 @@ STEP 3: 拆分后验证
 | 1 | 元数据注册表 | PS-STD-001 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则 |
 | 2 | 目录结构标准 | GOV-DOC-002 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
-| 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 5 | 系统总蓝图 | SYS-MASTER-001 | 当前版本 | `D:\ZephyrAlpha\docs\03_modules\_sys-master\blueprint.md` | 系统拓扑 |
 
 ---

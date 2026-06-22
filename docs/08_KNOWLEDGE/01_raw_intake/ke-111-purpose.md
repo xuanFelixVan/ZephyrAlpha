@@ -23,6 +23,6 @@ Integration Architecture（集成架构视图）回答以下问题：
 | `application_architecture.md` | 应用模块的功能职责与层次划分（what is each module）|
 | `technology_architecture.md` | 技术栈、基础设施、协议选型（how is it built）|
 | **本视图（integration_architecture.md）** | 模块与模块之间、系统与外部之间的**连接方式**（how do they talk）|
-| `architecture-model/contracts/cross_layer_contracts.yaml` | 各接口的**契约规格**（数据结构、版本、稳定性等级）|
+| `architecture_model/contracts/cross_layer_contracts.yaml` | 各接口的**契约规格**（数据结构、版本、稳定性等级）|
 
 ---

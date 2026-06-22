@@ -1,7 +1,7 @@
 # [A_config] module_id=CFG-document-metadata-index-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
-# module_id: DOM-GOV-001
+# blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-023
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -14,8 +14,8 @@ status: active
 generated_at: '2026-05-07T06:52:14Z'
 generated_from: generate_rule_catalog.py（与 rule-catalog-registry.yaml 同批同步�?
 scope_note: 本文件仅索引 docs/01_policies_and_standards/ 下带治理 frontmatter �?Markdown（及本树登记引用）�?
-  docs/02_enterprise_architecture/、docs/09_audit/findings/、architecture-model 施工树等不在此表——见各目�?
-  index.md �?architecture-model/SCOPE.yaml�?
+  docs/02_enterprise_architecture/、docs/09_audit/findings/、architecture_model 施工树等不在此表——见各目�?
+  index.md �?architecture_model/SCOPE.yaml�?
 total_files: 154
 files:
 - path: docs/01_policies_and_standards/index.md

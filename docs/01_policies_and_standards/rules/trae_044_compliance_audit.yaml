@@ -328,7 +328,7 @@ sections:
       on_failure: GATE-17/GATE-IDX/GATE-SQ/GATE-ADM门禁阻断
     - order: 2
       action: D2链接与引用——审计内部链接有效性、相对路径检测
-      pre_condition: docs/所有.md文件的内部链接+architecture-model/YAML的交叉引用
+      pre_condition: docs/所有.md文件的内部链接+architecture_model/YAML的交叉引用
       expected_result: 零断裂内部链接；零相对路径引用
       on_failure: GATE-01门禁阻断
     - order: 3
@@ -343,7 +343,7 @@ sections:
       on_failure: GATE-16间接覆盖
     - order: 5
       action: D5架构一致性——审计YAML↔代码↔文档三方一致、循环依赖、AI自治权限、蓝图同步、接口契约
-      pre_condition: architecture-model/*.yaml+layers/*.yaml(25+)+docs/03_modules/*/blueprint.md+src/zephyr/目录结构+_registry/contracts/*.yaml+ai_autonomy_authority_registry.yaml
+      pre_condition: architecture_model/*.yaml+layers/*.yaml(25+)+docs/03_modules/*/blueprint.md+src/zephyr/目录结构+_registry/contracts/*.yaml+ai_autonomy_authority_registry.yaml
       expected_result: YAML↔代码↔文档三方一致；零循环依赖；零未登记模块；蓝图与代码同步；AI自治权限注册表自洽
       on_failure: GATE-01~03/06/07/14/16/A/B/SUM/XREF/BLUEPRINT-CODE/CONTRACT/INDEX/13/AUTHORITY门禁阻断
     - order: 6

@@ -10,7 +10,7 @@ category: documentation
 4.4 OCP Extension points / 扩展点设计
 
 > 三个扩展点遵循 Open-Closed Principle。契约（基类 + 注册表）锁死，实现无限扩展。
-> 完整接口签名 → `architecture-model/contracts/cross_layer_contracts.yaml`。
+> 完整接口签名 → `architecture_model/contracts/cross_layer_contracts.yaml`。
 
 系统定义三个核心 OCP 扩展点：
 

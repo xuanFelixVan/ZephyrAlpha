@@ -71,7 +71,7 @@ depends_on:
   - {target: MOD-INF-025, at: "$TODO", why: "TODO -- auto-converted"}
 ---
 
-## DOM-GOV-001 集成契约锚点
+## MOD-023 集成契约锚点
 
 | 契约 ID | 本模块角色 | 对端模块 | 集成点 |
 |---------|------------|----------|--------|
@@ -299,7 +299,7 @@ ZephyrAlpha 由 1 人+AI 维护，AI Agent 拥有自主操作能力（代码写�
 |------|--------|:-------:|
 | Owner（人类） | AI 操作安全+成本控制+最终控制权 | 致命 |
 | AI Agent | 自主操作范围+委托能力+升级判定 | 高 |
-| 治理层（DOM-GOV-001） | 跨模块契约一致性+审计完整性 | 高 |
+| 治理层（MOD-023） | 跨模块契约一致性+审计完整性 | 高 |
 | 量化交易子系统 | 持仓安全+数据管道+订单状态 | 致命 |
 
 ### §1.6 差距
@@ -1000,7 +1000,7 @@ MCP Server SSoT：`D:\ZephyrAlpha\src\zephyr\mcp\governance_server.py`
 | Budget Engine | MOD-INF-022-Sub | 提供预算判定 | ✅ |
 | 预算超支→升级 | MOD-INF-024 | 事件消费 | ✅ |
 | KB 反馈环 | SKILL-DOM-KNW-001 | 升级解决→KB 写入 | 🔄 |
-| DOM-GOV-001 契约 | 治理层 | 升级事件→治理审计 | ✅ |
+| MOD-023 契约 | 治理层 | 升级事件→治理审计 | ✅ |
 
 ---
 
@@ -1140,7 +1140,7 @@ MCP Server SSoT：`D:\ZephyrAlpha\src\zephyr\mcp\governance_server.py`
 | ESC-008 | 4 | 操作涉及 API Key/Secret/Token 文件 | blocked |
 | ESC-005 | 50 | auto_guard 后验失败≥3次 | blocked |
 | ESC-001 | 100 | 修改文件数≥5 | auto_guard |
-| ESC-002 | 101 | 修改 architecture-model/ 下 YAML | auto_guard |
+| ESC-002 | 101 | 修改 architecture_model/ 下 YAML | auto_guard |
 | ESC-009 | 102 | 修改接口契约文件 | auto_guard |
 | ESC-010 | 103 | AI 决策置信度<0.7 | auto_guard |
 | ESC-011 | 104 | Token 消耗>预算 80% | auto_guard |

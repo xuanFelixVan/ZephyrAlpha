@@ -1,7 +1,7 @@
 # [A_config] module_id=CFG-scalability-1500-module-grouping | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
-# module_id: DOM-GOV-001
+# blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-023
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -10,7 +10,7 @@
 # AUDIT-06 P3-14 | 前置规划，防止紧急重构
 # 当前规模 (~40 模块) 无需执行——方案仅作前瞻备案
 
-module_id: DOM-GOV-001
+module_id: MOD-023
 schema_version: "1.0.0"
 created: "2026-05-06"
 audit_round: "AUDIT-06"

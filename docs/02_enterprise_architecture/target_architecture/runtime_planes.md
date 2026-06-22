@@ -91,7 +91,7 @@ ttl: permanent
 | `technology_architecture.md` | 04-TA 定义"全局技术选型"；本视图定义"按平面差异化技术选型"；§5 技术矩阵是 04-TA §3 的下钻 |
 | `governance_architecture.md` | 09-GOV 治理三层 Policy/Factory/Runtime 是**治理维度**（谁管什么规矩）；本视图三平面是**执行维度**（代码何时以什么延迟跑在什么硬件）。二者**名字都叫 "Runtime" 但意义完全不同**——§7 专门澄清。|
 | `frontend_architecture.md` | 10-FE 定义前端独立平台；本视图 §3.4 给前端子层打运行平面标签（React SPA Warm / WebSocket stream Hot-adjacent / SSR 报表 Cold）|
-| `architecture-model/technology/technology_landscape.yaml` | Tech Radar 风格的技术清单；本视图选型依赖其 Adopt/Trial/Hold 状态（§5 引用）|
+| `architecture_model/technology/technology_landscape.yaml` | Tech Radar 风格的技术清单；本视图选型依赖其 Adopt/Trial/Hold 状态（§5 引用）|
 
 ### 1.4 决策溯源
 
@@ -147,7 +147,7 @@ ttl: permanent
 
 ### 3.1 总览表（按业务层维度）
 
-> **SSoT 声明**：运行平面归属的 **Single Source of Truth** 是 [`architecture-model/cross-cutting/runtime_planes.yaml`](architecture-model/cross-cutting/runtime_planes.yaml)（Hot 7 模块 / Warm 39 模块 / Cold 24 模块 + 6 条跨面通信规则）。下表从该 YAML **只读派生**，如有冲突以 YAML 为准。
+> **SSoT 声明**：运行平面归属的 **Single Source of Truth** 是 [`architecture_model/cross-cutting/runtime_planes.yaml`](architecture_model/cross-cutting/runtime_planes.yaml)（Hot 7 模块 / Warm 39 模块 / Cold 24 模块 + 6 条跨面通信规则）。下表从该 YAML **只读派生**，如有冲突以 YAML 为准。
 
 | 业务层 | 子模块 | Hot 🔥 | Warm 🌡️ | Cold ❄️ | 备注 |
 |--------|--------|:------:|:-------:|:------:|------|
@@ -235,7 +235,7 @@ ttl: permanent
 
 ### 3.2 总览表（按运行平面维度 — 反查视图）
 
-> 按平面维度的反查视图同样收录于 [`runtime_planes.yaml`](architecture-model/cross-cutting/runtime_planes.yaml)（`planes.hot.modules[]` / `planes.warm.modules[]` / `planes.cold.modules[]`）。以下为可读摘要：
+> 按平面维度的反查视图同样收录于 [`runtime_planes.yaml`](architecture_model/cross-cutting/runtime_planes.yaml)（`planes.hot.modules[]` / `planes.warm.modules[]` / `planes.cold.modules[]`）。以下为可读摘要：
 
 **🔥 Hot Path（7 模块，当前未激活，T1 首次激活）**
 
@@ -281,7 +281,7 @@ T3 扩展（Hot Path 扩展触发后新增）：`l00-connectors-hot` / `l03-sign
 
 ### 3.4 前端（10-FE）三平面归属（同步批次）
 
-> 前端子层的平面归属数据见 [`runtime_planes.yaml`](architecture-model/cross-cutting/runtime_planes.yaml) 中 `planes.cold.modules[]` 的 `fe-ssr-reports` / `fe-codegen` 条目（其余前端子层默认 Warm）。
+> 前端子层的平面归属数据见 [`runtime_planes.yaml`](architecture_model/cross-cutting/runtime_planes.yaml) 中 `planes.cold.modules[]` 的 `fe-ssr-reports` / `fe-codegen` 条目（其余前端子层默认 Warm）。
 
 详见 J1 批次 E 任务同步更新 `frontend_architecture.md`。
 
@@ -289,7 +289,7 @@ T3 扩展（Hot Path 扩展触发后新增）：`l00-connectors-hot` / `l03-sign
 
 **澄清**：09-GOV 的 Policy/Factory/Runtime 是治理维度三层，本视图的 Hot/Warm/Cold 是执行维度三平面，二者正交。
 
-> 09-GOV 治理系统的平面归属数据见 [`runtime_planes.yaml`](architecture-model/cross-cutting/runtime_planes.yaml) 中 `planes.cold.modules[]` 的 `gov-factory` / `gov-scout-d02` 条目。**要点**：Policy 层无运行平面（纯文档）；Factory 层归 Cold（构建期批调度）；Runtime 层 A/B/C 归 Warm 主 + Hot 部分（kill switch / pre-trade hard check）；D-01 AISG `security_gateway` 子模块 Hot-adjacent（< 50ms）；D-02 Scout 归 Cold。
+> 09-GOV 治理系统的平面归属数据见 [`runtime_planes.yaml`](architecture_model/cross-cutting/runtime_planes.yaml) 中 `planes.cold.modules[]` 的 `gov-factory` / `gov-scout-d02` 条目。**要点**：Policy 层无运行平面（纯文档）；Factory 层归 Cold（构建期批调度）；Runtime 层 A/B/C 归 Warm 主 + Hot 部分（kill switch / pre-trade hard check）；D-01 AISG `security_gateway` 子模块 Hot-adjacent（< 50ms）；D-02 Scout 归 Cold。
 
 详见 J1 批次 D 任务同步更新 `governance_architecture.md` v1.1.0 → v1.2.0。
 
@@ -375,7 +375,7 @@ class RuntimePlane(Enum):
 | **部署** | 独立物理机 + NIC bypass（目标 T1 后）| K8s 容器 + HPA | Spark cluster / Ray cluster + object storage |
 | **测试** | 硬实时基准 (criterion.rs / google-benchmark) + 延迟直方图 | pytest-asyncio + hypothesis | Spark local mode + dbt test |
 
-### 5.2 对标 Tech Radar 状态（基于 `architecture-model/technology/technology_landscape.yaml`）
+### 5.2 对标 Tech Radar 状态（基于 `architecture_model/technology/technology_landscape.yaml`）
 
 | 技术栈 | Radar 状态 | 激活时机 |
 |---|---|---|

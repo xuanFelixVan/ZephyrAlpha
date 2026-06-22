@@ -11,7 +11,7 @@ category: documentation
 
 > 新增于 v2.1.0（2026-04-24）。源自 `vibe-coding-audit-merged.md` Qwen 17 项技术选型共识，是 AI 基础设施的**强约束选型**。
 
-**权威真源**：[`architecture-model/technology/vibe_coding_infrastructure_tech_stack.yaml`](architecture-model/technology/vibe_coding_infrastructure_tech_stack.yaml)（17 项 AI 基础设施选型） + [`architecture-model/technology/technology_landscape.yaml`](architecture-model/technology/technology_landscape.yaml)（43 项全技术栈雷达）
+**权威真源**：[`architecture_model/technology/vibe_coding_infrastructure_tech_stack.yaml`](architecture_model/technology/vibe_coding_infrastructure_tech_stack.yaml)（17 项 AI 基础设施选型） + [`architecture_model/technology/technology_landscape.yaml`](architecture_model/technology/technology_landscape.yaml)（43 项全技术栈雷达）
 
 **两者关系**：
 

@@ -34,7 +34,7 @@ depends_on:
   - {target: "MOD-INF-006", at: "§3.2.1", why: "task_manager MCP——decompose_blueprint接口"}
   - {target: "MOD-KB-001", at: "§4", why: "knowledge_base MCP——KE查询接口"}
   - {target: "MOD-INF-007", at: "§3.2", why: "gate_engine MCP——Gate判定接口"}
-  - {target: "architecture-model/layers/b_mcp.yaml", at: "全篇", why: "MCP YAML SSoT——本蓝图真源"}
+  - {target: "architecture_model/layers/b_mcp.yaml", at: "全篇", why: "MCP YAML SSoT——本蓝图真源"}
 references: []
 last_updated: "2026-05-15"
 ---
@@ -129,7 +129,7 @@ END_REQUIRED_SECTIONS
 > - 代码头部标准：[code-construction-standards.md §7](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md)
 > - 优化规则：先 Layer 1（蓝图+施工图模板合规）→ 后 Layer 2（规格化砍削）
 
-> 真源声明：本蓝图的 canonical SSoT 为 `architecture-model/layers/b_mcp.yaml`。
+> 真源声明：本蓝图的 canonical SSoT 为 `architecture_model/layers/b_mcp.yaml`。
 > 代码落位：`src/zephyr/mcp/`（19 个 .py 文件，其中 task_manager / blueprint_search / telemetry / governance / vector-memory 已实现，gateway / audit_logger / rate_limiter / error_codes / prompt_provider / resource_provider / handoff_auto_loader 已实现，knowledge_base / gate_engine / doc_guard / sentinel / sandbox 为 skeleton）。
 ---
 
@@ -441,7 +441,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 | MOD-INF-006 | 必须 | task_manager MCP——decompose_blueprint接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\task-repo\blueprint.md` |
 | MOD-KB-001 | 必须 | knowledge_base MCP——KE查询接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\knowledge-base\blueprint.md` |
 | MOD-INF-007 | 必须 | gate_engine MCP——Gate判定接口 | — | `D:\ZephyrAlpha\docs\03_modules\_domain-infra_ops\gate-engine\blueprint.md` |
-| b_mcp.yaml | 必须 | MCP YAML SSoT | — | `D:\ZephyrAlpha\architecture-model\layers\b_mcp.yaml` |
+| b_mcp.yaml | 必须 | MCP YAML SSoT | — | `D:\ZephyrAlpha\architecture_model\layers\b_mcp.yaml` |
 | mcp | 必须 | MCP SDK | ≥1.0.0 | — |
 
 ### 10.2 依赖图对齐声明
@@ -873,7 +873,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 | 修改本蓝图 | MUST 同步更新 |
 |-----------|-------------|
 | §3 接口契约 | `src/zephyr/mcp/tool-contracts.yaml` + 下游消费者蓝图 |
-| §2 MCP 服务端列表 | `src/zephyr/integration/mcp/__init__.py` + `architecture-model/layers/b_mcp.yaml` |
+| §2 MCP 服务端列表 | `src/zephyr/integration/mcp/__init__.py` + `architecture_model/layers/b_mcp.yaml` |
 | §11 施工步骤 | `AGENTS.md` §8.2 MCP 任务菜单 |
 | §0 代码对齐验证 | `src/zephyr/mcp/` 对应代码文件 `[BLUEPRINT]` 头部 |
 | §17 容量升级 | `config/capacity/capacity_slo.yaml` + capacity-assurance 蓝图 |
@@ -960,7 +960,7 @@ STEP 3: 拆分后验证
 | 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012 + MTH-013 |
 | 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 命名规则 |
-| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |
@@ -981,4 +981,4 @@ STEP 3: 拆分后验证
 | 2 | MCP re-export shim | `D:\ZephyrAlpha\src\zephyr\mcp_servers\__init__.py` | 读取 | re-export |
 | 3 | 工具契约 | `D:\ZephyrAlpha\src\zephyr\mcp\tool-contracts.yaml` | 读取 | 契约 SSoT |
 | 4 | 蓝图路由配置 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` | 读取 | blueprint_search 路由 |
-| 5 | MCP YAML SSoT | `D:\ZephyrAlpha\architecture-model\layers\b_mcp.yaml` | 读取 | 协议真源 |
+| 5 | MCP YAML SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_mcp.yaml` | 读取 | 协议真源 |

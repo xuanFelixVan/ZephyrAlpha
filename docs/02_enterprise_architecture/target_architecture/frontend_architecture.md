@@ -63,7 +63,7 @@ ttl: permanent
 |------|---------|
 | 后端 `src/zephyr/` 14 层分层与模块职责 | `application_architecture.md`（AA） |
 | 前端依赖的业务数据对象（Order / Signal / Position 等）| `data_architecture.md`（DA） |
-| 前端 ↔ 后端 REST/WebSocket/OpenAPI 字段级契约清单 | `architecture-model/contracts/cross_layer_contracts.yaml` |
+| 前端 ↔ 后端 REST/WebSocket/OpenAPI 字段级契约清单 | `architecture_model/contracts/cross_layer_contracts.yaml` |
 | 前端运行时依赖的 Redis / PostgreSQL / LLM 技术栈选型 | `technology_architecture.md`（TA）|
 | 前端安全策略（CSP / CORS / CSRF / XSS / OAuth）| `security_architecture.md`（SEC，当前 skeleton，后续深化时必须包含前端安全一节）|
 | 前端与外部集成拓扑（API Gateway / CDN / 第三方登录）| `integration_architecture.md`（INTEG）|
@@ -109,7 +109,7 @@ ttl: permanent
 
 ## 3. 前端分层（Frontend Layering）
 
-> **📋 SSoT 声明**：前端模块清单（模块 ID / 状态 / 优先级 / runtime_plane / 激活条件等）的**唯一权威来源（Single Source of Truth）**是 [`frontend_model.yaml`](architecture-model/frontend/frontend_model.yaml)。本节仅提供架构级分层概览与职责说明；如需查询具体模块列表、状态或优先级，请以 YAML 为准。
+> **📋 SSoT 声明**：前端模块清单（模块 ID / 状态 / 优先级 / runtime_plane / 激活条件等）的**唯一权威来源（Single Source of Truth）**是 [`frontend_model.yaml`](architecture_model/frontend/frontend_model.yaml)。本节仅提供架构级分层概览与职责说明；如需查询具体模块列表、状态或优先级，请以 YAML 为准。
 
 **本节与 03-AA 14 层 Python 后端分层平行但物理隔离**。前端采用 4 层模型（Application / Container / Component / Tools），数字越小越接近业务价值，数字越大越接近基础设施。
 
@@ -178,7 +178,7 @@ frontend/packages/*    ──┘
 
 ### 4.2 MFE 技术选型（Activation 时定）
 
-> **📋 SSoT 声明**：前端技术栈选型（框架、构建工具、状态管理库、图表引擎等）的权威定义见 [`frontend_model.yaml`](architecture-model/frontend/frontend_model.yaml) 各模块的 `description` 字段。本节提供架构级选型决策与对比分析。
+> **📋 SSoT 声明**：前端技术栈选型（框架、构建工具、状态管理库、图表引擎等）的权威定义见 [`frontend_model.yaml`](architecture_model/frontend/frontend_model.yaml) 各模块的 `description` 字段。本节提供架构级选型决策与对比分析。
 
 **当前方案**（FE-P7 渐进激活）：**Activation 时再最终选型**，候选已缩到 3 个：
 
@@ -349,7 +349,7 @@ frontend/packages/*    ──┘
 
 #### 7.5.1 前端模块三平面归属快查表
 
-> **📋 SSoT 声明**：各模块的 `runtime_plane` 权威值定义在 [`frontend_model.yaml`](architecture-model/frontend/frontend_model.yaml)。下表为架构视角的快查索引。
+> **📋 SSoT 声明**：各模块的 `runtime_plane` 权威值定义在 [`frontend_model.yaml`](architecture_model/frontend/frontend_model.yaml)。下表为架构视角的快查索引。
 
 | 前端模块 | 所属 FE 层 | Runtime Plane | 延迟特征 | 技术栈 | 部署拓扑 |
 |---------|-----------|--------------|--------|-------|---------|
@@ -396,7 +396,7 @@ frontend/packages/*    ──┘
 
 ## 8. 双轨/下沉结构（已退役）
 
-> **2026-05-01 更新**：原 `by-domain/` 双轨结构已于 README v2.0.0 统一移除。所有原计划下沉到 `by-domain/frontend-domain/` 的内容已吸纳入本视图及 `architecture-model/` YAML 联邦模型。以下触发清单保留为历史参考，实际落地不再依赖独立 by-domain 目录。
+> **2026-05-01 更新**：原 `by-domain/` 双轨结构已于 README v2.0.0 统一移除。所有原计划下沉到 `by-domain/frontend-domain/` 的内容已吸纳入本视图及 `architecture_model/` YAML 联邦模型。以下触发清单保留为历史参考，实际落地不再依赖独立 by-domain 目录。
 
 **下沉触发条件（历史记录）**：
 

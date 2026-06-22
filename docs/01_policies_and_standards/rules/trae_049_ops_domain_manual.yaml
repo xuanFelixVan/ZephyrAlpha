@@ -150,7 +150,7 @@ sections:
       - 不同等级对应不同审批要求和回滚方案
       - L3/L4变更必须创建KB决策记录
       applicable_to:
-      - 架构模型(architecture-model/)的任何变更
+      - 架构模型(architecture_model/)的任何变更
       - 模块增删
       - 接口契约变更
       - 层级结构调整
@@ -402,7 +402,7 @@ sections:
       - id: cross_layer_contracts.yaml
         title: 跨层契约文件
         usage: L3变更必须更新此文件
-      - id: architecture-model/
+      - id: architecture_model/
         title: 架构模型目录
         usage: L4变更必须更新架构模型
   ops_dev_002_change_history:

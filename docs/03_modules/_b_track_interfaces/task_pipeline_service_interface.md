@@ -15,7 +15,7 @@ ttl: permanent
 template_source: "vector-memory-service-interface.md（B 轨接口目录结构对齐）"
 truth_source:
   - "03_modules/_cross_layer/pipeline/blueprint.md（MOD-INF-009 — 详细设计与 CT 锚点；Phase 5 真源）"
-  - "architecture-model/layers/b_pipeline.yaml（Pipeline YAML SSoT）"
+  - "architecture_model/layers/b_pipeline.yaml（Pipeline YAML SSoT）"
 related_kb: []
 integration_points:
   - "Agent Orchestrator（downstream，任务调度与状态机消费 Pipeline 路由决策）"

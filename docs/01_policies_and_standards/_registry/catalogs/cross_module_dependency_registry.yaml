@@ -268,7 +268,7 @@ dependencies:
   type: contract
   strength: hard
   description: 回滚操作写入 Audit Trail（ProvenanceStandard + HMAC-SHA256 签名），G-CT-002 契约锚定。
-  contract_anchor: DOM-GOV-001 G-CT-002
+  contract_anchor: MOD-023 G-CT-002
   direction: upstream
   valid_since: '2026-05-05'
 - dep_id: DEP-021
@@ -310,7 +310,7 @@ dependencies:
   type: contract
   strength: soft
   description: 回滚失败结果进入 Escalation——G-CT-003 契约锚定。
-  contract_anchor: DOM-GOV-001 G-CT-003
+  contract_anchor: MOD-023 G-CT-003
   direction: downstream
   valid_since: '2026-05-05'
 - dep_id: DEP-025
@@ -321,7 +321,7 @@ dependencies:
   type: runtime
   strength: hard
   description: 漂移检测触发回滚——DriftEvent → RollbackExecutor 消费，G-CT-005 契约锚定。
-  contract_anchor: DOM-GOV-001 G-CT-005
+  contract_anchor: MOD-023 G-CT-005
   direction: downstream
   valid_since: '2026-05-05'
 - dep_id: DEP-025a
@@ -332,7 +332,7 @@ dependencies:
   type: runtime
   strength: hard
   description: 漂移预算耗尽触发升级——G-CT-006 契约锚定。
-  contract_anchor: DOM-GOV-001 G-CT-006
+  contract_anchor: MOD-023 G-CT-006
   direction: downstream
   valid_since: '2026-05-15'
 - dep_id: DEP-025b
@@ -403,7 +403,7 @@ dependencies:
   type: runtime
   strength: hard
   description: Gate Audit Trail 检查——门禁决策写入审计日志，实时阻断联动。
-  contract_anchor: DOM-GOV-001 G-CT-006
+  contract_anchor: MOD-023 G-CT-006
   direction: upstream
   valid_since: '2026-05-08'
 - dep_id: DEP-028
@@ -424,7 +424,7 @@ dependencies:
   type: runtime
   strength: hard
   description: 审计追踪链 ↔ 漂移检测器双向桥接——DriftEvent 触发审计异常签名 + 审计对账。
-  contract_anchor: DOM-GOV-001 G-CT-007
+  contract_anchor: MOD-023 G-CT-007
   direction: peer
   valid_since: '2026-05-08'
 - dep_id: DEP-030

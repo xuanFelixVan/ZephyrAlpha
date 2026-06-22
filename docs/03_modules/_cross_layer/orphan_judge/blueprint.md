@@ -688,7 +688,7 @@ class StandaloneResult(BaseModel):
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 新增MOD-INF-029 | 新模块注册 |
+| 1 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 新增MOD-INF-029 | 新模块注册 |
 | 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 新增本蓝图 | 新蓝图注册 |
 | 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 新增MOD-INF-029条目 | 资产可发现 |
 | 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 新增6条依赖 | 依赖可追踪 |
@@ -1340,7 +1340,7 @@ STEP 3: 拆分后验证
 | 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 知道文件该放哪 |
 | 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | 知道怎么治理 |
 | 4 | 项目规则 | — | `D:\ZephyrAlpha\.trae\rules\project_rules.md` | RULE-ZERO~NINE |
-| 5 | 模块注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 知道有哪些模块 |
+| 5 | 模块注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 知道有哪些模块 |
 | 6 | 蓝图注册表 | — | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 知道有哪些蓝图 |
 | 7 | 脚本清单 | — | `D:\ZephyrAlpha\scripts\script-manifest.yaml` | 知道有哪些脚本 |
 | 8 | 跨模块依赖 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | 知道依赖关系 |
@@ -1373,7 +1373,7 @@ STEP 3: 拆分后验证
 | 8 | Phase Check Registry | `D:\ZephyrAlpha\src\zephyr\governance\phase_check_registry.py` | 修改 | 追加gate_orphan_judge |
 | 9 | Skill Registry | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | 修改 | 追加SKILL-DOM-ORP-001 |
 | 10 | scaffold.py | `D:\ZephyrAlpha\scripts\scaffold.py` | 修改 | 追加SWID Tag注入 |
-| 11 | 模块注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 修改 | 追加MOD-INF-029 |
+| 11 | 模块注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 修改 | 追加MOD-INF-029 |
 | 12 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 修改 | 追加本蓝图 |
 | 13 | 跨模块依赖 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | 修改 | 追加6条依赖 |
 | 14 | 中央注册表 | `D:\ZephyrAlpha\docs\registry_of_registries.yaml` | 读取 | 只读 |

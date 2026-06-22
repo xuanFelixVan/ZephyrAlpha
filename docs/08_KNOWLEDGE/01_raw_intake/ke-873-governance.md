@@ -8,7 +8,7 @@ category: governance
 
 2.2 三层物理位置速查
 
-> **详细路径清单** → See `architecture-model/scripts/scripts_model.yaml`（governance/arch_guard/quality 三域）
+> **详细路径清单** → See `architecture_model/scripts/scripts_model.yaml`（governance/arch_guard/quality 三域）
 
 | 层 | 关键物理位置 | 代表产物 |
 |---|---|---|

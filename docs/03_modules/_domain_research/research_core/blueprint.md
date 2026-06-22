@@ -42,7 +42,7 @@ depends_on:
     at: "§10"
     why: "CTR-P1-014 ExperimentResult消费"
 references:
-  - path: "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\target-architecture\\architecture-model\\layers\\l09_research_innovation.yaml"
+  - path: "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\target-architecture\\architecture_model\\layers\\l09_research_innovation.yaml"
     section: ""
     why: "架构层YAML真源"
 codification_level: L1
@@ -465,7 +465,7 @@ class BacktestConfig:
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | construction_progress+priority更新 | 进度+优先级变更 |
-| 2 | 架构层YAML | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\layers\l09_research_innovation.yaml` | 确认files列表与磁盘一致 | ARB-23双重现实 |
+| 2 | 架构层YAML | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\layers\l09_research_innovation.yaml` | 确认files列表与磁盘一致 | ARB-23双重现实 |
 | 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 确认L09条目与蓝图一致 | 依赖对齐 |
 
 ---
@@ -546,7 +546,7 @@ class BacktestConfig:
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4 |
-| 产出位置 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\cross_layer_contracts.yaml` |
+| 产出位置 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\cross_layer_contracts.yaml` |
 | 验收标准 | BacktestResult注册为producer契约，L13可消费 |
 | 验证命令 | `grep "CTR-P1-014" cross_layer_contracts.yaml` |
 | G7 检查项 | 下游L13可消费 |
@@ -785,7 +785,7 @@ class BacktestConfig:
 | 2 | 目录结构标准 | GOV-DOC-002 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/MTH-013 |
 | 4 | 文件命名规范 | GOV-DOC-003 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 命名规则 |
-| 5 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 5 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 6 | 架构总览 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |

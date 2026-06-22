@@ -161,7 +161,7 @@ updated: "2026-06-22"
 | [ke-1036-governance.md](ke-1036-governance.md) | Markdown | 5.3 创建模块时的完整步骤（最复杂场景） |
 | [ke-1037-governance.md](ke-1037-governance.md) | Markdown | 5.3 跳级规则（明令禁止） |
 | [ke-1038-ai-v1-2-0-39-46.md](ke-1038-ai-v1-2-0-39-46.md) | Markdown | ke-1038-ai-v1-2-0-39-46.md |
-| [ke-1039-architecture-model-yaml.md](ke-1039-architecture-model-yaml.md) | Markdown | 5.3 Architecture Model YAML |
+| [ke-1039-architecture_model-yaml.md](ke-1039-architecture_model-yaml.md) | Markdown | 5.3 Architecture Model YAML |
 | [ke-104-tier.md](ke-104-tier.md) | Markdown | 1.5.1 Tier 1：硬编码枚举值（变更必须同步） |
 | [ke-1040-sla.md](ke-1040-sla.md) | Markdown | 5.3 SLA 与格式要求 |
 | [ke-1041-modules-b-track-interface.md](ke-1041-modules-b-track-interface.md) | Markdown | 5.4 `03_modules/_b_track_interfaces/` — 原 07_ai_engineering（已合并） |
@@ -2107,10 +2107,10 @@ updated: "2026-06-22"
 | [ke-2805-deliverysemantics.md](ke-2805-deliverysemantics.md) | Markdown | DeliverySemantics（消息传递语义） |
 | [ke-2806-detector-registry-yaml.md](ke-2806-detector-registry-yaml.md) | Markdown | ke-2806-detector-registry-yaml.md |
 | [ke-2807-dispatch.md](ke-2807-dispatch.md) | Markdown | dispatch 过程中记录每个模块的副作用 |
-| [ke-2808-dom-gov.md](ke-2808-dom-gov.md) | Markdown | DOM-GOV-001 集成契约锚点 |
-| [ke-2809-dom-gov-001-dependency-crossch.md](ke-2809-dom-gov-001-dependency-crossch.md) | Markdown | DOM-GOV-001 Dependency Crosscheck |
+| [ke-2808-dom-gov.md](ke-2808-dom-gov.md) | Markdown | MOD-023 集成契约锚点 |
+| [ke-2809-dom-gov-001-dependency-crossch.md](ke-2809-dom-gov-001-dependency-crossch.md) | Markdown | MOD-023 Dependency Crosscheck |
 | [ke-281-documentat.md](ke-281-documentat.md) | Markdown | ke-281-documentat.md |
-| [ke-2810-dom-gov-001-downstream-anchor.md](ke-2810-dom-gov-001-downstream-anchor.md) | Markdown | DOM-GOV-001 Downstream Anchor Report |
+| [ke-2810-dom-gov-001-downstream-anchor.md](ke-2810-dom-gov-001-downstream-anchor.md) | Markdown | MOD-023 Downstream Anchor Report |
 | [ke-2811-domain-governance.md](ke-2811-domain-governance.md) | Markdown | _domain-governance |
 | [ke-2812-domain-skill.md](ke-2812-domain-skill.md) | Markdown | 每个 Domain Skill 的标准目录结构 |
 | [ke-2813-drift-into-failure.md](ke-2813-drift-into-failure.md) | Markdown | === 故障正常化漂移 Drift Into Failure === |
@@ -2475,8 +2475,8 @@ updated: "2026-06-22"
 | [ke-314-doc-type-direc.md](ke-314-doc-type-direc.md) | Markdown | 3.4.1 防幻觉三向映射（doc_type → directory → rule_form） |
 | [ke-3140-session-lo.md](ke-3140-session-lo.md) | Markdown | 9. 开放问题 |
 | [ke-3141-adr-frontmatter.md](ke-3141-adr-frontmatter.md) | Markdown | 关键决策（从 ADR frontmatter 提取） |
-| [ke-3142-architecture-model-valid-from.md](ke-3142-architecture-model-valid-from.md) | Markdown | 关键里程碑（基于 architecture-model valid_from + git log 反推） |
-| [ke-3143-architecture-model-yaml-md.md](ke-3143-architecture-model-yaml-md.md) | Markdown | ke-3143-architecture-model-yaml-md.md |
+| [ke-3142-architecture_model-valid-from.md](ke-3142-architecture_model-valid-from.md) | Markdown | 关键里程碑（基于 architecture_model valid_from + git log 反推） |
+| [ke-3143-architecture_model-yaml-md.md](ke-3143-architecture_model-yaml-md.md) | Markdown | ke-3143-architecture_model-yaml-md.md |
 | [ke-3144-bug-1-4-contract-dataclass.md](ke-3144-bug-1-4-contract-dataclass.md) | Markdown | ke-3144-bug-1-4-contract-dataclass.md |
 | [ke-3145-bug-1-inputsanitizer-init.md](ke-3145-bug-1-inputsanitizer-init.md) | Markdown | Bug |
 | [ke-3146-bug-2-inputsanitizer-sani.md](ke-3146-bug-2-inputsanitizer-sani.md) | Markdown | Bug |
@@ -2895,7 +2895,7 @@ updated: "2026-06-22"
 | [ke-632-documentat.md](ke-632-documentat.md) | Markdown | ===== AI 自治 ===== |
 | [ke-633-documentat.md](ke-633-documentat.md) | Markdown | AI 使用指南 |
 | [ke-634-anti-corruption-layer-acl.md](ke-634-anti-corruption-layer-acl.md) | Markdown | ke-634-anti-corruption-layer-acl.md |
-| [ke-635-architecture-model.md](ke-635-architecture-model.md) | Markdown | 企业架构树中的 architecture-model（镜像说明） |
+| [ke-635-architecture_model.md](ke-635-architecture_model.md) | Markdown | 企业架构树中的 architecture_model（镜像说明） |
 | [ke-636-architecture-m.md](ke-636-architecture-m.md) | Markdown | ke-636-architecture-m.md |
 | [ke-637-documentat.md](ke-637-documentat.md) | Markdown | 六、未来待办标准（Backlog） |
 | [ke-638-c4.md](ke-638-c4.md) | Markdown | C4 模型 |

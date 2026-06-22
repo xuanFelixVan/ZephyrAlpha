@@ -196,7 +196,7 @@ fields:
       - {value: "cross_layer", description: "跨层治理"}
     applicable_docs: []
     description: "架构层归属——16 值（canonical SSoT: layer-vocabulary.yaml）"
-    source: "layer-vocabulary.yaml + architecture-model/layers/"
+    source: "layer-vocabulary.yaml + architecture_model/layers/"
     derived_from: "_registry/vocabularies/layer-vocabulary.yaml"
     note: ""
 

@@ -27,7 +27,7 @@ category: module_blueprint
 | 上下文装配器 | `D:\ZephyrAlpha\src\zephyr\context-engine\context_assembler.py` | .py |
 | G7 任务完成门禁 | `D:\ZephyrAlpha\src\zephyr\gates\task_completion_gate.py` | .py |
 | 蓝图-代码同步校验 | `D:\ZephyrAlpha\scripts\governance\d5_architecture\validate_blueprint_code_sync.py` | .py |
-| 架构模型（DB 层）| `D:\ZephyrAlpha\architecture-model\layers\b_db.yaml` | .yaml |
+| 架构模型（DB 层）| `D:\ZephyrAlpha\architecture_model\layers\b_db.yaml` | .yaml |
 | 测试 | `D:\ZephyrAlpha\tests\` | .py |
 
 ---

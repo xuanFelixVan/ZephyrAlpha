@@ -32,9 +32,9 @@ summary: "合规引擎——SecurityGateway+ComplianceEngine OCP扩展点+AISG S
 tags: [compliance, l10, security-gateway, artifact-scanner]
 priority: P0
 runtime_plane: warm
-ssot_yaml: "architecture-model/layers/l10_compliance.yaml"
+ssot_yaml: "architecture_model/layers/l10_compliance.yaml"
 references:
-  - path: "D:\\ZephyrAlpha\\architecture-model\\layers\\l10_compliance.yaml"
+  - path: "D:\\ZephyrAlpha\\architecture_model\\layers\\l10_compliance.yaml"
     section: "全篇"
     why: "YAML SSoT"
   - path: "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\system-dependency-map.md"
@@ -102,7 +102,7 @@ depends_on:
 |--------|---------|:---:|
 | construction_progress = partially_implemented → 已实现章节的代码存在 | 按章节核对 | ☐ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☐ |
-| artifact_scanner.py 存在于磁盘但未在 YAML SSoT 中注册 | `cat architecture-model/layers/l10_compliance.yaml` | ☐ |
+| artifact_scanner.py 存在于磁盘但未在 YAML SSoT 中注册 | `cat architecture_model/layers/l10_compliance.yaml` | ☐ |
 | default_security_gateway.py 根目录与 implementations/ 重复 | `diff default_security_gateway.py implementations/default_security_gateway.py` | ☐ |
 
 ### §0.3 版本-代码映射
@@ -465,7 +465,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | blueprint-registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | construction_progress更新; name统一为compliance-core | 进度更新+命名统一(ARB-21) |
-| 2 | l10_compliance.yaml | `D:\ZephyrAlpha\architecture-model\layers\l10_compliance.yaml` | 补充 artifact_scanner.py + implementations/ 子目录 | 消除孤儿文件 |
+| 2 | l10_compliance.yaml | `D:\ZephyrAlpha\architecture_model\layers\l10_compliance.yaml` | 补充 artifact_scanner.py + implementations/ 子目录 | 消除孤儿文件 |
 
 ---
 
@@ -529,7 +529,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §0.1 |
-| 产出位置 | `D:\ZephyrAlpha\architecture-model\layers\l10_compliance.yaml` |
+| 产出位置 | `D:\ZephyrAlpha\architecture_model\layers\l10_compliance.yaml` |
 | 验收标准 | audit_registration.py CLEAN |
 | 验证命令 | `python scripts/governance/audit_registration.py` |
 | G7 检查项 | artifact_scanner.py已读取；YAML路径精确；回滚方案可执行 |
@@ -549,7 +549,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | 步骤 | 如果出问题 | 回滚操作 |
 |------|----------|---------|
 | 1 | DefaultSecurityGateway三层防御实现失败 | `git checkout -- src/zephyr/compliance/implementations/` |
-| 2 | YAML注册导致格式错误 | `git checkout -- architecture-model/layers/l10_compliance.yaml` |
+| 2 | YAML注册导致格式错误 | `git checkout -- architecture_model/layers/l10_compliance.yaml` |
 | 3 | ComplianceManagerBase修改导致接口断裂 | `git checkout -- src/zephyr/compliance/compliance_manager.py` |
 
 ### 16.5 施工完成标准
@@ -557,7 +557,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | # | 产出物 | 存放完整绝对路径 | 是否存在 | 内容非空 | §0对齐 |
 |---|--------|---------------|:---:|:---:|:---:|
 | 1 | DefaultSecurityGateway | `D:\ZephyrAlpha\src\zephyr\compliance\implementations\default_security_gateway.py` | ☐ | ☐ | ☐ |
-| 2 | l10_compliance.yaml | `D:\ZephyrAlpha\architecture-model\layers\l10_compliance.yaml` | ☐ | ☐ | ☐ |
+| 2 | l10_compliance.yaml | `D:\ZephyrAlpha\architecture_model\layers\l10_compliance.yaml` | ☐ | ☐ | ☐ |
 | 3 | ComplianceManagerBase | `D:\ZephyrAlpha\src\zephyr\compliance\compliance_manager.py` | ☐ | ☐ | ☐ |
 
 - [ ] DefaultSecurityGateway import成功
@@ -723,7 +723,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | 2 | 目录结构标准 | GOV-DOC-002 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射、边界判据 |
 | 3 | 治理方法论 | PS-STD-011 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012 + MTH-013 |
 | 4 | 文件命名规范 | GOV-DOC-003 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 命名规则 |
-| 5 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 5 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 6 | 架构总览 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |
@@ -746,7 +746,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 | 4 | artifact_scanner.py | `D:\ZephyrAlpha\src\zephyr\compliance\artifact_scanner.py` | 修改 | 注册到YAML SSoT |
 | 5 | default_security_gateway.py（根目录） | `D:\ZephyrAlpha\src\zephyr\compliance\default_security_gateway.py` | 废弃 | 导出兼容层→迁移 |
 | 6 | implementations/default_security_gateway.py | `D:\ZephyrAlpha\src\zephyr\compliance\implementations\default_security_gateway.py` | 修改 | 完善三层防御实现 |
-| 7 | l10_compliance.yaml | `D:\ZephyrAlpha\architecture-model\layers\l10_compliance.yaml` | 修改 | 补充artifact_scanner注册 |
+| 7 | l10_compliance.yaml | `D:\ZephyrAlpha\architecture_model\layers\l10_compliance.yaml` | 修改 | 补充artifact_scanner注册 |
 | 8 | blueprint-registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 修改 | name统一为compliance-core |
 
 ---

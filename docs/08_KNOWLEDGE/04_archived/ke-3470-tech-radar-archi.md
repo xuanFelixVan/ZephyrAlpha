@@ -1,12 +1,12 @@
 ---
 module_id: KE-3335----tech-radar--------archi-001
-title: 5.2 对标 Tech Radar 状态（基于 `architecture-model/technology/technology_landscape.yaml
+title: 5.2 对标 Tech Radar 状态（基于 `architecture_model/technology/technology_landscape.yaml
 category: documentation
 ---
 
-# 5.2 对标 Tech Radar 状态（基于 `architecture-model/technology/technology_landscape.yaml
+# 5.2 对标 Tech Radar 状态（基于 `architecture_model/technology/technology_landscape.yaml
 
-5.2 对标 Tech Radar 状态（基于 `architecture-model/technology/technology_landscape.yaml`）
+5.2 对标 Tech Radar 状态（基于 `architecture_model/technology/technology_landscape.yaml`）
 
 | 技术栈 | Radar 状态 | 激活时机 |
 |---|---|---|

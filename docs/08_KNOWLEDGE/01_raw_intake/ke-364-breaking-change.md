@@ -12,11 +12,11 @@ category: documentation
 ```
 发现需要 Breaking Change
     ↓
-在 `architecture-model/contracts/cross_layer_contracts.yaml` 中标记 old_version → deprecated
+在 `architecture_model/contracts/cross_layer_contracts.yaml` 中标记 old_version → deprecated
     ↓
 新建 new_version 接口，与旧版本共存一个 MINOR 周期（≥1 sprint）
     ↓
-所有消费方完成迁移确认（checklist 见 `architecture-model/contracts/cross_layer_contracts.yaml`）
+所有消费方完成迁移确认（checklist 见 `architecture_model/contracts/cross_layer_contracts.yaml`）
     ↓
 废弃旧版本，更新 MAJOR 版本号
     ↓

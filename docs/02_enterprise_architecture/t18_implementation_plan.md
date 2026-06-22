@@ -110,7 +110,7 @@ edges表已有3个设计态保护触发器：
 | D-SIGNAL | 474 | 5.9% |
 | D-INTEGRATION | 416 | 5.2% |
 | D-INFRA_OPS | 387 | 4.8% |
-| D-INFRASTRUCTURE | 311 | 3.9% |
+| D-INFRA_RUNTIME | 311 | 3.9% |
 | D-FACTOR | 302 | 3.8% |
 | 其他29个域 | 2,807 | 35.0% |
 | **合计** | **8,020** | **100%** |

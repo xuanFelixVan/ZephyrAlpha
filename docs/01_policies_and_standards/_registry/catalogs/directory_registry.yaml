@@ -1,9 +1,9 @@
 # [A_config] module_id=CFG-directory-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 
-# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
 
-# module_id: DOM-GOV-001
+# module_id: MOD-023
 
 # stability: evolving
 
@@ -319,7 +319,7 @@ directories:
 
     status: active
 
-    note: "?target-architecture/"
+    note: "?target_architecture/"
 
 
 
@@ -930,11 +930,11 @@ directories:
     kb_ref: null
     track: C
     status: deprecated
-    note: "2026-06-10 deprecated——目录从未创建，内容在 target-architecture/ 中"
+    note: "2026-06-10 deprecated——目录从未创建，内容在 target_architecture/ 中"
 
 
 
-  - path: "docs/02_enterprise_architecture/target-architecture/"
+  - path: "docs/02_enterprise_architecture/target_architecture/"
 
     responsibility: "目标架构——TOGAF 10 视图 + 架构模型 + 蓝图 + 图表"
 
@@ -954,11 +954,11 @@ directories:
 
 
 
-  - path: "docs/02_enterprise_architecture/target-architecture/architecture-model/"
+  - path: "docs/02_enterprise_architecture/target_architecture/architecture_model/"
 
     responsibility: "架构模型——layers/cross-cutting/events/contracts/domain/technology/scripts"
 
-    parent: "docs/02_enterprise_architecture/target-architecture/"
+    parent: "docs/02_enterprise_architecture/target_architecture/"
 
     has_index: true
 
@@ -974,10 +974,10 @@ directories:
 
 
 
-  - path: "docs/02_enterprise_architecture/target-architecture/by-domain/"
+  - path: "docs/02_enterprise_architecture/target_architecture/by-domain/"
 
     responsibility: "按域视图——docs/frontend/scripts/src 四大域入?"
-    parent: "docs/02_enterprise_architecture/target-architecture/"
+    parent: "docs/02_enterprise_architecture/target_architecture/"
 
     has_index: false
 
@@ -992,10 +992,10 @@ directories:
     note: "2026-05-02 清空：域视图内容已合并至父视?(03-AA v2.2.0)，子目录?index.md 已删?"
 
 
-  - path: "docs/02_enterprise_architecture/target-architecture/diagrams/"
+  - path: "docs/02_enterprise_architecture/target_architecture/diagrams/"
 
     responsibility: "Mermaid 架构图表——C4/L1-L3 + 运行时拓?+ 序列?29 ?"
-    parent: "docs/02_enterprise_architecture/target-architecture/"
+    parent: "docs/02_enterprise_architecture/target_architecture/"
 
     has_index: true
 
@@ -1147,7 +1147,7 @@ directories:
 
   - path: "docs/09_audit/findings/"
 
-    responsibility: "安全与合?Finding、事件初?Markdown 落盘（对?target-architecture/06-security_architecture.md?"
+    responsibility: "安全与合?Finding、事件初?Markdown 落盘（对?target_architecture/06-security_architecture.md?"
     parent: "docs/09_audit/"
 
     has_index: true

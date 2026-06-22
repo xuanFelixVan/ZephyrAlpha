@@ -8,7 +8,7 @@ category: documentation
 
 3.1 总览表（按业务层维度）
 
-> **SSoT 声明**：运行平面归属的 **Single Source of Truth** 是 [`architecture-model/cross-cutting/runtime_planes.yaml`](architecture-model/cross-cutting/runtime_planes.yaml)（Hot 7 模块 / Warm 39 模块 / Cold 24 模块 + 6 条跨面通信规则）。下表从该 YAML **只读派生**，如有冲突以 YAML 为准。
+> **SSoT 声明**：运行平面归属的 **Single Source of Truth** 是 [`architecture_model/cross-cutting/runtime_planes.yaml`](architecture_model/cross-cutting/runtime_planes.yaml)（Hot 7 模块 / Warm 39 模块 / Cold 24 模块 + 6 条跨面通信规则）。下表从该 YAML **只读派生**，如有冲突以 YAML 为准。
 
 | 业务层 | 子模块 | Hot 🔥 | Warm 🌡️ | Cold ❄️ | 备注 |
 |--------|--------|:------:|:-------:|:------:|------|

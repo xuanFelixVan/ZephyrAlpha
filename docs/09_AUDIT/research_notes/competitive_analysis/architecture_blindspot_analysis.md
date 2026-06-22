@@ -1,5 +1,5 @@
 ---
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-023
 title: 2026 05 04 Architecture Blindspot Analysis
 module_id: GOV-057---
 

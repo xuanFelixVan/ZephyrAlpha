@@ -15,7 +15,7 @@ ttl: permanent
 template_source: "vector-memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
 truth_source:
   - "03_modules/_cross_layer/context-engine/blueprint.md（MOD-INF-008 — 详细设计与 CT 锚点；Phase 5 真源）"
-  - "architecture-model/layers/b_context_engine.yaml（Context Engine YAML SSoT）"
+  - "architecture_model/layers/b_context_engine.yaml（Context Engine YAML SSoT）"
 supersedes:
   - "docs/03_modules/_b_track_interfaces/context-interface-contract.md (will archive in B-b)"
 related_kb:

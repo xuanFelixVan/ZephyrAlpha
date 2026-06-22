@@ -10,7 +10,7 @@ owner: ZephyrAlpha-Owner
 classification: confidential
 language: zh
 depends_on:
-  - {target: EA-ARCH-MODEL-INDEX, at: "§文件清单", why: "同目录索引——终局锁定文件�?architecture-model 索引管理，引用其文件清单"}
+  - {target: EA-ARCH-MODEL-INDEX, at: "§文件清单", why: "同目录索引——终局锁定文件�?architecture_model 索引管理，引用其文件清单"}
 ttl: permanent
 ---
 

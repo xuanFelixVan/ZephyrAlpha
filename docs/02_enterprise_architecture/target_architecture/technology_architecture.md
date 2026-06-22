@@ -58,13 +58,13 @@ This view is **driven by** the Application Architecture (application characteris
 
 ### 2.1 Already decided / 已确定的技术决策
 
-> **📋 技术栈完整清单**：见 [`architecture-model/technology/technology_landscape.yaml`](architecture-model/technology/technology_landscape.yaml)，采用 ThoughtWorks Technology Radar 四象限分类（adopt/trial/assess/hold/build），包含 43 个技术项的版本、用途、决策状态及 KB 决策记录 引用。
+> **📋 技术栈完整清单**：见 [`architecture_model/technology/technology_landscape.yaml`](architecture_model/technology/technology_landscape.yaml)，采用 ThoughtWorks Technology Radar 四象限分类（adopt/trial/assess/hold/build），包含 43 个技术项的版本、用途、决策状态及 KB 决策记录 引用。
 
 ### 2.1B Vibe Coding 2.0 AI 基础设施技术选型（17 项聚焦视图）
 
 > 新增于 v2.1.0（2026-04-24）。源自 `vibe-coding-audit-merged.md` Qwen 17 项技术选型共识，是 AI 基础设施的**强约束选型**。
 
-**权威真源**：[`architecture-model/technology/vibe_coding_infrastructure_tech_stack.yaml`](architecture-model/technology/vibe_coding_infrastructure_tech_stack.yaml)（17 项 AI 基础设施选型） + [`architecture-model/technology/technology_landscape.yaml`](architecture-model/technology/technology_landscape.yaml)（43 项全技术栈雷达）
+**权威真源**：[`architecture_model/technology/vibe_coding_infrastructure_tech_stack.yaml`](architecture_model/technology/vibe_coding_infrastructure_tech_stack.yaml)（17 项 AI 基础设施选型） + [`architecture_model/technology/technology_landscape.yaml`](architecture_model/technology/technology_landscape.yaml)（43 项全技术栈雷达）
 
 **两者关系**：
 
@@ -151,7 +151,7 @@ L00 Data Source → L02 Alpha Factor → L03 Signal Generation → L04 Risk Mana
 
 横向治理贯穿：`L10 Governance & Compliance` + `L04 Risk Management` + `L08 Human-AI Interface`
 
-> 细颗粒度数据契约 → `application_architecture.md §7` + `architecture-model/contracts/cross_layer_contracts.yaml`
+> 细颗粒度数据契约 → `application_architecture.md §7` + `architecture_model/contracts/cross_layer_contracts.yaml`
 
 ---
 
@@ -421,7 +421,7 @@ L00 Data Source → L02 Alpha Factor → L03 Signal Generation → L04 Risk Mana
 
 | Date | Description |
 |------|-------------|
-| 2026-04-24 | **v2.1.0**：B-d-3 — 追加 §2.1B Vibe Coding 2.0 AI 基础设施技术选型（17 项聚焦视图）。引用 `architecture-model/technology/vibe_coding_infrastructure_tech_stack.yaml` 作为 AI 基础设施的**强约束选型**真源；说明与 `architecture-model/technology/technology_landscape.yaml`（43 项雷达）的"聚焦子集"关系。对应 KBG-0015~0020。 |
+| 2026-04-24 | **v2.1.0**：B-d-3 — 追加 §2.1B Vibe Coding 2.0 AI 基础设施技术选型（17 项聚焦视图）。引用 `architecture_model/technology/vibe_coding_infrastructure_tech_stack.yaml` 作为 AI 基础设施的**强约束选型**真源；说明与 `architecture_model/technology/technology_landscape.yaml`（43 项雷达）的"聚焦子集"关系。对应 KBG-0015~0020。 |
 | 2026-04-21 | **v2.0.0**：Architecture-as-Code 重组织——代码示例/配置模板/Post-Activation Mermaid 图精简，视图从 1070 行压缩至 ≤600 行。 |
 | 2026-04-19 | v1.3.0-v1.4.0：批次 C/D 深加工（Deployment + Environment Matrix + Observability + DR/BCP + Capacity + Cost + Runway）。 |
 | 2026-04-18 | v1.1.0：填充 §3 运行时拓扑 + §5 第三方集成。 |

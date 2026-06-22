@@ -27,7 +27,7 @@ category: documentation
 
 **Governance / 治理工程师**：`governance_architecture.md`（三层边界定义 + 39 系统分层 + 激活时间表）→ `application_architecture.md §5`（scripts 治理代码拓扑）→ `security_architecture.md`（治理与安全交集）→ KB:decisions namespace（KBG-0010 治理架构三层边界，原物理文件已迁入）→ 源讨论稿 `archive/reorg-2026-04-24/realized-as-adr/working-designs/governance-three-layer-boundary-design.md`（ARC-20260424-004，决策溯源）
 
-**AI collaborator / AI 协作者（推荐首选路径 v1.8.0）**：`architecture-model/index.yaml`（全局索引，1 分钟定位任何模块）→ 按需读取 `architecture-model/layers/lXX.yaml`（模块属性 SSoT）→ `overview.md`（设计哲学）→ 按需读取视图正文（设计理由与叙事）
+**AI collaborator / AI 协作者（推荐首选路径 v1.8.0）**：`architecture_model/index.yaml`（全局索引，1 分钟定位任何模块）→ 按需读取 `architecture_model/layers/lXX.yaml`（模块属性 SSoT）→ `overview.md`（设计哲学）→ 按需读取视图正文（设计理由与叙事）
 
 **Frontend developer / 前端开发者**：`frontend_architecture.md`（全篇）→ `integration_architecture.md §3/§4`（API 契约规范）→ `data_architecture.md §2`（了解所需业务数据对象）→ `application_architecture.md §4.1 L08`（api_gateway 子模块）→ `security_architecture.md`（前端安全策略，active v1.0.0）
 

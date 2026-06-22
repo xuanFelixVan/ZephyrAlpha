@@ -768,7 +768,7 @@ class UnregisteredModule:
 ```
 1. 全量扫描（CircadianScheduler 04:00 触发）
    - 遍历 src/zephyr/ 下所有 .py 文件
-   - 遍历 architecture-model/ 下所有 .yaml 文件
+   - 遍历 architecture_model/ 下所有 .yaml 文件
    - 对比 CapabilityRegistry.list_all()
    - 输出 UnregisteredModule 列表
 
@@ -778,7 +778,7 @@ class UnregisteredModule:
    - 输出单个 UnregisteredModule
 
 3. 蓝图扫描（CircadianScheduler 07:00 触发）
-   - 遍历 architecture-model/ 下所有 .yaml
+   - 遍历 architecture_model/ 下所有 .yaml
    - 检查蓝图定义的模块是否都有对应 CapabilityCard
    - 输出蓝图→代码→注册的三方对齐报告
 ```
@@ -912,7 +912,7 @@ HealthMonitor.reconcile() 每次调和时：
 
 ```
 1. 遍历 src/zephyr/ 下所有 .py 文件 → 300+ 个文件
-2. 遍历 architecture-model/ 下所有 .yaml → 31 个蓝图
+2. 遍历 architecture_model/ 下所有 .yaml → 31 个蓝图
 3. 对比 CapabilityRegistry.list_all() → 当前注册数
 4. 差集 = 未注册模块 = 孤儿
 5. 按 priority 排序：

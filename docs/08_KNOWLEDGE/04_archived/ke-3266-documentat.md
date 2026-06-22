@@ -14,4 +14,4 @@ category: documentation
 | `technology_architecture.md` | 04-TA 定义"全局技术选型"；本视图定义"按平面差异化技术选型"；§5 技术矩阵是 04-TA §3 的下钻 |
 | `governance_architecture.md` | 09-GOV 治理三层 Policy/Factory/Runtime 是**治理维度**（谁管什么规矩）；本视图三平面是**执行维度**（代码何时以什么延迟跑在什么硬件）。二者**名字都叫 "Runtime" 但意义完全不同**——§7 专门澄清。|
 | `frontend_architecture.md` | 10-FE 定义前端独立平台；本视图 §3.4 给前端子层打运行平面标签（React SPA Warm / WebSocket stream Hot-adjacent / SSR 报表 Cold）|
-| `architecture-model/technology/technology_landscape.yaml` | Tech Radar 风格的技术清单；本视图选型依赖其 Adopt/Trial/Hold 状态（§5 引用）|
+| `architecture_model/technology/technology_landscape.yaml` | Tech Radar 风格的技术清单；本视图选型依赖其 Adopt/Trial/Hold 状态（§5 引用）|

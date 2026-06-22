@@ -1,6 +1,6 @@
 # [A_config] module_id=CFG-hard-boundaries | layer=config | stability=stable | safety=H | ai_autonomy=human_gated
 # 治理锚定
-# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
+# blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
 # module_id: CFG-hard-boundaries
 # stability: frozen
 # safety_level: H

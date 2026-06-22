@@ -1019,7 +1019,7 @@ STEP 3: 规则文件渐进加载 — 只加载相关规则子集
 | .runtime/           |  0.08MB |  146 |  🟡  | 加TTL=7天清理                       |
 | .audit\_cache/      |   3.6MB |    5 |  🟡  | 增量更新策略                          |
 | specs/              |  0.09MB |    4 |  🟡  | 与蓝图关联                           |
-| architecture-model/ |  0.07MB |   19 |  🟡  | 废弃，信息合并入depgraph.db             |
+| architecture_model/ |  0.07MB |   19 |  🟡  | 废弃，信息合并入depgraph.db             |
 | frontend/           |  0.02MB |    8 |  🟡  | 数据聚合策略                          |
 | .github/            |  0.01MB |    4 |  🟡  | CI增量触发                          |
 | .zephyr/            |  0.04MB |    7 |  🟢  | 保留                              |

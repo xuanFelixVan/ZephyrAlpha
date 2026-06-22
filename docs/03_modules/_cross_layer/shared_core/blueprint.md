@@ -33,8 +33,8 @@ stability: evolving
 verifiability: hybrid
 references: []
 depends_on:
-  - {target: "architecture-model/layers/b_shared.yaml", at: "全篇", why: "Shared YAML SSoT"}
-  - {target: "architecture-model/layers/b_core.yaml", at: "全篇", why: "Core YAML SSoT"}
+  - {target: "architecture_model/layers/b_shared.yaml", at: "全篇", why: "Shared YAML SSoT"}
+  - {target: "architecture_model/layers/b_core.yaml", at: "全篇", why: "Core YAML SSoT"}
   - {target: "MOD-INF-008", at: "blueprint.md", why: "Context Engine 消费 Shared 模型"}
   - {target: "MOD-INF-003", at: "blueprint.md", why: "Script System 消费 Shared ProcessPoolManager"}
   - {target: "MOD-INF-007", at: "blueprint.md", why: "Gate Engine 消费 Shared AsyncObserver"}
@@ -46,7 +46,7 @@ depends_on:
 > module_id: MOD-INF-016 | version: 0.18.0 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/shared/ + src/zephyr/core/ | generation: 2 | construction_progress: completed
 >
-> **SSoT 声明**: Shared canon SSoT 为 [b_shared.yaml](file:///D:/ZephyrAlpha/architecture-model/layers/b_shared.yaml)；Core canon SSoT 为 [b_core.yaml](file:///D:/ZephyrAlpha/architecture-model/layers/b_core.yaml)。Shared + Core 合并为单一蓝图（均为跨层基础设施，体积较小）。
+> **SSoT 声明**: Shared canon SSoT 为 [b_shared.yaml](file:///D:/ZephyrAlpha/architecture_model/layers/b_shared.yaml)；Core canon SSoT 为 [b_core.yaml](file:///D:/ZephyrAlpha/architecture_model/layers/b_core.yaml)。Shared + Core 合并为单一蓝图（均为跨层基础设施，体积较小）。
 
 **负向责任**：不涉及应用层业务逻辑 / GUI 渲染 / 外部 API 集成 / 数据库 Schema 设计（→ MOD-INF-012）。
 
@@ -1267,7 +1267,7 @@ STEP 3: 拆分后验证
 |---|------|-----------|------------|----------|
 | 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则、doc_type词表、frontmatter模板 |
 | 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射、边界判据 |
-| 3 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 3 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 4 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 5 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 6 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |

@@ -56,7 +56,7 @@ sections:
         path: _registry/catalogs/document-metadata-index-registry.yaml
       - code: MOD-ID
         name: 模块ID
-        path: 02_enterprise_architecture/.../architecture-model/module_id_registry.yaml
+        path: 02_enterprise_architecture/.../architecture_model/module_id_registry.yaml
       - code: MODULE
         name: 模块
         path: 03_modules/module-registry.yaml

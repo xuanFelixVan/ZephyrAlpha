@@ -44,7 +44,7 @@ Integration Architecture（集成架构视图）回答以下问题：
 | `application_architecture.md` | 应用模块的功能职责与层次划分（what is each module）|
 | `technology_architecture.md` | 技术栈、基础设施、协议选型（how is it built）|
 | **本视图（integration_architecture.md）** | 模块与模块之间、系统与外部之间的**连接方式**（how do they talk）|
-| `architecture-model/contracts/cross_layer_contracts.yaml` | 各接口的**契约规格**（数据结构、版本、稳定性等级）|
+| `architecture_model/contracts/cross_layer_contracts.yaml` | 各接口的**契约规格**（数据结构、版本、稳定性等级）|
 
 ---
 
@@ -113,7 +113,7 @@ MarketDataTick (raw)
 
 **图例**：🔒 = frozen（不可变契约） | 🔓 = mutable（可变契约，含状态机）
 
-所有层间数据对象均在 `src/zephyr/shared/contracts/` 定义（frozen dataclass），见 `architecture-model/contracts/cross_layer_contracts.yaml` 完整规格。
+所有层间数据对象均在 `src/zephyr/shared/contracts/` 定义（frozen dataclass），见 `architecture_model/contracts/cross_layer_contracts.yaml` 完整规格。
 
 > **📊 跨层契约可视化图表**：
 > - [`diagrams/data_flow.mmd`](diagrams/data_flow.mmd) — 核心数据流全景图（14 层体系 + CTR 标注）
@@ -147,11 +147,11 @@ MarketDataTick (raw)
 ```
 发现需要 Breaking Change
     ↓
-在 `architecture-model/contracts/cross_layer_contracts.yaml` 中标记 old_version → deprecated
+在 `architecture_model/contracts/cross_layer_contracts.yaml` 中标记 old_version → deprecated
     ↓
 新建 new_version 接口，与旧版本共存一个 MINOR 周期（≥1 sprint）
     ↓
-所有消费方完成迁移确认（checklist 见 `architecture-model/contracts/cross_layer_contracts.yaml`）
+所有消费方完成迁移确认（checklist 见 `architecture_model/contracts/cross_layer_contracts.yaml`）
     ↓
 废弃旧版本，更新 MAJOR 版本号
     ↓
@@ -163,7 +163,7 @@ MarketDataTick (raw)
 ### 4.3 废弃政策（Deprecation Policy）
 
 1. 任何外部接口（EI 系列）废弃前，在本视图 §3.2 集成点清单中标记 `status: deprecated`，注明废弃时间和替代方案
-2. 内部接口废弃须在 `architecture-model/contracts/cross_layer_contracts.yaml` 中标记 `stability: deprecated`
+2. 内部接口废弃须在 `architecture_model/contracts/cross_layer_contracts.yaml` 中标记 `stability: deprecated`
 3. 废弃的接口保留至少 1 个完整的回测周期（当前为 30 天）后移除
 
 ---
@@ -227,7 +227,7 @@ MarketDataTick (raw)
 
 | 文档 | 内容 | 关系 |
 |------|------|------|
-| `architecture-model/contracts/cross_layer_contracts.yaml` | 各接口的契约规格（数据结构、版本、稳定性） | 本视图 §4 的**详细数据** |
+| `architecture_model/contracts/cross_layer_contracts.yaml` | 各接口的契约规格（数据结构、版本、稳定性） | 本视图 §4 的**详细数据** |
 | `application_architecture.md §7` | 关键集成点叙述（应用架构视角）| 本视图的前置阅读（应用层集成意图）|
 | `technology_architecture.md §5` | 集成协议与技术选型（技术架构视角）| 本视图的技术实现背景 |
 

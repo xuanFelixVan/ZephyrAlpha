@@ -14705,7 +14705,7 @@ tree:
       - ssot-authority-map.md
       - ssot-contradiction-tracker.yaml
       - system-dependency-map.md
-      target-architecture/:
+      target_architecture/:
         __files__:
         - overview.md
         - business_architecture.md
@@ -14727,7 +14727,7 @@ tree:
         - index.md
         - revision_history.md
         - session_carryover_schema.md
-        architecture-model/:
+        architecture_model/:
           __files__:
           - index.yaml
           - index.md
@@ -15606,7 +15606,7 @@ tree:
           changes/:
             __files__:
             - index.md
-            DOM-GOV-001/:
+            MOD-023/:
               __files__:
               - completeness_report.md
               - dependency_crosscheck.md
@@ -18093,7 +18093,7 @@ tree:
         - KE-documentat-ai-000.md
         - KE-documentat-ai-003.md
         - KE-documentat-anti-corruption_layer___acl___-001.md
-        - KE-documentat-architecture-model-004.md
+        - KE-documentat-architecture_model-004.md
         - KE-documentat-audit-04________architecture-m-004.md
         - KE-documentat-backlog-003.md
         - KE-documentat-c4-000.md
@@ -20600,8 +20600,8 @@ tree:
         - KE-session_lo-8_3-005.md
         - KE-session_lo-9-000.md
         - KE-session_lo-adr_frontmatter-002.md
-        - KE-session_lo-architecture-model_valid_from-003.md
-        - KE-session_lo-architecture-model_yaml___md-001.md
+        - KE-session_lo-architecture_model_valid_from-003.md
+        - KE-session_lo-architecture_model_yaml___md-001.md
         - KE-session_lo-bug-000.md
         - KE-session_lo-bug__1__4___contract_dataclass-000.md
         - KE-session_lo-bug__1__inputsanitizer___init_-000.md
@@ -22085,8 +22085,8 @@ tree:
         - KE-session_lo-6_2_context_engine-000.md
         - KE-session_lo-8_1_schema_version-002.md
         - KE-session_lo-9-000.md
-        - KE-session_lo-architecture-model_valid_from-003.md
-        - KE-session_lo-architecture-model_yaml___md-001.md
+        - KE-session_lo-architecture_model_valid_from-003.md
+        - KE-session_lo-architecture_model_yaml___md-001.md
         - KE-session_lo-bug-000.md
         - KE-session_lo-codegen______bug-000.md
         - KE-session_lo-l00_data_source_3-000.md

@@ -35,7 +35,7 @@ depends_on:
   - {target: "MOD-INF-011", at: "§ollama", why: "Vector Memory——复用 OllamaChat 的 /api/chat 调用模式"}
 references:
   - {path: "D:\\ZephyrAlpha\\docs\\03_modules\\_cross_layer\\auto-runtime-core\\blueprint.md", section: "§3", why: "AutoRuntimeCore 集成架构"}
-  - {path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain-governance\\blueprint.md", section: "§3", why: "DOM-GOV-001 集成契约定义"}
+  - {path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain-governance\\blueprint.md", section: "§3", why: "MOD-023 集成契约定义"}
 codification_level: L1
 ---
 
@@ -481,7 +481,7 @@ class BenchmarkCase(BaseModel):
 
 ### 12.1 域契约锚点
 
-> 权威定义见 [DOM-GOV-001 blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_domain-governance/blueprint.md) §3。
+> 权威定义见 [MOD-023 blueprint.md](file:///d:/ZephyrAlpha/docs/03_modules/_domain-governance/blueprint.md) §3。
 
 | 域契约ID | 域 | 契约内容 | 对方模块 | 同步更新规则 |
 |---------|-----|---------|---------|------------|
@@ -819,7 +819,7 @@ STEP 3: 拆分后验证
 | 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/MTH-013 |
 | 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 命名规则 |
-| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 5 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |

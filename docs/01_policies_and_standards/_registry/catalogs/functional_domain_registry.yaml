@@ -67,7 +67,7 @@ entries:
   - 治理自动化
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-GOV-DRIFT
+- domain: D-GOV_DRIFT
   subdomain: drift_detection
   ssot_module: MOD-INF-023
   ssot_path: src/zephyr/governance/drift_detection/
@@ -152,7 +152,7 @@ entries:
   - 自动补全
   stability: stable
   ai_autonomy: human_gated
-- domain: D-GOV-AUDIT
+- domain: D-GOV_AUDIT
   subdomain: audit_orchestration
   ssot_module: MOD-INF-027
   ssot_path: src/zephyr/governance/audit_orchestration/
@@ -166,7 +166,7 @@ entries:
   - audit orchestrator
   stability: evolving
   ai_autonomy: ai_modifiable
-- domain: D-GOV-AUDIT
+- domain: D-GOV_AUDIT
   subdomain: semantic_audit
   ssot_module: MOD-INF-028
   ssot_path: src/zephyr/governance/semantic_audit/
@@ -314,7 +314,7 @@ entries:
   - 冲突解决
   stability: evolving
   ai_autonomy: ai_modifiable
-- domain: D-INFRA-RUNTIME
+- domain: D-INFRA_RUNTIME
   subdomain: runtime_core
   ssot_module: MOD-INF-035
   ssot_path: src/zephyr/infra_runtime/
@@ -455,7 +455,7 @@ entries:
   - rule automation
   stability: stable
   ai_autonomy: human_gated
-- domain: D-GOV-AUDIT
+- domain: D-GOV_AUDIT
   subdomain: audit-trail
   ssot_module: MOD-INF-020
   ssot_path: src/zephyr/governance/audit_trail/
@@ -565,7 +565,7 @@ entries:
   - 容量规划
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-INFRA-RUNTIME
+- domain: D-INFRA_RUNTIME
   subdomain: persistence
   ssot_module: MOD-INF-012
   ssot_path: src/zephyr/data/persistence/
@@ -736,7 +736,7 @@ entries:
   - 混沌
   stability: stable
   ai_autonomy: ai_modifiable
-- domain: D-INFRA-RUNTIME
+- domain: D-INFRA_RUNTIME
   subdomain: runtime_integration
   ssot_module: MOD-INF-002
   ssot_path: src/zephyr/infra_runtime/

@@ -9,7 +9,7 @@ category: documentation
 
 8. 双轨/下沉结构（已退役）
 
-> **2026-05-01 更新**：原 `by-domain/` 双轨结构已于 README v2.0.0 统一移除。所有原计划下沉到 `by-domain/frontend-domain/` 的内容已吸纳入本视图及 `architecture-model/` YAML 联邦模型。以下触发清单保留为历史参考，实际落地不再依赖独立 by-domain 目录。
+> **2026-05-01 更新**：原 `by-domain/` 双轨结构已于 README v2.0.0 统一移除。所有原计划下沉到 `by-domain/frontend-domain/` 的内容已吸纳入本视图及 `architecture_model/` YAML 联邦模型。以下触发清单保留为历史参考，实际落地不再依赖独立 by-domain 目录。
 
 **下沉触发条件（历史记录）**：
 

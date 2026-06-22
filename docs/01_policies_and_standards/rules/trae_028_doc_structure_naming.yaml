@@ -615,11 +615,11 @@ sections:
     - description: 规则文件强制路径(含AI治理/架构治理/文档治理等所有规则)
       details: docs/01_policies_and_standards/rules/
     - description: 企业架构视图(TOGAF)强制路径
-      details: docs/02_enterprise_architecture/target-architecture/
+      details: docs/02_enterprise_architecture/target_architecture/
     - description: KB决策记录强制路径
       details: KB:decisions(Git-backed);旧docs/02_enterprise_architecture/adr/物理树已移除
     - description: 架构模型YAML强制路径
-      details: docs/02_enterprise_architecture/target-architecture/architecture-model/
+      details: docs/02_enterprise_architecture/target_architecture/architecture_model/
     - description: 架构快照强制路径
       details: docs/02_enterprise_architecture/snapshots/
     - description: 模块生命周期文档强制路径

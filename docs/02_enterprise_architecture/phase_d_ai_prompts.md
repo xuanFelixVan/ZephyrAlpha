@@ -1,4 +1,4 @@
-# 阶段D：18个AI完整提示词
+# 阶段D：19个AI完整提示词
 
 > 每个AI复制自己的提示词，在新对话中执行。
 > 工作流程：创建详细任务卡 → 审查任务卡 → 循环修复 → 执行任务卡
@@ -718,41 +718,35 @@ STEP 1-14 按14步统一流程执行
 
 ***
 
-## AI-17: F17 交易核心链路
+## AI-17: F17 交易骨架清理+蓝图保留
 
 ```
-你是AI-17，负责恢复F17 交易核心链路功能。
+你是AI-17，负责清理F17 交易核心链路骨架代码，保留蓝图。
 
 ## 你的元任务卡
 - task_id: DM-201017
-- 功能: F17 交易核心链路
-- 蓝图: MOD-L02
-- 源码包: src/zephyr/ex_core/
-- 包含子系统: ExecutionEngine + OrderManager + OMSRiskEngine(三层风控) + StopLossEngine + AlphaSignalPipeline + FactorRegistry + BacktestEngine
+- 功能: F17 交易骨架清理+蓝图保留
+- 蓝图: MOD-L02~L07（6个蓝图，保留）
+- 删除范围: src/zephyr/ex_core/ + factor/ + pf_core/ + risk/ + governance/financial_governance/oms_risk_engine.py + governance/strategy_base.py + governance/strategy_registry.py + governance/strategies/default_equity_strategy.py
+
+## 背景
+交易骨架代码零实际import消费者，后续将从上至下重新设计业务域。保留蓝图（设计意图），删除全部骨架代码。
 
 ## 阶段A：创建详细任务卡
-
 1. 读取元任务卡: tr.get('DM-201017')
-2. 读蓝图: Grep "MOD-L02" docs/03_modules/
-3. 拆分详细任务卡（序号从202701开始）:
-   - DM-202701: ExecutionEngine恢复
-   - DM-202702: OrderManager恢复
-   - DM-202703: OMSRiskEngine三层风控恢复
-   - DM-202704: StopLossEngine恢复
-   - DM-202705: AlphaSignalPipeline恢复
-   - DM-202706: FactorRegistry恢复
-   - DM-202707: BacktestEngine恢复
-   - DM-202708: 蓝图更新+三方对齐+索引更新
+2. 拆分详细任务卡（序号从202701开始）:
+   - DM-202701: ex_core/删除
+   - DM-202702: factor/删除
+   - DM-202703: pf_core/删除
+   - DM-202704: risk/删除
+   - DM-202705: governance域交易骨架删除
+   - DM-202706: 蓝图更新+三方对齐+索引更新
 
-## 阶段B+C：审查+循环修复
-
-## 阶段D：执行任务卡
-按14步流程逐张执行:
-- STEP 2重点: Grep "ExecutionEngine" + Grep "OrderManager" + Grep "OMSRiskEngine" + Glob src/zephyr/ex_core/**/*.py
-- STEP 8重点: python -m pytest tests/ -k trading -v
-- STEP 10重点: 测试超额下单、风控绕过、止损失效、回测作弊
-
-每张卡完成后transition(COMPLETED)，全部完成后报告F17整体状态。
+## 阶段D：执行
+- STEP 6: 删除前Grep确认无其他模块import
+- STEP 8: python -c "import zephyr" 确认删除后正常
+- STEP 11: 6个蓝图标记not_started+file_manifest清空
+- STEP 13: 清理__init__.py导出+_SUBMODULES+financial_governance/__init__.py
 ```
 
 ***
@@ -812,8 +806,50 @@ STEP 1-14 按14步统一流程执行
 5. 进度追踪: 记录18个AI的完成状态
 
 ## 启动顺序
-- 第1波(无依赖): AI-02, AI-03, AI-04, AI-05, AI-06, AI-08, AI-09, AI-10, AI-16, AI-18
+- 第1波(无依赖): AI-02, AI-03, AI-04, AI-05, AI-06, AI-08, AI-09, AI-10, AI-16, AI-18, AI-19
 - 第2波(依赖第1波): AI-01, AI-07, AI-11, AI-13, AI-14, AI-15
 - 第3波(依赖第2波): AI-12, AI-17
+```
+
+---
+
+## AI-19: F19 系统遥测域
+
+```
+你是AI-19，负责恢复F19 系统遥测域功能。
+
+## 你的元任务卡
+- task_id: DM-201019
+- 功能: F19 系统遥测域
+- 蓝图: MOD-INF-015
+- 源码包: src/zephyr/infrastructure/system_telemetry/
+- 包含子系统: Telemetry门面(9子系统) + auto_bootstrap + watchdog(三冗余) + health_probes(12系统) + metrics_bridge + contract_metrics + traces + ai_behavior + alerts + archive + logs
+
+## 背景
+系统遥测域是项目核心基础设施，25个文件，100+消费者，被zephyr/__init__.py包加载时自动bootstrap。蓝图状态completed，只需恢复不需新建。注意depgraph中路径漂移：infra_runtime→infrastructure。
+
+## 阶段A：创建详细任务卡
+
+1. 读取元任务卡: tr.get('DM-201019')
+2. 读蓝图: Grep "MOD-INF-015" docs/03_modules/
+3. 拆分详细任务卡（序号从202901开始）:
+   - DM-202901: Telemetry门面+auto_bootstrap恢复
+   - DM-202902: watchdog三冗余恢复
+   - DM-202903: health_probes+health_aggregator恢复
+   - DM-202904: metrics_bridge+contract_metrics恢复
+   - DM-202905: traces+ai_behavior+alerts恢复
+   - DM-202906: archive+logs+schema+profiles恢复
+   - DM-202907: 蓝图更新+三方对齐+索引更新
+
+## 阶段B+C：审查+循环修复
+
+## 阶段D：执行任务卡
+按14步流程逐张执行:
+- STEP 2重点: Glob src/zephyr/infrastructure/system_telemetry/**/*.py + Grep全项目找100+消费者
+- STEP 5重点: 注意depgraph路径漂移 infra_runtime→infrastructure
+- STEP 8重点: python -c "import zephyr" 确认bootstrap正常
+- STEP 10重点: 测试遥测注入、看门狗Panic Mode、健康探针失效
+
+每张卡完成后transition(COMPLETED)，全部完成后报告F19整体状态。
 ```
 

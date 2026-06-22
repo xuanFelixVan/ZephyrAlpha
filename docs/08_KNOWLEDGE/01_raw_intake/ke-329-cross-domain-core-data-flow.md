@@ -15,6 +15,6 @@ L00 Data Source → L02 Alpha Factor → L03 Signal Generation → L04 Risk Mana
 
 横向治理贯穿：`L10 Governance & Compliance` + `L04 Risk Management` + `L08 Human-AI Interface`
 
-> 细颗粒度数据契约 → `application_architecture.md §7` + `architecture-model/contracts/cross_layer_contracts.yaml`
+> 细颗粒度数据契约 → `application_architecture.md §7` + `architecture_model/contracts/cross_layer_contracts.yaml`
 
 ---

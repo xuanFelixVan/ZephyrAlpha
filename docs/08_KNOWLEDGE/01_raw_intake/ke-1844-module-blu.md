@@ -12,7 +12,7 @@ category: module_blueprint
 |------|---------|
 | KB 代码 | `D:\ZephyrAlpha\src\zephyr\kb\` |
 | 知识数据 | `D:\ZephyrAlpha\docs\08_knowledge\` |
-| 架构 YAML SSoT | `D:\ZephyrAlpha\architecture-model\layers\b_kb.yaml` |
+| 架构 YAML SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_kb.yaml` |
 | 任务系统蓝图 | `D:\ZephyrAlpha\docs\03_modules\l01-infrastructure\task-system\blueprint.md` |
 | 上下文引擎 ADR | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0015-context-engine-architecture.md` |
 | VMS ADR | `D:\ZephyrAlpha\docs\02_enterprise_architecture\adr\adr-0016-vector-memory-chromadb-bge-m3.md` |

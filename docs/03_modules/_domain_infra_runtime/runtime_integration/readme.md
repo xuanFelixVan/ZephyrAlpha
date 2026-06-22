@@ -1,5 +1,5 @@
 ---
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-023
 title: runtime-integration README
 module_id: MOD-032---
 

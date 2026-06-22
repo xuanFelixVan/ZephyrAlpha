@@ -22,7 +22,7 @@ actual_disk_path: "src/zephyr/governance/code_dedup_engine/"
 last_updated: "2026-05-14"
 last_verified: "2026-05-14"
 generation: 3
-belongs_to: "DOM-GOV-001"
+belongs_to: "MOD-023"
 parent_module: ""
 codification_level: L2
 codification_at: "2026-05-14"

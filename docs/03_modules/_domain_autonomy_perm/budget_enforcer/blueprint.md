@@ -46,7 +46,7 @@ generation: 3
 stability: evolving
 ---
 
-## DOM-GOV-001 集成契约锚点
+## MOD-023 集成契约锚点
 
 > 权威定义见 [`../../_domain-governance/blueprint.md`](../../_domain-governance/blueprint.md) §3。
 

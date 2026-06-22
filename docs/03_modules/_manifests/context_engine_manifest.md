@@ -1,5 +1,5 @@
 ---
-blueprint_id: DOM-GOV-001
+blueprint_id: MOD-023
 title: Context Engine.Manifest
 module_id: MOD-050---
 

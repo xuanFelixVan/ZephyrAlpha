@@ -112,7 +112,7 @@
 
 ### B.13 自动接入子系统（新增）
 - [ ] B.13.1 ModuleOnboardingScanner.scan_filesystem() 扫描 src/zephyr/ 下所有 .py
-- [ ] B.13.2 ModuleOnboardingScanner.scan_blueprints() 扫描 architecture-model/ 下所有 .yaml
+- [ ] B.13.2 ModuleOnboardingScanner.scan_blueprints() 扫描 architecture_model/ 下所有 .yaml
 - [ ] B.13.3 ModuleOnboardingScanner.diff_registered() 正确对比 CapabilityRegistry
 - [ ] B.13.4 AutoIntegrator.analyze_module() 临时启动 L3 API 分析
 - [ ] B.13.5 confidence >= 0.8 → 自动注册到 CapabilityRegistry

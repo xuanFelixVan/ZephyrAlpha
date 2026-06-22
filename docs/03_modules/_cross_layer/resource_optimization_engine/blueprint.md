@@ -806,7 +806,7 @@ class DegradationMatrix(BaseModel):
 | 9 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` | 新增 R030 路由规则 | AI 可路由 |
 | 10 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | 新增 SKILL-DOM-ROE-001 + task_keywords | AI 可发现技能 |
 | 11 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | 新增 MOD-INF-032 依赖关系 | 依赖链可追溯 |
-| 12 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 新增 MOD-INF-032 ID | ID 唯一性 |
+| 12 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 新增 MOD-INF-032 ID | ID 唯一性 |
 | 13 | Gate 注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` | 新增 G-RES 资源检查门禁 | 资源不足时门禁阻断 |
 | 14 | SLI 注册表 | `D:\ZephyrAlpha\config\sli_registry.yaml` | 新增资源优化 SLI 指标 | 可观测性 |
 | 15 | MCP 工具契约 | `D:\ZephyrAlpha\src\zephyr\mcp\tool-contracts.yaml` | 新增 6 个资源优化工具契约 | MCP 可调用 |
@@ -987,7 +987,7 @@ class DegradationMatrix(BaseModel):
    - 更新 `D:\ZephyrAlpha\config\blueprint_routing.yaml`：新增 R030 路由规则
    - 更新 `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml`：新增 SKILL-DOM-ROE-001 + task_keywords
    - 更新 `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml`：新增依赖
-   - 更新 `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml`：新增 ID
+   - 更新 `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml`：新增 ID
    - 更新 `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml`：新增 G-RES 门禁
    - 更新 `D:\ZephyrAlpha\config\sli_registry.yaml`：新增资源 SLI
    - 更新 `D:\ZephyrAlpha\src\zephyr\mcp\tool-contracts.yaml`：新增 6 个工具契约
@@ -1172,7 +1172,7 @@ STEP 3: 拆分后验证
 | 15 | 蓝图架构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_042_meta_rule_standard.yaml` |
 | 16 | 元数据注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` |
 | 17 | 目录结构标准 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` |
-| 18 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` |
+| 18 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` |
 | 19 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` |
 | 20 | 模块注册表 | `D:\ZephyrAlpha\docs\03_modules\module-registry.yaml` |
 | 21 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` |
@@ -1222,7 +1222,7 @@ STEP 3: 拆分后验证
 | 18 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` | 修改 | 修改 |
 | 19 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | 修改 | 修改 |
 | 20 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | 修改 | 修改 |
-| 21 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 修改 | 修改 |
+| 21 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 修改 | 修改 |
 | 22 | Gate 注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` | 修改 | 修改 |
 | 23 | SLI 注册表 | `D:\ZephyrAlpha\config\sli_registry.yaml` | 修改 | 修改 |
 | 24 | MCP 工具契约 | `D:\ZephyrAlpha\src\zephyr\mcp\tool-contracts.yaml` | 修改 | 修改 |
@@ -1594,7 +1594,7 @@ AGENTS.md → PS-STD-005 §7 → MOD-MASTER-001 → MOD-INF-032
 | 3 | 蓝图路由表 | `D:\ZephyrAlpha\config\blueprint_routing.yaml` | R030 路由规则 |
 | 4 | 技能注册表 | `D:\ZephyrAlpha\src\zephyr\agent-spec\skill-registry.yaml` | SKILL-DOM-ROE-001 + keywords |
 | 5 | 跨模块依赖注册表 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\cross-module-dependency-registry.yaml` | MOD-INF-032 依赖 |
-| 6 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | MOD-INF-032 ID |
+| 6 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | MOD-INF-032 ID |
 | 7 | Gate 注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` | G-RES-001~003 |
 | 8 | SLI 注册表 | `D:\ZephyrAlpha\config\sli_registry.yaml` | 5 个资源 SLI |
 | 9 | MCP 工具契约 | `D:\ZephyrAlpha\src\zephyr\mcp\tool-contracts.yaml` | 6 个工具契约 |

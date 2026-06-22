@@ -1289,7 +1289,7 @@ updated: "2026-06-22"
 | [ke-4509-six-standards.md](ke-4509-six-standards.md) | Markdown | ke-4509-six-standards.md |
 | [ke-4510-v0-1-0.md](ke-4510-v0-1-0.md) | Markdown | ke-4510-v0-1-0.md |
 | [ke-4511-module-blu.md](ke-4511-module-blu.md) | Markdown | ke-4511-module-blu.md |
-| [ke-4512-dom-gov.md](ke-4512-dom-gov.md) | Markdown | DOM-GOV-001 集成契约锚点 |
+| [ke-4512-dom-gov.md](ke-4512-dom-gov.md) | Markdown | MOD-023 集成契约锚点 |
 | [ke-4513-domain-governance.md](ke-4513-domain-governance.md) | Markdown | _domain-governance |
 | [ke-4514-e-ai-b4-e01-e12.md](ke-4514-e-ai-b4-e01-e12.md) | Markdown | ke-4514-e-ai-b4-e01-e12.md |
 | [ke-4515-encryption-at-rest.md](ke-4515-encryption-at-rest.md) | Markdown | 加密策略（Encryption at Rest） |
@@ -1390,8 +1390,8 @@ updated: "2026-06-22"
 | [ke-4610-context-engine.md](ke-4610-context-engine.md) | Markdown | 6.2 Context Engine 对其他服务的调用 |
 | [ke-4611-schema-version.md](ke-4611-schema-version.md) | Markdown | 8.1 schema_version 约定 |
 | [ke-4612-session-lo.md](ke-4612-session-lo.md) | Markdown | 9. 开放问题 |
-| [ke-4613-architecture-model-valid-from.md](ke-4613-architecture-model-valid-from.md) | Markdown | 关键里程碑（基于 architecture-model valid_from + git log 反推） |
-| [ke-4614-architecture-model-yaml-md.md](ke-4614-architecture-model-yaml-md.md) | Markdown | ke-4614-architecture-model-yaml-md.md |
+| [ke-4613-architecture_model-valid-from.md](ke-4613-architecture_model-valid-from.md) | Markdown | 关键里程碑（基于 architecture_model valid_from + git log 反推） |
+| [ke-4614-architecture_model-yaml-md.md](ke-4614-architecture_model-yaml-md.md) | Markdown | ke-4614-architecture_model-yaml-md.md |
 | [ke-4615-bug.md](ke-4615-bug.md) | Markdown | 发现的 Bug 与修复 |
 | [ke-4616-codegen-bug.md](ke-4616-codegen-bug.md) | Markdown | ke-4616-codegen-bug.md |
 | [ke-4617-l00-data-source.md](ke-4617-l00-data-source.md) | Markdown | L00 Data Source（3 个新文件） |

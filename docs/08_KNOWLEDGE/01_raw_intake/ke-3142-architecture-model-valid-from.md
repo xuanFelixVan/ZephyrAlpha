@@ -1,16 +1,16 @@
 ---
 module_id: KE-3040
-title: 关键里程碑（基于 architecture-model valid_from + git log 反推）
+title: 关键里程碑（基于 architecture_model valid_from + git log 反推）
 category: session_log
 ---
 
-# 关键里程碑（基于 architecture-model valid_from + git log 反推）
+# 关键里程碑（基于 architecture_model valid_from + git log 反推）
 
-关键里程碑（基于 architecture-model valid_from + git log 反推）
+关键里程碑（基于 architecture_model valid_from + git log 反推）
 
 | 日期（估计） | 事件 |
 |------|------|
-| 2026-04-17 | 架构模型创建：`architecture-model/index.yaml` + `module_id_registry.yaml` |
+| 2026-04-17 | 架构模型创建：`architecture_model/index.yaml` + `module_id_registry.yaml` |
 | 2026-04-17~20 | 14 层物理架构 YAML 化（l00-l13 + b_* 层） |
 | 2026-04-20~24 | 40+ 篇 ADR（architectural decision records）撰写 |
 | 2026-04-25~28 | Gate Engine v2.0 设计 + 初步实现 |

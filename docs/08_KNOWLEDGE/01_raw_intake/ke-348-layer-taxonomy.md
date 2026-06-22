@@ -10,11 +10,11 @@ category: documentation
 4.1 14-layer taxonomy / 14 层分层体系
 
 > **SSoT 声明**：模块属性（子模块清单、接口签名、优先级、运行平面归属）的
-> **Single Source of Truth** 是 [`architecture-model/layers/*.yaml`](architecture-model/layers/)。
+> **Single Source of Truth** 是 [`architecture_model/layers/*.yaml`](architecture_model/layers/)。
 > 本节及任何其他 Markdown 文件中的模块属性描述均为**只读引用**，不得作为权威来源。
 > 如有冲突，以 YAML 文件为准。
 
-> **📋 14 层模块完整清单**：见 [`architecture-model/layers/`](architecture-model/layers/) 目录下的 YAML 定义文件（L00~L13 + shared），每个文件包含模块 ID、职责、优先级、运行时平面归属等结构化数据。
+> **📋 14 层模块完整清单**：见 [`architecture_model/layers/`](architecture_model/layers/) 目录下的 YAML 定义文件（L00~L13 + shared），每个文件包含模块 ID、职责、优先级、运行时平面归属等结构化数据。
 
 **关键设计决策（永久保留）**：
 

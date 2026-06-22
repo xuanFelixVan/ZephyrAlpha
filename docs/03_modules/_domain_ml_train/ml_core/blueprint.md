@@ -39,7 +39,7 @@ references:
 tags: [ml-platform, l11, c-track, placeholder]
 priority: P1
 runtime_plane: warm
-ssot_yaml: "architecture-model/layers/l11_ml_platform.yaml"
+ssot_yaml: "architecture_model/layers/l11_ml_platform.yaml"
 ---
 
 > ⛔ **业务层未开放，禁止施工** — 本蓝图处于 C 轨占位状态，当前仅有 Phase B 骨架代码，不得启动新施工。待 B 轨容量升级完成后按 ARB-11 三梯队策略激活。
@@ -435,8 +435,8 @@ class ModelMetadata:
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | construction_progress + version | 蓝图升级 |
-| 2 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 版本信息 | 蓝图升级 |
-| 3 | YAML架构模型 | `D:\ZephyrAlpha\architecture-model\layers\l11_ml_platform.yaml` | 子模块声明 | 依赖图对齐 |
+| 2 | 模块ID注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 版本信息 | 蓝图升级 |
+| 3 | YAML架构模型 | `D:\ZephyrAlpha\architecture_model\layers\l11_ml_platform.yaml` | 子模块声明 | 依赖图对齐 |
 
 ---
 
@@ -740,7 +740,7 @@ class ModelMetadata:
 | 1 | 元数据注册表 | PS-STD-001 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则 |
 | 2 | 目录结构标准 | GOV-DOC-002 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
-| 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 5 | 架构总览 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 6 | Shared Core 蓝图 | MOD-INF-016 | 当前版本 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\shared-core\blueprint.md` | 契约承载 |
 | 7 | 治理规则主注册表 | — | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
@@ -762,7 +762,7 @@ class ModelMetadata:
 |---|---------|------------|------|---------|
 | 1 | ML平台核心代码 | `D:\ZephyrAlpha\src\zephyr\ml_train\` | 修改 | 蓝图描述的核心代码 |
 | 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain-ml_train\ml-core\blueprint.md` | 修改 | 本文件 |
-| 3 | YAML架构模型 | `D:\ZephyrAlpha\architecture-model\layers\l11_ml_platform.yaml` | 修改 | 子模块声明对齐 |
+| 3 | YAML架构模型 | `D:\ZephyrAlpha\architecture_model\layers\l11_ml_platform.yaml` | 修改 | 子模块声明对齐 |
 
 ---
 

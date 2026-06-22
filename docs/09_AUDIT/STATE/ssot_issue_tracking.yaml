@@ -1,14 +1,14 @@
 # [A_config] module_id=CFG-ssot-issue-tracking | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
-module_id: DOM-GOV-001
+module_id: MOD-023
 ---
 # --- 治理锚定 ---
-# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
-# module_id: DOM-GOV-001
+# blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-023
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
 # --- 治理锚定结束 ---
-# [BLUEPRINT] DOM-GOV-001 | docs/09_audit/state/ssot-issue-tracking.yaml | §
+# [BLUEPRINT] MOD-023 | docs/09_audit/state/ssot-issue-tracking.yaml | §
 doc_type: register
 register_id: REG-AUDIT-003
 schema_version: "1.0.0"

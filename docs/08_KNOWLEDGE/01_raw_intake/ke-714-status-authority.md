@@ -10,7 +10,7 @@ category: documentation
 二、状态字段权威 (Status Authority) — 文档生命周期状态
 
 > ⚠️ **scope 声明**：本节定义的是【文档生命周期状态】（Markdown/YAML 文件的 frontmatter 元数据），适用于 `docs/` 下所有文档。
-> 这与 `architecture-model/layers/schema.yaml` 定义的【代码模块实现状态】（planned/candidate/approved/in_development/active/completed/deprecated）
+> 这与 `architecture_model/layers/schema.yaml` 定义的【代码模块实现状态】（planned/candidate/approved/in_development/active/completed/deprecated）
 > 是两套完全不同的枚举。字段名都叫 `status`，但适用对象不同——混淆会导致 CI 误报或不报。
 > 判断标准：看你读的文件是"文档本身"还是"描述代码模块的数据条目"。前者用本节枚举，后者用 `_schema.yaml`。
 

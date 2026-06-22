@@ -9,7 +9,7 @@ category: documentation
 
 4.2 MFE 技术选型（Activation 时定）
 
-> **📋 SSoT 声明**：前端技术栈选型（框架、构建工具、状态管理库、图表引擎等）的权威定义见 [`frontend_model.yaml`](architecture-model/frontend/frontend_model.yaml) 各模块的 `description` 字段。本节提供架构级选型决策与对比分析。
+> **📋 SSoT 声明**：前端技术栈选型（框架、构建工具、状态管理库、图表引擎等）的权威定义见 [`frontend_model.yaml`](architecture_model/frontend/frontend_model.yaml) 各模块的 `description` 字段。本节提供架构级选型决策与对比分析。
 
 **当前方案**（FE-P7 渐进激活）：**Activation 时再最终选型**，候选已缩到 3 个：
 

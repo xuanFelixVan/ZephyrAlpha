@@ -450,7 +450,7 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | construction_progress + version 更新 | 蓝图升级 |
-| 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 版本号更新 | 蓝图升级 |
+| 2 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 版本号更新 | 蓝图升级 |
 | 3 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | L03 输出契约 CTR-008→CTR-P1-015 对齐 | 契约ID不一致 |
 | 4 | 代码文件头部 | `D:\ZephyrAlpha\src\zephyr\signal\*.py` | [BLUEPRINT] 字段指向 MOD-L03-001 | 当前指向 ALPHA-SIGNAL-DOMAIN-001 |
 
@@ -777,11 +777,11 @@ L02 Alpha Factor 层产出因子信号后，需要标准化聚合、合成、资
 | 2 | 目录结构标准 | GOV-DOC-002 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
 | 4 | 文件命名规范 | GOV-DOC-003 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 命名规则 |
-| 5 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 5 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 6 | 架构总览 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 治理规则主注册表 | — | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |
-| 9 | 跨层契约 SSoT | — | — | `D:\ZephyrAlpha\architecture-model\contracts\cross_layer_contracts.yaml` | CTR 契约定义 |
+| 9 | 跨层契约 SSoT | — | — | `D:\ZephyrAlpha\architecture_model\contracts\cross_layer_contracts.yaml` | CTR 契约定义 |
 
 ---
 

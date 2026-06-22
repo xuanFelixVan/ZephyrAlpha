@@ -9,7 +9,7 @@ category: documentation
 
 3.2 总览表（按运行平面维度 — 反查视图）
 
-> 按平面维度的反查视图同样收录于 [`runtime_planes.yaml`](architecture-model/cross-cutting/runtime_planes.yaml)（`planes.hot.modules[]` / `planes.warm.modules[]` / `planes.cold.modules[]`）。以下为可读摘要：
+> 按平面维度的反查视图同样收录于 [`runtime_planes.yaml`](architecture_model/cross-cutting/runtime_planes.yaml)（`planes.hot.modules[]` / `planes.warm.modules[]` / `planes.cold.modules[]`）。以下为可读摘要：
 
 **🔥 Hot Path（7 模块，当前未激活，T1 首次激活）**
 

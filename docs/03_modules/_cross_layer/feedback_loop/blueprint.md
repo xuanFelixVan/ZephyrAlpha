@@ -291,7 +291,7 @@ fire-and-forget 防循环依赖：FLE → Pipeline/Orchestrator/AuditTrail 单�
 | 3 | 事件峰值速率 | **240 events/s** |
 | 4 | Detector 纯函数化 | `(event, state_snapshot) → list[Finding]`，无副作用 |
 | 5 | GateQueue 全局串行 | L0→L67 有序串联 (后门依赖前门结果)，不可并行 |
-| 6 | 蓝图 YAML SSoT 双向对齐 | 修改蓝图 ⇔ 同步 `architecture-model/layers/b_feedback_loop.yaml` |
+| 6 | 蓝图 YAML SSoT 双向对齐 | 修改蓝图 ⇔ 同步 `architecture_model/layers/b_feedback_loop.yaml` |
 | 7 | Python 3.12+, Pydantic V2, Ruff lint | 与项目标准一致 |
 
 ### §5.2 容量估算
@@ -442,7 +442,7 @@ fire-and-forget 防循环依赖：FLE → Pipeline/Orchestrator/AuditTrail 单�
 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` | 本文件（含设计和施工指引） |
 | 业务代码 | `D:\ZephyrAlpha\src\zephyr\feedback-loop\` | FLE 源码（10 文件） |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\` | FLE 测试用例 |
-| YAML SSoT | `D:\ZephyrAlpha\architecture-model\layers\b_feedback_loop.yaml` | 结构真源 |
+| YAML SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_feedback_loop.yaml` | 结构真源 |
 | FLE安全门禁代码 | `D:\ZephyrAlpha\src\zephyr\feedback-loop\gates\` | 43个FLE门禁实现（FLE-ACTION-REVERSIBILITY ~ FLE-SCOPE-CREEP-MONITOR + FLE-SAFETY-GATE-L1~L67），gate_id在_registry.yaml中注册，实现归属本蓝图 |
 
 ---
@@ -629,7 +629,7 @@ STEP 3: 拆分后验证
 | 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012+MTH-013 |
 | 4 | 文件命名规范 | GOV-DOC-003 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 命名规则 |
-| 5 | 模块ID注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 5 | 模块ID注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 6 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 7 | 脚本系统蓝图 | MOD-INF-005 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\script-system\blueprint.md` | FLE↔ScriptSystem接口契约 |
 | 8 | AI自治权限注册表 | GOV-AI-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI操作权限 |
@@ -652,7 +652,7 @@ STEP 3: 拆分后验证
 | 1 | FLE源码 | `D:\ZephyrAlpha\src\zephyr\feedback-loop\` | 修改 | L级扩容组件新增 |
 | 2 | FLE测试 | `D:\ZephyrAlpha\tests\unit\` | 修改 | 新增测试用例 |
 | 3 | FLE蓝图 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\feedback-loop\blueprint.md` | 修改 | 本文件 |
-| 4 | YAML SSoT | `D:\ZephyrAlpha\architecture-model\layers\b_feedback_loop.yaml` | 修改 | 同步更新 |
+| 4 | YAML SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_feedback_loop.yaml` | 修改 | 同步更新 |
 | 5 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 修改 | 版本号更新 |
 
 ---
@@ -705,7 +705,7 @@ STEP 3: 拆分后验证
 
 | 项 | 值 |
 |---|---|
-| SSoT文件 | `architecture-model/layers/b_feedback_loop.yaml` |
+| SSoT文件 | `architecture_model/layers/b_feedback_loop.yaml` |
 | 蓝图文件 | `docs/03_modules/_cross_layer/feedback-loop/blueprint.md`（本文件） |
 | 冲突规则 | YAML SSoT为准；蓝图提供设计细节和施工指引 |
 

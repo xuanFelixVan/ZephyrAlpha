@@ -1,7 +1,7 @@
 # [A_config] module_id=CFG-system-pathway-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
-# module_id: DOM-GOV-001
+# blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-023
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -29,7 +29,7 @@
 #   3. 交叉引用 → 结合 module-registry.yaml 和 blueprint-registry.yaml 获取完整模块信息
 # ============================================================================
 
-module_id: DOM-GOV-001
+module_id: MOD-023
 registry:
   version: "1.2.1"
   created: "2026-05-04"

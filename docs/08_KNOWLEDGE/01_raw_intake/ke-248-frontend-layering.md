@@ -9,7 +9,7 @@ category: documentation
 
 3. 前端分层（Frontend Layering）
 
-> **📋 SSoT 声明**：前端模块清单（模块 ID / 状态 / 优先级 / runtime_plane / 激活条件等）的**唯一权威来源（Single Source of Truth）**是 [`frontend_model.yaml`](architecture-model/frontend/frontend_model.yaml)。本节仅提供架构级分层概览与职责说明；如需查询具体模块列表、状态或优先级，请以 YAML 为准。
+> **📋 SSoT 声明**：前端模块清单（模块 ID / 状态 / 优先级 / runtime_plane / 激活条件等）的**唯一权威来源（Single Source of Truth）**是 [`frontend_model.yaml`](architecture_model/frontend/frontend_model.yaml)。本节仅提供架构级分层概览与职责说明；如需查询具体模块列表、状态或优先级，请以 YAML 为准。
 
 **本节与 03-AA 14 层 Python 后端分层平行但物理隔离**。前端采用 4 层模型（Application / Container / Component / Tools），数字越小越接近业务价值，数字越大越接近基础设施。
 

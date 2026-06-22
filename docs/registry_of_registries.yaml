@@ -115,7 +115,7 @@ tiers:
         maintenance: manual
         entry_count: 8
         status: active
-        description: DOM-GOV-001 治理域集成蓝图——8模块(MOD-INF-018~025) + 8条G-CT跨模块契约 + MCP GovernanceServer统一入口
+        description: MOD-023 治理域集成蓝图——8模块(MOD-INF-018~025) + 8条G-CT跨模块契约 + MCP GovernanceServer统一入口
 
       - registry_id: REG-AFX-FIXER-001
         name: 修复器注册表

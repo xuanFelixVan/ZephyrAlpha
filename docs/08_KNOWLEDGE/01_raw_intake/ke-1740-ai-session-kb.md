@@ -14,5 +14,5 @@ category: module_blueprint
 | 2 | `src/zephyr/kb/kb_repo.py` | 核心仓储——10状态机 + SQLite + ChromaDB |
 | 3 | `src/zephyr/kb/unified_memory_api.py` | RI-02 统一内存 API——remember/learn/forget/recall |
 | 4 | `src/zephyr/kb/chromadb_init.py` | ChromaDB 4 Collection 初始化 |
-| 5 | `architecture-model/layers/b_kb.yaml` | 架构 YAML SSoT——KB 模块登记 |
+| 5 | `architecture_model/layers/b_kb.yaml` | 架构 YAML SSoT——KB 模块登记 |
 | 6 | MOD-INF-006 `task-system/blueprint.md` | 任务系统——KB 施工任务追踪格式 |

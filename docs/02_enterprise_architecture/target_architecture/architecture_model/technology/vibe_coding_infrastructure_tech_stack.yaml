@@ -1,7 +1,7 @@
 # [A_config] module_id=CFG-vibe-coding-infrastructure-tech-stack | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: DOM-GOV-001 | docs/03_modules/_domain-governance/blueprint.md | §
-# module_id: DOM-GOV-001
+# blueprint: MOD-023 | docs/03_modules/_domain-governance/blueprint.md | §
+# module_id: MOD-023
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
@@ -9,11 +9,11 @@
 # ============================================================================
 # Vibe Coding 2.0 Infrastructure Tech Stack / 基建技术选型栈
 # ============================================================================
-# 位置：docs/02_enterprise_architecture/target-architecture/architecture-model/technology/vibe_coding_infrastructure_tech_stack.yaml
+# 位置：docs/02_enterprise_architecture/target_architecture/architecture_model/technology/vibe_coding_infrastructure_tech_stack.yaml
 # 定位：Vibe Coding 2.0 6 大核心服务的 17 项具体技术选型（单一真源 SSoT）
 #       被 04-technology_architecture.md 引用，被 KBG-0015~0020 作为决策依据。
 #       企业级技术全景雷达见同目录 technology_landscape.yaml（43 项 ThoughtWorks Radar）
-# 迁移：2026-05-01 从 target-architecture/technology_landscape.yaml 重命名迁移至此，消除同名冲突
+# 迁移：2026-05-01 从 target_architecture/technology_landscape.yaml 重命名迁移至此，消除同名冲突
 # ============================================================================
 
 meta:
@@ -26,7 +26,7 @@ meta:
   last_updated: "2026-05-01"
   owner: ZephyrAlpha-Owner
   language: zh
-  note: "2026-05-01 从 target-architecture/technology_landscape.yaml 重命名迁移，消除与 architecture-model/technology/technology_landscape.yaml 的同名冲突"
+  note: "2026-05-01 从 target_architecture/technology_landscape.yaml 重命名迁移，消除与 architecture_model/technology/technology_landscape.yaml 的同名冲突"
   truth_sources:
     - "vibe-coding-audit-merged.md §Qwen 技术选型总表（17 项）"
     - "vibe-coding-audit-merged.md §Kimi §9.7 / §7.5.2 / §10.6.2 / §13.5.2 / §11.6.2"
@@ -470,7 +470,7 @@ revisions:
   - date: "2026-05-01"
     version: "1.1.0"
     author: "ai_architect_cleanup"
-    note: "从 target-architecture/technology_landscape.yaml 重命名迁移至 architecture-model/technology/，消除与 architecture-model/technology/technology_landscape.yaml 的同名冲突。文件名改为 vibe_coding_infrastructure_tech_stack.yaml 以明确职责（Vibe Coding 2.0 基建技术栈 vs 企业级技术雷达）。"
+    note: "从 target_architecture/technology_landscape.yaml 重命名迁移至 architecture_model/technology/，消除与 architecture_model/technology/technology_landscape.yaml 的同名冲突。文件名改为 vibe_coding_infrastructure_tech_stack.yaml 以明确职责（Vibe Coding 2.0 基建技术栈 vs 企业级技术雷达）。"
   - date: "2026-04-24"
     version: "1.0.0"
     author: "opus47_architect"

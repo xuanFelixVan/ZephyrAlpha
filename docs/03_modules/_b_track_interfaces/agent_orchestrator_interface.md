@@ -15,7 +15,7 @@ ttl: permanent
 template_source: "vector-memory-service-interface.md v1.2.0 (B-a-1 定稿模板)"
 truth_source:
   - "03_modules/infra_ops/task-system/blueprint.md（MOD-INF-006 — Agent Orchestrator / 任务生命周期与状态机真源）"
-  - "architecture-model/layers/b_orchestrator.yaml（Orchestrator YAML SSoT）"
+  - "architecture_model/layers/b_orchestrator.yaml（Orchestrator YAML SSoT）"
 supersedes:
   - "archive/reorg-2026-04-24/08_ai_engineering/workflow-interface-contract.md (archived 2026-04-24)"
 related_kb:

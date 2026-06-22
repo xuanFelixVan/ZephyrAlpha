@@ -83,7 +83,7 @@ summary: >
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 漂移检测体系——它解决了 100% AI 施工场景下的代码/配置/架构漂移无感知问题。核心职责包括：39 检测器并行调度、10 状态漂移生命周期管理、基线快照与自动对账、漂移预算与施工门禁、告警路由与疲劳管理、混沌注入与红白对抗验证。当前规模 54 文件 39 检测器，目标容量 1500 模块 DEEP scan。上游依赖 MOD-INF-021 Rollback（漂移→回滚桥接）和 MOD-INF-022 Escalation（预算耗尽升级），下游被 DOM-GOV-001 治理域蓝图和所有 AI 施工 session 消费。
+本蓝图描述 ZephyrAlpha 漂移检测体系——它解决了 100% AI 施工场景下的代码/配置/架构漂移无感知问题。核心职责包括：39 检测器并行调度、10 状态漂移生命周期管理、基线快照与自动对账、漂移预算与施工门禁、告警路由与疲劳管理、混沌注入与红白对抗验证。当前规模 54 文件 39 检测器，目标容量 1500 模块 DEEP scan。上游依赖 MOD-INF-021 Rollback（漂移→回滚桥接）和 MOD-INF-022 Escalation（预算耗尽升级），下游被 MOD-023 治理域蓝图和所有 AI 施工 session 消费。
 
 ---
 
@@ -694,7 +694,7 @@ class BaselineSnapshot(BaseModel):
 
 | 集成目标系统 | 集成方式 | 集成点 | 验证方法 |
 |------------|---------|--------|---------|
-| DOM-GOV-001 治理域蓝图 | 职责分派 | §2 职责分派表 | 蓝图 §2 条目存在 |
+| MOD-023 治理域蓝图 | 职责分派 | §2 职责分派表 | 蓝图 §2 条目存在 |
 | MOD-INF-021 Rollback | 漂移→回滚桥接(G-CT-005) | rollback_bridge.py | G-CT-005 契约可调用 |
 | MOD-INF-022 Escalation | 漂移预算耗尽升级(G-CT-006) | drift_engine.py | G-CT-006 契约可调用 |
 | MOD-INF-020 Audit Trail | 漂移事件审计 | tamper_proof_audit.py | AiAuditLogger 写入验证 |
@@ -716,7 +716,7 @@ class BaselineSnapshot(BaseModel):
 
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | MOD-INF-023 版本更新 | 版本升级同步 |
+| 1 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | MOD-INF-023 版本更新 | 版本升级同步 |
 | 2 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | MOD-INF-023 条目更新 | 版本升级同步 |
 | 3 | 治理资产清单 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | MOD-INF-023 元数据更新 | 版本升级同步 |
 | 4 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\system-dependency-map.md` | 线3:治理闭环 MOD-INF-023 版本 | 版本升级同步 |
@@ -1048,7 +1048,7 @@ STEP 3: 拆分后验证
 | 1 | 元数据注册表 | PS-STD-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则 |
 | 2 | 目录结构标准 | GOV-DOC-002 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
-| 4 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 4 | 模块 ID 注册表 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 5 | 架构总览 | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
 | 6 | 代码构建标准 | GOV-ENG-001 | `D:\ZephyrAlpha\docs\01_policies_and_standards\governance\engineering\code-construction-standards.md` | 十字段头部 |
 | 7 | AI 压缩工作流标准 | GOV-DOC-011 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_030_doc_numbering_metadata.yaml` | 压缩规则 |
@@ -1099,7 +1099,7 @@ STEP 3: 拆分后验证
 
 | Tier | 消费者 | 依赖内容 |
 |:----:|--------|---------|
-| Tier 1 | DOM-GOV-001 治理域蓝图 | §2 职责分派 |
+| Tier 1 | MOD-023 治理域蓝图 | §2 职责分派 |
 | Tier 1 | MOD-INF-007 Gate Engine | gates/drift-detector.py + gate_engine.py + ct_drift_budget.py |
 | Tier 1 | MOD-INF-021 Rollback | rollback/drift_fix.py |
 | Tier 2 | MOD-INF-020 Audit Trail | audit-trail/drift_bridge.py |
@@ -1113,12 +1113,12 @@ STEP 3: 拆分后验证
 |------------|---------|
 | drift / 漂移 / 检测器 / 对账 | 加载本蓝图 |
 | behavioral-auditor/ 文件迁移 | 读取 §5.3 孤儿文件清单 + §5 约束条件 |
-| 治理域子蓝图查询 | 从 DOM-GOV-001 §2 路由到本文件 |
+| 治理域子蓝图查询 | 从 MOD-023 §2 路由到本文件 |
 
 ### 导航路径
 
 ```
-registry_of_registries.yaml → blueprint-registry.yaml → DOM-GOV-001 → §2 → MOD-INF-023
+registry_of_registries.yaml → blueprint-registry.yaml → MOD-023 → §2 → MOD-INF-023
 ```
 
 ### 漂移防护

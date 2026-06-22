@@ -51,7 +51,7 @@ rules:
 
   - id: "ESC-002"
     priority: 101
-    condition: "修改 architecture-model/ 下 YAML"
+    condition: "修改 architecture_model/ 下 YAML"
     escalate_to: "auto_guard"
     guard_checks: ["yaml_syntax", "cross_layer_contract"]
 

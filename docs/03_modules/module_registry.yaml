@@ -27,7 +27,7 @@ modules:
     version: 0.4.0
   construction_plan:
     status: partially_implemented
-- module_id: DOM-GOV-001
+- module_id: MOD-023
   name: _domain-governance
   layer: cross_layer
   functional_domain: governance

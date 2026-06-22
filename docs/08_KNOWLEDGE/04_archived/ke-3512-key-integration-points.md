@@ -8,4 +8,4 @@ category: documentation
 
 7. Key integration points / 关键集成点与接口契约
 
-> 完整契约签名 → `architecture-model/contracts/cross_layer_contracts.yaml`。本节为导读。
+> 完整契约签名 → `architecture_model/contracts/cross_layer_contracts.yaml`。本节为导读。

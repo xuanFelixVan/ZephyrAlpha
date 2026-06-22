@@ -34,7 +34,7 @@ depends_on:
     at: "§10"
     why: CTR-010 ExperimentMetric 上报 + CTR-P1-014 ExperimentResult 消费
 references:
-  - path: "D:\\ZephyrAlpha\\architecture-model\\layers\\l13_experimentation.yaml"
+  - path: "D:\\ZephyrAlpha\\architecture_model\\layers\\l13_experimentation.yaml"
     section: "§0"
     why: SSoT YAML 真源
   - path: "D:\\ZephyrAlpha\\docs\\02_enterprise_architecture\\target-architecture\\03-application_architecture.md"
@@ -44,7 +44,7 @@ summary: "实验层。ExperimentPipelineBase + ScoutAgentBase OCP 扩展点 + Ex
 tags: [experimentation, l13, c-track, ocp, scout-agent, ab-test, t2-deferred]
 priority: P2
 runtime_plane: warm
-ssot_yaml: "architecture-model/layers/l13_experimentation.yaml"
+ssot_yaml: "architecture_model/layers/l13_experimentation.yaml"
 c_track_status: "T2-deferred"
 construction_gate: "ARB-11: C轨T2层保持blocked，代码归档_experimental/。开工条件：B轨容量升级完成(CAP-C01~C03) + T1层全部激活。"
 
@@ -500,9 +500,9 @@ class ExperimentMetric:
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | version: 2.1.0 + construction_progress 更新 | 蓝图升级 |
-| 2 | SSoT YAML | `D:\ZephyrAlpha\architecture-model\layers\l13_experimentation.yaml` | 新增 CTR-009~012 契约 | 契约扩展 |
-| 3 | 跨层契约 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\cross_layer_contracts.yaml` | 新增 CTR-009~012 契约定义 | 契约注册 |
-| 4 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 确认 MOD-L13-001 注册 | 编号验证 |
+| 2 | SSoT YAML | `D:\ZephyrAlpha\architecture_model\layers\l13_experimentation.yaml` | 新增 CTR-009~012 契约 | 契约扩展 |
+| 3 | 跨层契约 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\cross_layer_contracts.yaml` | 新增 CTR-009~012 契约定义 | 契约注册 |
+| 4 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 确认 MOD-L13-001 注册 | 编号验证 |
 
 ---
 
@@ -861,9 +861,9 @@ class ExperimentMetric:
 | 1 | 元数据注册表 | PS-STD-001 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | 编号规则 |
 | 2 | 目录结构标准 | GOV-DOC-002 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 治理方法论 | PS-STD-011 | 当前版本 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_024_methodology_diagnosis.yaml` | MTH-012/013 |
-| 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
+| 4 | 模块 ID 注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
 | 5 | 架构总览 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\00-overview.md` | 架构上下文 |
-| 6 | SSoT YAML | — | — | `D:\ZephyrAlpha\architecture-model\layers\l13_experimentation.yaml` | 层级真源 |
+| 6 | SSoT YAML | — | — | `D:\ZephyrAlpha\architecture_model\layers\l13_experimentation.yaml` | 层级真源 |
 | 7 | 治理规则主注册表 | — | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\document-metadata-index-registry.yaml` | 现有规则索引 |
 | 8 | AI 自治权限注册表 | GOV-AI-001 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ai_autonomy_authority_registry.yaml` | AI 操作权限 |
 

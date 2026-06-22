@@ -35,7 +35,7 @@ child_modules:
 depends_on:
   - {target: "MOD-INF-006", at: "§3.2.1", why: "task-system——TaskCard数据层真源"}
   - {target: "MOD-INF-007", at: "§1", why: "GateEngine——门禁结果SQLite落盘消费方"}
-  - {target: "architecture-model/layers/b_db.yaml", at: "全篇", why: "DB YAML SSoT——本蓝图真源"}
+  - {target: "architecture_model/layers/b_db.yaml", at: "全篇", why: "DB YAML SSoT——本蓝图真源"}
 references:
   - {id: "PS-STD-001", at: "§2~§7", why: "frontmatter字段合法值"}
   - {id: "PS-STD-005", at: "§6", why: "蓝图归属与引用链——belongs_to字段定义"}
@@ -181,8 +181,8 @@ v3.0: AI Agent ──→ DualDBRouter.read() ──→ SQLite优先 → PG fallb
 | # | 需更新的文件 | 完整绝对路径 | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint-registry.yaml` | 更新 MOD-INF-012 版本至 4.0.0 + 新增 012A/012B 条目 | DW-045 拆分 |
-| 2 | DB YAML SSoT | `D:\ZephyrAlpha\architecture-model\layers\b_db.yaml` | 同步 code 文件 + schema_version | SSoT 漂移修复 |
-| 3 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 新增 MOD-INF-012A/012B | 新模块 ID 注册 |
+| 2 | DB YAML SSoT | `D:\ZephyrAlpha\architecture_model\layers\b_db.yaml` | 同步 code 文件 + schema_version | SSoT 漂移修复 |
+| 3 | 模块 ID 注册表 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 新增 MOD-INF-012A/012B | 新模块 ID 注册 |
 
 ---
 
@@ -233,8 +233,8 @@ v3.0: AI Agent ──→ DualDBRouter.read() ──→ SQLite优先 → PG fallb
 | 1 | 元数据注册表 | PS-STD-001 | latest | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_043_meta_rule_metadata.yaml` | frontmatter模板 |
 | 2 | 目录结构标准 | GOV-DOC-002 | latest | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml` | 路径映射 |
 | 3 | 蓝图体系架构标准 | PS-STD-005 | 1.0.0 | `D:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_042_meta_rule_standard.yaml` | 三级金字塔 + belongs_to |
-| 4 | 模块ID注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture-model\module_id_registry.yaml` | 编号注册 |
-| 5 | DB YAML SSoT | — | 2.2.0 | `D:\ZephyrAlpha\architecture-model\layers\b_db.yaml` | DB YAML真源 |
+| 4 | 模块ID注册表 | — | — | `D:\ZephyrAlpha\docs\02_enterprise_architecture\target-architecture\architecture_model\module_id_registry.yaml` | 编号注册 |
+| 5 | DB YAML SSoT | — | 2.2.0 | `D:\ZephyrAlpha\architecture_model\layers\b_db.yaml` | DB YAML真源 |
 | 6 | 子蓝图 012A | MOD-INF-012A | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\sub-blueprints\MOD-INF-012A-blueprint.md` | Core 已实现细节 |
 | 7 | 子蓝图 012B | MOD-INF-012B | 1.0.0 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\database\sub-blueprints\MOD-INF-012B-blueprint.md` | v3.0 设计细节 |
 

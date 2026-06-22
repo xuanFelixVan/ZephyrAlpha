@@ -90,7 +90,7 @@ STEP 3: → 重新生成depgraph，让prototype节点对齐物理文件
 | D-FACTOR | 因子 | src/zephyr/factor/ | production | 319 |
 | D-FRONTEND | 前端 | src/zephyr/frontend/ | production | 237 |
 | D-GOVERNANCE | 治理 | src/zephyr/governance/ | production | 4643 |
-| D-INFRASTRUCTURE | 运行时基础设施 | src/zephyr/infrastructure/ | production | 726 |
+| D-INFRA_RUNTIME | 运行时基础设施 | src/zephyr/infrastructure/ | production | 726 |
 | D-INFRA_OPS | 基础设施运维 | src/zephyr/infra_ops/ | unbuilt | 404 |
 | D-INTEGRATION | 集成 | src/zephyr/integration/ | production | 704 |
 | D-INTELLIGENCE | 智能 | src/zephyr/intelligence/ | production | 272 |
@@ -201,7 +201,7 @@ STEP 3: → 重新生成depgraph，让prototype节点对齐物理文件
 | 骨架扫描 | ✓ | 根目录11个顶级目录+src/zephyr/40域+docs/6目录+tests/22目录全部合格 |
 | 根目录清理 | ✓ | 删除13个垃圾文件，移动/删除8个冗余目录 |
 | 空目录清理 | ✓ | 清理11,692个空目录 |
-| 遗留问题4修复 | ✓ | D-INFRA_RUNTIME→D-INFRASTRUCTURE，D-SIGNAL→design_only |
+| 遗留问题4修复 | ✓ | D-INFRA_RUNTIME→D-INFRA_RUNTIME，D-SIGNAL→design_only |
 
 ### 4.2 STEP 2：物理路径对齐检查（已完成）
 
