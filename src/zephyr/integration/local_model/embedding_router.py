@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-INT_embedding_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain-integration/local-model/blueprint.md | §3.1
+# [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/local_model/blueprint.md | §3.1
 
 # [MODULE] zephyr.integration.local_model.embedding_router
 
@@ -52,8 +52,8 @@ import numpy as np
 
 _logger = logging.getLogger(__name__)
 
-MODEL_DIR_BGE_M3: Path = Path("models/bge-m3")
-MODEL_DIR_BGE_SMALL: Path = Path("models/bge-small-zh-v1.5")
+MODEL_DIR_BGE_M3: Path = Path("data/models/local_model/bge-m3")
+MODEL_DIR_BGE_SMALL: Path = Path("data/models/local_model/paraphrase-multilingual-MiniLM-L12-v2")
 
 BGE_M3_COLLECTIONS: frozenset[str] = frozenset(
     {

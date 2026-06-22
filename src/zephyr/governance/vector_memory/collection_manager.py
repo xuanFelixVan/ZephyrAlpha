@@ -34,9 +34,9 @@ CollectionManager — MOD-INF-011 八大 Collection 全生命周期管理
 │ lessons          │ 1024     │ paragraph             │ permanent │ autonomous │
 │ knowledge        │ 1024     │ heading_aware         │ permanent │ supervised │
 │ rules            │ 1024     │ rule_level            │ permanent │ human-gated│
-│ blueprints       │  512     │ section_aware         │ permanent │ supervised │
-│ session_snapshots│  512     │ session_level         │ 90        │ autonomous │
-│ execution_traces │  512     │ time_window           │ 30        │ autonomous │
+│ blueprints       │  384     │ section_aware         │ permanent │ supervised │
+│ session_snapshots│  384     │ session_level         │ 90        │ autonomous │
+│ execution_traces │  384     │ time_window           │ 30        │ autonomous │
 └──────────────────┴──────────┴─────────────────────┴───────────┴────────────┘
 """
 
@@ -55,7 +55,7 @@ _logger = logging.getLogger(__name__)
 
 VMS_PERSIST_DIR: Path = Path("data/vector_db")
 
-ALLOWED_DIMENSIONS: frozenset[int] = frozenset({512, 1024})
+ALLOWED_DIMENSIONS: frozenset[int] = frozenset({384, 512, 1024})
 
 HOT_COLLECTIONS: frozenset[str] = frozenset({"decisions", "rules", "lessons", "knowledge"})
 COLD_COLLECTIONS: frozenset[str] = frozenset({"blueprints", "session_snapshots", "execution_traces"})
@@ -217,33 +217,33 @@ COLLECTION_SCHEMAS: dict[str, dict[str, Any]] = {
         "readers": ["CE", "Orchestrator"],
     },
     "blueprints": {
-        "dimension": 512,
+        "dimension": 384,
         "chunk_strategy": "section_aware",
         "ttl_days": 0,
         "ai_autonomy_level": "supervised",
-        "embedding_model": "BAAI/bge-small-zh-v1.5",
+        "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
         "hnsw:space": "cosine",
-        "description": "蓝图文档——Doc System写入，CE+Orc消费，512d bge-small",
+        "description": "蓝图文档——Doc System写入，CE+Orc消费，384d paraphrase-multilingual",
         "writers": ["DocSystem"],
         "readers": ["CE", "Orchestrator"],
     },
     "session_snapshots": {
-        "dimension": 512,
+        "dimension": 384,
         "chunk_strategy": "session_level",
         "ttl_days": 90,
         "ai_autonomy_level": "autonomous",
-        "embedding_model": "BAAI/bge-small-zh-v1.5",
+        "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
         "hnsw:space": "cosine",
         "description": "会话压缩摘要——SessionManager写入，CE消费",
         "writers": ["SessionManager"],
         "readers": ["CE"],
     },
     "execution_traces": {
-        "dimension": 512,
+        "dimension": 384,
         "chunk_strategy": "time_window",
         "ttl_days": 30,
         "ai_autonomy_level": "autonomous",
-        "embedding_model": "BAAI/bge-small-zh-v1.5",
+        "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
         "hnsw:space": "cosine",
         "description": "运行时任务执行语义摘要——All systems写入，FLE+CE消费，替代runtime_logs",
         "writers": ["AllSystems"],
