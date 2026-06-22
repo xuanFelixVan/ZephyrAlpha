@@ -661,7 +661,7 @@ class OverlapResult:
 
 | # | 需更新的文件 | 完整路径（相对优先） | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 模块ID注册表 | `docs/02_enterprise_architecture/target-architecture/architecture-model/module_id_registry.yaml` | 新增MOD-INF-037 | 新模块注册 |
+| 1 | 模块ID注册表 | `docs/02_enterprise_architecture/target_architecture/architecture-model/module_id_registry.yaml` | 新增MOD-INF-037 | 新模块注册 |
 | 2 | 蓝图注册表 | `docs/03_modules/blueprint-registry.yaml` | 新增registry-governance蓝图 | 蓝图注册 |
 | 3 | 注册表总索引 | `docs/registry_of_registries.yaml` | 新增REG-FUNC-DOMAIN-001条目 | 功能域注册表注册 |
 | 4 | scaffold.py | `scripts/scaffold.py` | 新增--domain参数+SSoTGate调用 | 门禁集成 |
@@ -997,7 +997,7 @@ class OverlapResult:
 |---|------|-----------|------------|----------|
 | 1 | 元数据注册表 | PS-STD-001 | `docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml` | 编号规则、doc_type词表 |
 | 2 | 目录结构标准 | GOV-DOC-002 | `docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml` | 路径映射 |
-| 3 | 模块ID注册表 | — | `docs/02_enterprise_architecture/target-architecture/architecture-model/module_id_registry.yaml` | 编号注册 |
+| 3 | 模块ID注册表 | — | `docs/02_enterprise_architecture/target_architecture/architecture-model/module_id_registry.yaml` | 编号注册 |
 | 4 | AI自治权限注册表 | GOV-AI-001 | `docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml` | AI操作权限 |
 | 5 | 注册表总索引 | — | `docs/registry_of_registries.yaml` | 43个注册表主索引 |
 | 6 | 注册表模板 | TPL-REGISTER-001 | `docs/01_policies_and_standards/templates/register-registry.md` | 功能域注册表Schema |
@@ -1023,7 +1023,7 @@ class OverlapResult:
 | 4 | 校验脚本 | `scripts/governance/d3_metadata/check_registry_consistency.py` | 新建 | 创建CLI脚本 |
 | 5 | scaffold.py | `scripts/scaffold.py` | 修改 | 新增--domain参数+SSoTGate调用 |
 | 6 | 注册表总索引 | `docs/registry_of_registries.yaml` | 修改 | 新增REG-FUNC-DOMAIN-001条目 |
-| 7 | 模块ID注册表 | `docs/02_enterprise_architecture/target-architecture/architecture-model/module_id_registry.yaml` | 修改 | 新增MOD-INF-037 |
+| 7 | 模块ID注册表 | `docs/02_enterprise_architecture/target_architecture/architecture-model/module_id_registry.yaml` | 修改 | 新增MOD-INF-037 |
 | 8 | 蓝图注册表 | `docs/03_modules/blueprint-registry.yaml` | 修改 | 新增registry-governance蓝图条目 |
 
 ---

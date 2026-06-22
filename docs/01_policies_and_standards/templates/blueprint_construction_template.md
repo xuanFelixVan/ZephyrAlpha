@@ -637,7 +637,7 @@ class {DataModel}(BaseModel):
 
 | # | 需更新的文件 | 完整路径（相对优先） | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
-| 1 | 模块 ID 注册表 | `docs/02_enterprise_architecture/target-architecture/architecture-model/module_id_registry.yaml` | {新增/修改什么} | {为什么} |
+| 1 | 模块 ID 注册表 | `docs/02_enterprise_architecture/target_architecture/architecture-model/module_id_registry.yaml` | {新增/修改什么} | {为什么} |
 | 2 | 蓝图注册表 | `docs/03_modules/blueprint-registry.yaml` | {新增/修改什么} | {为什么} |
 | 3 | 治理资产清单 | `docs/01_policies_and_standards/_registry/catalogs/document-metadata-index-registry.yaml` | {新增/修改什么} | {为什么} |
 | 4 | 依赖图 | `docs/02_enterprise_architecture/system-dependency-map.md` | {新增/修改什么} | {为什么} |
@@ -1003,7 +1003,7 @@ class {DataModel}(BaseModel):
 |---|------|-----------|------------|----------|
 | 1 | 元数据注册表 | PS-STD-001 | `docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml` | 编号规则、doc_type词表 |
 | 2 | 目录结构标准 | GOV-DOC-002 | `docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml doc_002` | 路径映射 |
-| 3 | 模块ID注册表 | — | `docs/02_enterprise_architecture/target-architecture/architecture-model/module_id_registry.yaml` | 编号注册 |
+| 3 | 模块ID注册表 | — | `docs/02_enterprise_architecture/target_architecture/architecture-model/module_id_registry.yaml` | 编号注册 |
 | 4 | AI自治权限注册表 | GOV-AI-001 | `docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml` | AI操作权限 |
 | 5 | {按项目实际补充} | {—} | `docs/...` | {用途} |
 

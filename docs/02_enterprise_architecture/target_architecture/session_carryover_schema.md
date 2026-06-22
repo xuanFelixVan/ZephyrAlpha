@@ -12,7 +12,7 @@ created_by: agent
 valid_from: 2026-04-24
 superseded_by: null
 supersedes: null
-placement_note: "本文件是模块级接口契约（Context Engine 的 JSON Schema 定义），不是 TOGAF 架构视图。当前暂放 target-architecture/ 是因为它是跨层基础设施的核心接口定义；未来迁移至 03_modules/ 下对应位置时需同步更新此 frontmatter。"
+placement_note: "本文件是模块级接口契约（Context Engine 的 JSON Schema 定义），不是 TOGAF 架构视图。当前暂放 target_architecture/ 是因为它是跨层基础设施的核心接口定义；未来迁移至 03_modules/ 下对应位置时需同步更新此 frontmatter。"
 truth_sources:
   - "[已归档-原模块候选池] vibe-coding-audit-merged.md §Opus 五 M-01 Session Carryover"
   - "[已归档-原模块候选池] vibe-coding-audit-merged.md §Kimi 9.7 Context Engine"

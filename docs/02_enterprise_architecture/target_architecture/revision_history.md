@@ -1,6 +1,6 @@
 ---
 doc_type: archive
-title: "target-architecture/ 完整修订历史"
+title: "target_architecture/ 完整修订历史"
 version: "2.2.0"
 status: Active
 layer: cross_layer
@@ -13,7 +13,7 @@ valid_from: 2026-04-17
 summary: index.md §8 修订记录的完整归档。活跃修订见 index.md §8。
 ---
 
-# 02_enterprise_architecture/target-architecture/ — 完整修订历史
+# 02_enterprise_architecture/target_architecture/ — 完整修订历史
 
 > 本文档是 `index.md` §8 修订记录的完整归档。`index.md` 仅保留最近 3 次修订条目。
 >

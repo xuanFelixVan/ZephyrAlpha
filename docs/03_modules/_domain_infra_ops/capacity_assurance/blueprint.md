@@ -1681,7 +1681,7 @@ STEP 3: 拆分后验证
 | cross-module-dependency-registry.yaml | `docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml` | 跨模块依赖登记（含 DEP-001: runtime-integration → capacity-assurance） | 全局引用 |
 | module-registry.yaml | `docs/03_modules/module-registry.yaml` | 模块生命周期登记表 SSoT | 全局引用 |
 | blueprint-registry.yaml | `docs/03_modules/blueprint-registry.yaml` | 蓝图深度评估登记表 | 全局引用 |
-| domain_events.yaml | `docs/02_enterprise_architecture/target-architecture/architecture-model/events/domain_events.yaml` | 22 条领域事件（含 SystemDegraded / 容量扩展触发条件） | M-07 / M-19 |
+| domain_events.yaml | `docs/02_enterprise_architecture/target_architecture/architecture-model/events/domain_events.yaml` | 22 条领域事件（含 SystemDegraded / 容量扩展触发条件） | M-07 / M-19 |
 
 ### 19.6 蓝图自身文件
 
